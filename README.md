@@ -80,12 +80,19 @@ app.run
 
 The specs cover:
 
+- process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
 - widget lifecycle and visibility state
 - title and text round trips through the native bridge
 - layout composition
 - button click callbacks routed from Qt into Crystal blocks
 
 That gives the project an executable contract for both the C++ shim and the Crystal wrapper.
+
+## Lifecycle Notes
+
+Qt objects must be created and destroyed on the GUI thread. The bindings therefore avoid GC finalizers for Qt teardown and instead perform deterministic cleanup during process exit through `Qt6.shutdown`.
+
+You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but ordinary applications can rely on the built-in exit hook.
 
 ## Project Layout
 
