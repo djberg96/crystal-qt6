@@ -1,0 +1,9 @@
+name: crystal-qt6
+version: 0.1.0
+
+authors:
+  - David Berger
+
+crystal: ">= 1.11.0"
+
+license: MIT
