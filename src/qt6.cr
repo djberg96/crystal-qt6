@@ -2,12 +2,28 @@ require "./qt6/native"
 
 module Qt6
   VERSION = "0.1.0"
+  @@application : Application?
+  @@tracked_widgets = [] of Widget
+  @@shutdown_registered = false
 
   class Error < Exception
   end
 
   def self.application(args : Enumerable(String) = ARGV)
+    register_shutdown_hook
     @@application ||= Application.new(args.to_a)
+  end
+
+  def self.shutdown : Nil
+    tracked_widgets = @@tracked_widgets.dup
+    tracked_widgets.reverse_each(&.release)
+    @@tracked_widgets.clear
+
+    application = @@application
+    return unless application
+
+    application.shutdown
+    @@application = nil
   end
 
   def self.window(title : String, width : Int32 = 800, height : Int32 = 600, &)
@@ -24,6 +40,21 @@ module Qt6
     value = String.new(pointer)
     LibQt6.qt6cr_string_free(pointer)
     value
+  end
+
+  def self.track_widget(widget : Widget) : Nil
+    @@tracked_widgets << widget
+  end
+
+  def self.untrack_widget(widget : Widget) : Nil
+    @@tracked_widgets.delete(widget)
+  end
+
+  private def self.register_shutdown_hook : Nil
+    return if @@shutdown_registered
+
+    at_exit { Qt6.shutdown }
+    @@shutdown_registered = true
   end
 
   class Application
@@ -51,7 +82,7 @@ module Qt6
       LibQt6.qt6cr_application_quit(@handle)
     end
 
-    def finalize
+    def shutdown : Nil
       return if @destroyed
 
       LibQt6.qt6cr_application_destroy(@handle)
@@ -67,9 +98,11 @@ module Qt6
     def initialize(parent : Widget? = nil)
       @owned = parent.nil?
       @to_unsafe = LibQt6.qt6cr_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null)
+      Qt6.track_widget(self) if @owned
     end
 
     protected def initialize(@to_unsafe : LibQt6::Handle, @owned : Bool)
+      Qt6.track_widget(self) if @owned
     end
 
     def window_title : String
@@ -111,13 +144,11 @@ module Qt6
 
       LibQt6.qt6cr_widget_destroy(@to_unsafe)
       @destroyed = true
-    end
-
-    def finalize
-      release
+      Qt6.untrack_widget(self)
     end
 
     def adopt_by_parent! : Nil
+      Qt6.untrack_widget(self) if @owned
       @owned = false
     end
   end
