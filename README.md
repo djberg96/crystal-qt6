@@ -27,11 +27,13 @@ The Crystal FFI layer links against the platform's default C++ runtime:
 
 ## Build
 
-Build the native shim:
+The native Qt shim builds automatically the first time you compile, run, or spec the shard. You can still build it explicitly:
 
 ```sh
 make native
 ```
+
+If you need to disable the automatic build, set `QT6CR_SKIP_BUILD=1` before invoking Crystal and build the shim yourself with `make native`.
 
 Run the full test suite:
 
@@ -44,6 +46,13 @@ Run the examples:
 ```sh
 make example-hello
 make example-counter
+```
+
+Direct Crystal commands also work without a separate native build step:
+
+```sh
+crystal run examples/hello_world.cr
+crystal spec
 ```
 
 ## API Overview
@@ -117,4 +126,4 @@ The next logical additions are:
 1. more layouts such as `HBoxLayout` and grid layouts
 2. richer widgets such as line edits, checkboxes, and menus
 3. more signal coverage using the same callback pattern as `PushButton#on_clicked`
-4. packaging improvements so the native shim builds automatically as part of the shard workflow
+4. packaging improvements beyond the current automatic native shim bootstrap
