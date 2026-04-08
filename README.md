@@ -1,5 +1,7 @@
 # crystal-qt6
 
+[![CI](https://github.com/djberg96/crystal-qt6/actions/workflows/ci.yml/badge.svg)](https://github.com/djberg96/crystal-qt6/actions/workflows/ci.yml)
+
 `crystal-qt6` is a Qt6 bindings project for Crystal with a small, explicit first API focused on desktop widgets.
 
 This repository currently provides:
@@ -54,6 +56,12 @@ Direct Crystal commands also work without a separate native build step:
 crystal run examples/hello_world.cr
 crystal spec
 ```
+
+## Continuous Integration
+
+GitHub Actions runs the native build, spec suite, and example compilation on both macOS and Linux via `.github/workflows/ci.yml`.
+
+The Linux job uses `xvfb` plus Qt's offscreen platform plugin for headless widget tests. The macOS job installs Homebrew Qt and runs the same specs with `QT_QPA_PLATFORM=offscreen`.
 
 ## API Overview
 

@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: latest
+
+      - name: Install Qt6 dependencies on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config qt6-base-dev xvfb
+
+      - name: Install Qt6 dependencies on macOS
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+        run: |
+          brew list pkg-config >/dev/null 2>&1 || brew install pkg-config
+          brew list qt >/dev/null 2>&1 || brew install qt
+          qt_prefix="$(brew --prefix qt)"
+          echo "$qt_prefix/bin" >> "$GITHUB_PATH"
+          echo "PKG_CONFIG_PATH=$qt_prefix/lib/pkgconfig:$qt_prefix/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
+
+      - name: Show toolchain versions
+        run: |
+          crystal --version
+          shards --version
+          pkg-config --modversion Qt6Widgets
+
+      - name: Build native shim
+        run: make native
+
+      - name: Run specs on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a env QT_QPA_PLATFORM=offscreen make spec
+
+      - name: Run specs on macOS
+        if: runner.os == 'macOS'
+        run: QT_QPA_PLATFORM=offscreen make spec
+
+      - name: Compile examples
+        run: |
+          crystal build examples/hello_world.cr -o /tmp/crystal-qt6-hello
+          crystal build examples/counter.cr -o /tmp/crystal-qt6-counter
