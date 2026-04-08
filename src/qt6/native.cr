@@ -1,3 +1,7 @@
+{% unless env("QT6CR_SKIP_BUILD") == "1" %}
+  {% build_output = system(%(sh "#{__DIR__}/../../scripts/build_qt6cr.sh")) %}
+{% end %}
+
 module Qt6
   {% if flag?(:darwin) %}
     @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++", pkg_config: "Qt6Widgets")]
