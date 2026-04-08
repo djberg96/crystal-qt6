@@ -18,6 +18,12 @@ This is an initial, working foundation rather than a full binding of the entire 
 - Crystal 1.11+
 - Qt6 Widgets development package available through `pkg-config`
 - macOS with Homebrew Qt6 works out of the box when `pkg-config` can resolve `Qt6Widgets`
+- Linux distributions using GCC's standard C++ runtime, such as Fedora with `qt6-qtbase-devel`, are supported
+
+The Crystal FFI layer links against the platform's default C++ runtime:
+
+- macOS: `libc++`
+- Linux: `libstdc++`
 
 ## Build
 
