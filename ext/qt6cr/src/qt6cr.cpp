@@ -6,6 +6,7 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QActionGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -21,6 +22,7 @@
 #include <QObject>
 #include <QPaintEvent>
 #include <QPushButton>
+#include <QKeySequence>
 #include <QResizeEvent>
 #include <QStatusBar>
 #include <QTimer>
@@ -172,6 +174,10 @@ QDockWidget *as_dock_widget(qt6cr_handle_t handle) {
 
 QAction *as_action(qt6cr_handle_t handle) {
   return static_cast<QAction *>(handle);
+}
+
+QActionGroup *as_action_group(qt6cr_handle_t handle) {
+  return static_cast<QActionGroup *>(handle);
 }
 
 QMenuBar *as_menu_bar(qt6cr_handle_t handle) {
@@ -539,6 +545,45 @@ char *qt6cr_action_text(qt6cr_handle_t handle) {
   return action == nullptr ? duplicate_string("") : duplicate_string(action->text());
 }
 
+void qt6cr_action_set_shortcut(qt6cr_handle_t handle, const char *shortcut) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setShortcut(QKeySequence(QString::fromUtf8(shortcut == nullptr ? "" : shortcut)));
+  }
+}
+
+char *qt6cr_action_shortcut(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action == nullptr ? duplicate_string("") : duplicate_string(action->shortcut().toString());
+}
+
+void qt6cr_action_set_checkable(qt6cr_handle_t handle, bool value) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setCheckable(value);
+  }
+}
+
+bool qt6cr_action_is_checkable(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action != nullptr && action->isCheckable();
+}
+
+void qt6cr_action_set_checked(qt6cr_handle_t handle, bool value) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setChecked(value);
+  }
+}
+
+bool qt6cr_action_is_checked(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action != nullptr && action->isChecked();
+}
+
 void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *action = as_action(handle);
 
@@ -557,6 +602,32 @@ void qt6cr_action_trigger(qt6cr_handle_t handle) {
   if (action != nullptr) {
     action->trigger();
   }
+}
+
+qt6cr_handle_t qt6cr_action_group_create(qt6cr_handle_t parent) {
+  return new QActionGroup(as_object(parent));
+}
+
+void qt6cr_action_group_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *action_group = as_action_group(handle);
+  auto *group_action = as_action(action);
+
+  if (action_group != nullptr && group_action != nullptr) {
+    action_group->addAction(group_action);
+  }
+}
+
+void qt6cr_action_group_set_exclusive(qt6cr_handle_t handle, bool value) {
+  auto *action_group = as_action_group(handle);
+
+  if (action_group != nullptr) {
+    action_group->setExclusive(value);
+  }
+}
+
+bool qt6cr_action_group_is_exclusive(qt6cr_handle_t handle) {
+  auto *action_group = as_action_group(handle);
+  return action_group != nullptr && action_group->isExclusive();
 }
 
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title) {

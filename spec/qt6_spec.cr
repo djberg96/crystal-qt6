@@ -1,6 +1,37 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "supports action shortcuts and exclusive action groups" do
+    app
+    window = Qt6::MainWindow.new
+    menu = window.menu_bar.add_menu("View")
+    group = Qt6::ActionGroup.new(window)
+    map_action = Qt6::Action.new("Map", window)
+    units_action = Qt6::Action.new("Units", window)
+
+    map_action.shortcut = Qt6::KeySequence.new("Ctrl+1")
+    units_action.shortcut = "Ctrl+2"
+    map_action.checkable = true
+    units_action.checkable = true
+    group.exclusive = true
+    group << map_action
+    group << units_action
+    menu << map_action
+    menu << units_action
+
+    map_action.checked = true
+    units_action.checked = true
+
+    map_action.shortcut.to_s.should eq("Ctrl+1")
+    units_action.shortcut.to_s.should eq("Ctrl+2")
+    map_action.checkable?.should be_true
+    units_action.checkable?.should be_true
+    group.exclusive?.should be_true
+    map_action.checked?.should be_false
+    units_action.checked?.should be_true
+    window.release
+  end
+
   it "builds a reduced shell with menus, toolbars, docks, dialogs, and controls" do
     application = app
     main = Qt6::MainWindow.new
@@ -132,7 +163,10 @@ describe Qt6 do
     application.process_events
 
     widget.repaint_now
-    application.process_events
+    10.times do
+      application.process_events
+      break unless paint_events.empty?
+    end
     widget.simulate_mouse_press(Qt6::PointF.new(10.0, 20.0))
     widget.simulate_mouse_move(Qt6::PointF.new(15.0, 25.0))
     widget.simulate_mouse_release(Qt6::PointF.new(18.0, 28.0))

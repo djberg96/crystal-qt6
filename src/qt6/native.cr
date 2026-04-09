@@ -92,8 +92,19 @@ module Qt6
     fun qt6cr_action_create = qt6cr_action_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_action_set_text = qt6cr_action_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_action_text = qt6cr_action_text(handle : Handle) : UInt8*
+    fun qt6cr_action_set_shortcut = qt6cr_action_set_shortcut(handle : Handle, shortcut : UInt8*)
+    fun qt6cr_action_shortcut = qt6cr_action_shortcut(handle : Handle) : UInt8*
+    fun qt6cr_action_set_checkable = qt6cr_action_set_checkable(handle : Handle, value : Bool)
+    fun qt6cr_action_is_checkable = qt6cr_action_is_checkable(handle : Handle) : Bool
+    fun qt6cr_action_set_checked = qt6cr_action_set_checked(handle : Handle, value : Bool)
+    fun qt6cr_action_is_checked = qt6cr_action_is_checked(handle : Handle) : Bool
     fun qt6cr_action_on_triggered = qt6cr_action_on_triggered(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_action_trigger = qt6cr_action_trigger(handle : Handle)
+
+    fun qt6cr_action_group_create = qt6cr_action_group_create(parent : Handle) : Handle
+    fun qt6cr_action_group_add_action = qt6cr_action_group_add_action(handle : Handle, action : Handle)
+    fun qt6cr_action_group_set_exclusive = qt6cr_action_group_set_exclusive(handle : Handle, value : Bool)
+    fun qt6cr_action_group_is_exclusive = qt6cr_action_group_is_exclusive(handle : Handle) : Bool
 
     fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
 
