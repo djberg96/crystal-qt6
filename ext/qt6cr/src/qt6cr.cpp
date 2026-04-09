@@ -1159,6 +1159,11 @@ void qt6cr_qsvg_widget_load_data(qt6cr_handle_t handle, const unsigned char *dat
   }
 }
 
+qt6cr_handle_t qt6cr_qsvg_widget_renderer(qt6cr_handle_t handle) {
+  auto *widget = as_qsvg_widget(handle);
+  return widget == nullptr ? nullptr : widget->renderer();
+}
+
 qt6cr_size_t qt6cr_qsvg_widget_size_hint(qt6cr_handle_t handle) {
   auto *widget = as_qsvg_widget(handle);
   return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->sizeHint());

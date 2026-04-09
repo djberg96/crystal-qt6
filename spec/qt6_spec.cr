@@ -260,6 +260,11 @@ describe Qt6 do
     SVG
 
     widget = Qt6::QSvgWidget.new(svg_path)
+  renderer = widget.renderer
+
+  renderer.valid?.should be_true
+  renderer.default_size.should eq(Qt6::Size.new(24, 16))
+  renderer.element_exists?("missing").should be_false
     widget.size_hint.should eq(Qt6::Size.new(24, 16))
     widget.resize(24, 16)
     widget.visible?.should be_false
@@ -275,6 +280,14 @@ describe Qt6 do
     preview.null?.should be_false
     preview.width.should be >= 24
     preview.height.should be >= 16
+
+    render_probe = Qt6::QImage.new(24, 16)
+    render_probe.fill(Qt6::Color.new(255, 255, 255))
+    Qt6::QPainter.paint(render_probe) do |painter|
+      renderer.render(painter)
+    end
+    render_probe.pixel_color(4, 3).should eq(Qt6::Color.new(255, 0, 0, 255))
+
     widget.release
   end
 
