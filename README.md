@@ -52,6 +52,7 @@ make example-counter
 make example-shell
 make example-events
 make example-render
+make example-svg
 ```
 
 Direct Crystal commands also work without a separate native build step:
@@ -67,7 +68,8 @@ Example highlights:
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
 - `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, convenience dialog helpers, and form/grid layout composition
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
-- `examples/rendering_stack.cr`: offscreen rendering plus file-backed and in-memory SVG import/export and PDF export with `QImage`, `QPixmap`, `QSvgGenerator`, `QSvgRenderer`, `QPdfWriter`, `QPainter`, `QPainterPath`, and `QTransform`
+- `examples/rendering_stack.cr`: offscreen rendering plus file-backed and in-memory SVG import/export, named-element SVG rasterization, and PDF export with `QImage`, `QPixmap`, `QSvgGenerator`, `QSvgRenderer`, `QPdfWriter`, `QPainter`, `QPainterPath`, and `QTransform`
+- `examples/svg_widget_renderer.cr`: embedded `QSvgWidget` display, in-memory `load_data`, borrowed `QSvgWidget#renderer` access, named-element preview rendering, and widget grab export
 
 ## Continuous Integration
 
