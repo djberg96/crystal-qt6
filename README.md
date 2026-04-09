@@ -126,6 +126,7 @@ You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but
 - `spec/qt6_spec.cr`: end-to-end specs
 - `examples/`: sample applications
 - `docs/design.md`: architecture notes
+- `docs/crystal-qt6-roadmap.md`: phased roadmap for growing `crystal-qt6` toward larger application ports
 
 ## Extending The Bindings
 
