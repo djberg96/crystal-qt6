@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-09
+
 ### Added
 
 - `QObject` as a shared base for wrapped Qt objects with deterministic release and a `destroyed` signal.
