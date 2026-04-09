@@ -166,6 +166,18 @@ void qt6cr_qsvg_generator_set_description(qt6cr_handle_t handle, const char *des
 int qt6cr_qsvg_generator_resolution(qt6cr_handle_t handle);
 void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution);
 
+qt6cr_handle_t qt6cr_qsvg_renderer_create(const char *file_name);
+void qt6cr_qsvg_renderer_destroy(qt6cr_handle_t handle);
+bool qt6cr_qsvg_renderer_is_valid(qt6cr_handle_t handle);
+bool qt6cr_qsvg_renderer_load(qt6cr_handle_t handle, const char *file_name);
+qt6cr_size_t qt6cr_qsvg_renderer_default_size(qt6cr_handle_t handle);
+qt6cr_rectf_t qt6cr_qsvg_renderer_view_box(qt6cr_handle_t handle);
+void qt6cr_qsvg_renderer_set_view_box(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+bool qt6cr_qsvg_renderer_element_exists(qt6cr_handle_t handle, const char *element_id);
+qt6cr_rectf_t qt6cr_qsvg_renderer_bounds_on_element(qt6cr_handle_t handle, const char *element_id);
+void qt6cr_qsvg_renderer_render(qt6cr_handle_t handle, qt6cr_handle_t painter);
+void qt6cr_qsvg_renderer_render_with_bounds(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rectf_t bounds);
+
 qt6cr_handle_t qt6cr_qpdf_writer_create(const char *file_name);
 void qt6cr_qpdf_writer_destroy(qt6cr_handle_t handle);
 void qt6cr_qpdf_writer_set_title(qt6cr_handle_t handle, const char *title);

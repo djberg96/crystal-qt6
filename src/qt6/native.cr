@@ -164,6 +164,18 @@ module Qt6
     fun qt6cr_qsvg_generator_resolution = qt6cr_qsvg_generator_resolution(handle : Handle) : LibC::Int
     fun qt6cr_qsvg_generator_set_resolution = qt6cr_qsvg_generator_set_resolution(handle : Handle, resolution : LibC::Int)
 
+    fun qt6cr_qsvg_renderer_create = qt6cr_qsvg_renderer_create(file_name : UInt8*) : Handle
+    fun qt6cr_qsvg_renderer_destroy = qt6cr_qsvg_renderer_destroy(handle : Handle)
+    fun qt6cr_qsvg_renderer_is_valid = qt6cr_qsvg_renderer_is_valid(handle : Handle) : Bool
+    fun qt6cr_qsvg_renderer_load = qt6cr_qsvg_renderer_load(handle : Handle, file_name : UInt8*) : Bool
+    fun qt6cr_qsvg_renderer_default_size = qt6cr_qsvg_renderer_default_size(handle : Handle) : SizeValue
+    fun qt6cr_qsvg_renderer_view_box = qt6cr_qsvg_renderer_view_box(handle : Handle) : RectFValue
+    fun qt6cr_qsvg_renderer_set_view_box = qt6cr_qsvg_renderer_set_view_box(handle : Handle, rect : RectFValue)
+    fun qt6cr_qsvg_renderer_element_exists = qt6cr_qsvg_renderer_element_exists(handle : Handle, element_id : UInt8*) : Bool
+    fun qt6cr_qsvg_renderer_bounds_on_element = qt6cr_qsvg_renderer_bounds_on_element(handle : Handle, element_id : UInt8*) : RectFValue
+    fun qt6cr_qsvg_renderer_render = qt6cr_qsvg_renderer_render(handle : Handle, painter : Handle)
+    fun qt6cr_qsvg_renderer_render_with_bounds = qt6cr_qsvg_renderer_render_with_bounds(handle : Handle, painter : Handle, bounds : RectFValue)
+
     fun qt6cr_qpdf_writer_create = qt6cr_qpdf_writer_create(file_name : UInt8*) : Handle
     fun qt6cr_qpdf_writer_destroy = qt6cr_qpdf_writer_destroy(handle : Handle)
     fun qt6cr_qpdf_writer_set_title = qt6cr_qpdf_writer_set_title(handle : Handle, title : UInt8*)
