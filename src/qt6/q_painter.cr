@@ -1,6 +1,11 @@
 module Qt6
   # Wraps `QPainter` for scoped drawing onto images and pixmaps.
   class QPainter < NativeResource
+    # Wraps an existing native painter handle.
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Begins painting on the given image.
     def initialize(target : QImage)
       super(LibQt6.qt6cr_qpainter_create_for_image(target.to_unsafe))

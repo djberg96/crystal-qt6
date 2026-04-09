@@ -17,6 +17,14 @@ canvas.on_paint do |event|
   event_label.text = "Paint rect: #{event.rect.width.to_i}x#{event.rect.height.to_i}"
 end
 
+canvas.on_paint_with_painter do |event, painter|
+  painter.fill_rect(event.rect, Qt6::Color.new(248, 246, 240))
+  painter.pen = Qt6::Color.new(32, 96, 192)
+  painter.draw_rect(Qt6::RectF.new(12.0, 12.0, event.rect.width - 24.0, event.rect.height - 24.0))
+  painter.draw_line(Qt6::PointF.new(12.0, 12.0), Qt6::PointF.new(event.rect.width - 12.0, event.rect.height - 12.0))
+  painter.draw_text(Qt6::PointF.new(18.0, 28.0), "EventWidget painter")
+end
+
 canvas.on_mouse_press do |event|
   event_label.text = "Mouse press at (#{event.position.x.to_i}, #{event.position.y.to_i})"
 end

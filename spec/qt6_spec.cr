@@ -319,6 +319,7 @@ describe Qt6 do
     application = app
     widget = Qt6::EventWidget.new
     paint_events = [] of Qt6::PaintEvent
+    painter_events = [] of Qt6::PaintEvent
     resize_events = [] of Qt6::ResizeEvent
     mouse_presses = [] of Qt6::MouseEvent
     mouse_moves = [] of Qt6::MouseEvent
@@ -327,6 +328,11 @@ describe Qt6 do
     keys = [] of Qt6::KeyEvent
 
     widget.on_paint { |event| paint_events << event }
+    widget.on_paint_with_painter do |event, painter|
+      painter_events << event
+      painter.active?.should be_true
+      painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 24.0, 16.0), Qt6::Color.new(255, 0, 0))
+    end
     widget.on_resize { |event| resize_events << event }
     widget.on_mouse_press { |event| mouse_presses << event }
     widget.on_mouse_move { |event| mouse_moves << event }
@@ -349,16 +355,19 @@ describe Qt6 do
     widget.simulate_wheel(Qt6::PointF.new(20.0, 30.0), angle_delta: Qt6::PointF.new(0.0, 120.0))
     widget.simulate_key_press(65)
     application.process_events
+    snapshot = widget.grab.to_image
 
     widget.size.should eq(Qt6::Size.new(200, 120))
     widget.rect.width.should eq(200.0)
     resize_events.last.size.should eq(Qt6::Size.new(200, 120))
     paint_events.empty?.should be_false
+    painter_events.empty?.should be_false
     mouse_presses.last.position.should eq(Qt6::PointF.new(10.0, 20.0))
     mouse_moves.last.position.should eq(Qt6::PointF.new(15.0, 25.0))
     mouse_releases.last.position.should eq(Qt6::PointF.new(18.0, 28.0))
     wheels.last.angle_delta.should eq(Qt6::PointF.new(0.0, 120.0))
     keys.last.key.should eq(65)
+    snapshot.pixel_color(5, 5).should eq(Qt6::Color.new(255, 0, 0, 255))
     widget.release
   end
 

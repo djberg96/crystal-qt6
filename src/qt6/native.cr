@@ -77,6 +77,7 @@ module Qt6
     fun qt6cr_widget_size = qt6cr_widget_size(handle : Handle) : SizeValue
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
+    fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
 
     fun qt6cr_main_window_create = qt6cr_main_window_create(parent : Handle) : Handle
     fun qt6cr_main_window_set_central_widget = qt6cr_main_window_set_central_widget(handle : Handle, widget : Handle)
@@ -238,6 +239,7 @@ module Qt6
 
     fun qt6cr_event_widget_create = qt6cr_event_widget_create(parent : Handle) : Handle
     fun qt6cr_event_widget_on_paint = qt6cr_event_widget_on_paint(handle : Handle, callback : (Handle, RectFValue ->), userdata : Handle)
+    fun qt6cr_event_widget_on_paint_with_painter = qt6cr_event_widget_on_paint_with_painter(handle : Handle, callback : (Handle, Handle, RectFValue ->), userdata : Handle)
     fun qt6cr_event_widget_on_resize = qt6cr_event_widget_on_resize(handle : Handle, callback : (Handle, SizeValue, SizeValue ->), userdata : Handle)
     fun qt6cr_event_widget_on_mouse_press = qt6cr_event_widget_on_mouse_press(handle : Handle, callback : (Handle, MouseEventValue ->), userdata : Handle)
     fun qt6cr_event_widget_on_mouse_move = qt6cr_event_widget_on_mouse_move(handle : Handle, callback : (Handle, MouseEventValue ->), userdata : Handle)

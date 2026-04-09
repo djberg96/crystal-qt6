@@ -6,7 +6,8 @@ module Qt6
       super(LibQt6.qt6cr_qpixmap_create(width, height))
     end
 
-    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+    # Wraps an existing native pixmap handle.
+    def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
 
