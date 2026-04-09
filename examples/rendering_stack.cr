@@ -39,3 +39,20 @@ end
 output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack.png")
 pixmap.save(output)
 puts "Wrote #{output}"
+
+svg_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack.svg")
+svg = Qt6::QSvgGenerator.new(svg_output, 160, 120, title: "crystal-qt6 rendering stack", description: "Vector export demo")
+svg.resolution = 96
+
+Qt6::QPainter.paint(svg) do |painter|
+  painter.antialiasing = false
+  painter.pen = pen
+  painter.brush = brush
+  painter.font = font
+  painter.draw_path(frame.transformed(transform))
+  painter.fill_rect(Qt6::RectF.new(72.0, 24.0, 48.0, 32.0), Qt6::Color.new(220, 96, 72))
+  painter.draw_text(Qt6::PointF.new(label_x, label_y), label)
+end
+
+svg.release
+puts "Wrote #{svg_output}"

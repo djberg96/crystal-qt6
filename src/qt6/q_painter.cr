@@ -16,6 +16,11 @@ module Qt6
       super(LibQt6.qt6cr_qpainter_create_for_pixmap(target.to_unsafe))
     end
 
+    # Begins painting on the given SVG generator.
+    def initialize(target : QSvgGenerator)
+      super(LibQt6.qt6cr_qpainter_create_for_svg_generator(target.to_unsafe))
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -34,6 +39,17 @@ module Qt6
     # Opens a painter for a pixmap for the duration of the block and releases
     # it afterward.
     def self.paint(target : QPixmap, &block)
+      painter = new(target)
+      begin
+        yield painter
+      ensure
+        painter.release
+      end
+    end
+
+    # Opens a painter for an SVG generator for the duration of the block and
+    # releases it afterward.
+    def self.paint(target : QSvgGenerator, &block)
       painter = new(target)
       begin
         yield painter
