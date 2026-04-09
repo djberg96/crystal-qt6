@@ -57,7 +57,7 @@ end
 svg.release
 puts "Wrote #{svg_output}"
 
-svg_renderer = Qt6::QSvgRenderer.new(svg_output)
+svg_renderer = Qt6::QSvgRenderer.from_data(File.read(svg_output))
 svg_preview = Qt6::QImage.new(160, 120)
 svg_preview.fill(Qt6::Color.new(255, 255, 255))
 

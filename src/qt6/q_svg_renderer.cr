@@ -6,6 +6,17 @@ module Qt6
       super(LibQt6.qt6cr_qsvg_renderer_create(file_name.to_unsafe))
     end
 
+    # Creates a renderer from an in-memory SVG payload.
+    def self.from_data(data : Bytes) : self
+      new(LibQt6.qt6cr_qsvg_renderer_create_from_data(data.to_unsafe, data.size), true)
+    end
+
+    # Creates a renderer from an in-memory SVG string.
+    def self.from_data(data : String) : self
+      bytes = data.to_slice
+      from_data(bytes)
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -18,6 +29,17 @@ module Qt6
     # Loads or replaces the SVG document from disk.
     def load(file_name : String) : Bool
       LibQt6.qt6cr_qsvg_renderer_load(to_unsafe, file_name.to_unsafe)
+    end
+
+    # Loads or replaces the SVG document from an in-memory payload.
+    def load_data(data : Bytes) : Bool
+      LibQt6.qt6cr_qsvg_renderer_load_data(to_unsafe, data.to_unsafe, data.size)
+    end
+
+    # Loads or replaces the SVG document from an in-memory string.
+    def load_data(data : String) : Bool
+      bytes = data.to_slice
+      load_data(bytes)
     end
 
     # Returns the default document size from the SVG metadata.
