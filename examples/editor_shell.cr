@@ -126,13 +126,31 @@ apply_button.on_clicked do
 end
 
 inspector = Qt6::Widget.new
-inspector.vbox do |column|
-  column << Qt6::Label.new("Layer name")
-  column << layer_name
-  column << snap_check
-  column << Qt6::Label.new("Layer kind")
-  column << layer_kind
-  column << apply_button
+inspector.form do |form|
+  form.add_row("Layer name", layer_name)
+  form.add_row("Layer kind", layer_kind)
+  form.add_row(snap_check)
+  form.add_row(Qt6::Widget.new.tap do |button_row|
+    button_row.hbox do |row|
+      row << apply_button
+      row << Qt6::PushButton.new("Quick Rename").tap do |button|
+        button.on_clicked do
+          if value = Qt6::InputDialog.get_text(main, title: "Rename Layer", label: "Layer name", value: layer_name.text)
+            layer_name.text = value
+            apply_changes.call
+          end
+        end
+      end
+    end
+  end)
+  form.add_row(Qt6::Widget.new.tap do |preview_grid|
+    preview_grid.grid do |grid|
+      grid.add(Qt6::Label.new("Preview"), 0, 0)
+      grid.add(Qt6::Label.new("Mode"), 0, 1)
+      grid.add(Qt6::Label.new(layer_kind.current_text), 1, 0)
+      grid.add(Qt6::Label.new(snap_check.checked? ? "Snap" : "Free"), 1, 1)
+    end
+  end)
 end
 
 dock = Qt6::DockWidget.new("Inspector", main)

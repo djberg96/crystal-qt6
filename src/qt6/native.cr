@@ -233,6 +233,17 @@ module Qt6
     fun qt6cr_v_box_layout_create = qt6cr_v_box_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_v_box_layout_add_widget = qt6cr_v_box_layout_add_widget(handle : Handle, widget : Handle)
 
+    fun qt6cr_h_box_layout_create = qt6cr_h_box_layout_create(parent_widget : Handle) : Handle
+    fun qt6cr_h_box_layout_add_widget = qt6cr_h_box_layout_add_widget(handle : Handle, widget : Handle)
+
+    fun qt6cr_grid_layout_create = qt6cr_grid_layout_create(parent_widget : Handle) : Handle
+    fun qt6cr_grid_layout_add_widget = qt6cr_grid_layout_add_widget(handle : Handle, widget : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)
+
+    fun qt6cr_form_layout_create = qt6cr_form_layout_create(parent_widget : Handle) : Handle
+    fun qt6cr_form_layout_add_row_label_widget = qt6cr_form_layout_add_row_label_widget(handle : Handle, label : UInt8*, field_widget : Handle)
+    fun qt6cr_form_layout_add_row_widget_widget = qt6cr_form_layout_add_row_widget_widget(handle : Handle, label_widget : Handle, field_widget : Handle)
+    fun qt6cr_form_layout_add_row_widget = qt6cr_form_layout_add_row_widget(handle : Handle, widget : Handle)
+
     fun qt6cr_string_free = qt6cr_string_free(value : UInt8*)
   end
 end

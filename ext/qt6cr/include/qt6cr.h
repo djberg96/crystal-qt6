@@ -238,6 +238,17 @@ void qt6cr_timer_on_timeout(qt6cr_handle_t handle, qt6cr_void_callback_t callbac
 qt6cr_handle_t qt6cr_v_box_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
+qt6cr_handle_t qt6cr_h_box_layout_create(qt6cr_handle_t parent_widget);
+void qt6cr_h_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+
+qt6cr_handle_t qt6cr_grid_layout_create(qt6cr_handle_t parent_widget);
+void qt6cr_grid_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int row, int column, int row_span, int column_span);
+
+qt6cr_handle_t qt6cr_form_layout_create(qt6cr_handle_t parent_widget);
+void qt6cr_form_layout_add_row_label_widget(qt6cr_handle_t handle, const char *label, qt6cr_handle_t field_widget);
+void qt6cr_form_layout_add_row_widget_widget(qt6cr_handle_t handle, qt6cr_handle_t label_widget, qt6cr_handle_t field_widget);
+void qt6cr_form_layout_add_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+
 void qt6cr_string_free(char *value);
 
 #ifdef __cplusplus

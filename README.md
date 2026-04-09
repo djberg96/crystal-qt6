@@ -64,7 +64,7 @@ Example highlights:
 
 - `examples/hello_world.cr`: smallest possible window with a label and button
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
-- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, and convenience helpers for standard, color, and input dialogs
+- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, convenience dialog helpers, and form/grid layout composition
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
 
 ## Continuous Integration
@@ -119,7 +119,7 @@ app.run
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, and `Qt6::ComboBox` for common form controls
-- `Qt6::VBoxLayout` for vertical layout composition
+- `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
 
 ## Testing Strategy
 
@@ -128,6 +128,7 @@ The specs cover:
 - process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
 - standard dialog configuration for `QMessageBox`, `QFileDialog`, `QColorDialog`, and `QInputDialog`
 - convenience helper flows for message, color, and input dialogs
+- layout composition through vertical, horizontal, form, and grid layouts
 - `QObject` destruction signals and `QTimer` timeout delivery
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls
