@@ -41,6 +41,7 @@
 #include <QKeySequence>
 #include <QResizeEvent>
 #include <QStatusBar>
+#include <QSvgGenerator>
 #include <QTimer>
 #include <QTransform>
 #include <QToolBar>
@@ -215,6 +216,10 @@ QPixmap *as_qpixmap(qt6cr_handle_t handle) {
   return static_cast<QPixmap *>(handle);
 }
 
+QSvgGenerator *as_qsvg_generator(qt6cr_handle_t handle) {
+  return static_cast<QSvgGenerator *>(handle);
+}
+
 QPen *as_qpen(qt6cr_handle_t handle) {
   return static_cast<QPen *>(handle);
 }
@@ -343,6 +348,10 @@ qt6cr_size_t to_size(const QSize &size) {
   return qt6cr_size_t{size.width(), size.height()};
 }
 
+qt6cr_rectf_t to_rectf(const QRect &rect) {
+  return qt6cr_rectf_t{static_cast<double>(rect.x()), static_cast<double>(rect.y()), static_cast<double>(rect.width()), static_cast<double>(rect.height())};
+}
+
 qt6cr_rectf_t to_rectf(const QRectF &rect) {
   return qt6cr_rectf_t{rect.x(), rect.y(), rect.width(), rect.height()};
 }
@@ -369,6 +378,10 @@ QPointF from_pointf(qt6cr_pointf_t point) {
 
 QRectF from_rectf(qt6cr_rectf_t rect) {
   return QRectF(rect.x, rect.y, rect.width, rect.height);
+}
+
+QRect from_rect(qt6cr_rectf_t rect) {
+  return QRect(static_cast<int>(rect.x), static_cast<int>(rect.y), static_cast<int>(rect.width), static_cast<int>(rect.height));
 }
 
 QColor from_color(qt6cr_color_t color) {
@@ -909,6 +922,92 @@ bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path) {
   return pixmap != nullptr && pixmap->save(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
+qt6cr_handle_t qt6cr_qsvg_generator_create(void) {
+  return new QSvgGenerator();
+}
+
+void qt6cr_qsvg_generator_destroy(qt6cr_handle_t handle) {
+  delete as_qsvg_generator(handle);
+}
+
+char *qt6cr_qsvg_generator_file_name(qt6cr_handle_t handle) {
+  auto *generator = as_qsvg_generator(handle);
+  return generator == nullptr ? duplicate_string("") : duplicate_string(generator->fileName());
+}
+
+void qt6cr_qsvg_generator_set_file_name(qt6cr_handle_t handle, const char *file_name) {
+  auto *generator = as_qsvg_generator(handle);
+
+  if (generator != nullptr) {
+    generator->setFileName(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+qt6cr_size_t qt6cr_qsvg_generator_size(qt6cr_handle_t handle) {
+  auto *generator = as_qsvg_generator(handle);
+  return generator == nullptr ? qt6cr_size_t{0, 0} : to_size(generator->size());
+}
+
+void qt6cr_qsvg_generator_set_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *generator = as_qsvg_generator(handle);
+
+  if (generator != nullptr) {
+    generator->setSize(QSize(size.width, size.height));
+  }
+}
+
+qt6cr_rectf_t qt6cr_qsvg_generator_view_box(qt6cr_handle_t handle) {
+  auto *generator = as_qsvg_generator(handle);
+  return generator == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(generator->viewBox());
+}
+
+void qt6cr_qsvg_generator_set_view_box(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *generator = as_qsvg_generator(handle);
+
+  if (generator != nullptr) {
+    generator->setViewBox(from_rect(rect));
+  }
+}
+
+char *qt6cr_qsvg_generator_title(qt6cr_handle_t handle) {
+  auto *generator = as_qsvg_generator(handle);
+  return generator == nullptr ? duplicate_string("") : duplicate_string(generator->title());
+}
+
+void qt6cr_qsvg_generator_set_title(qt6cr_handle_t handle, const char *title) {
+  auto *generator = as_qsvg_generator(handle);
+
+  if (generator != nullptr) {
+    generator->setTitle(QString::fromUtf8(title == nullptr ? "" : title));
+  }
+}
+
+char *qt6cr_qsvg_generator_description(qt6cr_handle_t handle) {
+  auto *generator = as_qsvg_generator(handle);
+  return generator == nullptr ? duplicate_string("") : duplicate_string(generator->description());
+}
+
+void qt6cr_qsvg_generator_set_description(qt6cr_handle_t handle, const char *description) {
+  auto *generator = as_qsvg_generator(handle);
+
+  if (generator != nullptr) {
+    generator->setDescription(QString::fromUtf8(description == nullptr ? "" : description));
+  }
+}
+
+int qt6cr_qsvg_generator_resolution(qt6cr_handle_t handle) {
+  auto *generator = as_qsvg_generator(handle);
+  return generator == nullptr ? 0 : generator->resolution();
+}
+
+void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution) {
+  auto *generator = as_qsvg_generator(handle);
+
+  if (generator != nullptr) {
+    generator->setResolution(resolution);
+  }
+}
+
 qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width) {
   auto pen = QPen(from_color(color));
   pen.setWidthF(width);
@@ -1234,6 +1333,11 @@ qt6cr_handle_t qt6cr_qpainter_create_for_image(qt6cr_handle_t image) {
 
 qt6cr_handle_t qt6cr_qpainter_create_for_pixmap(qt6cr_handle_t pixmap) {
   auto *target = as_qpixmap(pixmap);
+  return target == nullptr ? nullptr : new QPainter(target);
+}
+
+qt6cr_handle_t qt6cr_qpainter_create_for_svg_generator(qt6cr_handle_t svg_generator) {
+  auto *target = as_qsvg_generator(svg_generator);
   return target == nullptr ? nullptr : new QPainter(target);
 }
 

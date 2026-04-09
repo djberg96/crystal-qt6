@@ -151,6 +151,21 @@ bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle);
 void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
 
+qt6cr_handle_t qt6cr_qsvg_generator_create(void);
+void qt6cr_qsvg_generator_destroy(qt6cr_handle_t handle);
+char *qt6cr_qsvg_generator_file_name(qt6cr_handle_t handle);
+void qt6cr_qsvg_generator_set_file_name(qt6cr_handle_t handle, const char *file_name);
+qt6cr_size_t qt6cr_qsvg_generator_size(qt6cr_handle_t handle);
+void qt6cr_qsvg_generator_set_size(qt6cr_handle_t handle, qt6cr_size_t size);
+qt6cr_rectf_t qt6cr_qsvg_generator_view_box(qt6cr_handle_t handle);
+void qt6cr_qsvg_generator_set_view_box(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+char *qt6cr_qsvg_generator_title(qt6cr_handle_t handle);
+void qt6cr_qsvg_generator_set_title(qt6cr_handle_t handle, const char *title);
+char *qt6cr_qsvg_generator_description(qt6cr_handle_t handle);
+void qt6cr_qsvg_generator_set_description(qt6cr_handle_t handle, const char *description);
+int qt6cr_qsvg_generator_resolution(qt6cr_handle_t handle);
+void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution);
+
 qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width);
 void qt6cr_qpen_destroy(qt6cr_handle_t handle);
 qt6cr_color_t qt6cr_qpen_color(qt6cr_handle_t handle);
@@ -214,6 +229,7 @@ qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_hand
 
 qt6cr_handle_t qt6cr_qpainter_create_for_image(qt6cr_handle_t image);
 qt6cr_handle_t qt6cr_qpainter_create_for_pixmap(qt6cr_handle_t pixmap);
+qt6cr_handle_t qt6cr_qpainter_create_for_svg_generator(qt6cr_handle_t svg_generator);
 void qt6cr_qpainter_destroy(qt6cr_handle_t handle);
 bool qt6cr_qpainter_is_active(qt6cr_handle_t handle);
 void qt6cr_qpainter_set_antialiasing(qt6cr_handle_t handle, bool value);

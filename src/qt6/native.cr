@@ -4,9 +4,13 @@
 
 module Qt6
   {% if flag?(:darwin) %}
-    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++", pkg_config: "Qt6Widgets")]
+    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++")]
+    @[Link(pkg_config: "Qt6Widgets")]
+    @[Link(pkg_config: "Qt6Svg")]
   {% else %}
-    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lstdc++", pkg_config: "Qt6Widgets")]
+    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lstdc++")]
+    @[Link(pkg_config: "Qt6Widgets")]
+    @[Link(pkg_config: "Qt6Svg")]
   {% end %}
   lib LibQt6
     alias Handle = Void*
@@ -145,6 +149,21 @@ module Qt6
     fun qt6cr_qpixmap_fill = qt6cr_qpixmap_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
 
+    fun qt6cr_qsvg_generator_create = qt6cr_qsvg_generator_create : Handle
+    fun qt6cr_qsvg_generator_destroy = qt6cr_qsvg_generator_destroy(handle : Handle)
+    fun qt6cr_qsvg_generator_file_name = qt6cr_qsvg_generator_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qsvg_generator_set_file_name = qt6cr_qsvg_generator_set_file_name(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qsvg_generator_size = qt6cr_qsvg_generator_size(handle : Handle) : SizeValue
+    fun qt6cr_qsvg_generator_set_size = qt6cr_qsvg_generator_set_size(handle : Handle, size : SizeValue)
+    fun qt6cr_qsvg_generator_view_box = qt6cr_qsvg_generator_view_box(handle : Handle) : RectFValue
+    fun qt6cr_qsvg_generator_set_view_box = qt6cr_qsvg_generator_set_view_box(handle : Handle, rect : RectFValue)
+    fun qt6cr_qsvg_generator_title = qt6cr_qsvg_generator_title(handle : Handle) : UInt8*
+    fun qt6cr_qsvg_generator_set_title = qt6cr_qsvg_generator_set_title(handle : Handle, title : UInt8*)
+    fun qt6cr_qsvg_generator_description = qt6cr_qsvg_generator_description(handle : Handle) : UInt8*
+    fun qt6cr_qsvg_generator_set_description = qt6cr_qsvg_generator_set_description(handle : Handle, description : UInt8*)
+    fun qt6cr_qsvg_generator_resolution = qt6cr_qsvg_generator_resolution(handle : Handle) : LibC::Int
+    fun qt6cr_qsvg_generator_set_resolution = qt6cr_qsvg_generator_set_resolution(handle : Handle, resolution : LibC::Int)
+
     fun qt6cr_qpen_create = qt6cr_qpen_create(color : ColorValue, width : Float64) : Handle
     fun qt6cr_qpen_destroy = qt6cr_qpen_destroy(handle : Handle)
     fun qt6cr_qpen_color = qt6cr_qpen_color(handle : Handle) : ColorValue
@@ -208,6 +227,7 @@ module Qt6
 
     fun qt6cr_qpainter_create_for_image = qt6cr_qpainter_create_for_image(image : Handle) : Handle
     fun qt6cr_qpainter_create_for_pixmap = qt6cr_qpainter_create_for_pixmap(pixmap : Handle) : Handle
+    fun qt6cr_qpainter_create_for_svg_generator = qt6cr_qpainter_create_for_svg_generator(svg_generator : Handle) : Handle
     fun qt6cr_qpainter_destroy = qt6cr_qpainter_destroy(handle : Handle)
     fun qt6cr_qpainter_is_active = qt6cr_qpainter_is_active(handle : Handle) : Bool
     fun qt6cr_qpainter_set_antialiasing = qt6cr_qpainter_set_antialiasing(handle : Handle, value : Bool)

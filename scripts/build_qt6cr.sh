@@ -5,7 +5,7 @@ set -eu
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
 
-QT_PKG=${QT_PKG:-Qt6Widgets}
+QT_PKG=${QT_PKG:-Qt6Widgets Qt6Svg}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 CXX=${CXX:-c++}
 AR=${AR:-ar}
@@ -32,8 +32,8 @@ if ! command -v "$AR" >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! "$PKG_CONFIG" --exists "$QT_PKG"; then
-  echo "qt6cr: pkg-config could not find '$QT_PKG'; install the Qt6 Widgets development package" >&2
+if ! "$PKG_CONFIG" --exists $QT_PKG; then
+  echo "qt6cr: pkg-config could not find '$QT_PKG'; install the Qt6 Widgets and Qt6 Svg development packages" >&2
   exit 1
 fi
 
@@ -43,6 +43,6 @@ if [ -f "$LIB" ] && [ -f "$OBJ" ] && [ "$OBJ" -nt "$SRC" ] && [ "$OBJ" -nt "$HEA
   exit 0
 fi
 
-"$CXX" -std=c++17 -fPIC -I"$INCLUDE_DIR" $("$PKG_CONFIG" --cflags "$QT_PKG") ${CXXFLAGS:-} -c "$SRC" -o "$OBJ"
+"$CXX" -std=c++17 -fPIC -I"$INCLUDE_DIR" $("$PKG_CONFIG" --cflags $QT_PKG) ${CXXFLAGS:-} -c "$SRC" -o "$OBJ"
 rm -f "$LIB"
 "$AR" rcs "$LIB" "$OBJ"

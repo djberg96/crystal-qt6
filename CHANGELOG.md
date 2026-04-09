@@ -21,6 +21,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Layout bindings for `QHBoxLayout`, `QFormLayout`, and `QGridLayout`, plus widget DSL helpers for horizontal, form, and grid composition.
 - Common control bindings for `QLineEdit`, `QCheckBox`, and `QComboBox`.
 - Rendering bindings for `QImage`, `QPixmap`, `QPainter`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, and `QFont`, including direct widget paint callbacks.
+- `QSvgGenerator` bindings so `QPainter` scenes can be exported as SVG with size, view box, metadata, and DPI settings.
 - `QFontMetrics` bindings for text measurement, including line metrics, horizontal advance, and bounding rectangles.
 - `QFontMetricsF` bindings for subpixel text measurement and floating-point bounding rectangles.
 - `ColorDialog#native_dialog?` and `#native_dialog=` so automated tests can disable the platform-native color picker.
