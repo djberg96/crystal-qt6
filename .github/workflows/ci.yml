@@ -36,7 +36,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config qt6-base-dev xvfb
+          sudo apt-get install -y build-essential pkg-config qt6-base-dev libqt6svg6-dev xvfb
 
       - name: Install Qt6 dependencies on macOS
         if: runner.os == 'macOS'
@@ -54,6 +54,7 @@ jobs:
           crystal --version
           shards --version
           pkg-config --modversion Qt6Widgets
+          pkg-config --modversion Qt6Svg
 
       - name: Build native shim
         run: make native
