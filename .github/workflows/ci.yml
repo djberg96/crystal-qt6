@@ -61,7 +61,7 @@ jobs:
 
       - name: Run specs on Linux
         if: runner.os == 'Linux'
-        run: xvfb-run -a env QT_QPA_PLATFORM=offscreen make spec
+        run: xvfb-run -a env QT_QPA_PLATFORM=xcb make spec
 
       - name: Run specs on macOS
         if: runner.os == 'macOS'

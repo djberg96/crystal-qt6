@@ -73,7 +73,7 @@ Example highlights:
 
 GitHub Actions runs the native build, spec suite, and example compilation on both macOS and Linux via `.github/workflows/ci.yml`.
 
-The Linux job uses `xvfb` plus Qt's offscreen platform plugin for headless widget tests. The macOS job installs Homebrew Qt and runs the same specs with `QT_QPA_PLATFORM=offscreen`.
+The Linux job uses `xvfb` with Qt's `xcb` platform plugin for headless widget tests so CI behaves like a normal X11 desktop session without the offscreen plugin warnings. The macOS job installs Homebrew Qt and runs the same specs with `QT_QPA_PLATFORM=offscreen`.
 
 ## API Overview
 
