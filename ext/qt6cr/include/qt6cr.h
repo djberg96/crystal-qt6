@@ -149,6 +149,29 @@ bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle);
 void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
 
+qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width);
+void qt6cr_qpen_destroy(qt6cr_handle_t handle);
+qt6cr_color_t qt6cr_qpen_color(qt6cr_handle_t handle);
+void qt6cr_qpen_set_color(qt6cr_handle_t handle, qt6cr_color_t color);
+double qt6cr_qpen_width(qt6cr_handle_t handle);
+void qt6cr_qpen_set_width(qt6cr_handle_t handle, double width);
+
+qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color);
+void qt6cr_qbrush_destroy(qt6cr_handle_t handle);
+qt6cr_color_t qt6cr_qbrush_color(qt6cr_handle_t handle);
+void qt6cr_qbrush_set_color(qt6cr_handle_t handle, qt6cr_color_t color);
+
+qt6cr_handle_t qt6cr_qfont_create(const char *family, int point_size, bool bold, bool italic);
+void qt6cr_qfont_destroy(qt6cr_handle_t handle);
+char *qt6cr_qfont_family(qt6cr_handle_t handle);
+void qt6cr_qfont_set_family(qt6cr_handle_t handle, const char *family);
+int qt6cr_qfont_point_size(qt6cr_handle_t handle);
+void qt6cr_qfont_set_point_size(qt6cr_handle_t handle, int point_size);
+bool qt6cr_qfont_bold(qt6cr_handle_t handle);
+void qt6cr_qfont_set_bold(qt6cr_handle_t handle, bool value);
+bool qt6cr_qfont_italic(qt6cr_handle_t handle);
+void qt6cr_qfont_set_italic(qt6cr_handle_t handle, bool value);
+
 qt6cr_handle_t qt6cr_qtransform_create(void);
 void qt6cr_qtransform_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_qtransform_copy(qt6cr_handle_t handle);
@@ -177,7 +200,10 @@ void qt6cr_qpainter_destroy(qt6cr_handle_t handle);
 bool qt6cr_qpainter_is_active(qt6cr_handle_t handle);
 void qt6cr_qpainter_set_antialiasing(qt6cr_handle_t handle, bool value);
 void qt6cr_qpainter_set_pen_color(qt6cr_handle_t handle, qt6cr_color_t color);
+void qt6cr_qpainter_set_pen(qt6cr_handle_t handle, qt6cr_handle_t pen);
 void qt6cr_qpainter_set_brush_color(qt6cr_handle_t handle, qt6cr_color_t color);
+void qt6cr_qpainter_set_brush(qt6cr_handle_t handle, qt6cr_handle_t brush);
+void qt6cr_qpainter_set_font(qt6cr_handle_t handle, qt6cr_handle_t font);
 void qt6cr_qpainter_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform);
 void qt6cr_qpainter_reset_transform(qt6cr_handle_t handle);
 void qt6cr_qpainter_draw_line(qt6cr_handle_t handle, qt6cr_pointf_t from_point, qt6cr_pointf_t to_point);
