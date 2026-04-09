@@ -12,12 +12,14 @@
 #include <QCoreApplication>
 #include <QDialog>
 #include <QDockWidget>
+#include <QFileDialog>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QObject>
 #include <QPaintEvent>
@@ -166,6 +168,14 @@ QMainWindow *as_main_window(qt6cr_handle_t handle) {
 
 QDialog *as_dialog(qt6cr_handle_t handle) {
   return static_cast<QDialog *>(handle);
+}
+
+QMessageBox *as_message_box(qt6cr_handle_t handle) {
+  return static_cast<QMessageBox *>(handle);
+}
+
+QFileDialog *as_file_dialog(qt6cr_handle_t handle) {
+  return static_cast<QFileDialog *>(handle);
 }
 
 QDockWidget *as_dock_widget(qt6cr_handle_t handle) {
@@ -513,6 +523,131 @@ void qt6cr_dialog_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callb
   QObject::connect(dialog, &QDialog::rejected, dialog, [callback, userdata]() {
     callback(userdata);
   });
+}
+
+qt6cr_handle_t qt6cr_message_box_create(qt6cr_handle_t parent) {
+  return new QMessageBox(as_widget(parent));
+}
+
+void qt6cr_message_box_set_icon(qt6cr_handle_t handle, int icon) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setIcon(static_cast<QMessageBox::Icon>(icon));
+  }
+}
+
+int qt6cr_message_box_icon(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? 0 : static_cast<int>(message_box->icon());
+}
+
+void qt6cr_message_box_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_message_box_text(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? duplicate_string("") : duplicate_string(message_box->text());
+}
+
+void qt6cr_message_box_set_informative_text(qt6cr_handle_t handle, const char *text) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setInformativeText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_message_box_informative_text(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? duplicate_string("") : duplicate_string(message_box->informativeText());
+}
+
+void qt6cr_message_box_set_standard_buttons(qt6cr_handle_t handle, int buttons) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setStandardButtons(static_cast<QMessageBox::StandardButtons>(buttons));
+  }
+}
+
+int qt6cr_message_box_standard_buttons(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? 0 : static_cast<int>(message_box->standardButtons());
+}
+
+qt6cr_handle_t qt6cr_file_dialog_create(qt6cr_handle_t parent, const char *directory, const char *filter) {
+  return new QFileDialog(as_widget(parent), QString(), QString::fromUtf8(directory == nullptr ? "" : directory), QString::fromUtf8(filter == nullptr ? "" : filter));
+}
+
+void qt6cr_file_dialog_set_accept_mode(qt6cr_handle_t handle, int accept_mode) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setAcceptMode(static_cast<QFileDialog::AcceptMode>(accept_mode));
+  }
+}
+
+int qt6cr_file_dialog_accept_mode(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? 0 : static_cast<int>(file_dialog->acceptMode());
+}
+
+void qt6cr_file_dialog_set_file_mode(qt6cr_handle_t handle, int file_mode) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setFileMode(static_cast<QFileDialog::FileMode>(file_mode));
+  }
+}
+
+int qt6cr_file_dialog_file_mode(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? 0 : static_cast<int>(file_dialog->fileMode());
+}
+
+void qt6cr_file_dialog_set_directory(qt6cr_handle_t handle, const char *directory) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setDirectory(QString::fromUtf8(directory == nullptr ? "" : directory));
+  }
+}
+
+char *qt6cr_file_dialog_directory(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->directory().absolutePath());
+}
+
+void qt6cr_file_dialog_set_name_filter(qt6cr_handle_t handle, const char *filter) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setNameFilter(QString::fromUtf8(filter == nullptr ? "" : filter));
+  }
+}
+
+char *qt6cr_file_dialog_name_filter(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->nameFilters().join(QStringLiteral(";;")));
+}
+
+void qt6cr_file_dialog_select_file(qt6cr_handle_t handle, const char *path) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->selectFile(QString::fromUtf8(path == nullptr ? "" : path));
+  }
+}
+
+char *qt6cr_file_dialog_selected_file(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->selectedFiles().value(0));
 }
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title) {

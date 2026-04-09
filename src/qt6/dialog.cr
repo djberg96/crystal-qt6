@@ -9,7 +9,15 @@ module Qt6
     getter rejected : Signal()
 
     def initialize(parent : Widget? = nil)
-      super(LibQt6.qt6cr_dialog_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+      initialize(LibQt6.qt6cr_dialog_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      register_callbacks
+    end
+
+    private def register_callbacks : Nil
       @accepted = Signal().new
       @rejected = Signal().new
       @accepted_userdata = Box.box(self)

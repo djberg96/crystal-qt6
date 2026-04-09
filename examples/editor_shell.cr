@@ -15,14 +15,17 @@ status_bar.show_message("Ready")
 file_menu = main.menu_bar.add_menu("File")
 tools_menu = main.menu_bar.add_menu("Tools")
 
-about_dialog = Qt6::Dialog.new(main)
+about_dialog = Qt6::MessageBox.new(main)
 about_dialog.window_title = "About crystal-qt6"
-about_dialog.vbox do |column|
-  column << Qt6::Label.new("This example uses QMainWindow, menus, actions, docks, dialogs, and common controls.")
-  close_button = Qt6::PushButton.new("Close")
-  close_button.on_clicked { about_dialog.accept }
-  column << close_button
-end
+about_dialog.icon = Qt6::MessageBoxIcon::Information
+about_dialog.text = "This example uses QMainWindow, menus, actions, docks, standard dialogs, and common controls."
+about_dialog.informative_text = "Try Ctrl+O for QFileDialog or Ctrl+, for this message box."
+about_dialog.standard_buttons = Qt6::MessageBoxButton::Ok
+
+open_dialog = Qt6::FileDialog.new(main, Dir.current, "Maps (*.map *.json);;All Files (*)")
+open_dialog.window_title = "Open Map"
+open_dialog.accept_mode = Qt6::FileDialogAcceptMode::Open
+open_dialog.file_mode = Qt6::FileDialogFileMode::ExistingFile
 
 layer_name = Qt6::LineEdit.new("Terrain")
 snap_check = Qt6::CheckBox.new("Enable snapping")
@@ -39,6 +42,15 @@ about_action = Qt6::Action.new("About", main)
 about_action.shortcut = "Ctrl+,"
 about_action.on_triggered do
   about_dialog.exec
+end
+
+open_action = Qt6::Action.new("Open", main)
+open_action.shortcut = "Ctrl+O"
+open_action.on_triggered do
+  if open_dialog.exec == Qt6::DialogCode::Accepted
+    selected_file = open_dialog.selected_file
+    status_bar.show_message(selected_file.empty? ? "No file selected" : "Opened #{File.basename(selected_file)}")
+  end
 end
 
 apply_action = Qt6::Action.new("Apply", main)
@@ -65,12 +77,14 @@ mode_group << preview_mode
 tools_menu << edit_mode
 tools_menu << preview_mode
 
+file_menu << open_action
 file_menu << about_action
 file_menu.add_separator
 file_menu << quit_action
 tools_menu << apply_action
 
 toolbar = Qt6::ToolBar.new("Main", main)
+toolbar << open_action
 toolbar << about_action
 toolbar << apply_action
 toolbar << edit_mode

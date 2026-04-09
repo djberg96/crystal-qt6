@@ -1,6 +1,41 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "configures standard message and file dialogs" do
+    app
+    window = Qt6::MainWindow.new
+    message_box = Qt6::MessageBox.new(window)
+    file_dialog = Qt6::FileDialog.new(window, "/tmp", "Maps (*.map *.json)")
+
+    message_box.window_title = "Unsaved Changes"
+    message_box.icon = Qt6::MessageBoxIcon::Warning
+    message_box.text = "This map has unsaved changes."
+    message_box.informative_text = "Save before closing?"
+    message_box.standard_buttons = Qt6::MessageBoxButton::Save | Qt6::MessageBoxButton::Discard | Qt6::MessageBoxButton::Cancel
+    message_box.accept
+
+    file_dialog.accept_mode = Qt6::FileDialogAcceptMode::Save
+    file_dialog.file_mode = Qt6::FileDialogFileMode::AnyFile
+    file_dialog.directory = "/tmp"
+    file_dialog.name_filter = "Maps (*.map *.json)"
+    file_dialog.select_file("/tmp/example.map")
+
+    message_box.window_title.should eq("Unsaved Changes")
+    message_box.icon.should eq(Qt6::MessageBoxIcon::Warning)
+    message_box.text.should eq("This map has unsaved changes.")
+    message_box.informative_text.should eq("Save before closing?")
+    message_box.standard_buttons.includes?(Qt6::MessageBoxButton::Save).should be_true
+    message_box.standard_buttons.includes?(Qt6::MessageBoxButton::Discard).should be_true
+    message_box.standard_buttons.includes?(Qt6::MessageBoxButton::Cancel).should be_true
+    message_box.result.should eq(Qt6::DialogCode::Accepted)
+
+    file_dialog.accept_mode.should eq(Qt6::FileDialogAcceptMode::Save)
+    file_dialog.file_mode.should eq(Qt6::FileDialogFileMode::AnyFile)
+    file_dialog.directory.should eq("/tmp")
+    file_dialog.name_filter.should eq("Maps (*.map *.json)")
+    window.release
+  end
+
   it "supports action shortcuts and exclusive action groups" do
     app
     window = Qt6::MainWindow.new
