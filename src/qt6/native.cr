@@ -94,6 +94,7 @@ module Qt6
     fun qt6cr_dialog_on_rejected = qt6cr_dialog_on_rejected(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_message_box_create = qt6cr_message_box_create(parent : Handle) : Handle
+    fun qt6cr_message_box_exec = qt6cr_message_box_exec(handle : Handle) : LibC::Int
     fun qt6cr_message_box_set_icon = qt6cr_message_box_set_icon(handle : Handle, icon : LibC::Int)
     fun qt6cr_message_box_icon = qt6cr_message_box_icon(handle : Handle) : LibC::Int
     fun qt6cr_message_box_set_text = qt6cr_message_box_set_text(handle : Handle, text : UInt8*)

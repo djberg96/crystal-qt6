@@ -545,6 +545,11 @@ qt6cr_handle_t qt6cr_message_box_create(qt6cr_handle_t parent) {
   return new QMessageBox(as_widget(parent));
 }
 
+int qt6cr_message_box_exec(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? 0 : static_cast<int>(message_box->exec());
+}
+
 void qt6cr_message_box_set_icon(qt6cr_handle_t handle, int icon) {
   auto *message_box = as_message_box(handle);
 

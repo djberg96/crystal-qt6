@@ -99,6 +99,7 @@ void qt6cr_dialog_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callb
 void qt6cr_dialog_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_message_box_create(qt6cr_handle_t parent);
+int qt6cr_message_box_exec(qt6cr_handle_t handle);
 void qt6cr_message_box_set_icon(qt6cr_handle_t handle, int icon);
 int qt6cr_message_box_icon(qt6cr_handle_t handle);
 void qt6cr_message_box_set_text(qt6cr_handle_t handle, const char *text);

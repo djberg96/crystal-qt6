@@ -64,7 +64,7 @@ Example highlights:
 
 - `examples/hello_world.cr`: smallest possible window with a label and button
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
-- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, standard dialogs, color dialogs, input dialogs, and common controls
+- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, and convenience helpers for standard, color, and input dialogs
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
 
 ## Continuous Integration
@@ -111,6 +111,7 @@ app.run
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
 - `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, and `Qt6::InputDialog` for standard dialogs
+- convenience helpers such as `MessageBox.information`, `MessageBox.question`, `ColorDialog.get_color`, and `InputDialog.get_text` / `get_int` / `get_double`
 - `Qt6::InputDialogInputMode` plus message-box and file-dialog enums for dialog configuration
 - `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
 - `Qt6::KeySequence` and `QAction` shortcuts for keyboard-driven commands
@@ -126,6 +127,7 @@ The specs cover:
 
 - process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
 - standard dialog configuration for `QMessageBox`, `QFileDialog`, `QColorDialog`, and `QInputDialog`
+- convenience helper flows for message, color, and input dialogs
 - `QObject` destruction signals and `QTimer` timeout delivery
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls
