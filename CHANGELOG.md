@@ -6,6 +6,15 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- `QObject` as a shared base for wrapped Qt objects with deterministic release and a `destroyed` signal.
+- A reusable Crystal `Signal` type for zero-argument and value-carrying callbacks.
+- `QTimer` bindings with timeout callbacks, interval control, single-shot mode, and active-state queries.
+- Geometry and event value types including `PointF`, `Size`, `RectF`, `PaintEvent`, `ResizeEvent`, `MouseEvent`, `WheelEvent`, and `KeyEvent`.
+- `EventWidget`, a custom `QWidget` bridge with paint, resize, mouse, wheel, and key event hooks.
+- Expanded specs covering timers, geometry accessors, and custom widget event delivery.
+
 ## [0.1.0] - 2026-04-08
 
 ### Added
