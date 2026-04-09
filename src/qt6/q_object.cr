@@ -4,6 +4,8 @@ module Qt6
   # This class is responsible for deterministic teardown and for surfacing the
   # native `destroyed` signal into Crystal.
   class QObject
+    include ManagedResource
+
     getter to_unsafe : LibQt6::Handle
     @destroyed_signal : Signal() = Signal().new
     @owned : Bool = false

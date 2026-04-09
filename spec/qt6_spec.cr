@@ -1,6 +1,59 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "renders into images and pixmaps with paths and transforms" do
+    app
+    image = Qt6::QImage.new(32, 32)
+    image.fill(Qt6::Color.new(255, 255, 255))
+    image.set_pixel_color(0, 0, Qt6::Color.new(1, 2, 3, 255))
+
+    transform = Qt6::QTransform.new
+    transform.translate(4, 5)
+
+    path = Qt6::QPainterPath.new
+    path.add_rect(Qt6::RectF.new(0.0, 0.0, 8.0, 8.0))
+    moved_path = path.transformed(transform)
+
+    Qt6::QPainter.paint(image) do |painter|
+      painter.active?.should be_true
+      painter.antialiasing = false
+      painter.pen = Qt6::Color.new(255, 0, 0)
+      painter.brush = Qt6::Color.new(255, 0, 0)
+      painter.draw_path(moved_path)
+      painter.fill_rect(Qt6::RectF.new(20.0, 20.0, 4.0, 4.0), Qt6::Color.new(0, 0, 255))
+      painter.draw_line(Qt6::PointF.new(0.0, 31.0), Qt6::PointF.new(31.0, 31.0))
+    end
+
+    pixmap = Qt6::QPixmap.from_image(image)
+    pixmap_canvas = Qt6::QPixmap.new(40, 40)
+    pixmap_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    Qt6::QPainter.paint(pixmap_canvas) do |painter|
+      painter.draw_image(Qt6::PointF.new(2.0, 2.0), image)
+      painter.draw_pixmap(Qt6::PointF.new(0.0, 0.0), pixmap)
+    end
+
+    pixmap_image = pixmap_canvas.to_image
+    image_path = File.join(Dir.tempdir, "crystal-qt6-render-image-#{Process.pid}.png")
+    pixmap_path = File.join(Dir.tempdir, "crystal-qt6-render-pixmap-#{Process.pid}.png")
+
+    transform.map(Qt6::PointF.new(1.0, 1.0)).should eq(Qt6::PointF.new(5.0, 6.0))
+    transform.map(Qt6::RectF.new(0.0, 0.0, 8.0, 8.0)).should eq(Qt6::RectF.new(4.0, 5.0, 8.0, 8.0))
+    moved_path.bounding_rect.should eq(Qt6::RectF.new(4.0, 5.0, 8.0, 8.0))
+    image.pixel_color(0, 0).should eq(Qt6::Color.new(1, 2, 3, 255))
+    image.pixel_color(6, 7).should eq(Qt6::Color.new(255, 0, 0, 255))
+    image.pixel_color(21, 21).should eq(Qt6::Color.new(0, 0, 255, 255))
+    pixmap.width.should eq(32)
+    pixmap.height.should eq(32)
+    pixmap.null?.should be_false
+    pixmap_image.pixel_color(1, 1).should eq(Qt6::Color.new(255, 255, 255, 255))
+    pixmap_image.pixel_color(6, 7).should eq(Qt6::Color.new(255, 0, 0, 255))
+    image.save(image_path).should be_true
+    pixmap.save(pixmap_path).should be_true
+    File.exists?(image_path).should be_true
+    File.exists?(pixmap_path).should be_true
+  end
+
   it "provides convenience helpers for common dialogs" do
     app
     window = Qt6::MainWindow.new

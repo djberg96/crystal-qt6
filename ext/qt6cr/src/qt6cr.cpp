@@ -24,16 +24,23 @@
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QMenu>
+#include <QBrush>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QImage>
 #include <QObject>
 #include <QPaintEvent>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPen>
+#include <QPixmap>
 #include <QPushButton>
 #include <QKeySequence>
 #include <QResizeEvent>
 #include <QStatusBar>
 #include <QTimer>
+#include <QTransform>
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWheelEvent>
@@ -189,6 +196,26 @@ QColorDialog *as_color_dialog(qt6cr_handle_t handle) {
   return static_cast<QColorDialog *>(handle);
 }
 
+QImage *as_qimage(qt6cr_handle_t handle) {
+  return static_cast<QImage *>(handle);
+}
+
+QPixmap *as_qpixmap(qt6cr_handle_t handle) {
+  return static_cast<QPixmap *>(handle);
+}
+
+QTransform *as_qtransform(qt6cr_handle_t handle) {
+  return static_cast<QTransform *>(handle);
+}
+
+QPainterPath *as_qpainter_path(qt6cr_handle_t handle) {
+  return static_cast<QPainterPath *>(handle);
+}
+
+QPainter *as_qpainter(qt6cr_handle_t handle) {
+  return static_cast<QPainter *>(handle);
+}
+
 QInputDialog *as_input_dialog(qt6cr_handle_t handle) {
   return static_cast<QInputDialog *>(handle);
 }
@@ -303,6 +330,28 @@ qt6cr_key_event_t to_key_event(QKeyEvent *event) {
 
 qt6cr_color_t to_color(const QColor &color) {
   return qt6cr_color_t{color.red(), color.green(), color.blue(), color.alpha()};
+}
+
+QPointF from_pointf(qt6cr_pointf_t point) {
+  return QPointF(point.x, point.y);
+}
+
+QRectF from_rectf(qt6cr_rectf_t rect) {
+  return QRectF(rect.x, rect.y, rect.width, rect.height);
+}
+
+QColor from_color(qt6cr_color_t color) {
+  return QColor(color.red, color.green, color.blue, color.alpha);
+}
+
+QImage::Format image_format_from_int(int format) {
+  switch (format) {
+    case 1:
+      return QImage::Format_RGB32;
+    case 0:
+    default:
+      return QImage::Format_ARGB32;
+  }
 }
 
 void send_mouse_event(QWidget *widget, QEvent::Type type, qt6cr_pointf_t position, int button, int buttons, int modifiers) {
@@ -714,6 +763,366 @@ void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle) {
   auto *color_dialog = as_color_dialog(handle);
   return color_dialog != nullptr && color_dialog->testOption(QColorDialog::ShowAlphaChannel);
+}
+
+qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format) {
+  return new QImage(width, height, image_format_from_int(format));
+}
+
+void qt6cr_qimage_destroy(qt6cr_handle_t handle) {
+  delete as_qimage(handle);
+}
+
+int qt6cr_qimage_width(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? 0 : image->width();
+}
+
+int qt6cr_qimage_height(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? 0 : image->height();
+}
+
+bool qt6cr_qimage_is_null(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr || image->isNull();
+}
+
+void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *image = as_qimage(handle);
+
+  if (image != nullptr) {
+    image->fill(from_color(color));
+  }
+}
+
+bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path) {
+  auto *image = as_qimage(handle);
+  return image != nullptr && image->save(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+qt6cr_color_t qt6cr_qimage_pixel_color(qt6cr_handle_t handle, int x, int y) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? qt6cr_color_t{0, 0, 0, 0} : to_color(image->pixelColor(x, y));
+}
+
+void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_color_t color) {
+  auto *image = as_qimage(handle);
+
+  if (image != nullptr) {
+    image->setPixelColor(x, y, from_color(color));
+  }
+}
+
+qt6cr_handle_t qt6cr_qpixmap_create(int width, int height) {
+  return new QPixmap(width, height);
+}
+
+void qt6cr_qpixmap_destroy(qt6cr_handle_t handle) {
+  delete as_qpixmap(handle);
+}
+
+qt6cr_handle_t qt6cr_qpixmap_from_image(qt6cr_handle_t image) {
+  auto *source = as_qimage(image);
+  return source == nullptr ? nullptr : new QPixmap(QPixmap::fromImage(*source));
+}
+
+qt6cr_handle_t qt6cr_qpixmap_to_image(qt6cr_handle_t handle) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? nullptr : new QImage(pixmap->toImage());
+}
+
+int qt6cr_qpixmap_width(qt6cr_handle_t handle) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? 0 : pixmap->width();
+}
+
+int qt6cr_qpixmap_height(qt6cr_handle_t handle) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? 0 : pixmap->height();
+}
+
+bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr || pixmap->isNull();
+}
+
+void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *pixmap = as_qpixmap(handle);
+
+  if (pixmap != nullptr) {
+    pixmap->fill(from_color(color));
+  }
+}
+
+bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap != nullptr && pixmap->save(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+qt6cr_handle_t qt6cr_qtransform_create(void) {
+  return new QTransform();
+}
+
+void qt6cr_qtransform_destroy(qt6cr_handle_t handle) {
+  delete as_qtransform(handle);
+}
+
+qt6cr_handle_t qt6cr_qtransform_copy(qt6cr_handle_t handle) {
+  auto *transform = as_qtransform(handle);
+  return transform == nullptr ? nullptr : new QTransform(*transform);
+}
+
+void qt6cr_qtransform_reset(qt6cr_handle_t handle) {
+  auto *transform = as_qtransform(handle);
+
+  if (transform != nullptr) {
+    transform->reset();
+  }
+}
+
+void qt6cr_qtransform_translate(qt6cr_handle_t handle, double dx, double dy) {
+  auto *transform = as_qtransform(handle);
+
+  if (transform != nullptr) {
+    transform->translate(dx, dy);
+  }
+}
+
+void qt6cr_qtransform_scale(qt6cr_handle_t handle, double sx, double sy) {
+  auto *transform = as_qtransform(handle);
+
+  if (transform != nullptr) {
+    transform->scale(sx, sy);
+  }
+}
+
+void qt6cr_qtransform_rotate(qt6cr_handle_t handle, double angle) {
+  auto *transform = as_qtransform(handle);
+
+  if (transform != nullptr) {
+    transform->rotate(angle);
+  }
+}
+
+qt6cr_pointf_t qt6cr_qtransform_map_point(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *transform = as_qtransform(handle);
+  return transform == nullptr ? point : to_pointf(transform->map(from_pointf(point)));
+}
+
+qt6cr_rectf_t qt6cr_qtransform_map_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *transform = as_qtransform(handle);
+  return transform == nullptr ? rect : to_rectf(transform->mapRect(from_rectf(rect)));
+}
+
+qt6cr_handle_t qt6cr_qpainter_path_create(void) {
+  return new QPainterPath();
+}
+
+void qt6cr_qpainter_path_destroy(qt6cr_handle_t handle) {
+  delete as_qpainter_path(handle);
+}
+
+void qt6cr_qpainter_path_move_to(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->moveTo(from_pointf(point));
+  }
+}
+
+void qt6cr_qpainter_path_line_to(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->lineTo(from_pointf(point));
+  }
+}
+
+void qt6cr_qpainter_path_quad_to(qt6cr_handle_t handle, qt6cr_pointf_t control_point, qt6cr_pointf_t end_point) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->quadTo(from_pointf(control_point), from_pointf(end_point));
+  }
+}
+
+void qt6cr_qpainter_path_cubic_to(qt6cr_handle_t handle, qt6cr_pointf_t control_point1, qt6cr_pointf_t control_point2, qt6cr_pointf_t end_point) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->cubicTo(from_pointf(control_point1), from_pointf(control_point2), from_pointf(end_point));
+  }
+}
+
+void qt6cr_qpainter_path_add_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->addRect(from_rectf(rect));
+  }
+}
+
+void qt6cr_qpainter_path_add_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->addEllipse(from_rectf(rect));
+  }
+}
+
+void qt6cr_qpainter_path_close_subpath(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->closeSubpath();
+  }
+}
+
+qt6cr_rectf_t qt6cr_qpainter_path_bounding_rect(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(path->boundingRect());
+}
+
+qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform) {
+  auto *path = as_qpainter_path(handle);
+  auto *matrix = as_qtransform(transform);
+  return (path == nullptr || matrix == nullptr) ? nullptr : new QPainterPath(matrix->map(*path));
+}
+
+qt6cr_handle_t qt6cr_qpainter_create_for_image(qt6cr_handle_t image) {
+  auto *target = as_qimage(image);
+  return target == nullptr ? nullptr : new QPainter(target);
+}
+
+qt6cr_handle_t qt6cr_qpainter_create_for_pixmap(qt6cr_handle_t pixmap) {
+  auto *target = as_qpixmap(pixmap);
+  return target == nullptr ? nullptr : new QPainter(target);
+}
+
+void qt6cr_qpainter_destroy(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    if (painter->isActive()) {
+      painter->end();
+    }
+
+    delete painter;
+  }
+}
+
+bool qt6cr_qpainter_is_active(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+  return painter != nullptr && painter->isActive();
+}
+
+void qt6cr_qpainter_set_antialiasing(qt6cr_handle_t handle, bool value) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setRenderHint(QPainter::Antialiasing, value);
+  }
+}
+
+void qt6cr_qpainter_set_pen_color(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setPen(QPen(from_color(color)));
+  }
+}
+
+void qt6cr_qpainter_set_brush_color(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setBrush(QBrush(from_color(color)));
+  }
+}
+
+void qt6cr_qpainter_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform) {
+  auto *painter = as_qpainter(handle);
+  auto *matrix = as_qtransform(transform);
+
+  if (painter != nullptr && matrix != nullptr) {
+    painter->setTransform(*matrix);
+  }
+}
+
+void qt6cr_qpainter_reset_transform(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->resetTransform();
+  }
+}
+
+void qt6cr_qpainter_draw_line(qt6cr_handle_t handle, qt6cr_pointf_t from_point, qt6cr_pointf_t to_point) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawLine(from_pointf(from_point), from_pointf(to_point));
+  }
+}
+
+void qt6cr_qpainter_draw_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawRect(from_rectf(rect));
+  }
+}
+
+void qt6cr_qpainter_fill_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_color_t color) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->fillRect(from_rectf(rect), from_color(color));
+  }
+}
+
+void qt6cr_qpainter_draw_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawEllipse(from_rectf(rect));
+  }
+}
+
+void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpainter_path(path);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawPath(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_image(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t image) {
+  auto *painter = as_qpainter(handle);
+  auto *source = as_qimage(image);
+
+  if (painter != nullptr && source != nullptr) {
+    painter->drawImage(from_pointf(position), *source);
+  }
+}
+
+void qt6cr_qpainter_draw_pixmap(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t pixmap) {
+  auto *painter = as_qpainter(handle);
+  auto *source = as_qpixmap(pixmap);
+
+  if (painter != nullptr && source != nullptr) {
+    painter->drawPixmap(from_pointf(position), *source);
+  }
+}
+
+void qt6cr_qpainter_draw_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawText(from_pointf(position), QString::fromUtf8(text == nullptr ? "" : text));
+  }
 }
 
 qt6cr_handle_t qt6cr_input_dialog_create(qt6cr_handle_t parent) {

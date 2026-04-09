@@ -1,6 +1,9 @@
 require "./qt6/native"
 require "./qt6/error"
+require "./qt6/managed_resource"
+require "./qt6/native_resource"
 require "./qt6/color"
+require "./qt6/image_format"
 require "./qt6/point_f"
 require "./qt6/size"
 require "./qt6/rect_f"
@@ -12,6 +15,11 @@ require "./qt6/key_event"
 require "./qt6/signal"
 require "./qt6/application"
 require "./qt6/q_object"
+require "./qt6/q_transform"
+require "./qt6/q_painter_path"
+require "./qt6/q_image"
+require "./qt6/q_pixmap"
+require "./qt6/q_painter"
 require "./qt6/dock_area"
 require "./qt6/dialog_code"
 require "./qt6/message_box_icon"
@@ -51,7 +59,7 @@ module Qt6
   # Current shard version.
   VERSION = "0.1.0"
   @@application : Application?
-  @@tracked_objects = [] of QObject
+  @@tracked_objects = [] of ManagedResource
   @@shutdown_registered = false
 
   # Creates or returns the shared `QApplication` wrapper for the process.
@@ -98,11 +106,11 @@ module Qt6
     value
   end
 
-  def self.track_object(object : QObject) : Nil
+  def self.track_object(object : ManagedResource) : Nil
     @@tracked_objects << object
   end
 
-  def self.untrack_object(object : QObject) : Nil
+  def self.untrack_object(object : ManagedResource) : Nil
     @@tracked_objects.delete(object)
   end
 
