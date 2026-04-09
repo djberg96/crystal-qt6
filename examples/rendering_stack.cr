@@ -69,6 +69,24 @@ svg_preview_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack-from-sv
 svg_preview.save(svg_preview_output)
 puts "Wrote #{svg_preview_output}"
 
+element_svg = %(<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120">
+  <rect id="background" x="8" y="8" width="144" height="104" rx="12" fill="#f6efe2" stroke="#425466" stroke-width="4"/>
+  <rect id="accent" x="52" y="28" width="56" height="48" rx="8" fill="#d66853"/>
+  <text id="label" x="28" y="98" font-family="Helvetica" font-size="16" font-weight="700" fill="#16324f">element render</text>
+</svg>)
+
+element_renderer = Qt6::QSvgRenderer.from_data(element_svg)
+element_preview = Qt6::QImage.new(160, 120)
+element_preview.fill(Qt6::Color.new(255, 255, 255))
+
+Qt6::QPainter.paint(element_preview) do |painter|
+  element_renderer.render(painter, "accent", Qt6::RectF.new(20.0, 18.0, 120.0, 84.0))
+end
+
+element_preview_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack-element.png")
+element_preview.save(element_preview_output)
+puts "Wrote #{element_preview_output}"
+
 pdf_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack.pdf")
 pdf = Qt6::QPdfWriter.new(pdf_output, title: "crystal-qt6 rendering stack", creator: "crystal-qt6 example")
 pdf.page_size_points = Qt6::Size.new(160, 120)

@@ -72,3 +72,7 @@ jobs:
         run: |
           crystal build examples/hello_world.cr -o /tmp/crystal-qt6-hello
           crystal build examples/counter.cr -o /tmp/crystal-qt6-counter
+          crystal build examples/editor_shell.cr -o /tmp/crystal-qt6-shell
+          crystal build examples/event_monitor.cr -o /tmp/crystal-qt6-events
+          crystal build examples/rendering_stack.cr -o /tmp/crystal-qt6-render
+          crystal build examples/svg_widget_renderer.cr -o /tmp/crystal-qt6-svg
