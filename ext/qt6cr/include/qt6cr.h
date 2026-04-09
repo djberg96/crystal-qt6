@@ -182,6 +182,14 @@ int qt6cr_qfont_metrics_descent(qt6cr_handle_t handle);
 int qt6cr_qfont_metrics_horizontal_advance(qt6cr_handle_t handle, const char *text);
 qt6cr_rectf_t qt6cr_qfont_metrics_bounding_rect(qt6cr_handle_t handle, const char *text);
 
+qt6cr_handle_t qt6cr_qfont_metrics_f_create(qt6cr_handle_t font);
+void qt6cr_qfont_metrics_f_destroy(qt6cr_handle_t handle);
+double qt6cr_qfont_metrics_f_height(qt6cr_handle_t handle);
+double qt6cr_qfont_metrics_f_ascent(qt6cr_handle_t handle);
+double qt6cr_qfont_metrics_f_descent(qt6cr_handle_t handle);
+double qt6cr_qfont_metrics_f_horizontal_advance(qt6cr_handle_t handle, const char *text);
+qt6cr_rectf_t qt6cr_qfont_metrics_f_bounding_rect(qt6cr_handle_t handle, const char *text);
+
 qt6cr_handle_t qt6cr_qtransform_create(void);
 void qt6cr_qtransform_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_qtransform_copy(qt6cr_handle_t handle);

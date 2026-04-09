@@ -8,7 +8,7 @@ image.fill(Qt6::Color.new(245, 242, 236))
 pen = Qt6::QPen.new(Qt6::Color.new(32, 64, 128), 2.0)
 brush = Qt6::QBrush.new(Qt6::Color.new(96, 144, 224))
 font = Qt6::QFont.new(point_size: 12, bold: true)
-metrics = font.metrics
+metrics = font.metrics_f
 
 frame = Qt6::QPainterPath.new
 frame.add_rect(Qt6::RectF.new(0.0, 0.0, 36.0, 24.0))
@@ -19,7 +19,7 @@ transform.translate(16, 18)
 label = "crystal-qt6"
 label_width = metrics.horizontal_advance(label)
 label_x = ((image.width - label_width) / 2).to_f
-label_y = (image.height - 12 - metrics.descent).to_f
+label_y = image.height.to_f - 12.0 - metrics.descent
 
 Qt6::QPainter.paint(image) do |painter|
   painter.antialiasing = false
