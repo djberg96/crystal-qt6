@@ -13,7 +13,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - `QTimer` bindings with timeout callbacks, interval control, single-shot mode, and active-state queries.
 - Geometry and event value types including `PointF`, `Size`, `RectF`, `PaintEvent`, `ResizeEvent`, `MouseEvent`, `WheelEvent`, and `KeyEvent`.
 - `EventWidget`, a custom `QWidget` bridge with paint, resize, mouse, wheel, and key event hooks.
+- Main-window shell bindings for `QMainWindow`, `QDialog`, `QDockWidget`, `QAction`, `QMenuBar`, `QMenu`, `QToolBar`, and `QStatusBar`.
+- Common control bindings for `QLineEdit`, `QCheckBox`, and `QComboBox`.
 - Expanded specs covering timers, geometry accessors, and custom widget event delivery.
+- Expanded integration specs covering reduced application shells with menus, toolbars, docks, dialogs, and control callbacks.
 
 ## [0.1.0] - 2026-04-08
 

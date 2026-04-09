@@ -71,6 +71,46 @@ module Qt6
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
 
+    fun qt6cr_main_window_create = qt6cr_main_window_create(parent : Handle) : Handle
+    fun qt6cr_main_window_set_central_widget = qt6cr_main_window_set_central_widget(handle : Handle, widget : Handle)
+    fun qt6cr_main_window_menu_bar = qt6cr_main_window_menu_bar(handle : Handle) : Handle
+    fun qt6cr_main_window_status_bar = qt6cr_main_window_status_bar(handle : Handle) : Handle
+    fun qt6cr_main_window_add_tool_bar = qt6cr_main_window_add_tool_bar(handle : Handle, toolbar : Handle)
+    fun qt6cr_main_window_add_dock_widget = qt6cr_main_window_add_dock_widget(handle : Handle, area : LibC::Int, dock_widget : Handle)
+
+    fun qt6cr_dialog_create = qt6cr_dialog_create(parent : Handle) : Handle
+    fun qt6cr_dialog_exec = qt6cr_dialog_exec(handle : Handle) : LibC::Int
+    fun qt6cr_dialog_accept = qt6cr_dialog_accept(handle : Handle)
+    fun qt6cr_dialog_reject = qt6cr_dialog_reject(handle : Handle)
+    fun qt6cr_dialog_result = qt6cr_dialog_result(handle : Handle) : LibC::Int
+    fun qt6cr_dialog_on_accepted = qt6cr_dialog_on_accepted(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_dialog_on_rejected = qt6cr_dialog_on_rejected(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_dock_widget_create = qt6cr_dock_widget_create(parent : Handle, title : UInt8*) : Handle
+    fun qt6cr_dock_widget_set_widget = qt6cr_dock_widget_set_widget(handle : Handle, widget : Handle)
+
+    fun qt6cr_action_create = qt6cr_action_create(parent : Handle, text : UInt8*) : Handle
+    fun qt6cr_action_set_text = qt6cr_action_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_action_text = qt6cr_action_text(handle : Handle) : UInt8*
+    fun qt6cr_action_on_triggered = qt6cr_action_on_triggered(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_action_trigger = qt6cr_action_trigger(handle : Handle)
+
+    fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
+
+    fun qt6cr_menu_add_menu = qt6cr_menu_add_menu(handle : Handle, title : UInt8*) : Handle
+    fun qt6cr_menu_add_action = qt6cr_menu_add_action(handle : Handle, action : Handle)
+    fun qt6cr_menu_add_separator = qt6cr_menu_add_separator(handle : Handle)
+    fun qt6cr_menu_set_title = qt6cr_menu_set_title(handle : Handle, title : UInt8*)
+    fun qt6cr_menu_title = qt6cr_menu_title(handle : Handle) : UInt8*
+
+    fun qt6cr_tool_bar_create = qt6cr_tool_bar_create(parent : Handle, title : UInt8*) : Handle
+    fun qt6cr_tool_bar_add_action = qt6cr_tool_bar_add_action(handle : Handle, action : Handle)
+
+    fun qt6cr_status_bar_create = qt6cr_status_bar_create(parent : Handle) : Handle
+    fun qt6cr_status_bar_show_message = qt6cr_status_bar_show_message(handle : Handle, message : UInt8*, timeout_ms : LibC::Int)
+    fun qt6cr_status_bar_current_message = qt6cr_status_bar_current_message(handle : Handle) : UInt8*
+    fun qt6cr_status_bar_clear_message = qt6cr_status_bar_clear_message(handle : Handle)
+
     fun qt6cr_event_widget_create = qt6cr_event_widget_create(parent : Handle) : Handle
     fun qt6cr_event_widget_on_paint = qt6cr_event_widget_on_paint(handle : Handle, callback : (Handle, RectFValue ->), userdata : Handle)
     fun qt6cr_event_widget_on_resize = qt6cr_event_widget_on_resize(handle : Handle, callback : (Handle, SizeValue, SizeValue ->), userdata : Handle)
@@ -95,6 +135,25 @@ module Qt6
     fun qt6cr_push_button_text = qt6cr_push_button_text(handle : Handle) : UInt8*
     fun qt6cr_push_button_on_clicked = qt6cr_push_button_on_clicked(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_push_button_click = qt6cr_push_button_click(handle : Handle)
+
+    fun qt6cr_line_edit_create = qt6cr_line_edit_create(parent : Handle, text : UInt8*) : Handle
+    fun qt6cr_line_edit_set_text = qt6cr_line_edit_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_line_edit_text = qt6cr_line_edit_text(handle : Handle) : UInt8*
+
+    fun qt6cr_check_box_create = qt6cr_check_box_create(parent : Handle, text : UInt8*) : Handle
+    fun qt6cr_check_box_set_text = qt6cr_check_box_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_check_box_text = qt6cr_check_box_text(handle : Handle) : UInt8*
+    fun qt6cr_check_box_set_checked = qt6cr_check_box_set_checked(handle : Handle, value : Bool)
+    fun qt6cr_check_box_is_checked = qt6cr_check_box_is_checked(handle : Handle) : Bool
+    fun qt6cr_check_box_on_toggled = qt6cr_check_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+
+    fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle
+    fun qt6cr_combo_box_add_item = qt6cr_combo_box_add_item(handle : Handle, text : UInt8*)
+    fun qt6cr_combo_box_count = qt6cr_combo_box_count(handle : Handle) : LibC::Int
+    fun qt6cr_combo_box_current_index = qt6cr_combo_box_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_combo_box_set_current_index = qt6cr_combo_box_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_combo_box_current_text = qt6cr_combo_box_current_text(handle : Handle) : UInt8*
+    fun qt6cr_combo_box_on_current_index_changed = qt6cr_combo_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_timer_create = qt6cr_timer_create(parent : Handle) : Handle
     fun qt6cr_timer_set_interval = qt6cr_timer_set_interval(handle : Handle, interval : LibC::Int)

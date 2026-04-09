@@ -5,15 +5,26 @@
 #endif
 
 #include <QApplication>
+#include <QAction>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QCoreApplication>
+#include <QDialog>
+#include <QDockWidget>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
 #include <QMouseEvent>
 #include <QObject>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QStatusBar>
 #include <QTimer>
+#include <QToolBar>
 #include <QVBoxLayout>
 #include <QWheelEvent>
 #include <QWidget>
@@ -147,12 +158,56 @@ QWidget *as_widget(qt6cr_handle_t handle) {
   return static_cast<QWidget *>(handle);
 }
 
+QMainWindow *as_main_window(qt6cr_handle_t handle) {
+  return static_cast<QMainWindow *>(handle);
+}
+
+QDialog *as_dialog(qt6cr_handle_t handle) {
+  return static_cast<QDialog *>(handle);
+}
+
+QDockWidget *as_dock_widget(qt6cr_handle_t handle) {
+  return static_cast<QDockWidget *>(handle);
+}
+
+QAction *as_action(qt6cr_handle_t handle) {
+  return static_cast<QAction *>(handle);
+}
+
+QMenuBar *as_menu_bar(qt6cr_handle_t handle) {
+  return static_cast<QMenuBar *>(handle);
+}
+
+QMenu *as_menu(qt6cr_handle_t handle) {
+  return static_cast<QMenu *>(handle);
+}
+
+QToolBar *as_tool_bar(qt6cr_handle_t handle) {
+  return static_cast<QToolBar *>(handle);
+}
+
+QStatusBar *as_status_bar(qt6cr_handle_t handle) {
+  return static_cast<QStatusBar *>(handle);
+}
+
 QLabel *as_label(qt6cr_handle_t handle) {
   return static_cast<QLabel *>(handle);
 }
 
 QPushButton *as_push_button(qt6cr_handle_t handle) {
   return static_cast<QPushButton *>(handle);
+}
+
+QLineEdit *as_line_edit(qt6cr_handle_t handle) {
+  return static_cast<QLineEdit *>(handle);
+}
+
+QCheckBox *as_check_box(qt6cr_handle_t handle) {
+  return static_cast<QCheckBox *>(handle);
+}
+
+QComboBox *as_combo_box(qt6cr_handle_t handle) {
+  return static_cast<QComboBox *>(handle);
 }
 
 QVBoxLayout *as_v_box_layout(qt6cr_handle_t handle) {
@@ -359,6 +414,229 @@ void qt6cr_widget_update(qt6cr_handle_t handle) {
   }
 }
 
+qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent) {
+  return new QMainWindow(as_widget(parent));
+}
+
+void qt6cr_main_window_set_central_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *window = as_main_window(handle);
+  auto *central_widget = as_widget(widget);
+
+  if (window != nullptr && central_widget != nullptr) {
+    window->setCentralWidget(central_widget);
+  }
+}
+
+qt6cr_handle_t qt6cr_main_window_menu_bar(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window == nullptr ? nullptr : window->menuBar();
+}
+
+qt6cr_handle_t qt6cr_main_window_status_bar(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window == nullptr ? nullptr : window->statusBar();
+}
+
+void qt6cr_main_window_add_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t toolbar) {
+  auto *window = as_main_window(handle);
+  auto *tool_bar = as_tool_bar(toolbar);
+
+  if (window != nullptr && tool_bar != nullptr) {
+    window->addToolBar(tool_bar);
+  }
+}
+
+void qt6cr_main_window_add_dock_widget(qt6cr_handle_t handle, int area, qt6cr_handle_t dock_widget) {
+  auto *window = as_main_window(handle);
+  auto *dock = as_dock_widget(dock_widget);
+
+  if (window != nullptr && dock != nullptr) {
+    window->addDockWidget(static_cast<Qt::DockWidgetArea>(area), dock);
+  }
+}
+
+qt6cr_handle_t qt6cr_dialog_create(qt6cr_handle_t parent) {
+  return new QDialog(as_widget(parent));
+}
+
+int qt6cr_dialog_exec(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+  return dialog == nullptr ? 0 : dialog->exec();
+}
+
+void qt6cr_dialog_accept(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->accept();
+  }
+}
+
+void qt6cr_dialog_reject(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->reject();
+  }
+}
+
+int qt6cr_dialog_result(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+  return dialog == nullptr ? 0 : dialog->result();
+}
+
+void qt6cr_dialog_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dialog, &QDialog::accepted, dialog, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_dialog_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dialog, &QDialog::rejected, dialog, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title) {
+  return new QDockWidget(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+}
+
+void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *dock = as_dock_widget(handle);
+  auto *child = as_widget(widget);
+
+  if (dock != nullptr && child != nullptr) {
+    dock->setWidget(child);
+  }
+}
+
+qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text) {
+  return new QAction(QString::fromUtf8(text == nullptr ? "" : text), as_object(parent));
+}
+
+void qt6cr_action_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_action_text(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action == nullptr ? duplicate_string("") : duplicate_string(action->text());
+}
+
+void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *action = as_action(handle);
+
+  if (action == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(action, &QAction::triggered, action, [callback, userdata](bool) {
+    callback(userdata);
+  });
+}
+
+void qt6cr_action_trigger(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->trigger();
+  }
+}
+
+qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title) {
+  auto *menu_bar = as_menu_bar(handle);
+  return menu_bar == nullptr ? nullptr : menu_bar->addMenu(QString::fromUtf8(title == nullptr ? "" : title));
+}
+
+qt6cr_handle_t qt6cr_menu_add_menu(qt6cr_handle_t handle, const char *title) {
+  auto *menu = as_menu(handle);
+  return menu == nullptr ? nullptr : menu->addMenu(QString::fromUtf8(title == nullptr ? "" : title));
+}
+
+void qt6cr_menu_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *menu = as_menu(handle);
+  auto *menu_action = as_action(action);
+
+  if (menu != nullptr && menu_action != nullptr) {
+    menu->addAction(menu_action);
+  }
+}
+
+void qt6cr_menu_add_separator(qt6cr_handle_t handle) {
+  auto *menu = as_menu(handle);
+
+  if (menu != nullptr) {
+    menu->addSeparator();
+  }
+}
+
+void qt6cr_menu_set_title(qt6cr_handle_t handle, const char *title) {
+  auto *menu = as_menu(handle);
+
+  if (menu != nullptr) {
+    menu->setTitle(QString::fromUtf8(title == nullptr ? "" : title));
+  }
+}
+
+char *qt6cr_menu_title(qt6cr_handle_t handle) {
+  auto *menu = as_menu(handle);
+  return menu == nullptr ? duplicate_string("") : duplicate_string(menu->title());
+}
+
+qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title) {
+  return new QToolBar(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+}
+
+void qt6cr_tool_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *tool_bar = as_tool_bar(handle);
+  auto *tool_bar_action = as_action(action);
+
+  if (tool_bar != nullptr && tool_bar_action != nullptr) {
+    tool_bar->addAction(tool_bar_action);
+  }
+}
+
+qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent) {
+  return new QStatusBar(as_widget(parent));
+}
+
+void qt6cr_status_bar_show_message(qt6cr_handle_t handle, const char *message, int timeout_ms) {
+  auto *status_bar = as_status_bar(handle);
+
+  if (status_bar != nullptr) {
+    status_bar->showMessage(QString::fromUtf8(message == nullptr ? "" : message), timeout_ms);
+  }
+}
+
+char *qt6cr_status_bar_current_message(qt6cr_handle_t handle) {
+  auto *status_bar = as_status_bar(handle);
+  return status_bar == nullptr ? duplicate_string("") : duplicate_string(status_bar->currentMessage());
+}
+
+void qt6cr_status_bar_clear_message(qt6cr_handle_t handle) {
+  auto *status_bar = as_status_bar(handle);
+
+  if (status_bar != nullptr) {
+    status_bar->clearMessage();
+  }
+}
+
 qt6cr_handle_t qt6cr_event_widget_create(qt6cr_handle_t parent) {
   return new EventWidget(as_widget(parent));
 }
@@ -523,6 +801,114 @@ void qt6cr_push_button_click(qt6cr_handle_t handle) {
   if (button != nullptr) {
     button->click();
   }
+}
+
+qt6cr_handle_t qt6cr_line_edit_create(qt6cr_handle_t parent, const char *text) {
+  auto *line_edit = new QLineEdit(as_widget(parent));
+  line_edit->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  return line_edit;
+}
+
+void qt6cr_line_edit_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_line_edit_text(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? duplicate_string("") : duplicate_string(line_edit->text());
+}
+
+qt6cr_handle_t qt6cr_check_box_create(qt6cr_handle_t parent, const char *text) {
+  return new QCheckBox(QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent));
+}
+
+void qt6cr_check_box_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *check_box = as_check_box(handle);
+
+  if (check_box != nullptr) {
+    check_box->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_check_box_text(qt6cr_handle_t handle) {
+  auto *check_box = as_check_box(handle);
+  return check_box == nullptr ? duplicate_string("") : duplicate_string(check_box->text());
+}
+
+void qt6cr_check_box_set_checked(qt6cr_handle_t handle, bool value) {
+  auto *check_box = as_check_box(handle);
+
+  if (check_box != nullptr) {
+    check_box->setChecked(value);
+  }
+}
+
+bool qt6cr_check_box_is_checked(qt6cr_handle_t handle) {
+  auto *check_box = as_check_box(handle);
+  return check_box != nullptr && check_box->isChecked();
+}
+
+void qt6cr_check_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *check_box = as_check_box(handle);
+
+  if (check_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(check_box, &QCheckBox::toggled, check_box, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_combo_box_create(qt6cr_handle_t parent) {
+  return new QComboBox(as_widget(parent));
+}
+
+void qt6cr_combo_box_add_item(qt6cr_handle_t handle, const char *text) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->addItem(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+int qt6cr_combo_box_count(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? 0 : combo_box->count();
+}
+
+int qt6cr_combo_box_current_index(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? -1 : combo_box->currentIndex();
+}
+
+void qt6cr_combo_box_set_current_index(qt6cr_handle_t handle, int index) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setCurrentIndex(index);
+  }
+}
+
+char *qt6cr_combo_box_current_text(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? duplicate_string("") : duplicate_string(combo_box->currentText());
+}
+
+void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(combo_box, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), combo_box, [callback, userdata](int index) {
+    callback(userdata, index);
+  });
 }
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent) {

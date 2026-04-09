@@ -27,6 +27,13 @@ module Qt6
       @destroyed_signal
     end
 
+    def adopt_by_parent! : Nil
+      return unless @owned
+
+      Qt6.untrack_object(self)
+      @owned = false
+    end
+
     protected def mark_destroyed_from_qt : Nil
       return if @destroyed
 

@@ -1,6 +1,85 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "builds a reduced shell with menus, toolbars, docks, dialogs, and controls" do
+    application = app
+    main = Qt6::MainWindow.new
+    triggered = 0
+    accepted = 0
+    rejected = 0
+    toggled = [] of Bool
+    indices = [] of Int32
+
+    main.window_title = "Editor Shell"
+    main.resize(960, 640)
+    main.central_widget = Qt6::Label.new("Canvas")
+
+    file_menu = main.menu_bar.add_menu("File")
+    recent_menu = file_menu.add_menu("Recent")
+    open_action = Qt6::Action.new("Open", main)
+    open_action.on_triggered do
+      triggered += 1
+    end
+    file_menu << open_action
+    file_menu.add_separator
+
+    tool_bar = Qt6::ToolBar.new("Primary", main)
+    main.add_tool_bar(tool_bar)
+    tool_bar << open_action
+
+    dock = Qt6::DockWidget.new("Inspector", main)
+    inspector = Qt6::Widget.new
+    line_edit = Qt6::LineEdit.new("Hexes")
+    check_box = Qt6::CheckBox.new("Snap")
+    combo_box = Qt6::ComboBox.new
+    check_box.on_toggled do |value|
+      toggled << value
+    end
+    combo_box.on_current_index_changed do |index|
+      indices << index
+    end
+    combo_box << "Units" << "Terrain"
+
+    inspector.vbox do |column|
+      column << line_edit
+      column << check_box
+      column << combo_box
+    end
+
+    dock.widget = inspector
+    main.add_dock_widget(dock, Qt6::DockArea::Left)
+    main.status_bar.show_message("Ready")
+
+    dialog = Qt6::Dialog.new(main)
+    dialog.on_accepted do
+      accepted += 1
+    end
+    dialog.on_rejected do
+      rejected += 1
+    end
+
+    dialog.accept
+    check_box.checked = true
+    combo_box.current_index = 1
+    open_action.trigger
+    application.process_events
+
+    recent_menu.title.should eq("Recent")
+    main.status_bar.current_message.should eq("Ready")
+    line_edit.text = "Terrain"
+    line_edit.text.should eq("Terrain")
+    check_box.checked?.should be_true
+    combo_box.count.should eq(2)
+    combo_box.current_text.should eq("Terrain")
+    toggled.last.should be_true
+    indices.last.should eq(1)
+    triggered.should eq(1)
+    dialog.result.should eq(Qt6::DialogCode::Accepted)
+    accepted.should eq(1)
+    rejected.should eq(0)
+    main.release
+  end
+
   it "provides QObject-derived signals and timer callbacks" do
     application = app
     timer = Qt6::QTimer.new
