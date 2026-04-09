@@ -55,6 +55,7 @@ jobs:
           shards --version
           pkg-config --modversion Qt6Widgets
           pkg-config --modversion Qt6Svg
+          pkg-config --modversion Qt6SvgWidgets
 
       - name: Build native shim
         run: make native

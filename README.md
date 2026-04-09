@@ -19,8 +19,8 @@ This is an initial, working foundation rather than a full binding of the entire 
 ## Requirements
 
 - Crystal 1.11+
-- Qt6 Widgets and Qt6 Svg development packages available through `pkg-config`
-- macOS with Homebrew Qt6 works out of the box when `pkg-config` can resolve `Qt6Widgets` and `Qt6Svg`
+- Qt6 Widgets, Qt6 Svg, and Qt6 Svg Widgets development packages available through `pkg-config`
+- macOS with Homebrew Qt6 works out of the box when `pkg-config` can resolve `Qt6Widgets`, `Qt6Svg`, and `Qt6SvgWidgets`
 - Linux distributions using GCC's standard C++ runtime, such as Fedora with `qt6-qtbase-devel`, are supported
 
 The Crystal FFI layer links against the platform's default C++ runtime:
@@ -110,7 +110,7 @@ app.run
 - `Qt6::Signal` for Crystal-side callback composition
 - `Qt6::QTimer` for timeout-driven work on the Qt event loop
 - `Qt6::Color`, `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common value types
-- `Qt6::QImage`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering
+- `Qt6::QImage`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
 - `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, and `Qt6::InputDialog` for standard dialogs
@@ -132,7 +132,7 @@ The specs cover:
 - standard dialog configuration for `QMessageBox`, `QFileDialog`, `QColorDialog`, and `QInputDialog`
 - convenience helper flows for message, color, and input dialogs
 - layout composition through vertical, horizontal, form, and grid layouts
-- raster, SVG, and PDF rendering with images, pixmaps, painter paths, transforms, SVG generators, and PDF writers
+- raster, SVG, and PDF rendering with images, pixmaps, painter paths, transforms, SVG generators, SVG renderers, SVG widgets, and PDF writers
 - `QObject` destruction signals and `QTimer` timeout delivery
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls

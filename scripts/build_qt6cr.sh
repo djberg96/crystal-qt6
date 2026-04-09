@@ -5,7 +5,7 @@ set -eu
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
 
-QT_PKG=${QT_PKG:-Qt6Widgets Qt6Svg}
+QT_PKG=${QT_PKG:-Qt6Widgets Qt6Svg Qt6SvgWidgets}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 CXX=${CXX:-c++}
 AR=${AR:-ar}
@@ -33,7 +33,7 @@ if ! command -v "$AR" >/dev/null 2>&1; then
 fi
 
 if ! "$PKG_CONFIG" --exists $QT_PKG; then
-  echo "qt6cr: pkg-config could not find '$QT_PKG'; install the Qt6 Widgets and Qt6 Svg development packages" >&2
+  echo "qt6cr: pkg-config could not find '$QT_PKG'; install the Qt6 Widgets, Qt6 Svg, and Qt6 Svg Widgets development packages" >&2
   exit 1
 fi
 

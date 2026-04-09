@@ -58,6 +58,18 @@ module Qt6
       self
     end
 
+    # Renders the named SVG element using the painter's current transform and state.
+    def render(painter : QPainter, element_id : String) : self
+      LibQt6.qt6cr_qsvg_renderer_render_element(to_unsafe, painter.to_unsafe, element_id.to_unsafe)
+      self
+    end
+
+    # Renders the named SVG element scaled into the requested bounds.
+    def render(painter : QPainter, element_id : String, bounds : RectF) : self
+      LibQt6.qt6cr_qsvg_renderer_render_element_with_bounds(to_unsafe, painter.to_unsafe, element_id.to_unsafe, bounds.to_native)
+      self
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qsvg_renderer_destroy(to_unsafe)
     end
