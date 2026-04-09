@@ -44,6 +44,7 @@
 #include <QResizeEvent>
 #include <QStatusBar>
 #include <QSvgGenerator>
+#include <QSvgRenderer>
 #include <QTimer>
 #include <QTransform>
 #include <QToolBar>
@@ -220,6 +221,10 @@ QPixmap *as_qpixmap(qt6cr_handle_t handle) {
 
 QSvgGenerator *as_qsvg_generator(qt6cr_handle_t handle) {
   return static_cast<QSvgGenerator *>(handle);
+}
+
+QSvgRenderer *as_qsvg_renderer(qt6cr_handle_t handle) {
+  return static_cast<QSvgRenderer *>(handle);
 }
 
 QPdfWriter *as_qpdf_writer(qt6cr_handle_t handle) {
@@ -1011,6 +1016,70 @@ void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution) 
 
   if (generator != nullptr) {
     generator->setResolution(resolution);
+  }
+}
+
+qt6cr_handle_t qt6cr_qsvg_renderer_create(const char *file_name) {
+  return new QSvgRenderer(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+void qt6cr_qsvg_renderer_destroy(qt6cr_handle_t handle) {
+  delete as_qsvg_renderer(handle);
+}
+
+bool qt6cr_qsvg_renderer_is_valid(qt6cr_handle_t handle) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer != nullptr && renderer->isValid();
+}
+
+bool qt6cr_qsvg_renderer_load(qt6cr_handle_t handle, const char *file_name) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer != nullptr && renderer->load(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+qt6cr_size_t qt6cr_qsvg_renderer_default_size(qt6cr_handle_t handle) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer == nullptr ? qt6cr_size_t{0, 0} : to_size(renderer->defaultSize());
+}
+
+qt6cr_rectf_t qt6cr_qsvg_renderer_view_box(qt6cr_handle_t handle) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(renderer->viewBoxF());
+}
+
+void qt6cr_qsvg_renderer_set_view_box(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *renderer = as_qsvg_renderer(handle);
+
+  if (renderer != nullptr) {
+    renderer->setViewBox(from_rectf(rect));
+  }
+}
+
+bool qt6cr_qsvg_renderer_element_exists(qt6cr_handle_t handle, const char *element_id) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer != nullptr && renderer->elementExists(QString::fromUtf8(element_id == nullptr ? "" : element_id));
+}
+
+qt6cr_rectf_t qt6cr_qsvg_renderer_bounds_on_element(qt6cr_handle_t handle, const char *element_id) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(renderer->boundsOnElement(QString::fromUtf8(element_id == nullptr ? "" : element_id)));
+}
+
+void qt6cr_qsvg_renderer_render(qt6cr_handle_t handle, qt6cr_handle_t painter) {
+  auto *renderer = as_qsvg_renderer(handle);
+  auto *target = as_qpainter(painter);
+
+  if (renderer != nullptr && target != nullptr) {
+    renderer->render(target);
+  }
+}
+
+void qt6cr_qsvg_renderer_render_with_bounds(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rectf_t bounds) {
+  auto *renderer = as_qsvg_renderer(handle);
+  auto *target = as_qpainter(painter);
+
+  if (renderer != nullptr && target != nullptr) {
+    renderer->render(target, from_rectf(bounds));
   }
 }
 

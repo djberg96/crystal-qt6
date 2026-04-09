@@ -57,6 +57,18 @@ end
 svg.release
 puts "Wrote #{svg_output}"
 
+svg_renderer = Qt6::QSvgRenderer.new(svg_output)
+svg_preview = Qt6::QImage.new(160, 120)
+svg_preview.fill(Qt6::Color.new(255, 255, 255))
+
+Qt6::QPainter.paint(svg_preview) do |painter|
+  svg_renderer.render(painter, Qt6::RectF.new(0.0, 0.0, 160.0, 120.0))
+end
+
+svg_preview_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack-from-svg.png")
+svg_preview.save(svg_preview_output)
+puts "Wrote #{svg_preview_output}"
+
 pdf_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack.pdf")
 pdf = Qt6::QPdfWriter.new(pdf_output, title: "crystal-qt6 rendering stack", creator: "crystal-qt6 example")
 pdf.page_size_points = Qt6::Size.new(160, 120)
