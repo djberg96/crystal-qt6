@@ -164,6 +164,15 @@ module Qt6
     fun qt6cr_qsvg_generator_resolution = qt6cr_qsvg_generator_resolution(handle : Handle) : LibC::Int
     fun qt6cr_qsvg_generator_set_resolution = qt6cr_qsvg_generator_set_resolution(handle : Handle, resolution : LibC::Int)
 
+    fun qt6cr_qpdf_writer_create = qt6cr_qpdf_writer_create(file_name : UInt8*) : Handle
+    fun qt6cr_qpdf_writer_destroy = qt6cr_qpdf_writer_destroy(handle : Handle)
+    fun qt6cr_qpdf_writer_set_title = qt6cr_qpdf_writer_set_title(handle : Handle, title : UInt8*)
+    fun qt6cr_qpdf_writer_set_creator = qt6cr_qpdf_writer_set_creator(handle : Handle, creator : UInt8*)
+    fun qt6cr_qpdf_writer_resolution = qt6cr_qpdf_writer_resolution(handle : Handle) : LibC::Int
+    fun qt6cr_qpdf_writer_set_resolution = qt6cr_qpdf_writer_set_resolution(handle : Handle, resolution : LibC::Int)
+    fun qt6cr_qpdf_writer_set_page_size_points = qt6cr_qpdf_writer_set_page_size_points(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_qpdf_writer_new_page = qt6cr_qpdf_writer_new_page(handle : Handle) : Bool
+
     fun qt6cr_qpen_create = qt6cr_qpen_create(color : ColorValue, width : Float64) : Handle
     fun qt6cr_qpen_destroy = qt6cr_qpen_destroy(handle : Handle)
     fun qt6cr_qpen_color = qt6cr_qpen_color(handle : Handle) : ColorValue
@@ -228,6 +237,7 @@ module Qt6
     fun qt6cr_qpainter_create_for_image = qt6cr_qpainter_create_for_image(image : Handle) : Handle
     fun qt6cr_qpainter_create_for_pixmap = qt6cr_qpainter_create_for_pixmap(pixmap : Handle) : Handle
     fun qt6cr_qpainter_create_for_svg_generator = qt6cr_qpainter_create_for_svg_generator(svg_generator : Handle) : Handle
+    fun qt6cr_qpainter_create_for_pdf_writer = qt6cr_qpainter_create_for_pdf_writer(pdf_writer : Handle) : Handle
     fun qt6cr_qpainter_destroy = qt6cr_qpainter_destroy(handle : Handle)
     fun qt6cr_qpainter_is_active = qt6cr_qpainter_is_active(handle : Handle) : Bool
     fun qt6cr_qpainter_set_antialiasing = qt6cr_qpainter_set_antialiasing(handle : Handle, value : Bool)

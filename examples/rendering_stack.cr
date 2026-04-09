@@ -56,3 +56,21 @@ end
 
 svg.release
 puts "Wrote #{svg_output}"
+
+pdf_output = File.join(Dir.tempdir, "crystal-qt6-rendering-stack.pdf")
+pdf = Qt6::QPdfWriter.new(pdf_output, title: "crystal-qt6 rendering stack", creator: "crystal-qt6 example")
+pdf.page_size_points = Qt6::Size.new(160, 120)
+pdf.resolution = 144
+
+Qt6::QPainter.paint(pdf) do |painter|
+  painter.antialiasing = false
+  painter.pen = pen
+  painter.brush = brush
+  painter.font = font
+  painter.draw_path(frame.transformed(transform))
+  painter.fill_rect(Qt6::RectF.new(72.0, 24.0, 48.0, 32.0), Qt6::Color.new(220, 96, 72))
+  painter.draw_text(Qt6::PointF.new(label_x, label_y), label)
+end
+
+pdf.release
+puts "Wrote #{pdf_output}"

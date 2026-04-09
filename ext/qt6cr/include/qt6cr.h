@@ -166,6 +166,15 @@ void qt6cr_qsvg_generator_set_description(qt6cr_handle_t handle, const char *des
 int qt6cr_qsvg_generator_resolution(qt6cr_handle_t handle);
 void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution);
 
+qt6cr_handle_t qt6cr_qpdf_writer_create(const char *file_name);
+void qt6cr_qpdf_writer_destroy(qt6cr_handle_t handle);
+void qt6cr_qpdf_writer_set_title(qt6cr_handle_t handle, const char *title);
+void qt6cr_qpdf_writer_set_creator(qt6cr_handle_t handle, const char *creator);
+int qt6cr_qpdf_writer_resolution(qt6cr_handle_t handle);
+void qt6cr_qpdf_writer_set_resolution(qt6cr_handle_t handle, int resolution);
+void qt6cr_qpdf_writer_set_page_size_points(qt6cr_handle_t handle, int width, int height);
+bool qt6cr_qpdf_writer_new_page(qt6cr_handle_t handle);
+
 qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width);
 void qt6cr_qpen_destroy(qt6cr_handle_t handle);
 qt6cr_color_t qt6cr_qpen_color(qt6cr_handle_t handle);
@@ -230,6 +239,7 @@ qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_hand
 qt6cr_handle_t qt6cr_qpainter_create_for_image(qt6cr_handle_t image);
 qt6cr_handle_t qt6cr_qpainter_create_for_pixmap(qt6cr_handle_t pixmap);
 qt6cr_handle_t qt6cr_qpainter_create_for_svg_generator(qt6cr_handle_t svg_generator);
+qt6cr_handle_t qt6cr_qpainter_create_for_pdf_writer(qt6cr_handle_t pdf_writer);
 void qt6cr_qpainter_destroy(qt6cr_handle_t handle);
 bool qt6cr_qpainter_is_active(qt6cr_handle_t handle);
 void qt6cr_qpainter_set_antialiasing(qt6cr_handle_t handle, bool value);
