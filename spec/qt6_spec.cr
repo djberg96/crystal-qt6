@@ -176,6 +176,7 @@ describe Qt6 do
     File.write(svg_path, <<-SVG)
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="12" viewBox="0 0 20 12">
         <rect id="box" x="2" y="1" width="6" height="4" fill="#ff0000"/>
+        <rect id="accent" x="12" y="2" width="4" height="6" fill="#0000ff"/>
       </svg>
     SVG
 
@@ -183,18 +184,63 @@ describe Qt6 do
     renderer.load(svg_path).should be_true
     canvas = Qt6::QImage.new(20, 12)
     canvas.fill(Qt6::Color.new(255, 255, 255))
+    element_canvas = Qt6::QImage.new(20, 12)
+    element_canvas.fill(Qt6::Color.new(255, 255, 255))
+    bounded_element_canvas = Qt6::QImage.new(10, 10)
+    bounded_element_canvas.fill(Qt6::Color.new(255, 255, 255))
 
     Qt6::QPainter.paint(canvas) do |painter|
       renderer.render(painter)
+    end
+
+    Qt6::QPainter.paint(element_canvas) do |painter|
+      renderer.render(painter, "box")
+    end
+
+    Qt6::QPainter.paint(bounded_element_canvas) do |painter|
+      renderer.render(painter, "accent", Qt6::RectF.new(0.0, 0.0, 10.0, 10.0))
     end
 
     renderer.valid?.should be_true
     renderer.default_size.should eq(Qt6::Size.new(20, 12))
     renderer.view_box.should eq(Qt6::RectF.new(0.0, 0.0, 20.0, 12.0))
     renderer.element_exists?("box").should be_true
+    renderer.element_exists?("accent").should be_true
     renderer.element_exists?("missing").should be_false
     renderer.bounds_on_element("box").should eq(Qt6::RectF.new(2.0, 1.0, 6.0, 4.0))
+    renderer.bounds_on_element("accent").should eq(Qt6::RectF.new(12.0, 2.0, 4.0, 6.0))
     canvas.pixel_color(3, 2).should eq(Qt6::Color.new(255, 0, 0, 255))
+    canvas.pixel_color(13, 3).should eq(Qt6::Color.new(0, 0, 255, 255))
+    element_canvas.pixel_color(3, 2).should eq(Qt6::Color.new(255, 0, 0, 255))
+    bounded_element_canvas.pixel_color(1, 1).should eq(Qt6::Color.new(0, 0, 255, 255))
+  end
+
+  it "displays SVG content in QSvgWidget" do
+    application = app
+    svg_path = File.join(Dir.tempdir, "crystal-qt6-widget-#{Process.pid}.svg")
+    File.write(svg_path, <<-SVG)
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16">
+        <rect x="3" y="2" width="8" height="6" fill="#ff0000"/>
+      </svg>
+    SVG
+
+    widget = Qt6::QSvgWidget.new(svg_path)
+    widget.size_hint.should eq(Qt6::Size.new(24, 16))
+    widget.resize(24, 16)
+    widget.visible?.should be_false
+    widget.show
+    application.process_events
+    widget.update
+    application.process_events
+
+    preview = widget.grab
+
+    widget.visible?.should be_true
+    widget.size.should eq(Qt6::Size.new(24, 16))
+    preview.null?.should be_false
+    preview.width.should be >= 24
+    preview.height.should be >= 16
+    widget.release
   end
 
   it "provides convenience helpers for common dialogs" do

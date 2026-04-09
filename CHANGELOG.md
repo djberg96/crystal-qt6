@@ -23,6 +23,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Rendering bindings for `QImage`, `QPixmap`, `QPainter`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, and `QFont`, including direct widget paint callbacks.
 - `QSvgGenerator` bindings so `QPainter` scenes can be exported as SVG with size, view box, metadata, and DPI settings.
 - `QSvgRenderer` bindings so SVG files can be loaded, inspected, and rasterized through the existing `QPainter` API.
+- Element-specific `QSvgRenderer#render` overloads and `QSvgWidget` bindings for embedded SVG display inside widget layouts.
 - `QPdfWriter` bindings so `QPainter` scenes can be exported as PDF with metadata, custom page sizes, DPI settings, and page breaks.
 - `QFontMetrics` bindings for text measurement, including line metrics, horizontal advance, and bounding rectangles.
 - `QFontMetricsF` bindings for subpixel text measurement and floating-point bounding rectangles.

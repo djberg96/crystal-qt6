@@ -1,4 +1,4 @@
-QT_PKG ?= Qt6Widgets Qt6Svg
+QT_PKG ?= Qt6Widgets Qt6Svg Qt6SvgWidgets
 PKG_CONFIG ?= pkg-config
 CXX ?= c++
 AR ?= ar

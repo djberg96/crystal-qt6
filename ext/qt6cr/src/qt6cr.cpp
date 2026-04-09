@@ -45,6 +45,7 @@
 #include <QStatusBar>
 #include <QSvgGenerator>
 #include <QSvgRenderer>
+#include <QSvgWidget>
 #include <QTimer>
 #include <QTransform>
 #include <QToolBar>
@@ -225,6 +226,10 @@ QSvgGenerator *as_qsvg_generator(qt6cr_handle_t handle) {
 
 QSvgRenderer *as_qsvg_renderer(qt6cr_handle_t handle) {
   return static_cast<QSvgRenderer *>(handle);
+}
+
+QSvgWidget *as_qsvg_widget(qt6cr_handle_t handle) {
+  return static_cast<QSvgWidget *>(handle);
 }
 
 QPdfWriter *as_qpdf_writer(qt6cr_handle_t handle) {
@@ -1020,7 +1025,11 @@ void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution) 
 }
 
 qt6cr_handle_t qt6cr_qsvg_renderer_create(const char *file_name) {
-  return new QSvgRenderer(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  if (file_name == nullptr || file_name[0] == '\0') {
+    return new QSvgRenderer();
+  }
+
+  return new QSvgRenderer(QString::fromUtf8(file_name));
 }
 
 void qt6cr_qsvg_renderer_destroy(qt6cr_handle_t handle) {
@@ -1081,6 +1090,47 @@ void qt6cr_qsvg_renderer_render_with_bounds(qt6cr_handle_t handle, qt6cr_handle_
   if (renderer != nullptr && target != nullptr) {
     renderer->render(target, from_rectf(bounds));
   }
+}
+
+void qt6cr_qsvg_renderer_render_element(qt6cr_handle_t handle, qt6cr_handle_t painter, const char *element_id) {
+  auto *renderer = as_qsvg_renderer(handle);
+  auto *target = as_qpainter(painter);
+
+  if (renderer != nullptr && target != nullptr) {
+    renderer->render(target, QString::fromUtf8(element_id == nullptr ? "" : element_id));
+  }
+}
+
+void qt6cr_qsvg_renderer_render_element_with_bounds(qt6cr_handle_t handle, qt6cr_handle_t painter, const char *element_id, qt6cr_rectf_t bounds) {
+  auto *renderer = as_qsvg_renderer(handle);
+  auto *target = as_qpainter(painter);
+
+  if (renderer != nullptr && target != nullptr) {
+    renderer->render(target, QString::fromUtf8(element_id == nullptr ? "" : element_id), from_rectf(bounds));
+  }
+}
+
+qt6cr_handle_t qt6cr_qsvg_widget_create(qt6cr_handle_t parent, const char *file_name) {
+  auto *widget_parent = as_widget(parent);
+
+  if (file_name == nullptr || file_name[0] == '\0') {
+    return new QSvgWidget(widget_parent);
+  }
+
+  return new QSvgWidget(QString::fromUtf8(file_name), widget_parent);
+}
+
+void qt6cr_qsvg_widget_load(qt6cr_handle_t handle, const char *file_name) {
+  auto *widget = as_qsvg_widget(handle);
+
+  if (widget != nullptr) {
+    widget->load(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+qt6cr_size_t qt6cr_qsvg_widget_size_hint(qt6cr_handle_t handle) {
+  auto *widget = as_qsvg_widget(handle);
+  return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->sizeHint());
 }
 
 qt6cr_handle_t qt6cr_qpdf_writer_create(const char *file_name) {

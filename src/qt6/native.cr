@@ -4,9 +4,9 @@
 
 module Qt6
   {% if flag?(:darwin) %}
-    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++", pkg_config: "Qt6Widgets Qt6Svg")]
+    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++", pkg_config: "Qt6Widgets Qt6Svg Qt6SvgWidgets")]
   {% else %}
-    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lstdc++", pkg_config: "Qt6Widgets Qt6Svg")]
+    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lstdc++", pkg_config: "Qt6Widgets Qt6Svg Qt6SvgWidgets")]
   {% end %}
   lib LibQt6
     alias Handle = Void*
@@ -171,6 +171,12 @@ module Qt6
     fun qt6cr_qsvg_renderer_bounds_on_element = qt6cr_qsvg_renderer_bounds_on_element(handle : Handle, element_id : UInt8*) : RectFValue
     fun qt6cr_qsvg_renderer_render = qt6cr_qsvg_renderer_render(handle : Handle, painter : Handle)
     fun qt6cr_qsvg_renderer_render_with_bounds = qt6cr_qsvg_renderer_render_with_bounds(handle : Handle, painter : Handle, bounds : RectFValue)
+    fun qt6cr_qsvg_renderer_render_element = qt6cr_qsvg_renderer_render_element(handle : Handle, painter : Handle, element_id : UInt8*)
+    fun qt6cr_qsvg_renderer_render_element_with_bounds = qt6cr_qsvg_renderer_render_element_with_bounds(handle : Handle, painter : Handle, element_id : UInt8*, bounds : RectFValue)
+
+    fun qt6cr_qsvg_widget_create = qt6cr_qsvg_widget_create(parent : Handle, file_name : UInt8*) : Handle
+    fun qt6cr_qsvg_widget_load = qt6cr_qsvg_widget_load(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qsvg_widget_size_hint = qt6cr_qsvg_widget_size_hint(handle : Handle) : SizeValue
 
     fun qt6cr_qpdf_writer_create = qt6cr_qpdf_writer_create(file_name : UInt8*) : Handle
     fun qt6cr_qpdf_writer_destroy = qt6cr_qpdf_writer_destroy(handle : Handle)
