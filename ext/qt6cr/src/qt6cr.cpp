@@ -404,6 +404,14 @@ QColor from_color(qt6cr_color_t color) {
   return QColor(color.red, color.green, color.blue, color.alpha);
 }
 
+QByteArray byte_array_from_data(const unsigned char *data, int size) {
+  if (data == nullptr || size <= 0) {
+    return QByteArray();
+  }
+
+  return QByteArray(reinterpret_cast<const char *>(data), size);
+}
+
 QImage::Format image_format_from_int(int format) {
   switch (format) {
     case 1:
@@ -1032,6 +1040,16 @@ qt6cr_handle_t qt6cr_qsvg_renderer_create(const char *file_name) {
   return new QSvgRenderer(QString::fromUtf8(file_name));
 }
 
+qt6cr_handle_t qt6cr_qsvg_renderer_create_from_data(const unsigned char *data, int size) {
+  const auto bytes = byte_array_from_data(data, size);
+
+  if (bytes.isEmpty()) {
+    return new QSvgRenderer();
+  }
+
+  return new QSvgRenderer(bytes);
+}
+
 void qt6cr_qsvg_renderer_destroy(qt6cr_handle_t handle) {
   delete as_qsvg_renderer(handle);
 }
@@ -1044,6 +1062,11 @@ bool qt6cr_qsvg_renderer_is_valid(qt6cr_handle_t handle) {
 bool qt6cr_qsvg_renderer_load(qt6cr_handle_t handle, const char *file_name) {
   auto *renderer = as_qsvg_renderer(handle);
   return renderer != nullptr && renderer->load(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+bool qt6cr_qsvg_renderer_load_data(qt6cr_handle_t handle, const unsigned char *data, int size) {
+  auto *renderer = as_qsvg_renderer(handle);
+  return renderer != nullptr && renderer->load(byte_array_from_data(data, size));
 }
 
 qt6cr_size_t qt6cr_qsvg_renderer_default_size(qt6cr_handle_t handle) {
@@ -1125,6 +1148,14 @@ void qt6cr_qsvg_widget_load(qt6cr_handle_t handle, const char *file_name) {
 
   if (widget != nullptr) {
     widget->load(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+void qt6cr_qsvg_widget_load_data(qt6cr_handle_t handle, const unsigned char *data, int size) {
+  auto *widget = as_qsvg_widget(handle);
+
+  if (widget != nullptr) {
+    widget->load(byte_array_from_data(data, size));
   }
 }
 

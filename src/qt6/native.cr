@@ -161,9 +161,11 @@ module Qt6
     fun qt6cr_qsvg_generator_set_resolution = qt6cr_qsvg_generator_set_resolution(handle : Handle, resolution : LibC::Int)
 
     fun qt6cr_qsvg_renderer_create = qt6cr_qsvg_renderer_create(file_name : UInt8*) : Handle
+    fun qt6cr_qsvg_renderer_create_from_data = qt6cr_qsvg_renderer_create_from_data(data : UInt8*, size : LibC::Int) : Handle
     fun qt6cr_qsvg_renderer_destroy = qt6cr_qsvg_renderer_destroy(handle : Handle)
     fun qt6cr_qsvg_renderer_is_valid = qt6cr_qsvg_renderer_is_valid(handle : Handle) : Bool
     fun qt6cr_qsvg_renderer_load = qt6cr_qsvg_renderer_load(handle : Handle, file_name : UInt8*) : Bool
+    fun qt6cr_qsvg_renderer_load_data = qt6cr_qsvg_renderer_load_data(handle : Handle, data : UInt8*, size : LibC::Int) : Bool
     fun qt6cr_qsvg_renderer_default_size = qt6cr_qsvg_renderer_default_size(handle : Handle) : SizeValue
     fun qt6cr_qsvg_renderer_view_box = qt6cr_qsvg_renderer_view_box(handle : Handle) : RectFValue
     fun qt6cr_qsvg_renderer_set_view_box = qt6cr_qsvg_renderer_set_view_box(handle : Handle, rect : RectFValue)
@@ -176,6 +178,7 @@ module Qt6
 
     fun qt6cr_qsvg_widget_create = qt6cr_qsvg_widget_create(parent : Handle, file_name : UInt8*) : Handle
     fun qt6cr_qsvg_widget_load = qt6cr_qsvg_widget_load(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qsvg_widget_load_data = qt6cr_qsvg_widget_load_data(handle : Handle, data : UInt8*, size : LibC::Int)
     fun qt6cr_qsvg_widget_size_hint = qt6cr_qsvg_widget_size_hint(handle : Handle) : SizeValue
 
     fun qt6cr_qpdf_writer_create = qt6cr_qpdf_writer_create(file_name : UInt8*) : Handle

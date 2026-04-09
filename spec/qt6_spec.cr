@@ -215,6 +215,41 @@ describe Qt6 do
     bounded_element_canvas.pixel_color(1, 1).should eq(Qt6::Color.new(0, 0, 255, 255))
   end
 
+  it "loads SVG content from memory" do
+    app
+    svg_markup = <<-SVG
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="10" viewBox="0 0 18 10">
+        <rect id="memory-box" x="4" y="2" width="6" height="4" fill="#00aa00"/>
+      </svg>
+    SVG
+
+    renderer = Qt6::QSvgRenderer.from_data(svg_markup)
+    renderer.valid?.should be_true
+    renderer.default_size.should eq(Qt6::Size.new(18, 10))
+    renderer.element_exists?("memory-box").should be_true
+
+    image = Qt6::QImage.new(18, 10)
+    image.fill(Qt6::Color.new(255, 255, 255))
+
+    Qt6::QPainter.paint(image) do |painter|
+      renderer.render(painter)
+    end
+
+    image.pixel_color(5, 3).should eq(Qt6::Color.new(0, 170, 0, 255))
+
+    widget = Qt6::QSvgWidget.from_data(svg_markup)
+    widget.size_hint.should eq(Qt6::Size.new(18, 10))
+    widget.resize(18, 10)
+    widget.show
+    app.process_events
+
+    preview = widget.grab
+    preview.null?.should be_false
+    preview.width.should be >= 18
+    preview.height.should be >= 10
+    widget.release
+  end
+
   it "displays SVG content in QSvgWidget" do
     application = app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-widget-#{Process.pid}.svg")
