@@ -59,10 +59,28 @@ module Qt6
       color
     end
 
+    # Sets the pen used for outlines and lines.
+    def pen=(pen : QPen) : QPen
+      LibQt6.qt6cr_qpainter_set_pen(to_unsafe, pen.to_unsafe)
+      pen
+    end
+
     # Sets the brush color used for fills.
     def brush=(color : Color) : Color
       LibQt6.qt6cr_qpainter_set_brush_color(to_unsafe, color.to_native)
       color
+    end
+
+    # Sets the brush used for fills.
+    def brush=(brush : QBrush) : QBrush
+      LibQt6.qt6cr_qpainter_set_brush(to_unsafe, brush.to_unsafe)
+      brush
+    end
+
+    # Sets the font used for subsequent text drawing.
+    def font=(font : QFont) : QFont
+      LibQt6.qt6cr_qpainter_set_font(to_unsafe, font.to_unsafe)
+      font
     end
 
     # Replaces the painter transform.

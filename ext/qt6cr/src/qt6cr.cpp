@@ -15,6 +15,7 @@
 #include <QDialog>
 #include <QDockWidget>
 #include <QFileDialog>
+#include <QFont>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -211,6 +212,18 @@ QImage *as_qimage(qt6cr_handle_t handle) {
 
 QPixmap *as_qpixmap(qt6cr_handle_t handle) {
   return static_cast<QPixmap *>(handle);
+}
+
+QPen *as_qpen(qt6cr_handle_t handle) {
+  return static_cast<QPen *>(handle);
+}
+
+QBrush *as_qbrush(qt6cr_handle_t handle) {
+  return static_cast<QBrush *>(handle);
+}
+
+QFont *as_qfont(qt6cr_handle_t handle) {
+  return static_cast<QFont *>(handle);
 }
 
 QTransform *as_qtransform(qt6cr_handle_t handle) {
@@ -874,6 +887,126 @@ bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path) {
   return pixmap != nullptr && pixmap->save(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
+qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width) {
+  auto pen = QPen(from_color(color));
+  pen.setWidthF(width);
+  return new QPen(pen);
+}
+
+void qt6cr_qpen_destroy(qt6cr_handle_t handle) {
+  delete as_qpen(handle);
+}
+
+qt6cr_color_t qt6cr_qpen_color(qt6cr_handle_t handle) {
+  auto *pen = as_qpen(handle);
+  return pen == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(pen->color());
+}
+
+void qt6cr_qpen_set_color(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *pen = as_qpen(handle);
+
+  if (pen != nullptr) {
+    pen->setColor(from_color(color));
+  }
+}
+
+double qt6cr_qpen_width(qt6cr_handle_t handle) {
+  auto *pen = as_qpen(handle);
+  return pen == nullptr ? 0.0 : pen->widthF();
+}
+
+void qt6cr_qpen_set_width(qt6cr_handle_t handle, double width) {
+  auto *pen = as_qpen(handle);
+
+  if (pen != nullptr) {
+    pen->setWidthF(width);
+  }
+}
+
+qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color) {
+  return new QBrush(from_color(color));
+}
+
+void qt6cr_qbrush_destroy(qt6cr_handle_t handle) {
+  delete as_qbrush(handle);
+}
+
+qt6cr_color_t qt6cr_qbrush_color(qt6cr_handle_t handle) {
+  auto *brush = as_qbrush(handle);
+  return brush == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(brush->color());
+}
+
+void qt6cr_qbrush_set_color(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *brush = as_qbrush(handle);
+
+  if (brush != nullptr) {
+    brush->setColor(from_color(color));
+  }
+}
+
+qt6cr_handle_t qt6cr_qfont_create(const char *family, int point_size, bool bold, bool italic) {
+  auto font = QFont(QString::fromUtf8(family == nullptr ? "" : family), point_size);
+  font.setBold(bold);
+  font.setItalic(italic);
+  return new QFont(font);
+}
+
+void qt6cr_qfont_destroy(qt6cr_handle_t handle) {
+  delete as_qfont(handle);
+}
+
+char *qt6cr_qfont_family(qt6cr_handle_t handle) {
+  auto *font = as_qfont(handle);
+  return font == nullptr ? duplicate_string("") : duplicate_string(font->family());
+}
+
+void qt6cr_qfont_set_family(qt6cr_handle_t handle, const char *family) {
+  auto *font = as_qfont(handle);
+
+  if (font != nullptr) {
+    font->setFamily(QString::fromUtf8(family == nullptr ? "" : family));
+  }
+}
+
+int qt6cr_qfont_point_size(qt6cr_handle_t handle) {
+  auto *font = as_qfont(handle);
+  return font == nullptr ? -1 : font->pointSize();
+}
+
+void qt6cr_qfont_set_point_size(qt6cr_handle_t handle, int point_size) {
+  auto *font = as_qfont(handle);
+
+  if (font != nullptr) {
+    font->setPointSize(point_size);
+  }
+}
+
+bool qt6cr_qfont_bold(qt6cr_handle_t handle) {
+  auto *font = as_qfont(handle);
+  return font != nullptr && font->bold();
+}
+
+void qt6cr_qfont_set_bold(qt6cr_handle_t handle, bool value) {
+  auto *font = as_qfont(handle);
+
+  if (font != nullptr) {
+    font->setBold(value);
+  }
+}
+
+bool qt6cr_qfont_italic(qt6cr_handle_t handle) {
+  auto *font = as_qfont(handle);
+  return font != nullptr && font->italic();
+}
+
+void qt6cr_qfont_set_italic(qt6cr_handle_t handle, bool value) {
+  auto *font = as_qfont(handle);
+
+  if (font != nullptr) {
+    font->setItalic(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_qtransform_create(void) {
   return new QTransform();
 }
@@ -1047,11 +1180,38 @@ void qt6cr_qpainter_set_pen_color(qt6cr_handle_t handle, qt6cr_color_t color) {
   }
 }
 
+void qt6cr_qpainter_set_pen(qt6cr_handle_t handle, qt6cr_handle_t pen) {
+  auto *painter = as_qpainter(handle);
+  auto *value = as_qpen(pen);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->setPen(*value);
+  }
+}
+
 void qt6cr_qpainter_set_brush_color(qt6cr_handle_t handle, qt6cr_color_t color) {
   auto *painter = as_qpainter(handle);
 
   if (painter != nullptr) {
     painter->setBrush(QBrush(from_color(color)));
+  }
+}
+
+void qt6cr_qpainter_set_brush(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *painter = as_qpainter(handle);
+  auto *value = as_qbrush(brush);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->setBrush(*value);
+  }
+}
+
+void qt6cr_qpainter_set_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *painter = as_qpainter(handle);
+  auto *value = as_qfont(font);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->setFont(*value);
   }
 }
 

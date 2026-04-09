@@ -143,6 +143,29 @@ module Qt6
     fun qt6cr_qpixmap_fill = qt6cr_qpixmap_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
 
+    fun qt6cr_qpen_create = qt6cr_qpen_create(color : ColorValue, width : Float64) : Handle
+    fun qt6cr_qpen_destroy = qt6cr_qpen_destroy(handle : Handle)
+    fun qt6cr_qpen_color = qt6cr_qpen_color(handle : Handle) : ColorValue
+    fun qt6cr_qpen_set_color = qt6cr_qpen_set_color(handle : Handle, color : ColorValue)
+    fun qt6cr_qpen_width = qt6cr_qpen_width(handle : Handle) : Float64
+    fun qt6cr_qpen_set_width = qt6cr_qpen_set_width(handle : Handle, width : Float64)
+
+    fun qt6cr_qbrush_create = qt6cr_qbrush_create(color : ColorValue) : Handle
+    fun qt6cr_qbrush_destroy = qt6cr_qbrush_destroy(handle : Handle)
+    fun qt6cr_qbrush_color = qt6cr_qbrush_color(handle : Handle) : ColorValue
+    fun qt6cr_qbrush_set_color = qt6cr_qbrush_set_color(handle : Handle, color : ColorValue)
+
+    fun qt6cr_qfont_create = qt6cr_qfont_create(family : UInt8*, point_size : LibC::Int, bold : Bool, italic : Bool) : Handle
+    fun qt6cr_qfont_destroy = qt6cr_qfont_destroy(handle : Handle)
+    fun qt6cr_qfont_family = qt6cr_qfont_family(handle : Handle) : UInt8*
+    fun qt6cr_qfont_set_family = qt6cr_qfont_set_family(handle : Handle, family : UInt8*)
+    fun qt6cr_qfont_point_size = qt6cr_qfont_point_size(handle : Handle) : LibC::Int
+    fun qt6cr_qfont_set_point_size = qt6cr_qfont_set_point_size(handle : Handle, point_size : LibC::Int)
+    fun qt6cr_qfont_bold = qt6cr_qfont_bold(handle : Handle) : Bool
+    fun qt6cr_qfont_set_bold = qt6cr_qfont_set_bold(handle : Handle, value : Bool)
+    fun qt6cr_qfont_italic = qt6cr_qfont_italic(handle : Handle) : Bool
+    fun qt6cr_qfont_set_italic = qt6cr_qfont_set_italic(handle : Handle, value : Bool)
+
     fun qt6cr_qtransform_create = qt6cr_qtransform_create : Handle
     fun qt6cr_qtransform_destroy = qt6cr_qtransform_destroy(handle : Handle)
     fun qt6cr_qtransform_copy = qt6cr_qtransform_copy(handle : Handle) : Handle
@@ -171,7 +194,10 @@ module Qt6
     fun qt6cr_qpainter_is_active = qt6cr_qpainter_is_active(handle : Handle) : Bool
     fun qt6cr_qpainter_set_antialiasing = qt6cr_qpainter_set_antialiasing(handle : Handle, value : Bool)
     fun qt6cr_qpainter_set_pen_color = qt6cr_qpainter_set_pen_color(handle : Handle, color : ColorValue)
+    fun qt6cr_qpainter_set_pen = qt6cr_qpainter_set_pen(handle : Handle, pen : Handle)
     fun qt6cr_qpainter_set_brush_color = qt6cr_qpainter_set_brush_color(handle : Handle, color : ColorValue)
+    fun qt6cr_qpainter_set_brush = qt6cr_qpainter_set_brush(handle : Handle, brush : Handle)
+    fun qt6cr_qpainter_set_font = qt6cr_qpainter_set_font(handle : Handle, font : Handle)
     fun qt6cr_qpainter_set_transform = qt6cr_qpainter_set_transform(handle : Handle, transform : Handle)
     fun qt6cr_qpainter_reset_transform = qt6cr_qpainter_reset_transform(handle : Handle)
     fun qt6cr_qpainter_draw_line = qt6cr_qpainter_draw_line(handle : Handle, from_point : PointFValue, to_point : PointFValue)
