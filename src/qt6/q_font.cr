@@ -55,6 +55,11 @@ module Qt6
       value
     end
 
+    # Returns font metrics for measuring text with this font.
+    def metrics : QFontMetrics
+      QFontMetrics.new(self)
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qfont_destroy(to_unsafe)
     end

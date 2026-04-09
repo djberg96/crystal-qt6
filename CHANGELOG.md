@@ -21,6 +21,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Layout bindings for `QHBoxLayout`, `QFormLayout`, and `QGridLayout`, plus widget DSL helpers for horizontal, form, and grid composition.
 - Common control bindings for `QLineEdit`, `QCheckBox`, and `QComboBox`.
 - Rendering bindings for `QImage`, `QPixmap`, `QPainter`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, and `QFont`, including direct widget paint callbacks.
+- `QFontMetrics` bindings for text measurement, including line metrics, horizontal advance, and bounding rectangles.
 - Expanded specs covering timers, geometry accessors, and custom widget event delivery.
 - Expanded integration specs covering reduced application shells with menus, toolbars, docks, dialogs, and control callbacks.
 
