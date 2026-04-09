@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/djberg96/crystal-qt6/actions/workflows/ci.yml/badge.svg)](https://github.com/djberg96/crystal-qt6/actions/workflows/ci.yml)
 
-`crystal-qt6` is a Qt6 bindings project for Crystal with a small, explicit first API focused on desktop widgets.
+`crystal-qt6` is a Qt6 bindings project for Crystal with an explicit, incrementally growing API for desktop applications.
 
 This repository currently provides:
 
@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is an initial, working foundation rather than a full binding of the entire Qt6 API. The current surface targets a pragmatic first milestone for building and validating desktop UI bindings on macOS with Homebrew Qt6.
+This is an initial, working foundation rather than a full binding of the entire Qt6 API. The current surface now covers the basics for custom widgets plus a reduced desktop application shell built around main windows, menus, actions, docks, toolbars, dialogs, and a few common controls.
 
 ## Requirements
 
@@ -100,9 +100,12 @@ app.run
 - `Qt6::QTimer` for timeout-driven work on the Qt event loop
 - `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common geometry values
 - `Qt6::Widget` for generic widgets and top-level windows
+- `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
+- `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, and `Qt6::Action` for shell composition
 - `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
+- `Qt6::LineEdit`, `Qt6::CheckBox`, and `Qt6::ComboBox` for common form controls
 - `Qt6::VBoxLayout` for vertical layout composition
 
 ## Testing Strategy
@@ -112,6 +115,7 @@ The specs cover:
 - process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
 - `QObject` destruction signals and `QTimer` timeout delivery
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
+- reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls
 - widget lifecycle and visibility state
 - title and text round trips through the native bridge
 - layout composition
@@ -140,7 +144,7 @@ You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but
 
 The next logical additions are:
 
-1. more layouts such as `HBoxLayout` and grid layouts
-2. richer widgets such as line edits, checkboxes, and menus
-3. more `QObject`-based shell APIs such as `QMainWindow`, `QDialog`, menus, actions, and dock widgets
+1. more layouts such as `HBoxLayout`, grid layouts, and form layouts
+2. shell refinements such as shortcuts, action groups, and standard dialogs
+3. additional common controls such as radio buttons, list widgets, trees, tabs, and splitters
 4. rendering APIs such as `QPainter`, `QImage`, `QPixmap`, and `QPainterPath`
