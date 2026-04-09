@@ -176,6 +176,14 @@ module Qt6
     fun qt6cr_qfont_metrics_horizontal_advance = qt6cr_qfont_metrics_horizontal_advance(handle : Handle, text : UInt8*) : LibC::Int
     fun qt6cr_qfont_metrics_bounding_rect = qt6cr_qfont_metrics_bounding_rect(handle : Handle, text : UInt8*) : RectFValue
 
+    fun qt6cr_qfont_metrics_f_create = qt6cr_qfont_metrics_f_create(font : Handle) : Handle
+    fun qt6cr_qfont_metrics_f_destroy = qt6cr_qfont_metrics_f_destroy(handle : Handle)
+    fun qt6cr_qfont_metrics_f_height = qt6cr_qfont_metrics_f_height(handle : Handle) : Float64
+    fun qt6cr_qfont_metrics_f_ascent = qt6cr_qfont_metrics_f_ascent(handle : Handle) : Float64
+    fun qt6cr_qfont_metrics_f_descent = qt6cr_qfont_metrics_f_descent(handle : Handle) : Float64
+    fun qt6cr_qfont_metrics_f_horizontal_advance = qt6cr_qfont_metrics_f_horizontal_advance(handle : Handle, text : UInt8*) : Float64
+    fun qt6cr_qfont_metrics_f_bounding_rect = qt6cr_qfont_metrics_f_bounding_rect(handle : Handle, text : UInt8*) : RectFValue
+
     fun qt6cr_qtransform_create = qt6cr_qtransform_create : Handle
     fun qt6cr_qtransform_destroy = qt6cr_qtransform_destroy(handle : Handle)
     fun qt6cr_qtransform_copy = qt6cr_qtransform_copy(handle : Handle) : Handle

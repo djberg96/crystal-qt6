@@ -231,6 +231,10 @@ QFontMetrics *as_qfont_metrics(qt6cr_handle_t handle) {
   return static_cast<QFontMetrics *>(handle);
 }
 
+QFontMetricsF *as_qfont_metrics_f(qt6cr_handle_t handle) {
+  return static_cast<QFontMetricsF *>(handle);
+}
+
 QTransform *as_qtransform(qt6cr_handle_t handle) {
   return static_cast<QTransform *>(handle);
 }
@@ -1057,6 +1061,40 @@ int qt6cr_qfont_metrics_horizontal_advance(qt6cr_handle_t handle, const char *te
 qt6cr_rectf_t qt6cr_qfont_metrics_bounding_rect(qt6cr_handle_t handle, const char *text) {
   auto *metrics = as_qfont_metrics(handle);
   return metrics == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(QRectF(metrics->boundingRect(QString::fromUtf8(text == nullptr ? "" : text))));
+}
+
+qt6cr_handle_t qt6cr_qfont_metrics_f_create(qt6cr_handle_t font) {
+  auto *value = as_qfont(font);
+  return value == nullptr ? nullptr : new QFontMetricsF(*value);
+}
+
+void qt6cr_qfont_metrics_f_destroy(qt6cr_handle_t handle) {
+  delete as_qfont_metrics_f(handle);
+}
+
+double qt6cr_qfont_metrics_f_height(qt6cr_handle_t handle) {
+  auto *metrics = as_qfont_metrics_f(handle);
+  return metrics == nullptr ? 0.0 : metrics->height();
+}
+
+double qt6cr_qfont_metrics_f_ascent(qt6cr_handle_t handle) {
+  auto *metrics = as_qfont_metrics_f(handle);
+  return metrics == nullptr ? 0.0 : metrics->ascent();
+}
+
+double qt6cr_qfont_metrics_f_descent(qt6cr_handle_t handle) {
+  auto *metrics = as_qfont_metrics_f(handle);
+  return metrics == nullptr ? 0.0 : metrics->descent();
+}
+
+double qt6cr_qfont_metrics_f_horizontal_advance(qt6cr_handle_t handle, const char *text) {
+  auto *metrics = as_qfont_metrics_f(handle);
+  return metrics == nullptr ? 0.0 : metrics->horizontalAdvance(QString::fromUtf8(text == nullptr ? "" : text));
+}
+
+qt6cr_rectf_t qt6cr_qfont_metrics_f_bounding_rect(qt6cr_handle_t handle, const char *text) {
+  auto *metrics = as_qfont_metrics_f(handle);
+  return metrics == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(metrics->boundingRect(QString::fromUtf8(text == nullptr ? "" : text)));
 }
 
 qt6cr_handle_t qt6cr_qtransform_create(void) {

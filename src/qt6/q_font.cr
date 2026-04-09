@@ -60,6 +60,11 @@ module Qt6
       QFontMetrics.new(self)
     end
 
+    # Returns floating-point font metrics for subpixel text measurement.
+    def metrics_f : QFontMetricsF
+      QFontMetricsF.new(self)
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qfont_destroy(to_unsafe)
     end
