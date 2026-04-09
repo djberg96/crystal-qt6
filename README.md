@@ -49,6 +49,8 @@ Run the examples:
 ```sh
 make example-hello
 make example-counter
+make example-shell
+make example-events
 ```
 
 Direct Crystal commands also work without a separate native build step:
@@ -57,6 +59,13 @@ Direct Crystal commands also work without a separate native build step:
 crystal run examples/hello_world.cr
 crystal spec
 ```
+
+Example highlights:
+
+- `examples/hello_world.cr`: smallest possible window with a label and button
+- `examples/counter.cr`: simple stateful widget wiring with button callbacks
+- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, toolbars, docks, dialogs, and common controls
+- `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
 
 ## Continuous Integration
 
