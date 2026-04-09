@@ -16,6 +16,7 @@
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QFont>
+#include <QFontMetrics>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -224,6 +225,10 @@ QBrush *as_qbrush(qt6cr_handle_t handle) {
 
 QFont *as_qfont(qt6cr_handle_t handle) {
   return static_cast<QFont *>(handle);
+}
+
+QFontMetrics *as_qfont_metrics(qt6cr_handle_t handle) {
+  return static_cast<QFontMetrics *>(handle);
 }
 
 QTransform *as_qtransform(qt6cr_handle_t handle) {
@@ -1005,6 +1010,40 @@ void qt6cr_qfont_set_italic(qt6cr_handle_t handle, bool value) {
   if (font != nullptr) {
     font->setItalic(value);
   }
+}
+
+qt6cr_handle_t qt6cr_qfont_metrics_create(qt6cr_handle_t font) {
+  auto *value = as_qfont(font);
+  return value == nullptr ? nullptr : new QFontMetrics(*value);
+}
+
+void qt6cr_qfont_metrics_destroy(qt6cr_handle_t handle) {
+  delete as_qfont_metrics(handle);
+}
+
+int qt6cr_qfont_metrics_height(qt6cr_handle_t handle) {
+  auto *metrics = as_qfont_metrics(handle);
+  return metrics == nullptr ? 0 : metrics->height();
+}
+
+int qt6cr_qfont_metrics_ascent(qt6cr_handle_t handle) {
+  auto *metrics = as_qfont_metrics(handle);
+  return metrics == nullptr ? 0 : metrics->ascent();
+}
+
+int qt6cr_qfont_metrics_descent(qt6cr_handle_t handle) {
+  auto *metrics = as_qfont_metrics(handle);
+  return metrics == nullptr ? 0 : metrics->descent();
+}
+
+int qt6cr_qfont_metrics_horizontal_advance(qt6cr_handle_t handle, const char *text) {
+  auto *metrics = as_qfont_metrics(handle);
+  return metrics == nullptr ? 0 : metrics->horizontalAdvance(QString::fromUtf8(text == nullptr ? "" : text));
+}
+
+qt6cr_rectf_t qt6cr_qfont_metrics_bounding_rect(qt6cr_handle_t handle, const char *text) {
+  auto *metrics = as_qfont_metrics(handle);
+  return metrics == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(QRectF(metrics->boundingRect(QString::fromUtf8(text == nullptr ? "" : text))));
 }
 
 qt6cr_handle_t qt6cr_qtransform_create(void) {

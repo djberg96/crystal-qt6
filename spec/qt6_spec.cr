@@ -10,6 +10,7 @@ describe Qt6 do
     pen = Qt6::QPen.new(Qt6::Color.new(255, 0, 0), 3)
     brush = Qt6::QBrush.new(Qt6::Color.new(255, 0, 0))
     font = Qt6::QFont.new(point_size: 14, bold: true, italic: true)
+    metrics = font.metrics
 
     transform = Qt6::QTransform.new
     transform.translate(4, 5)
@@ -42,6 +43,7 @@ describe Qt6 do
     pixmap_image = pixmap_canvas.to_image
     image_path = File.join(Dir.tempdir, "crystal-qt6-render-image-#{Process.pid}.png")
     pixmap_path = File.join(Dir.tempdir, "crystal-qt6-render-pixmap-#{Process.pid}.png")
+    text_bounds = metrics.bounding_rect("qt6")
 
     pen.width.should eq(3.0)
     pen.color.should eq(Qt6::Color.new(255, 0, 0, 255))
@@ -49,6 +51,12 @@ describe Qt6 do
     font.point_size.should eq(14)
     font.bold?.should be_true
     font.italic?.should be_true
+    metrics.height.should be > 0
+    metrics.ascent.should be > 0
+    metrics.descent.should be >= 0
+    metrics.horizontal_advance("qt6").should be > 0
+    text_bounds.width.should be > 0.0
+    text_bounds.height.should be > 0.0
     transform.map(Qt6::PointF.new(1.0, 1.0)).should eq(Qt6::PointF.new(5.0, 6.0))
     transform.map(Qt6::RectF.new(0.0, 0.0, 8.0, 8.0)).should eq(Qt6::RectF.new(4.0, 5.0, 8.0, 8.0))
     moved_path.bounding_rect.should eq(Qt6::RectF.new(4.0, 5.0, 8.0, 8.0))
