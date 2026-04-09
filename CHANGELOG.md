@@ -25,6 +25,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - `QSvgRenderer` bindings so SVG files can be loaded, inspected, and rasterized through the existing `QPainter` API.
 - Element-specific `QSvgRenderer#render` overloads and `QSvgWidget` bindings for embedded SVG display inside widget layouts.
 - In-memory SVG loading for `QSvgRenderer` and `QSvgWidget` through `from_data` and `load_data` APIs.
+- `QSvgWidget#renderer` for borrowed access to the widget's internal SVG renderer.
 - `QPdfWriter` bindings so `QPainter` scenes can be exported as PDF with metadata, custom page sizes, DPI settings, and page breaks.
 - `QFontMetrics` bindings for text measurement, including line metrics, horizontal advance, and bounding rectangles.
 - `QFontMetricsF` bindings for subpixel text measurement and floating-point bounding rectangles.

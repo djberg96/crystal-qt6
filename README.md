@@ -110,7 +110,7 @@ app.run
 - `Qt6::Signal` for Crystal-side callback composition
 - `Qt6::QTimer` for timeout-driven work on the Qt event loop
 - `Qt6::Color`, `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common value types
-- `Qt6::QImage`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed and in-memory SVG loading
+- `Qt6::QImage`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed and in-memory SVG loading plus `QSvgWidget#renderer`
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
 - `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, and `Qt6::InputDialog` for standard dialogs

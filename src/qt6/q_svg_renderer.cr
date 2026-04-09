@@ -1,6 +1,11 @@
 module Qt6
   # Wraps `QSvgRenderer` for loading and drawing SVG content into a `QPainter`.
   class QSvgRenderer < NativeResource
+    # Wraps an existing native renderer handle without taking ownership.
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Loads an SVG document from disk.
     def initialize(file_name : String = "")
       super(LibQt6.qt6cr_qsvg_renderer_create(file_name.to_unsafe))

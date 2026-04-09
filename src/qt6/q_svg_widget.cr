@@ -38,6 +38,14 @@ module Qt6
       load_data(bytes)
     end
 
+    # Returns the widget's internal renderer.
+    #
+    # The returned wrapper is borrowed from the widget and remains valid only
+    # while the widget is alive.
+    def renderer : QSvgRenderer
+      QSvgRenderer.wrap(LibQt6.qt6cr_qsvg_widget_renderer(to_unsafe))
+    end
+
     # Returns the widget's preferred SVG-driven size.
     def size_hint : Size
       Size.from_native(LibQt6.qt6cr_qsvg_widget_size_hint(to_unsafe))

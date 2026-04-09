@@ -179,6 +179,7 @@ module Qt6
     fun qt6cr_qsvg_widget_create = qt6cr_qsvg_widget_create(parent : Handle, file_name : UInt8*) : Handle
     fun qt6cr_qsvg_widget_load = qt6cr_qsvg_widget_load(handle : Handle, file_name : UInt8*)
     fun qt6cr_qsvg_widget_load_data = qt6cr_qsvg_widget_load_data(handle : Handle, data : UInt8*, size : LibC::Int)
+    fun qt6cr_qsvg_widget_renderer = qt6cr_qsvg_widget_renderer(handle : Handle) : Handle
     fun qt6cr_qsvg_widget_size_hint = qt6cr_qsvg_widget_size_hint(handle : Handle) : SizeValue
 
     fun qt6cr_qpdf_writer_create = qt6cr_qpdf_writer_create(file_name : UInt8*) : Handle

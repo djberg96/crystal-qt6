@@ -185,6 +185,7 @@ void qt6cr_qsvg_renderer_render_element_with_bounds(qt6cr_handle_t handle, qt6cr
 qt6cr_handle_t qt6cr_qsvg_widget_create(qt6cr_handle_t parent, const char *file_name);
 void qt6cr_qsvg_widget_load(qt6cr_handle_t handle, const char *file_name);
 void qt6cr_qsvg_widget_load_data(qt6cr_handle_t handle, const unsigned char *data, int size);
+qt6cr_handle_t qt6cr_qsvg_widget_renderer(qt6cr_handle_t handle);
 qt6cr_size_t qt6cr_qsvg_widget_size_hint(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qpdf_writer_create(const char *file_name);
