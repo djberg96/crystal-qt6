@@ -4,13 +4,9 @@
 
 module Qt6
   {% if flag?(:darwin) %}
-    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++")]
-    @[Link(pkg_config: "Qt6Widgets")]
-    @[Link(pkg_config: "Qt6Svg")]
+    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lc++", pkg_config: "Qt6Widgets Qt6Svg")]
   {% else %}
-    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lstdc++")]
-    @[Link(pkg_config: "Qt6Widgets")]
-    @[Link(pkg_config: "Qt6Svg")]
+    @[Link(ldflags: "-L#{__DIR__}/../../ext/qt6cr/build -lqt6cr -lstdc++", pkg_config: "Qt6Widgets Qt6Svg")]
   {% end %}
   lib LibQt6
     alias Handle = Void*
