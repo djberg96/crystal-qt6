@@ -48,16 +48,24 @@ require "./qt6/form_layout"
 require "./qt6/v_box_layout"
 
 module Qt6
+  # Current shard version.
   VERSION = "0.1.0"
   @@application : Application?
   @@tracked_objects = [] of QObject
   @@shutdown_registered = false
 
+  # Creates or returns the shared `QApplication` wrapper for the process.
+  #
+  # The first call initializes Qt and registers the automatic shutdown hook.
   def self.application(args : Enumerable(String) = ARGV)
     register_shutdown_hook
     @@application ||= Application.new(args.to_a)
   end
 
+  # Releases tracked Qt objects and shuts down the shared application.
+  #
+  # Most applications can rely on the automatic `at_exit` hook, but this
+  # method is available when you want a deterministic shutdown point.
   def self.shutdown : Nil
     tracked_objects = @@tracked_objects.dup
     tracked_objects.reverse_each(&.release)
@@ -70,6 +78,8 @@ module Qt6
     @@application = nil
   end
 
+  # Builds a top-level `Widget`, applies a title and initial size, and yields
+  # it for configuration.
   def self.window(title : String, width : Int32 = 800, height : Int32 = 600, &)
     widget = Widget.new
     widget.window_title = title
@@ -78,6 +88,8 @@ module Qt6
     widget
   end
 
+  # Copies a native UTF-8 string into Crystal memory and releases the native
+  # allocation.
   def self.copy_and_release_string(pointer : UInt8*) : String
     return "" if pointer.null?
 

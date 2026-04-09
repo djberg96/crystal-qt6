@@ -1,4 +1,6 @@
 module Qt6
+  # A custom widget bridge that surfaces paint, resize, mouse, wheel, and key
+  # events into Crystal callbacks.
   class EventWidget < Widget
     @painted : Signal(PaintEvent) = Signal(PaintEvent).new
     @resized : Signal(ResizeEvent) = Signal(ResizeEvent).new
@@ -9,14 +11,22 @@ module Qt6
     @key_pressed : Signal(KeyEvent) = Signal(KeyEvent).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
+    # Signal emitted for paint events.
     getter painted : Signal(PaintEvent)
+    # Signal emitted for resize events.
     getter resized : Signal(ResizeEvent)
+    # Signal emitted for mouse press events.
     getter mouse_pressed : Signal(MouseEvent)
+    # Signal emitted for mouse move events.
     getter mouse_moved : Signal(MouseEvent)
+    # Signal emitted for mouse release events.
     getter mouse_released : Signal(MouseEvent)
+    # Signal emitted for wheel events.
     getter wheel_turned : Signal(WheelEvent)
+    # Signal emitted for key press events.
     getter key_pressed : Signal(KeyEvent)
 
+    # Creates a custom event-enabled widget.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_event_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
       @painted = Signal(PaintEvent).new
@@ -41,66 +51,79 @@ module Qt6
       super(handle, owned)
     end
 
+    # Registers a block for paint events.
     def on_paint(&block : PaintEvent ->) : self
       @painted.connect { |event| block.call(event) }
       self
     end
 
+    # Registers a block for resize events.
     def on_resize(&block : ResizeEvent ->) : self
       @resized.connect { |event| block.call(event) }
       self
     end
 
+    # Registers a block for mouse press events.
     def on_mouse_press(&block : MouseEvent ->) : self
       @mouse_pressed.connect { |event| block.call(event) }
       self
     end
 
+    # Registers a block for mouse move events.
     def on_mouse_move(&block : MouseEvent ->) : self
       @mouse_moved.connect { |event| block.call(event) }
       self
     end
 
+    # Registers a block for mouse release events.
     def on_mouse_release(&block : MouseEvent ->) : self
       @mouse_released.connect { |event| block.call(event) }
       self
     end
 
+    # Registers a block for wheel events.
     def on_wheel(&block : WheelEvent ->) : self
       @wheel_turned.connect { |event| block.call(event) }
       self
     end
 
+    # Registers a block for key press events.
     def on_key_press(&block : KeyEvent ->) : self
       @key_pressed.connect { |event| block.call(event) }
       self
     end
 
+    # Forces an immediate repaint of the widget.
     def repaint_now : self
       LibQt6.qt6cr_event_widget_repaint(to_unsafe)
       self
     end
 
+    # Sends a synthetic mouse-press event to the widget.
     def simulate_mouse_press(position : PointF, button : Int32 = 1, buttons : Int32 = button, modifiers : Int32 = 0) : self
       LibQt6.qt6cr_event_widget_send_mouse_press(to_unsafe, position.to_native, button, buttons, modifiers)
       self
     end
 
+    # Sends a synthetic mouse-move event to the widget.
     def simulate_mouse_move(position : PointF, button : Int32 = 0, buttons : Int32 = 0, modifiers : Int32 = 0) : self
       LibQt6.qt6cr_event_widget_send_mouse_move(to_unsafe, position.to_native, button, buttons, modifiers)
       self
     end
 
+    # Sends a synthetic mouse-release event to the widget.
     def simulate_mouse_release(position : PointF, button : Int32 = 1, buttons : Int32 = 0, modifiers : Int32 = 0) : self
       LibQt6.qt6cr_event_widget_send_mouse_release(to_unsafe, position.to_native, button, buttons, modifiers)
       self
     end
 
+    # Sends a synthetic wheel event to the widget.
     def simulate_wheel(position : PointF, pixel_delta : PointF = PointF.new(0.0, 0.0), angle_delta : PointF = PointF.new(0.0, 120.0), buttons : Int32 = 0, modifiers : Int32 = 0) : self
       LibQt6.qt6cr_event_widget_send_wheel(to_unsafe, position.to_native, pixel_delta.to_native, angle_delta.to_native, buttons, modifiers)
       self
     end
 
+    # Sends a synthetic key-press event to the widget.
     def simulate_key_press(key : Int32, modifiers : Int32 = 0, auto_repeat : Bool = false, count : Int32 = 1) : self
       LibQt6.qt6cr_event_widget_send_key_press(to_unsafe, key, modifiers, auto_repeat, count)
       self
