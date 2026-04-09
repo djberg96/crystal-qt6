@@ -86,6 +86,28 @@ module Qt6
     fun qt6cr_dialog_on_accepted = qt6cr_dialog_on_accepted(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_dialog_on_rejected = qt6cr_dialog_on_rejected(handle : Handle, callback : (Handle ->), userdata : Handle)
 
+    fun qt6cr_message_box_create = qt6cr_message_box_create(parent : Handle) : Handle
+    fun qt6cr_message_box_set_icon = qt6cr_message_box_set_icon(handle : Handle, icon : LibC::Int)
+    fun qt6cr_message_box_icon = qt6cr_message_box_icon(handle : Handle) : LibC::Int
+    fun qt6cr_message_box_set_text = qt6cr_message_box_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_message_box_text = qt6cr_message_box_text(handle : Handle) : UInt8*
+    fun qt6cr_message_box_set_informative_text = qt6cr_message_box_set_informative_text(handle : Handle, text : UInt8*)
+    fun qt6cr_message_box_informative_text = qt6cr_message_box_informative_text(handle : Handle) : UInt8*
+    fun qt6cr_message_box_set_standard_buttons = qt6cr_message_box_set_standard_buttons(handle : Handle, buttons : LibC::Int)
+    fun qt6cr_message_box_standard_buttons = qt6cr_message_box_standard_buttons(handle : Handle) : LibC::Int
+
+    fun qt6cr_file_dialog_create = qt6cr_file_dialog_create(parent : Handle, directory : UInt8*, filter : UInt8*) : Handle
+    fun qt6cr_file_dialog_set_accept_mode = qt6cr_file_dialog_set_accept_mode(handle : Handle, accept_mode : LibC::Int)
+    fun qt6cr_file_dialog_accept_mode = qt6cr_file_dialog_accept_mode(handle : Handle) : LibC::Int
+    fun qt6cr_file_dialog_set_file_mode = qt6cr_file_dialog_set_file_mode(handle : Handle, file_mode : LibC::Int)
+    fun qt6cr_file_dialog_file_mode = qt6cr_file_dialog_file_mode(handle : Handle) : LibC::Int
+    fun qt6cr_file_dialog_set_directory = qt6cr_file_dialog_set_directory(handle : Handle, directory : UInt8*)
+    fun qt6cr_file_dialog_directory = qt6cr_file_dialog_directory(handle : Handle) : UInt8*
+    fun qt6cr_file_dialog_set_name_filter = qt6cr_file_dialog_set_name_filter(handle : Handle, filter : UInt8*)
+    fun qt6cr_file_dialog_name_filter = qt6cr_file_dialog_name_filter(handle : Handle) : UInt8*
+    fun qt6cr_file_dialog_select_file = qt6cr_file_dialog_select_file(handle : Handle, path : UInt8*)
+    fun qt6cr_file_dialog_selected_file = qt6cr_file_dialog_selected_file(handle : Handle) : UInt8*
+
     fun qt6cr_dock_widget_create = qt6cr_dock_widget_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_dock_widget_set_widget = qt6cr_dock_widget_set_widget(handle : Handle, widget : Handle)
 

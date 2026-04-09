@@ -64,7 +64,7 @@ Example highlights:
 
 - `examples/hello_world.cr`: smallest possible window with a label and button
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
-- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, dialogs, and common controls
+- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, standard dialogs, and common controls
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
 
 ## Continuous Integration
@@ -110,6 +110,7 @@ app.run
 - `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common geometry values
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
+- `Qt6::MessageBox` and `Qt6::FileDialog` for standard dialogs
 - `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
 - `Qt6::KeySequence` and `QAction` shortcuts for keyboard-driven commands
 - `Qt6::EventWidget` for custom widget event hooks
@@ -123,6 +124,7 @@ app.run
 The specs cover:
 
 - process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
+- standard dialog configuration for `QMessageBox` and `QFileDialog`
 - `QObject` destruction signals and `QTimer` timeout delivery
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls

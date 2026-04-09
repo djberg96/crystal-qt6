@@ -91,6 +91,28 @@ int qt6cr_dialog_result(qt6cr_handle_t handle);
 void qt6cr_dialog_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_dialog_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_message_box_create(qt6cr_handle_t parent);
+void qt6cr_message_box_set_icon(qt6cr_handle_t handle, int icon);
+int qt6cr_message_box_icon(qt6cr_handle_t handle);
+void qt6cr_message_box_set_text(qt6cr_handle_t handle, const char *text);
+char *qt6cr_message_box_text(qt6cr_handle_t handle);
+void qt6cr_message_box_set_informative_text(qt6cr_handle_t handle, const char *text);
+char *qt6cr_message_box_informative_text(qt6cr_handle_t handle);
+void qt6cr_message_box_set_standard_buttons(qt6cr_handle_t handle, int buttons);
+int qt6cr_message_box_standard_buttons(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_file_dialog_create(qt6cr_handle_t parent, const char *directory, const char *filter);
+void qt6cr_file_dialog_set_accept_mode(qt6cr_handle_t handle, int accept_mode);
+int qt6cr_file_dialog_accept_mode(qt6cr_handle_t handle);
+void qt6cr_file_dialog_set_file_mode(qt6cr_handle_t handle, int file_mode);
+int qt6cr_file_dialog_file_mode(qt6cr_handle_t handle);
+void qt6cr_file_dialog_set_directory(qt6cr_handle_t handle, const char *directory);
+char *qt6cr_file_dialog_directory(qt6cr_handle_t handle);
+void qt6cr_file_dialog_set_name_filter(qt6cr_handle_t handle, const char *filter);
+char *qt6cr_file_dialog_name_filter(qt6cr_handle_t handle);
+void qt6cr_file_dialog_select_file(qt6cr_handle_t handle, const char *path);
+char *qt6cr_file_dialog_selected_file(qt6cr_handle_t handle);
+
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title);
 void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 

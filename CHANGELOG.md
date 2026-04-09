@@ -15,6 +15,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - `EventWidget`, a custom `QWidget` bridge with paint, resize, mouse, wheel, and key event hooks.
 - Main-window shell bindings for `QMainWindow`, `QDialog`, `QDockWidget`, `QAction`, `QMenuBar`, `QMenu`, `QToolBar`, and `QStatusBar`.
 - `QActionGroup` and `QKeySequence` support, including `QAction` shortcuts and checkable action state.
+- Standard dialog bindings for `QMessageBox` and `QFileDialog`, including Crystal enums for dialog configuration.
 - Common control bindings for `QLineEdit`, `QCheckBox`, and `QComboBox`.
 - Expanded specs covering timers, geometry accessors, and custom widget event delivery.
 - Expanded integration specs covering reduced application shells with menus, toolbars, docks, dialogs, and control callbacks.
