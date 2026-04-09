@@ -1,6 +1,43 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "configures color and input dialogs" do
+    app
+    window = Qt6::MainWindow.new
+    color_dialog = Qt6::ColorDialog.new(window)
+    input_dialog = Qt6::InputDialog.new(window)
+
+    color_dialog.window_title = "Pick Accent Color"
+    color_dialog.current_color = Qt6::Color.new(32, 96, 192, 180)
+    color_dialog.show_alpha_channel = true
+
+    input_dialog.window_title = "Layer Details"
+    input_dialog.input_mode = Qt6::InputDialogInputMode::Text
+    input_dialog.label_text = "Layer name"
+    input_dialog.text_value = "Terrain"
+    input_dialog.input_mode = Qt6::InputDialogInputMode::Int
+    input_dialog.int_range = 1..12
+    input_dialog.int_value = 4
+    input_dialog.input_mode = Qt6::InputDialogInputMode::Double
+    input_dialog.double_range = 0.5..4.0
+    input_dialog.double_value = 1.5
+
+    color_dialog.window_title.should eq("Pick Accent Color")
+    color_dialog.current_color.should eq(Qt6::Color.new(32, 96, 192, 180))
+    color_dialog.show_alpha_channel?.should be_true
+
+    input_dialog.window_title.should eq("Layer Details")
+    input_dialog.label_text.should eq("Layer name")
+    input_dialog.text_value.should eq("Terrain")
+    input_dialog.int_minimum.should eq(1)
+    input_dialog.int_maximum.should eq(12)
+    input_dialog.int_value.should eq(4)
+    input_dialog.double_minimum.should eq(0.5)
+    input_dialog.double_maximum.should eq(4.0)
+    input_dialog.double_value.should eq(1.5)
+    window.release
+  end
+
   it "configures standard message and file dialogs" do
     app
     window = Qt6::MainWindow.new

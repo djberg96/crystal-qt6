@@ -27,10 +27,21 @@ open_dialog.window_title = "Open Map"
 open_dialog.accept_mode = Qt6::FileDialogAcceptMode::Open
 open_dialog.file_mode = Qt6::FileDialogFileMode::ExistingFile
 
+color_dialog = Qt6::ColorDialog.new(main)
+color_dialog.window_title = "Pick Accent Color"
+color_dialog.current_color = Qt6::Color.new(32, 96, 192)
+color_dialog.show_alpha_channel = true
+
+rename_dialog = Qt6::InputDialog.new(main)
+rename_dialog.window_title = "Rename Layer"
+rename_dialog.input_mode = Qt6::InputDialogInputMode::Text
+rename_dialog.label_text = "Layer name"
+
 layer_name = Qt6::LineEdit.new("Terrain")
 snap_check = Qt6::CheckBox.new("Enable snapping")
 layer_kind = Qt6::ComboBox.new
 layer_kind << "Hexes" << "Terrain" << "Units"
+rename_dialog.text_value = layer_name.text
 
 apply_changes = -> do
   canvas_label.text = "#{layer_kind.current_text}: #{layer_name.text}"
@@ -50,6 +61,25 @@ open_action.on_triggered do
   if open_dialog.exec == Qt6::DialogCode::Accepted
     selected_file = open_dialog.selected_file
     status_bar.show_message(selected_file.empty? ? "No file selected" : "Opened #{File.basename(selected_file)}")
+  end
+end
+
+rename_action = Qt6::Action.new("Rename Layer", main)
+rename_action.shortcut = "Ctrl+R"
+rename_action.on_triggered do
+  rename_dialog.text_value = layer_name.text
+  if rename_dialog.exec == Qt6::DialogCode::Accepted
+    layer_name.text = rename_dialog.text_value
+    apply_changes.call
+  end
+end
+
+color_action = Qt6::Action.new("Accent Color", main)
+color_action.shortcut = "Ctrl+Shift+C"
+color_action.on_triggered do
+  if color_dialog.exec == Qt6::DialogCode::Accepted
+    color = color_dialog.current_color
+    status_bar.show_message("Accent color #{color.red},#{color.green},#{color.blue},#{color.alpha}")
   end
 end
 
@@ -81,11 +111,15 @@ file_menu << open_action
 file_menu << about_action
 file_menu.add_separator
 file_menu << quit_action
+tools_menu << rename_action
+tools_menu << color_action
 tools_menu << apply_action
 
 toolbar = Qt6::ToolBar.new("Main", main)
 toolbar << open_action
 toolbar << about_action
+toolbar << rename_action
+toolbar << color_action
 toolbar << apply_action
 toolbar << edit_mode
 toolbar << preview_mode

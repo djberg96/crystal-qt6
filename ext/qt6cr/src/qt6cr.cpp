@@ -8,11 +8,14 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QCheckBox>
+#include <QColor>
+#include <QColorDialog>
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QDialog>
 #include <QDockWidget>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
@@ -57,6 +60,7 @@ qt6cr_rectf_t to_rectf(const QRectF &rect);
 qt6cr_mouse_event_t to_mouse_event(QMouseEvent *event);
 qt6cr_wheel_event_t to_wheel_event(QWheelEvent *event);
 qt6cr_key_event_t to_key_event(QKeyEvent *event);
+qt6cr_color_t to_color(const QColor &color);
 
 class EventWidget final : public QWidget {
  public:
@@ -178,6 +182,14 @@ QFileDialog *as_file_dialog(qt6cr_handle_t handle) {
   return static_cast<QFileDialog *>(handle);
 }
 
+QColorDialog *as_color_dialog(qt6cr_handle_t handle) {
+  return static_cast<QColorDialog *>(handle);
+}
+
+QInputDialog *as_input_dialog(qt6cr_handle_t handle) {
+  return static_cast<QInputDialog *>(handle);
+}
+
 QDockWidget *as_dock_widget(qt6cr_handle_t handle) {
   return static_cast<QDockWidget *>(handle);
 }
@@ -272,6 +284,10 @@ qt6cr_wheel_event_t to_wheel_event(QWheelEvent *event) {
 
 qt6cr_key_event_t to_key_event(QKeyEvent *event) {
   return qt6cr_key_event_t{event->key(), static_cast<int>(event->modifiers()), event->isAutoRepeat(), event->count()};
+}
+
+qt6cr_color_t to_color(const QColor &color) {
+  return qt6cr_color_t{color.red(), color.green(), color.blue(), color.alpha()};
 }
 
 void send_mouse_event(QWidget *widget, QEvent::Type type, qt6cr_pointf_t position, int button, int buttons, int modifiers) {
@@ -648,6 +664,141 @@ void qt6cr_file_dialog_select_file(qt6cr_handle_t handle, const char *path) {
 char *qt6cr_file_dialog_selected_file(qt6cr_handle_t handle) {
   auto *file_dialog = as_file_dialog(handle);
   return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->selectedFiles().value(0));
+}
+
+qt6cr_handle_t qt6cr_color_dialog_create(qt6cr_handle_t parent) {
+  return new QColorDialog(as_widget(parent));
+}
+
+void qt6cr_color_dialog_set_current_color(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog != nullptr) {
+    color_dialog->setCurrentColor(QColor(color.red, color.green, color.blue, color.alpha));
+  }
+}
+
+qt6cr_color_t qt6cr_color_dialog_current_color(qt6cr_handle_t handle) {
+  auto *color_dialog = as_color_dialog(handle);
+  return color_dialog == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(color_dialog->currentColor());
+}
+
+void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog != nullptr) {
+    color_dialog->setOption(QColorDialog::ShowAlphaChannel, value);
+  }
+}
+
+bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle) {
+  auto *color_dialog = as_color_dialog(handle);
+  return color_dialog != nullptr && color_dialog->testOption(QColorDialog::ShowAlphaChannel);
+}
+
+qt6cr_handle_t qt6cr_input_dialog_create(qt6cr_handle_t parent) {
+  return new QInputDialog(as_widget(parent));
+}
+
+void qt6cr_input_dialog_set_input_mode(qt6cr_handle_t handle, int input_mode) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setInputMode(static_cast<QInputDialog::InputMode>(input_mode));
+  }
+}
+
+int qt6cr_input_dialog_input_mode(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : static_cast<int>(input_dialog->inputMode());
+}
+
+void qt6cr_input_dialog_set_label_text(qt6cr_handle_t handle, const char *text) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setLabelText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_input_dialog_label_text(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? duplicate_string("") : duplicate_string(input_dialog->labelText());
+}
+
+void qt6cr_input_dialog_set_text_value(qt6cr_handle_t handle, const char *text) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setTextValue(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_input_dialog_text_value(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? duplicate_string("") : duplicate_string(input_dialog->textValue());
+}
+
+void qt6cr_input_dialog_set_int_value(qt6cr_handle_t handle, int value) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setIntValue(value);
+  }
+}
+
+int qt6cr_input_dialog_int_value(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : input_dialog->intValue();
+}
+
+void qt6cr_input_dialog_set_int_range(qt6cr_handle_t handle, int minimum, int maximum) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setIntRange(minimum, maximum);
+  }
+}
+
+int qt6cr_input_dialog_int_minimum(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : input_dialog->intMinimum();
+}
+
+int qt6cr_input_dialog_int_maximum(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : input_dialog->intMaximum();
+}
+
+void qt6cr_input_dialog_set_double_value(qt6cr_handle_t handle, double value) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setDoubleValue(value);
+  }
+}
+
+double qt6cr_input_dialog_double_value(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0.0 : input_dialog->doubleValue();
+}
+
+void qt6cr_input_dialog_set_double_range(qt6cr_handle_t handle, double minimum, double maximum) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setDoubleRange(minimum, maximum);
+  }
+}
+
+double qt6cr_input_dialog_double_minimum(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0.0 : input_dialog->doubleMinimum();
+}
+
+double qt6cr_input_dialog_double_maximum(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0.0 : input_dialog->doubleMaximum();
 }
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title) {
