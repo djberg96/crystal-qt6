@@ -35,7 +35,9 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPageSize>
 #include <QPen>
+#include <QPdfWriter>
 #include <QPixmap>
 #include <QPushButton>
 #include <QKeySequence>
@@ -218,6 +220,10 @@ QPixmap *as_qpixmap(qt6cr_handle_t handle) {
 
 QSvgGenerator *as_qsvg_generator(qt6cr_handle_t handle) {
   return static_cast<QSvgGenerator *>(handle);
+}
+
+QPdfWriter *as_qpdf_writer(qt6cr_handle_t handle) {
+  return static_cast<QPdfWriter *>(handle);
 }
 
 QPen *as_qpen(qt6cr_handle_t handle) {
@@ -1008,6 +1014,56 @@ void qt6cr_qsvg_generator_set_resolution(qt6cr_handle_t handle, int resolution) 
   }
 }
 
+qt6cr_handle_t qt6cr_qpdf_writer_create(const char *file_name) {
+  return new QPdfWriter(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+void qt6cr_qpdf_writer_destroy(qt6cr_handle_t handle) {
+  delete as_qpdf_writer(handle);
+}
+
+void qt6cr_qpdf_writer_set_title(qt6cr_handle_t handle, const char *title) {
+  auto *writer = as_qpdf_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setTitle(QString::fromUtf8(title == nullptr ? "" : title));
+  }
+}
+
+void qt6cr_qpdf_writer_set_creator(qt6cr_handle_t handle, const char *creator) {
+  auto *writer = as_qpdf_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setCreator(QString::fromUtf8(creator == nullptr ? "" : creator));
+  }
+}
+
+int qt6cr_qpdf_writer_resolution(qt6cr_handle_t handle) {
+  auto *writer = as_qpdf_writer(handle);
+  return writer == nullptr ? 0 : writer->resolution();
+}
+
+void qt6cr_qpdf_writer_set_resolution(qt6cr_handle_t handle, int resolution) {
+  auto *writer = as_qpdf_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setResolution(resolution);
+  }
+}
+
+void qt6cr_qpdf_writer_set_page_size_points(qt6cr_handle_t handle, int width, int height) {
+  auto *writer = as_qpdf_writer(handle);
+
+  if (writer != nullptr && width > 0 && height > 0) {
+    writer->setPageSize(QPageSize(QSizeF(width, height), QPageSize::Point, QString(), QPageSize::ExactMatch));
+  }
+}
+
+bool qt6cr_qpdf_writer_new_page(qt6cr_handle_t handle) {
+  auto *writer = as_qpdf_writer(handle);
+  return writer != nullptr && writer->newPage();
+}
+
 qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width) {
   auto pen = QPen(from_color(color));
   pen.setWidthF(width);
@@ -1338,6 +1394,11 @@ qt6cr_handle_t qt6cr_qpainter_create_for_pixmap(qt6cr_handle_t pixmap) {
 
 qt6cr_handle_t qt6cr_qpainter_create_for_svg_generator(qt6cr_handle_t svg_generator) {
   auto *target = as_qsvg_generator(svg_generator);
+  return target == nullptr ? nullptr : new QPainter(target);
+}
+
+qt6cr_handle_t qt6cr_qpainter_create_for_pdf_writer(qt6cr_handle_t pdf_writer) {
+  auto *target = as_qpdf_writer(pdf_writer);
   return target == nullptr ? nullptr : new QPainter(target);
 }
 

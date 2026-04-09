@@ -1,5 +1,5 @@
 module Qt6
-  # Wraps `QPainter` for scoped drawing onto images and pixmaps.
+  # Wraps `QPainter` for scoped drawing onto raster and export paint devices.
   class QPainter < NativeResource
     # Wraps an existing native painter handle.
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
@@ -19,6 +19,11 @@ module Qt6
     # Begins painting on the given SVG generator.
     def initialize(target : QSvgGenerator)
       super(LibQt6.qt6cr_qpainter_create_for_svg_generator(target.to_unsafe))
+    end
+
+    # Begins painting on the given PDF writer.
+    def initialize(target : QPdfWriter)
+      super(LibQt6.qt6cr_qpainter_create_for_pdf_writer(target.to_unsafe))
     end
 
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
@@ -50,6 +55,17 @@ module Qt6
     # Opens a painter for an SVG generator for the duration of the block and
     # releases it afterward.
     def self.paint(target : QSvgGenerator, &block)
+      painter = new(target)
+      begin
+        yield painter
+      ensure
+        painter.release
+      end
+    end
+
+    # Opens a painter for a PDF writer for the duration of the block and
+    # releases it afterward.
+    def self.paint(target : QPdfWriter, &block)
       painter = new(target)
       begin
         yield painter
