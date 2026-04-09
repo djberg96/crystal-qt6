@@ -1,6 +1,57 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "provides convenience helpers for common dialogs" do
+    app
+    window = Qt6::MainWindow.new
+
+    message_result = Qt6::MessageBox.information(window, title: "About", text: "Helper test") do |dialog|
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
+    selected_color = Qt6::ColorDialog.get_color(window, current_color: Qt6::Color.new(8, 16, 32, 64), title: "Accent", show_alpha_channel: true) do |dialog|
+      dialog.current_color = Qt6::Color.new(32, 64, 96, 128)
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
+    text_value = Qt6::InputDialog.get_text(window, title: "Rename", label: "Layer", value: "Terrain") do |dialog|
+      dialog.text_value = "Roads"
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
+    int_value = Qt6::InputDialog.get_int(window, title: "Count", label: "Columns", value: 3, minimum: 1, maximum: 12) do |dialog|
+      dialog.int_value = 7
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
+    double_value = Qt6::InputDialog.get_double(window, title: "Scale", label: "Zoom", value: 1.0, minimum: 0.5, maximum: 4.0) do |dialog|
+      dialog.double_value = 1.25
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
+    message_result.should eq(Qt6::MessageBoxButton::Ok)
+    selected_color.should eq(Qt6::Color.new(32, 64, 96, 128))
+    text_value.should eq("Roads")
+    int_value.should eq(7)
+    double_value.should eq(1.25)
+    window.release
+  end
+
   it "configures color and input dialogs" do
     app
     window = Qt6::MainWindow.new

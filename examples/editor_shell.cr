@@ -15,33 +15,16 @@ status_bar.show_message("Ready")
 file_menu = main.menu_bar.add_menu("File")
 tools_menu = main.menu_bar.add_menu("Tools")
 
-about_dialog = Qt6::MessageBox.new(main)
-about_dialog.window_title = "About crystal-qt6"
-about_dialog.icon = Qt6::MessageBoxIcon::Information
-about_dialog.text = "This example uses QMainWindow, menus, actions, docks, standard dialogs, and common controls."
-about_dialog.informative_text = "Try Ctrl+O for QFileDialog or Ctrl+, for this message box."
-about_dialog.standard_buttons = Qt6::MessageBoxButton::Ok
-
 open_dialog = Qt6::FileDialog.new(main, Dir.current, "Maps (*.map *.json);;All Files (*)")
 open_dialog.window_title = "Open Map"
 open_dialog.accept_mode = Qt6::FileDialogAcceptMode::Open
 open_dialog.file_mode = Qt6::FileDialogFileMode::ExistingFile
 
-color_dialog = Qt6::ColorDialog.new(main)
-color_dialog.window_title = "Pick Accent Color"
-color_dialog.current_color = Qt6::Color.new(32, 96, 192)
-color_dialog.show_alpha_channel = true
-
-rename_dialog = Qt6::InputDialog.new(main)
-rename_dialog.window_title = "Rename Layer"
-rename_dialog.input_mode = Qt6::InputDialogInputMode::Text
-rename_dialog.label_text = "Layer name"
-
 layer_name = Qt6::LineEdit.new("Terrain")
 snap_check = Qt6::CheckBox.new("Enable snapping")
 layer_kind = Qt6::ComboBox.new
 layer_kind << "Hexes" << "Terrain" << "Units"
-rename_dialog.text_value = layer_name.text
+accent_color = Qt6::Color.new(32, 96, 192)
 
 apply_changes = -> do
   canvas_label.text = "#{layer_kind.current_text}: #{layer_name.text}"
@@ -52,7 +35,12 @@ end
 about_action = Qt6::Action.new("About", main)
 about_action.shortcut = "Ctrl+,"
 about_action.on_triggered do
-  about_dialog.exec
+  Qt6::MessageBox.information(
+    main,
+    title: "About crystal-qt6",
+    text: "This example uses QMainWindow, menus, actions, docks, standard dialogs, and common controls.",
+    informative_text: "Try Ctrl+O for QFileDialog, Ctrl+R for the input dialog, or Ctrl+Shift+C for the color dialog."
+  )
 end
 
 open_action = Qt6::Action.new("Open", main)
@@ -67,9 +55,8 @@ end
 rename_action = Qt6::Action.new("Rename Layer", main)
 rename_action.shortcut = "Ctrl+R"
 rename_action.on_triggered do
-  rename_dialog.text_value = layer_name.text
-  if rename_dialog.exec == Qt6::DialogCode::Accepted
-    layer_name.text = rename_dialog.text_value
+  if value = Qt6::InputDialog.get_text(main, title: "Rename Layer", label: "Layer name", value: layer_name.text)
+    layer_name.text = value
     apply_changes.call
   end
 end
@@ -77,8 +64,8 @@ end
 color_action = Qt6::Action.new("Accent Color", main)
 color_action.shortcut = "Ctrl+Shift+C"
 color_action.on_triggered do
-  if color_dialog.exec == Qt6::DialogCode::Accepted
-    color = color_dialog.current_color
+  if color = Qt6::ColorDialog.get_color(main, current_color: accent_color, title: "Pick Accent Color", show_alpha_channel: true)
+    accent_color = color
     status_bar.show_message("Accent color #{color.red},#{color.green},#{color.blue},#{color.alpha}")
   end
 end
