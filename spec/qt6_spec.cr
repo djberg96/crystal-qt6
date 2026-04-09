@@ -86,6 +86,7 @@ describe Qt6 do
     end
 
     selected_color = Qt6::ColorDialog.get_color(window, current_color: Qt6::Color.new(8, 16, 32, 64), title: "Accent", show_alpha_channel: true) do |dialog|
+      dialog.native_dialog = false
       dialog.current_color = Qt6::Color.new(32, 64, 96, 128)
       timer = Qt6::QTimer.new(dialog)
       timer.single_shot = true
@@ -132,8 +133,9 @@ describe Qt6 do
     input_dialog = Qt6::InputDialog.new(window)
 
     color_dialog.window_title = "Pick Accent Color"
-    color_dialog.current_color = Qt6::Color.new(32, 96, 192, 180)
+    color_dialog.native_dialog = false
     color_dialog.show_alpha_channel = true
+    color_dialog.current_color = Qt6::Color.new(32, 96, 192, 180)
 
     input_dialog.window_title = "Layer Details"
     input_dialog.input_mode = Qt6::InputDialogInputMode::Text
@@ -147,6 +149,7 @@ describe Qt6 do
     input_dialog.double_value = 1.5
 
     color_dialog.window_title.should eq("Pick Accent Color")
+    color_dialog.native_dialog?.should be_false
     color_dialog.current_color.should eq(Qt6::Color.new(32, 96, 192, 180))
     color_dialog.show_alpha_channel?.should be_true
 

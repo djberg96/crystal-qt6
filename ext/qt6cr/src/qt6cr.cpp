@@ -784,6 +784,19 @@ qt6cr_color_t qt6cr_color_dialog_current_color(qt6cr_handle_t handle) {
   return color_dialog == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(color_dialog->currentColor());
 }
 
+void qt6cr_color_dialog_set_native_dialog(qt6cr_handle_t handle, bool value) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog != nullptr) {
+    color_dialog->setOption(QColorDialog::DontUseNativeDialog, !value);
+  }
+}
+
+bool qt6cr_color_dialog_native_dialog(qt6cr_handle_t handle) {
+  auto *color_dialog = as_color_dialog(handle);
+  return color_dialog != nullptr && !color_dialog->testOption(QColorDialog::DontUseNativeDialog);
+}
+
 void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value) {
   auto *color_dialog = as_color_dialog(handle);
 

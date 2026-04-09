@@ -126,6 +126,8 @@ char *qt6cr_file_dialog_selected_file(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_color_dialog_create(qt6cr_handle_t parent);
 void qt6cr_color_dialog_set_current_color(qt6cr_handle_t handle, qt6cr_color_t color);
 qt6cr_color_t qt6cr_color_dialog_current_color(qt6cr_handle_t handle);
+void qt6cr_color_dialog_set_native_dialog(qt6cr_handle_t handle, bool value);
+bool qt6cr_color_dialog_native_dialog(qt6cr_handle_t handle);
 void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value);
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle);
 

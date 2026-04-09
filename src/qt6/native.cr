@@ -120,6 +120,8 @@ module Qt6
     fun qt6cr_color_dialog_create = qt6cr_color_dialog_create(parent : Handle) : Handle
     fun qt6cr_color_dialog_set_current_color = qt6cr_color_dialog_set_current_color(handle : Handle, color : ColorValue)
     fun qt6cr_color_dialog_current_color = qt6cr_color_dialog_current_color(handle : Handle) : ColorValue
+    fun qt6cr_color_dialog_set_native_dialog = qt6cr_color_dialog_set_native_dialog(handle : Handle, value : Bool)
+    fun qt6cr_color_dialog_native_dialog = qt6cr_color_dialog_native_dialog(handle : Handle) : Bool
     fun qt6cr_color_dialog_set_show_alpha_channel = qt6cr_color_dialog_set_show_alpha_channel(handle : Handle, value : Bool)
     fun qt6cr_color_dialog_show_alpha_channel = qt6cr_color_dialog_show_alpha_channel(handle : Handle) : Bool
 
