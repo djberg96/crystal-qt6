@@ -97,8 +97,19 @@ void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_action_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_action_text(qt6cr_handle_t handle);
+void qt6cr_action_set_shortcut(qt6cr_handle_t handle, const char *shortcut);
+char *qt6cr_action_shortcut(qt6cr_handle_t handle);
+void qt6cr_action_set_checkable(qt6cr_handle_t handle, bool value);
+bool qt6cr_action_is_checkable(qt6cr_handle_t handle);
+void qt6cr_action_set_checked(qt6cr_handle_t handle, bool value);
+bool qt6cr_action_is_checked(qt6cr_handle_t handle);
 void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_action_trigger(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_action_group_create(qt6cr_handle_t parent);
+void qt6cr_action_group_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+void qt6cr_action_group_set_exclusive(qt6cr_handle_t handle, bool value);
+bool qt6cr_action_group_is_exclusive(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title);
 

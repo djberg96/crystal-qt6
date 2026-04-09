@@ -64,7 +64,7 @@ Example highlights:
 
 - `examples/hello_world.cr`: smallest possible window with a label and button
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
-- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, toolbars, docks, dialogs, and common controls
+- `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, dialogs, and common controls
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
 
 ## Continuous Integration
@@ -110,7 +110,8 @@ app.run
 - `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common geometry values
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
-- `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, and `Qt6::Action` for shell composition
+- `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
+- `Qt6::KeySequence` and `QAction` shortcuts for keyboard-driven commands
 - `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks

@@ -36,19 +36,34 @@ apply_changes = -> do
 end
 
 about_action = Qt6::Action.new("About", main)
+about_action.shortcut = "Ctrl+,"
 about_action.on_triggered do
   about_dialog.exec
 end
 
 apply_action = Qt6::Action.new("Apply", main)
+apply_action.shortcut = Qt6::KeySequence.new("Ctrl+Return")
 apply_action.on_triggered do
   apply_changes.call
 end
 
 quit_action = Qt6::Action.new("Quit", main)
+quit_action.shortcut = "Ctrl+Q"
 quit_action.on_triggered do
   app.quit
 end
+
+mode_group = Qt6::ActionGroup.new(main)
+mode_group.exclusive = true
+edit_mode = Qt6::Action.new("Edit Mode", main)
+preview_mode = Qt6::Action.new("Preview Mode", main)
+edit_mode.checkable = true
+preview_mode.checkable = true
+edit_mode.checked = true
+mode_group << edit_mode
+mode_group << preview_mode
+tools_menu << edit_mode
+tools_menu << preview_mode
 
 file_menu << about_action
 file_menu.add_separator
@@ -58,6 +73,8 @@ tools_menu << apply_action
 toolbar = Qt6::ToolBar.new("Main", main)
 toolbar << about_action
 toolbar << apply_action
+toolbar << edit_mode
+toolbar << preview_mode
 main.add_tool_bar(toolbar)
 
 snap_check.on_toggled do |checked|
