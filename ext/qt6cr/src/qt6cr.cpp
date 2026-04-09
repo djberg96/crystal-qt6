@@ -81,6 +81,8 @@ class EventWidget final : public QWidget {
 
   qt6cr_paint_callback_t paint_callback = nullptr;
   void *paint_userdata = nullptr;
+  qt6cr_paint_with_painter_callback_t paint_with_painter_callback = nullptr;
+  void *paint_with_painter_userdata = nullptr;
   qt6cr_resize_callback_t resize_callback = nullptr;
   void *resize_userdata = nullptr;
   qt6cr_mouse_callback_t mouse_press_callback = nullptr;
@@ -96,11 +98,18 @@ class EventWidget final : public QWidget {
 
  protected:
   void paintEvent(QPaintEvent *event) override {
+    const auto rect = to_rectf(event->rect());
+
     if (paint_callback != nullptr) {
-      paint_callback(paint_userdata, to_rectf(event->rect()));
+      paint_callback(paint_userdata, rect);
     }
 
     QWidget::paintEvent(event);
+
+    if (paint_with_painter_callback != nullptr) {
+      QPainter painter(this);
+      paint_with_painter_callback(paint_with_painter_userdata, &painter, rect);
+    }
   }
 
   void resizeEvent(QResizeEvent *event) override {
@@ -508,6 +517,11 @@ void qt6cr_widget_update(qt6cr_handle_t handle) {
   if (widget != nullptr) {
     widget->update();
   }
+}
+
+qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QPixmap(widget->grab());
 }
 
 qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent) {
@@ -1433,6 +1447,15 @@ void qt6cr_event_widget_on_paint(qt6cr_handle_t handle, qt6cr_paint_callback_t c
   if (widget != nullptr) {
     widget->paint_callback = callback;
     widget->paint_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_paint_with_painter(qt6cr_handle_t handle, qt6cr_paint_with_painter_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->paint_with_painter_callback = callback;
+    widget->paint_with_painter_userdata = userdata;
   }
 }
 

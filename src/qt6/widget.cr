@@ -60,6 +60,11 @@ module Qt6
       self
     end
 
+    # Captures the widget's current contents into a pixmap.
+    def grab : QPixmap
+      QPixmap.new(LibQt6.qt6cr_widget_grab(@to_unsafe), true)
+    end
+
     # Creates a `VBoxLayout`, yields it for configuration, and returns it.
     def vbox(&block : VBoxLayout ->)
       layout = VBoxLayout.new(self)

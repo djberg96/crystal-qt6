@@ -3,6 +3,7 @@ module Qt6
   # events into Crystal callbacks.
   class EventWidget < Widget
     @painted : Signal(PaintEvent) = Signal(PaintEvent).new
+    @painted_with_painter : Signal(PaintEvent, QPainter) = Signal(PaintEvent, QPainter).new
     @resized : Signal(ResizeEvent) = Signal(ResizeEvent).new
     @mouse_pressed : Signal(MouseEvent) = Signal(MouseEvent).new
     @mouse_moved : Signal(MouseEvent) = Signal(MouseEvent).new
@@ -13,6 +14,8 @@ module Qt6
 
     # Signal emitted for paint events.
     getter painted : Signal(PaintEvent)
+    # Signal emitted for paint events with a live `QPainter`.
+    getter painted_with_painter : Signal(PaintEvent, QPainter)
     # Signal emitted for resize events.
     getter resized : Signal(ResizeEvent)
     # Signal emitted for mouse press events.
@@ -30,6 +33,7 @@ module Qt6
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_event_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
       @painted = Signal(PaintEvent).new
+      @painted_with_painter = Signal(PaintEvent, QPainter).new
       @resized = Signal(ResizeEvent).new
       @mouse_pressed = Signal(MouseEvent).new
       @mouse_moved = Signal(MouseEvent).new
@@ -39,6 +43,7 @@ module Qt6
       @callback_userdata = Box.box(self)
 
       LibQt6.qt6cr_event_widget_on_paint(to_unsafe, PAINT_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_event_widget_on_paint_with_painter(to_unsafe, PAINT_WITH_PAINTER_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_event_widget_on_resize(to_unsafe, RESIZE_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_event_widget_on_mouse_press(to_unsafe, MOUSE_PRESS_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_event_widget_on_mouse_move(to_unsafe, MOUSE_MOVE_TRAMPOLINE, @callback_userdata)
@@ -54,6 +59,13 @@ module Qt6
     # Registers a block for paint events.
     def on_paint(&block : PaintEvent ->) : self
       @painted.connect { |event| block.call(event) }
+      self
+    end
+
+    # Registers a block for paint events that receives a live painter valid only
+    # for the duration of the callback.
+    def on_paint_with_painter(&block : PaintEvent, QPainter ->) : self
+      @painted_with_painter.connect { |event, painter| block.call(event, painter) }
       self
     end
 
@@ -133,6 +145,10 @@ module Qt6
       @painted.emit(event)
     end
 
+    protected def emit_paint_with_painter(event : PaintEvent, painter : QPainter) : Nil
+      @painted_with_painter.emit(event, painter)
+    end
+
     protected def emit_resize(event : ResizeEvent) : Nil
       @resized.emit(event)
     end
@@ -159,6 +175,11 @@ module Qt6
 
     private PAINT_TRAMPOLINE = ->(userdata : Void*, rect : LibQt6::RectFValue) do
       Box(EventWidget).unbox(userdata).emit_paint(PaintEvent.new(RectF.from_native(rect)))
+    end
+
+    private PAINT_WITH_PAINTER_TRAMPOLINE = ->(userdata : Void*, painter_handle : Void*, rect : LibQt6::RectFValue) do
+      widget = Box(EventWidget).unbox(userdata)
+      widget.emit_paint_with_painter(PaintEvent.new(RectF.from_native(rect)), QPainter.wrap(painter_handle))
     end
 
     private RESIZE_TRAMPOLINE = ->(userdata : Void*, old_size : LibQt6::SizeValue, new_size : LibQt6::SizeValue) do

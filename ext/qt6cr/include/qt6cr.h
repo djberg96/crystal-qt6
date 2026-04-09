@@ -57,6 +57,7 @@ typedef void (*qt6cr_void_callback_t)(void *userdata);
 typedef void (*qt6cr_bool_callback_t)(void *userdata, bool value);
 typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
 typedef void (*qt6cr_paint_callback_t)(void *userdata, qt6cr_rectf_t rect);
+typedef void (*qt6cr_paint_with_painter_callback_t)(void *userdata, qt6cr_handle_t painter, qt6cr_rectf_t rect);
 typedef void (*qt6cr_resize_callback_t)(void *userdata, qt6cr_size_t old_size, qt6cr_size_t new_size);
 typedef void (*qt6cr_mouse_callback_t)(void *userdata, qt6cr_mouse_event_t event_data);
 typedef void (*qt6cr_wheel_callback_t)(void *userdata, qt6cr_wheel_event_t event_data);
@@ -82,6 +83,7 @@ bool qt6cr_widget_is_visible(qt6cr_handle_t handle);
 qt6cr_size_t qt6cr_widget_size(qt6cr_handle_t handle);
 qt6cr_rectf_t qt6cr_widget_rect(qt6cr_handle_t handle);
 void qt6cr_widget_update(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent);
 void qt6cr_main_window_set_central_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
@@ -243,6 +245,7 @@ void qt6cr_status_bar_clear_message(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_event_widget_create(qt6cr_handle_t parent);
 void qt6cr_event_widget_on_paint(qt6cr_handle_t handle, qt6cr_paint_callback_t callback, void *userdata);
+void qt6cr_event_widget_on_paint_with_painter(qt6cr_handle_t handle, qt6cr_paint_with_painter_callback_t callback, void *userdata);
 void qt6cr_event_widget_on_resize(qt6cr_handle_t handle, qt6cr_resize_callback_t callback, void *userdata);
 void qt6cr_event_widget_on_mouse_press(qt6cr_handle_t handle, qt6cr_mouse_callback_t callback, void *userdata);
 void qt6cr_event_widget_on_mouse_move(qt6cr_handle_t handle, qt6cr_mouse_callback_t callback, void *userdata);
