@@ -383,6 +383,44 @@ describe Qt6 do
     window.release
   end
 
+  it "supports hbox, form, and grid layouts" do
+    app
+    window = Qt6::Widget.new
+    name_field = Qt6::LineEdit.new("Terrain")
+    kind_field = Qt6::ComboBox.new
+    kind_field << "Hexes" << "Terrain"
+    primary = Qt6::PushButton.new("Primary")
+    secondary = Qt6::PushButton.new("Secondary")
+    top_left = Qt6::Label.new("A")
+    top_right = Qt6::Label.new("B")
+    footer = Qt6::Label.new("Footer")
+
+    window.form do |form|
+      form.add_row("Name", name_field)
+      form.add_row(Qt6::Label.new("Kind"), kind_field)
+      form.add_row(Qt6::Widget.new.tap do |button_row|
+        button_row.hbox do |row|
+          row << primary
+          row << secondary
+        end
+      end)
+      form.add_row(Qt6::Widget.new.tap do |grid_host|
+        grid_host.grid do |grid|
+          grid.add(top_left, 0, 0)
+          grid.add(top_right, 0, 1)
+          grid.add(footer, 1, 0, 1, 2)
+        end
+      end)
+    end
+
+    name_field.text.should eq("Terrain")
+    kind_field.count.should eq(2)
+    top_left.text.should eq("A")
+    top_right.text.should eq("B")
+    footer.text.should eq("Footer")
+    window.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|

@@ -15,6 +15,9 @@
 #include <QDialog>
 #include <QDockWidget>
 #include <QFileDialog>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QHBoxLayout>
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QLabel>
@@ -236,6 +239,18 @@ QCheckBox *as_check_box(qt6cr_handle_t handle) {
 
 QComboBox *as_combo_box(qt6cr_handle_t handle) {
   return static_cast<QComboBox *>(handle);
+}
+
+QHBoxLayout *as_h_box_layout(qt6cr_handle_t handle) {
+  return static_cast<QHBoxLayout *>(handle);
+}
+
+QGridLayout *as_grid_layout(qt6cr_handle_t handle) {
+  return static_cast<QGridLayout *>(handle);
+}
+
+QFormLayout *as_form_layout(qt6cr_handle_t handle) {
+  return static_cast<QFormLayout *>(handle);
 }
 
 QVBoxLayout *as_v_box_layout(qt6cr_handle_t handle) {
@@ -1346,6 +1361,64 @@ void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget)
 
   if (layout != nullptr && child != nullptr) {
     layout->addWidget(child);
+  }
+}
+
+qt6cr_handle_t qt6cr_h_box_layout_create(qt6cr_handle_t parent_widget) {
+  return new QHBoxLayout(as_widget(parent_widget));
+}
+
+void qt6cr_h_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *layout = as_h_box_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->addWidget(child);
+  }
+}
+
+qt6cr_handle_t qt6cr_grid_layout_create(qt6cr_handle_t parent_widget) {
+  return new QGridLayout(as_widget(parent_widget));
+}
+
+void qt6cr_grid_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int row, int column, int row_span, int column_span) {
+  auto *layout = as_grid_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->addWidget(child, row, column, row_span, column_span);
+  }
+}
+
+qt6cr_handle_t qt6cr_form_layout_create(qt6cr_handle_t parent_widget) {
+  return new QFormLayout(as_widget(parent_widget));
+}
+
+void qt6cr_form_layout_add_row_label_widget(qt6cr_handle_t handle, const char *label, qt6cr_handle_t field_widget) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_widget(field_widget);
+
+  if (layout != nullptr && field != nullptr) {
+    layout->addRow(QString::fromUtf8(label == nullptr ? "" : label), field);
+  }
+}
+
+void qt6cr_form_layout_add_row_widget_widget(qt6cr_handle_t handle, qt6cr_handle_t label_widget, qt6cr_handle_t field_widget) {
+  auto *layout = as_form_layout(handle);
+  auto *label = as_widget(label_widget);
+  auto *field = as_widget(field_widget);
+
+  if (layout != nullptr && label != nullptr && field != nullptr) {
+    layout->addRow(label, field);
+  }
+}
+
+void qt6cr_form_layout_add_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->addRow(child);
   }
 }
 

@@ -55,6 +55,24 @@ module Qt6
       layout
     end
 
+    def hbox(&block : HBoxLayout ->)
+      layout = HBoxLayout.new(self)
+      yield layout
+      layout
+    end
+
+    def grid(&block : GridLayout ->)
+      layout = GridLayout.new(self)
+      yield layout
+      layout
+    end
+
+    def form(&block : FormLayout ->)
+      layout = FormLayout.new(self)
+      yield layout
+      layout
+    end
+
     def adopt_by_parent! : Nil
       Qt6.untrack_object(self) if @owned
       @owned = false
