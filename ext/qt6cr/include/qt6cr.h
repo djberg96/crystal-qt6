@@ -127,6 +127,66 @@ qt6cr_color_t qt6cr_color_dialog_current_color(qt6cr_handle_t handle);
 void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value);
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format);
+void qt6cr_qimage_destroy(qt6cr_handle_t handle);
+int qt6cr_qimage_width(qt6cr_handle_t handle);
+int qt6cr_qimage_height(qt6cr_handle_t handle);
+bool qt6cr_qimage_is_null(qt6cr_handle_t handle);
+void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color);
+bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path);
+qt6cr_color_t qt6cr_qimage_pixel_color(qt6cr_handle_t handle, int x, int y);
+void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_color_t color);
+
+qt6cr_handle_t qt6cr_qpixmap_create(int width, int height);
+void qt6cr_qpixmap_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qpixmap_from_image(qt6cr_handle_t image);
+qt6cr_handle_t qt6cr_qpixmap_to_image(qt6cr_handle_t handle);
+int qt6cr_qpixmap_width(qt6cr_handle_t handle);
+int qt6cr_qpixmap_height(qt6cr_handle_t handle);
+bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle);
+void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
+bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
+
+qt6cr_handle_t qt6cr_qtransform_create(void);
+void qt6cr_qtransform_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qtransform_copy(qt6cr_handle_t handle);
+void qt6cr_qtransform_reset(qt6cr_handle_t handle);
+void qt6cr_qtransform_translate(qt6cr_handle_t handle, double dx, double dy);
+void qt6cr_qtransform_scale(qt6cr_handle_t handle, double sx, double sy);
+void qt6cr_qtransform_rotate(qt6cr_handle_t handle, double angle);
+qt6cr_pointf_t qt6cr_qtransform_map_point(qt6cr_handle_t handle, qt6cr_pointf_t point);
+qt6cr_rectf_t qt6cr_qtransform_map_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+
+qt6cr_handle_t qt6cr_qpainter_path_create(void);
+void qt6cr_qpainter_path_destroy(qt6cr_handle_t handle);
+void qt6cr_qpainter_path_move_to(qt6cr_handle_t handle, qt6cr_pointf_t point);
+void qt6cr_qpainter_path_line_to(qt6cr_handle_t handle, qt6cr_pointf_t point);
+void qt6cr_qpainter_path_quad_to(qt6cr_handle_t handle, qt6cr_pointf_t control_point, qt6cr_pointf_t end_point);
+void qt6cr_qpainter_path_cubic_to(qt6cr_handle_t handle, qt6cr_pointf_t control_point1, qt6cr_pointf_t control_point2, qt6cr_pointf_t end_point);
+void qt6cr_qpainter_path_add_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+void qt6cr_qpainter_path_add_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+void qt6cr_qpainter_path_close_subpath(qt6cr_handle_t handle);
+qt6cr_rectf_t qt6cr_qpainter_path_bounding_rect(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform);
+
+qt6cr_handle_t qt6cr_qpainter_create_for_image(qt6cr_handle_t image);
+qt6cr_handle_t qt6cr_qpainter_create_for_pixmap(qt6cr_handle_t pixmap);
+void qt6cr_qpainter_destroy(qt6cr_handle_t handle);
+bool qt6cr_qpainter_is_active(qt6cr_handle_t handle);
+void qt6cr_qpainter_set_antialiasing(qt6cr_handle_t handle, bool value);
+void qt6cr_qpainter_set_pen_color(qt6cr_handle_t handle, qt6cr_color_t color);
+void qt6cr_qpainter_set_brush_color(qt6cr_handle_t handle, qt6cr_color_t color);
+void qt6cr_qpainter_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform);
+void qt6cr_qpainter_reset_transform(qt6cr_handle_t handle);
+void qt6cr_qpainter_draw_line(qt6cr_handle_t handle, qt6cr_pointf_t from_point, qt6cr_pointf_t to_point);
+void qt6cr_qpainter_draw_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+void qt6cr_qpainter_fill_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_color_t color);
+void qt6cr_qpainter_draw_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path);
+void qt6cr_qpainter_draw_image(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t image);
+void qt6cr_qpainter_draw_pixmap(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t pixmap);
+void qt6cr_qpainter_draw_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text);
+
 qt6cr_handle_t qt6cr_input_dialog_create(qt6cr_handle_t parent);
 void qt6cr_input_dialog_set_input_mode(qt6cr_handle_t handle, int input_mode);
 int qt6cr_input_dialog_input_mode(qt6cr_handle_t handle);

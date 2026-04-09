@@ -51,6 +51,7 @@ make example-hello
 make example-counter
 make example-shell
 make example-events
+make example-render
 ```
 
 Direct Crystal commands also work without a separate native build step:
@@ -66,6 +67,7 @@ Example highlights:
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
 - `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, convenience dialog helpers, and form/grid layout composition
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
+- `examples/rendering_stack.cr`: offscreen rendering with `QImage`, `QPixmap`, `QPainter`, `QPainterPath`, and `QTransform`
 
 ## Continuous Integration
 
@@ -108,6 +110,7 @@ app.run
 - `Qt6::Signal` for Crystal-side callback composition
 - `Qt6::QTimer` for timeout-driven work on the Qt event loop
 - `Qt6::Color`, `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common value types
+- `Qt6::QImage`, `Qt6::QPixmap`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, and `Qt6::ImageFormat` for offscreen rendering
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
 - `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, and `Qt6::InputDialog` for standard dialogs
@@ -129,6 +132,7 @@ The specs cover:
 - standard dialog configuration for `QMessageBox`, `QFileDialog`, `QColorDialog`, and `QInputDialog`
 - convenience helper flows for message, color, and input dialogs
 - layout composition through vertical, horizontal, form, and grid layouts
+- offscreen rendering with images, pixmaps, painter paths, and transforms
 - `QObject` destruction signals and `QTimer` timeout delivery
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls
@@ -163,4 +167,4 @@ The next logical additions are:
 1. more layouts such as `HBoxLayout`, grid layouts, and form layouts
 2. shell refinements such as shortcuts, action groups, and standard dialogs
 3. additional common controls such as radio buttons, list widgets, trees, tabs, and splitters
-4. rendering APIs such as `QPainter`, `QImage`, `QPixmap`, and `QPainterPath`
+4. widget paint-device integration, plus pen/brush/font refinements on top of the current rendering stack
