@@ -8,6 +8,7 @@ This repository currently provides:
 
 - a native Qt6 bridge compiled from C++
 - an idiomatic Crystal wrapper for common widget tasks
+- reusable object, timer, signal, and event-hook primitives for richer bindings
 - runnable examples
 - a spec suite that exercises the wrapper end to end
 
@@ -94,7 +95,12 @@ app.run
 
 - `Qt6.application` for creating or reusing a single `QApplication`
 - `Qt6.window` for quick top-level window setup
+- `Qt6::QObject` as the common wrapper base for owned Qt objects
+- `Qt6::Signal` for Crystal-side callback composition
+- `Qt6::QTimer` for timeout-driven work on the Qt event loop
+- `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common geometry values
 - `Qt6::Widget` for generic widgets and top-level windows
+- `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::VBoxLayout` for vertical layout composition
@@ -104,6 +110,8 @@ app.run
 The specs cover:
 
 - process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
+- `QObject` destruction signals and `QTimer` timeout delivery
+- geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - widget lifecycle and visibility state
 - title and text round trips through the native bridge
 - layout composition
@@ -134,5 +142,5 @@ The next logical additions are:
 
 1. more layouts such as `HBoxLayout` and grid layouts
 2. richer widgets such as line edits, checkboxes, and menus
-3. more signal coverage using the same callback pattern as `PushButton#on_clicked`
-4. packaging improvements beyond the current automatic native shim bootstrap
+3. more `QObject`-based shell APIs such as `QMainWindow`, `QDialog`, menus, actions, and dock widgets
+4. rendering APIs such as `QPainter`, `QImage`, `QPixmap`, and `QPainterPath`

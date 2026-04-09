@@ -1,6 +1,78 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "provides QObject-derived signals and timer callbacks" do
+    application = app
+    timer = Qt6::QTimer.new
+    destroyed = 0
+    fired = 0
+
+    timer.destroyed.connect do
+      destroyed += 1
+    end
+
+    timer.on_timeout do
+      fired += 1
+    end
+
+    timer.single_shot = true
+    timer.start(0)
+
+    10.times do
+      application.process_events
+      break if fired == 1
+    end
+
+    fired.should eq(1)
+    timer.active?.should be_false
+    timer.release
+    destroyed.should eq(1)
+  end
+
+  it "exposes geometry types and custom widget event hooks" do
+    application = app
+    widget = Qt6::EventWidget.new
+    paint_events = [] of Qt6::PaintEvent
+    resize_events = [] of Qt6::ResizeEvent
+    mouse_presses = [] of Qt6::MouseEvent
+    mouse_moves = [] of Qt6::MouseEvent
+    mouse_releases = [] of Qt6::MouseEvent
+    wheels = [] of Qt6::WheelEvent
+    keys = [] of Qt6::KeyEvent
+
+    widget.on_paint { |event| paint_events << event }
+    widget.on_resize { |event| resize_events << event }
+    widget.on_mouse_press { |event| mouse_presses << event }
+    widget.on_mouse_move { |event| mouse_moves << event }
+    widget.on_mouse_release { |event| mouse_releases << event }
+    widget.on_wheel { |event| wheels << event }
+    widget.on_key_press { |event| keys << event }
+
+    widget.resize(200, 120)
+    widget.show
+    application.process_events
+
+    widget.repaint_now
+    application.process_events
+    widget.simulate_mouse_press(Qt6::PointF.new(10.0, 20.0))
+    widget.simulate_mouse_move(Qt6::PointF.new(15.0, 25.0))
+    widget.simulate_mouse_release(Qt6::PointF.new(18.0, 28.0))
+    widget.simulate_wheel(Qt6::PointF.new(20.0, 30.0), angle_delta: Qt6::PointF.new(0.0, 120.0))
+    widget.simulate_key_press(65)
+    application.process_events
+
+    widget.size.should eq(Qt6::Size.new(200, 120))
+    widget.rect.width.should eq(200.0)
+    resize_events.last.size.should eq(Qt6::Size.new(200, 120))
+    paint_events.empty?.should be_false
+    mouse_presses.last.position.should eq(Qt6::PointF.new(10.0, 20.0))
+    mouse_moves.last.position.should eq(Qt6::PointF.new(15.0, 25.0))
+    mouse_releases.last.position.should eq(Qt6::PointF.new(18.0, 28.0))
+    wheels.last.angle_delta.should eq(Qt6::PointF.new(0.0, 120.0))
+    keys.last.key.should eq(65)
+    widget.release
+  end
+
   it "shuts down without the Qt thread storage warning" do
     stdout = IO::Memory.new
     stderr = IO::Memory.new
