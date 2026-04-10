@@ -76,3 +76,4 @@ jobs:
           crystal build examples/event_monitor.cr -o /tmp/crystal-qt6-events
           crystal build examples/rendering_stack.cr -o /tmp/crystal-qt6-render
           crystal build examples/svg_widget_renderer.cr -o /tmp/crystal-qt6-svg
+          crystal build examples/inspector_workbench.cr -o /tmp/crystal-qt6-inspector

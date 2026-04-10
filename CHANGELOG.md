@@ -35,6 +35,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - `QFontMetricsF` bindings for subpixel text measurement and floating-point bounding rectangles.
 - `ColorDialog#native_dialog?` and `#native_dialog=` so automated tests can disable the platform-native color picker.
 - Refreshed and expanded example applications, including a new SVG widget and renderer demo plus deeper rendering-stack coverage.
+- Added an inspector-style workbench example that wires the editor-control widgets into a live custom canvas.
 - Expanded specs covering timers, geometry accessors, and custom widget event delivery.
 - Expanded integration specs covering reduced application shells with menus, toolbars, docks, dialogs, and control callbacks.
 
