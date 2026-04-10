@@ -1,14 +1,29 @@
 module Qt6
   # Wraps `QPixmap` for paint-device interop and display-oriented images.
   class QPixmap < NativeResource
+    # Wraps an existing native pixmap handle.
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates an empty pixmap with the requested dimensions.
     def initialize(width : Int, height : Int)
       super(LibQt6.qt6cr_qpixmap_create(width, height))
     end
 
+    # Loads a pixmap from disk.
+    def initialize(path : String)
+      super(LibQt6.qt6cr_qpixmap_create_from_file(path.to_unsafe))
+    end
+
     # Wraps an existing native pixmap handle.
     def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
+    end
+
+    # Loads a pixmap from disk.
+    def self.from_file(path : String) : self
+      new(path)
     end
 
     # Builds a pixmap copy from an image.
@@ -40,6 +55,11 @@ module Qt6
     def fill(color : Color) : self
       LibQt6.qt6cr_qpixmap_fill(to_unsafe, color.to_native)
       self
+    end
+
+    # Loads pixmap contents from disk into this instance.
+    def load(path : String) : Bool
+      LibQt6.qt6cr_qpixmap_load(to_unsafe, path.to_unsafe)
     end
 
     # Saves the pixmap to disk.

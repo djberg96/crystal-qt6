@@ -1,9 +1,24 @@
 module Qt6
   # Wraps `QImage` for offscreen raster drawing.
   class QImage < NativeResource
+    # Wraps an existing native image handle.
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates an empty image with the requested dimensions and format.
     def initialize(width : Int, height : Int, format : ImageFormat = ImageFormat::ARGB32)
       super(LibQt6.qt6cr_qimage_create(width, height, format.value))
+    end
+
+    # Loads an image from disk.
+    def initialize(path : String)
+      super(LibQt6.qt6cr_qimage_create_from_file(path.to_unsafe))
+    end
+
+    # Loads an image from disk.
+    def self.from_file(path : String) : self
+      new(path)
     end
 
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
@@ -34,6 +49,11 @@ module Qt6
     def fill(color : Color) : self
       LibQt6.qt6cr_qimage_fill(to_unsafe, color.to_native)
       self
+    end
+
+    # Loads image contents from disk into this instance.
+    def load(path : String) : Bool
+      LibQt6.qt6cr_qimage_load(to_unsafe, path.to_unsafe)
     end
 
     # Saves the image to disk.

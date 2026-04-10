@@ -65,6 +65,15 @@ module Qt6
     fun qt6cr_application_exec = qt6cr_application_exec(handle : Handle) : LibC::Int
     fun qt6cr_application_process_events = qt6cr_application_process_events(handle : Handle)
     fun qt6cr_application_quit = qt6cr_application_quit(handle : Handle)
+    fun qt6cr_application_clipboard = qt6cr_application_clipboard(handle : Handle) : Handle
+
+    fun qt6cr_clipboard_text = qt6cr_clipboard_text(handle : Handle) : UInt8*
+    fun qt6cr_clipboard_set_text = qt6cr_clipboard_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_clipboard_image = qt6cr_clipboard_image(handle : Handle) : Handle
+    fun qt6cr_clipboard_set_image = qt6cr_clipboard_set_image(handle : Handle, image : Handle)
+    fun qt6cr_clipboard_pixmap = qt6cr_clipboard_pixmap(handle : Handle) : Handle
+    fun qt6cr_clipboard_set_pixmap = qt6cr_clipboard_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_clipboard_clear = qt6cr_clipboard_clear(handle : Handle)
 
     fun qt6cr_widget_create = qt6cr_widget_create(parent : Handle) : Handle
     fun qt6cr_widget_destroy = qt6cr_widget_destroy(handle : Handle)
@@ -126,16 +135,19 @@ module Qt6
     fun qt6cr_color_dialog_show_alpha_channel = qt6cr_color_dialog_show_alpha_channel(handle : Handle) : Bool
 
     fun qt6cr_qimage_create = qt6cr_qimage_create(width : LibC::Int, height : LibC::Int, format : LibC::Int) : Handle
+    fun qt6cr_qimage_create_from_file = qt6cr_qimage_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qimage_destroy = qt6cr_qimage_destroy(handle : Handle)
     fun qt6cr_qimage_width = qt6cr_qimage_width(handle : Handle) : LibC::Int
     fun qt6cr_qimage_height = qt6cr_qimage_height(handle : Handle) : LibC::Int
     fun qt6cr_qimage_is_null = qt6cr_qimage_is_null(handle : Handle) : Bool
     fun qt6cr_qimage_fill = qt6cr_qimage_fill(handle : Handle, color : ColorValue)
+    fun qt6cr_qimage_load = qt6cr_qimage_load(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qimage_save = qt6cr_qimage_save(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qimage_pixel_color = qt6cr_qimage_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int) : ColorValue
     fun qt6cr_qimage_set_pixel_color = qt6cr_qimage_set_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int, color : ColorValue)
 
     fun qt6cr_qpixmap_create = qt6cr_qpixmap_create(width : LibC::Int, height : LibC::Int) : Handle
+    fun qt6cr_qpixmap_create_from_file = qt6cr_qpixmap_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qpixmap_destroy = qt6cr_qpixmap_destroy(handle : Handle)
     fun qt6cr_qpixmap_from_image = qt6cr_qpixmap_from_image(image : Handle) : Handle
     fun qt6cr_qpixmap_to_image = qt6cr_qpixmap_to_image(handle : Handle) : Handle
@@ -143,6 +155,7 @@ module Qt6
     fun qt6cr_qpixmap_height = qt6cr_qpixmap_height(handle : Handle) : LibC::Int
     fun qt6cr_qpixmap_is_null = qt6cr_qpixmap_is_null(handle : Handle) : Bool
     fun qt6cr_qpixmap_fill = qt6cr_qpixmap_fill(handle : Handle, color : ColorValue)
+    fun qt6cr_qpixmap_load = qt6cr_qpixmap_load(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
 
     fun qt6cr_qsvg_generator_create = qt6cr_qsvg_generator_create : Handle

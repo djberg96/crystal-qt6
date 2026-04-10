@@ -72,6 +72,15 @@ void qt6cr_application_destroy(qt6cr_handle_t handle);
 int qt6cr_application_exec(qt6cr_handle_t handle);
 void qt6cr_application_process_events(qt6cr_handle_t handle);
 void qt6cr_application_quit(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_application_clipboard(qt6cr_handle_t handle);
+
+char *qt6cr_clipboard_text(qt6cr_handle_t handle);
+void qt6cr_clipboard_set_text(qt6cr_handle_t handle, const char *text);
+qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle);
+void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image);
+qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle);
+void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap);
+void qt6cr_clipboard_clear(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_widget_create(qt6cr_handle_t parent);
 void qt6cr_widget_destroy(qt6cr_handle_t handle);
@@ -133,16 +142,19 @@ void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format);
+qt6cr_handle_t qt6cr_qimage_create_from_file(const char *path);
 void qt6cr_qimage_destroy(qt6cr_handle_t handle);
 int qt6cr_qimage_width(qt6cr_handle_t handle);
 int qt6cr_qimage_height(qt6cr_handle_t handle);
 bool qt6cr_qimage_is_null(qt6cr_handle_t handle);
 void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color);
+bool qt6cr_qimage_load(qt6cr_handle_t handle, const char *path);
 bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path);
 qt6cr_color_t qt6cr_qimage_pixel_color(qt6cr_handle_t handle, int x, int y);
 void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_color_t color);
 
 qt6cr_handle_t qt6cr_qpixmap_create(int width, int height);
+qt6cr_handle_t qt6cr_qpixmap_create_from_file(const char *path);
 void qt6cr_qpixmap_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_qpixmap_from_image(qt6cr_handle_t image);
 qt6cr_handle_t qt6cr_qpixmap_to_image(qt6cr_handle_t handle);
@@ -150,6 +162,7 @@ int qt6cr_qpixmap_width(qt6cr_handle_t handle);
 int qt6cr_qpixmap_height(qt6cr_handle_t handle);
 bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle);
 void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
+bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path);
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
 
 qt6cr_handle_t qt6cr_qsvg_generator_create(void);

@@ -1,0 +1,52 @@
+module Qt6
+  # Wraps the process-wide `QClipboard`.
+  class Clipboard < QObject
+    # Wraps an existing clipboard handle.
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+    end
+
+    # Returns the clipboard text.
+    def text : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_clipboard_text(to_unsafe))
+    end
+
+    # Replaces the clipboard text.
+    def text=(value : String) : String
+      LibQt6.qt6cr_clipboard_set_text(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns a copy of the clipboard image.
+    def image : QImage
+      QImage.wrap(LibQt6.qt6cr_clipboard_image(to_unsafe), true)
+    end
+
+    # Replaces the clipboard image.
+    def image=(value : QImage) : QImage
+      LibQt6.qt6cr_clipboard_set_image(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns a copy of the clipboard pixmap.
+    def pixmap : QPixmap
+      QPixmap.wrap(LibQt6.qt6cr_clipboard_pixmap(to_unsafe), true)
+    end
+
+    # Replaces the clipboard pixmap.
+    def pixmap=(value : QPixmap) : QPixmap
+      LibQt6.qt6cr_clipboard_set_pixmap(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Clears the clipboard.
+    def clear : self
+      LibQt6.qt6cr_clipboard_clear(to_unsafe)
+      self
+    end
+  end
+end

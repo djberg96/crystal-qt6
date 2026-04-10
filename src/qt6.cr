@@ -19,6 +19,7 @@ require "./qt6/q_transform"
 require "./qt6/q_painter_path"
 require "./qt6/q_image"
 require "./qt6/q_pixmap"
+require "./qt6/clipboard"
 require "./qt6/q_svg_generator"
 require "./qt6/q_svg_renderer"
 require "./qt6/q_pdf_writer"
@@ -90,6 +91,11 @@ module Qt6
   def self.application(args : Enumerable(String) = ARGV)
     register_shutdown_hook
     @@application ||= Application.new(args.to_a)
+  end
+
+  # Returns the shared application clipboard wrapper.
+  def self.clipboard : Clipboard
+    application.clipboard
   end
 
   # Releases tracked Qt objects and shuts down the shared application.

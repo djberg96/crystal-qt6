@@ -30,6 +30,11 @@ module Qt6
       LibQt6.qt6cr_application_quit(@handle)
     end
 
+    # Returns the process-wide clipboard wrapper.
+    def clipboard : Clipboard
+      Clipboard.wrap(LibQt6.qt6cr_application_clipboard(@handle))
+    end
+
     # Destroys the underlying Qt application if it is still active.
     def shutdown : Nil
       return if @destroyed

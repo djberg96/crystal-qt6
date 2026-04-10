@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QCheckBox>
+#include <QClipboard>
 #include <QColor>
 #include <QColorDialog>
 #include <QComboBox>
@@ -400,6 +401,10 @@ ApplicationState *as_application_state(qt6cr_handle_t handle) {
   return static_cast<ApplicationState *>(handle);
 }
 
+QClipboard *as_clipboard(qt6cr_handle_t handle) {
+  return static_cast<QClipboard *>(handle);
+}
+
 QObject *as_object(qt6cr_handle_t handle) {
   return static_cast<QObject *>(handle);
 }
@@ -567,6 +572,60 @@ void qt6cr_application_quit(qt6cr_handle_t handle) {
 
   if (state != nullptr && state->application != nullptr) {
     state->application->quit();
+  }
+}
+
+qt6cr_handle_t qt6cr_application_clipboard(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? nullptr : state->application->clipboard();
+}
+
+char *qt6cr_clipboard_text(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard == nullptr ? duplicate_string("") : duplicate_string(clipboard->text());
+}
+
+void qt6cr_clipboard_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *clipboard = as_clipboard(handle);
+
+  if (clipboard != nullptr) {
+    clipboard->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard == nullptr ? new QImage() : new QImage(clipboard->image());
+}
+
+void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
+  auto *clipboard = as_clipboard(handle);
+  auto *source = as_qimage(image);
+
+  if (clipboard != nullptr && source != nullptr) {
+    clipboard->setImage(*source);
+  }
+}
+
+qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard == nullptr ? new QPixmap() : new QPixmap(clipboard->pixmap());
+}
+
+void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
+  auto *clipboard = as_clipboard(handle);
+  auto *source = as_qpixmap(pixmap);
+
+  if (clipboard != nullptr && source != nullptr) {
+    clipboard->setPixmap(*source);
+  }
+}
+
+void qt6cr_clipboard_clear(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+
+  if (clipboard != nullptr) {
+    clipboard->clear();
   }
 }
 
@@ -915,6 +974,10 @@ qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format) {
   return new QImage(width, height, image_format_from_int(format));
 }
 
+qt6cr_handle_t qt6cr_qimage_create_from_file(const char *path) {
+  return new QImage(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
 void qt6cr_qimage_destroy(qt6cr_handle_t handle) {
   delete as_qimage(handle);
 }
@@ -942,6 +1005,11 @@ void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color) {
   }
 }
 
+bool qt6cr_qimage_load(qt6cr_handle_t handle, const char *path) {
+  auto *image = as_qimage(handle);
+  return image != nullptr && image->load(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
 bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path) {
   auto *image = as_qimage(handle);
   return image != nullptr && image->save(QString::fromUtf8(path == nullptr ? "" : path));
@@ -962,6 +1030,10 @@ void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_col
 
 qt6cr_handle_t qt6cr_qpixmap_create(int width, int height) {
   return new QPixmap(width, height);
+}
+
+qt6cr_handle_t qt6cr_qpixmap_create_from_file(const char *path) {
+  return new QPixmap(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
 void qt6cr_qpixmap_destroy(qt6cr_handle_t handle) {
@@ -999,6 +1071,11 @@ void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color) {
   if (pixmap != nullptr) {
     pixmap->fill(from_color(color));
   }
+}
+
+bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap != nullptr && pixmap->load(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path) {

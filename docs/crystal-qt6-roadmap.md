@@ -17,7 +17,7 @@ Larger editor-style applications still typically need:
 - heavy use of `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, fonts, pens, brushes, and geometry types
 - export paths for formats such as PDF and SVG
 - richer editor controls, containers, and list/tree surfaces
-- clipboard access, image loading helpers, and a few remaining document-oriented APIs
+- richer clipboard/data-transfer features, advanced image-loading helpers, and a few remaining document-oriented APIs
 - image processing or other high-throughput data operations outside simple UI code
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
@@ -213,7 +213,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels. The remaining priorities are drag and drop, richer model/view alternatives where needed, and a few application-service APIs such as clipboard and image-loading helpers.
+Most of the widget-level work in this phase is now in place, including list and tree panels. The remaining priorities are drag and drop, richer model/view alternatives where needed, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
 
 ## Phase 6: Export And Document Features
 
@@ -225,13 +225,13 @@ Goal: close the feature gap for external outputs.
 
 - PDF export support through `QPdfWriter` or an equivalent native path
 - SVG export support through `QSvgGenerator`
-- clipboard access where applications need it
+- clipboard access where applications need richer transfer support than text/image/pixmap basics
 - print-related bindings only if still needed
 
 ### Acceptance Criteria
 
 - Reproduce current PNG, PDF, and SVG export behavior for a representative sample document.
-- PDF and SVG export are already in place; the remaining work here is mostly clipboard and any truly needed print-related APIs.
+- PDF and SVG export are already in place; the remaining work here is mostly richer clipboard/data-transfer support, `QImageReader`-class helpers if needed, and any truly needed print-related APIs.
 
 ## Phase 7: High-Throughput Data And Image Processing
 
