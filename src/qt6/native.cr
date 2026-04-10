@@ -366,6 +366,13 @@ module Qt6
     fun qt6cr_check_box_is_checked = qt6cr_check_box_is_checked(handle : Handle) : Bool
     fun qt6cr_check_box_on_toggled = qt6cr_check_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
+    fun qt6cr_radio_button_create = qt6cr_radio_button_create(parent : Handle, text : UInt8*) : Handle
+    fun qt6cr_radio_button_set_text = qt6cr_radio_button_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_radio_button_text = qt6cr_radio_button_text(handle : Handle) : UInt8*
+    fun qt6cr_radio_button_set_checked = qt6cr_radio_button_set_checked(handle : Handle, value : Bool)
+    fun qt6cr_radio_button_is_checked = qt6cr_radio_button_is_checked(handle : Handle) : Bool
+    fun qt6cr_radio_button_on_toggled = qt6cr_radio_button_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+
     fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle
     fun qt6cr_combo_box_add_item = qt6cr_combo_box_add_item(handle : Handle, text : UInt8*)
     fun qt6cr_combo_box_count = qt6cr_combo_box_count(handle : Handle) : LibC::Int
@@ -373,6 +380,68 @@ module Qt6
     fun qt6cr_combo_box_set_current_index = qt6cr_combo_box_set_current_index(handle : Handle, index : LibC::Int)
     fun qt6cr_combo_box_current_text = qt6cr_combo_box_current_text(handle : Handle) : UInt8*
     fun qt6cr_combo_box_on_current_index_changed = qt6cr_combo_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_slider_create = qt6cr_slider_create(parent : Handle, orientation : LibC::Int) : Handle
+    fun qt6cr_slider_set_minimum = qt6cr_slider_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_slider_minimum = qt6cr_slider_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_slider_set_maximum = qt6cr_slider_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_slider_maximum = qt6cr_slider_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_slider_set_range = qt6cr_slider_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
+    fun qt6cr_slider_set_value = qt6cr_slider_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_slider_value = qt6cr_slider_value(handle : Handle) : LibC::Int
+    fun qt6cr_slider_orientation = qt6cr_slider_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_slider_on_value_changed = qt6cr_slider_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_spin_box_create = qt6cr_spin_box_create(parent : Handle) : Handle
+    fun qt6cr_spin_box_set_minimum = qt6cr_spin_box_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_spin_box_minimum = qt6cr_spin_box_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_spin_box_set_maximum = qt6cr_spin_box_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_spin_box_maximum = qt6cr_spin_box_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_spin_box_set_range = qt6cr_spin_box_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
+    fun qt6cr_spin_box_set_value = qt6cr_spin_box_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_spin_box_value = qt6cr_spin_box_value(handle : Handle) : LibC::Int
+    fun qt6cr_spin_box_set_single_step = qt6cr_spin_box_set_single_step(handle : Handle, value : LibC::Int)
+    fun qt6cr_spin_box_single_step = qt6cr_spin_box_single_step(handle : Handle) : LibC::Int
+    fun qt6cr_spin_box_on_value_changed = qt6cr_spin_box_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_double_spin_box_create = qt6cr_double_spin_box_create(parent : Handle) : Handle
+    fun qt6cr_double_spin_box_set_minimum = qt6cr_double_spin_box_set_minimum(handle : Handle, value : Float64)
+    fun qt6cr_double_spin_box_minimum = qt6cr_double_spin_box_minimum(handle : Handle) : Float64
+    fun qt6cr_double_spin_box_set_maximum = qt6cr_double_spin_box_set_maximum(handle : Handle, value : Float64)
+    fun qt6cr_double_spin_box_maximum = qt6cr_double_spin_box_maximum(handle : Handle) : Float64
+    fun qt6cr_double_spin_box_set_range = qt6cr_double_spin_box_set_range(handle : Handle, minimum : Float64, maximum : Float64)
+    fun qt6cr_double_spin_box_set_value = qt6cr_double_spin_box_set_value(handle : Handle, value : Float64)
+    fun qt6cr_double_spin_box_value = qt6cr_double_spin_box_value(handle : Handle) : Float64
+    fun qt6cr_double_spin_box_set_single_step = qt6cr_double_spin_box_set_single_step(handle : Handle, value : Float64)
+    fun qt6cr_double_spin_box_single_step = qt6cr_double_spin_box_single_step(handle : Handle) : Float64
+    fun qt6cr_double_spin_box_on_value_changed = qt6cr_double_spin_box_on_value_changed(handle : Handle, callback : (Handle, Float64 ->), userdata : Handle)
+
+    fun qt6cr_group_box_create = qt6cr_group_box_create(parent : Handle, title : UInt8*) : Handle
+    fun qt6cr_group_box_set_title = qt6cr_group_box_set_title(handle : Handle, title : UInt8*)
+    fun qt6cr_group_box_title = qt6cr_group_box_title(handle : Handle) : UInt8*
+    fun qt6cr_group_box_set_checkable = qt6cr_group_box_set_checkable(handle : Handle, value : Bool)
+    fun qt6cr_group_box_is_checkable = qt6cr_group_box_is_checkable(handle : Handle) : Bool
+    fun qt6cr_group_box_set_checked = qt6cr_group_box_set_checked(handle : Handle, value : Bool)
+    fun qt6cr_group_box_is_checked = qt6cr_group_box_is_checked(handle : Handle) : Bool
+    fun qt6cr_group_box_on_toggled = qt6cr_group_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+
+    fun qt6cr_tab_widget_create = qt6cr_tab_widget_create(parent : Handle) : Handle
+    fun qt6cr_tab_widget_add_tab = qt6cr_tab_widget_add_tab(handle : Handle, widget : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tab_widget_count = qt6cr_tab_widget_count(handle : Handle) : LibC::Int
+    fun qt6cr_tab_widget_current_index = qt6cr_tab_widget_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_tab_widget_set_current_index = qt6cr_tab_widget_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_tab_widget_on_current_index_changed = qt6cr_tab_widget_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_scroll_area_create = qt6cr_scroll_area_create(parent : Handle) : Handle
+    fun qt6cr_scroll_area_set_widget = qt6cr_scroll_area_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_scroll_area_set_widget_resizable = qt6cr_scroll_area_set_widget_resizable(handle : Handle, value : Bool)
+    fun qt6cr_scroll_area_widget_resizable = qt6cr_scroll_area_widget_resizable(handle : Handle) : Bool
+
+    fun qt6cr_splitter_create = qt6cr_splitter_create(parent : Handle, orientation : LibC::Int) : Handle
+    fun qt6cr_splitter_add_widget = qt6cr_splitter_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_splitter_count = qt6cr_splitter_count(handle : Handle) : LibC::Int
+    fun qt6cr_splitter_orientation = qt6cr_splitter_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_splitter_set_orientation = qt6cr_splitter_set_orientation(handle : Handle, orientation : LibC::Int)
 
     fun qt6cr_timer_create = qt6cr_timer_create(parent : Handle) : Handle
     fun qt6cr_timer_set_interval = qt6cr_timer_set_interval(handle : Handle, interval : LibC::Int)

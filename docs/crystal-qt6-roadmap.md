@@ -1,36 +1,42 @@
 # crystal-qt6 Roadmap
 
-This document describes a practical path for growing `crystal-qt6` from a small Qt6 binding foundation into a library capable of supporting large desktop applications.
+This document describes a practical path for growing `crystal-qt6` from its current `0.2.0` state into a library capable of supporting large desktop applications.
 
 The current motivating example is `WargameMapTool`, a substantial Python/PySide6 application, but the roadmap is intentionally broader than a single downstream project.
 
 ## Conclusion First
 
-Large PySide6-style desktop applications should not be ported directly today.
+Large PySide6-style desktop applications should still not be ported directly today.
 
-The current `crystal-qt6` surface is sufficient for simple widget demos, but larger editor-style applications typically need:
+`crystal-qt6` is now well beyond simple widget demos: it can host a reduced desktop shell, custom event-driven widgets, a usable raster/SVG/PDF rendering stack, and deterministic teardown. That is enough to prototype real editor subsystems, but not yet enough to replace a large application wholesale.
+
+Larger editor-style applications still typically need:
 
 - a `QMainWindow` shell with menus, toolbars, dialogs, dock widgets, status bars, and shortcuts
 - custom canvas widgets with paint and input event handling
 - heavy use of `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, fonts, pens, brushes, and geometry types
 - export paths for formats such as PDF and SVG
+- richer editor controls, containers, and list/tree surfaces
+- clipboard access, image loading helpers, and a few remaining document-oriented APIs
 - image processing or other high-throughput data operations outside simple UI code
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
 
-## Current Gap
+## Current State At 0.2.0
 
-Today, `crystal-qt6` exposes only a very small public surface:
+Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core areas needed for editor-style applications:
 
-- `Application`
-- `Widget`
-- `Label`
-- `PushButton`
-- `VBoxLayout`
+- `QtCore`-style foundations through `QObject`, Crystal-side `Signal`, `QTimer`, and geometry/event value types
+- `QtGui` rendering through `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, `QFont`, `QFontMetrics`, and `QFontMetricsF`
+- `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
+- `QtPrintSupport`-style export through `QPdfWriter`
+- `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
+- common form/layout support through line edits, checkboxes, combo boxes, and vertical, horizontal, form, and grid layouts
+- custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, and key callbacks
 
-That is a good foundation, but it is still far below the threshold required for complex Qt applications.
+That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the missing editor-control and data-panel layer that sits between the shell and the canvas.
 
-Applications in the target class usually depend on at least these Qt areas:
+Applications in the target class still usually depend on at least these Qt areas:
 
 - `QtCore`: object model, signals, timers, event loops, geometry/value types, buffers, byte arrays, and event metadata
 - `QtGui`: actions, colors, fonts, images, pixmaps, painting, paths, pens, brushes, transforms, painter events, keyboard and mouse events
@@ -49,7 +55,7 @@ To support serious application ports, the library needs a deliberate architectur
 4. A path for custom widget subclassing and event callbacks from Crystal.
 5. A rendering API that does not force all drawing logic back into C++.
 
-The existing button callback pattern is useful, but it is not enough by itself. The next stage needs generalized callback and event bridging.
+That generalized callback and event bridging now exists. The next stage is filling in the higher-level control and container surface that real editor sidebars and manager panels require.
 
 ## Porting Strategy
 
@@ -62,6 +68,8 @@ The readiness test should be something like:
 If the answer is no, the binding layer is still not ready for a serious application rewrite.
 
 ## Phase 1: Core Runtime And Object Model
+
+Status: largely complete
 
 Goal: make Crystal capable of expressing real Qt object graphs.
 
@@ -86,9 +94,11 @@ Goal: make Crystal capable of expressing real Qt object graphs.
 
 - A Crystal widget can subscribe to arbitrary Qt signals, not just button clicks.
 - A Crystal timer can invoke a Crystal callback repeatedly.
-- A Crystal app can set app metadata, icon, and stylesheet.
+- Remaining gaps in this phase are application polish features such as app metadata, window icon, stylesheet support, and `QEventLoop`.
 
 ## Phase 2: Main Window And Shell Widgets
+
+Status: mostly complete
 
 Goal: support real desktop application shells.
 
@@ -113,8 +123,11 @@ Goal: support real desktop application shells.
 
 - Rebuild a reduced application shell with file menu, edit menu, toolbar, two docks, and a status bar.
 - All actions can trigger Crystal callbacks.
+- Remaining gaps in this phase are mostly optional polish widgets such as `QProgressDialog` and `QSplashScreen`.
 
 ## Phase 3: Custom Widgets And Event Handling
+
+Status: complete for the current roadmap target
 
 Goal: make custom editor widgets possible from Crystal.
 
@@ -139,8 +152,11 @@ Goal: make custom editor widgets possible from Crystal.
 
 - Build a `CanvasWidget` prototype in Crystal with panning, zooming, hover tracking, and repaint scheduling.
 - Draw a test grid and overlays in a custom widget.
+- The event bridge is in place; the remaining work is to use it in richer examples and downstream ports.
 
 ## Phase 4: Rendering And Imaging Stack
+
+Status: mostly complete
 
 Goal: support the heavy `QtGui` drawing usage common to editor-style applications.
 
@@ -165,8 +181,11 @@ Goal: support the heavy `QtGui` drawing usage common to editor-style application
 
 - Render grids, text labels, paths, fills, and image assets from Crystal.
 - Export a rendered image buffer to PNG.
+- Remaining gaps in this phase are helper and polish APIs such as `QPainterPathStroker`, `QPolygonF`, `QImageReader`, and gradient/composition features.
 
 ## Phase 5: Forms And Editor Controls
+
+Status: next major phase
 
 Goal: support panel-heavy control surfaces and editor tooling.
 
@@ -194,7 +213,11 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
+This is now the highest-priority unfinished area. `crystal-qt6` already has enough shell and rendering capability to make additional isolated widgets less valuable than a coherent editor-control batch.
+
 ## Phase 6: Export And Document Features
+
+Status: partially complete
 
 Goal: close the feature gap for external outputs.
 
@@ -208,6 +231,7 @@ Goal: close the feature gap for external outputs.
 ### Acceptance Criteria
 
 - Reproduce current PNG, PDF, and SVG export behavior for a representative sample document.
+- PDF and SVG export are already in place; the remaining work here is mostly clipboard and any truly needed print-related APIs.
 
 ## Phase 7: High-Throughput Data And Image Processing
 
@@ -225,7 +249,7 @@ Prefer Crystal or native C++ implementations, but do not block the entire platfo
 
 ## Suggested Vertical Slice Order
 
-Once phases 1 through 4 are partially complete, port applications in this order:
+With phases 1 through 4 now mostly complete, port applications in this order:
 
 1. Main window shell with menu, toolbar, status bar, and placeholder docks.
 2. Basic document model and editing state.
@@ -257,6 +281,8 @@ Before serious application rewrite work begins, `crystal-qt6` should be able to 
 - path and text rendering
 - PNG export
 - stable shutdown and passing automated tests on macOS and Linux
+
+`crystal-qt6` now satisfies most of this bar except for the editor-control layer, image-loading helpers, and some richer container widgets. That is why the next tranche should focus on controls and panels rather than more shell or export work.
 
 If that sample app exists and is reliable, then application ports become realistic engineering projects rather than speculative rewrites.
 
