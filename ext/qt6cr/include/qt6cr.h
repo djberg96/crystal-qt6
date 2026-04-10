@@ -165,6 +165,49 @@ void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path);
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
 
+qt6cr_handle_t qt6cr_model_index_create(void);
+void qt6cr_model_index_destroy(qt6cr_handle_t handle);
+bool qt6cr_model_index_is_valid(qt6cr_handle_t handle);
+int qt6cr_model_index_row(qt6cr_handle_t handle);
+int qt6cr_model_index_column(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_standard_item_create(const char *text);
+void qt6cr_standard_item_destroy(qt6cr_handle_t handle);
+char *qt6cr_standard_item_text(qt6cr_handle_t handle);
+void qt6cr_standard_item_set_text(qt6cr_handle_t handle, const char *text);
+void qt6cr_standard_item_append_row(qt6cr_handle_t handle, qt6cr_handle_t item);
+void qt6cr_standard_item_set_child(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t item);
+qt6cr_handle_t qt6cr_standard_item_child(qt6cr_handle_t handle, int row, int column);
+int qt6cr_standard_item_row_count(qt6cr_handle_t handle);
+int qt6cr_standard_item_column_count(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_standard_item_model_create(qt6cr_handle_t parent);
+void qt6cr_standard_item_model_clear(qt6cr_handle_t handle);
+int qt6cr_standard_item_model_row_count(qt6cr_handle_t handle, qt6cr_handle_t parent_index);
+int qt6cr_standard_item_model_column_count(qt6cr_handle_t handle, qt6cr_handle_t parent_index);
+void qt6cr_standard_item_model_append_row(qt6cr_handle_t handle, qt6cr_handle_t item);
+void qt6cr_standard_item_model_set_item(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t item);
+qt6cr_handle_t qt6cr_standard_item_model_item(qt6cr_handle_t handle, int row, int column);
+void qt6cr_standard_item_model_set_horizontal_header_label(qt6cr_handle_t handle, int column, const char *text);
+char *qt6cr_standard_item_model_horizontal_header_label(qt6cr_handle_t handle, int column);
+qt6cr_handle_t qt6cr_standard_item_model_index(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t parent_index);
+qt6cr_handle_t qt6cr_standard_item_model_item_from_index(qt6cr_handle_t handle, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_standard_item_model_index_from_item(qt6cr_handle_t handle, qt6cr_handle_t item);
+
+qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent);
+void qt6cr_list_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
+qt6cr_handle_t qt6cr_list_view_current_index(qt6cr_handle_t handle);
+void qt6cr_list_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
+void qt6cr_list_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_tree_view_create(qt6cr_handle_t parent);
+void qt6cr_tree_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
+qt6cr_handle_t qt6cr_tree_view_current_index(qt6cr_handle_t handle);
+void qt6cr_tree_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
+void qt6cr_tree_view_expand_all(qt6cr_handle_t handle);
+void qt6cr_tree_view_collapse_all(qt6cr_handle_t handle);
+void qt6cr_tree_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_qsvg_generator_create(void);
 void qt6cr_qsvg_generator_destroy(qt6cr_handle_t handle);
 char *qt6cr_qsvg_generator_file_name(qt6cr_handle_t handle);

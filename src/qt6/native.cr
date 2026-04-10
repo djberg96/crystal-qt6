@@ -158,6 +158,49 @@ module Qt6
     fun qt6cr_qpixmap_load = qt6cr_qpixmap_load(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
 
+    fun qt6cr_model_index_create = qt6cr_model_index_create : Handle
+    fun qt6cr_model_index_destroy = qt6cr_model_index_destroy(handle : Handle)
+    fun qt6cr_model_index_is_valid = qt6cr_model_index_is_valid(handle : Handle) : Bool
+    fun qt6cr_model_index_row = qt6cr_model_index_row(handle : Handle) : LibC::Int
+    fun qt6cr_model_index_column = qt6cr_model_index_column(handle : Handle) : LibC::Int
+
+    fun qt6cr_standard_item_create = qt6cr_standard_item_create(text : UInt8*) : Handle
+    fun qt6cr_standard_item_destroy = qt6cr_standard_item_destroy(handle : Handle)
+    fun qt6cr_standard_item_text = qt6cr_standard_item_text(handle : Handle) : UInt8*
+    fun qt6cr_standard_item_set_text = qt6cr_standard_item_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_standard_item_append_row = qt6cr_standard_item_append_row(handle : Handle, item : Handle)
+    fun qt6cr_standard_item_set_child = qt6cr_standard_item_set_child(handle : Handle, row : LibC::Int, column : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_child = qt6cr_standard_item_child(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
+    fun qt6cr_standard_item_row_count = qt6cr_standard_item_row_count(handle : Handle) : LibC::Int
+    fun qt6cr_standard_item_column_count = qt6cr_standard_item_column_count(handle : Handle) : LibC::Int
+
+    fun qt6cr_standard_item_model_create = qt6cr_standard_item_model_create(parent : Handle) : Handle
+    fun qt6cr_standard_item_model_clear = qt6cr_standard_item_model_clear(handle : Handle)
+    fun qt6cr_standard_item_model_row_count = qt6cr_standard_item_model_row_count(handle : Handle, parent_index : Handle) : LibC::Int
+    fun qt6cr_standard_item_model_column_count = qt6cr_standard_item_model_column_count(handle : Handle, parent_index : Handle) : LibC::Int
+    fun qt6cr_standard_item_model_append_row = qt6cr_standard_item_model_append_row(handle : Handle, item : Handle)
+    fun qt6cr_standard_item_model_set_item = qt6cr_standard_item_model_set_item(handle : Handle, row : LibC::Int, column : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_model_item = qt6cr_standard_item_model_item(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
+    fun qt6cr_standard_item_model_set_horizontal_header_label = qt6cr_standard_item_model_set_horizontal_header_label(handle : Handle, column : LibC::Int, text : UInt8*)
+    fun qt6cr_standard_item_model_horizontal_header_label = qt6cr_standard_item_model_horizontal_header_label(handle : Handle, column : LibC::Int) : UInt8*
+    fun qt6cr_standard_item_model_index = qt6cr_standard_item_model_index(handle : Handle, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Handle
+    fun qt6cr_standard_item_model_item_from_index = qt6cr_standard_item_model_item_from_index(handle : Handle, index : Handle) : Handle
+    fun qt6cr_standard_item_model_index_from_item = qt6cr_standard_item_model_index_from_item(handle : Handle, item : Handle) : Handle
+
+    fun qt6cr_list_view_create = qt6cr_list_view_create(parent : Handle) : Handle
+    fun qt6cr_list_view_set_model = qt6cr_list_view_set_model(handle : Handle, model : Handle)
+    fun qt6cr_list_view_current_index = qt6cr_list_view_current_index(handle : Handle) : Handle
+    fun qt6cr_list_view_set_current_index = qt6cr_list_view_set_current_index(handle : Handle, index : Handle)
+    fun qt6cr_list_view_on_current_index_changed = qt6cr_list_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_tree_view_create = qt6cr_tree_view_create(parent : Handle) : Handle
+    fun qt6cr_tree_view_set_model = qt6cr_tree_view_set_model(handle : Handle, model : Handle)
+    fun qt6cr_tree_view_current_index = qt6cr_tree_view_current_index(handle : Handle) : Handle
+    fun qt6cr_tree_view_set_current_index = qt6cr_tree_view_set_current_index(handle : Handle, index : Handle)
+    fun qt6cr_tree_view_expand_all = qt6cr_tree_view_expand_all(handle : Handle)
+    fun qt6cr_tree_view_collapse_all = qt6cr_tree_view_collapse_all(handle : Handle)
+    fun qt6cr_tree_view_on_current_index_changed = qt6cr_tree_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+
     fun qt6cr_qsvg_generator_create = qt6cr_qsvg_generator_create : Handle
     fun qt6cr_qsvg_generator_destroy = qt6cr_qsvg_generator_destroy(handle : Handle)
     fun qt6cr_qsvg_generator_file_name = qt6cr_qsvg_generator_file_name(handle : Handle) : UInt8*

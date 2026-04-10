@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - `Clipboard` bindings plus `Qt6.clipboard` and `Application#clipboard` helpers for text, image, and pixmap clipboard access.
 - File-backed raster loading helpers for `QImage` and `QPixmap` through `new(path)`, `from_file`, and `load` APIs.
+- Initial model/view bindings for `ModelIndex`, `QStandardItem`, `QStandardItemModel`, `QListView`, and `QTreeView`, including current-index notifications and item/index lookup helpers.
 
 ## [0.2.0] - 2026-04-09
 

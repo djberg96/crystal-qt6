@@ -776,6 +776,80 @@ describe Qt6 do
     tree_widget.release
   end
 
+  it "supports initial model-view panels with standard item models" do
+    application = app
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    list_model = Qt6::StandardItemModel.new(list_view)
+    tree_model = Qt6::StandardItemModel.new(tree_view)
+    list_changes = 0
+    tree_changes = 0
+
+    list_view.on_current_index_changed do
+      list_changes += 1
+    end
+
+    tree_view.on_current_index_changed do
+      tree_changes += 1
+    end
+
+    list_model << Qt6::StandardItem.new("Terrain")
+    list_model << Qt6::StandardItem.new("Units")
+
+    tree_model.set_horizontal_header_label(0, "Layer")
+    tree_model.set_horizontal_header_label(1, "State")
+    terrain_item = Qt6::StandardItem.new("Terrain")
+    terrain_state = Qt6::StandardItem.new("Visible")
+    tree_model.set_item(0, 0, terrain_item)
+    tree_model.set_item(0, 1, terrain_state)
+    contour_item = Qt6::StandardItem.new("Contours")
+    contour_state = Qt6::StandardItem.new("Locked")
+    terrain_item.set_child(0, 0, contour_item)
+    terrain_item.set_child(0, 1, contour_state)
+
+    list_view.model = list_model
+    tree_view.model = tree_model
+    tree_view.expand_all
+
+    list_index = list_model.index(1)
+    tree_index = tree_model.index_from_item(contour_item)
+    list_view.current_index = list_index
+    tree_view.current_index = tree_index
+    application.process_events
+
+    current_list_index = list_view.current_index
+    current_tree_index = tree_view.current_index
+
+    list_model.row_count.should eq(2)
+    list_model.column_count.should eq(1)
+    list_model.item(0).not_nil!.text.should eq("Terrain")
+    list_model.item_from_index(current_list_index).not_nil!.text.should eq("Units")
+    current_list_index.valid?.should be_true
+    current_list_index.row.should eq(1)
+    current_list_index.column.should eq(0)
+    list_changes.should be >= 1
+
+    tree_model.row_count.should eq(1)
+    tree_model.column_count.should eq(2)
+    tree_model.horizontal_header_label.should eq("Layer")
+    tree_model.horizontal_header_label(1).should eq("State")
+    terrain_item.row_count.should eq(1)
+    terrain_item.child(0).not_nil!.text.should eq("Contours")
+    terrain_item.child(0, 1).not_nil!.text.should eq("Locked")
+    current_tree_index.valid?.should be_true
+    current_tree_index.row.should eq(0)
+    current_tree_index.column.should eq(0)
+    tree_model.item_from_index(current_tree_index).not_nil!.text.should eq("Contours")
+    tree_changes.should be >= 1
+
+    current_list_index.release
+    current_tree_index.release
+    list_index.release
+    tree_index.release
+    list_view.release
+    tree_view.release
+  end
+
   it "exposes geometry types and custom widget event hooks" do
     application = app
     widget = Qt6::EventWidget.new
