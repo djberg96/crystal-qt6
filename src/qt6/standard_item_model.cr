@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QStandardItemModel` for an initial model/view layer.
-  class StandardItemModel < QObject
+  class StandardItemModel < AbstractItemModel
     # Creates a standard item model, optionally parented to another object.
     def initialize(parent : QObject? = nil)
       super(LibQt6.qt6cr_standard_item_model_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
@@ -10,16 +10,6 @@ module Qt6
     def clear : self
       LibQt6.qt6cr_standard_item_model_clear(to_unsafe)
       self
-    end
-
-    # Returns the number of rows under the optional parent index.
-    def row_count(parent : ModelIndex? = nil) : Int32
-      LibQt6.qt6cr_standard_item_model_row_count(to_unsafe, parent.try(&.to_unsafe) || Pointer(Void).null)
-    end
-
-    # Returns the number of columns under the optional parent index.
-    def column_count(parent : ModelIndex? = nil) : Int32
-      LibQt6.qt6cr_standard_item_model_column_count(to_unsafe, parent.try(&.to_unsafe) || Pointer(Void).null)
     end
 
     # Appends a top-level row in the first column and returns it.
@@ -57,11 +47,6 @@ module Qt6
     # Returns the horizontal header label for the given column.
     def horizontal_header_label(column : Int = 0) : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_standard_item_model_horizontal_header_label(to_unsafe, column.to_i32))
-    end
-
-    # Returns an index for the requested row, column, and optional parent.
-    def index(row : Int, column : Int = 0, parent : ModelIndex? = nil) : ModelIndex
-      ModelIndex.wrap(LibQt6.qt6cr_standard_item_model_index(to_unsafe, row.to_i32, column.to_i32, parent.try(&.to_unsafe) || Pointer(Void).null), true)
     end
 
     # Returns the item referenced by the given index, if present.

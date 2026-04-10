@@ -20,8 +20,14 @@ require "./qt6/q_painter_path"
 require "./qt6/q_image"
 require "./qt6/q_pixmap"
 require "./qt6/model_index"
+require "./qt6/item_data_role"
+require "./qt6/sort_order"
+require "./qt6/case_sensitivity"
+require "./qt6/model_data"
+require "./qt6/abstract_item_model"
 require "./qt6/standard_item"
 require "./qt6/standard_item_model"
+require "./qt6/sort_filter_proxy_model"
 require "./qt6/clipboard"
 require "./qt6/q_svg_generator"
 require "./qt6/q_svg_renderer"
@@ -68,6 +74,7 @@ require "./qt6/list_widget_item"
 require "./qt6/list_widget"
 require "./qt6/tree_widget_item"
 require "./qt6/tree_widget"
+require "./qt6/styled_item_delegate"
 require "./qt6/list_view"
 require "./qt6/tree_view"
 require "./qt6/slider"
@@ -137,6 +144,18 @@ module Qt6
     value = String.new(pointer)
     LibQt6.qt6cr_string_free(pointer)
     value
+  end
+
+  def self.copy_string(pointer : UInt8*) : String
+    pointer.null? ? "" : String.new(pointer)
+  end
+
+  def self.malloc_string(value : String) : UInt8*
+    bytesize = value.bytesize
+    pointer = LibC.malloc(bytesize + 1).as(UInt8*)
+    pointer.copy_from(value.to_unsafe, bytesize)
+    pointer[bytesize] = 0u8
+    pointer
   end
 
   def self.track_object(object : ManagedResource) : Nil

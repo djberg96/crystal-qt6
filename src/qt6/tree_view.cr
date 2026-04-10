@@ -16,9 +16,15 @@ module Qt6
     end
 
     # Assigns the backing model and returns it.
-    def model=(model : StandardItemModel) : StandardItemModel
+    def model=(model : AbstractItemModel) : AbstractItemModel
       LibQt6.qt6cr_tree_view_set_model(to_unsafe, model.to_unsafe)
       model
+    end
+
+    # Assigns the item delegate used for display/edit behavior.
+    def item_delegate=(delegate : StyledItemDelegate) : StyledItemDelegate
+      LibQt6.qt6cr_tree_view_set_item_delegate(to_unsafe, delegate.to_unsafe)
+      delegate
     end
 
     # Returns the current model index.
