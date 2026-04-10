@@ -215,6 +215,54 @@ describe Qt6 do
     bounded_element_canvas.pixel_color(1, 1).should eq(Qt6::Color.new(0, 0, 255, 255))
   end
 
+  it "supports clipboard access and file-backed image loading" do
+    application = app
+    source_path = File.join(Dir.tempdir, "crystal-qt6-image-source-#{Process.pid}.png")
+    source = Qt6::QImage.new(12, 10)
+    source.fill(Qt6::Color.new(255, 255, 255))
+    source.set_pixel_color(4, 3, Qt6::Color.new(12, 34, 56, 255))
+    source.save(source_path).should be_true
+
+    loaded_image = Qt6::QImage.from_file(source_path)
+    loaded_image.null?.should be_false
+    loaded_image.size.should eq(Qt6::Size.new(12, 10))
+    loaded_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    reusable_image = Qt6::QImage.new(1, 1)
+    reusable_image.load(source_path).should be_true
+    reusable_image.size.should eq(Qt6::Size.new(12, 10))
+    reusable_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    loaded_pixmap = Qt6::QPixmap.from_file(source_path)
+    loaded_pixmap.null?.should be_false
+    loaded_pixmap.size.should eq(Qt6::Size.new(12, 10))
+    loaded_pixmap.to_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    reusable_pixmap = Qt6::QPixmap.new(1, 1)
+    reusable_pixmap.load(source_path).should be_true
+    reusable_pixmap.size.should eq(Qt6::Size.new(12, 10))
+    reusable_pixmap.to_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    clipboard = application.clipboard
+    clipboard.clear
+    clipboard.text = "clipboard sample"
+    application.process_events
+    clipboard.text.should eq("clipboard sample")
+
+    clipboard.image = loaded_image
+    application.process_events
+    clipboard_image = clipboard.image
+    clipboard_image.null?.should be_false
+    clipboard_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    clipboard.pixmap = loaded_pixmap
+    application.process_events
+    clipboard_pixmap = clipboard.pixmap
+    clipboard_pixmap.null?.should be_false
+    clipboard_pixmap.to_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+    clipboard.clear
+  end
+
   it "loads SVG content from memory" do
     app
     svg_markup = <<-SVG

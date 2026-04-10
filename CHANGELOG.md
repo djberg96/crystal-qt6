@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- `Clipboard` bindings plus `Qt6.clipboard` and `Application#clipboard` helpers for text, image, and pixmap clipboard access.
+- File-backed raster loading helpers for `QImage` and `QPixmap` through `new(path)`, `from_file`, and `load` APIs.
+
 ## [0.2.0] - 2026-04-09
 
 ### Added
