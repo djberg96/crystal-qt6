@@ -381,6 +381,49 @@ module Qt6
     fun qt6cr_combo_box_current_text = qt6cr_combo_box_current_text(handle : Handle) : UInt8*
     fun qt6cr_combo_box_on_current_index_changed = qt6cr_combo_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
+    fun qt6cr_list_widget_item_create = qt6cr_list_widget_item_create(text : UInt8*) : Handle
+    fun qt6cr_list_widget_item_destroy = qt6cr_list_widget_item_destroy(handle : Handle)
+    fun qt6cr_list_widget_item_set_text = qt6cr_list_widget_item_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_list_widget_item_text = qt6cr_list_widget_item_text(handle : Handle) : UInt8*
+
+    fun qt6cr_list_widget_create = qt6cr_list_widget_create(parent : Handle) : Handle
+    fun qt6cr_list_widget_add_item = qt6cr_list_widget_add_item(handle : Handle, item : Handle)
+    fun qt6cr_list_widget_add_item_text = qt6cr_list_widget_add_item_text(handle : Handle, text : UInt8*) : Handle
+    fun qt6cr_list_widget_count = qt6cr_list_widget_count(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_item = qt6cr_list_widget_item(handle : Handle, index : LibC::Int) : Handle
+    fun qt6cr_list_widget_item_text_at = qt6cr_list_widget_item_text_at(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_list_widget_current_row = qt6cr_list_widget_current_row(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_set_current_row = qt6cr_list_widget_set_current_row(handle : Handle, row : LibC::Int)
+    fun qt6cr_list_widget_current_item = qt6cr_list_widget_current_item(handle : Handle) : Handle
+    fun qt6cr_list_widget_current_text = qt6cr_list_widget_current_text(handle : Handle) : UInt8*
+    fun qt6cr_list_widget_clear = qt6cr_list_widget_clear(handle : Handle)
+    fun qt6cr_list_widget_on_current_row_changed = qt6cr_list_widget_on_current_row_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_tree_widget_item_create = qt6cr_tree_widget_item_create(text : UInt8*) : Handle
+    fun qt6cr_tree_widget_item_destroy = qt6cr_tree_widget_item_destroy(handle : Handle)
+    fun qt6cr_tree_widget_item_set_text = qt6cr_tree_widget_item_set_text(handle : Handle, column : LibC::Int, text : UInt8*)
+    fun qt6cr_tree_widget_item_text = qt6cr_tree_widget_item_text(handle : Handle, column : LibC::Int) : UInt8*
+    fun qt6cr_tree_widget_item_add_child = qt6cr_tree_widget_item_add_child(handle : Handle, child : Handle)
+    fun qt6cr_tree_widget_item_child_count = qt6cr_tree_widget_item_child_count(handle : Handle) : LibC::Int
+    fun qt6cr_tree_widget_item_child = qt6cr_tree_widget_item_child(handle : Handle, index : LibC::Int) : Handle
+
+    fun qt6cr_tree_widget_create = qt6cr_tree_widget_create(parent : Handle) : Handle
+    fun qt6cr_tree_widget_column_count = qt6cr_tree_widget_column_count(handle : Handle) : LibC::Int
+    fun qt6cr_tree_widget_set_column_count = qt6cr_tree_widget_set_column_count(handle : Handle, count : LibC::Int)
+    fun qt6cr_tree_widget_header_label = qt6cr_tree_widget_header_label(handle : Handle, column : LibC::Int) : UInt8*
+    fun qt6cr_tree_widget_set_header_label = qt6cr_tree_widget_set_header_label(handle : Handle, column : LibC::Int, text : UInt8*)
+    fun qt6cr_tree_widget_add_top_level_item = qt6cr_tree_widget_add_top_level_item(handle : Handle, item : Handle)
+    fun qt6cr_tree_widget_add_top_level_item_text = qt6cr_tree_widget_add_top_level_item_text(handle : Handle, text : UInt8*) : Handle
+    fun qt6cr_tree_widget_top_level_item_count = qt6cr_tree_widget_top_level_item_count(handle : Handle) : LibC::Int
+    fun qt6cr_tree_widget_top_level_item = qt6cr_tree_widget_top_level_item(handle : Handle, index : LibC::Int) : Handle
+    fun qt6cr_tree_widget_current_item = qt6cr_tree_widget_current_item(handle : Handle) : Handle
+    fun qt6cr_tree_widget_set_current_item = qt6cr_tree_widget_set_current_item(handle : Handle, item : Handle)
+    fun qt6cr_tree_widget_current_item_text = qt6cr_tree_widget_current_item_text(handle : Handle, column : LibC::Int) : UInt8*
+    fun qt6cr_tree_widget_expand_all = qt6cr_tree_widget_expand_all(handle : Handle)
+    fun qt6cr_tree_widget_collapse_all = qt6cr_tree_widget_collapse_all(handle : Handle)
+    fun qt6cr_tree_widget_clear = qt6cr_tree_widget_clear(handle : Handle)
+    fun qt6cr_tree_widget_on_current_item_changed = qt6cr_tree_widget_on_current_item_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+
     fun qt6cr_slider_create = qt6cr_slider_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_slider_set_minimum = qt6cr_slider_set_minimum(handle : Handle, value : LibC::Int)
     fun qt6cr_slider_minimum = qt6cr_slider_minimum(handle : Handle) : LibC::Int

@@ -31,10 +31,10 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
-- common form/layout support through line edits, checkboxes, combo boxes, and vertical, horizontal, form, and grid layouts
+- common form/layout support through line edits, checkboxes, combo boxes, list widgets, tree widgets, and vertical, horizontal, form, and grid layouts
 - custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, and key callbacks
 
-That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the missing editor-control and data-panel layer that sits between the shell and the canvas.
+That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
 
 Applications in the target class still usually depend on at least these Qt areas:
 
@@ -185,7 +185,7 @@ Goal: support the heavy `QtGui` drawing usage common to editor-style application
 
 ## Phase 5: Forms And Editor Controls
 
-Status: next major phase
+Status: substantially complete for widget-based editor panels
 
 Goal: support panel-heavy control surfaces and editor tooling.
 
@@ -213,7 +213,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-This is now the highest-priority unfinished area. `crystal-qt6` already has enough shell and rendering capability to make additional isolated widgets less valuable than a coherent editor-control batch.
+Most of the widget-level work in this phase is now in place, including list and tree panels. The remaining priorities are drag and drop, richer model/view alternatives where needed, and a few application-service APIs such as clipboard and image-loading helpers.
 
 ## Phase 6: Export And Document Features
 

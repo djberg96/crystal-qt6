@@ -388,6 +388,49 @@ void qt6cr_combo_box_set_current_index(qt6cr_handle_t handle, int index);
 char *qt6cr_combo_box_current_text(qt6cr_handle_t handle);
 void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_list_widget_item_create(const char *text);
+void qt6cr_list_widget_item_destroy(qt6cr_handle_t handle);
+void qt6cr_list_widget_item_set_text(qt6cr_handle_t handle, const char *text);
+char *qt6cr_list_widget_item_text(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_list_widget_create(qt6cr_handle_t parent);
+void qt6cr_list_widget_add_item(qt6cr_handle_t handle, qt6cr_handle_t item);
+qt6cr_handle_t qt6cr_list_widget_add_item_text(qt6cr_handle_t handle, const char *text);
+int qt6cr_list_widget_count(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_list_widget_item(qt6cr_handle_t handle, int index);
+char *qt6cr_list_widget_item_text_at(qt6cr_handle_t handle, int index);
+int qt6cr_list_widget_current_row(qt6cr_handle_t handle);
+void qt6cr_list_widget_set_current_row(qt6cr_handle_t handle, int row);
+qt6cr_handle_t qt6cr_list_widget_current_item(qt6cr_handle_t handle);
+char *qt6cr_list_widget_current_text(qt6cr_handle_t handle);
+void qt6cr_list_widget_clear(qt6cr_handle_t handle);
+void qt6cr_list_widget_on_current_row_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_tree_widget_item_create(const char *text);
+void qt6cr_tree_widget_item_destroy(qt6cr_handle_t handle);
+void qt6cr_tree_widget_item_set_text(qt6cr_handle_t handle, int column, const char *text);
+char *qt6cr_tree_widget_item_text(qt6cr_handle_t handle, int column);
+void qt6cr_tree_widget_item_add_child(qt6cr_handle_t handle, qt6cr_handle_t child);
+int qt6cr_tree_widget_item_child_count(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_tree_widget_item_child(qt6cr_handle_t handle, int index);
+
+qt6cr_handle_t qt6cr_tree_widget_create(qt6cr_handle_t parent);
+int qt6cr_tree_widget_column_count(qt6cr_handle_t handle);
+void qt6cr_tree_widget_set_column_count(qt6cr_handle_t handle, int count);
+char *qt6cr_tree_widget_header_label(qt6cr_handle_t handle, int column);
+void qt6cr_tree_widget_set_header_label(qt6cr_handle_t handle, int column, const char *text);
+void qt6cr_tree_widget_add_top_level_item(qt6cr_handle_t handle, qt6cr_handle_t item);
+qt6cr_handle_t qt6cr_tree_widget_add_top_level_item_text(qt6cr_handle_t handle, const char *text);
+int qt6cr_tree_widget_top_level_item_count(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_tree_widget_top_level_item(qt6cr_handle_t handle, int index);
+qt6cr_handle_t qt6cr_tree_widget_current_item(qt6cr_handle_t handle);
+void qt6cr_tree_widget_set_current_item(qt6cr_handle_t handle, qt6cr_handle_t item);
+char *qt6cr_tree_widget_current_item_text(qt6cr_handle_t handle, int column);
+void qt6cr_tree_widget_expand_all(qt6cr_handle_t handle);
+void qt6cr_tree_widget_collapse_all(qt6cr_handle_t handle);
+void qt6cr_tree_widget_clear(qt6cr_handle_t handle);
+void qt6cr_tree_widget_on_current_item_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value);
 int qt6cr_slider_minimum(qt6cr_handle_t handle);

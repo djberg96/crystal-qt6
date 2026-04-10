@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, raster/SVG/PDF rendering and export, and a first batch of common controls and layouts.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, raster/SVG/PDF rendering and export, and a first batch of common controls, layouts, and item-based editor panels.
 
 ## Requirements
 
@@ -126,6 +126,7 @@ app.run
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
+- `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
 
