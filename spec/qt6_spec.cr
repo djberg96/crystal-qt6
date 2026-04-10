@@ -527,6 +527,113 @@ describe Qt6 do
     main.release
   end
 
+  it "supports editor controls and container widgets" do
+    application = app
+    window = Qt6::MainWindow.new
+    radio_states = [] of Bool
+    slider_values = [] of Int32
+    spin_values = [] of Int32
+    double_values = [] of Float64
+    group_states = [] of Bool
+    tab_indices = [] of Int32
+
+    splitter = Qt6::Splitter.new(Qt6::Orientation::Horizontal)
+    scroll_area = Qt6::ScrollArea.new
+    tab_widget = Qt6::TabWidget.new
+    inspector = Qt6::Widget.new
+    options_group = Qt6::GroupBox.new("Options")
+    auto_mode = Qt6::RadioButton.new("Auto")
+    manual_mode = Qt6::RadioButton.new("Manual")
+    slider = Qt6::Slider.new
+    spin_box = Qt6::SpinBox.new
+    double_spin_box = Qt6::DoubleSpinBox.new
+
+    manual_mode.on_toggled do |value|
+      radio_states << value
+    end
+    slider.on_value_changed do |value|
+      slider_values << value
+    end
+    spin_box.on_value_changed do |value|
+      spin_values << value
+    end
+    double_spin_box.on_value_changed do |value|
+      double_values << value
+    end
+    options_group.on_toggled do |value|
+      group_states << value
+    end
+    tab_widget.on_current_index_changed do |value|
+      tab_indices << value
+    end
+
+    options_group.checkable = true
+    options_group.vbox do |column|
+      column << auto_mode
+      column << manual_mode
+      column << slider
+      column << spin_box
+      column << double_spin_box
+    end
+
+    inspector.vbox do |column|
+      column << options_group
+    end
+
+    scroll_area.widget_resizable = true
+    scroll_area.widget = inspector
+    tab_widget.add_tab(Qt6::Label.new("Layers"), "Layers")
+    tab_widget.add_tab(Qt6::Label.new("Export"), "Export")
+    splitter << scroll_area
+    splitter << tab_widget
+    window.central_widget = splitter
+
+    slider.set_range(0, 100)
+    slider.value = 42
+    spin_box.set_range(1, 9)
+    spin_box.single_step = 2
+    spin_box.value = 5
+    double_spin_box.set_range(0.5, 4.0)
+    double_spin_box.single_step = 0.25
+    double_spin_box.value = 1.75
+    manual_mode.checked = true
+    options_group.checked = false
+    options_group.checked = true
+    tab_widget.current_index = 1
+    splitter.orientation = Qt6::Orientation::Vertical
+    application.process_events
+
+    scroll_area.widget_resizable?.should be_true
+    splitter.count.should eq(2)
+    splitter.orientation.should eq(Qt6::Orientation::Vertical)
+    tab_widget.count.should eq(2)
+    tab_widget.current_index.should eq(1)
+    options_group.title.should eq("Options")
+    options_group.checkable?.should be_true
+    options_group.checked?.should be_true
+    auto_mode.checked?.should be_false
+    manual_mode.checked?.should be_true
+    slider.orientation.should eq(Qt6::Orientation::Horizontal)
+    slider.minimum.should eq(0)
+    slider.maximum.should eq(100)
+    slider.value.should eq(42)
+    spin_box.minimum.should eq(1)
+    spin_box.maximum.should eq(9)
+    spin_box.single_step.should eq(2)
+    spin_box.value.should eq(5)
+    double_spin_box.minimum.should eq(0.5)
+    double_spin_box.maximum.should eq(4.0)
+    double_spin_box.single_step.should eq(0.25)
+    double_spin_box.value.should eq(1.75)
+    radio_states.last.should be_true
+    slider_values.last.should eq(42)
+    spin_values.last.should eq(5)
+    double_values.last.should eq(1.75)
+    group_states.last.should be_true
+    tab_indices.last.should eq(1)
+    window.release
+  end
+
   it "provides QObject-derived signals and timer callbacks" do
     application = app
     timer = Qt6::QTimer.new

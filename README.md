@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is an initial, working foundation rather than a full binding of the entire Qt6 API. The current surface now covers the basics for custom widgets plus a reduced desktop application shell built around main windows, menus, actions, docks, toolbars, dialogs, and a few common controls.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, raster/SVG/PDF rendering and export, and a first batch of common controls and layouts.
 
 ## Requirements
 
@@ -123,7 +123,8 @@ app.run
 - `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
-- `Qt6::LineEdit`, `Qt6::CheckBox`, and `Qt6::ComboBox` for common form controls
+- `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
+- `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
 
 ## Testing Strategy
@@ -166,7 +167,7 @@ You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but
 
 The next logical additions are:
 
-1. more layouts such as `HBoxLayout`, grid layouts, and form layouts
-2. shell refinements such as shortcuts, action groups, and standard dialogs
-3. additional common controls such as radio buttons, list widgets, trees, tabs, and splitters
-4. widget paint-device integration, plus pen/brush/font refinements on top of the current rendering stack
+1. additional editor controls and containers such as radio buttons, sliders, spin boxes, group boxes, tabs, splitters, scroll areas, and list/tree surfaces
+2. one real inspector-style example that wires those controls into a custom canvas with live updates
+3. remaining rendering/document helpers such as `QImageReader`, clipboard support, gradients/composition features, and any narrowly needed print APIs
+4. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface

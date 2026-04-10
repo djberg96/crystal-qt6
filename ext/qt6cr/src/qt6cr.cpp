@@ -41,17 +41,25 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QKeySequence>
+#include <QRadioButton>
 #include <QResizeEvent>
+#include <QScrollArea>
+#include <QSlider>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QStatusBar>
+#include <QGroupBox>
 #include <QSvgGenerator>
 #include <QSvgRenderer>
 #include <QSvgWidget>
+#include <QTabWidget>
 #include <QTimer>
 #include <QTransform>
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWheelEvent>
 #include <QWidget>
+#include <QSplitter>
 
 #include <QPoint>
 
@@ -316,8 +324,40 @@ QCheckBox *as_check_box(qt6cr_handle_t handle) {
   return static_cast<QCheckBox *>(handle);
 }
 
+QRadioButton *as_radio_button(qt6cr_handle_t handle) {
+  return static_cast<QRadioButton *>(handle);
+}
+
 QComboBox *as_combo_box(qt6cr_handle_t handle) {
   return static_cast<QComboBox *>(handle);
+}
+
+QSlider *as_slider(qt6cr_handle_t handle) {
+  return static_cast<QSlider *>(handle);
+}
+
+QSpinBox *as_spin_box(qt6cr_handle_t handle) {
+  return static_cast<QSpinBox *>(handle);
+}
+
+QDoubleSpinBox *as_double_spin_box(qt6cr_handle_t handle) {
+  return static_cast<QDoubleSpinBox *>(handle);
+}
+
+QGroupBox *as_group_box(qt6cr_handle_t handle) {
+  return static_cast<QGroupBox *>(handle);
+}
+
+QTabWidget *as_tab_widget(qt6cr_handle_t handle) {
+  return static_cast<QTabWidget *>(handle);
+}
+
+QScrollArea *as_scroll_area(qt6cr_handle_t handle) {
+  return static_cast<QScrollArea *>(handle);
+}
+
+QSplitter *as_splitter(qt6cr_handle_t handle) {
+  return static_cast<QSplitter *>(handle);
 }
 
 QHBoxLayout *as_h_box_layout(qt6cr_handle_t handle) {
@@ -2243,6 +2283,48 @@ void qt6cr_check_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t cal
   });
 }
 
+qt6cr_handle_t qt6cr_radio_button_create(qt6cr_handle_t parent, const char *text) {
+  return new QRadioButton(QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent));
+}
+
+void qt6cr_radio_button_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *radio_button = as_radio_button(handle);
+
+  if (radio_button != nullptr) {
+    radio_button->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_radio_button_text(qt6cr_handle_t handle) {
+  auto *radio_button = as_radio_button(handle);
+  return radio_button == nullptr ? duplicate_string("") : duplicate_string(radio_button->text());
+}
+
+void qt6cr_radio_button_set_checked(qt6cr_handle_t handle, bool value) {
+  auto *radio_button = as_radio_button(handle);
+
+  if (radio_button != nullptr) {
+    radio_button->setChecked(value);
+  }
+}
+
+bool qt6cr_radio_button_is_checked(qt6cr_handle_t handle) {
+  auto *radio_button = as_radio_button(handle);
+  return radio_button != nullptr && radio_button->isChecked();
+}
+
+void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *radio_button = as_radio_button(handle);
+
+  if (radio_button == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(radio_button, &QRadioButton::toggled, radio_button, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
 qt6cr_handle_t qt6cr_combo_box_create(qt6cr_handle_t parent) {
   return new QComboBox(as_widget(parent));
 }
@@ -2288,6 +2370,383 @@ void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_c
   QObject::connect(combo_box, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), combo_box, [callback, userdata](int index) {
     callback(userdata, index);
   });
+}
+
+qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation) {
+  return new QSlider(static_cast<Qt::Orientation>(orientation), as_widget(parent));
+}
+
+void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setMinimum(value);
+  }
+}
+
+int qt6cr_slider_minimum(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? 0 : slider->minimum();
+}
+
+void qt6cr_slider_set_maximum(qt6cr_handle_t handle, int value) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setMaximum(value);
+  }
+}
+
+int qt6cr_slider_maximum(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? 99 : slider->maximum();
+}
+
+void qt6cr_slider_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setRange(minimum, maximum);
+  }
+}
+
+void qt6cr_slider_set_value(qt6cr_handle_t handle, int value) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setValue(value);
+  }
+}
+
+int qt6cr_slider_value(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? 0 : slider->value();
+}
+
+int qt6cr_slider_orientation(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(slider->orientation());
+}
+
+void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *slider = as_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QSlider::valueChanged, slider, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent) {
+  return new QSpinBox(as_widget(parent));
+}
+
+void qt6cr_spin_box_set_minimum(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setMinimum(value);
+  }
+}
+
+int qt6cr_spin_box_minimum(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? 0 : spin_box->minimum();
+}
+
+void qt6cr_spin_box_set_maximum(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setMaximum(value);
+  }
+}
+
+int qt6cr_spin_box_maximum(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? 99 : spin_box->maximum();
+}
+
+void qt6cr_spin_box_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setRange(minimum, maximum);
+  }
+}
+
+void qt6cr_spin_box_set_value(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setValue(value);
+  }
+}
+
+int qt6cr_spin_box_value(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? 0 : spin_box->value();
+}
+
+void qt6cr_spin_box_set_single_step(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setSingleStep(value);
+  }
+}
+
+int qt6cr_spin_box_single_step(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? 1 : spin_box->singleStep();
+}
+
+void qt6cr_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(spin_box, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), spin_box, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_double_spin_box_create(qt6cr_handle_t parent) {
+  return new QDoubleSpinBox(as_widget(parent));
+}
+
+void qt6cr_double_spin_box_set_minimum(qt6cr_handle_t handle, double value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setMinimum(value);
+  }
+}
+
+double qt6cr_double_spin_box_minimum(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? 0.0 : spin_box->minimum();
+}
+
+void qt6cr_double_spin_box_set_maximum(qt6cr_handle_t handle, double value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setMaximum(value);
+  }
+}
+
+double qt6cr_double_spin_box_maximum(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? 99.99 : spin_box->maximum();
+}
+
+void qt6cr_double_spin_box_set_range(qt6cr_handle_t handle, double minimum, double maximum) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setRange(minimum, maximum);
+  }
+}
+
+void qt6cr_double_spin_box_set_value(qt6cr_handle_t handle, double value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setValue(value);
+  }
+}
+
+double qt6cr_double_spin_box_value(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? 0.0 : spin_box->value();
+}
+
+void qt6cr_double_spin_box_set_single_step(qt6cr_handle_t handle, double value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setSingleStep(value);
+  }
+}
+
+double qt6cr_double_spin_box_single_step(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? 1.0 : spin_box->singleStep();
+}
+
+void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(spin_box, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), spin_box, [callback, userdata](double value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_group_box_create(qt6cr_handle_t parent, const char *title) {
+  return new QGroupBox(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+}
+
+void qt6cr_group_box_set_title(qt6cr_handle_t handle, const char *title) {
+  auto *group_box = as_group_box(handle);
+
+  if (group_box != nullptr) {
+    group_box->setTitle(QString::fromUtf8(title == nullptr ? "" : title));
+  }
+}
+
+char *qt6cr_group_box_title(qt6cr_handle_t handle) {
+  auto *group_box = as_group_box(handle);
+  return group_box == nullptr ? duplicate_string("") : duplicate_string(group_box->title());
+}
+
+void qt6cr_group_box_set_checkable(qt6cr_handle_t handle, bool value) {
+  auto *group_box = as_group_box(handle);
+
+  if (group_box != nullptr) {
+    group_box->setCheckable(value);
+  }
+}
+
+bool qt6cr_group_box_is_checkable(qt6cr_handle_t handle) {
+  auto *group_box = as_group_box(handle);
+  return group_box != nullptr && group_box->isCheckable();
+}
+
+void qt6cr_group_box_set_checked(qt6cr_handle_t handle, bool value) {
+  auto *group_box = as_group_box(handle);
+
+  if (group_box != nullptr) {
+    group_box->setChecked(value);
+  }
+}
+
+bool qt6cr_group_box_is_checked(qt6cr_handle_t handle) {
+  auto *group_box = as_group_box(handle);
+  return group_box != nullptr && group_box->isChecked();
+}
+
+void qt6cr_group_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *group_box = as_group_box(handle);
+
+  if (group_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group_box, &QGroupBox::toggled, group_box, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent) {
+  return new QTabWidget(as_widget(parent));
+}
+
+int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label) {
+  auto *tab_widget = as_tab_widget(handle);
+  auto *page = as_widget(widget);
+
+  if (tab_widget == nullptr || page == nullptr) {
+    return -1;
+  }
+
+  return tab_widget->addTab(page, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+int qt6cr_tab_widget_count(qt6cr_handle_t handle) {
+  auto *tab_widget = as_tab_widget(handle);
+  return tab_widget == nullptr ? 0 : tab_widget->count();
+}
+
+int qt6cr_tab_widget_current_index(qt6cr_handle_t handle) {
+  auto *tab_widget = as_tab_widget(handle);
+  return tab_widget == nullptr ? -1 : tab_widget->currentIndex();
+}
+
+void qt6cr_tab_widget_set_current_index(qt6cr_handle_t handle, int index) {
+  auto *tab_widget = as_tab_widget(handle);
+
+  if (tab_widget != nullptr) {
+    tab_widget->setCurrentIndex(index);
+  }
+}
+
+void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tab_widget = as_tab_widget(handle);
+
+  if (tab_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tab_widget, &QTabWidget::currentChanged, tab_widget, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent) {
+  return new QScrollArea(as_widget(parent));
+}
+
+void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *scroll_area = as_scroll_area(handle);
+  auto *content = as_widget(widget);
+
+  if (scroll_area != nullptr && content != nullptr) {
+    scroll_area->setWidget(content);
+  }
+}
+
+void qt6cr_scroll_area_set_widget_resizable(qt6cr_handle_t handle, bool value) {
+  auto *scroll_area = as_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->setWidgetResizable(value);
+  }
+}
+
+bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle) {
+  auto *scroll_area = as_scroll_area(handle);
+  return scroll_area != nullptr && scroll_area->widgetResizable();
+}
+
+qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation) {
+  return new QSplitter(static_cast<Qt::Orientation>(orientation), as_widget(parent));
+}
+
+void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *splitter = as_splitter(handle);
+  auto *child = as_widget(widget);
+
+  if (splitter != nullptr && child != nullptr) {
+    splitter->addWidget(child);
+  }
+}
+
+int qt6cr_splitter_count(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? 0 : splitter->count();
+}
+
+int qt6cr_splitter_orientation(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(splitter->orientation());
+}
+
+void qt6cr_splitter_set_orientation(qt6cr_handle_t handle, int orientation) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->setOrientation(static_cast<Qt::Orientation>(orientation));
+  }
 }
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent) {

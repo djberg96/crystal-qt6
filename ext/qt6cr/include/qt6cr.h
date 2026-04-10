@@ -56,6 +56,7 @@ typedef struct {
 typedef void (*qt6cr_void_callback_t)(void *userdata);
 typedef void (*qt6cr_bool_callback_t)(void *userdata, bool value);
 typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
+typedef void (*qt6cr_double_callback_t)(void *userdata, double value);
 typedef void (*qt6cr_paint_callback_t)(void *userdata, qt6cr_rectf_t rect);
 typedef void (*qt6cr_paint_with_painter_callback_t)(void *userdata, qt6cr_handle_t painter, qt6cr_rectf_t rect);
 typedef void (*qt6cr_resize_callback_t)(void *userdata, qt6cr_size_t old_size, qt6cr_size_t new_size);
@@ -372,6 +373,13 @@ void qt6cr_check_box_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_check_box_is_checked(qt6cr_handle_t handle);
 void qt6cr_check_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_radio_button_create(qt6cr_handle_t parent, const char *text);
+void qt6cr_radio_button_set_text(qt6cr_handle_t handle, const char *text);
+char *qt6cr_radio_button_text(qt6cr_handle_t handle);
+void qt6cr_radio_button_set_checked(qt6cr_handle_t handle, bool value);
+bool qt6cr_radio_button_is_checked(qt6cr_handle_t handle);
+void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_combo_box_create(qt6cr_handle_t parent);
 void qt6cr_combo_box_add_item(qt6cr_handle_t handle, const char *text);
 int qt6cr_combo_box_count(qt6cr_handle_t handle);
@@ -379,6 +387,68 @@ int qt6cr_combo_box_current_index(qt6cr_handle_t handle);
 void qt6cr_combo_box_set_current_index(qt6cr_handle_t handle, int index);
 char *qt6cr_combo_box_current_text(qt6cr_handle_t handle);
 void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation);
+void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value);
+int qt6cr_slider_minimum(qt6cr_handle_t handle);
+void qt6cr_slider_set_maximum(qt6cr_handle_t handle, int value);
+int qt6cr_slider_maximum(qt6cr_handle_t handle);
+void qt6cr_slider_set_range(qt6cr_handle_t handle, int minimum, int maximum);
+void qt6cr_slider_set_value(qt6cr_handle_t handle, int value);
+int qt6cr_slider_value(qt6cr_handle_t handle);
+int qt6cr_slider_orientation(qt6cr_handle_t handle);
+void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent);
+void qt6cr_spin_box_set_minimum(qt6cr_handle_t handle, int value);
+int qt6cr_spin_box_minimum(qt6cr_handle_t handle);
+void qt6cr_spin_box_set_maximum(qt6cr_handle_t handle, int value);
+int qt6cr_spin_box_maximum(qt6cr_handle_t handle);
+void qt6cr_spin_box_set_range(qt6cr_handle_t handle, int minimum, int maximum);
+void qt6cr_spin_box_set_value(qt6cr_handle_t handle, int value);
+int qt6cr_spin_box_value(qt6cr_handle_t handle);
+void qt6cr_spin_box_set_single_step(qt6cr_handle_t handle, int value);
+int qt6cr_spin_box_single_step(qt6cr_handle_t handle);
+void qt6cr_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_double_spin_box_create(qt6cr_handle_t parent);
+void qt6cr_double_spin_box_set_minimum(qt6cr_handle_t handle, double value);
+double qt6cr_double_spin_box_minimum(qt6cr_handle_t handle);
+void qt6cr_double_spin_box_set_maximum(qt6cr_handle_t handle, double value);
+double qt6cr_double_spin_box_maximum(qt6cr_handle_t handle);
+void qt6cr_double_spin_box_set_range(qt6cr_handle_t handle, double minimum, double maximum);
+void qt6cr_double_spin_box_set_value(qt6cr_handle_t handle, double value);
+double qt6cr_double_spin_box_value(qt6cr_handle_t handle);
+void qt6cr_double_spin_box_set_single_step(qt6cr_handle_t handle, double value);
+double qt6cr_double_spin_box_single_step(qt6cr_handle_t handle);
+void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_group_box_create(qt6cr_handle_t parent, const char *title);
+void qt6cr_group_box_set_title(qt6cr_handle_t handle, const char *title);
+char *qt6cr_group_box_title(qt6cr_handle_t handle);
+void qt6cr_group_box_set_checkable(qt6cr_handle_t handle, bool value);
+bool qt6cr_group_box_is_checkable(qt6cr_handle_t handle);
+void qt6cr_group_box_set_checked(qt6cr_handle_t handle, bool value);
+bool qt6cr_group_box_is_checked(qt6cr_handle_t handle);
+void qt6cr_group_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent);
+int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label);
+int qt6cr_tab_widget_count(qt6cr_handle_t handle);
+int qt6cr_tab_widget_current_index(qt6cr_handle_t handle);
+void qt6cr_tab_widget_set_current_index(qt6cr_handle_t handle, int index);
+void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent);
+void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_scroll_area_set_widget_resizable(qt6cr_handle_t handle, bool value);
+bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation);
+void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+int qt6cr_splitter_count(qt6cr_handle_t handle);
+int qt6cr_splitter_orientation(qt6cr_handle_t handle);
+void qt6cr_splitter_set_orientation(qt6cr_handle_t handle, int orientation);
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent);
 void qt6cr_timer_set_interval(qt6cr_handle_t handle, int interval);
