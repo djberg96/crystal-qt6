@@ -128,6 +128,7 @@ app.run
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels
+- `Qt6::ModelIndex`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::ListView`, and `Qt6::TreeView` for an initial model/view layer built on Qt's standard item model
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
 
@@ -174,5 +175,5 @@ The next logical additions are:
 1. additional editor controls and containers such as radio buttons, sliders, spin boxes, group boxes, tabs, splitters, scroll areas, and list/tree surfaces
 2. one real inspector-style example that wires those controls into a custom canvas with live updates
 3. remaining rendering/document helpers such as `QImageReader`, clipboard support, gradients/composition features, and any narrowly needed print APIs
-3. remaining rendering/document helpers such as `QImageReader`, gradients/composition features, and any narrowly needed print APIs
+3. richer model/view features, `QImageReader`, gradients/composition features, and any narrowly needed print APIs
 4. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface

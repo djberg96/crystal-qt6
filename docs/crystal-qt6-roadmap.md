@@ -31,7 +31,7 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
-- common form/layout support through line edits, checkboxes, combo boxes, list widgets, tree widgets, and vertical, horizontal, form, and grid layouts
+- common form/layout support through line edits, checkboxes, combo boxes, list widgets, tree widgets, an initial `QStandardItemModel`-based model/view layer, and vertical, horizontal, form, and grid layouts
 - custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, and key callbacks
 
 That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
@@ -213,7 +213,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels. The remaining priorities are drag and drop, richer model/view alternatives where needed, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
+Most of the widget-level work in this phase is now in place, including list and tree panels plus an initial `QStandardItemModel`-based model/view path. The remaining priorities are drag and drop, richer model/view alternatives or abstract-model bridges where needed, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
 
 ## Phase 6: Export And Document Features
 
