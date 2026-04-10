@@ -24,6 +24,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Common control bindings for `QLineEdit`, `QCheckBox`, and `QComboBox`.
 - Editor-control bindings for `QRadioButton`, `QSlider`, `QSpinBox`, `QDoubleSpinBox`, and `QGroupBox`.
 - Container bindings for `QTabWidget`, `QScrollArea`, `QSplitter`, and the shared `Orientation` enum used by panel-oriented widgets.
+- Item-view bindings for `QListWidget`, `QListWidgetItem`, `QTreeWidget`, and `QTreeWidgetItem`, including current-selection callbacks and hierarchical item text access.
 - Rendering bindings for `QImage`, `QPixmap`, `QPainter`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, and `QFont`, including direct widget paint callbacks.
 - `QSvgGenerator` bindings so `QPainter` scenes can be exported as SVG with size, view box, metadata, and DPI settings.
 - `QSvgRenderer` bindings so SVG files can be loaded, inspected, and rasterized through the existing `QPainter` API.

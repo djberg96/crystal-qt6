@@ -23,6 +23,8 @@
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QListWidget>
+#include <QListWidgetItem>
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QMenu>
@@ -56,6 +58,8 @@
 #include <QTimer>
 #include <QTransform>
 #include <QToolBar>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QWheelEvent>
 #include <QWidget>
@@ -332,6 +336,14 @@ QComboBox *as_combo_box(qt6cr_handle_t handle) {
   return static_cast<QComboBox *>(handle);
 }
 
+QListWidgetItem *as_list_widget_item(qt6cr_handle_t handle) {
+  return static_cast<QListWidgetItem *>(handle);
+}
+
+QListWidget *as_list_widget(qt6cr_handle_t handle) {
+  return static_cast<QListWidget *>(handle);
+}
+
 QSlider *as_slider(qt6cr_handle_t handle) {
   return static_cast<QSlider *>(handle);
 }
@@ -358,6 +370,14 @@ QScrollArea *as_scroll_area(qt6cr_handle_t handle) {
 
 QSplitter *as_splitter(qt6cr_handle_t handle) {
   return static_cast<QSplitter *>(handle);
+}
+
+QTreeWidgetItem *as_tree_widget_item(qt6cr_handle_t handle) {
+  return static_cast<QTreeWidgetItem *>(handle);
+}
+
+QTreeWidget *as_tree_widget(qt6cr_handle_t handle) {
+  return static_cast<QTreeWidget *>(handle);
 }
 
 QHBoxLayout *as_h_box_layout(qt6cr_handle_t handle) {
@@ -2369,6 +2389,281 @@ void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_c
 
   QObject::connect(combo_box, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), combo_box, [callback, userdata](int index) {
     callback(userdata, index);
+  });
+}
+
+qt6cr_handle_t qt6cr_list_widget_item_create(const char *text) {
+  return new QListWidgetItem(QString::fromUtf8(text == nullptr ? "" : text));
+}
+
+void qt6cr_list_widget_item_destroy(qt6cr_handle_t handle) {
+  delete as_list_widget_item(handle);
+}
+
+void qt6cr_list_widget_item_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *item = as_list_widget_item(handle);
+
+  if (item != nullptr) {
+    item->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_list_widget_item_text(qt6cr_handle_t handle) {
+  auto *item = as_list_widget_item(handle);
+  return item == nullptr ? duplicate_string("") : duplicate_string(item->text());
+}
+
+qt6cr_handle_t qt6cr_list_widget_create(qt6cr_handle_t parent) {
+  return new QListWidget(as_widget(parent));
+}
+
+void qt6cr_list_widget_add_item(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *list_widget = as_list_widget(handle);
+  auto *list_item = as_list_widget_item(item);
+
+  if (list_widget != nullptr && list_item != nullptr) {
+    list_widget->addItem(list_item);
+  }
+}
+
+qt6cr_handle_t qt6cr_list_widget_add_item_text(qt6cr_handle_t handle, const char *text) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget == nullptr) {
+    return nullptr;
+  }
+
+  return new QListWidgetItem(QString::fromUtf8(text == nullptr ? "" : text), list_widget);
+}
+
+int qt6cr_list_widget_count(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? 0 : list_widget->count();
+}
+
+qt6cr_handle_t qt6cr_list_widget_item(qt6cr_handle_t handle, int index) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? nullptr : list_widget->item(index);
+}
+
+char *qt6cr_list_widget_item_text_at(qt6cr_handle_t handle, int index) {
+  auto *list_widget = as_list_widget(handle);
+  auto *item = list_widget == nullptr ? nullptr : list_widget->item(index);
+  return item == nullptr ? duplicate_string("") : duplicate_string(item->text());
+}
+
+int qt6cr_list_widget_current_row(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? -1 : list_widget->currentRow();
+}
+
+void qt6cr_list_widget_set_current_row(qt6cr_handle_t handle, int row) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget != nullptr) {
+    list_widget->setCurrentRow(row);
+  }
+}
+
+qt6cr_handle_t qt6cr_list_widget_current_item(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? nullptr : list_widget->currentItem();
+}
+
+char *qt6cr_list_widget_current_text(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  auto *item = list_widget == nullptr ? nullptr : list_widget->currentItem();
+  return item == nullptr ? duplicate_string("") : duplicate_string(item->text());
+}
+
+void qt6cr_list_widget_clear(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget != nullptr) {
+    list_widget->clear();
+  }
+}
+
+void qt6cr_list_widget_on_current_row_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(list_widget, &QListWidget::currentRowChanged, list_widget, [callback, userdata](int row) {
+    callback(userdata, row);
+  });
+}
+
+qt6cr_handle_t qt6cr_tree_widget_item_create(const char *text) {
+  auto *item = new QTreeWidgetItem();
+  item->setText(0, QString::fromUtf8(text == nullptr ? "" : text));
+  return item;
+}
+
+void qt6cr_tree_widget_item_destroy(qt6cr_handle_t handle) {
+  delete as_tree_widget_item(handle);
+}
+
+void qt6cr_tree_widget_item_set_text(qt6cr_handle_t handle, int column, const char *text) {
+  auto *item = as_tree_widget_item(handle);
+
+  if (item != nullptr && column >= 0) {
+    item->setText(column, QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_tree_widget_item_text(qt6cr_handle_t handle, int column) {
+  auto *item = as_tree_widget_item(handle);
+  return item == nullptr || column < 0 ? duplicate_string("") : duplicate_string(item->text(column));
+}
+
+void qt6cr_tree_widget_item_add_child(qt6cr_handle_t handle, qt6cr_handle_t child) {
+  auto *item = as_tree_widget_item(handle);
+  auto *child_item = as_tree_widget_item(child);
+
+  if (item != nullptr && child_item != nullptr) {
+    item->addChild(child_item);
+  }
+}
+
+int qt6cr_tree_widget_item_child_count(qt6cr_handle_t handle) {
+  auto *item = as_tree_widget_item(handle);
+  return item == nullptr ? 0 : item->childCount();
+}
+
+qt6cr_handle_t qt6cr_tree_widget_item_child(qt6cr_handle_t handle, int index) {
+  auto *item = as_tree_widget_item(handle);
+  return item == nullptr ? nullptr : item->child(index);
+}
+
+qt6cr_handle_t qt6cr_tree_widget_create(qt6cr_handle_t parent) {
+  return new QTreeWidget(as_widget(parent));
+}
+
+int qt6cr_tree_widget_column_count(qt6cr_handle_t handle) {
+  auto *tree_widget = as_tree_widget(handle);
+  return tree_widget == nullptr ? 0 : tree_widget->columnCount();
+}
+
+void qt6cr_tree_widget_set_column_count(qt6cr_handle_t handle, int count) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget != nullptr && count >= 0) {
+    tree_widget->setColumnCount(count);
+  }
+}
+
+char *qt6cr_tree_widget_header_label(qt6cr_handle_t handle, int column) {
+  auto *tree_widget = as_tree_widget(handle);
+  auto *header_item = tree_widget == nullptr ? nullptr : tree_widget->headerItem();
+  return header_item == nullptr || column < 0 ? duplicate_string("") : duplicate_string(header_item->text(column));
+}
+
+void qt6cr_tree_widget_set_header_label(qt6cr_handle_t handle, int column, const char *text) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget == nullptr || column < 0) {
+    return;
+  }
+
+  if (tree_widget->columnCount() <= column) {
+    tree_widget->setColumnCount(column + 1);
+  }
+
+  auto *header_item = tree_widget->headerItem();
+
+  if (header_item != nullptr) {
+    header_item->setText(column, QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_tree_widget_add_top_level_item(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *tree_widget = as_tree_widget(handle);
+  auto *tree_item = as_tree_widget_item(item);
+
+  if (tree_widget != nullptr && tree_item != nullptr) {
+    tree_widget->addTopLevelItem(tree_item);
+  }
+}
+
+qt6cr_handle_t qt6cr_tree_widget_add_top_level_item_text(qt6cr_handle_t handle, const char *text) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget == nullptr) {
+    return nullptr;
+  }
+
+  auto *item = new QTreeWidgetItem();
+  item->setText(0, QString::fromUtf8(text == nullptr ? "" : text));
+  tree_widget->addTopLevelItem(item);
+  return item;
+}
+
+int qt6cr_tree_widget_top_level_item_count(qt6cr_handle_t handle) {
+  auto *tree_widget = as_tree_widget(handle);
+  return tree_widget == nullptr ? 0 : tree_widget->topLevelItemCount();
+}
+
+qt6cr_handle_t qt6cr_tree_widget_top_level_item(qt6cr_handle_t handle, int index) {
+  auto *tree_widget = as_tree_widget(handle);
+  return tree_widget == nullptr ? nullptr : tree_widget->topLevelItem(index);
+}
+
+qt6cr_handle_t qt6cr_tree_widget_current_item(qt6cr_handle_t handle) {
+  auto *tree_widget = as_tree_widget(handle);
+  return tree_widget == nullptr ? nullptr : tree_widget->currentItem();
+}
+
+void qt6cr_tree_widget_set_current_item(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *tree_widget = as_tree_widget(handle);
+  auto *tree_item = as_tree_widget_item(item);
+
+  if (tree_widget != nullptr) {
+    tree_widget->setCurrentItem(tree_item);
+  }
+}
+
+char *qt6cr_tree_widget_current_item_text(qt6cr_handle_t handle, int column) {
+  auto *tree_widget = as_tree_widget(handle);
+  auto *item = tree_widget == nullptr ? nullptr : tree_widget->currentItem();
+  return item == nullptr || column < 0 ? duplicate_string("") : duplicate_string(item->text(column));
+}
+
+void qt6cr_tree_widget_expand_all(qt6cr_handle_t handle) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget != nullptr) {
+    tree_widget->expandAll();
+  }
+}
+
+void qt6cr_tree_widget_collapse_all(qt6cr_handle_t handle) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget != nullptr) {
+    tree_widget->collapseAll();
+  }
+}
+
+void qt6cr_tree_widget_clear(qt6cr_handle_t handle) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget != nullptr) {
+    tree_widget->clear();
+  }
+}
+
+void qt6cr_tree_widget_on_current_item_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *tree_widget = as_tree_widget(handle);
+
+  if (tree_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tree_widget, &QTreeWidget::currentItemChanged, tree_widget, [callback, userdata](QTreeWidgetItem *, QTreeWidgetItem *) {
+    callback(userdata);
   });
 }
 

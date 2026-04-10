@@ -662,6 +662,72 @@ describe Qt6 do
     destroyed.should eq(1)
   end
 
+  it "supports list and tree widgets for editor panels" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    tree_widget = Qt6::TreeWidget.new
+    row_changes = [] of Int32
+    tree_changes = 0
+
+    list_widget.on_current_row_changed do |row|
+      row_changes << row
+    end
+
+    terrain_item = list_widget.add_item("Terrain")
+    unit_item = Qt6::ListWidgetItem.new("Units")
+    list_widget.add_item(unit_item)
+    list_widget.current_row = 1
+
+    tree_widget.on_current_item_changed do
+      tree_changes += 1
+    end
+
+    tree_widget.column_count = 2
+    tree_widget.header_label = "Layer"
+    tree_widget.set_header_label(1, "State")
+    root_item = tree_widget.add_top_level_item("Terrain")
+    root_item.set_text(1, "Visible")
+    child_item = Qt6::TreeWidgetItem.new("Contours")
+    child_item.set_text(1, "Locked")
+    root_item.add_child(child_item)
+    overlay_item = Qt6::TreeWidgetItem.new("Units")
+    overlay_item.set_text(1, "Hidden")
+    tree_widget.add_top_level_item(overlay_item)
+    tree_widget.current_item = child_item
+    tree_widget.expand_all
+    application.process_events
+
+    list_widget.count.should eq(2)
+    terrain_item.text.should eq("Terrain")
+    list_widget.item(1).not_nil!.text.should eq("Units")
+    list_widget.item_text(0).should eq("Terrain")
+    list_widget.current_row.should eq(1)
+    list_widget.current_item.not_nil!.text.should eq("Units")
+    list_widget.current_text.should eq("Units")
+    row_changes.last.should eq(1)
+
+    tree_widget.column_count.should eq(2)
+    tree_widget.header_label.should eq("Layer")
+    tree_widget.header_label(1).should eq("State")
+    tree_widget.top_level_item_count.should eq(2)
+    tree_widget.top_level_item(0).not_nil!.text.should eq("Terrain")
+    root_item.child_count.should eq(1)
+    root_item.child(0).not_nil!.text.should eq("Contours")
+    root_item.child(0).not_nil!.text(1).should eq("Locked")
+    tree_widget.current_item.not_nil!.text.should eq("Contours")
+    tree_widget.current_item_text(1).should eq("Locked")
+    tree_changes.should be >= 1
+
+    list_widget.clear
+    tree_widget.collapse_all
+    tree_widget.clear
+
+    list_widget.count.should eq(0)
+    tree_widget.top_level_item_count.should eq(0)
+    list_widget.release
+    tree_widget.release
+  end
+
   it "exposes geometry types and custom widget event hooks" do
     application = app
     widget = Qt6::EventWidget.new
