@@ -213,7 +213,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels plus an initial `QStandardItemModel`-based model/view path. The remaining priorities are drag and drop, richer model/view alternatives or abstract-model bridges where needed, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
+Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles and delegate formatting. The remaining priorities are drag and drop, richer abstract-model bridges or custom delegates where needed, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
 
 ## Phase 6: Export And Document Features
 

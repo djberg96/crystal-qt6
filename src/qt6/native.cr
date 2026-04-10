@@ -57,6 +57,15 @@ module Qt6
       alpha : LibC::Int
     end
 
+    struct VariantValue
+      type : LibC::Int
+      bool_value : Bool
+      int_value : LibC::Int
+      double_value : Float64
+      color_value : ColorValue
+      string_value : UInt8*
+    end
+
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
@@ -164,10 +173,18 @@ module Qt6
     fun qt6cr_model_index_row = qt6cr_model_index_row(handle : Handle) : LibC::Int
     fun qt6cr_model_index_column = qt6cr_model_index_column(handle : Handle) : LibC::Int
 
+    fun qt6cr_abstract_item_model_row_count = qt6cr_abstract_item_model_row_count(handle : Handle, parent_index : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_column_count = qt6cr_abstract_item_model_column_count(handle : Handle, parent_index : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_index = qt6cr_abstract_item_model_index(handle : Handle, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Handle
+    fun qt6cr_abstract_item_model_data = qt6cr_abstract_item_model_data(handle : Handle, index : Handle, role : LibC::Int) : VariantValue
+    fun qt6cr_abstract_item_model_set_data = qt6cr_abstract_item_model_set_data(handle : Handle, index : Handle, value : VariantValue, role : LibC::Int) : Bool
+
     fun qt6cr_standard_item_create = qt6cr_standard_item_create(text : UInt8*) : Handle
     fun qt6cr_standard_item_destroy = qt6cr_standard_item_destroy(handle : Handle)
     fun qt6cr_standard_item_text = qt6cr_standard_item_text(handle : Handle) : UInt8*
     fun qt6cr_standard_item_set_text = qt6cr_standard_item_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_standard_item_data = qt6cr_standard_item_data(handle : Handle, role : LibC::Int) : VariantValue
+    fun qt6cr_standard_item_set_data = qt6cr_standard_item_set_data(handle : Handle, value : VariantValue, role : LibC::Int) : Bool
     fun qt6cr_standard_item_append_row = qt6cr_standard_item_append_row(handle : Handle, item : Handle)
     fun qt6cr_standard_item_set_child = qt6cr_standard_item_set_child(handle : Handle, row : LibC::Int, column : LibC::Int, item : Handle)
     fun qt6cr_standard_item_child = qt6cr_standard_item_child(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
@@ -187,14 +204,42 @@ module Qt6
     fun qt6cr_standard_item_model_item_from_index = qt6cr_standard_item_model_item_from_index(handle : Handle, index : Handle) : Handle
     fun qt6cr_standard_item_model_index_from_item = qt6cr_standard_item_model_index_from_item(handle : Handle, item : Handle) : Handle
 
+    fun qt6cr_sort_filter_proxy_model_create = qt6cr_sort_filter_proxy_model_create(parent : Handle) : Handle
+    fun qt6cr_sort_filter_proxy_model_set_source_model = qt6cr_sort_filter_proxy_model_set_source_model(handle : Handle, model : Handle)
+    fun qt6cr_sort_filter_proxy_model_source_model = qt6cr_sort_filter_proxy_model_source_model(handle : Handle) : Handle
+    fun qt6cr_sort_filter_proxy_model_map_to_source = qt6cr_sort_filter_proxy_model_map_to_source(handle : Handle, proxy_index : Handle) : Handle
+    fun qt6cr_sort_filter_proxy_model_map_from_source = qt6cr_sort_filter_proxy_model_map_from_source(handle : Handle, source_index : Handle) : Handle
+    fun qt6cr_sort_filter_proxy_model_sort = qt6cr_sort_filter_proxy_model_sort(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_sort_filter_proxy_model_set_filter_fixed_string = qt6cr_sort_filter_proxy_model_set_filter_fixed_string(handle : Handle, value : UInt8*)
+    fun qt6cr_sort_filter_proxy_model_set_filter_wildcard = qt6cr_sort_filter_proxy_model_set_filter_wildcard(handle : Handle, value : UInt8*)
+    fun qt6cr_sort_filter_proxy_model_set_filter_key_column = qt6cr_sort_filter_proxy_model_set_filter_key_column(handle : Handle, column : LibC::Int)
+    fun qt6cr_sort_filter_proxy_model_filter_key_column = qt6cr_sort_filter_proxy_model_filter_key_column(handle : Handle) : LibC::Int
+    fun qt6cr_sort_filter_proxy_model_set_filter_role = qt6cr_sort_filter_proxy_model_set_filter_role(handle : Handle, role : LibC::Int)
+    fun qt6cr_sort_filter_proxy_model_filter_role = qt6cr_sort_filter_proxy_model_filter_role(handle : Handle) : LibC::Int
+    fun qt6cr_sort_filter_proxy_model_set_sort_role = qt6cr_sort_filter_proxy_model_set_sort_role(handle : Handle, role : LibC::Int)
+    fun qt6cr_sort_filter_proxy_model_sort_role = qt6cr_sort_filter_proxy_model_sort_role(handle : Handle) : LibC::Int
+    fun qt6cr_sort_filter_proxy_model_set_filter_case_sensitivity = qt6cr_sort_filter_proxy_model_set_filter_case_sensitivity(handle : Handle, sensitivity : LibC::Int)
+    fun qt6cr_sort_filter_proxy_model_filter_case_sensitivity = qt6cr_sort_filter_proxy_model_filter_case_sensitivity(handle : Handle) : LibC::Int
+    fun qt6cr_sort_filter_proxy_model_set_dynamic_sort_filter = qt6cr_sort_filter_proxy_model_set_dynamic_sort_filter(handle : Handle, value : Bool)
+    fun qt6cr_sort_filter_proxy_model_dynamic_sort_filter = qt6cr_sort_filter_proxy_model_dynamic_sort_filter(handle : Handle) : Bool
+    fun qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled = qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled(handle : Handle, value : Bool)
+    fun qt6cr_sort_filter_proxy_model_recursive_filtering_enabled = qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(handle : Handle) : Bool
+    fun qt6cr_sort_filter_proxy_model_invalidate = qt6cr_sort_filter_proxy_model_invalidate(handle : Handle)
+
+    fun qt6cr_styled_item_delegate_create = qt6cr_styled_item_delegate_create(parent : Handle) : Handle
+    fun qt6cr_styled_item_delegate_on_display_text = qt6cr_styled_item_delegate_on_display_text(handle : Handle, callback : (Handle, UInt8* -> UInt8*), userdata : Handle)
+    fun qt6cr_styled_item_delegate_display_text = qt6cr_styled_item_delegate_display_text(handle : Handle, value : VariantValue) : UInt8*
+
     fun qt6cr_list_view_create = qt6cr_list_view_create(parent : Handle) : Handle
     fun qt6cr_list_view_set_model = qt6cr_list_view_set_model(handle : Handle, model : Handle)
+    fun qt6cr_list_view_set_item_delegate = qt6cr_list_view_set_item_delegate(handle : Handle, delegate : Handle)
     fun qt6cr_list_view_current_index = qt6cr_list_view_current_index(handle : Handle) : Handle
     fun qt6cr_list_view_set_current_index = qt6cr_list_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_list_view_on_current_index_changed = qt6cr_list_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_tree_view_create = qt6cr_tree_view_create(parent : Handle) : Handle
     fun qt6cr_tree_view_set_model = qt6cr_tree_view_set_model(handle : Handle, model : Handle)
+    fun qt6cr_tree_view_set_item_delegate = qt6cr_tree_view_set_item_delegate(handle : Handle, delegate : Handle)
     fun qt6cr_tree_view_current_index = qt6cr_tree_view_current_index(handle : Handle) : Handle
     fun qt6cr_tree_view_set_current_index = qt6cr_tree_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_tree_view_expand_all = qt6cr_tree_view_expand_all(handle : Handle)

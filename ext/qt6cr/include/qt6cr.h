@@ -53,6 +53,15 @@ typedef struct {
 	int alpha;
 } qt6cr_color_t;
 
+typedef struct {
+	int type;
+	bool bool_value;
+	int int_value;
+	double double_value;
+	qt6cr_color_t color_value;
+	const char *string_value;
+} qt6cr_variant_value_t;
+
 typedef void (*qt6cr_void_callback_t)(void *userdata);
 typedef void (*qt6cr_bool_callback_t)(void *userdata, bool value);
 typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
@@ -63,6 +72,7 @@ typedef void (*qt6cr_resize_callback_t)(void *userdata, qt6cr_size_t old_size, q
 typedef void (*qt6cr_mouse_callback_t)(void *userdata, qt6cr_mouse_event_t event_data);
 typedef void (*qt6cr_wheel_callback_t)(void *userdata, qt6cr_wheel_event_t event_data);
 typedef void (*qt6cr_key_callback_t)(void *userdata, qt6cr_key_event_t event_data);
+typedef char *(*qt6cr_string_transform_callback_t)(void *userdata, const char *text);
 
 void qt6cr_object_destroy(qt6cr_handle_t handle);
 void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -171,10 +181,18 @@ bool qt6cr_model_index_is_valid(qt6cr_handle_t handle);
 int qt6cr_model_index_row(qt6cr_handle_t handle);
 int qt6cr_model_index_column(qt6cr_handle_t handle);
 
+int qt6cr_abstract_item_model_row_count(qt6cr_handle_t handle, qt6cr_handle_t parent_index);
+int qt6cr_abstract_item_model_column_count(qt6cr_handle_t handle, qt6cr_handle_t parent_index);
+qt6cr_handle_t qt6cr_abstract_item_model_index(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t parent_index);
+qt6cr_variant_value_t qt6cr_abstract_item_model_data(qt6cr_handle_t handle, qt6cr_handle_t index, int role);
+bool qt6cr_abstract_item_model_set_data(qt6cr_handle_t handle, qt6cr_handle_t index, qt6cr_variant_value_t value, int role);
+
 qt6cr_handle_t qt6cr_standard_item_create(const char *text);
 void qt6cr_standard_item_destroy(qt6cr_handle_t handle);
 char *qt6cr_standard_item_text(qt6cr_handle_t handle);
 void qt6cr_standard_item_set_text(qt6cr_handle_t handle, const char *text);
+qt6cr_variant_value_t qt6cr_standard_item_data(qt6cr_handle_t handle, int role);
+bool qt6cr_standard_item_set_data(qt6cr_handle_t handle, qt6cr_variant_value_t value, int role);
 void qt6cr_standard_item_append_row(qt6cr_handle_t handle, qt6cr_handle_t item);
 void qt6cr_standard_item_set_child(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t item);
 qt6cr_handle_t qt6cr_standard_item_child(qt6cr_handle_t handle, int row, int column);
@@ -194,14 +212,42 @@ qt6cr_handle_t qt6cr_standard_item_model_index(qt6cr_handle_t handle, int row, i
 qt6cr_handle_t qt6cr_standard_item_model_item_from_index(qt6cr_handle_t handle, qt6cr_handle_t index);
 qt6cr_handle_t qt6cr_standard_item_model_index_from_item(qt6cr_handle_t handle, qt6cr_handle_t item);
 
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_create(qt6cr_handle_t parent);
+void qt6cr_sort_filter_proxy_model_set_source_model(qt6cr_handle_t handle, qt6cr_handle_t model);
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_source_model(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_map_to_source(qt6cr_handle_t handle, qt6cr_handle_t proxy_index);
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_map_from_source(qt6cr_handle_t handle, qt6cr_handle_t source_index);
+void qt6cr_sort_filter_proxy_model_sort(qt6cr_handle_t handle, int column, int order);
+void qt6cr_sort_filter_proxy_model_set_filter_fixed_string(qt6cr_handle_t handle, const char *value);
+void qt6cr_sort_filter_proxy_model_set_filter_wildcard(qt6cr_handle_t handle, const char *value);
+void qt6cr_sort_filter_proxy_model_set_filter_key_column(qt6cr_handle_t handle, int column);
+int qt6cr_sort_filter_proxy_model_filter_key_column(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_set_filter_role(qt6cr_handle_t handle, int role);
+int qt6cr_sort_filter_proxy_model_filter_role(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_set_sort_role(qt6cr_handle_t handle, int role);
+int qt6cr_sort_filter_proxy_model_sort_role(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_set_filter_case_sensitivity(qt6cr_handle_t handle, int sensitivity);
+int qt6cr_sort_filter_proxy_model_filter_case_sensitivity(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_set_dynamic_sort_filter(qt6cr_handle_t handle, bool value);
+bool qt6cr_sort_filter_proxy_model_dynamic_sort_filter(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled(qt6cr_handle_t handle, bool value);
+bool qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_invalidate(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent);
+void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);
+char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value);
+
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent);
 void qt6cr_list_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
+void qt6cr_list_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate);
 qt6cr_handle_t qt6cr_list_view_current_index(qt6cr_handle_t handle);
 void qt6cr_list_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_list_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_tree_view_create(qt6cr_handle_t parent);
 void qt6cr_tree_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
+void qt6cr_tree_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate);
 qt6cr_handle_t qt6cr_tree_view_current_index(qt6cr_handle_t handle);
 void qt6cr_tree_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_tree_view_expand_all(qt6cr_handle_t handle);

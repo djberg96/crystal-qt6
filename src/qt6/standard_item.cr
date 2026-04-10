@@ -26,6 +26,17 @@ module Qt6
       value
     end
 
+    # Returns role-backed data for the item.
+    def data(role : ItemDataRole = ItemDataRole::Display) : ModelData
+      Qt6.model_data_from_native(LibQt6.qt6cr_standard_item_data(to_unsafe, role.value))
+    end
+
+    # Sets role-backed data and returns `self`.
+    def set_data(value, role : ItemDataRole = ItemDataRole::Edit) : self
+      LibQt6.qt6cr_standard_item_set_data(to_unsafe, Qt6.model_data_to_native(value), role.value)
+      self
+    end
+
     # Appends a child row in the first column and returns it.
     def append_row(item : StandardItem) : StandardItem
       LibQt6.qt6cr_standard_item_append_row(to_unsafe, item.to_unsafe)

@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QAction>
 #include <QActionGroup>
+#include <QAbstractItemModel>
 #include <QCheckBox>
 #include <QClipboard>
 #include <QColor>
@@ -45,6 +46,7 @@
 #include <QPdfWriter>
 #include <QPixmap>
 #include <QPushButton>
+#include <QSortFilterProxyModel>
 #include <QKeySequence>
 #include <QRadioButton>
 #include <QResizeEvent>
@@ -55,6 +57,7 @@
 #include <QStatusBar>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QStyledItemDelegate>
 #include <QGroupBox>
 #include <QSvgGenerator>
 #include <QSvgRenderer>
@@ -70,9 +73,13 @@
 #include <QWheelEvent>
 #include <QWidget>
 #include <QSplitter>
+#include <QVariant>
+#include <QMetaType>
+#include <QLocale>
 
 #include <QPoint>
 
+#include <cstdlib>
 #include <cstring>
 #include <memory>
 #include <string>
@@ -96,6 +103,8 @@ qt6cr_mouse_event_t to_mouse_event(QMouseEvent *event);
 qt6cr_wheel_event_t to_wheel_event(QWheelEvent *event);
 qt6cr_key_event_t to_key_event(QKeyEvent *event);
 qt6cr_color_t to_color(const QColor &color);
+qt6cr_variant_value_t to_variant_value(const QVariant &value);
+QVariant from_variant_value(const qt6cr_variant_value_t &value);
 
 class EventWidget final : public QWidget {
  public:
@@ -259,6 +268,33 @@ class ModelTreeView final : public QTreeView {
   QMetaObject::Connection current_changed_connection;
 };
 
+class CrystalStyledItemDelegate final : public QStyledItemDelegate {
+ public:
+  explicit CrystalStyledItemDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) {}
+
+  qt6cr_string_transform_callback_t display_text_callback = nullptr;
+  void *display_text_userdata = nullptr;
+
+  QString displayText(const QVariant &value, const QLocale &locale) const override {
+    const auto default_text = QStyledItemDelegate::displayText(value, locale);
+
+    if (display_text_callback == nullptr) {
+      return default_text;
+    }
+
+    const auto utf8 = default_text.toUtf8();
+    char *transformed = display_text_callback(display_text_userdata, utf8.constData());
+
+    if (transformed == nullptr) {
+      return default_text;
+    }
+
+    const auto result = QString::fromUtf8(transformed);
+    std::free(transformed);
+    return result;
+  }
+};
+
 char *duplicate_string(const QString &value) {
   const QByteArray utf8 = value.toUtf8();
   auto *copy = new char[static_cast<size_t>(utf8.size()) + 1];
@@ -302,8 +338,20 @@ QImage *as_qimage(qt6cr_handle_t handle) {
   return static_cast<QImage *>(handle);
 }
 
+QAbstractItemModel *as_abstract_item_model(qt6cr_handle_t handle) {
+  return static_cast<QAbstractItemModel *>(handle);
+}
+
 QPixmap *as_qpixmap(qt6cr_handle_t handle) {
   return static_cast<QPixmap *>(handle);
+}
+
+QSortFilterProxyModel *as_sort_filter_proxy_model(qt6cr_handle_t handle) {
+  return static_cast<QSortFilterProxyModel *>(handle);
+}
+
+CrystalStyledItemDelegate *as_styled_item_delegate(qt6cr_handle_t handle) {
+  return static_cast<CrystalStyledItemDelegate *>(handle);
 }
 
 QSvgGenerator *as_qsvg_generator(qt6cr_handle_t handle) {
@@ -544,6 +592,61 @@ qt6cr_key_event_t to_key_event(QKeyEvent *event) {
 
 qt6cr_color_t to_color(const QColor &color) {
   return qt6cr_color_t{color.red(), color.green(), color.blue(), color.alpha()};
+}
+
+qt6cr_variant_value_t to_variant_value(const QVariant &value) {
+  qt6cr_variant_value_t native{};
+  native.type = 0;
+  native.bool_value = false;
+  native.int_value = 0;
+  native.double_value = 0.0;
+  native.color_value = qt6cr_color_t{0, 0, 0, 0};
+  native.string_value = nullptr;
+
+  if (!value.isValid() || value.isNull()) {
+    return native;
+  }
+
+  switch (value.metaType().id()) {
+    case QMetaType::Bool:
+      native.type = 2;
+      native.bool_value = value.toBool();
+      return native;
+    case QMetaType::Int:
+      native.type = 3;
+      native.int_value = value.toInt();
+      return native;
+    case QMetaType::Double:
+      native.type = 4;
+      native.double_value = value.toDouble();
+      return native;
+    case QMetaType::QColor:
+      native.type = 5;
+      native.color_value = to_color(value.value<QColor>());
+      return native;
+    case QMetaType::QString:
+    default:
+      native.type = 1;
+      native.string_value = duplicate_string(value.toString());
+      return native;
+  }
+}
+
+QVariant from_variant_value(const qt6cr_variant_value_t &value) {
+  switch (value.type) {
+    case 1:
+      return QVariant(QString::fromUtf8(value.string_value == nullptr ? "" : value.string_value));
+    case 2:
+      return QVariant(value.bool_value);
+    case 3:
+      return QVariant(value.int_value);
+    case 4:
+      return QVariant(value.double_value);
+    case 5:
+      return QVariant(QColor(value.color_value.red, value.color_value.green, value.color_value.blue, value.color_value.alpha));
+    default:
+      return QVariant();
+  }
 }
 
 QPointF from_pointf(qt6cr_pointf_t point) {
@@ -1199,6 +1302,46 @@ int qt6cr_model_index_column(qt6cr_handle_t handle) {
   return index == nullptr ? -1 : index->column();
 }
 
+int qt6cr_abstract_item_model_row_count(qt6cr_handle_t handle, qt6cr_handle_t parent_index) {
+  auto *model = as_abstract_item_model(handle);
+  auto *parent = as_model_index(parent_index);
+  return model == nullptr ? 0 : model->rowCount(parent == nullptr ? QModelIndex() : *parent);
+}
+
+int qt6cr_abstract_item_model_column_count(qt6cr_handle_t handle, qt6cr_handle_t parent_index) {
+  auto *model = as_abstract_item_model(handle);
+  auto *parent = as_model_index(parent_index);
+  return model == nullptr ? 0 : model->columnCount(parent == nullptr ? QModelIndex() : *parent);
+}
+
+qt6cr_handle_t qt6cr_abstract_item_model_index(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t parent_index) {
+  auto *model = as_abstract_item_model(handle);
+  auto *parent = as_model_index(parent_index);
+
+  if (model == nullptr) {
+    return new QModelIndex();
+  }
+
+  return new QModelIndex(model->index(row, column, parent == nullptr ? QModelIndex() : *parent));
+}
+
+qt6cr_variant_value_t qt6cr_abstract_item_model_data(qt6cr_handle_t handle, qt6cr_handle_t index, int role) {
+  auto *model = as_abstract_item_model(handle);
+  auto *model_index = as_model_index(index);
+
+  if (model == nullptr || model_index == nullptr) {
+    return to_variant_value(QVariant());
+  }
+
+  return to_variant_value(model->data(*model_index, role));
+}
+
+bool qt6cr_abstract_item_model_set_data(qt6cr_handle_t handle, qt6cr_handle_t index, qt6cr_variant_value_t value, int role) {
+  auto *model = as_abstract_item_model(handle);
+  auto *model_index = as_model_index(index);
+  return model != nullptr && model_index != nullptr ? model->setData(*model_index, from_variant_value(value), role) : false;
+}
+
 qt6cr_handle_t qt6cr_standard_item_create(const char *text) {
   return new QStandardItem(QString::fromUtf8(text == nullptr ? "" : text));
 }
@@ -1218,6 +1361,22 @@ void qt6cr_standard_item_set_text(qt6cr_handle_t handle, const char *text) {
   if (item != nullptr) {
     item->setText(QString::fromUtf8(text == nullptr ? "" : text));
   }
+}
+
+qt6cr_variant_value_t qt6cr_standard_item_data(qt6cr_handle_t handle, int role) {
+  auto *item = as_standard_item(handle);
+  return item == nullptr ? to_variant_value(QVariant()) : to_variant_value(item->data(role));
+}
+
+bool qt6cr_standard_item_set_data(qt6cr_handle_t handle, qt6cr_variant_value_t value, int role) {
+  auto *item = as_standard_item(handle);
+
+  if (item == nullptr) {
+    return false;
+  }
+
+  item->setData(from_variant_value(value), role);
+  return true;
 }
 
 void qt6cr_standard_item_append_row(qt6cr_handle_t handle, qt6cr_handle_t item) {
@@ -1325,14 +1484,7 @@ char *qt6cr_standard_item_model_horizontal_header_label(qt6cr_handle_t handle, i
 }
 
 qt6cr_handle_t qt6cr_standard_item_model_index(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t parent_index) {
-  auto *model = as_standard_item_model(handle);
-  auto *parent = as_model_index(parent_index);
-
-  if (model == nullptr) {
-    return new QModelIndex();
-  }
-
-  return new QModelIndex(model->index(row, column, parent == nullptr ? QModelIndex() : *parent));
+  return qt6cr_abstract_item_model_index(handle, row, column, parent_index);
 }
 
 qt6cr_handle_t qt6cr_standard_item_model_item_from_index(qt6cr_handle_t handle, qt6cr_handle_t index) {
@@ -1352,6 +1504,175 @@ qt6cr_handle_t qt6cr_standard_item_model_index_from_item(qt6cr_handle_t handle, 
   return new QModelIndex(model->indexFromItem(standard_item));
 }
 
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_create(qt6cr_handle_t parent) {
+  return new QSortFilterProxyModel(as_object(parent));
+}
+
+void qt6cr_sort_filter_proxy_model_set_source_model(qt6cr_handle_t handle, qt6cr_handle_t model) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setSourceModel(as_abstract_item_model(model));
+  }
+}
+
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_source_model(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? nullptr : proxy->sourceModel();
+}
+
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_map_to_source(qt6cr_handle_t handle, qt6cr_handle_t proxy_index) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  auto *index = as_model_index(proxy_index);
+
+  if (proxy == nullptr || index == nullptr) {
+    return new QModelIndex();
+  }
+
+  return new QModelIndex(proxy->mapToSource(*index));
+}
+
+qt6cr_handle_t qt6cr_sort_filter_proxy_model_map_from_source(qt6cr_handle_t handle, qt6cr_handle_t source_index) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  auto *index = as_model_index(source_index);
+
+  if (proxy == nullptr || index == nullptr) {
+    return new QModelIndex();
+  }
+
+  return new QModelIndex(proxy->mapFromSource(*index));
+}
+
+void qt6cr_sort_filter_proxy_model_sort(qt6cr_handle_t handle, int column, int order) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->sort(column, static_cast<Qt::SortOrder>(order));
+  }
+}
+
+void qt6cr_sort_filter_proxy_model_set_filter_fixed_string(qt6cr_handle_t handle, const char *value) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setFilterFixedString(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+void qt6cr_sort_filter_proxy_model_set_filter_wildcard(qt6cr_handle_t handle, const char *value) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setFilterWildcard(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+void qt6cr_sort_filter_proxy_model_set_filter_key_column(qt6cr_handle_t handle, int column) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setFilterKeyColumn(column);
+  }
+}
+
+int qt6cr_sort_filter_proxy_model_filter_key_column(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? 0 : proxy->filterKeyColumn();
+}
+
+void qt6cr_sort_filter_proxy_model_set_filter_role(qt6cr_handle_t handle, int role) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setFilterRole(role);
+  }
+}
+
+int qt6cr_sort_filter_proxy_model_filter_role(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? 0 : proxy->filterRole();
+}
+
+void qt6cr_sort_filter_proxy_model_set_sort_role(qt6cr_handle_t handle, int role) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setSortRole(role);
+  }
+}
+
+int qt6cr_sort_filter_proxy_model_sort_role(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? 0 : proxy->sortRole();
+}
+
+void qt6cr_sort_filter_proxy_model_set_filter_case_sensitivity(qt6cr_handle_t handle, int sensitivity) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setFilterCaseSensitivity(static_cast<Qt::CaseSensitivity>(sensitivity));
+  }
+}
+
+int qt6cr_sort_filter_proxy_model_filter_case_sensitivity(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? 0 : static_cast<int>(proxy->filterCaseSensitivity());
+}
+
+void qt6cr_sort_filter_proxy_model_set_dynamic_sort_filter(qt6cr_handle_t handle, bool value) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setDynamicSortFilter(value);
+  }
+}
+
+bool qt6cr_sort_filter_proxy_model_dynamic_sort_filter(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? false : proxy->dynamicSortFilter();
+}
+
+void qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled(qt6cr_handle_t handle, bool value) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->setRecursiveFilteringEnabled(value);
+  }
+}
+
+bool qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+  return proxy == nullptr ? false : proxy->isRecursiveFilteringEnabled();
+}
+
+void qt6cr_sort_filter_proxy_model_invalidate(qt6cr_handle_t handle) {
+  auto *proxy = as_sort_filter_proxy_model(handle);
+
+  if (proxy != nullptr) {
+    proxy->invalidate();
+  }
+}
+
+qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent) {
+  return new CrystalStyledItemDelegate(as_object(parent));
+}
+
+void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata) {
+  auto *delegate = as_styled_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->display_text_callback = callback;
+  delegate->display_text_userdata = userdata;
+}
+
+char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
+  auto *delegate = as_styled_item_delegate(handle);
+  return delegate == nullptr ? duplicate_string("") : duplicate_string(delegate->displayText(from_variant_value(value), QLocale()));
+}
+
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent) {
   return new ModelListView(as_widget(parent));
 }
@@ -1360,7 +1681,15 @@ void qt6cr_list_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model) {
   auto *view = as_list_view(handle);
 
   if (view != nullptr) {
-    view->setModel(as_standard_item_model(model));
+    view->setModel(as_abstract_item_model(model));
+  }
+}
+
+void qt6cr_list_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setItemDelegate(as_styled_item_delegate(delegate));
   }
 }
 
@@ -1398,7 +1727,15 @@ void qt6cr_tree_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model) {
   auto *view = as_tree_view(handle);
 
   if (view != nullptr) {
-    view->setModel(as_standard_item_model(model));
+    view->setModel(as_abstract_item_model(model));
+  }
+}
+
+void qt6cr_tree_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setItemDelegate(as_styled_item_delegate(delegate));
   }
 }
 

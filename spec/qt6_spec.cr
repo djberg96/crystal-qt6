@@ -776,12 +776,14 @@ describe Qt6 do
     tree_widget.release
   end
 
-  it "supports initial model-view panels with standard item models" do
+  it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do
     application = app
     list_view = Qt6::ListView.new
     tree_view = Qt6::TreeView.new
     list_model = Qt6::StandardItemModel.new(list_view)
     tree_model = Qt6::StandardItemModel.new(tree_view)
+    proxy_model = Qt6::SortFilterProxyModel.new(list_view)
+    delegate = Qt6::StyledItemDelegate.new(list_view)
     list_changes = 0
     tree_changes = 0
 
@@ -793,8 +795,14 @@ describe Qt6 do
       tree_changes += 1
     end
 
-    list_model << Qt6::StandardItem.new("Terrain")
-    list_model << Qt6::StandardItem.new("Units")
+    terrain_list_item = Qt6::StandardItem.new("Terrain")
+    terrain_list_item.set_data("Terrain tools", Qt6::ItemDataRole::ToolTip)
+    terrain_list_item.set_data(20, Qt6::ItemDataRole::User)
+    units_list_item = Qt6::StandardItem.new("Units")
+    units_list_item.set_data(Qt6::Color.new(0, 64, 192), Qt6::ItemDataRole::Foreground)
+    units_list_item.set_data(10, Qt6::ItemDataRole::User)
+    list_model << terrain_list_item
+    list_model << units_list_item
 
     tree_model.set_horizontal_header_label(0, "Layer")
     tree_model.set_horizontal_header_label(1, "State")
@@ -807,11 +815,26 @@ describe Qt6 do
     terrain_item.set_child(0, 0, contour_item)
     terrain_item.set_child(0, 1, contour_state)
 
-    list_view.model = list_model
+    terrain_state_index = tree_model.index(0, 1)
+    tree_model.set_data(terrain_state_index, "Shown", Qt6::ItemDataRole::Edit).should be_true
+
+    delegate.on_display_text do |text|
+      ">> #{text.upcase}"
+    end
+
+    proxy_model.source_model = list_model
+    proxy_model.sort_role = Qt6::ItemDataRole::User
+    proxy_model.filter_role = Qt6::ItemDataRole::Display
+    proxy_model.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
+    proxy_model.dynamic_sort_filter = true
+    proxy_model.sort
+
+    list_view.model = proxy_model
+    list_view.item_delegate = delegate
     tree_view.model = tree_model
     tree_view.expand_all
 
-    list_index = list_model.index(1)
+    list_index = proxy_model.index(0)
     tree_index = tree_model.index_from_item(contour_item)
     list_view.current_index = list_index
     tree_view.current_index = tree_index
@@ -819,20 +842,32 @@ describe Qt6 do
 
     current_list_index = list_view.current_index
     current_tree_index = tree_view.current_index
+    source_list_index = proxy_model.map_to_source(current_list_index)
 
     list_model.row_count.should eq(2)
     list_model.column_count.should eq(1)
     list_model.item(0).not_nil!.text.should eq("Terrain")
-    list_model.item_from_index(current_list_index).not_nil!.text.should eq("Units")
+    terrain_list_item.data(Qt6::ItemDataRole::ToolTip).should eq("Terrain tools")
+    units_list_item.data(Qt6::ItemDataRole::Foreground).should eq(Qt6::Color.new(0, 64, 192, 255))
+    list_model.data(source_list_index, Qt6::ItemDataRole::User).should eq(10)
+    proxy_model.data(current_list_index).should eq("Units")
+    delegate.display_text(proxy_model.data(current_list_index)).should eq(">> UNITS")
     current_list_index.valid?.should be_true
-    current_list_index.row.should eq(1)
+    current_list_index.row.should eq(0)
     current_list_index.column.should eq(0)
+    source_list_index.row.should eq(1)
     list_changes.should be >= 1
+
+    proxy_model.filter_fixed_string = "unit"
+    proxy_model.invalidate
+    application.process_events
+    proxy_model.row_count.should eq(1)
 
     tree_model.row_count.should eq(1)
     tree_model.column_count.should eq(2)
     tree_model.horizontal_header_label.should eq("Layer")
     tree_model.horizontal_header_label(1).should eq("State")
+    tree_model.data(terrain_state_index).should eq("Shown")
     terrain_item.row_count.should eq(1)
     terrain_item.child(0).not_nil!.text.should eq("Contours")
     terrain_item.child(0, 1).not_nil!.text.should eq("Locked")
@@ -844,6 +879,8 @@ describe Qt6 do
 
     current_list_index.release
     current_tree_index.release
+    source_list_index.release
+    terrain_state_index.release
     list_index.release
     tree_index.release
     list_view.release
