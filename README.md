@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, file-backed drag/drop receive hooks, richer raster image loading, and a first batch of common controls, layouts, and item-based editor panels.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.3.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, file-backed drag/drop receive hooks, richer raster image loading, nested event loops, shell-polish widgets, and a broad first batch of common controls, layouts, and model/view editor panels.
 
 ## Requirements
 
@@ -50,6 +50,7 @@ Run the examples:
 make example-hello
 make example-counter
 make example-shell
+make example-slice
 make example-events
 make example-render
 make example-svg
@@ -178,8 +179,8 @@ You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but
 
 The next logical additions are:
 
-1. additional editor controls and containers such as radio buttons, sliders, spin boxes, group boxes, tabs, splitters, scroll areas, and list/tree surfaces
-2. one real inspector-style example that wires those controls into a custom canvas with live updates
-3. drag-and-drop support for editor workflows and data transfer
-4. richer abstract-model bridges, additional delegate hooks, and remaining rendering/document helpers such as gradients/composition features
+1. drag-source support and richer model/view drag-and-drop workflows beyond the current drop-receive path
+2. broader abstract-model bridges beyond flat list models, especially for custom tree models
+3. remaining rendering/document helpers such as gradients, composition features, `QPainterPathStroker`, and `QPolygonF`
+4. any additional image-reader, clipboard, or print helpers that the maintained editor slice exposes as real needs
 5. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface

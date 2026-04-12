@@ -8,10 +8,25 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Added
 
-- `Clipboard` bindings plus `Qt6.clipboard` and `Application#clipboard` helpers for text, image, and pixmap clipboard access.
+## [0.3.0] - 2026-04-12
+
+### Added
+
+- Clipboard bindings plus `Qt6.clipboard` and `Application#clipboard` helpers for text, image, pixmap, and `QMimeData` clipboard access.
 - File-backed raster loading helpers for `QImage` and `QPixmap` through `new(path)`, `from_file`, and `load` APIs.
-- Initial model/view bindings for `ModelIndex`, `QStandardItem`, `QStandardItemModel`, `QListView`, and `QTreeView`, including current-index notifications and item/index lookup helpers.
-- Expanded model/view support with role-based data access, `SortFilterProxyModel`, `StyledItemDelegate`, proxy index mapping, and delegate assignment on list and tree views.
+- `QImageReader` bindings for file-backed image probing and decode, including size, format, auto-transform, and read-into-image helpers.
+- Expanded model/view support with `ModelIndex`, `QStandardItem`, `QStandardItemModel`, `QListView`, `QTreeView`, role-based data access, `SortFilterProxyModel`, shared `ItemSelectionModel`, proxy index mapping, header data access, and delegate assignment on list and tree views.
+- `StyledItemDelegate` display formatting plus custom editor creation, editor population, and commit hooks.
+- `AbstractListModel` and generic item-flag support for callback-backed editable list models implemented in Crystal.
+- Drag-and-drop receive support through `MimeData`, `DropEvent`, widget drop acceptance, `EventWidget` drag-enter / drag-move / drop callbacks, and synthetic text-drop helpers for tests.
+- `QIcon` bindings plus application and widget helpers for app metadata, style sheets, and window icons.
+- `QEventLoop` bindings for nested local event loops.
+- `QProgressDialog` and `QSplashScreen` bindings for shell-polish workflows.
+- New maintained examples covering the real editor vertical slice, model/view workbench flows, and application-service workflows.
+
+### Changed
+
+- Refreshed the roadmap and README to reflect the broader desktop-shell, model/view, drag-and-drop, image-loading, and runtime-polish coverage now shipped in the shard.
 
 ## [0.2.0] - 2026-04-09
 
