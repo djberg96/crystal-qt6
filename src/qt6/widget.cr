@@ -1,6 +1,10 @@
 module Qt6
   # Wraps a generic `QWidget`.
   class Widget < QObject
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates a widget, optionally parented to another widget.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)

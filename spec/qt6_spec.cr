@@ -887,6 +887,55 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports custom delegate editor creation and commit hooks" do
+    app
+    host = Qt6::Widget.new
+    model = Qt6::StandardItemModel.new(host)
+    item = Qt6::StandardItem.new("terrain")
+    model << item
+    index = model.index(0)
+    delegate = Qt6::StyledItemDelegate.new(host)
+    created_editors = [] of Qt6::LineEdit
+    populated_values = [] of Qt6::ModelData
+    committed_values = [] of String
+
+    delegate.on_create_editor do |parent, editor_index|
+      editor_index.row.should eq(0)
+      editor = Qt6::LineEdit.new(parent: parent)
+      created_editors << editor
+      editor
+    end
+
+    delegate.on_set_editor_data do |editor, value, editor_index|
+      editor_index.column.should eq(0)
+      line_edit = editor.as(Qt6::LineEdit)
+      populated_values << value
+      line_edit.text = "#{value}-editor"
+    end
+
+    delegate.on_set_model_data do |editor, target_model, editor_index|
+      line_edit = editor.as(Qt6::LineEdit)
+      committed_values << line_edit.text
+      target_model.set_data(editor_index, line_edit.text.upcase)
+    end
+
+    editor = delegate.create_editor(host, index)
+    editor.should be_a(Qt6::LineEdit)
+    line_edit = editor.as(Qt6::LineEdit)
+    delegate.set_editor_data(line_edit, index)
+    line_edit.text.should eq("terrain-editor")
+    line_edit.text = "contours"
+    delegate.set_model_data(line_edit, model, index)
+
+    created_editors.size.should eq(1)
+    populated_values.should eq(["terrain"])
+    committed_values.should eq(["contours"])
+    model.data(index).should eq("CONTOURS")
+
+    index.release
+    host.release
+  end
+
   it "exposes geometry types and custom widget event hooks" do
     application = app
     widget = Qt6::EventWidget.new

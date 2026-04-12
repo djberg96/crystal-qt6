@@ -105,6 +105,7 @@ qt6cr_key_event_t to_key_event(QKeyEvent *event);
 qt6cr_color_t to_color(const QColor &color);
 qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
+QWidget *as_widget(qt6cr_handle_t handle);
 
 class EventWidget final : public QWidget {
  public:
@@ -274,6 +275,12 @@ class CrystalStyledItemDelegate final : public QStyledItemDelegate {
 
   qt6cr_string_transform_callback_t display_text_callback = nullptr;
   void *display_text_userdata = nullptr;
+  qt6cr_delegate_create_editor_callback_t create_editor_callback = nullptr;
+  void *create_editor_userdata = nullptr;
+  qt6cr_delegate_set_editor_data_callback_t set_editor_data_callback = nullptr;
+  void *set_editor_data_userdata = nullptr;
+  qt6cr_delegate_set_model_data_callback_t set_model_data_callback = nullptr;
+  void *set_model_data_userdata = nullptr;
 
   QString displayText(const QVariant &value, const QLocale &locale) const override {
     const auto default_text = QStyledItemDelegate::displayText(value, locale);
@@ -292,6 +299,36 @@ class CrystalStyledItemDelegate final : public QStyledItemDelegate {
     const auto result = QString::fromUtf8(transformed);
     std::free(transformed);
     return result;
+  }
+
+  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (create_editor_callback == nullptr) {
+      return QStyledItemDelegate::createEditor(parent, option, index);
+    }
+
+    QModelIndex index_copy(index);
+    auto *editor = as_widget(create_editor_callback(create_editor_userdata, parent, &index_copy));
+    return editor == nullptr ? QStyledItemDelegate::createEditor(parent, option, index) : editor;
+  }
+
+  void setEditorData(QWidget *editor, const QModelIndex &index) const override {
+    if (set_editor_data_callback == nullptr) {
+      QStyledItemDelegate::setEditorData(editor, index);
+      return;
+    }
+
+    QModelIndex index_copy(index);
+    set_editor_data_callback(set_editor_data_userdata, editor, to_variant_value(index.data(Qt::EditRole)), &index_copy);
+  }
+
+  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override {
+    if (set_model_data_callback == nullptr) {
+      QStyledItemDelegate::setModelData(editor, model, index);
+      return;
+    }
+
+    QModelIndex index_copy(index);
+    set_model_data_callback(set_model_data_userdata, editor, model, &index_copy);
   }
 };
 
@@ -1668,9 +1705,80 @@ void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_str
   delegate->display_text_userdata = userdata;
 }
 
+void qt6cr_styled_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata) {
+  auto *delegate = as_styled_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->create_editor_callback = callback;
+  delegate->create_editor_userdata = userdata;
+}
+
+void qt6cr_styled_item_delegate_on_set_editor_data(qt6cr_handle_t handle, qt6cr_delegate_set_editor_data_callback_t callback, void *userdata) {
+  auto *delegate = as_styled_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->set_editor_data_callback = callback;
+  delegate->set_editor_data_userdata = userdata;
+}
+
+void qt6cr_styled_item_delegate_on_set_model_data(qt6cr_handle_t handle, qt6cr_delegate_set_model_data_callback_t callback, void *userdata) {
+  auto *delegate = as_styled_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->set_model_data_callback = callback;
+  delegate->set_model_data_userdata = userdata;
+}
+
 char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
   auto *delegate = as_styled_item_delegate(handle);
   return delegate == nullptr ? duplicate_string("") : duplicate_string(delegate->displayText(from_variant_value(value), QLocale()));
+}
+
+qt6cr_handle_t qt6cr_styled_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index) {
+  auto *delegate = as_styled_item_delegate(handle);
+  auto *editor_parent = as_widget(parent);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_parent == nullptr || model_index == nullptr) {
+    return nullptr;
+  }
+
+  QStyleOptionViewItem option;
+  return delegate->createEditor(editor_parent, option, *model_index);
+}
+
+void qt6cr_styled_item_delegate_set_editor_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t index) {
+  auto *delegate = as_styled_item_delegate(handle);
+  auto *editor_widget = as_widget(editor);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_widget == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  delegate->setEditorData(editor_widget, *model_index);
+}
+
+void qt6cr_styled_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index) {
+  auto *delegate = as_styled_item_delegate(handle);
+  auto *editor_widget = as_widget(editor);
+  auto *abstract_item_model = as_abstract_item_model(model);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_widget == nullptr || abstract_item_model == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  delegate->setModelData(editor_widget, abstract_item_model, *model_index);
 }
 
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent) {
