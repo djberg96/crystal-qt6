@@ -207,6 +207,7 @@ module Qt6
 
     fun qt6cr_qimage_create = qt6cr_qimage_create(width : LibC::Int, height : LibC::Int, format : LibC::Int) : Handle
     fun qt6cr_qimage_create_from_file = qt6cr_qimage_create_from_file(path : UInt8*) : Handle
+    fun qt6cr_qimage_create_from_raw_data = qt6cr_qimage_create_from_raw_data(data : UInt8*, size : LibC::Int, width : LibC::Int, height : LibC::Int, bytes_per_line : LibC::Int, format : LibC::Int) : Handle
     fun qt6cr_qimage_destroy = qt6cr_qimage_destroy(handle : Handle)
     fun qt6cr_qimage_width = qt6cr_qimage_width(handle : Handle) : LibC::Int
     fun qt6cr_qimage_height = qt6cr_qimage_height(handle : Handle) : LibC::Int
@@ -446,6 +447,9 @@ module Qt6
     fun qt6cr_qpdf_writer_set_resolution = qt6cr_qpdf_writer_set_resolution(handle : Handle, resolution : LibC::Int)
     fun qt6cr_qpdf_writer_set_page_size_points = qt6cr_qpdf_writer_set_page_size_points(handle : Handle, width : LibC::Int, height : LibC::Int)
     fun qt6cr_qpdf_writer_set_page_size_millimeters = qt6cr_qpdf_writer_set_page_size_millimeters(handle : Handle, width : Float64, height : Float64, orientation : LibC::Int)
+    fun qt6cr_qpdf_writer_set_page_layout = qt6cr_qpdf_writer_set_page_layout(handle : Handle, width : Float64, height : Float64, unit : LibC::Int, orientation : LibC::Int, left : Float64, top : Float64, right : Float64, bottom : Float64)
+    fun qt6cr_qpdf_writer_page_layout_full_rect_points = qt6cr_qpdf_writer_page_layout_full_rect_points(handle : Handle) : RectFValue
+    fun qt6cr_qpdf_writer_page_layout_paint_rect_points = qt6cr_qpdf_writer_page_layout_paint_rect_points(handle : Handle) : RectFValue
     fun qt6cr_qpdf_writer_new_page = qt6cr_qpdf_writer_new_page(handle : Handle) : Bool
 
     fun qt6cr_qbyte_array_create = qt6cr_qbyte_array_create : Handle
@@ -601,8 +605,10 @@ module Qt6
     fun qt6cr_qpainter_draw_polygon = qt6cr_qpainter_draw_polygon(handle : Handle, polygon : Handle)
     fun qt6cr_qpainter_draw_image = qt6cr_qpainter_draw_image(handle : Handle, position : PointFValue, image : Handle)
     fun qt6cr_qpainter_draw_image_xy = qt6cr_qpainter_draw_image_xy(handle : Handle, x : Float64, y : Float64, image : Handle)
+    fun qt6cr_qpainter_draw_image_rect = qt6cr_qpainter_draw_image_rect(handle : Handle, rect : RectFValue, image : Handle)
     fun qt6cr_qpainter_draw_pixmap = qt6cr_qpainter_draw_pixmap(handle : Handle, position : PointFValue, pixmap : Handle)
     fun qt6cr_qpainter_draw_pixmap_xy = qt6cr_qpainter_draw_pixmap_xy(handle : Handle, x : Float64, y : Float64, pixmap : Handle)
+    fun qt6cr_qpainter_draw_point = qt6cr_qpainter_draw_point(handle : Handle, point : PointFValue)
     fun qt6cr_qpainter_draw_text = qt6cr_qpainter_draw_text(handle : Handle, position : PointFValue, text : UInt8*)
 
     fun qt6cr_input_dialog_create = qt6cr_input_dialog_create(parent : Handle) : Handle

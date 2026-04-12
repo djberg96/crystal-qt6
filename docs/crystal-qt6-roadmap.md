@@ -232,7 +232,7 @@ Goal: close the feature gap for external outputs.
 ### Acceptance Criteria
 
 - Reproduce current PNG, PDF, and SVG export behavior for a representative sample document.
-- PDF and SVG export are already in place; the remaining work here is mostly richer clipboard/data-transfer support beyond the new `QMimeData` basics, any additional image-reader capabilities the real editor slice exposes, and any truly needed print-related APIs.
+- PDF and SVG export are already in place, including custom PDF page layout control. The remaining work here is mostly richer clipboard/data-transfer support beyond the new `QMimeData` basics, any additional image-reader capabilities the real editor slice exposes, and any truly needed print-related APIs.
 
 ## Phase 7: High-Throughput Data And Image Processing
 

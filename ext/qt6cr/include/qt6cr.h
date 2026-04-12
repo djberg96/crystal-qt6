@@ -230,6 +230,7 @@ void qt6cr_progress_dialog_on_canceled(qt6cr_handle_t handle, qt6cr_void_callbac
 
 qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format);
 qt6cr_handle_t qt6cr_qimage_create_from_file(const char *path);
+qt6cr_handle_t qt6cr_qimage_create_from_raw_data(const unsigned char *data, int size, int width, int height, int bytes_per_line, int format);
 void qt6cr_qimage_destroy(qt6cr_handle_t handle);
 int qt6cr_qimage_width(qt6cr_handle_t handle);
 int qt6cr_qimage_height(qt6cr_handle_t handle);
@@ -469,6 +470,9 @@ int qt6cr_qpdf_writer_resolution(qt6cr_handle_t handle);
 void qt6cr_qpdf_writer_set_resolution(qt6cr_handle_t handle, int resolution);
 void qt6cr_qpdf_writer_set_page_size_points(qt6cr_handle_t handle, int width, int height);
 void qt6cr_qpdf_writer_set_page_size_millimeters(qt6cr_handle_t handle, double width, double height, int orientation);
+void qt6cr_qpdf_writer_set_page_layout(qt6cr_handle_t handle, double width, double height, int unit, int orientation, double left, double top, double right, double bottom);
+qt6cr_rectf_t qt6cr_qpdf_writer_page_layout_full_rect_points(qt6cr_handle_t handle);
+qt6cr_rectf_t qt6cr_qpdf_writer_page_layout_paint_rect_points(qt6cr_handle_t handle);
 bool qt6cr_qpdf_writer_new_page(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qbyte_array_create(void);
@@ -624,8 +628,10 @@ void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path);
 void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_image(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t image);
 void qt6cr_qpainter_draw_image_xy(qt6cr_handle_t handle, double x, double y, qt6cr_handle_t image);
+void qt6cr_qpainter_draw_image_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_handle_t image);
 void qt6cr_qpainter_draw_pixmap(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t pixmap);
 void qt6cr_qpainter_draw_pixmap_xy(qt6cr_handle_t handle, double x, double y, qt6cr_handle_t pixmap);
+void qt6cr_qpainter_draw_point(qt6cr_handle_t handle, qt6cr_pointf_t point);
 void qt6cr_qpainter_draw_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text);
 
 qt6cr_handle_t qt6cr_input_dialog_create(qt6cr_handle_t parent);

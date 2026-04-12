@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.3.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, model/view drag/drop payloads and view configuration, richer raster image loading, nested event loops, shell-polish widgets, and a broad first batch of common controls, layouts, and model/view editor panels.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.3.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, model/view drag/drop payloads and view configuration, richer raster image loading, nested event loops, shell-polish widgets, richer PDF page layout control, and a broad first batch of common controls, layouts, and model/view editor panels.
 
 ## Requirements
 
