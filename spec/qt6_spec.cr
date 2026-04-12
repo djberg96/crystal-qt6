@@ -20,6 +20,74 @@ private class EditorVerticalSliceSpecState
   end
 end
 
+private class EditableLayerListModel < Qt6::AbstractListModel
+  getter layers
+
+  def initialize(layers : Array(String), parent : Qt6::QObject? = nil)
+    @layers = layers
+    super(parent)
+  end
+
+  def append_layer(name : String) : String
+    position = @layers.size
+    begin_insert_rows(position, position)
+    @layers << name
+    end_insert_rows
+    name
+  end
+
+  def remove_layer(row : Int) : String
+    begin_remove_rows(row, row)
+    removed = @layers.delete_at(row)
+    end_remove_rows
+    removed
+  end
+
+  def replace_layers(layers : Array(String)) : Array(String)
+    begin_reset_model
+    @layers = layers
+    end_reset_model
+    layers
+  end
+
+  protected def model_row_count : Int32
+    @layers.size.to_i32
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+
+    case role
+    when Qt6::ItemDataRole::Display.value, Qt6::ItemDataRole::Edit.value
+      @layers[index.row]?
+    when Qt6::ItemDataRole::User.value
+      index.row
+    else
+      nil
+    end
+  end
+
+  protected def model_set_data(index : Qt6::ModelIndex, value : Qt6::ModelData, role : Int32) : Bool
+    return false unless index.valid? && role == Qt6::ItemDataRole::Edit.value
+
+    @layers[index.row] = value.to_s
+    data_changed(index)
+    true
+  end
+
+  protected def model_header_data(section : Int32, orientation : Qt6::Orientation, role : Int32) : Qt6::ModelData
+    return nil unless section == 0 && orientation == Qt6::Orientation::Horizontal && role == Qt6::ItemDataRole::Display.value
+
+    "Layer"
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::None unless index.valid?
+
+    Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable
+  end
+end
+
 describe Qt6 do
   it "renders into images and pixmaps with paths and transforms" do
     app
@@ -1213,6 +1281,70 @@ describe Qt6 do
     png_header.should eq(Bytes[0x89_u8, 0x50_u8, 0x4E_u8, 0x47_u8, 0x0D_u8, 0x0A_u8, 0x1A_u8, 0x0A_u8])
 
     main.release
+  end
+
+  it "supports callback-backed abstract list models with edits and row notifications" do
+    application = app
+    model = EditableLayerListModel.new(["Terrain", "Units"])
+    proxy = Qt6::SortFilterProxyModel.new
+    proxy.source_model = model
+    list_view = Qt6::ListView.new
+    list_view.model = proxy
+
+    delegate = Qt6::StyledItemDelegate.new(list_view)
+    delegate.on_create_editor do |parent, _index|
+      Qt6::LineEdit.new(parent: parent)
+    end
+    delegate.on_set_editor_data do |editor, value, _index|
+      editor.as(Qt6::LineEdit).text = value.to_s
+    end
+    delegate.on_set_model_data do |editor, target_model, index|
+      target_model.set_data(index, editor.as(Qt6::LineEdit).text).should be_true
+    end
+    list_view.item_delegate = delegate
+
+    source_index = model.index(0)
+    proxy_index = proxy.index(1)
+    editor = delegate.create_editor(list_view, proxy_index)
+    editor.should be_a(Qt6::LineEdit)
+    line_edit = editor.as(Qt6::LineEdit)
+    delegate.set_editor_data(line_edit, proxy_index)
+    line_edit.text.should eq("Units")
+    line_edit.text = "Counter"
+    delegate.set_model_data(line_edit, proxy, proxy_index)
+    application.process_events
+
+    model.layers.should eq(["Terrain", "Counter"])
+    proxy.data(proxy_index).should eq("Counter")
+    proxy.header_data.should eq("Layer")
+    model.flags(source_index).should eq(Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable)
+
+    model.append_layer("Labels")
+    application.process_events
+    proxy.row_count.should eq(3)
+
+    removed = model.remove_layer(0)
+    application.process_events
+    removed.should eq("Terrain")
+    proxy.row_count.should eq(2)
+
+    refreshed_index = proxy.index(0)
+    proxy.data(refreshed_index).should eq("Counter")
+
+    model.replace_layers(["Roads"])
+    application.process_events
+    proxy.row_count.should eq(1)
+
+    reset_index = proxy.index(0)
+    proxy.data(reset_index).should eq("Roads")
+
+    source_index.release
+    proxy_index.release
+    refreshed_index.release
+    reset_index.release
+    list_view.release
+    proxy.release
+    model.release
   end
 
   it "exposes geometry types and custom widget event hooks" do
