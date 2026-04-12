@@ -6,5 +6,6 @@ module Qt6
     DotLine        = 3
     DashDotLine    = 4
     DashDotDotLine = 5
+    CustomDashLine = 6
   end
 end

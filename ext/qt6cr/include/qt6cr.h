@@ -439,10 +439,29 @@ int qt6cr_qpen_style(qt6cr_handle_t handle);
 void qt6cr_qpen_set_style(qt6cr_handle_t handle, int style);
 int qt6cr_qpen_cap_style(qt6cr_handle_t handle);
 void qt6cr_qpen_set_cap_style(qt6cr_handle_t handle, int style);
+int qt6cr_qpen_join_style(qt6cr_handle_t handle);
+void qt6cr_qpen_set_join_style(qt6cr_handle_t handle, int style);
+double qt6cr_qpen_dash_offset(qt6cr_handle_t handle);
+void qt6cr_qpen_set_dash_offset(qt6cr_handle_t handle, double offset);
+void qt6cr_qpen_set_dash_pattern(qt6cr_handle_t handle, const double *values, int size);
+
+qt6cr_handle_t qt6cr_qlinear_gradient_create(double x1, double y1, double x2, double y2);
+void qt6cr_qlinear_gradient_destroy(qt6cr_handle_t handle);
+void qt6cr_qlinear_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color);
+qt6cr_pointf_t qt6cr_qlinear_gradient_start(qt6cr_handle_t handle);
+qt6cr_pointf_t qt6cr_qlinear_gradient_final_stop(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_qradial_gradient_create(double center_x, double center_y, double radius);
+void qt6cr_qradial_gradient_destroy(qt6cr_handle_t handle);
+void qt6cr_qradial_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color);
+qt6cr_pointf_t qt6cr_qradial_gradient_center(qt6cr_handle_t handle);
+double qt6cr_qradial_gradient_radius(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color);
 qt6cr_handle_t qt6cr_qbrush_create_from_pixmap(qt6cr_handle_t pixmap);
 qt6cr_handle_t qt6cr_qbrush_create_from_image(qt6cr_handle_t image);
+qt6cr_handle_t qt6cr_qbrush_create_from_linear_gradient(qt6cr_handle_t gradient);
+qt6cr_handle_t qt6cr_qbrush_create_from_radial_gradient(qt6cr_handle_t gradient);
 void qt6cr_qbrush_destroy(qt6cr_handle_t handle);
 qt6cr_color_t qt6cr_qbrush_color(qt6cr_handle_t handle);
 void qt6cr_qbrush_set_color(qt6cr_handle_t handle, qt6cr_color_t color);
