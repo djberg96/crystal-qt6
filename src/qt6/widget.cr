@@ -69,6 +69,28 @@ module Qt6
       QPixmap.new(LibQt6.qt6cr_widget_grab(@to_unsafe), true)
     end
 
+    # Returns the widget's style sheet.
+    def style_sheet : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_style_sheet(@to_unsafe))
+    end
+
+    # Sets the widget's style sheet.
+    def style_sheet=(value : String) : String
+      LibQt6.qt6cr_widget_set_style_sheet(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the widget's current window icon.
+    def window_icon : QIcon
+      QIcon.wrap(LibQt6.qt6cr_widget_window_icon(@to_unsafe), true)
+    end
+
+    # Sets the widget's window icon.
+    def window_icon=(value : QIcon) : QIcon
+      LibQt6.qt6cr_widget_set_window_icon(@to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns `true` when the widget accepts drops.
     def accept_drops? : Bool
       LibQt6.qt6cr_widget_accept_drops(@to_unsafe)

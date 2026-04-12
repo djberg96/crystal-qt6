@@ -35,6 +35,61 @@ module Qt6
       Clipboard.wrap(LibQt6.qt6cr_application_clipboard(@handle))
     end
 
+    # Returns the current application name.
+    def name : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_application_name(@handle))
+    end
+
+    # Sets the application name.
+    def name=(value : String) : String
+      LibQt6.qt6cr_application_set_name(@handle, value.to_unsafe)
+      value
+    end
+
+    # Returns the current organization name.
+    def organization_name : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_application_organization_name(@handle))
+    end
+
+    # Sets the organization name.
+    def organization_name=(value : String) : String
+      LibQt6.qt6cr_application_set_organization_name(@handle, value.to_unsafe)
+      value
+    end
+
+    # Returns the current organization domain.
+    def organization_domain : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_application_organization_domain(@handle))
+    end
+
+    # Sets the organization domain.
+    def organization_domain=(value : String) : String
+      LibQt6.qt6cr_application_set_organization_domain(@handle, value.to_unsafe)
+      value
+    end
+
+    # Returns the application-wide style sheet.
+    def style_sheet : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_application_style_sheet(@handle))
+    end
+
+    # Sets the application-wide style sheet.
+    def style_sheet=(value : String) : String
+      LibQt6.qt6cr_application_set_style_sheet(@handle, value.to_unsafe)
+      value
+    end
+
+    # Returns the current application window icon.
+    def window_icon : QIcon
+      QIcon.wrap(LibQt6.qt6cr_application_window_icon(@handle), true)
+    end
+
+    # Sets the application window icon.
+    def window_icon=(value : QIcon) : QIcon
+      LibQt6.qt6cr_application_set_window_icon(@handle, value.to_unsafe)
+      value
+    end
+
     # Destroys the underlying Qt application if it is still active.
     def shutdown : Nil
       return if @destroyed
