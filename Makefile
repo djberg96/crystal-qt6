@@ -5,7 +5,7 @@ AR ?= ar
 
 BUILD_SCRIPT := scripts/build_qt6cr.sh
 
-.PHONY: native spec example-hello example-counter example-shell example-slice example-events example-render example-svg example-inspector clean
+.PHONY: native spec example-hello example-counter example-shell example-slice example-events example-render example-svg example-inspector example-modelview example-services clean
 
 native:
 	QT_PKG='$(QT_PKG)' PKG_CONFIG=$(PKG_CONFIG) CXX=$(CXX) AR=$(AR) CXXFLAGS='$(CXXFLAGS)' sh $(BUILD_SCRIPT)
@@ -36,6 +36,12 @@ example-svg:
 
 example-inspector:
 	crystal run examples/inspector_workbench.cr
+
+example-modelview:
+	crystal run examples/model_view_workbench.cr
+
+example-services:
+	crystal run examples/application_services_showcase.cr
 
 clean:
 	rm -rf ext/qt6cr/build
