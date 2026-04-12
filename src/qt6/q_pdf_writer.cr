@@ -63,6 +63,12 @@ module Qt6
       value
     end
 
+    # Sets a custom zero-margin page size in millimeters.
+    def set_page_size_millimeters(width : Number, height : Number, orientation : PageOrientation = PageOrientation::Portrait) : self
+      LibQt6.qt6cr_qpdf_writer_set_page_size_millimeters(to_unsafe, width.to_f64, height.to_f64, orientation.value)
+      self
+    end
+
     # Starts a new page in the output document.
     def new_page : Bool
       LibQt6.qt6cr_qpdf_writer_new_page(to_unsafe)

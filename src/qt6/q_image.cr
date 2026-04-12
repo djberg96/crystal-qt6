@@ -21,6 +21,13 @@ module Qt6
       new(path)
     end
 
+    # Loads an image from encoded bytes.
+    def self.from_data(data : Bytes, format : String? = nil) : self
+      image = new(0, 0)
+      image.load(data, format)
+      image
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -56,9 +63,24 @@ module Qt6
       LibQt6.qt6cr_qimage_load(to_unsafe, path.to_unsafe)
     end
 
+    # Loads image contents from encoded bytes into this instance.
+    def load(data : Bytes, format : String? = nil) : Bool
+      LibQt6.qt6cr_qimage_load_from_data(to_unsafe, data.to_unsafe, data.size, format.try(&.to_unsafe) || Pointer(UInt8).null)
+    end
+
     # Saves the image to disk.
     def save(path : String) : Bool
       LibQt6.qt6cr_qimage_save(to_unsafe, path.to_unsafe)
+    end
+
+    # Encodes the image into bytes using the given format.
+    def save_to_data(format : String) : Bytes
+      Qt6.copy_and_release_bytes(LibQt6.qt6cr_qimage_save_to_data(to_unsafe, format.to_unsafe))
+    end
+
+    # Saves the image into an open buffer using the given format.
+    def save(buffer : QBuffer, format : String? = nil) : Bool
+      LibQt6.qt6cr_qimage_save_to_buffer(to_unsafe, buffer.to_unsafe, format.try(&.to_unsafe) || Pointer(UInt8).null)
     end
 
     # Returns the color of a single pixel.
