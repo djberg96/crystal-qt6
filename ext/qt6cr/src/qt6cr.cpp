@@ -19,6 +19,7 @@
 #include <QDockWidget>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
+#include <QEventLoop>
 #include <QFileDialog>
 #include <QFont>
 #include <QFontMetrics>
@@ -1066,6 +1067,44 @@ void qt6cr_application_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t ico
   if (state != nullptr && state->application != nullptr && window_icon != nullptr) {
     state->application->setWindowIcon(*window_icon);
   }
+}
+
+qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent) {
+  return new QEventLoop(as_object(parent));
+}
+
+int qt6cr_event_loop_exec(qt6cr_handle_t handle) {
+  auto *event_loop = static_cast<QEventLoop *>(handle);
+  return event_loop == nullptr ? -1 : event_loop->exec();
+}
+
+void qt6cr_event_loop_quit(qt6cr_handle_t handle) {
+  auto *event_loop = static_cast<QEventLoop *>(handle);
+
+  if (event_loop != nullptr) {
+    event_loop->quit();
+  }
+}
+
+void qt6cr_event_loop_exit(qt6cr_handle_t handle, int return_code) {
+  auto *event_loop = static_cast<QEventLoop *>(handle);
+
+  if (event_loop != nullptr) {
+    event_loop->exit(return_code);
+  }
+}
+
+void qt6cr_event_loop_process_events(qt6cr_handle_t handle) {
+  auto *event_loop = static_cast<QEventLoop *>(handle);
+
+  if (event_loop != nullptr) {
+    event_loop->processEvents();
+  }
+}
+
+bool qt6cr_event_loop_is_running(qt6cr_handle_t handle) {
+  auto *event_loop = static_cast<QEventLoop *>(handle);
+  return event_loop != nullptr && event_loop->isRunning();
 }
 
 char *qt6cr_clipboard_text(qt6cr_handle_t handle) {

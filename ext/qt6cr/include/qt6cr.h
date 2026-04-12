@@ -108,6 +108,13 @@ void qt6cr_application_set_style_sheet(qt6cr_handle_t handle, const char *style_
 qt6cr_handle_t qt6cr_application_window_icon(qt6cr_handle_t handle);
 void qt6cr_application_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 
+qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent);
+int qt6cr_event_loop_exec(qt6cr_handle_t handle);
+void qt6cr_event_loop_quit(qt6cr_handle_t handle);
+void qt6cr_event_loop_exit(qt6cr_handle_t handle, int return_code);
+void qt6cr_event_loop_process_events(qt6cr_handle_t handle);
+bool qt6cr_event_loop_is_running(qt6cr_handle_t handle);
+
 char *qt6cr_clipboard_text(qt6cr_handle_t handle);
 void qt6cr_clipboard_set_text(qt6cr_handle_t handle, const char *text);
 qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle);

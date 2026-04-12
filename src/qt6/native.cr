@@ -91,6 +91,13 @@ module Qt6
     fun qt6cr_application_window_icon = qt6cr_application_window_icon(handle : Handle) : Handle
     fun qt6cr_application_set_window_icon = qt6cr_application_set_window_icon(handle : Handle, icon : Handle)
 
+    fun qt6cr_event_loop_create = qt6cr_event_loop_create(parent : Handle) : Handle
+    fun qt6cr_event_loop_exec = qt6cr_event_loop_exec(handle : Handle) : LibC::Int
+    fun qt6cr_event_loop_quit = qt6cr_event_loop_quit(handle : Handle)
+    fun qt6cr_event_loop_exit = qt6cr_event_loop_exit(handle : Handle, return_code : LibC::Int)
+    fun qt6cr_event_loop_process_events = qt6cr_event_loop_process_events(handle : Handle)
+    fun qt6cr_event_loop_is_running = qt6cr_event_loop_is_running(handle : Handle) : Bool
+
     fun qt6cr_clipboard_text = qt6cr_clipboard_text(handle : Handle) : UInt8*
     fun qt6cr_clipboard_set_text = qt6cr_clipboard_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_clipboard_image = qt6cr_clipboard_image(handle : Handle) : Handle

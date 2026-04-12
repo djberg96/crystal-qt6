@@ -833,6 +833,37 @@ describe Qt6 do
     destroyed.should eq(1)
   end
 
+  it "supports nested event loops driven by timers" do
+    app
+    exit_loop = Qt6::QEventLoop.new
+    exit_timer = Qt6::QTimer.new(exit_loop)
+    exit_codes = [] of Int32
+
+    exit_timer.single_shot = true
+    exit_timer.on_timeout do
+      exit_loop.running?.should be_true
+      exit_codes << exit_loop.exit(23)
+    end
+    exit_timer.start(0)
+
+    exit_loop.running?.should be_false
+    exit_loop.run.should eq(23)
+    exit_loop.running?.should be_false
+    exit_codes.should eq([23])
+
+    quit_loop = Qt6::QEventLoop.new
+    quit_timer = Qt6::QTimer.new(quit_loop)
+    quit_timer.single_shot = true
+    quit_timer.on_timeout do
+      quit_loop.running?.should be_true
+      quit_loop.quit
+    end
+    quit_timer.start(0)
+
+    quit_loop.run.should eq(0)
+    quit_loop.running?.should be_false
+  end
+
   it "supports list and tree widgets for editor panels" do
     application = app
     list_widget = Qt6::ListWidget.new
