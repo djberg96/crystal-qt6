@@ -73,6 +73,9 @@ typedef void (*qt6cr_mouse_callback_t)(void *userdata, qt6cr_mouse_event_t event
 typedef void (*qt6cr_wheel_callback_t)(void *userdata, qt6cr_wheel_event_t event_data);
 typedef void (*qt6cr_key_callback_t)(void *userdata, qt6cr_key_event_t event_data);
 typedef char *(*qt6cr_string_transform_callback_t)(void *userdata, const char *text);
+typedef qt6cr_handle_t (*qt6cr_delegate_create_editor_callback_t)(void *userdata, qt6cr_handle_t parent, qt6cr_handle_t index);
+typedef void (*qt6cr_delegate_set_editor_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_variant_value_t value, qt6cr_handle_t index);
+typedef void (*qt6cr_delegate_set_model_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
 
 void qt6cr_object_destroy(qt6cr_handle_t handle);
 void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -236,7 +239,13 @@ void qt6cr_sort_filter_proxy_model_invalidate(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent);
 void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);
+void qt6cr_styled_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata);
+void qt6cr_styled_item_delegate_on_set_editor_data(qt6cr_handle_t handle, qt6cr_delegate_set_editor_data_callback_t callback, void *userdata);
+void qt6cr_styled_item_delegate_on_set_model_data(qt6cr_handle_t handle, qt6cr_delegate_set_model_data_callback_t callback, void *userdata);
 char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value);
+qt6cr_handle_t qt6cr_styled_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index);
+void qt6cr_styled_item_delegate_set_editor_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t index);
+void qt6cr_styled_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
 
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent);
 void qt6cr_list_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);

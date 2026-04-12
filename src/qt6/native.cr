@@ -228,7 +228,13 @@ module Qt6
 
     fun qt6cr_styled_item_delegate_create = qt6cr_styled_item_delegate_create(parent : Handle) : Handle
     fun qt6cr_styled_item_delegate_on_display_text = qt6cr_styled_item_delegate_on_display_text(handle : Handle, callback : (Handle, UInt8* -> UInt8*), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_create_editor = qt6cr_styled_item_delegate_on_create_editor(handle : Handle, callback : (Handle, Handle, Handle -> Handle), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_set_editor_data = qt6cr_styled_item_delegate_on_set_editor_data(handle : Handle, callback : (Handle, Handle, VariantValue, Handle ->), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_set_model_data = qt6cr_styled_item_delegate_on_set_model_data(handle : Handle, callback : (Handle, Handle, Handle, Handle ->), userdata : Handle)
     fun qt6cr_styled_item_delegate_display_text = qt6cr_styled_item_delegate_display_text(handle : Handle, value : VariantValue) : UInt8*
+    fun qt6cr_styled_item_delegate_create_editor = qt6cr_styled_item_delegate_create_editor(handle : Handle, parent : Handle, index : Handle) : Handle
+    fun qt6cr_styled_item_delegate_set_editor_data = qt6cr_styled_item_delegate_set_editor_data(handle : Handle, editor : Handle, index : Handle)
+    fun qt6cr_styled_item_delegate_set_model_data = qt6cr_styled_item_delegate_set_model_data(handle : Handle, editor : Handle, model : Handle, index : Handle)
 
     fun qt6cr_list_view_create = qt6cr_list_view_create(parent : Handle) : Handle
     fun qt6cr_list_view_set_model = qt6cr_list_view_set_model(handle : Handle, model : Handle)
