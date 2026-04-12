@@ -10,6 +10,9 @@ module Qt6
     @mouse_released : Signal(MouseEvent) = Signal(MouseEvent).new
     @wheel_turned : Signal(WheelEvent) = Signal(WheelEvent).new
     @key_pressed : Signal(KeyEvent) = Signal(KeyEvent).new
+    @drag_entered : Signal(DropEvent) = Signal(DropEvent).new
+    @drag_moved : Signal(DropEvent) = Signal(DropEvent).new
+    @dropped : Signal(DropEvent) = Signal(DropEvent).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
     # Signal emitted for paint events.
@@ -28,6 +31,12 @@ module Qt6
     getter wheel_turned : Signal(WheelEvent)
     # Signal emitted for key press events.
     getter key_pressed : Signal(KeyEvent)
+    # Signal emitted for drag-enter events.
+    getter drag_entered : Signal(DropEvent)
+    # Signal emitted for drag-move events.
+    getter drag_moved : Signal(DropEvent)
+    # Signal emitted for drop events.
+    getter dropped : Signal(DropEvent)
 
     # Creates a custom event-enabled widget.
     def initialize(parent : Widget? = nil)
@@ -40,6 +49,9 @@ module Qt6
       @mouse_released = Signal(MouseEvent).new
       @wheel_turned = Signal(WheelEvent).new
       @key_pressed = Signal(KeyEvent).new
+      @drag_entered = Signal(DropEvent).new
+      @drag_moved = Signal(DropEvent).new
+      @dropped = Signal(DropEvent).new
       @callback_userdata = Box.box(self)
 
       LibQt6.qt6cr_event_widget_on_paint(to_unsafe, PAINT_TRAMPOLINE, @callback_userdata)
@@ -50,6 +62,9 @@ module Qt6
       LibQt6.qt6cr_event_widget_on_mouse_release(to_unsafe, MOUSE_RELEASE_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_event_widget_on_wheel(to_unsafe, WHEEL_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_event_widget_on_key_press(to_unsafe, KEY_PRESS_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_event_widget_on_drag_enter(to_unsafe, DRAG_ENTER_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_event_widget_on_drag_move(to_unsafe, DRAG_MOVE_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_event_widget_on_drop(to_unsafe, DROP_TRAMPOLINE, @callback_userdata)
     end
 
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
@@ -105,6 +120,24 @@ module Qt6
       self
     end
 
+    # Registers a block for drag-enter events.
+    def on_drag_enter(&block : DropEvent ->) : self
+      @drag_entered.connect { |event| block.call(event) }
+      self
+    end
+
+    # Registers a block for drag-move events.
+    def on_drag_move(&block : DropEvent ->) : self
+      @drag_moved.connect { |event| block.call(event) }
+      self
+    end
+
+    # Registers a block for drop events.
+    def on_drop(&block : DropEvent ->) : self
+      @dropped.connect { |event| block.call(event) }
+      self
+    end
+
     # Forces an immediate repaint of the widget.
     def repaint_now : self
       LibQt6.qt6cr_event_widget_repaint(to_unsafe)
@@ -141,6 +174,24 @@ module Qt6
       self
     end
 
+    # Sends a synthetic drag-enter event carrying text.
+    def simulate_drag_enter_text(position : PointF, text : String, buttons : Int32 = 1, modifiers : Int32 = 0) : self
+      LibQt6.qt6cr_event_widget_send_drag_enter_text(to_unsafe, position.to_native, text.to_unsafe, buttons, modifiers)
+      self
+    end
+
+    # Sends a synthetic drag-move event carrying text.
+    def simulate_drag_move_text(position : PointF, text : String, buttons : Int32 = 1, modifiers : Int32 = 0) : self
+      LibQt6.qt6cr_event_widget_send_drag_move_text(to_unsafe, position.to_native, text.to_unsafe, buttons, modifiers)
+      self
+    end
+
+    # Sends a synthetic drop event carrying text.
+    def simulate_drop_text(position : PointF, text : String, buttons : Int32 = 1, modifiers : Int32 = 0) : self
+      LibQt6.qt6cr_event_widget_send_drop_text(to_unsafe, position.to_native, text.to_unsafe, buttons, modifiers)
+      self
+    end
+
     protected def emit_paint(event : PaintEvent) : Nil
       @painted.emit(event)
     end
@@ -171,6 +222,18 @@ module Qt6
 
     protected def emit_key_press(event : KeyEvent) : Nil
       @key_pressed.emit(event)
+    end
+
+    protected def emit_drag_enter(event : DropEvent) : Nil
+      @drag_entered.emit(event)
+    end
+
+    protected def emit_drag_move(event : DropEvent) : Nil
+      @drag_moved.emit(event)
+    end
+
+    protected def emit_drop(event : DropEvent) : Nil
+      @dropped.emit(event)
     end
 
     private PAINT_TRAMPOLINE = ->(userdata : Void*, rect : LibQt6::RectFValue) do
@@ -204,6 +267,18 @@ module Qt6
 
     private KEY_PRESS_TRAMPOLINE = ->(userdata : Void*, event_value : LibQt6::KeyEventValue) do
       Box(EventWidget).unbox(userdata).emit_key_press(KeyEvent.from_native(event_value))
+    end
+
+    private DRAG_ENTER_TRAMPOLINE = ->(userdata : Void*, event_handle : Void*) do
+      Box(EventWidget).unbox(userdata).emit_drag_enter(DropEvent.new(event_handle))
+    end
+
+    private DRAG_MOVE_TRAMPOLINE = ->(userdata : Void*, event_handle : Void*) do
+      Box(EventWidget).unbox(userdata).emit_drag_move(DropEvent.new(event_handle))
+    end
+
+    private DROP_TRAMPOLINE = ->(userdata : Void*, event_handle : Void*) do
+      Box(EventWidget).unbox(userdata).emit_drop(DropEvent.new(event_handle))
     end
   end
 end

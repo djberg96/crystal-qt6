@@ -348,6 +348,20 @@ describe Qt6 do
     clipboard_pixmap = clipboard.pixmap
     clipboard_pixmap.null?.should be_false
     clipboard_pixmap.to_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    mime_data = Qt6::MimeData.new
+    mime_data.text = "mime sample"
+    mime_data.set_data("application/x-crystal-qt6-layer", Bytes[1_u8, 7_u8, 9_u8])
+    clipboard.mime_data = mime_data
+    application.process_events
+
+    clipboard_mime = clipboard.mime_data
+    clipboard_mime.should_not be_nil
+    clipboard_mime = clipboard_mime.not_nil!
+    clipboard_mime.has_text?.should be_true
+    clipboard_mime.text.should eq("mime sample")
+    clipboard_mime.has_format?("application/x-crystal-qt6-layer").should be_true
+    clipboard_mime.data("application/x-crystal-qt6-layer").should eq(Bytes[1_u8, 7_u8, 9_u8])
     clipboard.clear
   end
 
@@ -396,11 +410,11 @@ describe Qt6 do
     SVG
 
     widget = Qt6::QSvgWidget.new(svg_path)
-  renderer = widget.renderer
+    renderer = widget.renderer
 
-  renderer.valid?.should be_true
-  renderer.default_size.should eq(Qt6::Size.new(24, 16))
-  renderer.element_exists?("missing").should be_false
+    renderer.valid?.should be_true
+    renderer.default_size.should eq(Qt6::Size.new(24, 16))
+    renderer.element_exists?("missing").should be_false
     widget.size_hint.should eq(Qt6::Size.new(24, 16))
     widget.resize(24, 16)
     widget.visible?.should be_false
@@ -1400,6 +1414,47 @@ describe Qt6 do
     wheels.last.angle_delta.should eq(Qt6::PointF.new(0.0, 120.0))
     keys.last.key.should eq(65)
     snapshot.pixel_color(5, 5).should eq(Qt6::Color.new(255, 0, 0, 255))
+    widget.release
+  end
+
+  it "supports drop callbacks and synthetic text drops on event widgets" do
+    application = app
+    widget = Qt6::EventWidget.new
+    drag_enter_payloads = [] of String
+    drag_move_positions = [] of Qt6::PointF
+    dropped_payloads = [] of String
+    acceptance_states = [] of Bool
+
+    widget.accept_drops = true
+    widget.on_drag_enter do |event|
+      drag_enter_payloads << event.mime_data.not_nil!.text
+      event.accept_proposed_action
+      acceptance_states << event.accepted?
+    end
+    widget.on_drag_move do |event|
+      drag_move_positions << event.position
+      event.accept
+    end
+    widget.on_drop do |event|
+      dropped_payloads << event.mime_data.not_nil!.text
+      event.accept_proposed_action
+      acceptance_states << event.accepted?
+    end
+
+    widget.resize(180, 100)
+    widget.show
+    application.process_events
+
+    widget.simulate_drag_enter_text(Qt6::PointF.new(12.0, 14.0), "terrain")
+    widget.simulate_drag_move_text(Qt6::PointF.new(18.0, 24.0), "terrain")
+    widget.simulate_drop_text(Qt6::PointF.new(20.0, 26.0), "terrain")
+    application.process_events
+
+    widget.accept_drops?.should be_true
+    drag_enter_payloads.should eq(["terrain"])
+    drag_move_positions.should eq([Qt6::PointF.new(18.0, 24.0)])
+    dropped_payloads.should eq(["terrain"])
+    acceptance_states.should eq([true, true])
     widget.release
   end
 

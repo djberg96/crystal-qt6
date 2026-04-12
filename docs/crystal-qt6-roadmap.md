@@ -17,7 +17,7 @@ Larger editor-style applications still typically need:
 - heavy use of `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, fonts, pens, brushes, and geometry types
 - export paths for formats such as PDF and SVG
 - richer editor controls, containers, and list/tree surfaces
-- richer clipboard/data-transfer features, advanced image-loading helpers, and a few remaining document-oriented APIs
+- richer clipboard/data-transfer features beyond the new MIME and drop-receive basics, advanced image-loading helpers, and a few remaining document-oriented APIs
 - image processing or other high-throughput data operations outside simple UI code
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
@@ -32,7 +32,8 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
 - common form/layout and model/view support through line edits, checkboxes, combo boxes, list widgets, tree widgets, `QStandardItemModel`, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
-- custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, and key callbacks
+- basic clipboard and MIME/data-transfer support through text, image, pixmap, `QMimeData`, and first-pass drop-receive hooks
+- custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, key, and drop callbacks
 
 That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
 
@@ -215,7 +216,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, and delegate editor lifecycle hooks. The remaining priorities are drag and drop, richer abstract-model bridges beyond the standard-item path, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
+Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, widget drop acceptance, and `EventWidget` drag-enter/drag-move/drop callbacks. The remaining priorities are drag-source support, richer model/view drag-and-drop paths, and abstract-model bridges beyond the standard-item path.
 
 ## Phase 6: Export And Document Features
 
@@ -233,7 +234,7 @@ Goal: close the feature gap for external outputs.
 ### Acceptance Criteria
 
 - Reproduce current PNG, PDF, and SVG export behavior for a representative sample document.
-- PDF and SVG export are already in place; the remaining work here is mostly richer clipboard/data-transfer support, `QImageReader`-class helpers if needed, and any truly needed print-related APIs.
+- PDF and SVG export are already in place; the remaining work here is mostly richer clipboard/data-transfer support beyond the new `QMimeData` basics, `QImageReader`-class helpers if needed, and any truly needed print-related APIs.
 
 ## Phase 7: High-Throughput Data And Image Processing
 

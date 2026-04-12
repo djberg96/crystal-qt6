@@ -69,6 +69,17 @@ module Qt6
       QPixmap.new(LibQt6.qt6cr_widget_grab(@to_unsafe), true)
     end
 
+    # Returns `true` when the widget accepts drops.
+    def accept_drops? : Bool
+      LibQt6.qt6cr_widget_accept_drops(@to_unsafe)
+    end
+
+    # Enables or disables drop acceptance.
+    def accept_drops=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_accept_drops(@to_unsafe, value)
+      value
+    end
+
     # Creates a `VBoxLayout`, yields it for configuration, and returns it.
     def vbox(&block : VBoxLayout ->)
       layout = VBoxLayout.new(self)

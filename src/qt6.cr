@@ -32,6 +32,7 @@ require "./qt6/item_selection_model"
 require "./qt6/standard_item"
 require "./qt6/standard_item_model"
 require "./qt6/sort_filter_proxy_model"
+require "./qt6/mime_data"
 require "./qt6/clipboard"
 require "./qt6/q_svg_generator"
 require "./qt6/q_svg_renderer"
@@ -66,6 +67,7 @@ require "./qt6/file_dialog"
 require "./qt6/color_dialog"
 require "./qt6/input_dialog"
 require "./qt6/dock_widget"
+require "./qt6/drop_event"
 require "./qt6/event_widget"
 require "./qt6/label"
 require "./qt6/push_button"
@@ -151,6 +153,21 @@ module Qt6
 
   def self.copy_string(pointer : UInt8*) : String
     pointer.null? ? "" : String.new(pointer)
+  end
+
+  def self.copy_and_release_bytes(value : LibQt6::ByteArrayValue) : Bytes
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_string_free(pointer) unless pointer.null?
+      return Bytes.empty
+    end
+
+    bytes = Bytes.new(size)
+    bytes.to_unsafe.copy_from(pointer, size)
+    LibQt6.qt6cr_string_free(pointer)
+    bytes
   end
 
   def self.malloc_string(value : String) : UInt8*
