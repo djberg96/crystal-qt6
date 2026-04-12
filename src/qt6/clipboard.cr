@@ -43,6 +43,18 @@ module Qt6
       value
     end
 
+    # Returns the current clipboard MIME payload.
+    def mime_data : MimeData?
+      handle = LibQt6.qt6cr_clipboard_mime_data(to_unsafe)
+      handle.null? ? nil : MimeData.wrap(handle)
+    end
+
+    # Replaces the clipboard MIME payload.
+    def mime_data=(value : MimeData) : MimeData
+      LibQt6.qt6cr_clipboard_set_mime_data(to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Clears the clipboard.
     def clear : self
       LibQt6.qt6cr_clipboard_clear(to_unsafe)

@@ -54,6 +54,11 @@ typedef struct {
 } qt6cr_color_t;
 
 typedef struct {
+	unsigned char *data;
+	int size;
+} qt6cr_byte_array_t;
+
+typedef struct {
 	int type;
 	bool bool_value;
 	int int_value;
@@ -73,6 +78,7 @@ typedef void (*qt6cr_mouse_callback_t)(void *userdata, qt6cr_mouse_event_t event
 typedef void (*qt6cr_wheel_callback_t)(void *userdata, qt6cr_wheel_event_t event_data);
 typedef void (*qt6cr_key_callback_t)(void *userdata, qt6cr_key_event_t event_data);
 typedef char *(*qt6cr_string_transform_callback_t)(void *userdata, const char *text);
+typedef void (*qt6cr_drop_event_callback_t)(void *userdata, qt6cr_handle_t event);
 typedef int (*qt6cr_model_count_callback_t)(void *userdata);
 typedef qt6cr_variant_value_t (*qt6cr_model_data_callback_t)(void *userdata, qt6cr_handle_t index, int role);
 typedef bool (*qt6cr_model_set_data_callback_t)(void *userdata, qt6cr_handle_t index, qt6cr_variant_value_t value, int role);
@@ -98,7 +104,17 @@ qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle);
 void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image);
 qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle);
 void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap);
+qt6cr_handle_t qt6cr_clipboard_mime_data(qt6cr_handle_t handle);
+void qt6cr_clipboard_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_data);
 void qt6cr_clipboard_clear(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_mime_data_create(void);
+bool qt6cr_mime_data_has_text(qt6cr_handle_t handle);
+char *qt6cr_mime_data_text(qt6cr_handle_t handle);
+void qt6cr_mime_data_set_text(qt6cr_handle_t handle, const char *text);
+bool qt6cr_mime_data_has_format(qt6cr_handle_t handle, const char *format);
+qt6cr_byte_array_t qt6cr_mime_data_data(qt6cr_handle_t handle, const char *format);
+void qt6cr_mime_data_set_data(qt6cr_handle_t handle, const char *format, const unsigned char *data, int size);
 
 qt6cr_handle_t qt6cr_widget_create(qt6cr_handle_t parent);
 void qt6cr_widget_destroy(qt6cr_handle_t handle);
@@ -112,6 +128,8 @@ qt6cr_size_t qt6cr_widget_size(qt6cr_handle_t handle);
 qt6cr_rectf_t qt6cr_widget_rect(qt6cr_handle_t handle);
 void qt6cr_widget_update(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
+bool qt6cr_widget_accept_drops(qt6cr_handle_t handle);
+void qt6cr_widget_set_accept_drops(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent);
 void qt6cr_main_window_set_central_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
@@ -488,12 +506,27 @@ void qt6cr_event_widget_on_mouse_move(qt6cr_handle_t handle, qt6cr_mouse_callbac
 void qt6cr_event_widget_on_mouse_release(qt6cr_handle_t handle, qt6cr_mouse_callback_t callback, void *userdata);
 void qt6cr_event_widget_on_wheel(qt6cr_handle_t handle, qt6cr_wheel_callback_t callback, void *userdata);
 void qt6cr_event_widget_on_key_press(qt6cr_handle_t handle, qt6cr_key_callback_t callback, void *userdata);
+void qt6cr_event_widget_on_drag_enter(qt6cr_handle_t handle, qt6cr_drop_event_callback_t callback, void *userdata);
+void qt6cr_event_widget_on_drag_move(qt6cr_handle_t handle, qt6cr_drop_event_callback_t callback, void *userdata);
+void qt6cr_event_widget_on_drop(qt6cr_handle_t handle, qt6cr_drop_event_callback_t callback, void *userdata);
 void qt6cr_event_widget_repaint(qt6cr_handle_t handle);
 void qt6cr_event_widget_send_mouse_press(qt6cr_handle_t handle, qt6cr_pointf_t position, int button, int buttons, int modifiers);
 void qt6cr_event_widget_send_mouse_move(qt6cr_handle_t handle, qt6cr_pointf_t position, int button, int buttons, int modifiers);
 void qt6cr_event_widget_send_mouse_release(qt6cr_handle_t handle, qt6cr_pointf_t position, int button, int buttons, int modifiers);
 void qt6cr_event_widget_send_wheel(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_pointf_t pixel_delta, qt6cr_pointf_t angle_delta, int buttons, int modifiers);
 void qt6cr_event_widget_send_key_press(qt6cr_handle_t handle, int key, int modifiers, bool auto_repeat, int count);
+void qt6cr_event_widget_send_drag_enter_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int buttons, int modifiers);
+void qt6cr_event_widget_send_drag_move_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int buttons, int modifiers);
+void qt6cr_event_widget_send_drop_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int buttons, int modifiers);
+
+qt6cr_pointf_t qt6cr_drop_event_position(qt6cr_handle_t handle);
+int qt6cr_drop_event_buttons(qt6cr_handle_t handle);
+int qt6cr_drop_event_modifiers(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_drop_event_mime_data(qt6cr_handle_t handle);
+void qt6cr_drop_event_accept(qt6cr_handle_t handle);
+void qt6cr_drop_event_accept_proposed_action(qt6cr_handle_t handle);
+void qt6cr_drop_event_ignore(qt6cr_handle_t handle);
+bool qt6cr_drop_event_is_accepted(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_label_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_label_set_text(qt6cr_handle_t handle, const char *text);

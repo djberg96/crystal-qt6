@@ -57,6 +57,11 @@ module Qt6
       alpha : LibC::Int
     end
 
+    struct ByteArrayValue
+      data : UInt8*
+      size : LibC::Int
+    end
+
     struct VariantValue
       type : LibC::Int
       bool_value : Bool
@@ -82,7 +87,17 @@ module Qt6
     fun qt6cr_clipboard_set_image = qt6cr_clipboard_set_image(handle : Handle, image : Handle)
     fun qt6cr_clipboard_pixmap = qt6cr_clipboard_pixmap(handle : Handle) : Handle
     fun qt6cr_clipboard_set_pixmap = qt6cr_clipboard_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_clipboard_mime_data = qt6cr_clipboard_mime_data(handle : Handle) : Handle
+    fun qt6cr_clipboard_set_mime_data = qt6cr_clipboard_set_mime_data(handle : Handle, mime_data : Handle)
     fun qt6cr_clipboard_clear = qt6cr_clipboard_clear(handle : Handle)
+
+    fun qt6cr_mime_data_create = qt6cr_mime_data_create : Handle
+    fun qt6cr_mime_data_has_text = qt6cr_mime_data_has_text(handle : Handle) : Bool
+    fun qt6cr_mime_data_text = qt6cr_mime_data_text(handle : Handle) : UInt8*
+    fun qt6cr_mime_data_set_text = qt6cr_mime_data_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_mime_data_has_format = qt6cr_mime_data_has_format(handle : Handle, format : UInt8*) : Bool
+    fun qt6cr_mime_data_data = qt6cr_mime_data_data(handle : Handle, format : UInt8*) : ByteArrayValue
+    fun qt6cr_mime_data_set_data = qt6cr_mime_data_set_data(handle : Handle, format : UInt8*, data : UInt8*, size : LibC::Int)
 
     fun qt6cr_widget_create = qt6cr_widget_create(parent : Handle) : Handle
     fun qt6cr_widget_destroy = qt6cr_widget_destroy(handle : Handle)
@@ -96,6 +111,8 @@ module Qt6
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
+    fun qt6cr_widget_accept_drops = qt6cr_widget_accept_drops(handle : Handle) : Bool
+    fun qt6cr_widget_set_accept_drops = qt6cr_widget_set_accept_drops(handle : Handle, value : Bool)
 
     fun qt6cr_main_window_create = qt6cr_main_window_create(parent : Handle) : Handle
     fun qt6cr_main_window_set_central_widget = qt6cr_main_window_set_central_widget(handle : Handle, widget : Handle)
@@ -472,12 +489,27 @@ module Qt6
     fun qt6cr_event_widget_on_mouse_release = qt6cr_event_widget_on_mouse_release(handle : Handle, callback : (Handle, MouseEventValue ->), userdata : Handle)
     fun qt6cr_event_widget_on_wheel = qt6cr_event_widget_on_wheel(handle : Handle, callback : (Handle, WheelEventValue ->), userdata : Handle)
     fun qt6cr_event_widget_on_key_press = qt6cr_event_widget_on_key_press(handle : Handle, callback : (Handle, KeyEventValue ->), userdata : Handle)
+    fun qt6cr_event_widget_on_drag_enter = qt6cr_event_widget_on_drag_enter(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_event_widget_on_drag_move = qt6cr_event_widget_on_drag_move(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_event_widget_on_drop = qt6cr_event_widget_on_drop(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
     fun qt6cr_event_widget_repaint = qt6cr_event_widget_repaint(handle : Handle)
     fun qt6cr_event_widget_send_mouse_press = qt6cr_event_widget_send_mouse_press(handle : Handle, position : PointFValue, button : LibC::Int, buttons : LibC::Int, modifiers : LibC::Int)
     fun qt6cr_event_widget_send_mouse_move = qt6cr_event_widget_send_mouse_move(handle : Handle, position : PointFValue, button : LibC::Int, buttons : LibC::Int, modifiers : LibC::Int)
     fun qt6cr_event_widget_send_mouse_release = qt6cr_event_widget_send_mouse_release(handle : Handle, position : PointFValue, button : LibC::Int, buttons : LibC::Int, modifiers : LibC::Int)
     fun qt6cr_event_widget_send_wheel = qt6cr_event_widget_send_wheel(handle : Handle, position : PointFValue, pixel_delta : PointFValue, angle_delta : PointFValue, buttons : LibC::Int, modifiers : LibC::Int)
     fun qt6cr_event_widget_send_key_press = qt6cr_event_widget_send_key_press(handle : Handle, key : LibC::Int, modifiers : LibC::Int, auto_repeat : Bool, count : LibC::Int)
+    fun qt6cr_event_widget_send_drag_enter_text = qt6cr_event_widget_send_drag_enter_text(handle : Handle, position : PointFValue, text : UInt8*, buttons : LibC::Int, modifiers : LibC::Int)
+    fun qt6cr_event_widget_send_drag_move_text = qt6cr_event_widget_send_drag_move_text(handle : Handle, position : PointFValue, text : UInt8*, buttons : LibC::Int, modifiers : LibC::Int)
+    fun qt6cr_event_widget_send_drop_text = qt6cr_event_widget_send_drop_text(handle : Handle, position : PointFValue, text : UInt8*, buttons : LibC::Int, modifiers : LibC::Int)
+
+    fun qt6cr_drop_event_position = qt6cr_drop_event_position(handle : Handle) : PointFValue
+    fun qt6cr_drop_event_buttons = qt6cr_drop_event_buttons(handle : Handle) : LibC::Int
+    fun qt6cr_drop_event_modifiers = qt6cr_drop_event_modifiers(handle : Handle) : LibC::Int
+    fun qt6cr_drop_event_mime_data = qt6cr_drop_event_mime_data(handle : Handle) : Handle
+    fun qt6cr_drop_event_accept = qt6cr_drop_event_accept(handle : Handle)
+    fun qt6cr_drop_event_accept_proposed_action = qt6cr_drop_event_accept_proposed_action(handle : Handle)
+    fun qt6cr_drop_event_ignore = qt6cr_drop_event_ignore(handle : Handle)
+    fun qt6cr_drop_event_is_accepted = qt6cr_drop_event_is_accepted(handle : Handle) : Bool
 
     fun qt6cr_label_create = qt6cr_label_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_label_set_text = qt6cr_label_set_text(handle : Handle, text : UInt8*)

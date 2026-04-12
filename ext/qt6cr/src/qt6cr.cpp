@@ -17,6 +17,8 @@
 #include <QCoreApplication>
 #include <QDialog>
 #include <QDockWidget>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
 #include <QFileDialog>
 #include <QFont>
 #include <QFontMetrics>
@@ -36,6 +38,7 @@
 #include <QBrush>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QMouseEvent>
 #include <QImage>
 #include <QObject>
@@ -77,6 +80,7 @@
 #include <QVariant>
 #include <QMetaType>
 #include <QLocale>
+#include <QDropEvent>
 
 #include <QPoint>
 
@@ -107,6 +111,7 @@ qt6cr_color_t to_color(const QColor &color);
 qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QWidget *as_widget(qt6cr_handle_t handle);
+qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 
 class EventWidget final : public QWidget {
  public:
@@ -131,6 +136,12 @@ class EventWidget final : public QWidget {
   void *wheel_userdata = nullptr;
   qt6cr_key_callback_t key_press_callback = nullptr;
   void *key_press_userdata = nullptr;
+  qt6cr_drop_event_callback_t drag_enter_callback = nullptr;
+  void *drag_enter_userdata = nullptr;
+  qt6cr_drop_event_callback_t drag_move_callback = nullptr;
+  void *drag_move_userdata = nullptr;
+  qt6cr_drop_event_callback_t drop_callback = nullptr;
+  void *drop_userdata = nullptr;
 
  protected:
   void paintEvent(QPaintEvent *event) override {
@@ -194,6 +205,30 @@ class EventWidget final : public QWidget {
     }
 
     QWidget::keyPressEvent(event);
+  }
+
+  void dragEnterEvent(QDragEnterEvent *event) override {
+    if (drag_enter_callback != nullptr) {
+      drag_enter_callback(drag_enter_userdata, event);
+    }
+
+    QWidget::dragEnterEvent(event);
+  }
+
+  void dragMoveEvent(QDragMoveEvent *event) override {
+    if (drag_move_callback != nullptr) {
+      drag_move_callback(drag_move_userdata, event);
+    }
+
+    QWidget::dragMoveEvent(event);
+  }
+
+  void dropEvent(QDropEvent *event) override {
+    if (drop_callback != nullptr) {
+      drop_callback(drop_userdata, event);
+    }
+
+    QWidget::dropEvent(event);
   }
 
  private:
@@ -463,8 +498,28 @@ char *duplicate_string(const char *value) {
   return copy;
 }
 
+qt6cr_byte_array_t to_byte_array_value(const QByteArray &value) {
+  const auto size = static_cast<int>(value.size());
+
+  if (size <= 0) {
+    return qt6cr_byte_array_t{nullptr, 0};
+  }
+
+  auto *copy = static_cast<unsigned char *>(std::malloc(static_cast<size_t>(size)));
+  std::memcpy(copy, value.constData(), static_cast<size_t>(size));
+  return qt6cr_byte_array_t{copy, size};
+}
+
 QWidget *as_widget(qt6cr_handle_t handle) {
   return static_cast<QWidget *>(handle);
+}
+
+QMimeData *as_mime_data(qt6cr_handle_t handle) {
+  return static_cast<QMimeData *>(handle);
+}
+
+QDropEvent *as_drop_event(qt6cr_handle_t handle) {
+  return static_cast<QDropEvent *>(handle);
 }
 
 QMainWindow *as_main_window(qt6cr_handle_t handle) {
@@ -978,11 +1033,78 @@ void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
   }
 }
 
+qt6cr_handle_t qt6cr_clipboard_mime_data(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard == nullptr ? nullptr : const_cast<QMimeData *>(clipboard->mimeData());
+}
+
+void qt6cr_clipboard_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_data) {
+  auto *clipboard = as_clipboard(handle);
+  auto *source = as_mime_data(mime_data);
+
+  if (clipboard == nullptr || source == nullptr) {
+    return;
+  }
+
+  auto *copy = new QMimeData();
+
+  if (source->hasText()) {
+    copy->setText(source->text());
+  }
+
+  const auto formats = source->formats();
+  for (const auto &format : formats) {
+    copy->setData(format, source->data(format));
+  }
+
+  clipboard->setMimeData(copy);
+}
+
 void qt6cr_clipboard_clear(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
 
   if (clipboard != nullptr) {
     clipboard->clear();
+  }
+}
+
+qt6cr_handle_t qt6cr_mime_data_create(void) {
+  return new QMimeData();
+}
+
+bool qt6cr_mime_data_has_text(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data != nullptr && mime_data->hasText();
+}
+
+char *qt6cr_mime_data_text(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data == nullptr ? duplicate_string("") : duplicate_string(mime_data->text());
+}
+
+void qt6cr_mime_data_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *mime_data = as_mime_data(handle);
+
+  if (mime_data != nullptr) {
+    mime_data->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+bool qt6cr_mime_data_has_format(qt6cr_handle_t handle, const char *format) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data != nullptr && mime_data->hasFormat(format == nullptr ? "" : format);
+}
+
+qt6cr_byte_array_t qt6cr_mime_data_data(qt6cr_handle_t handle, const char *format) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data == nullptr ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(mime_data->data(format == nullptr ? "" : format));
+}
+
+void qt6cr_mime_data_set_data(qt6cr_handle_t handle, const char *format, const unsigned char *data, int size) {
+  auto *mime_data = as_mime_data(handle);
+
+  if (mime_data != nullptr && format != nullptr) {
+    mime_data->setData(format, QByteArray(reinterpret_cast<const char *>(data), size));
   }
 }
 
@@ -1057,6 +1179,19 @@ void qt6cr_widget_update(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? nullptr : new QPixmap(widget->grab());
+}
+
+bool qt6cr_widget_accept_drops(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->acceptDrops();
+}
+
+void qt6cr_widget_set_accept_drops(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAcceptDrops(value);
+  }
 }
 
 qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent) {
@@ -3350,6 +3485,33 @@ void qt6cr_event_widget_on_key_press(qt6cr_handle_t handle, qt6cr_key_callback_t
   }
 }
 
+void qt6cr_event_widget_on_drag_enter(qt6cr_handle_t handle, qt6cr_drop_event_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->drag_enter_callback = callback;
+    widget->drag_enter_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_drag_move(qt6cr_handle_t handle, qt6cr_drop_event_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->drag_move_callback = callback;
+    widget->drag_move_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_drop(qt6cr_handle_t handle, qt6cr_drop_event_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->drop_callback = callback;
+    widget->drop_userdata = userdata;
+  }
+}
+
 void qt6cr_event_widget_repaint(qt6cr_handle_t handle) {
   auto *widget = as_event_widget(handle);
 
@@ -3393,6 +3555,94 @@ void qt6cr_event_widget_send_key_press(qt6cr_handle_t handle, int key, int modif
 
   QKeyEvent event(QEvent::KeyPress, key, Qt::KeyboardModifiers(modifiers), QString(), auto_repeat, static_cast<quint16>(count));
   QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_drag_enter_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int buttons, int modifiers) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QMimeData mime_data;
+  mime_data.setText(QString::fromUtf8(text == nullptr ? "" : text));
+  QDragEnterEvent event(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_drag_move_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int buttons, int modifiers) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QMimeData mime_data;
+  mime_data.setText(QString::fromUtf8(text == nullptr ? "" : text));
+  QDragMoveEvent event(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_drop_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int buttons, int modifiers) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QMimeData mime_data;
+  mime_data.setText(QString::fromUtf8(text == nullptr ? "" : text));
+  QDropEvent event(QPointF(position.x, position.y), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+  QApplication::sendEvent(widget, &event);
+}
+
+qt6cr_pointf_t qt6cr_drop_event_position(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->position());
+}
+
+int qt6cr_drop_event_buttons(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->buttons());
+}
+
+int qt6cr_drop_event_modifiers(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->modifiers());
+}
+
+qt6cr_handle_t qt6cr_drop_event_mime_data(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? nullptr : const_cast<QMimeData *>(event->mimeData());
+}
+
+void qt6cr_drop_event_accept(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+
+  if (event != nullptr) {
+    event->accept();
+  }
+}
+
+void qt6cr_drop_event_accept_proposed_action(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+
+  if (event != nullptr) {
+    event->acceptProposedAction();
+  }
+}
+
+void qt6cr_drop_event_ignore(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+
+  if (event != nullptr) {
+    event->ignore();
+  }
+}
+
+bool qt6cr_drop_event_is_accepted(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event != nullptr && event->isAccepted();
 }
 
 qt6cr_handle_t qt6cr_label_create(qt6cr_handle_t parent, const char *text) {
