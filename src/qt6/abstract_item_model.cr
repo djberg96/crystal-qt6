@@ -43,5 +43,10 @@ module Qt6
     def set_header_data(section : Int, value, orientation : Orientation = Orientation::Horizontal, role : ItemDataRole = ItemDataRole::Edit) : Bool
       LibQt6.qt6cr_abstract_item_model_set_header_data(to_unsafe, section.to_i32, orientation.value, Qt6.model_data_to_native(value), role.value)
     end
+
+    # Returns the item flags for the given index.
+    def flags(index : ModelIndex) : ItemFlag
+      ItemFlag.from_value(LibQt6.qt6cr_abstract_item_model_flags(to_unsafe, index.to_unsafe))
+    end
   end
 end

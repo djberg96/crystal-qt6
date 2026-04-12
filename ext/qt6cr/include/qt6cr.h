@@ -73,6 +73,11 @@ typedef void (*qt6cr_mouse_callback_t)(void *userdata, qt6cr_mouse_event_t event
 typedef void (*qt6cr_wheel_callback_t)(void *userdata, qt6cr_wheel_event_t event_data);
 typedef void (*qt6cr_key_callback_t)(void *userdata, qt6cr_key_event_t event_data);
 typedef char *(*qt6cr_string_transform_callback_t)(void *userdata, const char *text);
+typedef int (*qt6cr_model_count_callback_t)(void *userdata);
+typedef qt6cr_variant_value_t (*qt6cr_model_data_callback_t)(void *userdata, qt6cr_handle_t index, int role);
+typedef bool (*qt6cr_model_set_data_callback_t)(void *userdata, qt6cr_handle_t index, qt6cr_variant_value_t value, int role);
+typedef qt6cr_variant_value_t (*qt6cr_model_header_data_callback_t)(void *userdata, int section, int orientation, int role);
+typedef int (*qt6cr_model_flags_callback_t)(void *userdata, qt6cr_handle_t index);
 typedef qt6cr_handle_t (*qt6cr_delegate_create_editor_callback_t)(void *userdata, qt6cr_handle_t parent, qt6cr_handle_t index);
 typedef void (*qt6cr_delegate_set_editor_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_variant_value_t value, qt6cr_handle_t index);
 typedef void (*qt6cr_delegate_set_model_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
@@ -191,6 +196,22 @@ qt6cr_variant_value_t qt6cr_abstract_item_model_data(qt6cr_handle_t handle, qt6c
 bool qt6cr_abstract_item_model_set_data(qt6cr_handle_t handle, qt6cr_handle_t index, qt6cr_variant_value_t value, int role);
 qt6cr_variant_value_t qt6cr_abstract_item_model_header_data(qt6cr_handle_t handle, int section, int orientation, int role);
 bool qt6cr_abstract_item_model_set_header_data(qt6cr_handle_t handle, int section, int orientation, qt6cr_variant_value_t value, int role);
+int qt6cr_abstract_item_model_flags(qt6cr_handle_t handle, qt6cr_handle_t index);
+
+qt6cr_handle_t qt6cr_abstract_list_model_create(qt6cr_handle_t parent);
+void qt6cr_abstract_list_model_on_row_count(qt6cr_handle_t handle, qt6cr_model_count_callback_t callback, void *userdata);
+void qt6cr_abstract_list_model_on_column_count(qt6cr_handle_t handle, qt6cr_model_count_callback_t callback, void *userdata);
+void qt6cr_abstract_list_model_on_data(qt6cr_handle_t handle, qt6cr_model_data_callback_t callback, void *userdata);
+void qt6cr_abstract_list_model_on_set_data(qt6cr_handle_t handle, qt6cr_model_set_data_callback_t callback, void *userdata);
+void qt6cr_abstract_list_model_on_header_data(qt6cr_handle_t handle, qt6cr_model_header_data_callback_t callback, void *userdata);
+void qt6cr_abstract_list_model_on_flags(qt6cr_handle_t handle, qt6cr_model_flags_callback_t callback, void *userdata);
+void qt6cr_abstract_list_model_begin_reset_model(qt6cr_handle_t handle);
+void qt6cr_abstract_list_model_end_reset_model(qt6cr_handle_t handle);
+void qt6cr_abstract_list_model_begin_insert_rows(qt6cr_handle_t handle, int first, int last, qt6cr_handle_t parent_index);
+void qt6cr_abstract_list_model_end_insert_rows(qt6cr_handle_t handle);
+void qt6cr_abstract_list_model_begin_remove_rows(qt6cr_handle_t handle, int first, int last, qt6cr_handle_t parent_index);
+void qt6cr_abstract_list_model_end_remove_rows(qt6cr_handle_t handle);
+void qt6cr_abstract_list_model_data_changed(qt6cr_handle_t handle, qt6cr_handle_t top_left, qt6cr_handle_t bottom_right);
 
 qt6cr_handle_t qt6cr_item_selection_model_create(qt6cr_handle_t model, qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_item_selection_model_model(qt6cr_handle_t handle);
