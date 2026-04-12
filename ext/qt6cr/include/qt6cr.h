@@ -198,6 +198,28 @@ bool qt6cr_color_dialog_native_dialog(qt6cr_handle_t handle);
 void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value);
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_progress_dialog_create(qt6cr_handle_t parent, const char *label_text, const char *cancel_button_text, int minimum, int maximum);
+char *qt6cr_progress_dialog_label_text(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_label_text(qt6cr_handle_t handle, const char *label_text);
+void qt6cr_progress_dialog_set_cancel_button_text(qt6cr_handle_t handle, const char *cancel_button_text);
+int qt6cr_progress_dialog_minimum(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_minimum(qt6cr_handle_t handle, int value);
+int qt6cr_progress_dialog_maximum(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_maximum(qt6cr_handle_t handle, int value);
+void qt6cr_progress_dialog_set_range(qt6cr_handle_t handle, int minimum, int maximum);
+int qt6cr_progress_dialog_value(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_value(qt6cr_handle_t handle, int value);
+bool qt6cr_progress_dialog_auto_close(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_auto_close(qt6cr_handle_t handle, bool value);
+bool qt6cr_progress_dialog_auto_reset(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_auto_reset(qt6cr_handle_t handle, bool value);
+int qt6cr_progress_dialog_minimum_duration(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_set_minimum_duration(qt6cr_handle_t handle, int value);
+bool qt6cr_progress_dialog_was_canceled(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_cancel(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_reset(qt6cr_handle_t handle);
+void qt6cr_progress_dialog_on_canceled(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format);
 qt6cr_handle_t qt6cr_qimage_create_from_file(const char *path);
 void qt6cr_qimage_destroy(qt6cr_handle_t handle);
@@ -240,6 +262,14 @@ qt6cr_handle_t qt6cr_qicon_create(void);
 qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path);
 void qt6cr_qicon_destroy(qt6cr_handle_t handle);
 bool qt6cr_qicon_is_null(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_splash_screen_create(qt6cr_handle_t pixmap);
+qt6cr_handle_t qt6cr_splash_screen_pixmap(qt6cr_handle_t handle);
+void qt6cr_splash_screen_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap);
+char *qt6cr_splash_screen_message(qt6cr_handle_t handle);
+void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, qt6cr_color_t color);
+void qt6cr_splash_screen_clear_message(qt6cr_handle_t handle);
+void qt6cr_splash_screen_finish(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
 qt6cr_handle_t qt6cr_model_index_create(void);
 void qt6cr_model_index_destroy(qt6cr_handle_t handle);

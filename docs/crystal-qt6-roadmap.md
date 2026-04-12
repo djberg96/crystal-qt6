@@ -100,7 +100,7 @@ Goal: make Crystal capable of expressing real Qt object graphs.
 
 ## Phase 2: Main Window And Shell Widgets
 
-Status: closer to complete for the current roadmap target
+Status: complete for the current roadmap target
 
 Goal: support real desktop application shells.
 
@@ -125,7 +125,7 @@ Goal: support real desktop application shells.
 
 - Rebuild a reduced application shell with file menu, edit menu, toolbar, two docks, and a status bar.
 - All actions can trigger Crystal callbacks.
-- Remaining gaps in this phase are mostly optional polish widgets such as `QProgressDialog` and `QSplashScreen`.
+- Reduced desktop shells can now cover the full roadmap target for this phase, including optional polish widgets such as `QProgressDialog` and `QSplashScreen`.
 
 ## Phase 3: Custom Widgets And Event Handling
 
