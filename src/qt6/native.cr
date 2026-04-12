@@ -422,10 +422,29 @@ module Qt6
     fun qt6cr_qpen_set_style = qt6cr_qpen_set_style(handle : Handle, style : LibC::Int)
     fun qt6cr_qpen_cap_style = qt6cr_qpen_cap_style(handle : Handle) : LibC::Int
     fun qt6cr_qpen_set_cap_style = qt6cr_qpen_set_cap_style(handle : Handle, style : LibC::Int)
+    fun qt6cr_qpen_join_style = qt6cr_qpen_join_style(handle : Handle) : LibC::Int
+    fun qt6cr_qpen_set_join_style = qt6cr_qpen_set_join_style(handle : Handle, style : LibC::Int)
+    fun qt6cr_qpen_dash_offset = qt6cr_qpen_dash_offset(handle : Handle) : Float64
+    fun qt6cr_qpen_set_dash_offset = qt6cr_qpen_set_dash_offset(handle : Handle, offset : Float64)
+    fun qt6cr_qpen_set_dash_pattern = qt6cr_qpen_set_dash_pattern(handle : Handle, values : Float64*, size : LibC::Int)
+
+    fun qt6cr_qlinear_gradient_create = qt6cr_qlinear_gradient_create(x1 : Float64, y1 : Float64, x2 : Float64, y2 : Float64) : Handle
+    fun qt6cr_qlinear_gradient_destroy = qt6cr_qlinear_gradient_destroy(handle : Handle)
+    fun qt6cr_qlinear_gradient_set_color_at = qt6cr_qlinear_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
+    fun qt6cr_qlinear_gradient_start = qt6cr_qlinear_gradient_start(handle : Handle) : PointFValue
+    fun qt6cr_qlinear_gradient_final_stop = qt6cr_qlinear_gradient_final_stop(handle : Handle) : PointFValue
+
+    fun qt6cr_qradial_gradient_create = qt6cr_qradial_gradient_create(center_x : Float64, center_y : Float64, radius : Float64) : Handle
+    fun qt6cr_qradial_gradient_destroy = qt6cr_qradial_gradient_destroy(handle : Handle)
+    fun qt6cr_qradial_gradient_set_color_at = qt6cr_qradial_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
+    fun qt6cr_qradial_gradient_center = qt6cr_qradial_gradient_center(handle : Handle) : PointFValue
+    fun qt6cr_qradial_gradient_radius = qt6cr_qradial_gradient_radius(handle : Handle) : Float64
 
     fun qt6cr_qbrush_create = qt6cr_qbrush_create(color : ColorValue) : Handle
     fun qt6cr_qbrush_create_from_pixmap = qt6cr_qbrush_create_from_pixmap(pixmap : Handle) : Handle
     fun qt6cr_qbrush_create_from_image = qt6cr_qbrush_create_from_image(image : Handle) : Handle
+    fun qt6cr_qbrush_create_from_linear_gradient = qt6cr_qbrush_create_from_linear_gradient(gradient : Handle) : Handle
+    fun qt6cr_qbrush_create_from_radial_gradient = qt6cr_qbrush_create_from_radial_gradient(gradient : Handle) : Handle
     fun qt6cr_qbrush_destroy = qt6cr_qbrush_destroy(handle : Handle)
     fun qt6cr_qbrush_color = qt6cr_qbrush_color(handle : Handle) : ColorValue
     fun qt6cr_qbrush_set_color = qt6cr_qbrush_set_color(handle : Handle, color : ColorValue)

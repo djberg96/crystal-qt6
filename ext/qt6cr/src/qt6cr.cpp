@@ -31,6 +31,7 @@
 #include <QItemSelectionModel>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QLinearGradient>
 #include <QListView>
 #include <QListWidget>
 #include <QListWidgetItem>
@@ -59,6 +60,7 @@
 #include <QSortFilterProxyModel>
 #include <QKeySequence>
 #include <QRadioButton>
+#include <QRadialGradient>
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QSlider>
@@ -611,6 +613,14 @@ QPdfWriter *as_qpdf_writer(qt6cr_handle_t handle) {
 
 QPen *as_qpen(qt6cr_handle_t handle) {
   return static_cast<QPen *>(handle);
+}
+
+QLinearGradient *as_qlinear_gradient(qt6cr_handle_t handle) {
+  return static_cast<QLinearGradient *>(handle);
+}
+
+QRadialGradient *as_qradial_gradient(qt6cr_handle_t handle) {
+  return static_cast<QRadialGradient *>(handle);
 }
 
 QBrush *as_qbrush(qt6cr_handle_t handle) {
@@ -3135,6 +3145,99 @@ void qt6cr_qpen_set_cap_style(qt6cr_handle_t handle, int style) {
   }
 }
 
+int qt6cr_qpen_join_style(qt6cr_handle_t handle) {
+  auto *pen = as_qpen(handle);
+  return pen == nullptr ? static_cast<int>(Qt::BevelJoin) : static_cast<int>(pen->joinStyle());
+}
+
+void qt6cr_qpen_set_join_style(qt6cr_handle_t handle, int style) {
+  auto *pen = as_qpen(handle);
+
+  if (pen != nullptr) {
+    pen->setJoinStyle(static_cast<Qt::PenJoinStyle>(style));
+  }
+}
+
+double qt6cr_qpen_dash_offset(qt6cr_handle_t handle) {
+  auto *pen = as_qpen(handle);
+  return pen == nullptr ? 0.0 : pen->dashOffset();
+}
+
+void qt6cr_qpen_set_dash_offset(qt6cr_handle_t handle, double offset) {
+  auto *pen = as_qpen(handle);
+
+  if (pen != nullptr) {
+    pen->setDashOffset(offset);
+  }
+}
+
+void qt6cr_qpen_set_dash_pattern(qt6cr_handle_t handle, const double *values, int size) {
+  auto *pen = as_qpen(handle);
+
+  if (pen == nullptr || values == nullptr || size <= 0) {
+    return;
+  }
+
+  QList<qreal> pattern;
+  pattern.reserve(size);
+  for (int index = 0; index < size; ++index) {
+    pattern.append(values[index]);
+  }
+  pen->setDashPattern(pattern);
+}
+
+qt6cr_handle_t qt6cr_qlinear_gradient_create(double x1, double y1, double x2, double y2) {
+  return new QLinearGradient(x1, y1, x2, y2);
+}
+
+void qt6cr_qlinear_gradient_destroy(qt6cr_handle_t handle) {
+  delete as_qlinear_gradient(handle);
+}
+
+void qt6cr_qlinear_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color) {
+  auto *gradient = as_qlinear_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setColorAt(position, from_color(color));
+  }
+}
+
+qt6cr_pointf_t qt6cr_qlinear_gradient_start(qt6cr_handle_t handle) {
+  auto *gradient = as_qlinear_gradient(handle);
+  return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->start());
+}
+
+qt6cr_pointf_t qt6cr_qlinear_gradient_final_stop(qt6cr_handle_t handle) {
+  auto *gradient = as_qlinear_gradient(handle);
+  return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->finalStop());
+}
+
+qt6cr_handle_t qt6cr_qradial_gradient_create(double center_x, double center_y, double radius) {
+  return new QRadialGradient(center_x, center_y, radius);
+}
+
+void qt6cr_qradial_gradient_destroy(qt6cr_handle_t handle) {
+  delete as_qradial_gradient(handle);
+}
+
+void qt6cr_qradial_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color) {
+  auto *gradient = as_qradial_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setColorAt(position, from_color(color));
+  }
+}
+
+qt6cr_pointf_t qt6cr_qradial_gradient_center(qt6cr_handle_t handle) {
+  auto *gradient = as_qradial_gradient(handle);
+  return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->center());
+}
+
+double qt6cr_qradial_gradient_radius(qt6cr_handle_t handle) {
+  auto *gradient = as_qradial_gradient(handle);
+  return gradient == nullptr ? 0.0 : gradient->radius();
+}
+
 qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color) {
   return new QBrush(from_color(color));
 }
@@ -3147,6 +3250,16 @@ qt6cr_handle_t qt6cr_qbrush_create_from_pixmap(qt6cr_handle_t pixmap) {
 qt6cr_handle_t qt6cr_qbrush_create_from_image(qt6cr_handle_t image) {
   auto *source = as_qimage(image);
   return source == nullptr ? nullptr : new QBrush(QPixmap::fromImage(*source));
+}
+
+qt6cr_handle_t qt6cr_qbrush_create_from_linear_gradient(qt6cr_handle_t gradient) {
+  auto *source = as_qlinear_gradient(gradient);
+  return source == nullptr ? nullptr : new QBrush(*source);
+}
+
+qt6cr_handle_t qt6cr_qbrush_create_from_radial_gradient(qt6cr_handle_t gradient) {
+  auto *source = as_qradial_gradient(gradient);
+  return source == nullptr ? nullptr : new QBrush(*source);
 }
 
 void qt6cr_qbrush_destroy(qt6cr_handle_t handle) {

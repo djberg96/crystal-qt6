@@ -349,6 +349,73 @@ describe Qt6 do
     canvas.pixel_color(10, 2).should eq(Qt6::Color.new(70, 170, 240, 255))
   end
 
+  it "supports gradients and advanced pen styling" do
+    app
+
+    gradient_canvas = Qt6::QImage.new(12, 12)
+    gradient_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    linear = Qt6::QLinearGradient.new(0.0, 0.0, 10.0, 0.0)
+    linear.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
+    linear.set_color_at(1.0, Qt6::Color.new(0, 0, 255))
+    linear.start.should eq(Qt6::PointF.new(0.0, 0.0))
+    linear.final_stop.should eq(Qt6::PointF.new(10.0, 0.0))
+
+    radial = Qt6::QRadialGradient.new(Qt6::PointF.new(6.0, 8.0), 4.0)
+    radial.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
+    radial.set_color_at(1.0, Qt6::Color.new(0, 0, 0))
+    radial.center.should eq(Qt6::PointF.new(6.0, 8.0))
+    radial.radius.should eq(4.0)
+
+    Qt6::QPainter.paint(gradient_canvas) do |painter|
+      painter.antialiasing = false
+      painter.pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1).tap { |pen| pen.style = Qt6::PenStyle::NoPen }
+      painter.brush = Qt6::QBrush.new(linear)
+      painter.draw_rect(Qt6::RectF.new(0.0, 0.0, 10.0, 4.0))
+      painter.brush = Qt6::QBrush.new(radial)
+      painter.draw_rect(Qt6::RectF.new(2.0, 4.0, 8.0, 8.0))
+    end
+
+    left = gradient_canvas.pixel_color(1, 1)
+    middle = gradient_canvas.pixel_color(5, 1)
+    right = gradient_canvas.pixel_color(8, 1)
+    radial_center = gradient_canvas.pixel_color(6, 8)
+    radial_edge = gradient_canvas.pixel_color(2, 8)
+
+    left.red.should be > left.blue
+    middle.red.should be > 0
+    middle.blue.should be > 0
+    right.blue.should be > right.red
+    radial_center.red.should be > radial_edge.red
+    radial_center.green.should be > radial_edge.green
+    radial_center.blue.should be > radial_edge.blue
+
+    dash_canvas = Qt6::QImage.new(12, 12)
+    dash_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    dashed_pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1)
+    dashed_pen.cap_style = Qt6::PenCapStyle::FlatCap
+    dashed_pen.join_style = Qt6::PenJoinStyle::RoundJoin
+    dashed_pen.dash_pattern = [2.0, 2.0]
+    dashed_pen.dash_offset = 0.0
+
+    Qt6::QPainter.paint(dash_canvas) do |painter|
+      painter.antialiasing = false
+      painter.pen = dashed_pen
+      painter.draw_line(Qt6::PointF.new(0.0, 6.0), Qt6::PointF.new(11.0, 6.0))
+    end
+
+    dashed_pen.style.should eq(Qt6::PenStyle::CustomDashLine)
+    dashed_pen.join_style.should eq(Qt6::PenJoinStyle::RoundJoin)
+    dashed_pen.dash_offset.should eq(0.0)
+    dash_canvas.pixel_color(0, 6).should eq(Qt6::Color.new(0, 0, 0, 255))
+    dash_canvas.pixel_color(1, 6).should eq(Qt6::Color.new(0, 0, 0, 255))
+    dash_canvas.pixel_color(3, 6).should eq(Qt6::Color.new(0, 0, 0, 0))
+    dash_canvas.pixel_color(4, 6).should eq(Qt6::Color.new(0, 0, 0, 255))
+    dash_canvas.pixel_color(5, 6).should eq(Qt6::Color.new(0, 0, 0, 255))
+    dash_canvas.pixel_color(7, 6).should eq(Qt6::Color.new(0, 0, 0, 0))
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")

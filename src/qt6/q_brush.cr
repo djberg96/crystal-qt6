@@ -20,6 +20,16 @@ module Qt6
       super(LibQt6.qt6cr_qbrush_create_from_image(image.to_unsafe))
     end
 
+    # Creates a brush from a linear gradient.
+    def initialize(gradient : QLinearGradient)
+      super(LibQt6.qt6cr_qbrush_create_from_linear_gradient(gradient.to_unsafe))
+    end
+
+    # Creates a brush from a radial gradient.
+    def initialize(gradient : QRadialGradient)
+      super(LibQt6.qt6cr_qbrush_create_from_radial_gradient(gradient.to_unsafe))
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
