@@ -88,6 +88,105 @@ private class EditableLayerListModel < Qt6::AbstractListModel
   end
 end
 
+private class DraggableLayerListModel < Qt6::AbstractListModel
+  MIME_TYPE = "application/x-crystal-qt6-layer"
+
+  getter layers
+
+  def initialize(layers : Array(String), parent : Qt6::QObject? = nil)
+    @layers = layers
+    super(parent)
+  end
+
+  protected def model_row_count : Int32
+    @layers.size.to_i32
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+
+    case role
+    when Qt6::ItemDataRole::Display.value, Qt6::ItemDataRole::Edit.value
+      @layers[index.row]?
+    else
+      nil
+    end
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::None unless index.valid?
+
+    Qt6::ItemFlag::Enabled |
+      Qt6::ItemFlag::Selectable |
+      Qt6::ItemFlag::Editable |
+      Qt6::ItemFlag::DragEnabled |
+      Qt6::ItemFlag::DropEnabled
+  end
+
+  protected def model_mime_types : Array(String)
+    [MIME_TYPE, "text/plain"]
+  end
+
+  protected def model_mime_data(indexes : Array(Qt6::ModelIndex)) : Qt6::MimeData?
+    names = indexes.compact_map { |index| @layers[index.row]? }.uniq
+    return nil if names.empty?
+
+    mime_data = Qt6::MimeData.new
+    payload = names.join("\n")
+    mime_data.text = payload
+    mime_data.set_data(MIME_TYPE, payload)
+    mime_data
+  end
+
+  protected def model_drop_mime_data(mime_data : Qt6::MimeData, action : Qt6::DropAction, row : Int32, column : Int32, parent : Qt6::ModelIndex) : Bool
+    return false unless action.includes?(Qt6::DropAction::MoveAction) || action.includes?(Qt6::DropAction::CopyAction)
+    return false unless mime_data.has_format?(MIME_TYPE)
+
+    names = String.new(mime_data.data(MIME_TYPE)).split('\n').reject(&.empty?)
+    return false if names.empty?
+
+    destination = if row >= 0
+                    row
+                  elsif parent.valid?
+                    parent.row
+                  else
+                    @layers.size
+                  end
+
+    if action.includes?(Qt6::DropAction::MoveAction)
+      moved_names = names.select { |name| @layers.includes?(name) }
+      return false if moved_names.empty?
+
+      moved_names.each do |name|
+        source_index = @layers.index(name)
+        next unless source_index
+
+        begin_remove_rows(source_index, source_index)
+        @layers.delete_at(source_index)
+        end_remove_rows
+        destination -= 1 if source_index < destination
+      end
+    end
+
+    names.each_with_index do |name, offset|
+      insert_at = Math.min(destination + offset, @layers.size)
+      begin_insert_rows(insert_at, insert_at)
+      @layers.insert(insert_at, name)
+      end_insert_rows
+    end
+
+    true
+  end
+
+  protected def model_supported_drag_actions : Qt6::DropAction
+    Qt6::DropAction::CopyAction | Qt6::DropAction::MoveAction
+  end
+
+  protected def model_supported_drop_actions : Qt6::DropAction
+    Qt6::DropAction::CopyAction | Qt6::DropAction::MoveAction
+  end
+end
+
 describe Qt6 do
   it "renders into images and pixmaps with paths and transforms" do
     app
@@ -1397,6 +1496,59 @@ describe Qt6 do
     terrain_state_index.release
     list_index.release
     tree_index.release
+    list_view.release
+    tree_view.release
+  end
+
+  it "supports model drag sources and model-view drops" do
+    application = app
+    model = DraggableLayerListModel.new(["Terrain", "Units", "Roads"])
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+
+    list_view.model = model
+    tree_view.model = model
+
+    list_view.drag_enabled = true
+    list_view.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+    list_view.default_drop_action = Qt6::DropAction::MoveAction
+    list_view.drop_indicator_shown = true
+    list_view.accept_drops = true
+
+    tree_view.drag_enabled = true
+    tree_view.drag_drop_mode = Qt6::ItemViewDragDropMode::DragDrop
+    tree_view.default_drop_action = Qt6::DropAction::MoveAction
+    tree_view.drop_indicator_shown = true
+    tree_view.accept_drops = true
+
+    dragged_index = model.index(1)
+    payload = model.mime_data([dragged_index]).not_nil!
+
+    payload.text.should eq("Units")
+    payload.has_format?(DraggableLayerListModel::MIME_TYPE).should be_true
+    String.new(payload.data(DraggableLayerListModel::MIME_TYPE)).should eq("Units")
+    model.mime_types.should eq([DraggableLayerListModel::MIME_TYPE, "text/plain"])
+    model.supported_drag_actions.includes?(Qt6::DropAction::MoveAction).should be_true
+    model.supported_drop_actions.includes?(Qt6::DropAction::MoveAction).should be_true
+
+    model.drop_mime_data(payload, Qt6::DropAction::MoveAction, 0).should be_true
+    application.process_events
+
+    model.layers.should eq(["Units", "Terrain", "Roads"])
+    list_view.drag_enabled?.should be_true
+    list_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::InternalMove)
+    list_view.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    list_view.drop_indicator_shown?.should be_true
+    list_view.accept_drops?.should be_true
+    tree_view.drag_enabled?.should be_true
+    tree_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragDrop)
+    tree_view.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    tree_view.drop_indicator_shown?.should be_true
+    tree_view.accept_drops?.should be_true
+    model.data(model.index(0)).should eq("Units")
+
+    payload.release
+    dragged_index.release
     list_view.release
     tree_view.release
   end

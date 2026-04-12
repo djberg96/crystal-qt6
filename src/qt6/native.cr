@@ -275,6 +275,12 @@ module Qt6
     fun qt6cr_abstract_item_model_header_data = qt6cr_abstract_item_model_header_data(handle : Handle, section : LibC::Int, orientation : LibC::Int, role : LibC::Int) : VariantValue
     fun qt6cr_abstract_item_model_set_header_data = qt6cr_abstract_item_model_set_header_data(handle : Handle, section : LibC::Int, orientation : LibC::Int, value : VariantValue, role : LibC::Int) : Bool
     fun qt6cr_abstract_item_model_flags = qt6cr_abstract_item_model_flags(handle : Handle, index : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_mime_type_count = qt6cr_abstract_item_model_mime_type_count(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_mime_type = qt6cr_abstract_item_model_mime_type(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_abstract_item_model_mime_data_for_indexes = qt6cr_abstract_item_model_mime_data_for_indexes(handle : Handle, indexes : Handle*, count : LibC::Int) : Handle
+    fun qt6cr_abstract_item_model_drop_mime_data = qt6cr_abstract_item_model_drop_mime_data(handle : Handle, mime_data : Handle, action : LibC::Int, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_supported_drag_actions = qt6cr_abstract_item_model_supported_drag_actions(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_supported_drop_actions = qt6cr_abstract_item_model_supported_drop_actions(handle : Handle) : LibC::Int
 
     fun qt6cr_abstract_list_model_create = qt6cr_abstract_list_model_create(parent : Handle) : Handle
     fun qt6cr_abstract_list_model_on_row_count = qt6cr_abstract_list_model_on_row_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
@@ -283,6 +289,12 @@ module Qt6
     fun qt6cr_abstract_list_model_on_set_data = qt6cr_abstract_list_model_on_set_data(handle : Handle, callback : (Handle, Handle, VariantValue, LibC::Int -> Bool), userdata : Handle)
     fun qt6cr_abstract_list_model_on_header_data = qt6cr_abstract_list_model_on_header_data(handle : Handle, callback : (Handle, LibC::Int, LibC::Int, LibC::Int -> VariantValue), userdata : Handle)
     fun qt6cr_abstract_list_model_on_flags = qt6cr_abstract_list_model_on_flags(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_list_model_on_mime_type_count = qt6cr_abstract_list_model_on_mime_type_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_list_model_on_mime_type = qt6cr_abstract_list_model_on_mime_type(handle : Handle, callback : (Handle, LibC::Int -> UInt8*), userdata : Handle)
+    fun qt6cr_abstract_list_model_on_mime_data = qt6cr_abstract_list_model_on_mime_data(handle : Handle, callback : (Handle, Handle*, LibC::Int -> Handle), userdata : Handle)
+    fun qt6cr_abstract_list_model_on_drop_mime_data = qt6cr_abstract_list_model_on_drop_mime_data(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int, LibC::Int, Handle -> Bool), userdata : Handle)
+    fun qt6cr_abstract_list_model_on_supported_drag_actions = qt6cr_abstract_list_model_on_supported_drag_actions(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_list_model_on_supported_drop_actions = qt6cr_abstract_list_model_on_supported_drop_actions(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
     fun qt6cr_abstract_list_model_begin_reset_model = qt6cr_abstract_list_model_begin_reset_model(handle : Handle)
     fun qt6cr_abstract_list_model_end_reset_model = qt6cr_abstract_list_model_end_reset_model(handle : Handle)
     fun qt6cr_abstract_list_model_begin_insert_rows = qt6cr_abstract_list_model_begin_insert_rows(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
@@ -360,6 +372,14 @@ module Qt6
     fun qt6cr_list_view_set_selection_model = qt6cr_list_view_set_selection_model(handle : Handle, selection_model : Handle)
     fun qt6cr_list_view_current_index = qt6cr_list_view_current_index(handle : Handle) : Handle
     fun qt6cr_list_view_set_current_index = qt6cr_list_view_set_current_index(handle : Handle, index : Handle)
+    fun qt6cr_list_view_drag_enabled = qt6cr_list_view_drag_enabled(handle : Handle) : Bool
+    fun qt6cr_list_view_set_drag_enabled = qt6cr_list_view_set_drag_enabled(handle : Handle, value : Bool)
+    fun qt6cr_list_view_drag_drop_mode = qt6cr_list_view_drag_drop_mode(handle : Handle) : LibC::Int
+    fun qt6cr_list_view_set_drag_drop_mode = qt6cr_list_view_set_drag_drop_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_list_view_default_drop_action = qt6cr_list_view_default_drop_action(handle : Handle) : LibC::Int
+    fun qt6cr_list_view_set_default_drop_action = qt6cr_list_view_set_default_drop_action(handle : Handle, action : LibC::Int)
+    fun qt6cr_list_view_drop_indicator_shown = qt6cr_list_view_drop_indicator_shown(handle : Handle) : Bool
+    fun qt6cr_list_view_set_drop_indicator_shown = qt6cr_list_view_set_drop_indicator_shown(handle : Handle, value : Bool)
     fun qt6cr_list_view_on_current_index_changed = qt6cr_list_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_tree_view_create = qt6cr_tree_view_create(parent : Handle) : Handle
@@ -369,6 +389,14 @@ module Qt6
     fun qt6cr_tree_view_set_selection_model = qt6cr_tree_view_set_selection_model(handle : Handle, selection_model : Handle)
     fun qt6cr_tree_view_current_index = qt6cr_tree_view_current_index(handle : Handle) : Handle
     fun qt6cr_tree_view_set_current_index = qt6cr_tree_view_set_current_index(handle : Handle, index : Handle)
+    fun qt6cr_tree_view_drag_enabled = qt6cr_tree_view_drag_enabled(handle : Handle) : Bool
+    fun qt6cr_tree_view_set_drag_enabled = qt6cr_tree_view_set_drag_enabled(handle : Handle, value : Bool)
+    fun qt6cr_tree_view_drag_drop_mode = qt6cr_tree_view_drag_drop_mode(handle : Handle) : LibC::Int
+    fun qt6cr_tree_view_set_drag_drop_mode = qt6cr_tree_view_set_drag_drop_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_tree_view_default_drop_action = qt6cr_tree_view_default_drop_action(handle : Handle) : LibC::Int
+    fun qt6cr_tree_view_set_default_drop_action = qt6cr_tree_view_set_default_drop_action(handle : Handle, action : LibC::Int)
+    fun qt6cr_tree_view_drop_indicator_shown = qt6cr_tree_view_drop_indicator_shown(handle : Handle) : Bool
+    fun qt6cr_tree_view_set_drop_indicator_shown = qt6cr_tree_view_set_drop_indicator_shown(handle : Handle, value : Bool)
     fun qt6cr_tree_view_expand_all = qt6cr_tree_view_expand_all(handle : Handle)
     fun qt6cr_tree_view_collapse_all = qt6cr_tree_view_collapse_all(handle : Handle)
     fun qt6cr_tree_view_on_current_index_changed = qt6cr_tree_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)

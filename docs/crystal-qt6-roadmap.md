@@ -32,7 +32,7 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
 - common form/layout and model/view support through line edits, checkboxes, combo boxes, list widgets, tree widgets, `QStandardItemModel`, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
-- basic clipboard and MIME/data-transfer support through text, image, pixmap, `QMimeData`, and first-pass drop-receive hooks
+- basic clipboard and MIME/data-transfer support through text, image, pixmap, `QMimeData`, model/view drag-drop payload helpers, and widget-side drop hooks
 - custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, key, and drop callbacks
 
 That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
@@ -214,7 +214,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, `QInputDialog.getItem`-style item selection, richer `QListWidget` item state and reorder hooks, widget drop acceptance, and `EventWidget` drag-enter/drag-move/drop callbacks. The remaining priorities are drag-source support, richer model/view drag-and-drop paths, and abstract-model bridges beyond the standard-item path.
+Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, `QInputDialog.getItem`-style item selection, richer `QListWidget` item state and reorder hooks, model-level MIME payload/drop hooks, `ListView` and `TreeView` drag/drop configuration, widget drop acceptance, and `EventWidget` drag-enter/drag-move/drop callbacks. The remaining priorities are abstract-model bridges beyond the standard-item path, especially real custom tree models, plus any higher-level drag/drop polish the maintained editor slice still exposes.
 
 ## Phase 6: Export And Document Features
 

@@ -50,6 +50,50 @@ module Qt6
       index
     end
 
+    # Returns whether the view can start drag operations.
+    def drag_enabled? : Bool
+      LibQt6.qt6cr_tree_view_drag_enabled(to_unsafe)
+    end
+
+    # Enables or disables drag initiation from the view.
+    def drag_enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_view_set_drag_enabled(to_unsafe, value)
+      value
+    end
+
+    # Returns the current model/view drag/drop mode.
+    def drag_drop_mode : ItemViewDragDropMode
+      ItemViewDragDropMode.from_value(LibQt6.qt6cr_tree_view_drag_drop_mode(to_unsafe))
+    end
+
+    # Sets the current model/view drag/drop mode.
+    def drag_drop_mode=(value : ItemViewDragDropMode) : ItemViewDragDropMode
+      LibQt6.qt6cr_tree_view_set_drag_drop_mode(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the default drop action used by the view.
+    def default_drop_action : DropAction
+      DropAction.from_value(LibQt6.qt6cr_tree_view_default_drop_action(to_unsafe))
+    end
+
+    # Sets the default drop action used by the view.
+    def default_drop_action=(value : DropAction) : DropAction
+      LibQt6.qt6cr_tree_view_set_default_drop_action(to_unsafe, value.value)
+      value
+    end
+
+    # Returns whether the drop indicator is shown while dragging.
+    def drop_indicator_shown? : Bool
+      LibQt6.qt6cr_tree_view_drop_indicator_shown(to_unsafe)
+    end
+
+    # Shows or hides the drop indicator while dragging.
+    def drop_indicator_shown=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_view_set_drop_indicator_shown(to_unsafe, value)
+      value
+    end
+
     # Expands all visible branches.
     def expand_all : self
       LibQt6.qt6cr_tree_view_expand_all(to_unsafe)
