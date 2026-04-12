@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, file-backed drag/drop receive hooks, richer raster image loading, and a first batch of common controls, layouts, and item-based editor panels.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, file-backed drag/drop receive hooks, richer raster image loading, and a first batch of common controls, layouts, and item-based editor panels.
 
 ## Requirements
 
@@ -111,6 +111,7 @@ app.run
 
 - `Qt6.application` for creating or reusing a single `QApplication`
 - `Qt6.window` for quick top-level window setup
+- `Qt6::QIcon` plus application and widget window-icon/style-sheet helpers for desktop polish
 - `Qt6::QObject` as the common wrapper base for owned Qt objects
 - `Qt6::Signal` for Crystal-side callback composition
 - `Qt6::QTimer` for timeout-driven work on the Qt event loop
@@ -177,4 +178,4 @@ The next logical additions are:
 2. one real inspector-style example that wires those controls into a custom canvas with live updates
 3. drag-and-drop support for editor workflows and data transfer
 4. richer abstract-model bridges, additional delegate hooks, and remaining rendering/document helpers such as gradients/composition features
-5. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface
+5. optional shell polish widgets such as `QProgressDialog`, `QSplashScreen`, and `QEventLoop` if the maintained editor slice exposes a concrete need

@@ -97,6 +97,16 @@ int qt6cr_application_exec(qt6cr_handle_t handle);
 void qt6cr_application_process_events(qt6cr_handle_t handle);
 void qt6cr_application_quit(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_application_clipboard(qt6cr_handle_t handle);
+char *qt6cr_application_name(qt6cr_handle_t handle);
+void qt6cr_application_set_name(qt6cr_handle_t handle, const char *name);
+char *qt6cr_application_organization_name(qt6cr_handle_t handle);
+void qt6cr_application_set_organization_name(qt6cr_handle_t handle, const char *name);
+char *qt6cr_application_organization_domain(qt6cr_handle_t handle);
+void qt6cr_application_set_organization_domain(qt6cr_handle_t handle, const char *domain);
+char *qt6cr_application_style_sheet(qt6cr_handle_t handle);
+void qt6cr_application_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
+qt6cr_handle_t qt6cr_application_window_icon(qt6cr_handle_t handle);
+void qt6cr_application_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 
 char *qt6cr_clipboard_text(qt6cr_handle_t handle);
 void qt6cr_clipboard_set_text(qt6cr_handle_t handle, const char *text);
@@ -128,6 +138,10 @@ qt6cr_size_t qt6cr_widget_size(qt6cr_handle_t handle);
 qt6cr_rectf_t qt6cr_widget_rect(qt6cr_handle_t handle);
 void qt6cr_widget_update(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
+char *qt6cr_widget_style_sheet(qt6cr_handle_t handle);
+void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
+qt6cr_handle_t qt6cr_widget_window_icon(qt6cr_handle_t handle);
+void qt6cr_widget_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 bool qt6cr_widget_accept_drops(qt6cr_handle_t handle);
 void qt6cr_widget_set_accept_drops(qt6cr_handle_t handle, bool value);
 
@@ -214,6 +228,11 @@ bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle);
 void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path);
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
+
+qt6cr_handle_t qt6cr_qicon_create(void);
+qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path);
+void qt6cr_qicon_destroy(qt6cr_handle_t handle);
+bool qt6cr_qicon_is_null(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_model_index_create(void);
 void qt6cr_model_index_destroy(qt6cr_handle_t handle);

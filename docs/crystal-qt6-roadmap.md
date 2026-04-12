@@ -72,7 +72,7 @@ That readiness checkpoint should now be maintained explicitly in-tree through a 
 
 ## Phase 1: Core Runtime And Object Model
 
-Status: largely complete
+Status: closer to complete for the current roadmap target
 
 Goal: make Crystal capable of expressing real Qt object graphs.
 
@@ -97,7 +97,7 @@ Goal: make Crystal capable of expressing real Qt object graphs.
 
 - A Crystal widget can subscribe to arbitrary Qt signals, not just button clicks.
 - A Crystal timer can invoke a Crystal callback repeatedly.
-- Remaining gaps in this phase are application polish features such as app metadata, window icon, stylesheet support, and `QEventLoop`.
+- Application-level polish now includes app metadata, application and widget stylesheet support, and window icons; the main remaining runtime gap in this phase is `QEventLoop`.
 
 ## Phase 2: Main Window And Shell Widgets
 

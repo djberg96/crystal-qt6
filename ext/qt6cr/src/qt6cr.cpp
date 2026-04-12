@@ -25,6 +25,7 @@
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QInputDialog>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
@@ -551,6 +552,10 @@ QImageReader *as_qimage_reader(qt6cr_handle_t handle) {
   return static_cast<QImageReader *>(handle);
 }
 
+QIcon *as_qicon(qt6cr_handle_t handle) {
+  return static_cast<QIcon *>(handle);
+}
+
 QAbstractItemModel *as_abstract_item_model(qt6cr_handle_t handle) {
   return static_cast<QAbstractItemModel *>(handle);
 }
@@ -997,6 +1002,72 @@ qt6cr_handle_t qt6cr_application_clipboard(qt6cr_handle_t handle) {
   return state == nullptr || state->application == nullptr ? nullptr : state->application->clipboard();
 }
 
+char *qt6cr_application_name(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? duplicate_string("") : duplicate_string(state->application->applicationName());
+}
+
+void qt6cr_application_set_name(qt6cr_handle_t handle, const char *name) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setApplicationName(QString::fromUtf8(name == nullptr ? "" : name));
+  }
+}
+
+char *qt6cr_application_organization_name(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? duplicate_string("") : duplicate_string(state->application->organizationName());
+}
+
+void qt6cr_application_set_organization_name(qt6cr_handle_t handle, const char *name) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setOrganizationName(QString::fromUtf8(name == nullptr ? "" : name));
+  }
+}
+
+char *qt6cr_application_organization_domain(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? duplicate_string("") : duplicate_string(state->application->organizationDomain());
+}
+
+void qt6cr_application_set_organization_domain(qt6cr_handle_t handle, const char *domain) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setOrganizationDomain(QString::fromUtf8(domain == nullptr ? "" : domain));
+  }
+}
+
+char *qt6cr_application_style_sheet(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? duplicate_string("") : duplicate_string(state->application->styleSheet());
+}
+
+void qt6cr_application_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setStyleSheet(QString::fromUtf8(style_sheet == nullptr ? "" : style_sheet));
+  }
+}
+
+qt6cr_handle_t qt6cr_application_window_icon(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? new QIcon() : new QIcon(state->application->windowIcon());
+}
+
+void qt6cr_application_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *state = as_application_state(handle);
+  auto *window_icon = as_qicon(icon);
+
+  if (state != nullptr && state->application != nullptr && window_icon != nullptr) {
+    state->application->setWindowIcon(*window_icon);
+  }
+}
+
 char *qt6cr_clipboard_text(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
   return clipboard == nullptr ? duplicate_string("") : duplicate_string(clipboard->text());
@@ -1184,6 +1255,33 @@ void qt6cr_widget_update(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? nullptr : new QPixmap(widget->grab());
+}
+
+char *qt6cr_widget_style_sheet(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->styleSheet());
+}
+
+void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setStyleSheet(QString::fromUtf8(style_sheet == nullptr ? "" : style_sheet));
+  }
+}
+
+qt6cr_handle_t qt6cr_widget_window_icon(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? new QIcon() : new QIcon(widget->windowIcon());
+}
+
+void qt6cr_widget_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *widget = as_widget(handle);
+  auto *window_icon = as_qicon(icon);
+
+  if (widget != nullptr && window_icon != nullptr) {
+    widget->setWindowIcon(*window_icon);
+  }
 }
 
 bool qt6cr_widget_accept_drops(qt6cr_handle_t handle) {
@@ -1653,6 +1751,23 @@ bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path) {
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path) {
   auto *pixmap = as_qpixmap(handle);
   return pixmap != nullptr && pixmap->save(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+qt6cr_handle_t qt6cr_qicon_create(void) {
+  return new QIcon();
+}
+
+qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path) {
+  return new QIcon(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+void qt6cr_qicon_destroy(qt6cr_handle_t handle) {
+  delete as_qicon(handle);
+}
+
+bool qt6cr_qicon_is_null(qt6cr_handle_t handle) {
+  auto *icon = as_qicon(handle);
+  return icon == nullptr || icon->isNull();
 }
 
 qt6cr_handle_t qt6cr_model_index_create(void) {

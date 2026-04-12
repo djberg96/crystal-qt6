@@ -80,6 +80,16 @@ module Qt6
     fun qt6cr_application_process_events = qt6cr_application_process_events(handle : Handle)
     fun qt6cr_application_quit = qt6cr_application_quit(handle : Handle)
     fun qt6cr_application_clipboard = qt6cr_application_clipboard(handle : Handle) : Handle
+    fun qt6cr_application_name = qt6cr_application_name(handle : Handle) : UInt8*
+    fun qt6cr_application_set_name = qt6cr_application_set_name(handle : Handle, name : UInt8*)
+    fun qt6cr_application_organization_name = qt6cr_application_organization_name(handle : Handle) : UInt8*
+    fun qt6cr_application_set_organization_name = qt6cr_application_set_organization_name(handle : Handle, name : UInt8*)
+    fun qt6cr_application_organization_domain = qt6cr_application_organization_domain(handle : Handle) : UInt8*
+    fun qt6cr_application_set_organization_domain = qt6cr_application_set_organization_domain(handle : Handle, domain : UInt8*)
+    fun qt6cr_application_style_sheet = qt6cr_application_style_sheet(handle : Handle) : UInt8*
+    fun qt6cr_application_set_style_sheet = qt6cr_application_set_style_sheet(handle : Handle, style_sheet : UInt8*)
+    fun qt6cr_application_window_icon = qt6cr_application_window_icon(handle : Handle) : Handle
+    fun qt6cr_application_set_window_icon = qt6cr_application_set_window_icon(handle : Handle, icon : Handle)
 
     fun qt6cr_clipboard_text = qt6cr_clipboard_text(handle : Handle) : UInt8*
     fun qt6cr_clipboard_set_text = qt6cr_clipboard_set_text(handle : Handle, text : UInt8*)
@@ -111,6 +121,10 @@ module Qt6
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
+    fun qt6cr_widget_style_sheet = qt6cr_widget_style_sheet(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
+    fun qt6cr_widget_window_icon = qt6cr_widget_window_icon(handle : Handle) : Handle
+    fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
     fun qt6cr_widget_accept_drops = qt6cr_widget_accept_drops(handle : Handle) : Bool
     fun qt6cr_widget_set_accept_drops = qt6cr_widget_set_accept_drops(handle : Handle, value : Bool)
 
@@ -197,6 +211,11 @@ module Qt6
     fun qt6cr_qpixmap_fill = qt6cr_qpixmap_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qpixmap_load = qt6cr_qpixmap_load(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
+
+    fun qt6cr_qicon_create = qt6cr_qicon_create : Handle
+    fun qt6cr_qicon_create_from_file = qt6cr_qicon_create_from_file(path : UInt8*) : Handle
+    fun qt6cr_qicon_destroy = qt6cr_qicon_destroy(handle : Handle)
+    fun qt6cr_qicon_is_null = qt6cr_qicon_is_null(handle : Handle) : Bool
 
     fun qt6cr_model_index_create = qt6cr_model_index_create : Handle
     fun qt6cr_model_index_destroy = qt6cr_model_index_destroy(handle : Handle)

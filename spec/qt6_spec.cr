@@ -1512,6 +1512,49 @@ describe Qt6 do
     window.release
   end
 
+  it "supports application metadata, stylesheets, and window icons" do
+    application = app
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-window-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(16, 16)
+    icon_image.fill(Qt6::Color.new(0, 0, 0, 0))
+    icon_image.set_pixel_color(4, 4, Qt6::Color.new(32, 96, 180, 255))
+    icon_image.save(icon_path).should be_true
+
+    previous_name = application.name
+    previous_organization_name = application.organization_name
+    previous_organization_domain = application.organization_domain
+    previous_style_sheet = application.style_sheet
+    previous_window_icon = application.window_icon
+
+    icon = Qt6::QIcon.from_file(icon_path)
+    icon.null?.should be_false
+
+    application.name = "crystal-qt6 specs"
+    application.organization_name = "Spec Org"
+    application.organization_domain = "spec.example"
+    application.style_sheet = "QWidget { color: rgb(12, 34, 56); }"
+    application.window_icon = icon
+
+    window = Qt6::Widget.new
+    window.style_sheet = "QWidget { background-color: rgb(22, 44, 66); }"
+    window.window_icon = icon
+
+    application.name.should eq("crystal-qt6 specs")
+    application.organization_name.should eq("Spec Org")
+    application.organization_domain.should eq("spec.example")
+    application.style_sheet.should eq("QWidget { color: rgb(12, 34, 56); }")
+    application.window_icon.null?.should be_false
+    window.style_sheet.should eq("QWidget { background-color: rgb(22, 44, 66); }")
+    window.window_icon.null?.should be_false
+
+    window.release
+    application.name = previous_name
+    application.organization_name = previous_organization_name
+    application.organization_domain = previous_organization_domain
+    application.style_sheet = previous_style_sheet
+    application.window_icon = previous_window_icon
+  end
+
   it "updates label and button text" do
     app
     label = Qt6::Label.new("Ready")
