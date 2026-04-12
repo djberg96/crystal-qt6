@@ -114,7 +114,7 @@ app.run
 - `Qt6::QIcon` plus application and widget window-icon/style-sheet helpers for desktop polish
 - `Qt6::QObject` as the common wrapper base for owned Qt objects
 - `Qt6::Signal` for Crystal-side callback composition
-- `Qt6::QTimer` for timeout-driven work on the Qt event loop
+- `Qt6::QTimer` and `Qt6::QEventLoop` for timeout-driven work and nested local event loops
 - `Qt6.clipboard` and `Qt6::Clipboard` for process-wide clipboard text, image, and pixmap access
 - `Qt6::Color`, `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common value types
 - `Qt6::QImage`, `Qt6::QImageReader`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, probed image-reader metadata, file-backed and in-memory SVG loading, and `QSvgWidget#renderer`
@@ -143,7 +143,7 @@ The specs cover:
 - convenience helper flows for message, color, and input dialogs
 - layout composition through vertical, horizontal, form, and grid layouts
 - raster, SVG, and PDF rendering with images, pixmaps, painter paths, transforms, SVG generators, SVG renderers, SVG widgets, and PDF writers
-- `QObject` destruction signals and `QTimer` timeout delivery
+- `QObject` destruction signals, `QTimer` timeout delivery, and `QEventLoop` nested-loop behavior
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls
 - widget lifecycle and visibility state
@@ -178,4 +178,4 @@ The next logical additions are:
 2. one real inspector-style example that wires those controls into a custom canvas with live updates
 3. drag-and-drop support for editor workflows and data transfer
 4. richer abstract-model bridges, additional delegate hooks, and remaining rendering/document helpers such as gradients/composition features
-5. optional shell polish widgets such as `QProgressDialog`, `QSplashScreen`, and `QEventLoop` if the maintained editor slice exposes a concrete need
+5. optional shell polish widgets such as `QProgressDialog` and `QSplashScreen` if the maintained editor slice exposes a concrete need
