@@ -418,11 +418,19 @@ module Qt6
     fun qt6cr_qpen_set_color = qt6cr_qpen_set_color(handle : Handle, color : ColorValue)
     fun qt6cr_qpen_width = qt6cr_qpen_width(handle : Handle) : Float64
     fun qt6cr_qpen_set_width = qt6cr_qpen_set_width(handle : Handle, width : Float64)
+    fun qt6cr_qpen_style = qt6cr_qpen_style(handle : Handle) : LibC::Int
+    fun qt6cr_qpen_set_style = qt6cr_qpen_set_style(handle : Handle, style : LibC::Int)
+    fun qt6cr_qpen_cap_style = qt6cr_qpen_cap_style(handle : Handle) : LibC::Int
+    fun qt6cr_qpen_set_cap_style = qt6cr_qpen_set_cap_style(handle : Handle, style : LibC::Int)
 
     fun qt6cr_qbrush_create = qt6cr_qbrush_create(color : ColorValue) : Handle
+    fun qt6cr_qbrush_create_from_pixmap = qt6cr_qbrush_create_from_pixmap(pixmap : Handle) : Handle
+    fun qt6cr_qbrush_create_from_image = qt6cr_qbrush_create_from_image(image : Handle) : Handle
     fun qt6cr_qbrush_destroy = qt6cr_qbrush_destroy(handle : Handle)
     fun qt6cr_qbrush_color = qt6cr_qbrush_color(handle : Handle) : ColorValue
     fun qt6cr_qbrush_set_color = qt6cr_qbrush_set_color(handle : Handle, color : ColorValue)
+    fun qt6cr_qbrush_transform = qt6cr_qbrush_transform(handle : Handle) : Handle
+    fun qt6cr_qbrush_set_transform = qt6cr_qbrush_set_transform(handle : Handle, transform : Handle)
 
     fun qt6cr_qfont_create = qt6cr_qfont_create(family : UInt8*, point_size : LibC::Int, bold : Bool, italic : Bool) : Handle
     fun qt6cr_qfont_destroy = qt6cr_qfont_destroy(handle : Handle)
@@ -460,6 +468,14 @@ module Qt6
     fun qt6cr_qtransform_rotate = qt6cr_qtransform_rotate(handle : Handle, angle : Float64)
     fun qt6cr_qtransform_map_point = qt6cr_qtransform_map_point(handle : Handle, point : PointFValue) : PointFValue
     fun qt6cr_qtransform_map_rect = qt6cr_qtransform_map_rect(handle : Handle, rect : RectFValue) : RectFValue
+    fun qt6cr_qtransform_map_path = qt6cr_qtransform_map_path(handle : Handle, path : Handle) : Handle
+
+    fun qt6cr_qpolygonf_create = qt6cr_qpolygonf_create : Handle
+    fun qt6cr_qpolygonf_destroy = qt6cr_qpolygonf_destroy(handle : Handle)
+    fun qt6cr_qpolygonf_append = qt6cr_qpolygonf_append(handle : Handle, point : PointFValue)
+    fun qt6cr_qpolygonf_size = qt6cr_qpolygonf_size(handle : Handle) : LibC::Int
+    fun qt6cr_qpolygonf_at = qt6cr_qpolygonf_at(handle : Handle, index : LibC::Int) : PointFValue
+    fun qt6cr_qpolygonf_bounding_rect = qt6cr_qpolygonf_bounding_rect(handle : Handle) : RectFValue
 
     fun qt6cr_qpainter_path_create = qt6cr_qpainter_path_create : Handle
     fun qt6cr_qpainter_path_destroy = qt6cr_qpainter_path_destroy(handle : Handle)
@@ -469,9 +485,18 @@ module Qt6
     fun qt6cr_qpainter_path_cubic_to = qt6cr_qpainter_path_cubic_to(handle : Handle, control_point1 : PointFValue, control_point2 : PointFValue, end_point : PointFValue)
     fun qt6cr_qpainter_path_add_rect = qt6cr_qpainter_path_add_rect(handle : Handle, rect : RectFValue)
     fun qt6cr_qpainter_path_add_ellipse = qt6cr_qpainter_path_add_ellipse(handle : Handle, rect : RectFValue)
+    fun qt6cr_qpainter_path_add_polygon = qt6cr_qpainter_path_add_polygon(handle : Handle, polygon : Handle)
     fun qt6cr_qpainter_path_close_subpath = qt6cr_qpainter_path_close_subpath(handle : Handle)
     fun qt6cr_qpainter_path_bounding_rect = qt6cr_qpainter_path_bounding_rect(handle : Handle) : RectFValue
     fun qt6cr_qpainter_path_transformed = qt6cr_qpainter_path_transformed(handle : Handle, transform : Handle) : Handle
+    fun qt6cr_qpainter_path_contains = qt6cr_qpainter_path_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_qpainter_path_is_empty = qt6cr_qpainter_path_is_empty(handle : Handle) : Bool
+
+    fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
+    fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)
+    fun qt6cr_qpainter_path_stroker_width = qt6cr_qpainter_path_stroker_width(handle : Handle) : Float64
+    fun qt6cr_qpainter_path_stroker_set_width = qt6cr_qpainter_path_stroker_set_width(handle : Handle, width : Float64)
+    fun qt6cr_qpainter_path_stroker_create_stroke = qt6cr_qpainter_path_stroker_create_stroke(handle : Handle, path : Handle) : Handle
 
     fun qt6cr_qpainter_create_for_image = qt6cr_qpainter_create_for_image(image : Handle) : Handle
     fun qt6cr_qpainter_create_for_pixmap = qt6cr_qpainter_create_for_pixmap(pixmap : Handle) : Handle
@@ -480,6 +505,7 @@ module Qt6
     fun qt6cr_qpainter_destroy = qt6cr_qpainter_destroy(handle : Handle)
     fun qt6cr_qpainter_is_active = qt6cr_qpainter_is_active(handle : Handle) : Bool
     fun qt6cr_qpainter_set_antialiasing = qt6cr_qpainter_set_antialiasing(handle : Handle, value : Bool)
+    fun qt6cr_qpainter_set_smooth_pixmap_transform = qt6cr_qpainter_set_smooth_pixmap_transform(handle : Handle, value : Bool)
     fun qt6cr_qpainter_set_pen_color = qt6cr_qpainter_set_pen_color(handle : Handle, color : ColorValue)
     fun qt6cr_qpainter_set_pen = qt6cr_qpainter_set_pen(handle : Handle, pen : Handle)
     fun qt6cr_qpainter_set_brush_color = qt6cr_qpainter_set_brush_color(handle : Handle, color : ColorValue)
@@ -487,13 +513,27 @@ module Qt6
     fun qt6cr_qpainter_set_font = qt6cr_qpainter_set_font(handle : Handle, font : Handle)
     fun qt6cr_qpainter_set_transform = qt6cr_qpainter_set_transform(handle : Handle, transform : Handle)
     fun qt6cr_qpainter_reset_transform = qt6cr_qpainter_reset_transform(handle : Handle)
+    fun qt6cr_qpainter_translate = qt6cr_qpainter_translate(handle : Handle, dx : Float64, dy : Float64)
+    fun qt6cr_qpainter_scale = qt6cr_qpainter_scale(handle : Handle, sx : Float64, sy : Float64)
+    fun qt6cr_qpainter_save = qt6cr_qpainter_save(handle : Handle)
+    fun qt6cr_qpainter_restore = qt6cr_qpainter_restore(handle : Handle)
+    fun qt6cr_qpainter_opacity = qt6cr_qpainter_opacity(handle : Handle) : Float64
+    fun qt6cr_qpainter_set_opacity = qt6cr_qpainter_set_opacity(handle : Handle, value : Float64)
+    fun qt6cr_qpainter_composition_mode = qt6cr_qpainter_composition_mode(handle : Handle) : LibC::Int
+    fun qt6cr_qpainter_set_composition_mode = qt6cr_qpainter_set_composition_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_qpainter_set_clipping = qt6cr_qpainter_set_clipping(handle : Handle, value : Bool)
+    fun qt6cr_qpainter_set_clip_path = qt6cr_qpainter_set_clip_path(handle : Handle, path : Handle)
     fun qt6cr_qpainter_draw_line = qt6cr_qpainter_draw_line(handle : Handle, from_point : PointFValue, to_point : PointFValue)
     fun qt6cr_qpainter_draw_rect = qt6cr_qpainter_draw_rect(handle : Handle, rect : RectFValue)
     fun qt6cr_qpainter_fill_rect = qt6cr_qpainter_fill_rect(handle : Handle, rect : RectFValue, color : ColorValue)
     fun qt6cr_qpainter_draw_ellipse = qt6cr_qpainter_draw_ellipse(handle : Handle, rect : RectFValue)
+    fun qt6cr_qpainter_draw_ellipse_center = qt6cr_qpainter_draw_ellipse_center(handle : Handle, center : PointFValue, rx : Float64, ry : Float64)
     fun qt6cr_qpainter_draw_path = qt6cr_qpainter_draw_path(handle : Handle, path : Handle)
+    fun qt6cr_qpainter_draw_polygon = qt6cr_qpainter_draw_polygon(handle : Handle, polygon : Handle)
     fun qt6cr_qpainter_draw_image = qt6cr_qpainter_draw_image(handle : Handle, position : PointFValue, image : Handle)
+    fun qt6cr_qpainter_draw_image_xy = qt6cr_qpainter_draw_image_xy(handle : Handle, x : Float64, y : Float64, image : Handle)
     fun qt6cr_qpainter_draw_pixmap = qt6cr_qpainter_draw_pixmap(handle : Handle, position : PointFValue, pixmap : Handle)
+    fun qt6cr_qpainter_draw_pixmap_xy = qt6cr_qpainter_draw_pixmap_xy(handle : Handle, x : Float64, y : Float64, pixmap : Handle)
     fun qt6cr_qpainter_draw_text = qt6cr_qpainter_draw_text(handle : Handle, position : PointFValue, text : UInt8*)
 
     fun qt6cr_input_dialog_create = qt6cr_input_dialog_create(parent : Handle) : Handle

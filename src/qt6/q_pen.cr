@@ -33,6 +33,28 @@ module Qt6
       width
     end
 
+    # Returns the pen style.
+    def style : PenStyle
+      PenStyle.from_value(LibQt6.qt6cr_qpen_style(to_unsafe))
+    end
+
+    # Sets the pen style.
+    def style=(value : PenStyle) : PenStyle
+      LibQt6.qt6cr_qpen_set_style(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the pen cap style.
+    def cap_style : PenCapStyle
+      PenCapStyle.from_value(LibQt6.qt6cr_qpen_cap_style(to_unsafe))
+    end
+
+    # Sets the pen cap style.
+    def cap_style=(value : PenCapStyle) : PenCapStyle
+      LibQt6.qt6cr_qpen_set_cap_style(to_unsafe, value.value)
+      value
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qpen_destroy(to_unsafe)
     end

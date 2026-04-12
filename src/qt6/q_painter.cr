@@ -85,6 +85,12 @@ module Qt6
       value
     end
 
+    # Enables or disables smooth pixmap filtering.
+    def smooth_pixmap_transform=(value : Bool) : Bool
+      LibQt6.qt6cr_qpainter_set_smooth_pixmap_transform(to_unsafe, value)
+      value
+    end
+
     # Sets the pen color used for outlines and lines.
     def pen=(color : Color) : Color
       LibQt6.qt6cr_qpainter_set_pen_color(to_unsafe, color.to_native)
@@ -127,6 +133,65 @@ module Qt6
       self
     end
 
+    # Applies a translation to the current transform.
+    def translate(dx : Number, dy : Number) : self
+      LibQt6.qt6cr_qpainter_translate(to_unsafe, dx.to_f64, dy.to_f64)
+      self
+    end
+
+    # Applies a scale to the current transform.
+    def scale(sx : Number, sy : Number) : self
+      LibQt6.qt6cr_qpainter_scale(to_unsafe, sx.to_f64, sy.to_f64)
+      self
+    end
+
+    # Saves the current painter state.
+    def save : self
+      LibQt6.qt6cr_qpainter_save(to_unsafe)
+      self
+    end
+
+    # Restores the most recently saved painter state.
+    def restore : self
+      LibQt6.qt6cr_qpainter_restore(to_unsafe)
+      self
+    end
+
+    # Returns the current opacity.
+    def opacity : Float64
+      LibQt6.qt6cr_qpainter_opacity(to_unsafe)
+    end
+
+    # Sets the painter opacity.
+    def opacity=(value : Number) : Float64
+      opacity = value.to_f64
+      LibQt6.qt6cr_qpainter_set_opacity(to_unsafe, opacity)
+      opacity
+    end
+
+    # Returns the current composition mode.
+    def composition_mode : PainterCompositionMode
+      PainterCompositionMode.from_value(LibQt6.qt6cr_qpainter_composition_mode(to_unsafe))
+    end
+
+    # Sets the composition mode used for subsequent drawing.
+    def composition_mode=(value : PainterCompositionMode) : PainterCompositionMode
+      LibQt6.qt6cr_qpainter_set_composition_mode(to_unsafe, value.value)
+      value
+    end
+
+    # Enables or disables clipping.
+    def clipping=(value : Bool) : Bool
+      LibQt6.qt6cr_qpainter_set_clipping(to_unsafe, value)
+      value
+    end
+
+    # Replaces the current clip path.
+    def clip_path=(path : QPainterPath) : QPainterPath
+      LibQt6.qt6cr_qpainter_set_clip_path(to_unsafe, path.to_unsafe)
+      path
+    end
+
     # Draws a line between two points.
     def draw_line(from_point : PointF, to_point : PointF) : self
       LibQt6.qt6cr_qpainter_draw_line(to_unsafe, from_point.to_native, to_point.to_native)
@@ -151,9 +216,21 @@ module Qt6
       self
     end
 
+    # Draws the outline and fill for an ellipse defined by center and radii.
+    def draw_ellipse(center : PointF, rx : Number, ry : Number) : self
+      LibQt6.qt6cr_qpainter_draw_ellipse_center(to_unsafe, center.to_native, rx.to_f64, ry.to_f64)
+      self
+    end
+
     # Draws a vector path.
     def draw_path(path : QPainterPath) : self
       LibQt6.qt6cr_qpainter_draw_path(to_unsafe, path.to_unsafe)
+      self
+    end
+
+    # Draws a polygon.
+    def draw_polygon(polygon : QPolygonF) : self
+      LibQt6.qt6cr_qpainter_draw_polygon(to_unsafe, polygon.to_unsafe)
       self
     end
 
@@ -163,9 +240,21 @@ module Qt6
       self
     end
 
+    # Draws an image with its top-left corner at the given coordinates.
+    def draw_image(x : Number, y : Number, image : QImage) : self
+      LibQt6.qt6cr_qpainter_draw_image_xy(to_unsafe, x.to_f64, y.to_f64, image.to_unsafe)
+      self
+    end
+
     # Draws a pixmap with its top-left corner at the given position.
     def draw_pixmap(position : PointF, pixmap : QPixmap) : self
       LibQt6.qt6cr_qpainter_draw_pixmap(to_unsafe, position.to_native, pixmap.to_unsafe)
+      self
+    end
+
+    # Draws a pixmap with its top-left corner at the given coordinates.
+    def draw_pixmap(x : Number, y : Number, pixmap : QPixmap) : self
+      LibQt6.qt6cr_qpainter_draw_pixmap_xy(to_unsafe, x.to_f64, y.to_f64, pixmap.to_unsafe)
       self
     end
 

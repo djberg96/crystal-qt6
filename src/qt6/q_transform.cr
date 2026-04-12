@@ -1,6 +1,11 @@
 module Qt6
   # Wraps `QTransform` for geometric transformations applied during painting.
   class QTransform < NativeResource
+    # Wraps an existing native transform handle.
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates an identity transform.
     def initialize
       super(LibQt6.qt6cr_qtransform_create)
@@ -12,7 +17,7 @@ module Qt6
 
     # Returns a copy of this transform.
     def dup : self
-      self.class.new(LibQt6.qt6cr_qtransform_copy(to_unsafe), true)
+      self.class.wrap(LibQt6.qt6cr_qtransform_copy(to_unsafe), true)
     end
 
     # Resets the transform to the identity matrix.
@@ -47,6 +52,11 @@ module Qt6
     # Maps a rectangle through the transform.
     def map(rect : RectF) : RectF
       RectF.from_native(LibQt6.qt6cr_qtransform_map_rect(to_unsafe, rect.to_native))
+    end
+
+    # Maps a path through the transform.
+    def map(path : QPainterPath) : QPainterPath
+      QPainterPath.wrap(LibQt6.qt6cr_qtransform_map_path(to_unsafe, path.to_unsafe), true)
     end
 
     protected def destroy_native : Nil
