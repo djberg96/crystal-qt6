@@ -217,6 +217,15 @@ class ModelListView final : public QListView {
     reconnect_current_changed();
   }
 
+  void setSelectionModel(QItemSelectionModel *selection_model) override {
+    if (current_changed_connection) {
+      QObject::disconnect(current_changed_connection);
+    }
+
+    QListView::setSelectionModel(selection_model);
+    reconnect_current_changed();
+  }
+
   void reconnect_current_changed() {
     auto *selection_model = selectionModel();
 
@@ -248,6 +257,15 @@ class ModelTreeView final : public QTreeView {
     }
 
     QTreeView::setModel(model);
+    reconnect_current_changed();
+  }
+
+  void setSelectionModel(QItemSelectionModel *selection_model) override {
+    if (current_changed_connection) {
+      QObject::disconnect(current_changed_connection);
+    }
+
+    QTreeView::setSelectionModel(selection_model);
     reconnect_current_changed();
   }
 
@@ -377,6 +395,10 @@ QImage *as_qimage(qt6cr_handle_t handle) {
 
 QAbstractItemModel *as_abstract_item_model(qt6cr_handle_t handle) {
   return static_cast<QAbstractItemModel *>(handle);
+}
+
+QItemSelectionModel *as_item_selection_model(qt6cr_handle_t handle) {
+  return static_cast<QItemSelectionModel *>(handle);
 }
 
 QPixmap *as_qpixmap(qt6cr_handle_t handle) {
@@ -1379,6 +1401,42 @@ bool qt6cr_abstract_item_model_set_data(qt6cr_handle_t handle, qt6cr_handle_t in
   return model != nullptr && model_index != nullptr ? model->setData(*model_index, from_variant_value(value), role) : false;
 }
 
+qt6cr_variant_value_t qt6cr_abstract_item_model_header_data(qt6cr_handle_t handle, int section, int orientation, int role) {
+  auto *model = as_abstract_item_model(handle);
+  return model == nullptr ? to_variant_value(QVariant()) : to_variant_value(model->headerData(section, static_cast<Qt::Orientation>(orientation), role));
+}
+
+bool qt6cr_abstract_item_model_set_header_data(qt6cr_handle_t handle, int section, int orientation, qt6cr_variant_value_t value, int role) {
+  auto *model = as_abstract_item_model(handle);
+  return model != nullptr ? model->setHeaderData(section, static_cast<Qt::Orientation>(orientation), from_variant_value(value), role) : false;
+}
+
+qt6cr_handle_t qt6cr_item_selection_model_create(qt6cr_handle_t model, qt6cr_handle_t parent) {
+  return new QItemSelectionModel(as_abstract_item_model(model), as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_item_selection_model_model(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+  return selection_model == nullptr ? nullptr : selection_model->model();
+}
+
+qt6cr_handle_t qt6cr_item_selection_model_current_index(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+  return selection_model == nullptr ? new QModelIndex() : new QModelIndex(selection_model->currentIndex());
+}
+
+void qt6cr_item_selection_model_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *selection_model = as_item_selection_model(handle);
+
+  if (selection_model == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(selection_model, &QItemSelectionModel::currentChanged, selection_model, [callback, userdata](const QModelIndex &, const QModelIndex &) {
+    callback(userdata);
+  });
+}
+
 qt6cr_handle_t qt6cr_standard_item_create(const char *text) {
   return new QStandardItem(QString::fromUtf8(text == nullptr ? "" : text));
 }
@@ -1801,6 +1859,19 @@ void qt6cr_list_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t del
   }
 }
 
+qt6cr_handle_t qt6cr_list_view_selection_model(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? nullptr : view->selectionModel();
+}
+
+void qt6cr_list_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionModel(as_item_selection_model(selection_model));
+  }
+}
+
 qt6cr_handle_t qt6cr_list_view_current_index(qt6cr_handle_t handle) {
   auto *view = as_list_view(handle);
   return view == nullptr ? new QModelIndex() : new QModelIndex(view->currentIndex());
@@ -1844,6 +1915,19 @@ void qt6cr_tree_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t del
 
   if (view != nullptr) {
     view->setItemDelegate(as_styled_item_delegate(delegate));
+  }
+}
+
+qt6cr_handle_t qt6cr_tree_view_selection_model(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? nullptr : view->selectionModel();
+}
+
+void qt6cr_tree_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionModel(as_item_selection_model(selection_model));
   }
 }
 

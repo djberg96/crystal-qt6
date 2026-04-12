@@ -27,6 +27,18 @@ module Qt6
       delegate
     end
 
+    # Returns the active selection model, if one is installed.
+    def selection_model : ItemSelectionModel?
+      handle = LibQt6.qt6cr_tree_view_selection_model(to_unsafe)
+      handle.null? ? nil : ItemSelectionModel.wrap(handle)
+    end
+
+    # Assigns the selection model used by the view and returns it.
+    def selection_model=(selection_model : ItemSelectionModel) : ItemSelectionModel
+      LibQt6.qt6cr_tree_view_set_selection_model(to_unsafe, selection_model.to_unsafe)
+      selection_model
+    end
+
     # Returns the current model index.
     def current_index : ModelIndex
       ModelIndex.wrap(LibQt6.qt6cr_tree_view_current_index(to_unsafe), true)
