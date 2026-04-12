@@ -727,11 +727,22 @@ describe Qt6 do
       timer.start(0)
     end
 
+    item_value = Qt6::InputDialog.get_item(window, title: "Layer Type", label: "Kind", items: ["Terrain", "Units", "Roads"], current: 1, editable: false) do |dialog|
+      dialog.combo_box_items.should eq(["Terrain", "Units", "Roads"])
+      dialog.combo_box_editable?.should be_false
+      dialog.text_value = "Roads"
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
     message_result.should eq(Qt6::MessageBoxButton::Ok)
     selected_color.should eq(Qt6::Color.new(32, 64, 96, 128))
     text_value.should eq("Roads")
     int_value.should eq(7)
     double_value.should eq(1.25)
+    item_value.should eq("Roads")
     window.release
   end
 
@@ -756,6 +767,10 @@ describe Qt6 do
     input_dialog.input_mode = Qt6::InputDialogInputMode::Double
     input_dialog.double_range = 0.5..4.0
     input_dialog.double_value = 1.5
+    input_dialog.input_mode = Qt6::InputDialogInputMode::Text
+    input_dialog.combo_box_items = ["Terrain", "Units", "Roads"]
+    input_dialog.combo_box_editable = false
+    input_dialog.text_value = "Units"
 
     color_dialog.window_title.should eq("Pick Accent Color")
     color_dialog.native_dialog?.should be_false
@@ -764,13 +779,15 @@ describe Qt6 do
 
     input_dialog.window_title.should eq("Layer Details")
     input_dialog.label_text.should eq("Layer name")
-    input_dialog.text_value.should eq("Terrain")
+    input_dialog.text_value.should eq("Units")
     input_dialog.int_minimum.should eq(1)
     input_dialog.int_maximum.should eq(12)
     input_dialog.int_value.should eq(4)
     input_dialog.double_minimum.should eq(0.5)
     input_dialog.double_maximum.should eq(4.0)
     input_dialog.double_value.should eq(1.5)
+    input_dialog.combo_box_items.should eq(["Terrain", "Units", "Roads"])
+    input_dialog.combo_box_editable?.should be_false
     window.release
   end
 
@@ -1211,6 +1228,66 @@ describe Qt6 do
     tree_widget.top_level_item_count.should eq(0)
     list_widget.release
     tree_widget.release
+  end
+
+  it "supports advanced list widget item hooks and reorder state" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    list_widget.resize(240, 180)
+    list_widget.show
+
+    changed_texts = [] of String
+    double_clicked_texts = [] of String
+    rows_moved = 0
+
+    list_widget.on_item_changed do |item|
+      changed_texts << item.text
+    end
+
+    list_widget.on_item_double_clicked do |item|
+      double_clicked_texts << item.text
+    end
+
+    list_widget.on_rows_moved do
+      rows_moved += 1
+    end
+
+    list_widget.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+    list_widget.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
+    list_widget.default_drop_action = Qt6::DropAction::MoveAction
+
+    terrain_item = Qt6::ListWidgetItem.new(Qt6::QIcon.new, "Terrain")
+    terrain_item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable | Qt6::ItemFlag::UserCheckable | Qt6::ItemFlag::DragEnabled | Qt6::ItemFlag::DropEnabled
+    terrain_item.check_state = Qt6::CheckState::Checked
+    terrain_item.set_data("ground", Qt6::ItemDataRole::User)
+    terrain_item.foreground = Qt6::Color.new(32, 96, 192)
+    list_widget.add_item(terrain_item)
+    list_widget.add_item("Units")
+    list_widget.add_item("Roads")
+    application.process_events
+
+    terrain_item.text = "Terrain Layer"
+    application.process_events
+
+    list_widget.move_item(0, 2).should be_true
+    application.process_events
+    Qt6::LibQt6.qt6cr_list_widget_emit_item_double_clicked(list_widget.to_unsafe, 2)
+    application.process_events
+
+    list_widget.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::InternalMove)
+    list_widget.selection_mode.should eq(Qt6::ItemSelectionMode::ExtendedSelection)
+    list_widget.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    terrain_item.flags.includes?(Qt6::ItemFlag::Editable).should be_true
+    terrain_item.flags.includes?(Qt6::ItemFlag::UserCheckable).should be_true
+    terrain_item.check_state.should eq(Qt6::CheckState::Checked)
+    terrain_item.data(Qt6::ItemDataRole::User).should eq("ground")
+    terrain_item.foreground.should eq(Qt6::Color.new(32, 96, 192, 255))
+    changed_texts.includes?("Terrain Layer").should be_true
+    list_widget.item_text(2).should eq("Terrain Layer")
+    double_clicked_texts.should eq(["Terrain Layer"])
+    rows_moved.should be >= 1
+
+    list_widget.release
   end
 
   it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do

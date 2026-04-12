@@ -11,6 +11,11 @@ module Qt6
       super(LibQt6.qt6cr_list_widget_item_create(text.to_unsafe))
     end
 
+    # Creates a list item with an icon and display text.
+    def initialize(icon : QIcon, text : String)
+      super(LibQt6.qt6cr_list_widget_item_create_with_icon(icon.to_unsafe, text.to_unsafe))
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -23,6 +28,50 @@ module Qt6
     # Sets the item text.
     def text=(value : String) : String
       LibQt6.qt6cr_list_widget_item_set_text(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the item's current flags.
+    def flags : ItemFlag
+      ItemFlag.from_value(LibQt6.qt6cr_list_widget_item_flags(to_unsafe))
+    end
+
+    # Sets the item's current flags.
+    def flags=(value : ItemFlag) : ItemFlag
+      LibQt6.qt6cr_list_widget_item_set_flags(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the item's check state.
+    def check_state : CheckState
+      CheckState.from_value(LibQt6.qt6cr_list_widget_item_check_state(to_unsafe))
+    end
+
+    # Sets the item's check state.
+    def check_state=(value : CheckState) : CheckState
+      LibQt6.qt6cr_list_widget_item_set_check_state(to_unsafe, value.value)
+      value
+    end
+
+    # Returns item data for the given role.
+    def data(role : ItemDataRole = ItemDataRole::Display) : ModelData
+      Qt6.model_data_from_native(LibQt6.qt6cr_list_widget_item_data(to_unsafe, role.value))
+    end
+
+    # Sets item data for the given role.
+    def set_data(value, role : ItemDataRole = ItemDataRole::Edit) : self
+      LibQt6.qt6cr_list_widget_item_set_data(to_unsafe, role.value, Qt6.model_data_to_native(value))
+      self
+    end
+
+    # Returns the item's foreground color.
+    def foreground : Color
+      Color.from_native(LibQt6.qt6cr_list_widget_item_foreground(to_unsafe))
+    end
+
+    # Sets the item's foreground color.
+    def foreground=(value : Color) : Color
+      LibQt6.qt6cr_list_widget_item_set_foreground(to_unsafe, value.to_native)
       value
     end
 

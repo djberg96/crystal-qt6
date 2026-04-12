@@ -36,6 +36,16 @@ module Qt6
       @destroyed_signal
     end
 
+    # Blocks or unblocks this object's signal emissions.
+    def block_signals=(value : Bool) : Bool
+      LibQt6.qt6cr_object_block_signals(@to_unsafe, value)
+    end
+
+    # Returns `true` when signal delivery is currently blocked.
+    def signals_blocked? : Bool
+      LibQt6.qt6cr_object_signals_blocked(@to_unsafe)
+    end
+
     # Marks this object as owned by a native parent so the wrapper stops trying
     # to release it directly.
     def adopt_by_parent! : Nil

@@ -182,7 +182,7 @@ Goal: support the heavy `QtGui` drawing usage common to editor-style application
 
 - Render grids, text labels, paths, fills, and image assets from Crystal.
 - Export a rendered image buffer to PNG.
-- Remaining gaps in this phase are helper and polish APIs such as `QPainterPathStroker`, `QPolygonF`, scaled/stream-backed image reading if needed, and gradient/composition features.
+- Remaining gaps in this phase are now mostly secondary helper APIs such as scaled or stream-backed image reading, plus any extra painter and page-layout polish the real editor slice exposes.
 
 ## Phase 5: Forms And Editor Controls
 
@@ -214,7 +214,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, widget drop acceptance, and `EventWidget` drag-enter/drag-move/drop callbacks. The remaining priorities are drag-source support, richer model/view drag-and-drop paths, and abstract-model bridges beyond the standard-item path.
+Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, `QInputDialog.getItem`-style item selection, richer `QListWidget` item state and reorder hooks, widget drop acceptance, and `EventWidget` drag-enter/drag-move/drop callbacks. The remaining priorities are drag-source support, richer model/view drag-and-drop paths, and abstract-model bridges beyond the standard-item path.
 
 ## Phase 6: Export And Document Features
 

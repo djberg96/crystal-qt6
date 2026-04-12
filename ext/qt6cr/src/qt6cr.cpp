@@ -248,6 +248,15 @@ class EventWidget final : public QWidget {
   }
 };
 
+class CrystalListWidget final : public QListWidget {
+ public:
+  using QListWidget::QListWidget;
+
+  void emitItemDoubleClickedBridge(QListWidgetItem *item) {
+    emit itemDoubleClicked(item);
+  }
+};
+
 class ModelListView final : public QListView {
  public:
   explicit ModelListView(QWidget *parent = nullptr) : QListView(parent) {}
@@ -978,6 +987,16 @@ void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t call
   QObject::connect(object, &QObject::destroyed, object, [callback, userdata]() {
     callback(userdata);
   });
+}
+
+bool qt6cr_object_block_signals(qt6cr_handle_t handle, bool block) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->blockSignals(block);
+}
+
+bool qt6cr_object_signals_blocked(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->signalsBlocked();
 }
 
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv) {
@@ -4165,6 +4184,62 @@ double qt6cr_input_dialog_double_maximum(qt6cr_handle_t handle) {
   return input_dialog == nullptr ? 0.0 : input_dialog->doubleMaximum();
 }
 
+void qt6cr_input_dialog_set_combo_box_items(qt6cr_handle_t handle, const char *const *items, int count) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr) {
+    return;
+  }
+
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    values << QString::fromUtf8(items[index] == nullptr ? "" : items[index]);
+  }
+
+  input_dialog->setComboBoxItems(values);
+}
+
+int qt6cr_input_dialog_combo_box_item_count(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : input_dialog->comboBoxItems().size();
+}
+
+char *qt6cr_input_dialog_combo_box_item_text(qt6cr_handle_t handle, int index) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? duplicate_string("") : duplicate_string(input_dialog->comboBoxItems().value(index));
+}
+
+void qt6cr_input_dialog_set_combo_box_editable(qt6cr_handle_t handle, bool editable) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setComboBoxEditable(editable);
+  }
+}
+
+bool qt6cr_input_dialog_combo_box_editable(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog != nullptr ? input_dialog->isComboBoxEditable() : false;
+}
+
+char *qt6cr_input_dialog_get_item(qt6cr_handle_t parent, const char *title, const char *label, const char *const *items, int count, int current, bool editable) {
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    values << QString::fromUtf8(items[index] == nullptr ? "" : items[index]);
+  }
+
+  bool ok = false;
+  const auto result = QInputDialog::getItem(
+      as_widget(parent),
+      QString::fromUtf8(title == nullptr ? "" : title),
+      QString::fromUtf8(label == nullptr ? "" : label),
+      values,
+      current,
+      editable,
+      &ok);
+  return ok ? duplicate_string(result) : nullptr;
+}
+
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title) {
   return new QDockWidget(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
@@ -4802,6 +4877,11 @@ qt6cr_handle_t qt6cr_list_widget_item_create(const char *text) {
   return new QListWidgetItem(QString::fromUtf8(text == nullptr ? "" : text));
 }
 
+qt6cr_handle_t qt6cr_list_widget_item_create_with_icon(qt6cr_handle_t icon, const char *text) {
+  auto *value = as_qicon(icon);
+  return value == nullptr ? nullptr : new QListWidgetItem(*value, QString::fromUtf8(text == nullptr ? "" : text));
+}
+
 void qt6cr_list_widget_item_destroy(qt6cr_handle_t handle) {
   delete as_list_widget_item(handle);
 }
@@ -4819,8 +4899,60 @@ char *qt6cr_list_widget_item_text(qt6cr_handle_t handle) {
   return item == nullptr ? duplicate_string("") : duplicate_string(item->text());
 }
 
+int qt6cr_list_widget_item_flags(qt6cr_handle_t handle) {
+  auto *item = as_list_widget_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->flags());
+}
+
+void qt6cr_list_widget_item_set_flags(qt6cr_handle_t handle, int flags) {
+  auto *item = as_list_widget_item(handle);
+
+  if (item != nullptr) {
+    item->setFlags(static_cast<Qt::ItemFlags>(flags));
+  }
+}
+
+int qt6cr_list_widget_item_check_state(qt6cr_handle_t handle) {
+  auto *item = as_list_widget_item(handle);
+  return item == nullptr ? static_cast<int>(Qt::Unchecked) : static_cast<int>(item->checkState());
+}
+
+void qt6cr_list_widget_item_set_check_state(qt6cr_handle_t handle, int state) {
+  auto *item = as_list_widget_item(handle);
+
+  if (item != nullptr) {
+    item->setCheckState(static_cast<Qt::CheckState>(state));
+  }
+}
+
+qt6cr_variant_value_t qt6cr_list_widget_item_data(qt6cr_handle_t handle, int role) {
+  auto *item = as_list_widget_item(handle);
+  return item == nullptr ? qt6cr_variant_value_t{0, false, 0, 0.0, qt6cr_color_t{0, 0, 0, 0}, nullptr} : to_variant_value(item->data(role));
+}
+
+void qt6cr_list_widget_item_set_data(qt6cr_handle_t handle, int role, qt6cr_variant_value_t value) {
+  auto *item = as_list_widget_item(handle);
+
+  if (item != nullptr) {
+    item->setData(role, from_variant_value(value));
+  }
+}
+
+qt6cr_color_t qt6cr_list_widget_item_foreground(qt6cr_handle_t handle) {
+  auto *item = as_list_widget_item(handle);
+  return item == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(item->foreground().color());
+}
+
+void qt6cr_list_widget_item_set_foreground(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *item = as_list_widget_item(handle);
+
+  if (item != nullptr) {
+    item->setForeground(QBrush(from_color(color)));
+  }
+}
+
 qt6cr_handle_t qt6cr_list_widget_create(qt6cr_handle_t parent) {
-  return new QListWidget(as_widget(parent));
+  return new CrystalListWidget(as_widget(parent));
 }
 
 void qt6cr_list_widget_add_item(qt6cr_handle_t handle, qt6cr_handle_t item) {
@@ -4890,6 +5022,80 @@ void qt6cr_list_widget_clear(qt6cr_handle_t handle) {
   }
 }
 
+int qt6cr_list_widget_drag_drop_mode(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? 0 : static_cast<int>(list_widget->dragDropMode());
+}
+
+void qt6cr_list_widget_set_drag_drop_mode(qt6cr_handle_t handle, int mode) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget != nullptr) {
+    list_widget->setDragDropMode(static_cast<QAbstractItemView::DragDropMode>(mode));
+  }
+}
+
+int qt6cr_list_widget_selection_mode(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? 0 : static_cast<int>(list_widget->selectionMode());
+}
+
+void qt6cr_list_widget_set_selection_mode(qt6cr_handle_t handle, int mode) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget != nullptr) {
+    list_widget->setSelectionMode(static_cast<QAbstractItemView::SelectionMode>(mode));
+  }
+}
+
+int qt6cr_list_widget_default_drop_action(qt6cr_handle_t handle) {
+  auto *list_widget = as_list_widget(handle);
+  return list_widget == nullptr ? 0 : static_cast<int>(list_widget->defaultDropAction());
+}
+
+void qt6cr_list_widget_set_default_drop_action(qt6cr_handle_t handle, int action) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget != nullptr) {
+    list_widget->setDefaultDropAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
+bool qt6cr_list_widget_move_item(qt6cr_handle_t handle, int from, int to) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget == nullptr || from < 0 || to < 0 || from >= list_widget->count() || to >= list_widget->count()) {
+    return false;
+  }
+
+  if (from == to) {
+    return true;
+  }
+
+  auto *model = list_widget->model();
+  if (model != nullptr && model->moveRow(QModelIndex(), from, QModelIndex(), to > from ? to + 1 : to)) {
+    return true;
+  }
+
+  auto *item = list_widget->takeItem(from);
+
+  if (item == nullptr) {
+    return false;
+  }
+
+  list_widget->insertItem(to, item);
+  return true;
+}
+
+void qt6cr_list_widget_emit_item_double_clicked(qt6cr_handle_t handle, int index) {
+  auto *list_widget = static_cast<CrystalListWidget *>(as_list_widget(handle));
+  auto *item = list_widget == nullptr ? nullptr : list_widget->item(index);
+
+  if (list_widget != nullptr && item != nullptr) {
+    list_widget->emitItemDoubleClickedBridge(item);
+  }
+}
+
 void qt6cr_list_widget_on_current_row_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   auto *list_widget = as_list_widget(handle);
 
@@ -4899,6 +5105,42 @@ void qt6cr_list_widget_on_current_row_changed(qt6cr_handle_t handle, qt6cr_int_c
 
   QObject::connect(list_widget, &QListWidget::currentRowChanged, list_widget, [callback, userdata](int row) {
     callback(userdata, row);
+  });
+}
+
+void qt6cr_list_widget_on_item_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(list_widget, &QListWidget::itemChanged, list_widget, [callback, userdata](QListWidgetItem *item) {
+    callback(userdata, item);
+  });
+}
+
+void qt6cr_list_widget_on_item_double_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(list_widget, &QListWidget::itemDoubleClicked, list_widget, [callback, userdata](QListWidgetItem *item) {
+    callback(userdata, item);
+  });
+}
+
+void qt6cr_list_widget_on_rows_moved(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *list_widget = as_list_widget(handle);
+
+  if (list_widget == nullptr || callback == nullptr || list_widget->model() == nullptr) {
+    return;
+  }
+
+  QObject::connect(list_widget->model(), &QAbstractItemModel::rowsMoved, list_widget, [callback, userdata](const QModelIndex &, int, int, const QModelIndex &, int) {
+    callback(userdata);
   });
 }
 
