@@ -1,5 +1,25 @@
 require "./spec_helper"
 
+private class EditorVerticalSliceSpecState
+  property active_layer : String
+  property zoom : Float64
+  property pan_x : Float64
+  property pan_y : Float64
+  property dragging : Bool
+  property last_pointer : Qt6::PointF
+  property accent : Qt6::Color
+
+  def initialize
+    @active_layer = "Terrain"
+    @zoom = 1.0
+    @pan_x = 24.0
+    @pan_y = 28.0
+    @dragging = false
+    @last_pointer = Qt6::PointF.new(0.0, 0.0)
+    @accent = Qt6::Color.new(62, 130, 109)
+  end
+end
+
 describe Qt6 do
   it "renders into images and pixmaps with paths and transforms" do
     app
@@ -984,6 +1004,215 @@ describe Qt6 do
     units_index.release
     list_view.release
     tree_view.release
+  end
+
+  it "hosts a vertical editor slice with docks, canvas interaction, and PNG export" do
+    application = app
+    state = EditorVerticalSliceSpecState.new
+    main = Qt6::MainWindow.new
+    main.window_title = "Vertical Slice Spec"
+    main.resize(960, 680)
+    status_bar = main.status_bar
+    canvas = Qt6::EventWidget.new
+    canvas.resize(720, 480)
+    export_path = File.join(Dir.tempdir, "crystal-qt6-vertical-slice-#{Process.pid}.png")
+
+    grid_pen = Qt6::QPen.new(Qt6::Color.new(198, 206, 214), 1.0)
+    frame_pen = Qt6::QPen.new(Qt6::Color.new(72, 80, 90), 2.0)
+    route_pen = Qt6::QPen.new(state.accent, 3.0)
+    hud_font = Qt6::QFont.new(point_size: 11, bold: true)
+
+    scene_to_view = ->(point : Qt6::PointF) do
+      Qt6::PointF.new(state.pan_x + point.x * state.zoom, state.pan_y + point.y * state.zoom)
+    end
+
+    canvas.on_mouse_press do |event|
+      state.dragging = true
+      state.last_pointer = event.position
+    end
+
+    canvas.on_mouse_move do |event|
+      next unless state.dragging
+
+      state.pan_x += event.position.x - state.last_pointer.x
+      state.pan_y += event.position.y - state.last_pointer.y
+      state.last_pointer = event.position
+      canvas.update
+    end
+
+    canvas.on_mouse_release do |_event|
+      state.dragging = false
+    end
+
+    canvas.on_wheel do |event|
+      state.zoom = (state.zoom * (event.angle_delta.y >= 0 ? 1.1 : 0.9)).clamp(0.5, 3.0)
+      canvas.update
+    end
+
+    canvas.on_paint_with_painter do |event, painter|
+      painter.fill_rect(event.rect, Qt6::Color.new(245, 243, 238))
+
+      scene_rect = Qt6::RectF.new(0.0, 0.0, 520.0, 320.0)
+      painter.pen = frame_pen
+      painter.brush = Qt6::Color.new(255, 255, 255)
+      painter.draw_rect(Qt6::RectF.new(state.pan_x, state.pan_y, scene_rect.width * state.zoom, scene_rect.height * state.zoom))
+
+      painter.pen = grid_pen
+      x = 0
+      while x <= scene_rect.width
+        painter.draw_line(scene_to_view.call(Qt6::PointF.new(x.to_f, 0.0)), scene_to_view.call(Qt6::PointF.new(x.to_f, scene_rect.height)))
+        x += 48
+      end
+
+      y = 0
+      while y <= scene_rect.height
+        painter.draw_line(scene_to_view.call(Qt6::PointF.new(0.0, y.to_f)), scene_to_view.call(Qt6::PointF.new(scene_rect.width, y.to_f)))
+        y += 48
+      end
+
+      route_pen.color = state.accent
+      painter.pen = route_pen
+      painter.brush = state.accent
+      points = case state.active_layer
+               when "Units"
+                 [
+                   Qt6::PointF.new(96.0, 88.0),
+                   Qt6::PointF.new(180.0, 156.0),
+                   Qt6::PointF.new(276.0, 132.0),
+                 ]
+               else
+                 [
+                   Qt6::PointF.new(112.0, 92.0),
+                   Qt6::PointF.new(210.0, 142.0),
+                   Qt6::PointF.new(308.0, 118.0),
+                 ]
+               end.map { |point| scene_to_view.call(point) }
+
+      points.each_cons(2) do |segment|
+        painter.draw_line(segment[0], segment[1])
+      end
+
+      points.each_with_index do |point, index|
+        size = 18.0 * state.zoom
+        painter.draw_ellipse(Qt6::RectF.new(point.x - size / 2.0, point.y - size / 2.0, size, size))
+        painter.draw_text(Qt6::PointF.new(point.x + size / 2.0 + 6.0, point.y + 4.0), "#{index + 1}")
+      end
+
+      painter.font = hud_font
+      painter.pen = Qt6::Color.new(50, 56, 62)
+      painter.draw_text(Qt6::PointF.new(18.0, 24.0), "Layer #{state.active_layer} | zoom #{state.zoom.round(2)}x")
+    end
+
+    main.central_widget = canvas
+
+    layer_model = Qt6::StandardItemModel.new(main)
+    terrain_item = Qt6::StandardItem.new("Terrain")
+    terrain_item.set_data(10, Qt6::ItemDataRole::User)
+    units_item = Qt6::StandardItem.new("Units")
+    units_item.set_data(20, Qt6::ItemDataRole::User)
+    layer_model.set_item(0, 0, terrain_item)
+    layer_model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+    layer_model.set_item(1, 0, units_item)
+    layer_model.set_item(1, 1, Qt6::StandardItem.new("Visible"))
+    layer_model.set_horizontal_header_label(0, "Layer")
+    layer_model.set_horizontal_header_label(1, "State")
+
+    proxy_model = Qt6::SortFilterProxyModel.new(main)
+    proxy_model.source_model = layer_model
+    proxy_model.sort_role = Qt6::ItemDataRole::User
+    proxy_model.sort
+
+    tree_view = Qt6::TreeView.new
+    tree_view.model = proxy_model
+    selection_model = Qt6::ItemSelectionModel.new(proxy_model, tree_view)
+    tree_view.selection_model = selection_model
+    tree_view.on_current_index_changed do
+      current = tree_view.current_index
+      if current.valid?
+        name_index = proxy_model.index(current.row, 0)
+        state.active_layer = proxy_model.data(name_index).to_s
+        state.accent = state.active_layer == "Units" ? Qt6::Color.new(204, 86, 62) : Qt6::Color.new(62, 130, 109)
+        status_bar.show_message("Active #{state.active_layer}", 1200)
+        name_index.release
+      end
+      current.release
+      canvas.update
+    end
+
+    layers_dock = Qt6::DockWidget.new("Layers", main)
+    layers_dock.widget = Qt6::Widget.new.tap do |panel|
+      panel.vbox do |column|
+        column << Qt6::Label.new("Manager")
+        column << tree_view
+      end
+    end
+    main.add_dock_widget(layers_dock, Qt6::DockArea::Left)
+
+    inspector_dock = Qt6::DockWidget.new("Inspector", main)
+    inspector_dock.widget = Qt6::Widget.new.tap do |panel|
+      panel.form do |form|
+        form.add_row("Layer", Qt6::Label.new("Driven by the manager dock"))
+        form.add_row(Qt6::PushButton.new("Reset View").tap do |button|
+          button.on_clicked do
+            state.zoom = 1.0
+            state.pan_x = 24.0
+            state.pan_y = 28.0
+            canvas.update
+          end
+        end)
+      end
+    end
+    main.add_dock_widget(inspector_dock, Qt6::DockArea::Right)
+
+    file_menu = main.menu_bar.add_menu("File")
+    export_action = Qt6::Action.new("Export PNG", main)
+    export_action.shortcut = "Ctrl+E"
+    export_action.on_triggered do
+      canvas.grab.save(export_path).should be_true
+      status_bar.show_message("Exported PNG", 1200)
+    end
+    file_menu << export_action
+
+    toolbar = Qt6::ToolBar.new("Editor", main)
+    toolbar << export_action
+    main.add_tool_bar(toolbar)
+
+    initial_index = proxy_model.index(1, 0)
+    tree_view.current_index = initial_index
+    initial_index.release
+
+    main.show
+    application.process_events
+
+    zoom_before = state.zoom
+    pan_x_before = state.pan_x
+    pan_y_before = state.pan_y
+
+    canvas.simulate_wheel(Qt6::PointF.new(180.0, 180.0))
+    canvas.simulate_mouse_press(Qt6::PointF.new(140.0, 140.0))
+    canvas.simulate_mouse_move(Qt6::PointF.new(196.0, 188.0), buttons: 1)
+    canvas.simulate_mouse_release(Qt6::PointF.new(196.0, 188.0))
+    5.times { application.process_events }
+
+    export_action.trigger
+    application.process_events
+
+    png_header = File.open(export_path) do |file|
+      bytes = Bytes.new(8)
+      file.read_fully(bytes)
+      bytes
+    end
+
+    state.active_layer.should eq("Units")
+    proxy_model.header_data.should eq("Layer")
+    tree_view.selection_model.not_nil!.current_index.row.should eq(1)
+    state.zoom.should be > zoom_before
+    state.pan_x.should be > pan_x_before
+    state.pan_y.should be > pan_y_before
+    File.exists?(export_path).should be_true
+    png_header.should eq(Bytes[0x89_u8, 0x50_u8, 0x4E_u8, 0x47_u8, 0x0D_u8, 0x0A_u8, 0x1A_u8, 0x0A_u8])
+
+    main.release
   end
 
   it "exposes geometry types and custom widget event hooks" do
