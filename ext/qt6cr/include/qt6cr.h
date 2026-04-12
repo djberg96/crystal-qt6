@@ -189,6 +189,20 @@ bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path);
 qt6cr_color_t qt6cr_qimage_pixel_color(qt6cr_handle_t handle, int x, int y);
 void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_color_t color);
 
+qt6cr_handle_t qt6cr_qimage_reader_create(const char *file_name, const char *format);
+void qt6cr_qimage_reader_destroy(qt6cr_handle_t handle);
+char *qt6cr_qimage_reader_file_name(qt6cr_handle_t handle);
+void qt6cr_qimage_reader_set_file_name(qt6cr_handle_t handle, const char *file_name);
+char *qt6cr_qimage_reader_format(qt6cr_handle_t handle);
+void qt6cr_qimage_reader_set_format(qt6cr_handle_t handle, const char *format);
+qt6cr_size_t qt6cr_qimage_reader_size(qt6cr_handle_t handle);
+bool qt6cr_qimage_reader_can_read(qt6cr_handle_t handle);
+bool qt6cr_qimage_reader_auto_transform(qt6cr_handle_t handle);
+void qt6cr_qimage_reader_set_auto_transform(qt6cr_handle_t handle, bool value);
+char *qt6cr_qimage_reader_error_string(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qimage_reader_read(qt6cr_handle_t handle);
+bool qt6cr_qimage_reader_read_into(qt6cr_handle_t handle, qt6cr_handle_t image);
+
 qt6cr_handle_t qt6cr_qpixmap_create(int width, int height);
 qt6cr_handle_t qt6cr_qpixmap_create_from_file(const char *path);
 void qt6cr_qpixmap_destroy(qt6cr_handle_t handle);

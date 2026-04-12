@@ -172,6 +172,20 @@ module Qt6
     fun qt6cr_qimage_pixel_color = qt6cr_qimage_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int) : ColorValue
     fun qt6cr_qimage_set_pixel_color = qt6cr_qimage_set_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int, color : ColorValue)
 
+    fun qt6cr_qimage_reader_create = qt6cr_qimage_reader_create(file_name : UInt8*, format : UInt8*) : Handle
+    fun qt6cr_qimage_reader_destroy = qt6cr_qimage_reader_destroy(handle : Handle)
+    fun qt6cr_qimage_reader_file_name = qt6cr_qimage_reader_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qimage_reader_set_file_name = qt6cr_qimage_reader_set_file_name(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qimage_reader_format = qt6cr_qimage_reader_format(handle : Handle) : UInt8*
+    fun qt6cr_qimage_reader_set_format = qt6cr_qimage_reader_set_format(handle : Handle, format : UInt8*)
+    fun qt6cr_qimage_reader_size = qt6cr_qimage_reader_size(handle : Handle) : SizeValue
+    fun qt6cr_qimage_reader_can_read = qt6cr_qimage_reader_can_read(handle : Handle) : Bool
+    fun qt6cr_qimage_reader_auto_transform = qt6cr_qimage_reader_auto_transform(handle : Handle) : Bool
+    fun qt6cr_qimage_reader_set_auto_transform = qt6cr_qimage_reader_set_auto_transform(handle : Handle, value : Bool)
+    fun qt6cr_qimage_reader_error_string = qt6cr_qimage_reader_error_string(handle : Handle) : UInt8*
+    fun qt6cr_qimage_reader_read = qt6cr_qimage_reader_read(handle : Handle) : Handle
+    fun qt6cr_qimage_reader_read_into = qt6cr_qimage_reader_read_into(handle : Handle, image : Handle) : Bool
+
     fun qt6cr_qpixmap_create = qt6cr_qpixmap_create(width : LibC::Int, height : LibC::Int) : Handle
     fun qt6cr_qpixmap_create_from_file = qt6cr_qpixmap_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qpixmap_destroy = qt6cr_qpixmap_destroy(handle : Handle)

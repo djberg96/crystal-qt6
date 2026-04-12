@@ -41,6 +41,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QImage>
+#include <QImageReader>
 #include <QObject>
 #include <QPaintEvent>
 #include <QPainter>
@@ -544,6 +545,10 @@ QColorDialog *as_color_dialog(qt6cr_handle_t handle) {
 
 QImage *as_qimage(qt6cr_handle_t handle) {
   return static_cast<QImage *>(handle);
+}
+
+QImageReader *as_qimage_reader(qt6cr_handle_t handle) {
+  return static_cast<QImageReader *>(handle);
 }
 
 QAbstractItemModel *as_abstract_item_model(qt6cr_handle_t handle) {
@@ -1518,6 +1523,81 @@ void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_col
   if (image != nullptr) {
     image->setPixelColor(x, y, from_color(color));
   }
+}
+
+qt6cr_handle_t qt6cr_qimage_reader_create(const char *file_name, const char *format) {
+  return new QImageReader(
+      QString::fromUtf8(file_name == nullptr ? "" : file_name),
+      QByteArray(format == nullptr ? "" : format));
+}
+
+void qt6cr_qimage_reader_destroy(qt6cr_handle_t handle) {
+  delete as_qimage_reader(handle);
+}
+
+char *qt6cr_qimage_reader_file_name(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader == nullptr ? duplicate_string("") : duplicate_string(reader->fileName());
+}
+
+void qt6cr_qimage_reader_set_file_name(qt6cr_handle_t handle, const char *file_name) {
+  auto *reader = as_qimage_reader(handle);
+
+  if (reader != nullptr) {
+    reader->setFileName(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+char *qt6cr_qimage_reader_format(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader == nullptr ? duplicate_string("") : duplicate_string(QString::fromLatin1(reader->format()));
+}
+
+void qt6cr_qimage_reader_set_format(qt6cr_handle_t handle, const char *format) {
+  auto *reader = as_qimage_reader(handle);
+
+  if (reader != nullptr) {
+    reader->setFormat(QByteArray(format == nullptr ? "" : format));
+  }
+}
+
+qt6cr_size_t qt6cr_qimage_reader_size(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader == nullptr ? qt6cr_size_t{0, 0} : to_size(reader->size());
+}
+
+bool qt6cr_qimage_reader_can_read(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader != nullptr && reader->canRead();
+}
+
+bool qt6cr_qimage_reader_auto_transform(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader != nullptr && reader->autoTransform();
+}
+
+void qt6cr_qimage_reader_set_auto_transform(qt6cr_handle_t handle, bool value) {
+  auto *reader = as_qimage_reader(handle);
+
+  if (reader != nullptr) {
+    reader->setAutoTransform(value);
+  }
+}
+
+char *qt6cr_qimage_reader_error_string(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader == nullptr ? duplicate_string("") : duplicate_string(reader->errorString());
+}
+
+qt6cr_handle_t qt6cr_qimage_reader_read(qt6cr_handle_t handle) {
+  auto *reader = as_qimage_reader(handle);
+  return reader == nullptr ? new QImage() : new QImage(reader->read());
+}
+
+bool qt6cr_qimage_reader_read_into(qt6cr_handle_t handle, qt6cr_handle_t image) {
+  auto *reader = as_qimage_reader(handle);
+  auto *target = as_qimage(image);
+  return reader != nullptr && target != nullptr && reader->read(target);
 }
 
 qt6cr_handle_t qt6cr_qpixmap_create(int width, int height) {

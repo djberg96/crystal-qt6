@@ -17,7 +17,7 @@ Larger editor-style applications still typically need:
 - heavy use of `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, fonts, pens, brushes, and geometry types
 - export paths for formats such as PDF and SVG
 - richer editor controls, containers, and list/tree surfaces
-- richer clipboard/data-transfer features beyond the new MIME and drop-receive basics, advanced image-loading helpers, and a few remaining document-oriented APIs
+- richer clipboard/data-transfer features beyond the new MIME and drop-receive basics, a few higher-end image-loading helpers beyond the new `QImageReader` basics, and a few remaining document-oriented APIs
 - image processing or other high-throughput data operations outside simple UI code
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
@@ -27,7 +27,7 @@ The right strategy is to grow `crystal-qt6` in layers until one substantial subs
 Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core areas needed for editor-style applications:
 
 - `QtCore`-style foundations through `QObject`, Crystal-side `Signal`, `QTimer`, and geometry/event value types
-- `QtGui` rendering through `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, `QFont`, `QFontMetrics`, and `QFontMetricsF`
+- `QtGui` rendering through `QPainter`, `QImage`, `QImageReader`, `QPixmap`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, `QFont`, `QFontMetrics`, and `QFontMetricsF`
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
@@ -101,7 +101,7 @@ Goal: make Crystal capable of expressing real Qt object graphs.
 
 ## Phase 2: Main Window And Shell Widgets
 
-Status: mostly complete
+Status: closer to complete for the current roadmap target
 
 Goal: support real desktop application shells.
 
@@ -177,14 +177,13 @@ Goal: support the heavy `QtGui` drawing usage common to editor-style application
 - `QTransform`
 - `QImage`
 - `QPixmap`
-- `QImageReader`
 - gradients and composition features as needed
 
 ### Acceptance Criteria
 
 - Render grids, text labels, paths, fills, and image assets from Crystal.
 - Export a rendered image buffer to PNG.
-- Remaining gaps in this phase are helper and polish APIs such as `QPainterPathStroker`, `QPolygonF`, `QImageReader`, and gradient/composition features.
+- Remaining gaps in this phase are helper and polish APIs such as `QPainterPathStroker`, `QPolygonF`, scaled/stream-backed image reading if needed, and gradient/composition features.
 
 ## Phase 5: Forms And Editor Controls
 
@@ -234,7 +233,7 @@ Goal: close the feature gap for external outputs.
 ### Acceptance Criteria
 
 - Reproduce current PNG, PDF, and SVG export behavior for a representative sample document.
-- PDF and SVG export are already in place; the remaining work here is mostly richer clipboard/data-transfer support beyond the new `QMimeData` basics, `QImageReader`-class helpers if needed, and any truly needed print-related APIs.
+- PDF and SVG export are already in place; the remaining work here is mostly richer clipboard/data-transfer support beyond the new `QMimeData` basics, any additional image-reader capabilities the real editor slice exposes, and any truly needed print-related APIs.
 
 ## Phase 7: High-Throughput Data And Image Processing
 
