@@ -588,6 +588,68 @@ describe Qt6 do
     window.release
   end
 
+  it "supports progress dialogs and splash screens" do
+    application = app
+    window = Qt6::MainWindow.new
+    progress = Qt6::ProgressDialog.new(window, label_text: "Loading tiles", cancel_button_text: "Stop", minimum: 0, maximum: 10)
+
+    progress.label_text.should eq("Loading tiles")
+    progress.minimum.should eq(0)
+    progress.maximum.should eq(10)
+    progress.minimum_duration = 0
+    progress.minimum_duration.should eq(0)
+    progress.auto_close = false
+    progress.auto_reset = false
+    progress.auto_close?.should be_false
+    progress.auto_reset?.should be_false
+    progress.range = 1..5
+    progress.minimum.should eq(1)
+    progress.maximum.should eq(5)
+    progress.value = 2
+    progress.value.should eq(2)
+    progress.was_canceled?.should be_false
+
+    cancel_timer = Qt6::QTimer.new(progress)
+    cancel_timer.single_shot = true
+    cancel_timer.on_timeout do
+      progress.cancel
+    end
+    progress.show
+    cancel_timer.start(0)
+    10.times do
+      application.process_events
+      break if progress.was_canceled?
+    end
+
+    progress.was_canceled?.should be_true
+    progress.reset
+
+    splash_image = Qt6::QImage.new(24, 16)
+    splash_image.fill(Qt6::Color.new(250, 240, 220))
+    splash_image.set_pixel_color(2, 2, Qt6::Color.new(30, 90, 180))
+    splash = Qt6::SplashScreen.new(splash_image.to_pixmap)
+    replacement_pixmap = Qt6::QPixmap.new(12, 12)
+    replacement_pixmap.fill(Qt6::Color.new(18, 36, 72))
+
+    splash.pixmap.null?.should be_false
+    splash.show
+    splash.show_message("Booting", Qt6::Color.new(12, 34, 56))
+    application.process_events
+    splash.message.should eq("Booting")
+    splash.pixmap = replacement_pixmap
+    splash.pixmap.size.should eq(Qt6::Size.new(12, 12))
+    window.show
+    application.process_events
+    splash.finish(window)
+    application.process_events
+    splash.visible?.should be_false
+    splash.clear_message
+    splash.message.should eq("")
+
+    splash.release
+    window.release
+  end
+
   it "supports action shortcuts and exclusive action groups" do
     app
     window = Qt6::MainWindow.new

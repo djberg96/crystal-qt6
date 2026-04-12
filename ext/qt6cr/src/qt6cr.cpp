@@ -52,6 +52,7 @@
 #include <QPen>
 #include <QPdfWriter>
 #include <QPixmap>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QKeySequence>
@@ -66,6 +67,7 @@
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 #include <QGroupBox>
+#include <QSplashScreen>
 #include <QSvgGenerator>
 #include <QSvgRenderer>
 #include <QSvgWidget>
@@ -545,6 +547,10 @@ QColorDialog *as_color_dialog(qt6cr_handle_t handle) {
   return static_cast<QColorDialog *>(handle);
 }
 
+QProgressDialog *as_progress_dialog(qt6cr_handle_t handle) {
+  return static_cast<QProgressDialog *>(handle);
+}
+
 QImage *as_qimage(qt6cr_handle_t handle) {
   return static_cast<QImage *>(handle);
 }
@@ -555,6 +561,10 @@ QImageReader *as_qimage_reader(qt6cr_handle_t handle) {
 
 QIcon *as_qicon(qt6cr_handle_t handle) {
   return static_cast<QIcon *>(handle);
+}
+
+QSplashScreen *as_splash_screen(qt6cr_handle_t handle) {
+  return static_cast<QSplashScreen *>(handle);
 }
 
 QAbstractItemModel *as_abstract_item_model(qt6cr_handle_t handle) {
@@ -1604,6 +1614,155 @@ bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle) {
   return color_dialog != nullptr && color_dialog->testOption(QColorDialog::ShowAlphaChannel);
 }
 
+qt6cr_handle_t qt6cr_progress_dialog_create(qt6cr_handle_t parent, const char *label_text, const char *cancel_button_text, int minimum, int maximum) {
+  return new QProgressDialog(
+      QString::fromUtf8(label_text == nullptr ? "" : label_text),
+      QString::fromUtf8(cancel_button_text == nullptr ? "" : cancel_button_text),
+      minimum,
+      maximum,
+      as_widget(parent));
+}
+
+char *qt6cr_progress_dialog_label_text(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog == nullptr ? duplicate_string("") : duplicate_string(dialog->labelText());
+}
+
+void qt6cr_progress_dialog_set_label_text(qt6cr_handle_t handle, const char *label_text) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setLabelText(QString::fromUtf8(label_text == nullptr ? "" : label_text));
+  }
+}
+
+void qt6cr_progress_dialog_set_cancel_button_text(qt6cr_handle_t handle, const char *cancel_button_text) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setCancelButtonText(QString::fromUtf8(cancel_button_text == nullptr ? "" : cancel_button_text));
+  }
+}
+
+int qt6cr_progress_dialog_minimum(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog == nullptr ? 0 : dialog->minimum();
+}
+
+void qt6cr_progress_dialog_set_minimum(qt6cr_handle_t handle, int value) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setMinimum(value);
+  }
+}
+
+int qt6cr_progress_dialog_maximum(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog == nullptr ? 0 : dialog->maximum();
+}
+
+void qt6cr_progress_dialog_set_maximum(qt6cr_handle_t handle, int value) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setMaximum(value);
+  }
+}
+
+void qt6cr_progress_dialog_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setRange(minimum, maximum);
+  }
+}
+
+int qt6cr_progress_dialog_value(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog == nullptr ? 0 : dialog->value();
+}
+
+void qt6cr_progress_dialog_set_value(qt6cr_handle_t handle, int value) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setValue(value);
+  }
+}
+
+bool qt6cr_progress_dialog_auto_close(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog != nullptr && dialog->autoClose();
+}
+
+void qt6cr_progress_dialog_set_auto_close(qt6cr_handle_t handle, bool value) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setAutoClose(value);
+  }
+}
+
+bool qt6cr_progress_dialog_auto_reset(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog != nullptr && dialog->autoReset();
+}
+
+void qt6cr_progress_dialog_set_auto_reset(qt6cr_handle_t handle, bool value) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setAutoReset(value);
+  }
+}
+
+int qt6cr_progress_dialog_minimum_duration(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog == nullptr ? 0 : dialog->minimumDuration();
+}
+
+void qt6cr_progress_dialog_set_minimum_duration(qt6cr_handle_t handle, int value) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setMinimumDuration(value);
+  }
+}
+
+bool qt6cr_progress_dialog_was_canceled(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog != nullptr && dialog->wasCanceled();
+}
+
+void qt6cr_progress_dialog_cancel(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->cancel();
+  }
+}
+
+void qt6cr_progress_dialog_reset(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->reset();
+  }
+}
+
+void qt6cr_progress_dialog_on_canceled(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *dialog = as_progress_dialog(handle);
+
+  if (dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dialog, &QProgressDialog::canceled, dialog, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
 qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format) {
   return new QImage(width, height, image_format_from_int(format));
 }
@@ -1807,6 +1966,55 @@ void qt6cr_qicon_destroy(qt6cr_handle_t handle) {
 bool qt6cr_qicon_is_null(qt6cr_handle_t handle) {
   auto *icon = as_qicon(handle);
   return icon == nullptr || icon->isNull();
+}
+
+qt6cr_handle_t qt6cr_splash_screen_create(qt6cr_handle_t pixmap) {
+  auto *image = as_qpixmap(pixmap);
+  return image == nullptr ? new QSplashScreen() : new QSplashScreen(*image);
+}
+
+qt6cr_handle_t qt6cr_splash_screen_pixmap(qt6cr_handle_t handle) {
+  auto *splash = as_splash_screen(handle);
+  return splash == nullptr ? new QPixmap() : new QPixmap(splash->pixmap());
+}
+
+void qt6cr_splash_screen_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
+  auto *splash = as_splash_screen(handle);
+  auto *image = as_qpixmap(pixmap);
+
+  if (splash != nullptr && image != nullptr) {
+    splash->setPixmap(*image);
+  }
+}
+
+char *qt6cr_splash_screen_message(qt6cr_handle_t handle) {
+  auto *splash = as_splash_screen(handle);
+  return splash == nullptr ? duplicate_string("") : duplicate_string(splash->message());
+}
+
+void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, qt6cr_color_t color) {
+  auto *splash = as_splash_screen(handle);
+
+  if (splash != nullptr) {
+    splash->showMessage(QString::fromUtf8(message == nullptr ? "" : message), Qt::AlignLeft, from_color(color));
+  }
+}
+
+void qt6cr_splash_screen_clear_message(qt6cr_handle_t handle) {
+  auto *splash = as_splash_screen(handle);
+
+  if (splash != nullptr) {
+    splash->clearMessage();
+  }
+}
+
+void qt6cr_splash_screen_finish(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *splash = as_splash_screen(handle);
+  auto *target = as_widget(widget);
+
+  if (splash != nullptr && target != nullptr) {
+    splash->finish(target);
+  }
 }
 
 qt6cr_handle_t qt6cr_model_index_create(void) {

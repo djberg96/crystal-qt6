@@ -181,6 +181,28 @@ module Qt6
     fun qt6cr_color_dialog_set_show_alpha_channel = qt6cr_color_dialog_set_show_alpha_channel(handle : Handle, value : Bool)
     fun qt6cr_color_dialog_show_alpha_channel = qt6cr_color_dialog_show_alpha_channel(handle : Handle) : Bool
 
+    fun qt6cr_progress_dialog_create = qt6cr_progress_dialog_create(parent : Handle, label_text : UInt8*, cancel_button_text : UInt8*, minimum : LibC::Int, maximum : LibC::Int) : Handle
+    fun qt6cr_progress_dialog_label_text = qt6cr_progress_dialog_label_text(handle : Handle) : UInt8*
+    fun qt6cr_progress_dialog_set_label_text = qt6cr_progress_dialog_set_label_text(handle : Handle, label_text : UInt8*)
+    fun qt6cr_progress_dialog_set_cancel_button_text = qt6cr_progress_dialog_set_cancel_button_text(handle : Handle, cancel_button_text : UInt8*)
+    fun qt6cr_progress_dialog_minimum = qt6cr_progress_dialog_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_progress_dialog_set_minimum = qt6cr_progress_dialog_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_dialog_maximum = qt6cr_progress_dialog_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_progress_dialog_set_maximum = qt6cr_progress_dialog_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_dialog_set_range = qt6cr_progress_dialog_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
+    fun qt6cr_progress_dialog_value = qt6cr_progress_dialog_value(handle : Handle) : LibC::Int
+    fun qt6cr_progress_dialog_set_value = qt6cr_progress_dialog_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_dialog_auto_close = qt6cr_progress_dialog_auto_close(handle : Handle) : Bool
+    fun qt6cr_progress_dialog_set_auto_close = qt6cr_progress_dialog_set_auto_close(handle : Handle, value : Bool)
+    fun qt6cr_progress_dialog_auto_reset = qt6cr_progress_dialog_auto_reset(handle : Handle) : Bool
+    fun qt6cr_progress_dialog_set_auto_reset = qt6cr_progress_dialog_set_auto_reset(handle : Handle, value : Bool)
+    fun qt6cr_progress_dialog_minimum_duration = qt6cr_progress_dialog_minimum_duration(handle : Handle) : LibC::Int
+    fun qt6cr_progress_dialog_set_minimum_duration = qt6cr_progress_dialog_set_minimum_duration(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_dialog_was_canceled = qt6cr_progress_dialog_was_canceled(handle : Handle) : Bool
+    fun qt6cr_progress_dialog_cancel = qt6cr_progress_dialog_cancel(handle : Handle)
+    fun qt6cr_progress_dialog_reset = qt6cr_progress_dialog_reset(handle : Handle)
+    fun qt6cr_progress_dialog_on_canceled = qt6cr_progress_dialog_on_canceled(handle : Handle, callback : (Handle ->), userdata : Handle)
+
     fun qt6cr_qimage_create = qt6cr_qimage_create(width : LibC::Int, height : LibC::Int, format : LibC::Int) : Handle
     fun qt6cr_qimage_create_from_file = qt6cr_qimage_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qimage_destroy = qt6cr_qimage_destroy(handle : Handle)
@@ -223,6 +245,14 @@ module Qt6
     fun qt6cr_qicon_create_from_file = qt6cr_qicon_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qicon_destroy = qt6cr_qicon_destroy(handle : Handle)
     fun qt6cr_qicon_is_null = qt6cr_qicon_is_null(handle : Handle) : Bool
+
+    fun qt6cr_splash_screen_create = qt6cr_splash_screen_create(pixmap : Handle) : Handle
+    fun qt6cr_splash_screen_pixmap = qt6cr_splash_screen_pixmap(handle : Handle) : Handle
+    fun qt6cr_splash_screen_set_pixmap = qt6cr_splash_screen_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_splash_screen_message = qt6cr_splash_screen_message(handle : Handle) : UInt8*
+    fun qt6cr_splash_screen_show_message = qt6cr_splash_screen_show_message(handle : Handle, message : UInt8*, color : ColorValue)
+    fun qt6cr_splash_screen_clear_message = qt6cr_splash_screen_clear_message(handle : Handle)
+    fun qt6cr_splash_screen_finish = qt6cr_splash_screen_finish(handle : Handle, widget : Handle)
 
     fun qt6cr_model_index_create = qt6cr_model_index_create : Handle
     fun qt6cr_model_index_destroy = qt6cr_model_index_destroy(handle : Handle)

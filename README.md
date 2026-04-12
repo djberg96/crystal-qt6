@@ -120,7 +120,7 @@ app.run
 - `Qt6::QImage`, `Qt6::QImageReader`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, probed image-reader metadata, file-backed and in-memory SVG loading, and `QSvgWidget#renderer`
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
-- `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, and `Qt6::InputDialog` for standard dialogs
+- `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, `Qt6::InputDialog`, `Qt6::ProgressDialog`, and `Qt6::SplashScreen` for standard dialogs and shell polish widgets
 - convenience helpers such as `MessageBox.information`, `MessageBox.question`, `ColorDialog.get_color`, and `InputDialog.get_text` / `get_int` / `get_double`
 - `Qt6::InputDialogInputMode` plus message-box and file-dialog enums for dialog configuration
 - `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
@@ -178,4 +178,4 @@ The next logical additions are:
 2. one real inspector-style example that wires those controls into a custom canvas with live updates
 3. drag-and-drop support for editor workflows and data transfer
 4. richer abstract-model bridges, additional delegate hooks, and remaining rendering/document helpers such as gradients/composition features
-5. optional shell polish widgets such as `QProgressDialog` and `QSplashScreen` if the maintained editor slice exposes a concrete need
+5. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface
