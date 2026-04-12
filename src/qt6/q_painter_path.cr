@@ -1,6 +1,10 @@
 module Qt6
   # Wraps `QPainterPath` for vector path construction.
   class QPainterPath < NativeResource
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates an empty painter path.
     def initialize
       super(LibQt6.qt6cr_qpainter_path_create)
@@ -46,6 +50,12 @@ module Qt6
       self
     end
 
+    # Adds a polygon to the path.
+    def add_polygon(polygon : QPolygonF) : self
+      LibQt6.qt6cr_qpainter_path_add_polygon(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
     # Closes the current subpath.
     def close_subpath : self
       LibQt6.qt6cr_qpainter_path_close_subpath(to_unsafe)
@@ -59,7 +69,17 @@ module Qt6
 
     # Returns a transformed copy of the path.
     def transformed(transform : QTransform) : QPainterPath
-      QPainterPath.new(LibQt6.qt6cr_qpainter_path_transformed(to_unsafe, transform.to_unsafe), true)
+      QPainterPath.wrap(LibQt6.qt6cr_qpainter_path_transformed(to_unsafe, transform.to_unsafe), true)
+    end
+
+    # Returns `true` if the path contains the given point.
+    def contains(point : PointF) : Bool
+      LibQt6.qt6cr_qpainter_path_contains(to_unsafe, point.to_native)
+    end
+
+    # Returns `true` if the path has no elements.
+    def empty? : Bool
+      LibQt6.qt6cr_qpainter_path_is_empty(to_unsafe)
     end
 
     protected def destroy_native : Nil

@@ -48,10 +48,12 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPainterPathStroker>
 #include <QPageSize>
 #include <QPen>
 #include <QPdfWriter>
 #include <QPixmap>
+#include <QPolygonF>
 #include <QProgressDialog>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
@@ -631,8 +633,16 @@ QTransform *as_qtransform(qt6cr_handle_t handle) {
   return static_cast<QTransform *>(handle);
 }
 
+QPolygonF *as_qpolygonf(qt6cr_handle_t handle) {
+  return static_cast<QPolygonF *>(handle);
+}
+
 QPainterPath *as_qpainter_path(qt6cr_handle_t handle) {
   return static_cast<QPainterPath *>(handle);
+}
+
+QPainterPathStroker *as_qpainter_path_stroker(qt6cr_handle_t handle) {
+  return static_cast<QPainterPathStroker *>(handle);
 }
 
 QPainter *as_qpainter(qt6cr_handle_t handle) {
@@ -3099,8 +3109,44 @@ void qt6cr_qpen_set_width(qt6cr_handle_t handle, double width) {
   }
 }
 
+int qt6cr_qpen_style(qt6cr_handle_t handle) {
+  auto *pen = as_qpen(handle);
+  return pen == nullptr ? static_cast<int>(Qt::SolidLine) : static_cast<int>(pen->style());
+}
+
+void qt6cr_qpen_set_style(qt6cr_handle_t handle, int style) {
+  auto *pen = as_qpen(handle);
+
+  if (pen != nullptr) {
+    pen->setStyle(static_cast<Qt::PenStyle>(style));
+  }
+}
+
+int qt6cr_qpen_cap_style(qt6cr_handle_t handle) {
+  auto *pen = as_qpen(handle);
+  return pen == nullptr ? static_cast<int>(Qt::SquareCap) : static_cast<int>(pen->capStyle());
+}
+
+void qt6cr_qpen_set_cap_style(qt6cr_handle_t handle, int style) {
+  auto *pen = as_qpen(handle);
+
+  if (pen != nullptr) {
+    pen->setCapStyle(static_cast<Qt::PenCapStyle>(style));
+  }
+}
+
 qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color) {
   return new QBrush(from_color(color));
+}
+
+qt6cr_handle_t qt6cr_qbrush_create_from_pixmap(qt6cr_handle_t pixmap) {
+  auto *source = as_qpixmap(pixmap);
+  return source == nullptr ? nullptr : new QBrush(*source);
+}
+
+qt6cr_handle_t qt6cr_qbrush_create_from_image(qt6cr_handle_t image) {
+  auto *source = as_qimage(image);
+  return source == nullptr ? nullptr : new QBrush(QPixmap::fromImage(*source));
 }
 
 void qt6cr_qbrush_destroy(qt6cr_handle_t handle) {
@@ -3117,6 +3163,20 @@ void qt6cr_qbrush_set_color(qt6cr_handle_t handle, qt6cr_color_t color) {
 
   if (brush != nullptr) {
     brush->setColor(from_color(color));
+  }
+}
+
+qt6cr_handle_t qt6cr_qbrush_transform(qt6cr_handle_t handle) {
+  auto *brush = as_qbrush(handle);
+  return brush == nullptr ? nullptr : new QTransform(brush->transform());
+}
+
+void qt6cr_qbrush_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform) {
+  auto *brush = as_qbrush(handle);
+  auto *matrix = as_qtransform(transform);
+
+  if (brush != nullptr && matrix != nullptr) {
+    brush->setTransform(*matrix);
   }
 }
 
@@ -3306,6 +3366,47 @@ qt6cr_rectf_t qt6cr_qtransform_map_rect(qt6cr_handle_t handle, qt6cr_rectf_t rec
   return transform == nullptr ? rect : to_rectf(transform->mapRect(from_rectf(rect)));
 }
 
+qt6cr_handle_t qt6cr_qtransform_map_path(qt6cr_handle_t handle, qt6cr_handle_t path) {
+  auto *transform = as_qtransform(handle);
+  auto *source = as_qpainter_path(path);
+  return (transform == nullptr || source == nullptr) ? nullptr : new QPainterPath(transform->map(*source));
+}
+
+qt6cr_handle_t qt6cr_qpolygonf_create(void) {
+  return new QPolygonF();
+}
+
+void qt6cr_qpolygonf_destroy(qt6cr_handle_t handle) {
+  delete as_qpolygonf(handle);
+}
+
+void qt6cr_qpolygonf_append(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *polygon = as_qpolygonf(handle);
+
+  if (polygon != nullptr) {
+    polygon->append(from_pointf(point));
+  }
+}
+
+int qt6cr_qpolygonf_size(qt6cr_handle_t handle) {
+  auto *polygon = as_qpolygonf(handle);
+  return polygon == nullptr ? 0 : polygon->size();
+}
+
+qt6cr_pointf_t qt6cr_qpolygonf_at(qt6cr_handle_t handle, int index) {
+  auto *polygon = as_qpolygonf(handle);
+  if (polygon == nullptr || index < 0 || index >= polygon->size()) {
+    return qt6cr_pointf_t{0.0, 0.0};
+  }
+
+  return to_pointf(polygon->at(index));
+}
+
+qt6cr_rectf_t qt6cr_qpolygonf_bounding_rect(qt6cr_handle_t handle) {
+  auto *polygon = as_qpolygonf(handle);
+  return polygon == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(polygon->boundingRect());
+}
+
 qt6cr_handle_t qt6cr_qpainter_path_create(void) {
   return new QPainterPath();
 }
@@ -3362,6 +3463,15 @@ void qt6cr_qpainter_path_add_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect) 
   }
 }
 
+void qt6cr_qpainter_path_add_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *path = as_qpainter_path(handle);
+  auto *shape = as_qpolygonf(polygon);
+
+  if (path != nullptr && shape != nullptr) {
+    path->addPolygon(*shape);
+  }
+}
+
 void qt6cr_qpainter_path_close_subpath(qt6cr_handle_t handle) {
   auto *path = as_qpainter_path(handle);
 
@@ -3379,6 +3489,43 @@ qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_hand
   auto *path = as_qpainter_path(handle);
   auto *matrix = as_qtransform(transform);
   return (path == nullptr || matrix == nullptr) ? nullptr : new QPainterPath(matrix->map(*path));
+}
+
+bool qt6cr_qpainter_path_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *path = as_qpainter_path(handle);
+  return path != nullptr && path->contains(from_pointf(point));
+}
+
+bool qt6cr_qpainter_path_is_empty(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr || path->isEmpty();
+}
+
+qt6cr_handle_t qt6cr_qpainter_path_stroker_create(void) {
+  return new QPainterPathStroker();
+}
+
+void qt6cr_qpainter_path_stroker_destroy(qt6cr_handle_t handle) {
+  delete as_qpainter_path_stroker(handle);
+}
+
+double qt6cr_qpainter_path_stroker_width(qt6cr_handle_t handle) {
+  auto *stroker = as_qpainter_path_stroker(handle);
+  return stroker == nullptr ? 0.0 : stroker->width();
+}
+
+void qt6cr_qpainter_path_stroker_set_width(qt6cr_handle_t handle, double width) {
+  auto *stroker = as_qpainter_path_stroker(handle);
+
+  if (stroker != nullptr) {
+    stroker->setWidth(width);
+  }
+}
+
+qt6cr_handle_t qt6cr_qpainter_path_stroker_create_stroke(qt6cr_handle_t handle, qt6cr_handle_t path) {
+  auto *stroker = as_qpainter_path_stroker(handle);
+  auto *source = as_qpainter_path(path);
+  return (stroker == nullptr || source == nullptr) ? nullptr : new QPainterPath(stroker->createStroke(*source));
 }
 
 qt6cr_handle_t qt6cr_qpainter_create_for_image(qt6cr_handle_t image) {
@@ -3423,6 +3570,14 @@ void qt6cr_qpainter_set_antialiasing(qt6cr_handle_t handle, bool value) {
 
   if (painter != nullptr) {
     painter->setRenderHint(QPainter::Antialiasing, value);
+  }
+}
+
+void qt6cr_qpainter_set_smooth_pixmap_transform(qt6cr_handle_t handle, bool value) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, value);
   }
 }
 
@@ -3486,6 +3641,81 @@ void qt6cr_qpainter_reset_transform(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_qpainter_translate(qt6cr_handle_t handle, double dx, double dy) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->translate(dx, dy);
+  }
+}
+
+void qt6cr_qpainter_scale(qt6cr_handle_t handle, double sx, double sy) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->scale(sx, sy);
+  }
+}
+
+void qt6cr_qpainter_save(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->save();
+  }
+}
+
+void qt6cr_qpainter_restore(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->restore();
+  }
+}
+
+double qt6cr_qpainter_opacity(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+  return painter == nullptr ? 1.0 : painter->opacity();
+}
+
+void qt6cr_qpainter_set_opacity(qt6cr_handle_t handle, double value) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setOpacity(value);
+  }
+}
+
+int qt6cr_qpainter_composition_mode(qt6cr_handle_t handle) {
+  auto *painter = as_qpainter(handle);
+  return painter == nullptr ? static_cast<int>(QPainter::CompositionMode_SourceOver) : static_cast<int>(painter->compositionMode());
+}
+
+void qt6cr_qpainter_set_composition_mode(qt6cr_handle_t handle, int mode) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setCompositionMode(static_cast<QPainter::CompositionMode>(mode));
+  }
+}
+
+void qt6cr_qpainter_set_clipping(qt6cr_handle_t handle, bool value) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->setClipping(value);
+  }
+}
+
+void qt6cr_qpainter_set_clip_path(qt6cr_handle_t handle, qt6cr_handle_t path) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpainter_path(path);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->setClipPath(*shape);
+  }
+}
+
 void qt6cr_qpainter_draw_line(qt6cr_handle_t handle, qt6cr_pointf_t from_point, qt6cr_pointf_t to_point) {
   auto *painter = as_qpainter(handle);
 
@@ -3518,12 +3748,29 @@ void qt6cr_qpainter_draw_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
   }
 }
 
+void qt6cr_qpainter_draw_ellipse_center(qt6cr_handle_t handle, qt6cr_pointf_t center, double rx, double ry) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawEllipse(from_pointf(center), rx, ry);
+  }
+}
+
 void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path) {
   auto *painter = as_qpainter(handle);
   auto *shape = as_qpainter_path(path);
 
   if (painter != nullptr && shape != nullptr) {
     painter->drawPath(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpolygonf(polygon);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawPolygon(*shape);
   }
 }
 
@@ -3536,12 +3783,30 @@ void qt6cr_qpainter_draw_image(qt6cr_handle_t handle, qt6cr_pointf_t position, q
   }
 }
 
+void qt6cr_qpainter_draw_image_xy(qt6cr_handle_t handle, double x, double y, qt6cr_handle_t image) {
+  auto *painter = as_qpainter(handle);
+  auto *source = as_qimage(image);
+
+  if (painter != nullptr && source != nullptr) {
+    painter->drawImage(QPointF(x, y), *source);
+  }
+}
+
 void qt6cr_qpainter_draw_pixmap(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t pixmap) {
   auto *painter = as_qpainter(handle);
   auto *source = as_qpixmap(pixmap);
 
   if (painter != nullptr && source != nullptr) {
     painter->drawPixmap(from_pointf(position), *source);
+  }
+}
+
+void qt6cr_qpainter_draw_pixmap_xy(qt6cr_handle_t handle, double x, double y, qt6cr_handle_t pixmap) {
+  auto *painter = as_qpainter(handle);
+  auto *source = as_qpixmap(pixmap);
+
+  if (painter != nullptr && source != nullptr) {
+    painter->drawPixmap(QPointF(x, y), *source);
   }
 }
 

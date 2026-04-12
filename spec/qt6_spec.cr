@@ -258,6 +258,97 @@ describe Qt6 do
     svg_canvas.pixel_color(21, 21).should eq(Qt6::Color.new(0, 0, 255, 255))
   end
 
+  it "supports richer painter state, polygons, strokers, and textured brushes" do
+    app
+
+    polygon = Qt6::QPolygonF.new([
+      Qt6::PointF.new(0.0, 0.0),
+      Qt6::PointF.new(4.0, 0.0),
+      Qt6::PointF.new(4.0, 4.0),
+      Qt6::PointF.new(0.0, 4.0),
+    ])
+    polygon << Qt6::PointF.new(0.0, 0.0)
+
+    path = Qt6::QPainterPath.new
+    path.add_polygon(polygon)
+
+    map_transform = Qt6::QTransform.new
+    map_transform.translate(6, 0)
+    moved_path = map_transform.map(path)
+
+    stroker = Qt6::QPainterPathStroker.new
+    stroker.width = 2.0
+    stroked_path = stroker.create_stroke(path)
+
+    pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1)
+    pen.style = Qt6::PenStyle::NoPen
+    pen.cap_style = Qt6::PenCapStyle::RoundCap
+
+    texture = Qt6::QPixmap.new(1, 1)
+    texture.fill(Qt6::Color.new(220, 40, 40))
+    textured_brush = Qt6::QBrush.new(texture)
+    brush_transform = Qt6::QTransform.new
+    brush_transform.translate(1, 0)
+    textured_brush.transform = brush_transform
+
+    source = Qt6::QImage.new(2, 2)
+    source.fill(Qt6::Color.new(30, 60, 220))
+    source_pixmap = Qt6::QPixmap.from_image(source)
+
+    canvas = Qt6::QImage.new(12, 12)
+    canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    Qt6::QPainter.paint(canvas) do |painter|
+      painter.smooth_pixmap_transform = true
+      painter.pen = pen
+      painter.brush = textured_brush
+      painter.draw_polygon(polygon)
+
+      painter.save
+      painter.clip_path = moved_path
+      painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 12.0, 12.0), Qt6::Color.new(40, 220, 80))
+      painter.restore
+
+      painter.save
+      painter.translate(8, 8)
+      painter.opacity = 0.5
+      painter.draw_image(0, 0, source)
+      painter.restore
+
+      painter.draw_pixmap(0, 8, source_pixmap)
+      painter.composition_mode = Qt6::PainterCompositionMode::Clear
+      painter.fill_rect(Qt6::RectF.new(8.0, 8.0, 1.0, 1.0), Qt6::Color.new(255, 255, 255))
+      painter.composition_mode.should eq(Qt6::PainterCompositionMode::Clear)
+      painter.composition_mode = Qt6::PainterCompositionMode::SourceOver
+      painter.brush = Qt6::Color.new(70, 170, 240)
+      painter.draw_ellipse(Qt6::PointF.new(10.0, 2.0), 1.0, 1.0)
+    end
+
+    polygon.size.should eq(5)
+    polygon[2].should eq(Qt6::PointF.new(4.0, 4.0))
+    polygon.bounding_rect.should eq(Qt6::RectF.new(0.0, 0.0, 4.0, 4.0))
+    path.empty?.should be_false
+    path.contains(Qt6::PointF.new(2.0, 2.0)).should be_true
+    path.contains(Qt6::PointF.new(5.5, 2.0)).should be_false
+    moved_path.bounding_rect.should eq(Qt6::RectF.new(6.0, 0.0, 4.0, 4.0))
+    stroked_path.contains(Qt6::PointF.new(0.2, 2.0)).should be_true
+    pen.style.should eq(Qt6::PenStyle::NoPen)
+    pen.cap_style.should eq(Qt6::PenCapStyle::RoundCap)
+    textured_brush.transform.map(Qt6::PointF.new(1.0, 1.0)).should eq(Qt6::PointF.new(2.0, 1.0))
+
+    canvas.pixel_color(2, 2).should eq(Qt6::Color.new(220, 40, 40, 255))
+    canvas.pixel_color(7, 2).should eq(Qt6::Color.new(40, 220, 80, 255))
+    canvas.pixel_color(5, 2).should eq(Qt6::Color.new(0, 0, 0, 0))
+    canvas.pixel_color(8, 8).should eq(Qt6::Color.new(0, 0, 0, 0))
+    faded = canvas.pixel_color(9, 9)
+    faded.red.should eq(30)
+    faded.green.should eq(60)
+    faded.blue.should eq(220)
+    faded.alpha.should eq(127)
+    canvas.pixel_color(0, 8).should eq(Qt6::Color.new(30, 60, 220, 255))
+    canvas.pixel_color(10, 2).should eq(Qt6::Color.new(70, 170, 240, 255))
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")
