@@ -560,6 +560,20 @@ describe Qt6 do
     pdf = Qt6::QPdfWriter.new(pdf_path, title: "MM Layout", creator: "crystal-qt6 specs")
     pdf.set_page_size_millimeters(50.0, 40.0, Qt6::PageOrientation::Portrait)
     pdf.resolution = 96
+    layout = Qt6::PageLayout.new(
+      Qt6::PageSize.new(50.0, 40.0, Qt6::PageSizeUnit::Millimeter),
+      Qt6::PageOrientation::Portrait,
+      Qt6::MarginsF.new(5.0, 2.5, 5.0, 2.5)
+    )
+    pdf.page_layout = layout
+
+    full_rect = pdf.page_layout_full_rect_points
+    paint_rect = pdf.page_layout_paint_rect_points
+
+    full_rect.width.should be > paint_rect.width
+    full_rect.height.should be > paint_rect.height
+    paint_rect.x.should be > 0.0
+    paint_rect.y.should be > 0.0
 
     Qt6::QPainter.paint(pdf) do |painter|
       painter.draw_line(Qt6::PointF.new(0.0, 0.0), Qt6::PointF.new(20.0, 20.0))

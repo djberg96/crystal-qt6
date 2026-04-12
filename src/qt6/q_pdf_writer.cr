@@ -69,6 +69,34 @@ module Qt6
       self
     end
 
+    # Applies a full page layout with explicit size, unit, orientation, and margins.
+    def page_layout=(layout : PageLayout) : PageLayout
+      page_size = layout.page_size
+      margins = layout.margins
+      LibQt6.qt6cr_qpdf_writer_set_page_layout(
+        to_unsafe,
+        page_size.width,
+        page_size.height,
+        page_size.unit.value,
+        layout.orientation.value,
+        margins.left,
+        margins.top,
+        margins.right,
+        margins.bottom
+      )
+      layout
+    end
+
+    # Returns the full page rectangle in PDF points for the current layout.
+    def page_layout_full_rect_points : RectF
+      RectF.from_native(LibQt6.qt6cr_qpdf_writer_page_layout_full_rect_points(to_unsafe))
+    end
+
+    # Returns the paintable page rectangle in PDF points for the current layout.
+    def page_layout_paint_rect_points : RectF
+      RectF.from_native(LibQt6.qt6cr_qpdf_writer_page_layout_paint_rect_points(to_unsafe))
+    end
+
     # Starts a new page in the output document.
     def new_page : Bool
       LibQt6.qt6cr_qpdf_writer_new_page(to_unsafe)

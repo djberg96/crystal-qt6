@@ -1046,6 +1046,8 @@ QByteArray byte_array_from_data(const unsigned char *data, int size) {
 
 QImage::Format image_format_from_int(int format) {
   switch (format) {
+    case 2:
+      return QImage::Format_ARGB32_Premultiplied;
     case 1:
       return QImage::Format_RGB32;
     case 0:
@@ -1913,6 +1915,20 @@ qt6cr_handle_t qt6cr_qimage_create(int width, int height, int format) {
 
 qt6cr_handle_t qt6cr_qimage_create_from_file(const char *path) {
   return new QImage(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+qt6cr_handle_t qt6cr_qimage_create_from_raw_data(const unsigned char *data, int size, int width, int height, int bytes_per_line, int format) {
+  if (data == nullptr || size <= 0 || width <= 0 || height <= 0 || bytes_per_line <= 0) {
+    return new QImage();
+  }
+
+  const auto required_size = static_cast<long long>(bytes_per_line) * static_cast<long long>(height);
+  if (required_size <= 0 || required_size > size) {
+    return new QImage();
+  }
+
+  const QImage image(reinterpret_cast<const uchar *>(data), width, height, bytes_per_line, image_format_from_int(format));
+  return new QImage(image.copy());
 }
 
 void qt6cr_qimage_destroy(qt6cr_handle_t handle) {
@@ -3478,6 +3494,30 @@ void qt6cr_qpdf_writer_set_page_size_millimeters(qt6cr_handle_t handle, double w
   }
 }
 
+void qt6cr_qpdf_writer_set_page_layout(qt6cr_handle_t handle, double width, double height, int unit, int orientation, double left, double top, double right, double bottom) {
+  auto *writer = as_qpdf_writer(handle);
+
+  if (writer == nullptr || width <= 0.0 || height <= 0.0) {
+    return;
+  }
+
+  const auto page_unit = unit == 1 ? QPageSize::Point : QPageSize::Millimeter;
+  writer->setPageLayout(QPageLayout(
+      QPageSize(QSizeF(width, height), page_unit),
+      static_cast<QPageLayout::Orientation>(orientation),
+      QMarginsF(left, top, right, bottom)));
+}
+
+qt6cr_rectf_t qt6cr_qpdf_writer_page_layout_full_rect_points(qt6cr_handle_t handle) {
+  auto *writer = as_qpdf_writer(handle);
+  return writer == nullptr ? to_rectf(QRectF()) : to_rectf(writer->pageLayout().fullRect(QPageLayout::Point));
+}
+
+qt6cr_rectf_t qt6cr_qpdf_writer_page_layout_paint_rect_points(qt6cr_handle_t handle) {
+  auto *writer = as_qpdf_writer(handle);
+  return writer == nullptr ? to_rectf(QRectF()) : to_rectf(writer->pageLayout().paintRect(QPageLayout::Point));
+}
+
 bool qt6cr_qpdf_writer_new_page(qt6cr_handle_t handle) {
   auto *writer = as_qpdf_writer(handle);
   return writer != nullptr && writer->newPage();
@@ -4367,6 +4407,15 @@ void qt6cr_qpainter_draw_image_xy(qt6cr_handle_t handle, double x, double y, qt6
   }
 }
 
+void qt6cr_qpainter_draw_image_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_handle_t image) {
+  auto *painter = as_qpainter(handle);
+  auto *source = as_qimage(image);
+
+  if (painter != nullptr && source != nullptr) {
+    painter->drawImage(QRectF(rect.x, rect.y, rect.width, rect.height), *source);
+  }
+}
+
 void qt6cr_qpainter_draw_pixmap(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t pixmap) {
   auto *painter = as_qpainter(handle);
   auto *source = as_qpixmap(pixmap);
@@ -4382,6 +4431,14 @@ void qt6cr_qpainter_draw_pixmap_xy(qt6cr_handle_t handle, double x, double y, qt
 
   if (painter != nullptr && source != nullptr) {
     painter->drawPixmap(QPointF(x, y), *source);
+  }
+}
+
+void qt6cr_qpainter_draw_point(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawPoint(QPointF(point.x, point.y));
   }
 }
 
