@@ -189,6 +189,13 @@ int qt6cr_abstract_item_model_column_count(qt6cr_handle_t handle, qt6cr_handle_t
 qt6cr_handle_t qt6cr_abstract_item_model_index(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t parent_index);
 qt6cr_variant_value_t qt6cr_abstract_item_model_data(qt6cr_handle_t handle, qt6cr_handle_t index, int role);
 bool qt6cr_abstract_item_model_set_data(qt6cr_handle_t handle, qt6cr_handle_t index, qt6cr_variant_value_t value, int role);
+qt6cr_variant_value_t qt6cr_abstract_item_model_header_data(qt6cr_handle_t handle, int section, int orientation, int role);
+bool qt6cr_abstract_item_model_set_header_data(qt6cr_handle_t handle, int section, int orientation, qt6cr_variant_value_t value, int role);
+
+qt6cr_handle_t qt6cr_item_selection_model_create(qt6cr_handle_t model, qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_item_selection_model_model(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_item_selection_model_current_index(qt6cr_handle_t handle);
+void qt6cr_item_selection_model_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_standard_item_create(const char *text);
 void qt6cr_standard_item_destroy(qt6cr_handle_t handle);
@@ -250,6 +257,8 @@ void qt6cr_styled_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_hand
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent);
 void qt6cr_list_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
 void qt6cr_list_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate);
+qt6cr_handle_t qt6cr_list_view_selection_model(qt6cr_handle_t handle);
+void qt6cr_list_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model);
 qt6cr_handle_t qt6cr_list_view_current_index(qt6cr_handle_t handle);
 void qt6cr_list_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_list_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -257,6 +266,8 @@ void qt6cr_list_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_
 qt6cr_handle_t qt6cr_tree_view_create(qt6cr_handle_t parent);
 void qt6cr_tree_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
 void qt6cr_tree_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate);
+qt6cr_handle_t qt6cr_tree_view_selection_model(qt6cr_handle_t handle);
+void qt6cr_tree_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model);
 qt6cr_handle_t qt6cr_tree_view_current_index(qt6cr_handle_t handle);
 void qt6cr_tree_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_tree_view_expand_all(qt6cr_handle_t handle);

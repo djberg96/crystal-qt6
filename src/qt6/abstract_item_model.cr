@@ -33,5 +33,15 @@ module Qt6
     def set_data(index : ModelIndex, value, role : ItemDataRole = ItemDataRole::Edit) : Bool
       LibQt6.qt6cr_abstract_item_model_set_data(to_unsafe, index.to_unsafe, Qt6.model_data_to_native(value), role.value)
     end
+
+    # Returns header-backed data for a section, orientation, and role.
+    def header_data(section : Int = 0, orientation : Orientation = Orientation::Horizontal, role : ItemDataRole = ItemDataRole::Display) : ModelData
+      Qt6.model_data_from_native(LibQt6.qt6cr_abstract_item_model_header_data(to_unsafe, section.to_i32, orientation.value, role.value))
+    end
+
+    # Sets header-backed data and returns whether Qt accepted the change.
+    def set_header_data(section : Int, value, orientation : Orientation = Orientation::Horizontal, role : ItemDataRole = ItemDataRole::Edit) : Bool
+      LibQt6.qt6cr_abstract_item_model_set_header_data(to_unsafe, section.to_i32, orientation.value, Qt6.model_data_to_native(value), role.value)
+    end
   end
 end

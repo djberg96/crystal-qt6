@@ -936,6 +936,56 @@ describe Qt6 do
     host.release
   end
 
+  it "supports proxy headers and shared selection models across views" do
+    application = app
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    source_model = Qt6::StandardItemModel.new(list_view)
+    proxy_model = Qt6::SortFilterProxyModel.new(list_view)
+    source_model << Qt6::StandardItem.new("Terrain")
+    source_model << Qt6::StandardItem.new("Units")
+    source_model.set_header_data(0, "Panel", Qt6::Orientation::Horizontal).should be_true
+    proxy_model.source_model = source_model
+    list_view.model = proxy_model
+    tree_view.model = proxy_model
+
+    shared_selection = Qt6::ItemSelectionModel.new(proxy_model, list_view)
+    selection_changes = 0
+    list_changes = 0
+    tree_changes = 0
+
+    shared_selection.on_current_index_changed do
+      selection_changes += 1
+    end
+
+    list_view.on_current_index_changed do
+      list_changes += 1
+    end
+
+    tree_view.on_current_index_changed do
+      tree_changes += 1
+    end
+
+    list_view.selection_model = shared_selection
+    tree_view.selection_model = shared_selection
+
+    units_index = proxy_model.index(1)
+    list_view.current_index = units_index
+    application.process_events
+
+    proxy_model.header_data.should eq("Panel")
+    list_view.selection_model.not_nil!.current_index.row.should eq(1)
+    tree_view.selection_model.not_nil!.current_index.row.should eq(1)
+    tree_view.current_index.row.should eq(1)
+    selection_changes.should be >= 1
+    list_changes.should be >= 1
+    tree_changes.should be >= 1
+
+    units_index.release
+    list_view.release
+    tree_view.release
+  end
+
   it "exposes geometry types and custom widget event hooks" do
     application = app
     widget = Qt6::EventWidget.new
