@@ -31,7 +31,7 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
-- common form/layout support through line edits, checkboxes, combo boxes, list widgets, tree widgets, an initial `QStandardItemModel`-based model/view layer, and vertical, horizontal, form, and grid layouts
+- common form/layout and model/view support through line edits, checkboxes, combo boxes, list widgets, tree widgets, `QStandardItemModel`, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
 - custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, and key callbacks
 
 That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
@@ -55,7 +55,7 @@ To support serious application ports, the library needs a deliberate architectur
 4. A path for custom widget subclassing and event callbacks from Crystal.
 5. A rendering API that does not force all drawing logic back into C++.
 
-That generalized callback and event bridging now exists. The next stage is filling in the higher-level control and container surface that real editor sidebars and manager panels require.
+That generalized callback and event bridging now exists. The next stage is to keep one real in-repo editor slice healthy while filling in the remaining control, model/view, and application-service gaps it exposes.
 
 ## Porting Strategy
 
@@ -66,6 +66,8 @@ The readiness test should be something like:
 "Can `crystal-qt6` host a simplified but real desktop editor window with docks, a custom canvas widget, painting, zoom/pan interaction, and PNG export?"
 
 If the answer is no, the binding layer is still not ready for a serious application rewrite.
+
+That readiness checkpoint should now be maintained explicitly in-tree through a richer example application and a matching spec path, not just described abstractly in this document.
 
 ## Phase 1: Core Runtime And Object Model
 
@@ -213,7 +215,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles and delegate formatting. The remaining priorities are drag and drop, richer abstract-model bridges or custom delegates where needed, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
+Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, and delegate editor lifecycle hooks. The remaining priorities are drag and drop, richer abstract-model bridges beyond the standard-item path, and a few application-service APIs beyond the new basic clipboard and file-loading helpers.
 
 ## Phase 6: Export And Document Features
 
@@ -258,6 +260,8 @@ With phases 1 through 4 now mostly complete, port applications in this order:
 5. One or two primary editable layers or tools.
 6. PNG export.
 7. Remaining panels, tools, and advanced export features.
+
+The immediate next milestone is to keep one simplified editor vertical slice in the repository that combines these steps in a single maintained example and verification path.
 8. Advanced processing and niche features.
 
 This order gives visible progress early and avoids starting with the most complex editor features before the platform is ready.
