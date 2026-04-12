@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.3.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, file-backed drag/drop receive hooks, richer raster image loading, nested event loops, shell-polish widgets, and a broad first batch of common controls, layouts, and model/view editor panels.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.3.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, model/view drag/drop payloads and view configuration, richer raster image loading, nested event loops, shell-polish widgets, and a broad first batch of common controls, layouts, and model/view editor panels.
 
 ## Requirements
 
@@ -135,7 +135,7 @@ app.run
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
-- `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, proxy sorting/filtering, and delegate-based display formatting
+- `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, proxy sorting/filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
 
@@ -179,8 +179,8 @@ You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but
 
 The next logical additions are:
 
-1. drag-source support and richer model/view drag-and-drop workflows beyond the current drop-receive path
-2. broader abstract-model bridges beyond flat list models, especially for custom tree models
-3. remaining rendering/document helpers such as gradients, composition features, `QPainterPathStroker`, and `QPolygonF`
+1. broader abstract-model bridges beyond flat list models, especially for custom tree models
+2. any remaining higher-level drag/drop polish the maintained editor slice exposes, such as richer proxy-model workflows or explicit drag objects if needed
+3. remaining rendering/document helpers driven by real downstream needs
 4. any additional image-reader, clipboard, or print helpers that the maintained editor slice exposes as real needs
 5. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface

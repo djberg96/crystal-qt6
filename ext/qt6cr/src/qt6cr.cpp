@@ -123,6 +123,8 @@ qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QWidget *as_widget(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
+QMimeData *as_mime_data(qt6cr_handle_t handle);
+QMimeData *clone_mime_data(const QMimeData *source);
 
 class EventWidget final : public QWidget {
  public:
@@ -359,6 +361,18 @@ class CrystalAbstractListModel final : public QAbstractListModel {
   void *header_data_userdata = nullptr;
   qt6cr_model_flags_callback_t flags_callback = nullptr;
   void *flags_userdata = nullptr;
+  qt6cr_model_mime_type_count_callback_t mime_type_count_callback = nullptr;
+  void *mime_type_count_userdata = nullptr;
+  qt6cr_indexed_string_callback_t mime_type_callback = nullptr;
+  void *mime_type_userdata = nullptr;
+  qt6cr_model_mime_data_callback_t mime_data_callback = nullptr;
+  void *mime_data_userdata = nullptr;
+  qt6cr_model_drop_mime_data_callback_t drop_mime_data_callback = nullptr;
+  void *drop_mime_data_userdata = nullptr;
+  qt6cr_model_actions_callback_t supported_drag_actions_callback = nullptr;
+  void *supported_drag_actions_userdata = nullptr;
+  qt6cr_model_actions_callback_t supported_drop_actions_callback = nullptr;
+  void *supported_drop_actions_userdata = nullptr;
 
   int rowCount(const QModelIndex &parent = QModelIndex()) const override {
     if (parent.isValid()) {
@@ -409,6 +423,69 @@ class CrystalAbstractListModel final : public QAbstractListModel {
 
     QModelIndex index_copy(index);
     return static_cast<Qt::ItemFlags>(flags_callback(flags_userdata, &index_copy));
+  }
+
+  QStringList mimeTypes() const override {
+    if (mime_type_count_callback == nullptr || mime_type_callback == nullptr) {
+      return QAbstractListModel::mimeTypes();
+    }
+
+    QStringList values;
+    const auto count = mime_type_count_callback(mime_type_count_userdata);
+
+    for (int index = 0; index < count; ++index) {
+      char *text = mime_type_callback(mime_type_userdata, index);
+
+      if (text == nullptr) {
+        values << QString();
+        continue;
+      }
+
+      values << QString::fromUtf8(text);
+      std::free(text);
+    }
+
+    return values;
+  }
+
+  QMimeData *mimeData(const QModelIndexList &indexes) const override {
+    if (mime_data_callback == nullptr) {
+      return QAbstractListModel::mimeData(indexes);
+    }
+
+    std::vector<QModelIndex> index_storage;
+    index_storage.reserve(static_cast<size_t>(indexes.size()));
+    std::vector<qt6cr_handle_t> index_handles;
+    index_handles.reserve(static_cast<size_t>(indexes.size()));
+
+    for (const auto &index : indexes) {
+      index_storage.emplace_back(index);
+      index_handles.push_back(&index_storage.back());
+    }
+
+    return clone_mime_data(as_mime_data(mime_data_callback(
+        mime_data_userdata,
+        index_handles.empty() ? nullptr : index_handles.data(),
+        static_cast<int>(index_handles.size()))));
+  }
+
+  bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override {
+    if (drop_mime_data_callback == nullptr) {
+      return QAbstractListModel::dropMimeData(data, action, row, column, parent);
+    }
+
+    QModelIndex parent_copy(parent);
+    return drop_mime_data_callback(drop_mime_data_userdata, const_cast<QMimeData *>(data), static_cast<int>(action), row, column, &parent_copy);
+  }
+
+  Qt::DropActions supportedDragActions() const override {
+    return supported_drag_actions_callback == nullptr ? QAbstractListModel::supportedDragActions()
+                                                      : static_cast<Qt::DropActions>(supported_drag_actions_callback(supported_drag_actions_userdata));
+  }
+
+  Qt::DropActions supportedDropActions() const override {
+    return supported_drop_actions_callback == nullptr ? QAbstractListModel::supportedDropActions()
+                                                      : static_cast<Qt::DropActions>(supported_drop_actions_callback(supported_drop_actions_userdata));
   }
 
   void beginResetModelBridge() {
@@ -528,6 +605,24 @@ qt6cr_byte_array_t to_byte_array_value(const QByteArray &value) {
   auto *copy = static_cast<unsigned char *>(std::malloc(static_cast<size_t>(size)));
   std::memcpy(copy, value.constData(), static_cast<size_t>(size));
   return qt6cr_byte_array_t{copy, size};
+}
+
+QMimeData *clone_mime_data(const QMimeData *source) {
+  if (source == nullptr) {
+    return nullptr;
+  }
+
+  auto *copy = new QMimeData();
+
+  if (source->hasText()) {
+    copy->setText(source->text());
+  }
+
+  for (const auto &format : source->formats()) {
+    copy->setData(format, source->data(format));
+  }
+
+  return copy;
 }
 
 QWidget *as_widget(qt6cr_handle_t handle) {
@@ -2191,6 +2286,55 @@ int qt6cr_abstract_item_model_flags(qt6cr_handle_t handle, qt6cr_handle_t index)
   return model != nullptr && model_index != nullptr ? static_cast<int>(model->flags(*model_index)) : 0;
 }
 
+int qt6cr_abstract_item_model_mime_type_count(qt6cr_handle_t handle) {
+  auto *model = as_abstract_item_model(handle);
+  return model == nullptr ? 0 : model->mimeTypes().size();
+}
+
+char *qt6cr_abstract_item_model_mime_type(qt6cr_handle_t handle, int index) {
+  auto *model = as_abstract_item_model(handle);
+  return model == nullptr ? duplicate_string("") : duplicate_string(model->mimeTypes().value(index));
+}
+
+qt6cr_handle_t qt6cr_abstract_item_model_mime_data_for_indexes(qt6cr_handle_t handle, qt6cr_handle_t *indexes, int count) {
+  auto *model = as_abstract_item_model(handle);
+
+  if (model == nullptr) {
+    return nullptr;
+  }
+
+  QModelIndexList values;
+  for (int index = 0; index < count; ++index) {
+    auto *model_index = as_model_index(indexes[index]);
+
+    if (model_index != nullptr && model_index->isValid()) {
+      values << *model_index;
+    }
+  }
+
+  return clone_mime_data(model->mimeData(values));
+}
+
+bool qt6cr_abstract_item_model_drop_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_data, int action, int row, int column, qt6cr_handle_t parent_index) {
+  auto *model = as_abstract_item_model(handle);
+  auto *payload = as_mime_data(mime_data);
+  auto *parent = as_model_index(parent_index);
+
+  return model != nullptr && payload != nullptr
+             ? model->dropMimeData(payload, static_cast<Qt::DropAction>(action), row, column, parent == nullptr ? QModelIndex() : *parent)
+             : false;
+}
+
+int qt6cr_abstract_item_model_supported_drag_actions(qt6cr_handle_t handle) {
+  auto *model = as_abstract_item_model(handle);
+  return model == nullptr ? 0 : static_cast<int>(model->supportedDragActions());
+}
+
+int qt6cr_abstract_item_model_supported_drop_actions(qt6cr_handle_t handle) {
+  auto *model = as_abstract_item_model(handle);
+  return model == nullptr ? 0 : static_cast<int>(model->supportedDropActions());
+}
+
 qt6cr_handle_t qt6cr_abstract_list_model_create(qt6cr_handle_t parent) {
   return new CrystalAbstractListModel(as_object(parent));
 }
@@ -2259,6 +2403,72 @@ void qt6cr_abstract_list_model_on_flags(qt6cr_handle_t handle, qt6cr_model_flags
 
   model->flags_callback = callback;
   model->flags_userdata = userdata;
+}
+
+void qt6cr_abstract_list_model_on_mime_type_count(qt6cr_handle_t handle, qt6cr_model_mime_type_count_callback_t callback, void *userdata) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  model->mime_type_count_callback = callback;
+  model->mime_type_count_userdata = userdata;
+}
+
+void qt6cr_abstract_list_model_on_mime_type(qt6cr_handle_t handle, qt6cr_indexed_string_callback_t callback, void *userdata) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  model->mime_type_callback = callback;
+  model->mime_type_userdata = userdata;
+}
+
+void qt6cr_abstract_list_model_on_mime_data(qt6cr_handle_t handle, qt6cr_model_mime_data_callback_t callback, void *userdata) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  model->mime_data_callback = callback;
+  model->mime_data_userdata = userdata;
+}
+
+void qt6cr_abstract_list_model_on_drop_mime_data(qt6cr_handle_t handle, qt6cr_model_drop_mime_data_callback_t callback, void *userdata) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  model->drop_mime_data_callback = callback;
+  model->drop_mime_data_userdata = userdata;
+}
+
+void qt6cr_abstract_list_model_on_supported_drag_actions(qt6cr_handle_t handle, qt6cr_model_actions_callback_t callback, void *userdata) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  model->supported_drag_actions_callback = callback;
+  model->supported_drag_actions_userdata = userdata;
+}
+
+void qt6cr_abstract_list_model_on_supported_drop_actions(qt6cr_handle_t handle, qt6cr_model_actions_callback_t callback, void *userdata) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  model->supported_drop_actions_callback = callback;
+  model->supported_drop_actions_userdata = userdata;
 }
 
 void qt6cr_abstract_list_model_begin_reset_model(qt6cr_handle_t handle) {
@@ -2798,6 +3008,58 @@ void qt6cr_list_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t ind
   }
 }
 
+bool qt6cr_list_view_drag_enabled(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->dragEnabled();
+}
+
+void qt6cr_list_view_set_drag_enabled(qt6cr_handle_t handle, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setDragEnabled(value);
+  }
+}
+
+int qt6cr_list_view_drag_drop_mode(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->dragDropMode());
+}
+
+void qt6cr_list_view_set_drag_drop_mode(qt6cr_handle_t handle, int mode) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setDragDropMode(static_cast<QAbstractItemView::DragDropMode>(mode));
+  }
+}
+
+int qt6cr_list_view_default_drop_action(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->defaultDropAction());
+}
+
+void qt6cr_list_view_set_default_drop_action(qt6cr_handle_t handle, int action) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setDefaultDropAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
+bool qt6cr_list_view_drop_indicator_shown(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->showDropIndicator();
+}
+
+void qt6cr_list_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setDropIndicatorShown(value);
+  }
+}
+
 void qt6cr_list_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *view = as_list_view(handle);
 
@@ -2854,6 +3116,58 @@ void qt6cr_tree_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t ind
 
   if (view != nullptr) {
     view->setCurrentIndex(model_index == nullptr ? QModelIndex() : *model_index);
+  }
+}
+
+bool qt6cr_tree_view_drag_enabled(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->dragEnabled();
+}
+
+void qt6cr_tree_view_set_drag_enabled(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setDragEnabled(value);
+  }
+}
+
+int qt6cr_tree_view_drag_drop_mode(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->dragDropMode());
+}
+
+void qt6cr_tree_view_set_drag_drop_mode(qt6cr_handle_t handle, int mode) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setDragDropMode(static_cast<QAbstractItemView::DragDropMode>(mode));
+  }
+}
+
+int qt6cr_tree_view_default_drop_action(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->defaultDropAction());
+}
+
+void qt6cr_tree_view_set_default_drop_action(qt6cr_handle_t handle, int action) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setDefaultDropAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
+bool qt6cr_tree_view_drop_indicator_shown(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->showDropIndicator();
+}
+
+void qt6cr_tree_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setDropIndicatorShown(value);
   }
 }
 

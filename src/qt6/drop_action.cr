@@ -1,4 +1,5 @@
 module Qt6
+  @[Flags]
   enum DropAction
     IgnoreAction = 0
     CopyAction   = 1
