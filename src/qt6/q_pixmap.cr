@@ -26,6 +26,13 @@ module Qt6
       new(path)
     end
 
+    # Loads a pixmap from encoded bytes.
+    def self.from_data(data : Bytes, format : String? = nil) : self
+      pixmap = new(0, 0)
+      pixmap.load(data, format)
+      pixmap
+    end
+
     # Builds a pixmap copy from an image.
     def self.from_image(image : QImage) : self
       new(LibQt6.qt6cr_qpixmap_from_image(image.to_unsafe), true)
@@ -62,9 +69,19 @@ module Qt6
       LibQt6.qt6cr_qpixmap_load(to_unsafe, path.to_unsafe)
     end
 
+    # Loads pixmap contents from encoded bytes into this instance.
+    def load(data : Bytes, format : String? = nil) : Bool
+      LibQt6.qt6cr_qpixmap_load_from_data(to_unsafe, data.to_unsafe, data.size, format.try(&.to_unsafe) || Pointer(UInt8).null)
+    end
+
     # Saves the pixmap to disk.
     def save(path : String) : Bool
       LibQt6.qt6cr_qpixmap_save(to_unsafe, path.to_unsafe)
+    end
+
+    # Encodes the pixmap into bytes using the given format.
+    def save_to_data(format : String) : Bytes
+      Qt6.copy_and_release_bytes(LibQt6.qt6cr_qpixmap_save_to_data(to_unsafe, format.to_unsafe))
     end
 
     # Returns an image copy of the pixmap.

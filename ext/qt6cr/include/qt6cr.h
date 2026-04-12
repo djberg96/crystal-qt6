@@ -228,7 +228,10 @@ int qt6cr_qimage_height(qt6cr_handle_t handle);
 bool qt6cr_qimage_is_null(qt6cr_handle_t handle);
 void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qimage_load(qt6cr_handle_t handle, const char *path);
+bool qt6cr_qimage_load_from_data(qt6cr_handle_t handle, const unsigned char *data, int size, const char *format);
 bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path);
+qt6cr_byte_array_t qt6cr_qimage_save_to_data(qt6cr_handle_t handle, const char *format);
+bool qt6cr_qimage_save_to_buffer(qt6cr_handle_t handle, qt6cr_handle_t buffer, const char *format);
 qt6cr_color_t qt6cr_qimage_pixel_color(qt6cr_handle_t handle, int x, int y);
 void qt6cr_qimage_set_pixel_color(qt6cr_handle_t handle, int x, int y, qt6cr_color_t color);
 
@@ -256,7 +259,9 @@ int qt6cr_qpixmap_height(qt6cr_handle_t handle);
 bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle);
 void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path);
+bool qt6cr_qpixmap_load_from_data(qt6cr_handle_t handle, const unsigned char *data, int size, const char *format);
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
+qt6cr_byte_array_t qt6cr_qpixmap_save_to_data(qt6cr_handle_t handle, const char *format);
 
 qt6cr_handle_t qt6cr_qicon_create(void);
 qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path);
@@ -427,7 +432,22 @@ void qt6cr_qpdf_writer_set_creator(qt6cr_handle_t handle, const char *creator);
 int qt6cr_qpdf_writer_resolution(qt6cr_handle_t handle);
 void qt6cr_qpdf_writer_set_resolution(qt6cr_handle_t handle, int resolution);
 void qt6cr_qpdf_writer_set_page_size_points(qt6cr_handle_t handle, int width, int height);
+void qt6cr_qpdf_writer_set_page_size_millimeters(qt6cr_handle_t handle, double width, double height, int orientation);
 bool qt6cr_qpdf_writer_new_page(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_qbyte_array_create(void);
+qt6cr_handle_t qt6cr_qbyte_array_create_from_data(const unsigned char *data, int size);
+void qt6cr_qbyte_array_destroy(qt6cr_handle_t handle);
+int qt6cr_qbyte_array_size(qt6cr_handle_t handle);
+qt6cr_byte_array_t qt6cr_qbyte_array_data(qt6cr_handle_t handle);
+void qt6cr_qbyte_array_clear(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_qbuffer_create(qt6cr_handle_t byte_array);
+void qt6cr_qbuffer_destroy(qt6cr_handle_t handle);
+bool qt6cr_qbuffer_open(qt6cr_handle_t handle, int open_mode);
+void qt6cr_qbuffer_close(qt6cr_handle_t handle);
+bool qt6cr_qbuffer_is_open(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qbuffer_data(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width);
 void qt6cr_qpen_destroy(qt6cr_handle_t handle);

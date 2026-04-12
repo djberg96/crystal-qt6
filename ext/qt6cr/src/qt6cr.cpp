@@ -9,6 +9,7 @@
 #include <QActionGroup>
 #include <QAbstractItemModel>
 #include <QAbstractListModel>
+#include <QBuffer>
 #include <QCheckBox>
 #include <QClipboard>
 #include <QColor>
@@ -50,6 +51,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
+#include <QPageLayout>
 #include <QPageSize>
 #include <QPen>
 #include <QPdfWriter>
@@ -609,6 +611,14 @@ QSvgWidget *as_qsvg_widget(qt6cr_handle_t handle) {
 
 QPdfWriter *as_qpdf_writer(qt6cr_handle_t handle) {
   return static_cast<QPdfWriter *>(handle);
+}
+
+QByteArray *as_qbyte_array(qt6cr_handle_t handle) {
+  return static_cast<QByteArray *>(handle);
+}
+
+QBuffer *as_qbuffer(qt6cr_handle_t handle) {
+  return static_cast<QBuffer *>(handle);
 }
 
 QPen *as_qpen(qt6cr_handle_t handle) {
@@ -1823,9 +1833,35 @@ bool qt6cr_qimage_load(qt6cr_handle_t handle, const char *path) {
   return image != nullptr && image->load(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
+bool qt6cr_qimage_load_from_data(qt6cr_handle_t handle, const unsigned char *data, int size, const char *format) {
+  auto *image = as_qimage(handle);
+  return image != nullptr && image->loadFromData(data, size, format == nullptr ? nullptr : format);
+}
+
 bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path) {
   auto *image = as_qimage(handle);
   return image != nullptr && image->save(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+qt6cr_byte_array_t qt6cr_qimage_save_to_data(qt6cr_handle_t handle, const char *format) {
+  auto *image = as_qimage(handle);
+  if (image == nullptr) {
+    return qt6cr_byte_array_t{nullptr, 0};
+  }
+
+  QByteArray output;
+  QBuffer buffer(&output);
+  if (!buffer.open(QIODevice::WriteOnly) || !image->save(&buffer, format == nullptr ? nullptr : format)) {
+    return qt6cr_byte_array_t{nullptr, 0};
+  }
+
+  return to_byte_array_value(output);
+}
+
+bool qt6cr_qimage_save_to_buffer(qt6cr_handle_t handle, qt6cr_handle_t buffer, const char *format) {
+  auto *image = as_qimage(handle);
+  auto *target = as_qbuffer(buffer);
+  return image != nullptr && target != nullptr && image->save(target, format == nullptr ? nullptr : format);
 }
 
 qt6cr_color_t qt6cr_qimage_pixel_color(qt6cr_handle_t handle, int x, int y) {
@@ -1966,9 +2002,29 @@ bool qt6cr_qpixmap_load(qt6cr_handle_t handle, const char *path) {
   return pixmap != nullptr && pixmap->load(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
+bool qt6cr_qpixmap_load_from_data(qt6cr_handle_t handle, const unsigned char *data, int size, const char *format) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap != nullptr && pixmap->loadFromData(data, size, format == nullptr ? nullptr : format);
+}
+
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path) {
   auto *pixmap = as_qpixmap(handle);
   return pixmap != nullptr && pixmap->save(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+qt6cr_byte_array_t qt6cr_qpixmap_save_to_data(qt6cr_handle_t handle, const char *format) {
+  auto *pixmap = as_qpixmap(handle);
+  if (pixmap == nullptr) {
+    return qt6cr_byte_array_t{nullptr, 0};
+  }
+
+  QByteArray output;
+  QBuffer buffer(&output);
+  if (!buffer.open(QIODevice::WriteOnly) || !pixmap->save(&buffer, format == nullptr ? nullptr : format)) {
+    return qt6cr_byte_array_t{nullptr, 0};
+  }
+
+  return to_byte_array_value(output);
 }
 
 qt6cr_handle_t qt6cr_qicon_create(void) {
@@ -3078,9 +3134,82 @@ void qt6cr_qpdf_writer_set_page_size_points(qt6cr_handle_t handle, int width, in
   }
 }
 
+void qt6cr_qpdf_writer_set_page_size_millimeters(qt6cr_handle_t handle, double width, double height, int orientation) {
+  auto *writer = as_qpdf_writer(handle);
+
+  if (writer != nullptr && width > 0.0 && height > 0.0) {
+    writer->setPageLayout(QPageLayout(
+        QPageSize(QSizeF(width, height), QPageSize::Millimeter),
+        static_cast<QPageLayout::Orientation>(orientation),
+        QMarginsF(0, 0, 0, 0)));
+  }
+}
+
 bool qt6cr_qpdf_writer_new_page(qt6cr_handle_t handle) {
   auto *writer = as_qpdf_writer(handle);
   return writer != nullptr && writer->newPage();
+}
+
+qt6cr_handle_t qt6cr_qbyte_array_create(void) {
+  return new QByteArray();
+}
+
+qt6cr_handle_t qt6cr_qbyte_array_create_from_data(const unsigned char *data, int size) {
+  return new QByteArray(byte_array_from_data(data, size));
+}
+
+void qt6cr_qbyte_array_destroy(qt6cr_handle_t handle) {
+  delete as_qbyte_array(handle);
+}
+
+int qt6cr_qbyte_array_size(qt6cr_handle_t handle) {
+  auto *value = as_qbyte_array(handle);
+  return value == nullptr ? 0 : value->size();
+}
+
+qt6cr_byte_array_t qt6cr_qbyte_array_data(qt6cr_handle_t handle) {
+  auto *value = as_qbyte_array(handle);
+  return value == nullptr ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(*value);
+}
+
+void qt6cr_qbyte_array_clear(qt6cr_handle_t handle) {
+  auto *value = as_qbyte_array(handle);
+
+  if (value != nullptr) {
+    value->clear();
+  }
+}
+
+qt6cr_handle_t qt6cr_qbuffer_create(qt6cr_handle_t byte_array) {
+  auto *data = as_qbyte_array(byte_array);
+  return data == nullptr ? new QBuffer() : new QBuffer(data);
+}
+
+void qt6cr_qbuffer_destroy(qt6cr_handle_t handle) {
+  delete as_qbuffer(handle);
+}
+
+bool qt6cr_qbuffer_open(qt6cr_handle_t handle, int open_mode) {
+  auto *buffer = as_qbuffer(handle);
+  return buffer != nullptr && buffer->open(QIODevice::OpenMode(open_mode));
+}
+
+void qt6cr_qbuffer_close(qt6cr_handle_t handle) {
+  auto *buffer = as_qbuffer(handle);
+
+  if (buffer != nullptr) {
+    buffer->close();
+  }
+}
+
+bool qt6cr_qbuffer_is_open(qt6cr_handle_t handle) {
+  auto *buffer = as_qbuffer(handle);
+  return buffer != nullptr && buffer->isOpen();
+}
+
+qt6cr_handle_t qt6cr_qbuffer_data(qt6cr_handle_t handle) {
+  auto *buffer = as_qbuffer(handle);
+  return buffer == nullptr ? nullptr : new QByteArray(buffer->data());
 }
 
 qt6cr_handle_t qt6cr_qpen_create(qt6cr_color_t color, double width) {

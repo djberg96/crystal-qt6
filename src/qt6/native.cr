@@ -211,7 +211,10 @@ module Qt6
     fun qt6cr_qimage_is_null = qt6cr_qimage_is_null(handle : Handle) : Bool
     fun qt6cr_qimage_fill = qt6cr_qimage_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qimage_load = qt6cr_qimage_load(handle : Handle, path : UInt8*) : Bool
+    fun qt6cr_qimage_load_from_data = qt6cr_qimage_load_from_data(handle : Handle, data : UInt8*, size : LibC::Int, format : UInt8*) : Bool
     fun qt6cr_qimage_save = qt6cr_qimage_save(handle : Handle, path : UInt8*) : Bool
+    fun qt6cr_qimage_save_to_data = qt6cr_qimage_save_to_data(handle : Handle, format : UInt8*) : ByteArrayValue
+    fun qt6cr_qimage_save_to_buffer = qt6cr_qimage_save_to_buffer(handle : Handle, buffer : Handle, format : UInt8*) : Bool
     fun qt6cr_qimage_pixel_color = qt6cr_qimage_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int) : ColorValue
     fun qt6cr_qimage_set_pixel_color = qt6cr_qimage_set_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int, color : ColorValue)
 
@@ -239,7 +242,9 @@ module Qt6
     fun qt6cr_qpixmap_is_null = qt6cr_qpixmap_is_null(handle : Handle) : Bool
     fun qt6cr_qpixmap_fill = qt6cr_qpixmap_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qpixmap_load = qt6cr_qpixmap_load(handle : Handle, path : UInt8*) : Bool
+    fun qt6cr_qpixmap_load_from_data = qt6cr_qpixmap_load_from_data(handle : Handle, data : UInt8*, size : LibC::Int, format : UInt8*) : Bool
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
+    fun qt6cr_qpixmap_save_to_data = qt6cr_qpixmap_save_to_data(handle : Handle, format : UInt8*) : ByteArrayValue
 
     fun qt6cr_qicon_create = qt6cr_qicon_create : Handle
     fun qt6cr_qicon_create_from_file = qt6cr_qicon_create_from_file(path : UInt8*) : Handle
@@ -410,7 +415,22 @@ module Qt6
     fun qt6cr_qpdf_writer_resolution = qt6cr_qpdf_writer_resolution(handle : Handle) : LibC::Int
     fun qt6cr_qpdf_writer_set_resolution = qt6cr_qpdf_writer_set_resolution(handle : Handle, resolution : LibC::Int)
     fun qt6cr_qpdf_writer_set_page_size_points = qt6cr_qpdf_writer_set_page_size_points(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_qpdf_writer_set_page_size_millimeters = qt6cr_qpdf_writer_set_page_size_millimeters(handle : Handle, width : Float64, height : Float64, orientation : LibC::Int)
     fun qt6cr_qpdf_writer_new_page = qt6cr_qpdf_writer_new_page(handle : Handle) : Bool
+
+    fun qt6cr_qbyte_array_create = qt6cr_qbyte_array_create : Handle
+    fun qt6cr_qbyte_array_create_from_data = qt6cr_qbyte_array_create_from_data(data : UInt8*, size : LibC::Int) : Handle
+    fun qt6cr_qbyte_array_destroy = qt6cr_qbyte_array_destroy(handle : Handle)
+    fun qt6cr_qbyte_array_size = qt6cr_qbyte_array_size(handle : Handle) : LibC::Int
+    fun qt6cr_qbyte_array_data = qt6cr_qbyte_array_data(handle : Handle) : ByteArrayValue
+    fun qt6cr_qbyte_array_clear = qt6cr_qbyte_array_clear(handle : Handle)
+
+    fun qt6cr_qbuffer_create = qt6cr_qbuffer_create(byte_array : Handle) : Handle
+    fun qt6cr_qbuffer_destroy = qt6cr_qbuffer_destroy(handle : Handle)
+    fun qt6cr_qbuffer_open = qt6cr_qbuffer_open(handle : Handle, open_mode : LibC::Int) : Bool
+    fun qt6cr_qbuffer_close = qt6cr_qbuffer_close(handle : Handle)
+    fun qt6cr_qbuffer_is_open = qt6cr_qbuffer_is_open(handle : Handle) : Bool
+    fun qt6cr_qbuffer_data = qt6cr_qbuffer_data(handle : Handle) : Handle
 
     fun qt6cr_qpen_create = qt6cr_qpen_create(color : ColorValue, width : Float64) : Handle
     fun qt6cr_qpen_destroy = qt6cr_qpen_destroy(handle : Handle)

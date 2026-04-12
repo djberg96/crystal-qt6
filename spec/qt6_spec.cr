@@ -416,6 +416,69 @@ describe Qt6 do
     dash_canvas.pixel_color(7, 6).should eq(Qt6::Color.new(0, 0, 0, 0))
   end
 
+  it "supports byte arrays, buffers, data-backed images, and mm-based pdf sizing" do
+    app
+
+    raw = Qt6::QByteArray.new(Bytes[1_u8, 2_u8, 3_u8, 4_u8])
+    raw.size.should eq(4)
+    raw.bytes.should eq(Bytes[1_u8, 2_u8, 3_u8, 4_u8])
+    raw.clear
+    raw.empty?.should be_true
+
+    image = Qt6::QImage.new(4, 4)
+    image.fill(Qt6::Color.new(0, 0, 0, 0))
+    image.set_pixel_color(1, 1, Qt6::Color.new(10, 20, 30))
+    image.set_pixel_color(2, 2, Qt6::Color.new(200, 150, 100))
+
+    byte_array = Qt6::QByteArray.new
+    buffer = Qt6::QBuffer.new(byte_array)
+    buffer.open(Qt6::IODeviceOpenMode::WriteOnly).should be_true
+    image.save(buffer, "PNG").should be_true
+    buffer.close
+    buffer.open?.should be_false
+
+    encoded = byte_array.bytes
+    encoded.size.should be > 0
+
+    image_from_data = Qt6::QImage.from_data(encoded, "PNG")
+    image_from_data.null?.should be_false
+    image_from_data.pixel_color(1, 1).should eq(Qt6::Color.new(10, 20, 30, 255))
+    image_from_data.pixel_color(2, 2).should eq(Qt6::Color.new(200, 150, 100, 255))
+    image.save_to_data("PNG").size.should be > 0
+
+    pixmap_from_data = Qt6::QPixmap.from_data(encoded, "PNG")
+    pixmap_from_data.null?.should be_false
+    pixmap_from_data.to_image.pixel_color(2, 2).should eq(Qt6::Color.new(200, 150, 100, 255))
+    pixmap_from_data.save_to_data("PNG").size.should be > 0
+
+    implicit_buffer = Qt6::QBuffer.new
+    implicit_buffer.open(Qt6::IODeviceOpenMode::WriteOnly).should be_true
+    image.save(implicit_buffer, "PNG").should be_true
+    implicit_buffer.close
+    implicit_buffer.data.bytes.size.should be > 0
+
+    pdf_path = File.join(Dir.tempdir, "crystal-qt6-mm-layout-#{Process.pid}.pdf")
+    pdf = Qt6::QPdfWriter.new(pdf_path, title: "MM Layout", creator: "crystal-qt6 specs")
+    pdf.set_page_size_millimeters(50.0, 40.0, Qt6::PageOrientation::Portrait)
+    pdf.resolution = 96
+
+    Qt6::QPainter.paint(pdf) do |painter|
+      painter.draw_line(Qt6::PointF.new(0.0, 0.0), Qt6::PointF.new(20.0, 20.0))
+    end
+
+    pdf_header = begin
+      pdf.release
+      File.open(pdf_path) do |file|
+        bytes = Bytes.new(5)
+        file.read_fully(bytes)
+        String.new(bytes)
+      end
+    end
+
+    File.exists?(pdf_path).should be_true
+    pdf_header.should eq("%PDF-")
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")
