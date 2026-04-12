@@ -73,6 +73,8 @@ module Qt6
 
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_object_block_signals = qt6cr_object_block_signals(handle : Handle, block : Bool) : Bool
+    fun qt6cr_object_signals_blocked = qt6cr_object_signals_blocked(handle : Handle) : Bool
 
     fun qt6cr_application_create = qt6cr_application_create(argc : LibC::Int, argv : UInt8**) : Handle
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)
@@ -592,6 +594,12 @@ module Qt6
     fun qt6cr_input_dialog_set_double_range = qt6cr_input_dialog_set_double_range(handle : Handle, minimum : Float64, maximum : Float64)
     fun qt6cr_input_dialog_double_minimum = qt6cr_input_dialog_double_minimum(handle : Handle) : Float64
     fun qt6cr_input_dialog_double_maximum = qt6cr_input_dialog_double_maximum(handle : Handle) : Float64
+    fun qt6cr_input_dialog_set_combo_box_items = qt6cr_input_dialog_set_combo_box_items(handle : Handle, items : UInt8**, count : LibC::Int)
+    fun qt6cr_input_dialog_combo_box_item_count = qt6cr_input_dialog_combo_box_item_count(handle : Handle) : LibC::Int
+    fun qt6cr_input_dialog_combo_box_item_text = qt6cr_input_dialog_combo_box_item_text(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_input_dialog_set_combo_box_editable = qt6cr_input_dialog_set_combo_box_editable(handle : Handle, editable : Bool)
+    fun qt6cr_input_dialog_combo_box_editable = qt6cr_input_dialog_combo_box_editable(handle : Handle) : Bool
+    fun qt6cr_input_dialog_get_item = qt6cr_input_dialog_get_item(parent : Handle, title : UInt8*, label : UInt8*, items : UInt8**, count : LibC::Int, current : LibC::Int, editable : Bool) : UInt8*
 
     fun qt6cr_dock_widget_create = qt6cr_dock_widget_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_dock_widget_set_widget = qt6cr_dock_widget_set_widget(handle : Handle, widget : Handle)
@@ -697,9 +705,18 @@ module Qt6
     fun qt6cr_combo_box_on_current_index_changed = qt6cr_combo_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_list_widget_item_create = qt6cr_list_widget_item_create(text : UInt8*) : Handle
+    fun qt6cr_list_widget_item_create_with_icon = qt6cr_list_widget_item_create_with_icon(icon : Handle, text : UInt8*) : Handle
     fun qt6cr_list_widget_item_destroy = qt6cr_list_widget_item_destroy(handle : Handle)
     fun qt6cr_list_widget_item_set_text = qt6cr_list_widget_item_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_list_widget_item_text = qt6cr_list_widget_item_text(handle : Handle) : UInt8*
+    fun qt6cr_list_widget_item_flags = qt6cr_list_widget_item_flags(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_item_set_flags = qt6cr_list_widget_item_set_flags(handle : Handle, flags : LibC::Int)
+    fun qt6cr_list_widget_item_check_state = qt6cr_list_widget_item_check_state(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_item_set_check_state = qt6cr_list_widget_item_set_check_state(handle : Handle, state : LibC::Int)
+    fun qt6cr_list_widget_item_data = qt6cr_list_widget_item_data(handle : Handle, role : LibC::Int) : VariantValue
+    fun qt6cr_list_widget_item_set_data = qt6cr_list_widget_item_set_data(handle : Handle, role : LibC::Int, value : VariantValue)
+    fun qt6cr_list_widget_item_foreground = qt6cr_list_widget_item_foreground(handle : Handle) : ColorValue
+    fun qt6cr_list_widget_item_set_foreground = qt6cr_list_widget_item_set_foreground(handle : Handle, color : ColorValue)
 
     fun qt6cr_list_widget_create = qt6cr_list_widget_create(parent : Handle) : Handle
     fun qt6cr_list_widget_add_item = qt6cr_list_widget_add_item(handle : Handle, item : Handle)
@@ -712,7 +729,18 @@ module Qt6
     fun qt6cr_list_widget_current_item = qt6cr_list_widget_current_item(handle : Handle) : Handle
     fun qt6cr_list_widget_current_text = qt6cr_list_widget_current_text(handle : Handle) : UInt8*
     fun qt6cr_list_widget_clear = qt6cr_list_widget_clear(handle : Handle)
+    fun qt6cr_list_widget_drag_drop_mode = qt6cr_list_widget_drag_drop_mode(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_set_drag_drop_mode = qt6cr_list_widget_set_drag_drop_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_list_widget_selection_mode = qt6cr_list_widget_selection_mode(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_set_selection_mode = qt6cr_list_widget_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_list_widget_default_drop_action = qt6cr_list_widget_default_drop_action(handle : Handle) : LibC::Int
+    fun qt6cr_list_widget_set_default_drop_action = qt6cr_list_widget_set_default_drop_action(handle : Handle, action : LibC::Int)
+    fun qt6cr_list_widget_move_item = qt6cr_list_widget_move_item(handle : Handle, from : LibC::Int, to : LibC::Int) : Bool
+    fun qt6cr_list_widget_emit_item_double_clicked = qt6cr_list_widget_emit_item_double_clicked(handle : Handle, index : LibC::Int)
     fun qt6cr_list_widget_on_current_row_changed = qt6cr_list_widget_on_current_row_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_list_widget_on_item_changed = qt6cr_list_widget_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_list_widget_on_item_double_clicked = qt6cr_list_widget_on_item_double_clicked(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_list_widget_on_rows_moved = qt6cr_list_widget_on_rows_moved(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_tree_widget_item_create = qt6cr_tree_widget_item_create(text : UInt8*) : Handle
     fun qt6cr_tree_widget_item_destroy = qt6cr_tree_widget_item_destroy(handle : Handle)

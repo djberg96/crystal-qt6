@@ -71,6 +71,7 @@ typedef void (*qt6cr_void_callback_t)(void *userdata);
 typedef void (*qt6cr_bool_callback_t)(void *userdata, bool value);
 typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
 typedef void (*qt6cr_double_callback_t)(void *userdata, double value);
+typedef void (*qt6cr_handle_callback_t)(void *userdata, qt6cr_handle_t handle);
 typedef void (*qt6cr_paint_callback_t)(void *userdata, qt6cr_rectf_t rect);
 typedef void (*qt6cr_paint_with_painter_callback_t)(void *userdata, qt6cr_handle_t painter, qt6cr_rectf_t rect);
 typedef void (*qt6cr_resize_callback_t)(void *userdata, qt6cr_size_t old_size, qt6cr_size_t new_size);
@@ -90,6 +91,8 @@ typedef void (*qt6cr_delegate_set_model_data_callback_t)(void *userdata, qt6cr_h
 
 void qt6cr_object_destroy(qt6cr_handle_t handle);
 void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+bool qt6cr_object_block_signals(qt6cr_handle_t handle, bool block);
+bool qt6cr_object_signals_blocked(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv);
 void qt6cr_application_destroy(qt6cr_handle_t handle);
@@ -609,6 +612,12 @@ double qt6cr_input_dialog_double_value(qt6cr_handle_t handle);
 void qt6cr_input_dialog_set_double_range(qt6cr_handle_t handle, double minimum, double maximum);
 double qt6cr_input_dialog_double_minimum(qt6cr_handle_t handle);
 double qt6cr_input_dialog_double_maximum(qt6cr_handle_t handle);
+void qt6cr_input_dialog_set_combo_box_items(qt6cr_handle_t handle, const char *const *items, int count);
+int qt6cr_input_dialog_combo_box_item_count(qt6cr_handle_t handle);
+char *qt6cr_input_dialog_combo_box_item_text(qt6cr_handle_t handle, int index);
+void qt6cr_input_dialog_set_combo_box_editable(qt6cr_handle_t handle, bool editable);
+bool qt6cr_input_dialog_combo_box_editable(qt6cr_handle_t handle);
+char *qt6cr_input_dialog_get_item(qt6cr_handle_t parent, const char *title, const char *label, const char *const *items, int count, int current, bool editable);
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title);
 void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
@@ -714,9 +723,18 @@ char *qt6cr_combo_box_current_text(qt6cr_handle_t handle);
 void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_list_widget_item_create(const char *text);
+qt6cr_handle_t qt6cr_list_widget_item_create_with_icon(qt6cr_handle_t icon, const char *text);
 void qt6cr_list_widget_item_destroy(qt6cr_handle_t handle);
 void qt6cr_list_widget_item_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_list_widget_item_text(qt6cr_handle_t handle);
+int qt6cr_list_widget_item_flags(qt6cr_handle_t handle);
+void qt6cr_list_widget_item_set_flags(qt6cr_handle_t handle, int flags);
+int qt6cr_list_widget_item_check_state(qt6cr_handle_t handle);
+void qt6cr_list_widget_item_set_check_state(qt6cr_handle_t handle, int state);
+qt6cr_variant_value_t qt6cr_list_widget_item_data(qt6cr_handle_t handle, int role);
+void qt6cr_list_widget_item_set_data(qt6cr_handle_t handle, int role, qt6cr_variant_value_t value);
+qt6cr_color_t qt6cr_list_widget_item_foreground(qt6cr_handle_t handle);
+void qt6cr_list_widget_item_set_foreground(qt6cr_handle_t handle, qt6cr_color_t color);
 
 qt6cr_handle_t qt6cr_list_widget_create(qt6cr_handle_t parent);
 void qt6cr_list_widget_add_item(qt6cr_handle_t handle, qt6cr_handle_t item);
@@ -729,7 +747,18 @@ void qt6cr_list_widget_set_current_row(qt6cr_handle_t handle, int row);
 qt6cr_handle_t qt6cr_list_widget_current_item(qt6cr_handle_t handle);
 char *qt6cr_list_widget_current_text(qt6cr_handle_t handle);
 void qt6cr_list_widget_clear(qt6cr_handle_t handle);
+int qt6cr_list_widget_drag_drop_mode(qt6cr_handle_t handle);
+void qt6cr_list_widget_set_drag_drop_mode(qt6cr_handle_t handle, int mode);
+int qt6cr_list_widget_selection_mode(qt6cr_handle_t handle);
+void qt6cr_list_widget_set_selection_mode(qt6cr_handle_t handle, int mode);
+int qt6cr_list_widget_default_drop_action(qt6cr_handle_t handle);
+void qt6cr_list_widget_set_default_drop_action(qt6cr_handle_t handle, int action);
+bool qt6cr_list_widget_move_item(qt6cr_handle_t handle, int from, int to);
+void qt6cr_list_widget_emit_item_double_clicked(qt6cr_handle_t handle, int index);
 void qt6cr_list_widget_on_current_row_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_list_widget_on_item_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_list_widget_on_item_double_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_list_widget_on_rows_moved(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_tree_widget_item_create(const char *text);
 void qt6cr_tree_widget_item_destroy(qt6cr_handle_t handle);

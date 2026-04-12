@@ -126,7 +126,7 @@ app.run
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
 - `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, `Qt6::InputDialog`, `Qt6::ProgressDialog`, and `Qt6::SplashScreen` for standard dialogs and shell polish widgets
-- convenience helpers such as `MessageBox.information`, `MessageBox.question`, `ColorDialog.get_color`, and `InputDialog.get_text` / `get_int` / `get_double`
+- convenience helpers such as `MessageBox.information`, `MessageBox.question`, `ColorDialog.get_color`, and `InputDialog.get_text` / `get_int` / `get_double` / `get_item`
 - `Qt6::InputDialogInputMode` plus message-box and file-dialog enums for dialog configuration
 - `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
 - `Qt6::KeySequence` and `QAction` shortcuts for keyboard-driven commands
@@ -134,7 +134,7 @@ app.run
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
-- `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels
+- `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
 - `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, proxy sorting/filtering, and delegate-based display formatting
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition

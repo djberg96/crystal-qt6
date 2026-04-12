@@ -93,6 +93,33 @@ module Qt6
       LibQt6.qt6cr_input_dialog_double_maximum(to_unsafe)
     end
 
+    # Returns the combo-box items used by item-selection dialogs.
+    def combo_box_items : Array(String)
+      count = LibQt6.qt6cr_input_dialog_combo_box_item_count(to_unsafe)
+      Array(String).new(count) do |index|
+        Qt6.copy_and_release_string(LibQt6.qt6cr_input_dialog_combo_box_item_text(to_unsafe, index))
+      end
+    end
+
+    # Sets the combo-box items used by item-selection dialogs.
+    def combo_box_items=(items : Enumerable(String)) : Array(String)
+      values = items.to_a
+      pointers = values.map(&.to_unsafe)
+      LibQt6.qt6cr_input_dialog_set_combo_box_items(to_unsafe, pointers.to_unsafe, pointers.size)
+      values
+    end
+
+    # Returns whether the combo-box allows arbitrary text entry.
+    def combo_box_editable? : Bool
+      LibQt6.qt6cr_input_dialog_combo_box_editable(to_unsafe)
+    end
+
+    # Sets whether the combo-box allows arbitrary text entry.
+    def combo_box_editable=(value : Bool) : Bool
+      LibQt6.qt6cr_input_dialog_set_combo_box_editable(to_unsafe, value)
+      value
+    end
+
     # Shows a modal text-input dialog and returns the entered value, or `nil`
     # if the dialog is canceled.
     def self.get_text(parent : Widget? = nil, *, title : String, label : String, value : String = "") : String?
@@ -185,6 +212,41 @@ module Qt6
       begin
         yield dialog
         dialog.exec == DialogCode::Accepted ? dialog.double_value : nil
+      ensure
+        dialog.release
+      end
+    end
+
+    # Shows a modal item-selection dialog and returns the selected value, or
+    # `nil` if the dialog is canceled.
+    def self.get_item(parent : Widget? = nil, *, title : String, label : String, items : Enumerable(String), current : Int = 0, editable : Bool = true) : String?
+      dialog = new(parent)
+      dialog.window_title = title
+      dialog.input_mode = InputDialogInputMode::Text
+      dialog.label_text = label
+      dialog.combo_box_items = items
+      dialog.combo_box_editable = editable
+      dialog.text_value = dialog.combo_box_items[current]? || ""
+      begin
+        dialog.exec == DialogCode::Accepted ? dialog.text_value : nil
+      ensure
+        dialog.release
+      end
+    end
+
+    # Shows a modal item-selection dialog, yields it for customization, and
+    # returns the selected value, or `nil` if the dialog is canceled.
+    def self.get_item(parent : Widget? = nil, *, title : String, label : String, items : Enumerable(String), current : Int = 0, editable : Bool = true, &block : InputDialog ->) : String?
+      dialog = new(parent)
+      dialog.window_title = title
+      dialog.input_mode = InputDialogInputMode::Text
+      dialog.label_text = label
+      dialog.combo_box_items = items
+      dialog.combo_box_editable = editable
+      dialog.text_value = dialog.combo_box_items[current]? || ""
+      begin
+        yield dialog
+        dialog.exec == DialogCode::Accepted ? dialog.text_value : nil
       ensure
         dialog.release
       end
