@@ -303,7 +303,7 @@ describe Qt6 do
     bounded_element_canvas.pixel_color(1, 1).should eq(Qt6::Color.new(0, 0, 255, 255))
   end
 
-  it "supports clipboard access and file-backed image loading" do
+  it "supports clipboard access and file-backed image loading helpers" do
     application = app
     source_path = File.join(Dir.tempdir, "crystal-qt6-image-source-#{Process.pid}.png")
     source = Qt6::QImage.new(12, 10)
@@ -330,6 +330,27 @@ describe Qt6 do
     reusable_pixmap.load(source_path).should be_true
     reusable_pixmap.size.should eq(Qt6::Size.new(12, 10))
     reusable_pixmap.to_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    reader = Qt6::QImageReader.new(source_path)
+    reader.file_name.should eq(source_path)
+    reader.can_read?.should be_true
+    reader.size.should eq(Qt6::Size.new(12, 10))
+    reader.format.should eq("png")
+    reader.auto_transform?.should be_false
+    reader.auto_transform = true
+    reader.auto_transform?.should be_true
+    reader.format = "png"
+    reader.format.should eq("png")
+
+    reader_image = reader.read
+    reader_image.null?.should be_false
+    reader_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    second_reader = Qt6::QImageReader.new(source_path)
+    reused_reader_image = Qt6::QImage.new(1, 1)
+    second_reader.read(reused_reader_image).should be_true
+    reused_reader_image.size.should eq(Qt6::Size.new(12, 10))
+    reused_reader_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
 
     clipboard = application.clipboard
     clipboard.clear

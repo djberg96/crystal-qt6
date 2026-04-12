@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, raster/SVG/PDF rendering and export, clipboard access, basic raster image loading, and a first batch of common controls, layouts, and item-based editor panels.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The current surface covers custom widgets, a reduced desktop application shell, raster/SVG/PDF rendering and export, clipboard access, `QMimeData`, file-backed drag/drop receive hooks, richer raster image loading, and a first batch of common controls, layouts, and item-based editor panels.
 
 ## Requirements
 
@@ -116,7 +116,7 @@ app.run
 - `Qt6::QTimer` for timeout-driven work on the Qt event loop
 - `Qt6.clipboard` and `Qt6::Clipboard` for process-wide clipboard text, image, and pixmap access
 - `Qt6::Color`, `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common value types
-- `Qt6::QImage`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, file-backed and in-memory SVG loading, and `QSvgWidget#renderer`
+- `Qt6::QImage`, `Qt6::QImageReader`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, probed image-reader metadata, file-backed and in-memory SVG loading, and `QSvgWidget#renderer`
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
 - `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, and `Qt6::InputDialog` for standard dialogs
@@ -176,5 +176,5 @@ The next logical additions are:
 1. additional editor controls and containers such as radio buttons, sliders, spin boxes, group boxes, tabs, splitters, scroll areas, and list/tree surfaces
 2. one real inspector-style example that wires those controls into a custom canvas with live updates
 3. drag-and-drop support for editor workflows and data transfer
-4. richer abstract-model bridges, additional delegate hooks, and remaining rendering/document helpers such as `QImageReader` and gradients/composition features
+4. richer abstract-model bridges, additional delegate hooks, and remaining rendering/document helpers such as gradients/composition features
 5. a roadmap refresh whenever a major phase closes so the documented plan stays aligned with the shipped surface
