@@ -157,6 +157,11 @@ char *qt6cr_widget_style_sheet(qt6cr_handle_t handle);
 void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
 qt6cr_handle_t qt6cr_widget_window_icon(qt6cr_handle_t handle);
 void qt6cr_widget_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+bool qt6cr_widget_is_enabled(qt6cr_handle_t handle);
+void qt6cr_widget_set_enabled(qt6cr_handle_t handle, bool value);
+void qt6cr_widget_set_fixed_size(qt6cr_handle_t handle, int width, int height);
+int qt6cr_widget_minimum_width(qt6cr_handle_t handle);
+void qt6cr_widget_set_minimum_width(qt6cr_handle_t handle, int value);
 bool qt6cr_widget_accept_drops(qt6cr_handle_t handle);
 void qt6cr_widget_set_accept_drops(qt6cr_handle_t handle, bool value);
 
@@ -729,6 +734,20 @@ qt6cr_handle_t qt6cr_label_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_label_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_label_text(qt6cr_handle_t handle);
 
+char *qt6cr_abstract_button_text(qt6cr_handle_t handle);
+void qt6cr_abstract_button_set_text(qt6cr_handle_t handle, const char *text);
+bool qt6cr_abstract_button_is_checkable(qt6cr_handle_t handle);
+void qt6cr_abstract_button_set_checkable(qt6cr_handle_t handle, bool value);
+bool qt6cr_abstract_button_is_checked(qt6cr_handle_t handle);
+void qt6cr_abstract_button_set_checked(qt6cr_handle_t handle, bool value);
+void qt6cr_abstract_button_on_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_abstract_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_abstract_button_click(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_abstract_button_icon(qt6cr_handle_t handle);
+void qt6cr_abstract_button_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+qt6cr_size_t qt6cr_abstract_button_icon_size(qt6cr_handle_t handle);
+void qt6cr_abstract_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size);
+
 qt6cr_handle_t qt6cr_push_button_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_push_button_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_push_button_text(qt6cr_handle_t handle);
@@ -752,6 +771,10 @@ char *qt6cr_radio_button_text(qt6cr_handle_t handle);
 void qt6cr_radio_button_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_radio_button_is_checked(qt6cr_handle_t handle);
 void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_tool_button_create(qt6cr_handle_t parent);
+int qt6cr_tool_button_style(qt6cr_handle_t handle);
+void qt6cr_tool_button_set_style(qt6cr_handle_t handle, int style);
 
 qt6cr_handle_t qt6cr_combo_box_create(qt6cr_handle_t parent);
 void qt6cr_combo_box_add_item(qt6cr_handle_t handle, const char *text);
@@ -868,6 +891,12 @@ void qt6cr_group_box_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_group_box_is_checked(qt6cr_handle_t handle);
 void qt6cr_group_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_frame_create(qt6cr_handle_t parent);
+int qt6cr_frame_shape(qt6cr_handle_t handle);
+void qt6cr_frame_set_shape(qt6cr_handle_t handle, int shape);
+int qt6cr_frame_shadow(qt6cr_handle_t handle);
+void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow);
+
 qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent);
 int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label);
 int qt6cr_tab_widget_count(qt6cr_handle_t handle);
@@ -879,12 +908,28 @@ qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent);
 void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_scroll_area_set_widget_resizable(qt6cr_handle_t handle, bool value);
 bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle);
+int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
+void qt6cr_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
+int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle);
+void qt6cr_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy);
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 int qt6cr_splitter_count(qt6cr_handle_t handle);
 int qt6cr_splitter_orientation(qt6cr_handle_t handle);
 void qt6cr_splitter_set_orientation(qt6cr_handle_t handle, int orientation);
+
+qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent, int buttons);
+qt6cr_handle_t qt6cr_dialog_button_box_button(qt6cr_handle_t handle, int button);
+void qt6cr_dialog_button_box_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_dialog_button_box_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_button_group_create(qt6cr_handle_t parent);
+bool qt6cr_button_group_is_exclusive(qt6cr_handle_t handle);
+void qt6cr_button_group_set_exclusive(qt6cr_handle_t handle, bool value);
+void qt6cr_button_group_add_button(qt6cr_handle_t handle, qt6cr_handle_t button, int id);
+qt6cr_handle_t qt6cr_button_group_button(qt6cr_handle_t handle, int id);
+int qt6cr_button_group_checked_id(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent);
 void qt6cr_timer_set_interval(qt6cr_handle_t handle, int interval);
@@ -898,6 +943,7 @@ void qt6cr_timer_on_timeout(qt6cr_handle_t handle, qt6cr_void_callback_t callbac
 
 qt6cr_handle_t qt6cr_v_box_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_v_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget);
 
 qt6cr_handle_t qt6cr_h_box_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_h_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
@@ -909,6 +955,10 @@ qt6cr_handle_t qt6cr_form_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_form_layout_add_row_label_widget(qt6cr_handle_t handle, const char *label, qt6cr_handle_t field_widget);
 void qt6cr_form_layout_add_row_widget_widget(qt6cr_handle_t handle, qt6cr_handle_t label_widget, qt6cr_handle_t field_widget);
 void qt6cr_form_layout_add_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+int qt6cr_layout_spacing(qt6cr_handle_t handle);
+void qt6cr_layout_set_spacing(qt6cr_handle_t handle, int value);
+void qt6cr_layout_set_contents_margins(qt6cr_handle_t handle, double left, double top, double right, double bottom);
+void qt6cr_layout_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
 void qt6cr_string_free(char *value);
 

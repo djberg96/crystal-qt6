@@ -134,6 +134,11 @@ module Qt6
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
     fun qt6cr_widget_window_icon = qt6cr_widget_window_icon(handle : Handle) : Handle
     fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
+    fun qt6cr_widget_is_enabled = qt6cr_widget_is_enabled(handle : Handle) : Bool
+    fun qt6cr_widget_set_enabled = qt6cr_widget_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_widget_set_fixed_size = qt6cr_widget_set_fixed_size(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_widget_minimum_width = qt6cr_widget_minimum_width(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_minimum_width = qt6cr_widget_set_minimum_width(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_accept_drops = qt6cr_widget_accept_drops(handle : Handle) : Bool
     fun qt6cr_widget_set_accept_drops = qt6cr_widget_set_accept_drops(handle : Handle, value : Bool)
 
@@ -706,6 +711,20 @@ module Qt6
     fun qt6cr_label_set_text = qt6cr_label_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_label_text = qt6cr_label_text(handle : Handle) : UInt8*
 
+    fun qt6cr_abstract_button_text = qt6cr_abstract_button_text(handle : Handle) : UInt8*
+    fun qt6cr_abstract_button_set_text = qt6cr_abstract_button_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_abstract_button_is_checkable = qt6cr_abstract_button_is_checkable(handle : Handle) : Bool
+    fun qt6cr_abstract_button_set_checkable = qt6cr_abstract_button_set_checkable(handle : Handle, value : Bool)
+    fun qt6cr_abstract_button_is_checked = qt6cr_abstract_button_is_checked(handle : Handle) : Bool
+    fun qt6cr_abstract_button_set_checked = qt6cr_abstract_button_set_checked(handle : Handle, value : Bool)
+    fun qt6cr_abstract_button_on_clicked = qt6cr_abstract_button_on_clicked(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_abstract_button_on_toggled = qt6cr_abstract_button_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_abstract_button_click = qt6cr_abstract_button_click(handle : Handle)
+    fun qt6cr_abstract_button_icon = qt6cr_abstract_button_icon(handle : Handle) : Handle
+    fun qt6cr_abstract_button_set_icon = qt6cr_abstract_button_set_icon(handle : Handle, icon : Handle)
+    fun qt6cr_abstract_button_icon_size = qt6cr_abstract_button_icon_size(handle : Handle) : SizeValue
+    fun qt6cr_abstract_button_set_icon_size = qt6cr_abstract_button_set_icon_size(handle : Handle, size : SizeValue)
+
     fun qt6cr_push_button_create = qt6cr_push_button_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_push_button_set_text = qt6cr_push_button_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_push_button_text = qt6cr_push_button_text(handle : Handle) : UInt8*
@@ -729,6 +748,10 @@ module Qt6
     fun qt6cr_radio_button_set_checked = qt6cr_radio_button_set_checked(handle : Handle, value : Bool)
     fun qt6cr_radio_button_is_checked = qt6cr_radio_button_is_checked(handle : Handle) : Bool
     fun qt6cr_radio_button_on_toggled = qt6cr_radio_button_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+
+    fun qt6cr_tool_button_create = qt6cr_tool_button_create(parent : Handle) : Handle
+    fun qt6cr_tool_button_style = qt6cr_tool_button_style(handle : Handle) : LibC::Int
+    fun qt6cr_tool_button_set_style = qt6cr_tool_button_set_style(handle : Handle, style : LibC::Int)
 
     fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle
     fun qt6cr_combo_box_add_item = qt6cr_combo_box_add_item(handle : Handle, text : UInt8*)
@@ -845,6 +868,12 @@ module Qt6
     fun qt6cr_group_box_is_checked = qt6cr_group_box_is_checked(handle : Handle) : Bool
     fun qt6cr_group_box_on_toggled = qt6cr_group_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
+    fun qt6cr_frame_create = qt6cr_frame_create(parent : Handle) : Handle
+    fun qt6cr_frame_shape = qt6cr_frame_shape(handle : Handle) : LibC::Int
+    fun qt6cr_frame_set_shape = qt6cr_frame_set_shape(handle : Handle, shape : LibC::Int)
+    fun qt6cr_frame_shadow = qt6cr_frame_shadow(handle : Handle) : LibC::Int
+    fun qt6cr_frame_set_shadow = qt6cr_frame_set_shadow(handle : Handle, shadow : LibC::Int)
+
     fun qt6cr_tab_widget_create = qt6cr_tab_widget_create(parent : Handle) : Handle
     fun qt6cr_tab_widget_add_tab = qt6cr_tab_widget_add_tab(handle : Handle, widget : Handle, label : UInt8*) : LibC::Int
     fun qt6cr_tab_widget_count = qt6cr_tab_widget_count(handle : Handle) : LibC::Int
@@ -856,12 +885,28 @@ module Qt6
     fun qt6cr_scroll_area_set_widget = qt6cr_scroll_area_set_widget(handle : Handle, widget : Handle)
     fun qt6cr_scroll_area_set_widget_resizable = qt6cr_scroll_area_set_widget_resizable(handle : Handle, value : Bool)
     fun qt6cr_scroll_area_widget_resizable = qt6cr_scroll_area_widget_resizable(handle : Handle) : Bool
+    fun qt6cr_scroll_area_vertical_scroll_bar_policy = qt6cr_scroll_area_vertical_scroll_bar_policy(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_area_set_vertical_scroll_bar_policy = qt6cr_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
+    fun qt6cr_scroll_area_horizontal_scroll_bar_policy = qt6cr_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_area_set_horizontal_scroll_bar_policy = qt6cr_scroll_area_set_horizontal_scroll_bar_policy(handle : Handle, policy : LibC::Int)
 
     fun qt6cr_splitter_create = qt6cr_splitter_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_splitter_add_widget = qt6cr_splitter_add_widget(handle : Handle, widget : Handle)
     fun qt6cr_splitter_count = qt6cr_splitter_count(handle : Handle) : LibC::Int
     fun qt6cr_splitter_orientation = qt6cr_splitter_orientation(handle : Handle) : LibC::Int
     fun qt6cr_splitter_set_orientation = qt6cr_splitter_set_orientation(handle : Handle, orientation : LibC::Int)
+
+    fun qt6cr_dialog_button_box_create = qt6cr_dialog_button_box_create(parent : Handle, buttons : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_button = qt6cr_dialog_button_box_button(handle : Handle, button : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_on_accepted = qt6cr_dialog_button_box_on_accepted(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_dialog_button_box_on_rejected = qt6cr_dialog_button_box_on_rejected(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_button_group_create = qt6cr_button_group_create(parent : Handle) : Handle
+    fun qt6cr_button_group_is_exclusive = qt6cr_button_group_is_exclusive(handle : Handle) : Bool
+    fun qt6cr_button_group_set_exclusive = qt6cr_button_group_set_exclusive(handle : Handle, value : Bool)
+    fun qt6cr_button_group_add_button = qt6cr_button_group_add_button(handle : Handle, button : Handle, id : LibC::Int)
+    fun qt6cr_button_group_button = qt6cr_button_group_button(handle : Handle, id : LibC::Int) : Handle
+    fun qt6cr_button_group_checked_id = qt6cr_button_group_checked_id(handle : Handle) : LibC::Int
 
     fun qt6cr_timer_create = qt6cr_timer_create(parent : Handle) : Handle
     fun qt6cr_timer_set_interval = qt6cr_timer_set_interval(handle : Handle, interval : LibC::Int)
@@ -875,6 +920,7 @@ module Qt6
 
     fun qt6cr_v_box_layout_create = qt6cr_v_box_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_v_box_layout_add_widget = qt6cr_v_box_layout_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_v_box_layout_insert_widget = qt6cr_v_box_layout_insert_widget(handle : Handle, index : LibC::Int, widget : Handle)
 
     fun qt6cr_h_box_layout_create = qt6cr_h_box_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_h_box_layout_add_widget = qt6cr_h_box_layout_add_widget(handle : Handle, widget : Handle)
@@ -886,6 +932,10 @@ module Qt6
     fun qt6cr_form_layout_add_row_label_widget = qt6cr_form_layout_add_row_label_widget(handle : Handle, label : UInt8*, field_widget : Handle)
     fun qt6cr_form_layout_add_row_widget_widget = qt6cr_form_layout_add_row_widget_widget(handle : Handle, label_widget : Handle, field_widget : Handle)
     fun qt6cr_form_layout_add_row_widget = qt6cr_form_layout_add_row_widget(handle : Handle, widget : Handle)
+    fun qt6cr_layout_spacing = qt6cr_layout_spacing(handle : Handle) : LibC::Int
+    fun qt6cr_layout_set_spacing = qt6cr_layout_set_spacing(handle : Handle, value : LibC::Int)
+    fun qt6cr_layout_set_contents_margins = qt6cr_layout_set_contents_margins(handle : Handle, left : Float64, top : Float64, right : Float64, bottom : Float64)
+    fun qt6cr_layout_remove_widget = qt6cr_layout_remove_widget(handle : Handle, widget : Handle)
 
     fun qt6cr_string_free = qt6cr_string_free(value : UInt8*)
   end

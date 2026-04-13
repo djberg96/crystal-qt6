@@ -91,6 +91,34 @@ module Qt6
       value
     end
 
+    # Returns `true` when the widget accepts input.
+    def enabled? : Bool
+      LibQt6.qt6cr_widget_is_enabled(@to_unsafe)
+    end
+
+    # Enables or disables the widget.
+    def enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_enabled(@to_unsafe, value)
+      value
+    end
+
+    # Locks the widget to a fixed size and returns `self`.
+    def set_fixed_size(width : Int, height : Int) : self
+      LibQt6.qt6cr_widget_set_fixed_size(@to_unsafe, width, height)
+      self
+    end
+
+    # Returns the widget's minimum width.
+    def minimum_width : Int32
+      LibQt6.qt6cr_widget_minimum_width(@to_unsafe)
+    end
+
+    # Sets the widget's minimum width.
+    def minimum_width=(value : Int) : Int32
+      LibQt6.qt6cr_widget_set_minimum_width(@to_unsafe, value)
+      value.to_i
+    end
+
     # Returns `true` when the widget accepts drops.
     def accept_drops? : Bool
       LibQt6.qt6cr_widget_accept_drops(@to_unsafe)
