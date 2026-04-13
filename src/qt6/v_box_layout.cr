@@ -12,6 +12,12 @@ module Qt6
       adopt(widget)
     end
 
+    # Inserts a widget at the given layout index and returns it.
+    def insert(index : Int, widget : Widget) : Widget
+      LibQt6.qt6cr_v_box_layout_insert_widget(@to_unsafe, index, widget.to_unsafe)
+      adopt(widget)
+    end
+
     # Appends a widget to the layout and returns `self`.
     def <<(widget : Widget) : self
       add(widget)

@@ -1218,6 +1218,102 @@ describe Qt6 do
     window.release
   end
 
+  it "supports WargameMapTool-style panel primitives" do
+    application = app
+    dialog = Qt6::Dialog.new
+    dialog.minimum_width = 280
+
+    mode_group = Qt6::ButtonGroup.new(dialog)
+    mode_group.exclusive = true
+
+    place_button = Qt6::PushButton.new("Place")
+    select_button = Qt6::PushButton.new("Select")
+    tool_button = Qt6::ToolButton.new
+    tool_button.text = "Brush"
+    tool_button.tool_button_style = Qt6::ToolButtonStyle::TextUnderIcon
+    tool_button.icon = Qt6::QIcon.new
+    tool_button.icon_size = Qt6::Size.new(24, 24)
+    tool_button.set_fixed_size(72, 88)
+    tool_button.enabled = false
+    tool_button.enabled = true
+
+    toggled_states = [] of Bool
+    select_button.on_toggled do |value|
+      toggled_states << value
+    end
+
+    place_button.checkable = true
+    select_button.checkable = true
+    mode_group.add(place_button, 0)
+    mode_group.add(select_button, 1)
+    place_button.checked = true
+    select_button.checked = true
+
+    separator = Qt6::Frame.new
+    separator.frame_shape = Qt6::FrameShape::HLine
+    separator.frame_shadow = Qt6::FrameShadow::Sunken
+
+    host = Qt6::Widget.new
+    layout = host.vbox do |column|
+      column.spacing = 6
+      column.set_contents_margins(4, 5, 6, 7)
+    end
+    layout << place_button
+    layout << select_button
+    layout.insert(0, tool_button)
+    layout << separator
+    layout.remove(separator)
+    layout << separator
+
+    scroll_area = Qt6::ScrollArea.new
+    scroll_area.frame_shape = Qt6::FrameShape::NoFrame
+    scroll_area.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOff
+    scroll_area.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+    scroll_area.widget_resizable = true
+    scroll_area.widget = host
+
+    button_box = Qt6::DialogButtonBox.new(
+      Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel,
+      dialog
+    )
+    accepted = 0
+    rejected = 0
+    button_box.on_accepted { accepted += 1 }
+    button_box.on_rejected { rejected += 1 }
+
+    ok_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Ok).not_nil!
+    cancel_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Cancel).not_nil!
+    ok_button.text = "Export"
+    ok_button.click
+    cancel_button.click
+    application.process_events
+
+    dialog.minimum_width.should eq(280)
+    layout.spacing.should eq(6)
+    tool_button.tool_button_style.should eq(Qt6::ToolButtonStyle::TextUnderIcon)
+    tool_button.icon_size.should eq(Qt6::Size.new(24, 24))
+    tool_button.enabled?.should be_true
+    tool_button.size.should eq(Qt6::Size.new(72, 88))
+    place_button.checkable?.should be_true
+    place_button.checked?.should be_false
+    select_button.checked?.should be_true
+    mode_group.checked_id.should eq(1)
+    mode_group.button(1).not_nil!.text.should eq("Select")
+    mode_group.button(1).not_nil!.checked?.should be_true
+    toggled_states.last.should be_true
+    separator.frame_shape.should eq(Qt6::FrameShape::HLine)
+    separator.frame_shadow.should eq(Qt6::FrameShadow::Sunken)
+    scroll_area.frame_shape.should eq(Qt6::FrameShape::NoFrame)
+    scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
+    scroll_area.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
+    scroll_area.widget_resizable?.should be_true
+    ok_button.text.should eq("Export")
+    accepted.should eq(1)
+    rejected.should eq(1)
+
+    dialog.release
+  end
+
   it "provides QObject-derived signals and timer callbacks" do
     application = app
     timer = Qt6::QTimer.new
