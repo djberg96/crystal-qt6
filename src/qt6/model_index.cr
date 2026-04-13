@@ -30,6 +30,11 @@ module Qt6
       LibQt6.qt6cr_model_index_column(to_unsafe)
     end
 
+    # Returns the model-provided internal identifier for this index.
+    def internal_id : UInt64
+      LibQt6.qt6cr_model_index_internal_id(to_unsafe)
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_model_index_destroy(to_unsafe)
     end

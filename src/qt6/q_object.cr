@@ -6,6 +6,10 @@ module Qt6
   class QObject
     include ManagedResource
 
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     getter to_unsafe : LibQt6::Handle
     @destroyed_signal : Signal() = Signal().new
     @owned : Bool = false
@@ -44,6 +48,18 @@ module Qt6
     # Returns `true` when signal delivery is currently blocked.
     def signals_blocked? : Bool
       LibQt6.qt6cr_object_signals_blocked(@to_unsafe)
+    end
+
+    # Installs an event filter on this object.
+    def install_event_filter(filter : EventFilter) : EventFilter
+      LibQt6.qt6cr_object_install_event_filter(@to_unsafe, filter.to_unsafe)
+      filter
+    end
+
+    # Removes an event filter from this object.
+    def remove_event_filter(filter : EventFilter) : EventFilter
+      LibQt6.qt6cr_object_remove_event_filter(@to_unsafe, filter.to_unsafe)
+      filter
     end
 
     # Marks this object as owned by a native parent so the wrapper stops trying

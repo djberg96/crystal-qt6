@@ -71,10 +71,25 @@ module Qt6
       string_value : UInt8*
     end
 
+    struct ModelIndexSpecValue
+      valid : Bool
+      row : LibC::Int
+      column : LibC::Int
+      internal_id : UInt64
+    end
+
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_object_block_signals = qt6cr_object_block_signals(handle : Handle, block : Bool) : Bool
     fun qt6cr_object_signals_blocked = qt6cr_object_signals_blocked(handle : Handle) : Bool
+    fun qt6cr_object_install_event_filter = qt6cr_object_install_event_filter(handle : Handle, filter : Handle)
+    fun qt6cr_object_remove_event_filter = qt6cr_object_remove_event_filter(handle : Handle, filter : Handle)
+    fun qt6cr_event_filter_create = qt6cr_event_filter_create(parent : Handle) : Handle
+    fun qt6cr_event_filter_on_event = qt6cr_event_filter_on_event(handle : Handle, callback : (Handle, Handle, Handle -> Bool), userdata : Handle)
+    fun qt6cr_event_type = qt6cr_event_type(handle : Handle) : LibC::Int
+    fun qt6cr_event_accept = qt6cr_event_accept(handle : Handle)
+    fun qt6cr_event_ignore = qt6cr_event_ignore(handle : Handle)
+    fun qt6cr_event_is_accepted = qt6cr_event_is_accepted(handle : Handle) : Bool
 
     fun qt6cr_application_create = qt6cr_application_create(argc : LibC::Int, argv : UInt8**) : Handle
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)
@@ -136,7 +151,13 @@ module Qt6
     fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
     fun qt6cr_widget_is_enabled = qt6cr_widget_is_enabled(handle : Handle) : Bool
     fun qt6cr_widget_set_enabled = qt6cr_widget_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_widget_has_focus = qt6cr_widget_has_focus(handle : Handle) : Bool
+    fun qt6cr_widget_focus_policy = qt6cr_widget_focus_policy(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_focus_policy = qt6cr_widget_set_focus_policy(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_set_focus = qt6cr_widget_set_focus(handle : Handle)
+    fun qt6cr_widget_clear_focus = qt6cr_widget_clear_focus(handle : Handle)
     fun qt6cr_widget_set_fixed_size = qt6cr_widget_set_fixed_size(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_widget_simulate_wheel = qt6cr_widget_simulate_wheel(handle : Handle, position : PointFValue, pixel_delta : PointFValue, angle_delta : PointFValue, buttons : LibC::Int, modifiers : LibC::Int)
     fun qt6cr_widget_horizontal_size_policy = qt6cr_widget_horizontal_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_vertical_size_policy = qt6cr_widget_vertical_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_size_policy = qt6cr_widget_set_size_policy(handle : Handle, horizontal : LibC::Int, vertical : LibC::Int)
@@ -275,10 +296,12 @@ module Qt6
     fun qt6cr_model_index_is_valid = qt6cr_model_index_is_valid(handle : Handle) : Bool
     fun qt6cr_model_index_row = qt6cr_model_index_row(handle : Handle) : LibC::Int
     fun qt6cr_model_index_column = qt6cr_model_index_column(handle : Handle) : LibC::Int
+    fun qt6cr_model_index_internal_id = qt6cr_model_index_internal_id(handle : Handle) : UInt64
 
     fun qt6cr_abstract_item_model_row_count = qt6cr_abstract_item_model_row_count(handle : Handle, parent_index : Handle) : LibC::Int
     fun qt6cr_abstract_item_model_column_count = qt6cr_abstract_item_model_column_count(handle : Handle, parent_index : Handle) : LibC::Int
     fun qt6cr_abstract_item_model_index = qt6cr_abstract_item_model_index(handle : Handle, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Handle
+    fun qt6cr_abstract_item_model_parent = qt6cr_abstract_item_model_parent(handle : Handle, index : Handle) : Handle
     fun qt6cr_abstract_item_model_data = qt6cr_abstract_item_model_data(handle : Handle, index : Handle, role : LibC::Int) : VariantValue
     fun qt6cr_abstract_item_model_set_data = qt6cr_abstract_item_model_set_data(handle : Handle, index : Handle, value : VariantValue, role : LibC::Int) : Bool
     fun qt6cr_abstract_item_model_header_data = qt6cr_abstract_item_model_header_data(handle : Handle, section : LibC::Int, orientation : LibC::Int, role : LibC::Int) : VariantValue
@@ -311,6 +334,28 @@ module Qt6
     fun qt6cr_abstract_list_model_begin_remove_rows = qt6cr_abstract_list_model_begin_remove_rows(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
     fun qt6cr_abstract_list_model_end_remove_rows = qt6cr_abstract_list_model_end_remove_rows(handle : Handle)
     fun qt6cr_abstract_list_model_data_changed = qt6cr_abstract_list_model_data_changed(handle : Handle, top_left : Handle, bottom_right : Handle)
+    fun qt6cr_abstract_tree_model_create = qt6cr_abstract_tree_model_create(parent : Handle) : Handle
+    fun qt6cr_abstract_tree_model_on_row_count = qt6cr_abstract_tree_model_on_row_count(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_column_count = qt6cr_abstract_tree_model_on_column_count(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_index_id = qt6cr_abstract_tree_model_on_index_id(handle : Handle, callback : (Handle, LibC::Int, LibC::Int, Handle -> UInt64), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_parent = qt6cr_abstract_tree_model_on_parent(handle : Handle, callback : (Handle, Handle -> ModelIndexSpecValue), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_data = qt6cr_abstract_tree_model_on_data(handle : Handle, callback : (Handle, Handle, LibC::Int -> VariantValue), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_set_data = qt6cr_abstract_tree_model_on_set_data(handle : Handle, callback : (Handle, Handle, VariantValue, LibC::Int -> Bool), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_header_data = qt6cr_abstract_tree_model_on_header_data(handle : Handle, callback : (Handle, LibC::Int, LibC::Int, LibC::Int -> VariantValue), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_flags = qt6cr_abstract_tree_model_on_flags(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_mime_type_count = qt6cr_abstract_tree_model_on_mime_type_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_mime_type = qt6cr_abstract_tree_model_on_mime_type(handle : Handle, callback : (Handle, LibC::Int -> UInt8*), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_mime_data = qt6cr_abstract_tree_model_on_mime_data(handle : Handle, callback : (Handle, Handle*, LibC::Int -> Handle), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_drop_mime_data = qt6cr_abstract_tree_model_on_drop_mime_data(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int, LibC::Int, Handle -> Bool), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_supported_drag_actions = qt6cr_abstract_tree_model_on_supported_drag_actions(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_tree_model_on_supported_drop_actions = qt6cr_abstract_tree_model_on_supported_drop_actions(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_tree_model_begin_reset_model = qt6cr_abstract_tree_model_begin_reset_model(handle : Handle)
+    fun qt6cr_abstract_tree_model_end_reset_model = qt6cr_abstract_tree_model_end_reset_model(handle : Handle)
+    fun qt6cr_abstract_tree_model_begin_insert_rows = qt6cr_abstract_tree_model_begin_insert_rows(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_tree_model_end_insert_rows = qt6cr_abstract_tree_model_end_insert_rows(handle : Handle)
+    fun qt6cr_abstract_tree_model_begin_remove_rows = qt6cr_abstract_tree_model_begin_remove_rows(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_tree_model_end_remove_rows = qt6cr_abstract_tree_model_end_remove_rows(handle : Handle)
+    fun qt6cr_abstract_tree_model_data_changed = qt6cr_abstract_tree_model_data_changed(handle : Handle, top_left : Handle, bottom_right : Handle)
 
     fun qt6cr_item_selection_model_create = qt6cr_item_selection_model_create(model : Handle, parent : Handle) : Handle
     fun qt6cr_item_selection_model_model = qt6cr_item_selection_model_model(handle : Handle) : Handle

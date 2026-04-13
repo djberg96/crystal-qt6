@@ -24,6 +24,11 @@ module Qt6
       ModelIndex.wrap(LibQt6.qt6cr_abstract_item_model_index(to_unsafe, row.to_i32, column.to_i32, parent.try(&.to_unsafe) || Pointer(Void).null), true)
     end
 
+    # Returns the parent index for the given child index.
+    def parent_index(index : ModelIndex) : ModelIndex
+      ModelIndex.wrap(LibQt6.qt6cr_abstract_item_model_parent(to_unsafe, index.to_unsafe), true)
+    end
+
     # Returns role-backed model data for an index.
     def data(index : ModelIndex, role : ItemDataRole = ItemDataRole::Display) : ModelData
       Qt6.model_data_from_native(LibQt6.qt6cr_abstract_item_model_data(to_unsafe, index.to_unsafe, role.value))
