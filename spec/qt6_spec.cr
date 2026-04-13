@@ -1412,7 +1412,11 @@ describe Qt6 do
     end
 
     font_combo.count.should be > 0
-    font_combo.current_index = 1 if font_combo.count > 1
+    original_font_index = font_combo.current_index
+    if font_combo.count > 1
+      alternate_index = original_font_index == 0 ? 1 : 0
+      font_combo.current_index = alternate_index
+    end
     application.process_events
 
     browser = Qt6::TextBrowser.new(host)
@@ -1439,7 +1443,7 @@ describe Qt6 do
     font_combo.horizontal_size_policy.should eq(Qt6::SizePolicy::Ignored)
     font_combo.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
     font_combo.current_font.family.should_not be_empty
-    font_families.last?.should_not be_nil if font_combo.count > 1
+    font_families.last?.should_not be_nil if font_combo.count > 1 && font_combo.current_index != original_font_index
     browser.open_external_links?.should be_false
     browser.default_style_sheet.should contain("#c00")
     browser.plain_text.should contain("Guide")
