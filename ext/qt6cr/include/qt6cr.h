@@ -72,6 +72,7 @@ typedef void (*qt6cr_bool_callback_t)(void *userdata, bool value);
 typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
 typedef void (*qt6cr_double_callback_t)(void *userdata, double value);
 typedef void (*qt6cr_handle_callback_t)(void *userdata, qt6cr_handle_t handle);
+typedef void (*qt6cr_string_callback_t)(void *userdata, const char *value);
 typedef void (*qt6cr_paint_callback_t)(void *userdata, qt6cr_rectf_t rect);
 typedef void (*qt6cr_paint_with_painter_callback_t)(void *userdata, qt6cr_handle_t painter, qt6cr_rectf_t rect);
 typedef void (*qt6cr_resize_callback_t)(void *userdata, qt6cr_size_t old_size, qt6cr_size_t new_size);
@@ -160,6 +161,9 @@ void qt6cr_widget_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 bool qt6cr_widget_is_enabled(qt6cr_handle_t handle);
 void qt6cr_widget_set_enabled(qt6cr_handle_t handle, bool value);
 void qt6cr_widget_set_fixed_size(qt6cr_handle_t handle, int width, int height);
+int qt6cr_widget_horizontal_size_policy(qt6cr_handle_t handle);
+int qt6cr_widget_vertical_size_policy(qt6cr_handle_t handle);
+void qt6cr_widget_set_size_policy(qt6cr_handle_t handle, int horizontal, int vertical);
 int qt6cr_widget_minimum_width(qt6cr_handle_t handle);
 void qt6cr_widget_set_minimum_width(qt6cr_handle_t handle, int value);
 bool qt6cr_widget_accept_drops(qt6cr_handle_t handle);
@@ -784,6 +788,11 @@ void qt6cr_combo_box_set_current_index(qt6cr_handle_t handle, int index);
 char *qt6cr_combo_box_current_text(qt6cr_handle_t handle);
 void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_font_combo_box_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_font_combo_box_current_font(qt6cr_handle_t handle);
+void qt6cr_font_combo_box_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font);
+void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_list_widget_item_create(const char *text);
 qt6cr_handle_t qt6cr_list_widget_item_create_with_icon(qt6cr_handle_t icon, const char *text);
 void qt6cr_list_widget_item_destroy(qt6cr_handle_t handle);
@@ -897,12 +906,30 @@ void qt6cr_frame_set_shape(qt6cr_handle_t handle, int shape);
 int qt6cr_frame_shadow(qt6cr_handle_t handle);
 void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow);
 
+qt6cr_handle_t qt6cr_text_browser_create(qt6cr_handle_t parent);
+char *qt6cr_text_browser_html(qt6cr_handle_t handle);
+void qt6cr_text_browser_set_html(qt6cr_handle_t handle, const char *html);
+char *qt6cr_text_browser_plain_text(qt6cr_handle_t handle);
+bool qt6cr_text_browser_open_external_links(qt6cr_handle_t handle);
+void qt6cr_text_browser_set_open_external_links(qt6cr_handle_t handle, bool value);
+char *qt6cr_text_browser_default_style_sheet(qt6cr_handle_t handle);
+void qt6cr_text_browser_set_default_style_sheet(qt6cr_handle_t handle, const char *css);
+int qt6cr_text_browser_vertical_scroll_value(qt6cr_handle_t handle);
+void qt6cr_text_browser_set_vertical_scroll_value(qt6cr_handle_t handle, int value);
+void qt6cr_text_browser_on_anchor_clicked(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent);
 int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label);
 int qt6cr_tab_widget_count(qt6cr_handle_t handle);
 int qt6cr_tab_widget_current_index(qt6cr_handle_t handle);
 void qt6cr_tab_widget_set_current_index(qt6cr_handle_t handle, int index);
 void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_stacked_widget_create(qt6cr_handle_t parent);
+int qt6cr_stacked_widget_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+int qt6cr_stacked_widget_count(qt6cr_handle_t handle);
+int qt6cr_stacked_widget_current_index(qt6cr_handle_t handle);
+void qt6cr_stacked_widget_set_current_index(qt6cr_handle_t handle, int index);
 
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent);
 void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

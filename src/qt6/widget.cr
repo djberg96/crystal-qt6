@@ -108,6 +108,22 @@ module Qt6
       self
     end
 
+    # Returns the widget's horizontal size policy.
+    def horizontal_size_policy : SizePolicy
+      SizePolicy.from_value(LibQt6.qt6cr_widget_horizontal_size_policy(@to_unsafe))
+    end
+
+    # Returns the widget's vertical size policy.
+    def vertical_size_policy : SizePolicy
+      SizePolicy.from_value(LibQt6.qt6cr_widget_vertical_size_policy(@to_unsafe))
+    end
+
+    # Sets both size policies and returns `self`.
+    def set_size_policy(horizontal : SizePolicy, vertical : SizePolicy) : self
+      LibQt6.qt6cr_widget_set_size_policy(@to_unsafe, horizontal.value, vertical.value)
+      self
+    end
+
     # Returns the widget's minimum width.
     def minimum_width : Int32
       LibQt6.qt6cr_widget_minimum_width(@to_unsafe)

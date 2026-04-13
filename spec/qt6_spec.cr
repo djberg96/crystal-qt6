@@ -1314,6 +1314,60 @@ describe Qt6 do
     dialog.release
   end
 
+  it "supports WargameMapTool-style font, stack, and browser widgets" do
+    application = app
+    host = Qt6::Widget.new
+    host.resize(320, 220)
+
+    font_combo = Qt6::FontComboBox.new(host)
+    font_combo.set_size_policy(Qt6::SizePolicy::Ignored, Qt6::SizePolicy::Fixed)
+
+    font_families = [] of String
+    font_combo.on_current_font_changed do |font|
+      font_families << font.family
+    end
+
+    font_combo.count.should be > 0
+    font_combo.current_index = 1 if font_combo.count > 1
+    application.process_events
+
+    browser = Qt6::TextBrowser.new(host)
+    browser.open_external_links = false
+    browser.default_style_sheet = "a { color: #c00; }"
+    browser.html = <<-HTML
+      <h1>Guide</h1>
+      <p><a href="page:intro">Intro</a></p>
+    HTML
+    browser.scroll_to_top
+
+    clicked_links = [] of String
+    browser.on_anchor_clicked do |href|
+      clicked_links << href
+    end
+
+    stack = Qt6::StackedWidget.new(host)
+    info_page = Qt6::Label.new("Info")
+    stack.add_widget(info_page)
+    stack.add_widget(browser)
+    stack.current_index = 1
+    application.process_events
+
+    font_combo.horizontal_size_policy.should eq(Qt6::SizePolicy::Ignored)
+    font_combo.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    font_combo.current_font.family.should_not be_empty
+    font_families.last?.should_not be_nil if font_combo.count > 1
+    browser.open_external_links?.should be_false
+    browser.default_style_sheet.should contain("#c00")
+    browser.plain_text.should contain("Guide")
+    browser.html.should contain("page:intro")
+    browser.vertical_scroll_value.should eq(0)
+    clicked_links.should be_empty
+    stack.count.should eq(2)
+    stack.current_index.should eq(1)
+
+    host.release
+  end
+
   it "provides QObject-derived signals and timer callbacks" do
     application = app
     timer = Qt6::QTimer.new

@@ -15,6 +15,13 @@ module Qt6
       LibQt6.qt6cr_combo_box_on_current_index_changed(to_unsafe, INDEX_CHANGED_TRAMPOLINE, @callback_userdata)
     end
 
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      @current_index_changed = Signal(Int32).new
+      @callback_userdata = Box.box(self)
+      LibQt6.qt6cr_combo_box_on_current_index_changed(to_unsafe, INDEX_CHANGED_TRAMPOLINE, @callback_userdata)
+    end
+
     # Adds an item to the combo box.
     def add_item(text : String) : self
       LibQt6.qt6cr_combo_box_add_item(to_unsafe, text.to_unsafe)
