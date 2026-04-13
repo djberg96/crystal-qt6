@@ -137,6 +137,9 @@ module Qt6
     fun qt6cr_widget_is_enabled = qt6cr_widget_is_enabled(handle : Handle) : Bool
     fun qt6cr_widget_set_enabled = qt6cr_widget_set_enabled(handle : Handle, value : Bool)
     fun qt6cr_widget_set_fixed_size = qt6cr_widget_set_fixed_size(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_widget_horizontal_size_policy = qt6cr_widget_horizontal_size_policy(handle : Handle) : LibC::Int
+    fun qt6cr_widget_vertical_size_policy = qt6cr_widget_vertical_size_policy(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_size_policy = qt6cr_widget_set_size_policy(handle : Handle, horizontal : LibC::Int, vertical : LibC::Int)
     fun qt6cr_widget_minimum_width = qt6cr_widget_minimum_width(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_minimum_width = qt6cr_widget_set_minimum_width(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_accept_drops = qt6cr_widget_accept_drops(handle : Handle) : Bool
@@ -760,6 +763,10 @@ module Qt6
     fun qt6cr_combo_box_set_current_index = qt6cr_combo_box_set_current_index(handle : Handle, index : LibC::Int)
     fun qt6cr_combo_box_current_text = qt6cr_combo_box_current_text(handle : Handle) : UInt8*
     fun qt6cr_combo_box_on_current_index_changed = qt6cr_combo_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_font_combo_box_create = qt6cr_font_combo_box_create(parent : Handle) : Handle
+    fun qt6cr_font_combo_box_current_font = qt6cr_font_combo_box_current_font(handle : Handle) : Handle
+    fun qt6cr_font_combo_box_set_current_font = qt6cr_font_combo_box_set_current_font(handle : Handle, font : Handle)
+    fun qt6cr_font_combo_box_on_current_font_changed = qt6cr_font_combo_box_on_current_font_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
 
     fun qt6cr_list_widget_item_create = qt6cr_list_widget_item_create(text : UInt8*) : Handle
     fun qt6cr_list_widget_item_create_with_icon = qt6cr_list_widget_item_create_with_icon(icon : Handle, text : UInt8*) : Handle
@@ -873,6 +880,17 @@ module Qt6
     fun qt6cr_frame_set_shape = qt6cr_frame_set_shape(handle : Handle, shape : LibC::Int)
     fun qt6cr_frame_shadow = qt6cr_frame_shadow(handle : Handle) : LibC::Int
     fun qt6cr_frame_set_shadow = qt6cr_frame_set_shadow(handle : Handle, shadow : LibC::Int)
+    fun qt6cr_text_browser_create = qt6cr_text_browser_create(parent : Handle) : Handle
+    fun qt6cr_text_browser_html = qt6cr_text_browser_html(handle : Handle) : UInt8*
+    fun qt6cr_text_browser_set_html = qt6cr_text_browser_set_html(handle : Handle, html : UInt8*)
+    fun qt6cr_text_browser_plain_text = qt6cr_text_browser_plain_text(handle : Handle) : UInt8*
+    fun qt6cr_text_browser_open_external_links = qt6cr_text_browser_open_external_links(handle : Handle) : Bool
+    fun qt6cr_text_browser_set_open_external_links = qt6cr_text_browser_set_open_external_links(handle : Handle, value : Bool)
+    fun qt6cr_text_browser_default_style_sheet = qt6cr_text_browser_default_style_sheet(handle : Handle) : UInt8*
+    fun qt6cr_text_browser_set_default_style_sheet = qt6cr_text_browser_set_default_style_sheet(handle : Handle, css : UInt8*)
+    fun qt6cr_text_browser_vertical_scroll_value = qt6cr_text_browser_vertical_scroll_value(handle : Handle) : LibC::Int
+    fun qt6cr_text_browser_set_vertical_scroll_value = qt6cr_text_browser_set_vertical_scroll_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_text_browser_on_anchor_clicked = qt6cr_text_browser_on_anchor_clicked(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
 
     fun qt6cr_tab_widget_create = qt6cr_tab_widget_create(parent : Handle) : Handle
     fun qt6cr_tab_widget_add_tab = qt6cr_tab_widget_add_tab(handle : Handle, widget : Handle, label : UInt8*) : LibC::Int
@@ -880,6 +898,11 @@ module Qt6
     fun qt6cr_tab_widget_current_index = qt6cr_tab_widget_current_index(handle : Handle) : LibC::Int
     fun qt6cr_tab_widget_set_current_index = qt6cr_tab_widget_set_current_index(handle : Handle, index : LibC::Int)
     fun qt6cr_tab_widget_on_current_index_changed = qt6cr_tab_widget_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_stacked_widget_create = qt6cr_stacked_widget_create(parent : Handle) : Handle
+    fun qt6cr_stacked_widget_add_widget = qt6cr_stacked_widget_add_widget(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_stacked_widget_count = qt6cr_stacked_widget_count(handle : Handle) : LibC::Int
+    fun qt6cr_stacked_widget_current_index = qt6cr_stacked_widget_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_stacked_widget_set_current_index = qt6cr_stacked_widget_set_current_index(handle : Handle, index : LibC::Int)
 
     fun qt6cr_scroll_area_create = qt6cr_scroll_area_create(parent : Handle) : Handle
     fun qt6cr_scroll_area_set_widget = qt6cr_scroll_area_set_widget(handle : Handle, widget : Handle)

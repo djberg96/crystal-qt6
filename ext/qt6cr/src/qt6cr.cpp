@@ -25,6 +25,7 @@
 #include <QDragMoveEvent>
 #include <QEventLoop>
 #include <QFileDialog>
+#include <QFontComboBox>
 #include <QFrame>
 #include <QFont>
 #include <QFontMetrics>
@@ -69,13 +70,18 @@
 #include <QRadialGradient>
 #include <QResizeEvent>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSlider>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QSizePolicy>
+#include <QStackedWidget>
 #include <QStatusBar>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
+#include <QTextBrowser>
+#include <QTextDocument>
 #include <QGroupBox>
 #include <QSplashScreen>
 #include <QSvgGenerator>
@@ -850,6 +856,10 @@ QComboBox *as_combo_box(qt6cr_handle_t handle) {
   return static_cast<QComboBox *>(handle);
 }
 
+QFontComboBox *as_font_combo_box(qt6cr_handle_t handle) {
+  return static_cast<QFontComboBox *>(handle);
+}
+
 QListWidgetItem *as_list_widget_item(qt6cr_handle_t handle) {
   return static_cast<QListWidgetItem *>(handle);
 }
@@ -886,8 +896,16 @@ QFrame *as_frame(qt6cr_handle_t handle) {
   return static_cast<QFrame *>(handle);
 }
 
+QTextBrowser *as_text_browser(qt6cr_handle_t handle) {
+  return static_cast<QTextBrowser *>(handle);
+}
+
 QTabWidget *as_tab_widget(qt6cr_handle_t handle) {
   return static_cast<QTabWidget *>(handle);
+}
+
+QStackedWidget *as_stacked_widget(qt6cr_handle_t handle) {
+  return static_cast<QStackedWidget *>(handle);
 }
 
 QScrollArea *as_scroll_area(qt6cr_handle_t handle) {
@@ -1526,6 +1544,24 @@ void qt6cr_widget_set_fixed_size(qt6cr_handle_t handle, int width, int height) {
 
   if (widget != nullptr) {
     widget->setFixedSize(width, height);
+  }
+}
+
+int qt6cr_widget_horizontal_size_policy(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(QSizePolicy::Preferred) : static_cast<int>(widget->sizePolicy().horizontalPolicy());
+}
+
+int qt6cr_widget_vertical_size_policy(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(QSizePolicy::Preferred) : static_cast<int>(widget->sizePolicy().verticalPolicy());
+}
+
+void qt6cr_widget_set_size_policy(qt6cr_handle_t handle, int horizontal, int vertical) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setSizePolicy(static_cast<QSizePolicy::Policy>(horizontal), static_cast<QSizePolicy::Policy>(vertical));
   }
 }
 
@@ -5422,6 +5458,36 @@ void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_c
   });
 }
 
+qt6cr_handle_t qt6cr_font_combo_box_create(qt6cr_handle_t parent) {
+  return new QFontComboBox(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_font_combo_box_current_font(qt6cr_handle_t handle) {
+  auto *font_combo_box = as_font_combo_box(handle);
+  return font_combo_box == nullptr ? new QFont() : new QFont(font_combo_box->currentFont());
+}
+
+void qt6cr_font_combo_box_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *font_combo_box = as_font_combo_box(handle);
+  auto *value = as_qfont(font);
+
+  if (font_combo_box != nullptr && value != nullptr) {
+    font_combo_box->setCurrentFont(*value);
+  }
+}
+
+void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+  if (font_combo_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(font_combo_box, &QFontComboBox::currentFontChanged, font_combo_box, [callback, userdata](const QFont &font) {
+    callback(userdata, new QFont(font));
+  });
+}
+
 qt6cr_handle_t qt6cr_list_widget_item_create(const char *text) {
   return new QListWidgetItem(QString::fromUtf8(text == nullptr ? "" : text));
 }
@@ -6169,6 +6235,85 @@ void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow) {
   }
 }
 
+qt6cr_handle_t qt6cr_text_browser_create(qt6cr_handle_t parent) {
+  return new QTextBrowser(as_widget(parent));
+}
+
+char *qt6cr_text_browser_html(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? duplicate_string("") : duplicate_string(text_browser->toHtml());
+}
+
+void qt6cr_text_browser_set_html(qt6cr_handle_t handle, const char *html) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->setHtml(QString::fromUtf8(html == nullptr ? "" : html));
+  }
+}
+
+char *qt6cr_text_browser_plain_text(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? duplicate_string("") : duplicate_string(text_browser->toPlainText());
+}
+
+bool qt6cr_text_browser_open_external_links(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser != nullptr && text_browser->openExternalLinks();
+}
+
+void qt6cr_text_browser_set_open_external_links(qt6cr_handle_t handle, bool value) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->setOpenExternalLinks(value);
+  }
+}
+
+char *qt6cr_text_browser_default_style_sheet(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  auto *document = text_browser == nullptr ? nullptr : text_browser->document();
+  return document == nullptr ? duplicate_string("") : duplicate_string(document->defaultStyleSheet());
+}
+
+void qt6cr_text_browser_set_default_style_sheet(qt6cr_handle_t handle, const char *css) {
+  auto *text_browser = as_text_browser(handle);
+  auto *document = text_browser == nullptr ? nullptr : text_browser->document();
+
+  if (document != nullptr) {
+    document->setDefaultStyleSheet(QString::fromUtf8(css == nullptr ? "" : css));
+  }
+}
+
+int qt6cr_text_browser_vertical_scroll_value(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  auto *scroll_bar = text_browser == nullptr ? nullptr : text_browser->verticalScrollBar();
+  return scroll_bar == nullptr ? 0 : scroll_bar->value();
+}
+
+void qt6cr_text_browser_set_vertical_scroll_value(qt6cr_handle_t handle, int value) {
+  auto *text_browser = as_text_browser(handle);
+  auto *scroll_bar = text_browser == nullptr ? nullptr : text_browser->verticalScrollBar();
+
+  if (scroll_bar != nullptr) {
+    scroll_bar->setValue(value);
+  }
+}
+
+void qt6cr_text_browser_on_anchor_clicked(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_browser, &QTextBrowser::anchorClicked, text_browser, [callback, userdata](const QUrl &url) {
+    char *value = duplicate_string(url.toString());
+    callback(userdata, value);
+    delete[] value;
+  });
+}
+
 qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent) {
   return new QTabWidget(as_widget(parent));
 }
@@ -6212,6 +6357,39 @@ void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_
   QObject::connect(tab_widget, &QTabWidget::currentChanged, tab_widget, [callback, userdata](int value) {
     callback(userdata, value);
   });
+}
+
+qt6cr_handle_t qt6cr_stacked_widget_create(qt6cr_handle_t parent) {
+  return new QStackedWidget(as_widget(parent));
+}
+
+int qt6cr_stacked_widget_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  auto *page = as_widget(widget);
+
+  if (stacked_widget == nullptr || page == nullptr) {
+    return -1;
+  }
+
+  return stacked_widget->addWidget(page);
+}
+
+int qt6cr_stacked_widget_count(qt6cr_handle_t handle) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  return stacked_widget == nullptr ? 0 : stacked_widget->count();
+}
+
+int qt6cr_stacked_widget_current_index(qt6cr_handle_t handle) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  return stacked_widget == nullptr ? -1 : stacked_widget->currentIndex();
+}
+
+void qt6cr_stacked_widget_set_current_index(qt6cr_handle_t handle, int index) {
+  auto *stacked_widget = as_stacked_widget(handle);
+
+  if (stacked_widget != nullptr) {
+    stacked_widget->setCurrentIndex(index);
+  }
 }
 
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent) {

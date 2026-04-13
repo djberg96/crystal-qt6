@@ -1,6 +1,10 @@
 module Qt6
   # Wraps `QFont` for text styling.
   class QFont < NativeResource
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates a font with optional family, size, bold, and italic settings.
     def initialize(family : String = "", point_size : Int = -1, bold : Bool = false, italic : Bool = false)
       super(LibQt6.qt6cr_qfont_create(family.to_unsafe, point_size, bold, italic))
