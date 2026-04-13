@@ -1623,7 +1623,18 @@ void qt6cr_clipboard_set_text(qt6cr_handle_t handle, const char *text) {
 
 qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
-  return clipboard == nullptr ? new QImage() : new QImage(clipboard->image());
+
+  if (clipboard == nullptr) {
+    return new QImage();
+  }
+
+  auto image = clipboard->image();
+  if (!image.isNull()) {
+    return new QImage(image);
+  }
+
+  const auto pixmap = clipboard->pixmap();
+  return pixmap.isNull() ? new QImage() : new QImage(pixmap.toImage());
 }
 
 void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
@@ -1637,7 +1648,18 @@ void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
 
 qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
-  return clipboard == nullptr ? new QPixmap() : new QPixmap(clipboard->pixmap());
+
+  if (clipboard == nullptr) {
+    return new QPixmap();
+  }
+
+  auto pixmap = clipboard->pixmap();
+  if (!pixmap.isNull()) {
+    return new QPixmap(pixmap);
+  }
+
+  const auto image = clipboard->image();
+  return image.isNull() ? new QPixmap() : new QPixmap(QPixmap::fromImage(image));
 }
 
 void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
