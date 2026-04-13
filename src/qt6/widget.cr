@@ -102,9 +102,43 @@ module Qt6
       value
     end
 
+    # Returns `true` when the widget currently owns keyboard focus.
+    def has_focus? : Bool
+      LibQt6.qt6cr_widget_has_focus(@to_unsafe)
+    end
+
+    # Returns the widget's focus policy.
+    def focus_policy : FocusPolicy
+      FocusPolicy.from_value(LibQt6.qt6cr_widget_focus_policy(@to_unsafe))
+    end
+
+    # Sets the widget's focus policy.
+    def focus_policy=(value : FocusPolicy) : FocusPolicy
+      LibQt6.qt6cr_widget_set_focus_policy(@to_unsafe, value.value)
+      value
+    end
+
+    # Gives the widget keyboard focus.
+    def set_focus : self
+      LibQt6.qt6cr_widget_set_focus(@to_unsafe)
+      self
+    end
+
+    # Clears keyboard focus from the widget.
+    def clear_focus : self
+      LibQt6.qt6cr_widget_clear_focus(@to_unsafe)
+      self
+    end
+
     # Locks the widget to a fixed size and returns `self`.
     def set_fixed_size(width : Int, height : Int) : self
       LibQt6.qt6cr_widget_set_fixed_size(@to_unsafe, width, height)
+      self
+    end
+
+    # Sends a synthetic wheel event to the widget.
+    def simulate_wheel(position : PointF, pixel_delta : PointF = PointF.new(0.0, 0.0), angle_delta : PointF = PointF.new(0.0, 120.0), buttons : Int = 0, modifiers : Int = 0) : self
+      LibQt6.qt6cr_widget_simulate_wheel(@to_unsafe, position.to_native, pixel_delta.to_native, angle_delta.to_native, buttons, modifiers)
       self
     end
 

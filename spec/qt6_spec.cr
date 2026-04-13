@@ -187,6 +187,90 @@ private class DraggableLayerListModel < Qt6::AbstractListModel
   end
 end
 
+private class LayerTreeModel < Qt6::AbstractTreeModel
+  private record Node, id : UInt64, label : String, parent_id : UInt64?, children : Array(UInt64)
+
+  def initialize(parent : Qt6::QObject? = nil)
+    @nodes = {} of UInt64 => Node
+    @roots = [] of UInt64
+
+    @nodes[1_u64] = Node.new(1_u64, "Terrain", nil, [2_u64, 3_u64])
+    @nodes[2_u64] = Node.new(2_u64, "Contours", 1_u64, [] of UInt64)
+    @nodes[3_u64] = Node.new(3_u64, "Labels", 1_u64, [] of UInt64)
+    @nodes[4_u64] = Node.new(4_u64, "Units", nil, [5_u64])
+    @nodes[5_u64] = Node.new(5_u64, "Infantry", 4_u64, [] of UInt64)
+    @roots = [1_u64, 4_u64]
+    super(parent)
+  end
+
+  protected def model_row_count(parent : Qt6::ModelIndex) : Int32
+    child_ids_for(parent).size.to_i32
+  end
+
+  protected def model_column_count(parent : Qt6::ModelIndex) : Int32
+    1
+  end
+
+  protected def model_index_internal_id(row : Int32, column : Int32, parent : Qt6::ModelIndex) : UInt64?
+    return nil unless column == 0
+
+    child_ids_for(parent)[row]?
+  end
+
+  protected def model_parent(index : Qt6::ModelIndex) : Qt6::ModelIndexSpec?
+    return nil unless index.valid?
+
+    node = @nodes[index.internal_id]?
+    parent_id = node.try(&.parent_id)
+    return nil unless node && parent_id
+
+    parent_node = @nodes[parent_id]?
+    return nil unless parent_node
+
+    siblings = parent_node.parent_id ? @nodes[parent_node.parent_id].not_nil!.children : @roots
+    row = siblings.index(parent_id)
+    return nil unless row
+
+    Qt6::ModelIndexSpec.new(row.to_i32, 0, parent_id)
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+    return nil unless role == Qt6::ItemDataRole::Display.value || role == Qt6::ItemDataRole::Edit.value
+
+    @nodes[index.internal_id]?.try(&.label)
+  end
+
+  protected def model_set_data(index : Qt6::ModelIndex, value : Qt6::ModelData, role : Int32) : Bool
+    return false unless index.valid? && role == Qt6::ItemDataRole::Edit.value
+
+    node = @nodes[index.internal_id]?
+    return false unless node
+
+    @nodes[index.internal_id] = Node.new(node.id, value.to_s, node.parent_id, node.children)
+    data_changed(index)
+    true
+  end
+
+  protected def model_header_data(section : Int32, orientation : Qt6::Orientation, role : Int32) : Qt6::ModelData
+    return nil unless section == 0 && orientation == Qt6::Orientation::Horizontal && role == Qt6::ItemDataRole::Display.value
+
+    "Layer"
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::None unless index.valid?
+
+    Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable
+  end
+
+  private def child_ids_for(parent : Qt6::ModelIndex) : Array(UInt64)
+    return @roots unless parent.valid?
+
+    @nodes[parent.internal_id]?.try(&.children) || ([] of UInt64)
+  end
+end
+
 describe Qt6 do
   it "renders into images and pixmaps with paths and transforms" do
     app
@@ -2087,6 +2171,91 @@ describe Qt6 do
     list_view.release
     proxy.release
     model.release
+  end
+
+  it "supports callback-backed tree models in tree views" do
+    application = app
+    model = LayerTreeModel.new
+    tree_view = Qt6::TreeView.new
+    tree_view.model = model
+    tree_view.expand_all
+
+    terrain_index = model.index(0)
+    contours_index = model.index(0, 0, terrain_index)
+    units_index = model.index(1)
+    parent_index = model.parent_index(contours_index)
+
+    tree_changes = 0
+    tree_view.on_current_index_changed do
+      tree_changes += 1
+    end
+
+    tree_view.current_index = contours_index
+    application.process_events
+    model.set_data(contours_index, "Contours Overlay").should be_true
+    application.process_events
+
+    model.row_count.should eq(2)
+    model.row_count(terrain_index).should eq(2)
+    model.row_count(units_index).should eq(1)
+    model.column_count(terrain_index).should eq(1)
+    model.header_data.should eq("Layer")
+    model.data(contours_index).should eq("Contours Overlay")
+    parent_index.valid?.should be_true
+    parent_index.row.should eq(0)
+    parent_index.internal_id.should eq(1_u64)
+    model.data(parent_index).should eq("Terrain")
+    tree_view.current_index.internal_id.should eq(2_u64)
+    tree_changes.should be >= 1
+
+    parent_index.release
+    units_index.release
+    contours_index.release
+    terrain_index.release
+    tree_view.release
+    model.release
+  end
+
+  it "supports widget event filters and no-scroll guards" do
+    application = app
+    host = Qt6::Widget.new
+    spin_box = Qt6::SpinBox.new(host)
+    spin_box.set_range(0, 10)
+    spin_box.value = 5
+    spin_box.focus_policy = Qt6::FocusPolicy::StrongFocus
+
+    filter_events = [] of Int32
+    filter = Qt6::EventFilter.new(host)
+    filter.on_event do |watched, event|
+      filter_events << event.type_value
+      watched.try(&.to_unsafe) == spin_box.to_unsafe && event.type == Qt6::EventType::Wheel && !spin_box.has_focus?
+    end
+    spin_box.install_event_filter(filter)
+
+    spin_box.show
+    application.process_events
+    spin_box.simulate_wheel(Qt6::PointF.new(10.0, 10.0))
+    application.process_events
+
+    spin_box.value.should eq(5)
+    filter_events.should contain(Qt6::EventType::Wheel.value)
+
+    spin_box.remove_event_filter(filter)
+    no_scroll = Qt6::NoScrollFilter.new(host)
+    spin_box.install_event_filter(no_scroll)
+    spin_box.simulate_wheel(Qt6::PointF.new(10.0, 10.0))
+    application.process_events
+    spin_box.value.should eq(5)
+
+    spin_box.remove_event_filter(no_scroll)
+    application.process_events
+    spin_box.simulate_wheel(Qt6::PointF.new(10.0, 10.0))
+    application.process_events
+
+    spin_box.value.should be > 5
+    spin_box.focus_policy.should eq(Qt6::FocusPolicy::StrongFocus)
+
+    host.release
   end
 
   it "exposes geometry types and custom widget event hooks" do
