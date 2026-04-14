@@ -19,6 +19,11 @@ typedef struct {
 } qt6cr_size_t;
 
 typedef struct {
+	double width;
+	double height;
+} qt6cr_sizef_t;
+
+typedef struct {
 	double x;
 	double y;
 	double width;
@@ -944,6 +949,11 @@ void qt6cr_slider_set_value(qt6cr_handle_t handle, int value);
 int qt6cr_slider_value(qt6cr_handle_t handle);
 int qt6cr_slider_orientation(qt6cr_handle_t handle);
 void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+int qt6cr_abstract_spin_box_button_symbols(qt6cr_handle_t handle);
+void qt6cr_abstract_spin_box_set_button_symbols(qt6cr_handle_t handle, int value);
+bool qt6cr_abstract_spin_box_is_read_only(qt6cr_handle_t handle);
+void qt6cr_abstract_spin_box_set_read_only(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent);
 void qt6cr_spin_box_set_minimum(qt6cr_handle_t handle, int value);

@@ -7,5 +7,9 @@ module Qt6
     def to_native : LibQt6::RectFValue
       LibQt6::RectFValue.new(x: x, y: y, width: width, height: height)
     end
+
+    def to_rect : Rect
+      Rect.new(x.round.to_i32, y.round.to_i32, width.round.to_i32, height.round.to_i32)
+    end
   end
 end

@@ -47,6 +47,11 @@ module Qt6
       Size.new(width, height)
     end
 
+    # Returns the image bounds in pixels.
+    def rect : Rect
+      Rect.new(0, 0, width, height)
+    end
+
     # Returns `true` if the image does not contain valid pixel data.
     def null? : Bool
       LibQt6.qt6cr_qimage_is_null(to_unsafe)

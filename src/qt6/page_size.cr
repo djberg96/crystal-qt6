@@ -9,5 +9,13 @@ module Qt6
       @height = height.to_f64
       @unit = unit
     end
+
+    def initialize(size : SizeF, unit : PageSizeUnit = PageSizeUnit::Millimeter)
+      initialize(size.width, size.height, unit)
+    end
+
+    def size : SizeF
+      SizeF.new(width, height)
+    end
   end
 end

@@ -1195,6 +1195,46 @@ describe Qt6 do
     main.release
   end
 
+  it "supports abstract spin boxes and general geometry value types" do
+    application = app
+    spin_box = Qt6::SpinBox.new
+    double_spin_box = Qt6::DoubleSpinBox.new
+    image = Qt6::QImage.new(32, 18)
+    pixmap = Qt6::QPixmap.new(12, 7)
+
+    spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::NoButtons
+    spin_box.read_only = true
+    double_spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::PlusMinus
+    double_spin_box.read_only = false
+
+    rect = Qt6::Rect.new(1, 2, 30, 40)
+    rect_f = rect.to_rect_f
+    size = Qt6::Size.new(14, 9)
+    size_f = size.to_size_f
+    page_size = Qt6::PageSize.new(size_f)
+
+    spin_box.should be_a(Qt6::AbstractSpinBox)
+    double_spin_box.should be_a(Qt6::AbstractSpinBox)
+    spin_box.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::NoButtons)
+    spin_box.read_only?.should be_true
+    double_spin_box.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::PlusMinus)
+    double_spin_box.read_only?.should be_false
+
+    rect_f.should eq(Qt6::RectF.new(1.0, 2.0, 30.0, 40.0))
+    rect_f.to_rect.should eq(rect)
+    size_f.should eq(Qt6::SizeF.new(14.0, 9.0))
+    size_f.to_size.should eq(size)
+    page_size.size.should eq(size_f)
+    image.rect.should eq(Qt6::Rect.new(0, 0, 32, 18))
+    pixmap.rect.should eq(Qt6::Rect.new(0, 0, 12, 7))
+    application.process_events
+
+    spin_box.release
+    double_spin_box.release
+    image.release
+    pixmap.release
+  end
+
   it "supports editor controls and container widgets" do
     application = app
     window = Qt6::MainWindow.new
