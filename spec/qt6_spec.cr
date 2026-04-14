@@ -1414,6 +1414,177 @@ describe Qt6 do
     window.release
   end
 
+  it "supports common control widgets and date-based editors" do
+    application = app
+    progress_bar = Qt6::ProgressBar.new
+    scroll_bar = Qt6::ScrollBar.new(Qt6::Orientation::Horizontal)
+    dial = Qt6::Dial.new
+    date_time_edit = Qt6::DateTimeEdit.new
+    date_edit = Qt6::DateEdit.new
+    time_edit = Qt6::TimeEdit.new
+    calendar = Qt6::CalendarWidget.new
+    lcd = Qt6::LcdNumber.new
+    command_link = Qt6::CommandLinkButton.new("Export", "Save the current map")
+    tab_bar = Qt6::TabBar.new
+    stacked_host = Qt6::Widget.new
+    stacked_layout = Qt6::StackedLayout.new(stacked_host)
+    first_page = Qt6::Label.new("General")
+    second_page = Qt6::Label.new("Preview")
+
+    scroll_values = [] of Int32
+    dial_values = [] of Int32
+    date_time_values = [] of String
+    date_values = [] of String
+    time_values = [] of String
+    calendar_values = [] of String
+    tab_indices = [] of Int32
+    stacked_indices = [] of Int32
+
+    scroll_bar.on_value_changed do |value|
+      scroll_values << value
+    end
+    dial.on_value_changed do |value|
+      dial_values << value
+    end
+    date_time_edit.on_date_time_changed do |value|
+      date_time_values << value.to_string
+    end
+    date_edit.on_date_changed do |value|
+      date_values << value.to_string
+    end
+    time_edit.on_time_changed do |value|
+      time_values << value.to_string
+    end
+    calendar.on_selection_changed do
+      calendar_values << calendar.selected_date.to_string
+    end
+    tab_bar.on_current_index_changed do |value|
+      tab_indices << value
+    end
+    stacked_layout.on_current_index_changed do |value|
+      stacked_indices << value
+    end
+
+    progress_bar.set_range(0, 12)
+    progress_bar.value = 7
+    progress_bar.text_visible = false
+    progress_bar.format = "%v/%m"
+    progress_bar.orientation = Qt6::Orientation::Vertical
+
+    scroll_bar.set_range(5, 20)
+    scroll_bar.single_step = 2
+    scroll_bar.page_step = 5
+    scroll_bar.value = 11
+
+    dial.set_range(0, 360)
+    dial.wrapping = true
+    dial.notches_visible = true
+    dial.value = 90
+
+    date_time = Qt6::QDateTime.new(2026, 4, 14, 9, 30, 15)
+    date = Qt6::QDate.new(2026, 4, 15)
+    time = Qt6::QTime.new(11, 45, 0)
+
+    date_time_edit.display_format = "yyyy/MM/dd HH:mm:ss"
+    date_time_edit.calendar_popup = true
+    date_time_edit.date_time = date_time
+    date_edit.date = date
+    time_edit.time = time
+
+    calendar.minimum_date = Qt6::QDate.new(2026, 1, 1)
+    calendar.maximum_date = Qt6::QDate.new(2026, 12, 31)
+    calendar.grid_visible = true
+    calendar.selected_date = date
+
+    lcd.digit_count = 6
+    lcd.mode = Qt6::LcdNumberMode::Hex
+    lcd.segment_style = Qt6::LcdNumberSegmentStyle::Flat
+    lcd.display(255)
+
+    command_link.description = "Save the current map as an image"
+
+    tab_bar.add_tab("Layers")
+    tab_bar.add_tab("Export")
+    tab_bar.set_tab_text(1, "Preview")
+    tab_bar.draw_base = false
+    tab_bar.current_index = 1
+
+    stacked_layout << first_page
+    stacked_layout << second_page
+    stacked_layout.current_index = 1
+
+    application.process_events
+
+    progress_bar.minimum.should eq(0)
+    progress_bar.maximum.should eq(12)
+    progress_bar.value.should eq(7)
+    progress_bar.text_visible?.should be_false
+    progress_bar.format.should eq("%v/%m")
+    progress_bar.orientation.should eq(Qt6::Orientation::Vertical)
+
+    scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
+    scroll_bar.minimum.should eq(5)
+    scroll_bar.maximum.should eq(20)
+    scroll_bar.single_step.should eq(2)
+    scroll_bar.page_step.should eq(5)
+    scroll_bar.value.should eq(11)
+    scroll_values.last.should eq(11)
+
+    dial.minimum.should eq(0)
+    dial.maximum.should eq(360)
+    dial.wrapping?.should be_true
+    dial.notches_visible?.should be_true
+    dial.value.should eq(90)
+    dial_values.last.should eq(90)
+
+    date_time_edit.display_format.should eq("yyyy/MM/dd HH:mm:ss")
+    date_time_edit.calendar_popup?.should be_true
+    date_time_edit.date_time.to_string.should eq(date_time.to_string)
+    date_time_values.last.should eq(date_time.to_string)
+
+    date_edit.date.to_string.should eq(date.to_string)
+    date_values.last.should eq(date.to_string)
+
+    time_edit.time.to_string.should eq(time.to_string)
+    time_values.last.should eq(time.to_string)
+
+    calendar.minimum_date.to_string.should eq("2026-01-01")
+    calendar.maximum_date.to_string.should eq("2026-12-31")
+    calendar.grid_visible?.should be_true
+    calendar.selected_date.to_string.should eq(date.to_string)
+    calendar_values.last.should eq(date.to_string)
+
+    lcd.digit_count.should eq(6)
+    lcd.mode.should eq(Qt6::LcdNumberMode::Hex)
+    lcd.segment_style.should eq(Qt6::LcdNumberSegmentStyle::Flat)
+    lcd.int_value.should eq(255)
+
+    command_link.text.should eq("Export")
+    command_link.description.should eq("Save the current map as an image")
+
+    tab_bar.count.should eq(2)
+    tab_bar.current_index.should eq(1)
+    tab_bar.tab_text(1).should eq("Preview")
+    tab_bar.draw_base?.should be_false
+    tab_indices.last.should eq(1)
+
+    stacked_layout.count.should eq(2)
+    stacked_layout.current_index.should eq(1)
+    stacked_indices.last.should eq(1)
+
+    progress_bar.release
+    scroll_bar.release
+    dial.release
+    date_time_edit.release
+    date_edit.release
+    time_edit.release
+    calendar.release
+    lcd.release
+    command_link.release
+    tab_bar.release
+    stacked_host.release
+  end
+
   it "supports WargameMapTool-style panel primitives" do
     application = app
     dialog = Qt6::Dialog.new
