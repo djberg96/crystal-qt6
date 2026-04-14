@@ -1193,6 +1193,10 @@ EventWidget *as_event_widget(qt6cr_handle_t handle) {
   return static_cast<EventWidget *>(handle);
 }
 
+QAbstractSpinBox *as_abstract_spin_box(qt6cr_handle_t handle) {
+  return static_cast<QAbstractSpinBox *>(handle);
+}
+
 QTimer *as_timer(qt6cr_handle_t handle) {
   return static_cast<QTimer *>(handle);
 }
@@ -1207,6 +1211,10 @@ qt6cr_pointf_t to_pointf(const QPoint &point) {
 
 qt6cr_size_t to_size(const QSize &size) {
   return qt6cr_size_t{size.width(), size.height()};
+}
+
+qt6cr_sizef_t to_sizef(const QSizeF &size) {
+  return qt6cr_sizef_t{size.width(), size.height()};
 }
 
 qt6cr_rectf_t to_rectf(const QRect &rect) {
@@ -6760,6 +6768,32 @@ void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t c
   QObject::connect(slider, &QSlider::valueChanged, slider, [callback, userdata](int value) {
     callback(userdata, value);
   });
+}
+
+int qt6cr_abstract_spin_box_button_symbols(qt6cr_handle_t handle) {
+  auto *spin_box = as_abstract_spin_box(handle);
+  return spin_box == nullptr ? static_cast<int>(QAbstractSpinBox::UpDownArrows) : static_cast<int>(spin_box->buttonSymbols());
+}
+
+void qt6cr_abstract_spin_box_set_button_symbols(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_abstract_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setButtonSymbols(static_cast<QAbstractSpinBox::ButtonSymbols>(value));
+  }
+}
+
+bool qt6cr_abstract_spin_box_is_read_only(qt6cr_handle_t handle) {
+  auto *spin_box = as_abstract_spin_box(handle);
+  return spin_box != nullptr && spin_box->isReadOnly();
+}
+
+void qt6cr_abstract_spin_box_set_read_only(qt6cr_handle_t handle, bool value) {
+  auto *spin_box = as_abstract_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setReadOnly(value);
+  }
 }
 
 qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent) {

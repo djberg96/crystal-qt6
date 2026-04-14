@@ -53,6 +53,11 @@ module Qt6
       Size.new(width, height)
     end
 
+    # Returns the pixmap bounds in pixels.
+    def rect : Rect
+      Rect.new(0, 0, width, height)
+    end
+
     # Returns `true` if the pixmap is null.
     def null? : Bool
       LibQt6.qt6cr_qpixmap_is_null(to_unsafe)

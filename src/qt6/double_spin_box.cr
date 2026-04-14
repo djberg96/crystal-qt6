@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QDoubleSpinBox`.
-  class DoubleSpinBox < Widget
+  class DoubleSpinBox < AbstractSpinBox
     @value_changed : Signal(Float64) = Signal(Float64).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 

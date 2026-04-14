@@ -21,6 +21,11 @@ module Qt6
       height : LibC::Int
     end
 
+    struct SizeFValue
+      width : Float64
+      height : Float64
+    end
+
     struct RectFValue
       x : Float64
       y : Float64
@@ -912,6 +917,11 @@ module Qt6
     fun qt6cr_slider_value = qt6cr_slider_value(handle : Handle) : LibC::Int
     fun qt6cr_slider_orientation = qt6cr_slider_orientation(handle : Handle) : LibC::Int
     fun qt6cr_slider_on_value_changed = qt6cr_slider_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_abstract_spin_box_button_symbols = qt6cr_abstract_spin_box_button_symbols(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_spin_box_set_button_symbols = qt6cr_abstract_spin_box_set_button_symbols(handle : Handle, value : LibC::Int)
+    fun qt6cr_abstract_spin_box_is_read_only = qt6cr_abstract_spin_box_is_read_only(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_set_read_only = qt6cr_abstract_spin_box_set_read_only(handle : Handle, value : Bool)
 
     fun qt6cr_spin_box_create = qt6cr_spin_box_create(parent : Handle) : Handle
     fun qt6cr_spin_box_set_minimum = qt6cr_spin_box_set_minimum(handle : Handle, value : LibC::Int)
