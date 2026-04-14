@@ -47,5 +47,22 @@ module Qt6
       LibQt6.qt6cr_header_view_set_section_hidden(to_unsafe, index.to_i32, value)
       value
     end
+
+    # Returns the resize mode for the given section.
+    def section_resize_mode(index : Int) : HeaderResizeMode
+      HeaderResizeMode.from_value(LibQt6.qt6cr_header_view_section_resize_mode(to_unsafe, index.to_i32))
+    end
+
+    # Sets the resize mode for the given section.
+    def set_section_resize_mode(index : Int, value : HeaderResizeMode) : HeaderResizeMode
+      LibQt6.qt6cr_header_view_set_section_resize_mode(to_unsafe, index.to_i32, value.value)
+      value
+    end
+
+    # Resizes a section to the requested pixel size.
+    def resize_section(index : Int, size : Int) : self
+      LibQt6.qt6cr_header_view_resize_section(to_unsafe, index.to_i32, size.to_i32)
+      self
+    end
   end
 end

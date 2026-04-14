@@ -61,6 +61,17 @@ module Qt6
       value
     end
 
+    # Returns how selections expand across table cells.
+    def selection_behavior : ItemSelectionBehavior
+      ItemSelectionBehavior.from_value(LibQt6.qt6cr_table_view_selection_behavior(to_unsafe))
+    end
+
+    # Sets how selections expand across table cells.
+    def selection_behavior=(value : ItemSelectionBehavior) : ItemSelectionBehavior
+      LibQt6.qt6cr_table_view_set_selection_behavior(to_unsafe, value.value)
+      value
+    end
+
     # Returns whether alternating row colors are enabled.
     def alternating_row_colors? : Bool
       LibQt6.qt6cr_table_view_alternating_row_colors(to_unsafe)
@@ -157,6 +168,22 @@ module Qt6
     # Returns the vertical header view.
     def vertical_header : HeaderView
       HeaderView.wrap(LibQt6.qt6cr_table_view_vertical_header(to_unsafe))
+    end
+
+    # Sets a visual span for the given cell.
+    def set_span(row : Int, column : Int, row_span : Int, column_span : Int) : self
+      LibQt6.qt6cr_table_view_set_span(to_unsafe, row.to_i32, column.to_i32, row_span.to_i32, column_span.to_i32)
+      self
+    end
+
+    # Returns the current visual row span for the given cell.
+    def row_span(row : Int, column : Int) : Int32
+      LibQt6.qt6cr_table_view_row_span(to_unsafe, row.to_i32, column.to_i32)
+    end
+
+    # Returns the current visual column span for the given cell.
+    def column_span(row : Int, column : Int) : Int32
+      LibQt6.qt6cr_table_view_column_span(to_unsafe, row.to_i32, column.to_i32)
     end
 
     # Registers a block to run when the current index changes.

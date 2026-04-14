@@ -2271,6 +2271,7 @@ describe Qt6 do
 
     table_view.model = model
     table_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    table_view.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
     table_view.alternating_row_colors = true
     table_view.show_grid = false
     table_view.word_wrap = false
@@ -2283,11 +2284,14 @@ describe Qt6 do
     horizontal_header = table_view.horizontal_header
     horizontal_header.default_section_size = 96
     horizontal_header.stretch_last_section = true
+    horizontal_header.set_section_resize_mode(0, Qt6::HeaderResizeMode::Fixed)
+    horizontal_header.resize_section(0, 120)
     vertical_header = table_view.vertical_header
     vertical_header.set_section_hidden(1, true)
 
     selected_index = model.index(1, 1)
     table_view.current_index = selected_index
+    table_view.set_span(0, 0, 1, 2)
 
     table_widget.row_count = 2
     table_widget.column_count = 2
@@ -2296,6 +2300,7 @@ describe Qt6 do
     table_widget.set_vertical_header_label(0, "Base")
     table_widget.set_vertical_header_label(1, "Overlay")
     table_widget.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    table_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
     table_widget.alternating_row_colors = true
     table_widget.show_grid = false
 
@@ -2309,12 +2314,14 @@ describe Qt6 do
     table_widget.set_item(0, 0, terrain_item)
     table_widget.set_item(0, 1, visible_item)
     terrain_item.text = "Terrain Layer"
+    table_widget.set_span(1, 0, 1, 2)
     table_widget.set_current_cell(0, 1)
     application.process_events
 
     current_index = table_view.current_index
 
     table_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    table_view.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
     table_view.alternating_row_colors?.should be_true
     table_view.show_grid?.should be_false
     table_view.word_wrap?.should be_false
@@ -2330,8 +2337,11 @@ describe Qt6 do
     horizontal_header.count.should eq(2)
     horizontal_header.default_section_size.should eq(96)
     horizontal_header.stretch_last_section?.should be_true
+    horizontal_header.section_resize_mode(0).should eq(Qt6::HeaderResizeMode::Fixed)
     vertical_header.count.should eq(2)
     vertical_header.section_hidden?(1).should be_true
+    table_view.row_span(0, 0).should eq(1)
+    table_view.column_span(0, 0).should eq(2)
 
     table_widget.row_count.should eq(2)
     table_widget.column_count.should eq(2)
@@ -2340,6 +2350,7 @@ describe Qt6 do
     table_widget.vertical_header_label.should eq("Base")
     table_widget.vertical_header_label(1).should eq("Overlay")
     table_widget.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    table_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
     table_widget.alternating_row_colors?.should be_true
     table_widget.show_grid?.should be_false
     table_widget.current_row.should eq(0)
@@ -2353,6 +2364,8 @@ describe Qt6 do
     changed_item_texts.includes?("Terrain Layer").should be_true
     table_widget.horizontal_header.count.should eq(2)
     table_widget.vertical_header.count.should eq(2)
+    table_widget.row_span(1, 0).should eq(1)
+    table_widget.column_span(1, 0).should eq(2)
 
     current_index.release
     selected_index.release
