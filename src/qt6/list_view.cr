@@ -50,6 +50,28 @@ module Qt6
       index
     end
 
+    # Returns the current selection mode.
+    def selection_mode : ItemSelectionMode
+      ItemSelectionMode.from_value(LibQt6.qt6cr_list_view_selection_mode(to_unsafe))
+    end
+
+    # Sets the current selection mode.
+    def selection_mode=(value : ItemSelectionMode) : ItemSelectionMode
+      LibQt6.qt6cr_list_view_set_selection_mode(to_unsafe, value.value)
+      value
+    end
+
+    # Returns whether alternating row colors are enabled.
+    def alternating_row_colors? : Bool
+      LibQt6.qt6cr_list_view_alternating_row_colors(to_unsafe)
+    end
+
+    # Enables or disables alternating row colors.
+    def alternating_row_colors=(value : Bool) : Bool
+      LibQt6.qt6cr_list_view_set_alternating_row_colors(to_unsafe, value)
+      value
+    end
+
     # Returns whether the view can start drag operations.
     def drag_enabled? : Bool
       LibQt6.qt6cr_list_view_drag_enabled(to_unsafe)

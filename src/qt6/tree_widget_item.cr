@@ -25,6 +25,59 @@ module Qt6
       Qt6.copy_and_release_string(LibQt6.qt6cr_tree_widget_item_text(to_unsafe, column.to_i32))
     end
 
+    # Returns the item's current flags.
+    def flags : ItemFlag
+      ItemFlag.from_value(LibQt6.qt6cr_tree_widget_item_flags(to_unsafe))
+    end
+
+    # Sets the item's current flags.
+    def flags=(value : ItemFlag) : ItemFlag
+      LibQt6.qt6cr_tree_widget_item_set_flags(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the font for the first column.
+    def font : QFont
+      font(0)
+    end
+
+    # Returns the font for the given column.
+    def font(column : Int) : QFont
+      QFont.wrap(LibQt6.qt6cr_tree_widget_item_font(to_unsafe, column.to_i32), true)
+    end
+
+    # Sets the font for the first column.
+    def font=(value : QFont) : QFont
+      set_font(0, value)
+    end
+
+    # Sets the font for the given column and returns it.
+    def set_font(column : Int, value : QFont) : QFont
+      LibQt6.qt6cr_tree_widget_item_set_font(to_unsafe, column.to_i32, value.to_unsafe)
+      value
+    end
+
+    # Returns the foreground color for the first column.
+    def foreground : Color
+      foreground(0)
+    end
+
+    # Returns the foreground color for the given column.
+    def foreground(column : Int) : Color
+      Color.from_native(LibQt6.qt6cr_tree_widget_item_foreground(to_unsafe, column.to_i32))
+    end
+
+    # Sets the foreground color for the first column.
+    def foreground=(value : Color) : Color
+      set_foreground(0, value)
+    end
+
+    # Sets the foreground color for the given column and returns it.
+    def set_foreground(column : Int, value : Color) : Color
+      LibQt6.qt6cr_tree_widget_item_set_foreground(to_unsafe, column.to_i32, value.to_native)
+      value
+    end
+
     # Sets the first-column text.
     def text=(value : String) : String
       set_text(0, value)

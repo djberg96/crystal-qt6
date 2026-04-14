@@ -99,6 +99,18 @@ module Qt6
       self
     end
 
+    # Returns the spacing between items.
+    def spacing : Int32
+      LibQt6.qt6cr_list_widget_spacing(to_unsafe)
+    end
+
+    # Sets the spacing between items.
+    def spacing=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_list_widget_set_spacing(to_unsafe, int_value)
+      int_value
+    end
+
     # Returns the current drag/drop mode.
     def drag_drop_mode : ItemViewDragDropMode
       ItemViewDragDropMode.from_value(LibQt6.qt6cr_list_widget_drag_drop_mode(to_unsafe))

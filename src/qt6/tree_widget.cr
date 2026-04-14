@@ -48,6 +48,17 @@ module Qt6
       value
     end
 
+    # Returns whether the header is hidden.
+    def header_hidden? : Bool
+      LibQt6.qt6cr_tree_widget_header_hidden(to_unsafe)
+    end
+
+    # Shows or hides the header.
+    def header_hidden=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_widget_set_header_hidden(to_unsafe, value)
+      value
+    end
+
     # Adds an existing top-level item and returns it.
     def add_top_level_item(item : TreeWidgetItem) : TreeWidgetItem
       LibQt6.qt6cr_tree_widget_add_top_level_item(to_unsafe, item.to_unsafe)
