@@ -4383,6 +4383,27 @@ void qt6cr_header_view_set_section_hidden(qt6cr_handle_t handle, int index, bool
   }
 }
 
+int qt6cr_header_view_section_resize_mode(qt6cr_handle_t handle, int index) {
+  auto *header = as_header_view(handle);
+  return header == nullptr || index < 0 ? static_cast<int>(QHeaderView::Interactive) : static_cast<int>(header->sectionResizeMode(index));
+}
+
+void qt6cr_header_view_set_section_resize_mode(qt6cr_handle_t handle, int index, int value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr && index >= 0) {
+    header->setSectionResizeMode(index, static_cast<QHeaderView::ResizeMode>(value));
+  }
+}
+
+void qt6cr_header_view_resize_section(qt6cr_handle_t handle, int index, int size) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr && index >= 0 && size >= 0) {
+    header->resizeSection(index, size);
+  }
+}
+
 qt6cr_handle_t qt6cr_table_view_create(qt6cr_handle_t parent) {
   return new ModelTableView(as_widget(parent));
 }
@@ -4440,6 +4461,19 @@ void qt6cr_table_view_set_selection_mode(qt6cr_handle_t handle, int mode) {
 
   if (view != nullptr) {
     view->setSelectionMode(static_cast<QAbstractItemView::SelectionMode>(mode));
+  }
+}
+
+int qt6cr_table_view_selection_behavior(qt6cr_handle_t handle) {
+  auto *view = as_table_view(handle);
+  return view == nullptr ? static_cast<int>(QAbstractItemView::SelectItems) : static_cast<int>(view->selectionBehavior());
+}
+
+void qt6cr_table_view_set_selection_behavior(qt6cr_handle_t handle, int behavior) {
+  auto *view = as_table_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionBehavior(static_cast<QAbstractItemView::SelectionBehavior>(behavior));
   }
 }
 
@@ -4555,6 +4589,24 @@ qt6cr_handle_t qt6cr_table_view_horizontal_header(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_table_view_vertical_header(qt6cr_handle_t handle) {
   auto *view = as_table_view(handle);
   return view == nullptr ? nullptr : view->verticalHeader();
+}
+
+void qt6cr_table_view_set_span(qt6cr_handle_t handle, int row, int column, int row_span, int column_span) {
+  auto *view = as_table_view(handle);
+
+  if (view != nullptr && row >= 0 && column >= 0 && row_span >= 1 && column_span >= 1) {
+    view->setSpan(row, column, row_span, column_span);
+  }
+}
+
+int qt6cr_table_view_row_span(qt6cr_handle_t handle, int row, int column) {
+  auto *view = as_table_view(handle);
+  return view == nullptr ? 1 : view->rowSpan(row, column);
+}
+
+int qt6cr_table_view_column_span(qt6cr_handle_t handle, int row, int column) {
+  auto *view = as_table_view(handle);
+  return view == nullptr ? 1 : view->columnSpan(row, column);
 }
 
 void qt6cr_table_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
@@ -7985,6 +8037,19 @@ void qt6cr_table_widget_set_selection_mode(qt6cr_handle_t handle, int mode) {
   }
 }
 
+int qt6cr_table_widget_selection_behavior(qt6cr_handle_t handle) {
+  auto *table = as_table_widget(handle);
+  return table == nullptr ? static_cast<int>(QAbstractItemView::SelectItems) : static_cast<int>(table->selectionBehavior());
+}
+
+void qt6cr_table_widget_set_selection_behavior(qt6cr_handle_t handle, int behavior) {
+  auto *table = as_table_widget(handle);
+
+  if (table != nullptr) {
+    table->setSelectionBehavior(static_cast<QAbstractItemView::SelectionBehavior>(behavior));
+  }
+}
+
 bool qt6cr_table_widget_alternating_row_colors(qt6cr_handle_t handle) {
   auto *table = as_table_widget(handle);
   return table != nullptr && table->alternatingRowColors();
@@ -8019,6 +8084,24 @@ qt6cr_handle_t qt6cr_table_widget_horizontal_header(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_table_widget_vertical_header(qt6cr_handle_t handle) {
   auto *table = as_table_widget(handle);
   return table == nullptr ? nullptr : table->verticalHeader();
+}
+
+void qt6cr_table_widget_set_span(qt6cr_handle_t handle, int row, int column, int row_span, int column_span) {
+  auto *table = as_table_widget(handle);
+
+  if (table != nullptr && row >= 0 && column >= 0 && row_span >= 1 && column_span >= 1) {
+    table->setSpan(row, column, row_span, column_span);
+  }
+}
+
+int qt6cr_table_widget_row_span(qt6cr_handle_t handle, int row, int column) {
+  auto *table = as_table_widget(handle);
+  return table == nullptr ? 1 : table->rowSpan(row, column);
+}
+
+int qt6cr_table_widget_column_span(qt6cr_handle_t handle, int row, int column) {
+  auto *table = as_table_widget(handle);
+  return table == nullptr ? 1 : table->columnSpan(row, column);
 }
 
 void qt6cr_table_widget_on_current_cell_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {

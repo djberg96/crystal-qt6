@@ -505,6 +505,9 @@ module Qt6
     fun qt6cr_header_view_set_stretch_last_section = qt6cr_header_view_set_stretch_last_section(handle : Handle, value : Bool)
     fun qt6cr_header_view_section_hidden = qt6cr_header_view_section_hidden(handle : Handle, index : LibC::Int) : Bool
     fun qt6cr_header_view_set_section_hidden = qt6cr_header_view_set_section_hidden(handle : Handle, index : LibC::Int, value : Bool)
+    fun qt6cr_header_view_section_resize_mode = qt6cr_header_view_section_resize_mode(handle : Handle, index : LibC::Int) : LibC::Int
+    fun qt6cr_header_view_set_section_resize_mode = qt6cr_header_view_set_section_resize_mode(handle : Handle, index : LibC::Int, value : LibC::Int)
+    fun qt6cr_header_view_resize_section = qt6cr_header_view_resize_section(handle : Handle, index : LibC::Int, size : LibC::Int)
 
     fun qt6cr_table_view_create = qt6cr_table_view_create(parent : Handle) : Handle
     fun qt6cr_table_view_set_model = qt6cr_table_view_set_model(handle : Handle, model : Handle)
@@ -515,6 +518,8 @@ module Qt6
     fun qt6cr_table_view_set_current_index = qt6cr_table_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_table_view_selection_mode = qt6cr_table_view_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_table_view_set_selection_mode = qt6cr_table_view_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_table_view_selection_behavior = qt6cr_table_view_selection_behavior(handle : Handle) : LibC::Int
+    fun qt6cr_table_view_set_selection_behavior = qt6cr_table_view_set_selection_behavior(handle : Handle, behavior : LibC::Int)
     fun qt6cr_table_view_alternating_row_colors = qt6cr_table_view_alternating_row_colors(handle : Handle) : Bool
     fun qt6cr_table_view_set_alternating_row_colors = qt6cr_table_view_set_alternating_row_colors(handle : Handle, value : Bool)
     fun qt6cr_table_view_drag_enabled = qt6cr_table_view_drag_enabled(handle : Handle) : Bool
@@ -533,6 +538,9 @@ module Qt6
     fun qt6cr_table_view_set_sorting_enabled = qt6cr_table_view_set_sorting_enabled(handle : Handle, value : Bool)
     fun qt6cr_table_view_horizontal_header = qt6cr_table_view_horizontal_header(handle : Handle) : Handle
     fun qt6cr_table_view_vertical_header = qt6cr_table_view_vertical_header(handle : Handle) : Handle
+    fun qt6cr_table_view_set_span = qt6cr_table_view_set_span(handle : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)
+    fun qt6cr_table_view_row_span = qt6cr_table_view_row_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
+    fun qt6cr_table_view_column_span = qt6cr_table_view_column_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
     fun qt6cr_table_view_on_current_index_changed = qt6cr_table_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_qsvg_generator_create = qt6cr_qsvg_generator_create : Handle
@@ -1083,12 +1091,17 @@ module Qt6
     fun qt6cr_table_widget_clear_contents = qt6cr_table_widget_clear_contents(handle : Handle)
     fun qt6cr_table_widget_selection_mode = qt6cr_table_widget_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_table_widget_set_selection_mode = qt6cr_table_widget_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_table_widget_selection_behavior = qt6cr_table_widget_selection_behavior(handle : Handle) : LibC::Int
+    fun qt6cr_table_widget_set_selection_behavior = qt6cr_table_widget_set_selection_behavior(handle : Handle, behavior : LibC::Int)
     fun qt6cr_table_widget_alternating_row_colors = qt6cr_table_widget_alternating_row_colors(handle : Handle) : Bool
     fun qt6cr_table_widget_set_alternating_row_colors = qt6cr_table_widget_set_alternating_row_colors(handle : Handle, value : Bool)
     fun qt6cr_table_widget_show_grid = qt6cr_table_widget_show_grid(handle : Handle) : Bool
     fun qt6cr_table_widget_set_show_grid = qt6cr_table_widget_set_show_grid(handle : Handle, value : Bool)
     fun qt6cr_table_widget_horizontal_header = qt6cr_table_widget_horizontal_header(handle : Handle) : Handle
     fun qt6cr_table_widget_vertical_header = qt6cr_table_widget_vertical_header(handle : Handle) : Handle
+    fun qt6cr_table_widget_set_span = qt6cr_table_widget_set_span(handle : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)
+    fun qt6cr_table_widget_row_span = qt6cr_table_widget_row_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
+    fun qt6cr_table_widget_column_span = qt6cr_table_widget_column_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
     fun qt6cr_table_widget_on_current_cell_changed = qt6cr_table_widget_on_current_cell_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_table_widget_on_item_changed = qt6cr_table_widget_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
 
