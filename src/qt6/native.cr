@@ -665,6 +665,29 @@ module Qt6
     fun qt6cr_qfont_metrics_f_horizontal_advance = qt6cr_qfont_metrics_f_horizontal_advance(handle : Handle, text : UInt8*) : Float64
     fun qt6cr_qfont_metrics_f_bounding_rect = qt6cr_qfont_metrics_f_bounding_rect(handle : Handle, text : UInt8*) : RectFValue
 
+    fun qt6cr_qdate_create = qt6cr_qdate_create(year : LibC::Int, month : LibC::Int, day : LibC::Int) : Handle
+    fun qt6cr_qdate_destroy = qt6cr_qdate_destroy(handle : Handle)
+    fun qt6cr_qdate_year = qt6cr_qdate_year(handle : Handle) : LibC::Int
+    fun qt6cr_qdate_month = qt6cr_qdate_month(handle : Handle) : LibC::Int
+    fun qt6cr_qdate_day = qt6cr_qdate_day(handle : Handle) : LibC::Int
+    fun qt6cr_qdate_is_valid = qt6cr_qdate_is_valid(handle : Handle) : Bool
+    fun qt6cr_qdate_to_string = qt6cr_qdate_to_string(handle : Handle, format : UInt8*) : UInt8*
+
+    fun qt6cr_qtime_create = qt6cr_qtime_create(hour : LibC::Int, minute : LibC::Int, second : LibC::Int) : Handle
+    fun qt6cr_qtime_destroy = qt6cr_qtime_destroy(handle : Handle)
+    fun qt6cr_qtime_hour = qt6cr_qtime_hour(handle : Handle) : LibC::Int
+    fun qt6cr_qtime_minute = qt6cr_qtime_minute(handle : Handle) : LibC::Int
+    fun qt6cr_qtime_second = qt6cr_qtime_second(handle : Handle) : LibC::Int
+    fun qt6cr_qtime_is_valid = qt6cr_qtime_is_valid(handle : Handle) : Bool
+    fun qt6cr_qtime_to_string = qt6cr_qtime_to_string(handle : Handle, format : UInt8*) : UInt8*
+
+    fun qt6cr_qdatetime_create = qt6cr_qdatetime_create(year : LibC::Int, month : LibC::Int, day : LibC::Int, hour : LibC::Int, minute : LibC::Int, second : LibC::Int) : Handle
+    fun qt6cr_qdatetime_destroy = qt6cr_qdatetime_destroy(handle : Handle)
+    fun qt6cr_qdatetime_date = qt6cr_qdatetime_date(handle : Handle) : Handle
+    fun qt6cr_qdatetime_time = qt6cr_qdatetime_time(handle : Handle) : Handle
+    fun qt6cr_qdatetime_is_valid = qt6cr_qdatetime_is_valid(handle : Handle) : Bool
+    fun qt6cr_qdatetime_to_string = qt6cr_qdatetime_to_string(handle : Handle, format : UInt8*) : UInt8*
+
     fun qt6cr_qtransform_create = qt6cr_qtransform_create : Handle
     fun qt6cr_qtransform_destroy = qt6cr_qtransform_destroy(handle : Handle)
     fun qt6cr_qtransform_copy = qt6cr_qtransform_copy(handle : Handle) : Handle
@@ -875,6 +898,54 @@ module Qt6
     fun qt6cr_line_edit_text = qt6cr_line_edit_text(handle : Handle) : UInt8*
     fun qt6cr_line_edit_placeholder_text = qt6cr_line_edit_placeholder_text(handle : Handle) : UInt8*
     fun qt6cr_line_edit_set_placeholder_text = qt6cr_line_edit_set_placeholder_text(handle : Handle, text : UInt8*)
+    fun qt6cr_line_edit_echo_mode = qt6cr_line_edit_echo_mode(handle : Handle) : LibC::Int
+    fun qt6cr_line_edit_set_echo_mode = qt6cr_line_edit_set_echo_mode(handle : Handle, value : LibC::Int)
+    fun qt6cr_line_edit_input_mask = qt6cr_line_edit_input_mask(handle : Handle) : UInt8*
+    fun qt6cr_line_edit_set_input_mask = qt6cr_line_edit_set_input_mask(handle : Handle, value : UInt8*)
+    fun qt6cr_line_edit_alignment = qt6cr_line_edit_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_line_edit_set_alignment = qt6cr_line_edit_set_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_line_edit_cursor_position = qt6cr_line_edit_cursor_position(handle : Handle) : LibC::Int
+    fun qt6cr_line_edit_set_cursor_position = qt6cr_line_edit_set_cursor_position(handle : Handle, value : LibC::Int)
+    fun qt6cr_line_edit_selected_text = qt6cr_line_edit_selected_text(handle : Handle) : UInt8*
+    fun qt6cr_line_edit_has_selected_text = qt6cr_line_edit_has_selected_text(handle : Handle) : Bool
+    fun qt6cr_line_edit_selection_start = qt6cr_line_edit_selection_start(handle : Handle) : LibC::Int
+    fun qt6cr_line_edit_select_all = qt6cr_line_edit_select_all(handle : Handle)
+    fun qt6cr_line_edit_clear_selection = qt6cr_line_edit_clear_selection(handle : Handle)
+    fun qt6cr_line_edit_set_selection = qt6cr_line_edit_set_selection(handle : Handle, start : LibC::Int, length : LibC::Int)
+    fun qt6cr_line_edit_clear = qt6cr_line_edit_clear(handle : Handle)
+    fun qt6cr_line_edit_validator = qt6cr_line_edit_validator(handle : Handle) : Handle
+    fun qt6cr_line_edit_set_validator = qt6cr_line_edit_set_validator(handle : Handle, validator : Handle)
+    fun qt6cr_line_edit_completer = qt6cr_line_edit_completer(handle : Handle) : Handle
+    fun qt6cr_line_edit_set_completer = qt6cr_line_edit_set_completer(handle : Handle, completer : Handle)
+    fun qt6cr_line_edit_on_text_changed = qt6cr_line_edit_on_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+
+    fun qt6cr_validator_validate = qt6cr_validator_validate(handle : Handle, input : UInt8*) : LibC::Int
+    fun qt6cr_int_validator_create = qt6cr_int_validator_create(parent : Handle, bottom : LibC::Int, top : LibC::Int) : Handle
+    fun qt6cr_int_validator_bottom = qt6cr_int_validator_bottom(handle : Handle) : LibC::Int
+    fun qt6cr_int_validator_set_bottom = qt6cr_int_validator_set_bottom(handle : Handle, value : LibC::Int)
+    fun qt6cr_int_validator_top = qt6cr_int_validator_top(handle : Handle) : LibC::Int
+    fun qt6cr_int_validator_set_top = qt6cr_int_validator_set_top(handle : Handle, value : LibC::Int)
+    fun qt6cr_int_validator_set_range = qt6cr_int_validator_set_range(handle : Handle, bottom : LibC::Int, top : LibC::Int)
+    fun qt6cr_double_validator_create = qt6cr_double_validator_create(parent : Handle, bottom : Float64, top : Float64, decimals : LibC::Int) : Handle
+    fun qt6cr_double_validator_bottom = qt6cr_double_validator_bottom(handle : Handle) : Float64
+    fun qt6cr_double_validator_set_bottom = qt6cr_double_validator_set_bottom(handle : Handle, value : Float64)
+    fun qt6cr_double_validator_top = qt6cr_double_validator_top(handle : Handle) : Float64
+    fun qt6cr_double_validator_set_top = qt6cr_double_validator_set_top(handle : Handle, value : Float64)
+    fun qt6cr_double_validator_decimals = qt6cr_double_validator_decimals(handle : Handle) : LibC::Int
+    fun qt6cr_double_validator_set_decimals = qt6cr_double_validator_set_decimals(handle : Handle, value : LibC::Int)
+    fun qt6cr_double_validator_set_range = qt6cr_double_validator_set_range(handle : Handle, bottom : Float64, top : Float64, decimals : LibC::Int)
+    fun qt6cr_regex_validator_create = qt6cr_regex_validator_create(parent : Handle, pattern : UInt8*) : Handle
+    fun qt6cr_regex_validator_pattern = qt6cr_regex_validator_pattern(handle : Handle) : UInt8*
+    fun qt6cr_regex_validator_set_pattern = qt6cr_regex_validator_set_pattern(handle : Handle, pattern : UInt8*)
+    fun qt6cr_completer_create = qt6cr_completer_create(parent : Handle) : Handle
+    fun qt6cr_completer_set_items = qt6cr_completer_set_items(handle : Handle, items : UInt8**, count : LibC::Int)
+    fun qt6cr_completer_completion_prefix = qt6cr_completer_completion_prefix(handle : Handle) : UInt8*
+    fun qt6cr_completer_set_completion_prefix = qt6cr_completer_set_completion_prefix(handle : Handle, value : UInt8*)
+    fun qt6cr_completer_current_completion = qt6cr_completer_current_completion(handle : Handle) : UInt8*
+    fun qt6cr_completer_case_sensitivity = qt6cr_completer_case_sensitivity(handle : Handle) : LibC::Int
+    fun qt6cr_completer_set_case_sensitivity = qt6cr_completer_set_case_sensitivity(handle : Handle, value : LibC::Int)
+    fun qt6cr_completer_completion_mode = qt6cr_completer_completion_mode(handle : Handle) : LibC::Int
+    fun qt6cr_completer_set_completion_mode = qt6cr_completer_set_completion_mode(handle : Handle, value : LibC::Int)
 
     fun qt6cr_check_box_create = qt6cr_check_box_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_check_box_set_text = qt6cr_check_box_set_text(handle : Handle, text : UInt8*)

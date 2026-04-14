@@ -929,6 +929,58 @@ void qt6cr_line_edit_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_line_edit_text(qt6cr_handle_t handle);
 char *qt6cr_line_edit_placeholder_text(qt6cr_handle_t handle);
 void qt6cr_line_edit_set_placeholder_text(qt6cr_handle_t handle, const char *text);
+int qt6cr_line_edit_echo_mode(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_echo_mode(qt6cr_handle_t handle, int value);
+char *qt6cr_line_edit_input_mask(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_input_mask(qt6cr_handle_t handle, const char *value);
+int qt6cr_line_edit_alignment(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_alignment(qt6cr_handle_t handle, int value);
+int qt6cr_line_edit_cursor_position(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_cursor_position(qt6cr_handle_t handle, int value);
+char *qt6cr_line_edit_selected_text(qt6cr_handle_t handle);
+bool qt6cr_line_edit_has_selected_text(qt6cr_handle_t handle);
+int qt6cr_line_edit_selection_start(qt6cr_handle_t handle);
+void qt6cr_line_edit_select_all(qt6cr_handle_t handle);
+void qt6cr_line_edit_clear_selection(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_selection(qt6cr_handle_t handle, int start, int length);
+void qt6cr_line_edit_clear(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_line_edit_validator(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_validator(qt6cr_handle_t handle, qt6cr_handle_t validator);
+qt6cr_handle_t qt6cr_line_edit_completer(qt6cr_handle_t handle);
+void qt6cr_line_edit_set_completer(qt6cr_handle_t handle, qt6cr_handle_t completer);
+void qt6cr_line_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+
+int qt6cr_validator_validate(qt6cr_handle_t handle, const char *input);
+
+qt6cr_handle_t qt6cr_int_validator_create(qt6cr_handle_t parent, int bottom, int top);
+int qt6cr_int_validator_bottom(qt6cr_handle_t handle);
+void qt6cr_int_validator_set_bottom(qt6cr_handle_t handle, int value);
+int qt6cr_int_validator_top(qt6cr_handle_t handle);
+void qt6cr_int_validator_set_top(qt6cr_handle_t handle, int value);
+void qt6cr_int_validator_set_range(qt6cr_handle_t handle, int bottom, int top);
+
+qt6cr_handle_t qt6cr_double_validator_create(qt6cr_handle_t parent, double bottom, double top, int decimals);
+double qt6cr_double_validator_bottom(qt6cr_handle_t handle);
+void qt6cr_double_validator_set_bottom(qt6cr_handle_t handle, double value);
+double qt6cr_double_validator_top(qt6cr_handle_t handle);
+void qt6cr_double_validator_set_top(qt6cr_handle_t handle, double value);
+int qt6cr_double_validator_decimals(qt6cr_handle_t handle);
+void qt6cr_double_validator_set_decimals(qt6cr_handle_t handle, int value);
+void qt6cr_double_validator_set_range(qt6cr_handle_t handle, double bottom, double top, int decimals);
+
+qt6cr_handle_t qt6cr_regex_validator_create(qt6cr_handle_t parent, const char *pattern);
+char *qt6cr_regex_validator_pattern(qt6cr_handle_t handle);
+void qt6cr_regex_validator_set_pattern(qt6cr_handle_t handle, const char *pattern);
+
+qt6cr_handle_t qt6cr_completer_create(qt6cr_handle_t parent);
+void qt6cr_completer_set_items(qt6cr_handle_t handle, const char *const *items, int count);
+char *qt6cr_completer_completion_prefix(qt6cr_handle_t handle);
+void qt6cr_completer_set_completion_prefix(qt6cr_handle_t handle, const char *value);
+char *qt6cr_completer_current_completion(qt6cr_handle_t handle);
+int qt6cr_completer_case_sensitivity(qt6cr_handle_t handle);
+void qt6cr_completer_set_case_sensitivity(qt6cr_handle_t handle, int value);
+int qt6cr_completer_completion_mode(qt6cr_handle_t handle);
+void qt6cr_completer_set_completion_mode(qt6cr_handle_t handle, int value);
 
 qt6cr_handle_t qt6cr_check_box_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_check_box_set_text(qt6cr_handle_t handle, const char *text);
