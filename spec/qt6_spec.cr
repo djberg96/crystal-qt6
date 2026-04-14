@@ -2555,6 +2555,59 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports selection-model commands and model-index convenience helpers" do
+    application = app
+    list_view = Qt6::ListView.new
+    model = Qt6::StandardItemModel.new(list_view)
+    model << Qt6::StandardItem.new("Terrain")
+    model << Qt6::StandardItem.new("Units")
+    list_view.model = model
+
+    selection_model = Qt6::ItemSelectionModel.new(model, list_view)
+    list_view.selection_model = selection_model
+
+    terrain_index = model.index(0)
+    units_index = model.index(1)
+    parent_index = units_index.parent(model)
+
+    units_index.data(model).should eq("Units")
+    units_index.set_data(model, "Counter").should be_true
+    units_index.data(model).should eq("Counter")
+    units_index.flags(model).should eq(model.flags(units_index))
+    parent_index.valid?.should be_false
+
+    selection_model.current_index.valid?.should be_false
+
+    selection_model.current_index = terrain_index
+    application.process_events
+    selection_model.current_index.row.should eq(0)
+
+    selection_model.select(units_index, Qt6::SelectionFlag::ClearAndSelect)
+    application.process_events
+
+    selection_model.current_index.row.should eq(0)
+    selection_model.has_selection?.should be_true
+    selection_model.selected?(units_index).should be_true
+    selection_model.selected?(terrain_index).should be_false
+
+    selection_model.set_current_index(units_index, Qt6::SelectionFlag::Current)
+    application.process_events
+    selection_model.current_index.row.should eq(1)
+
+    selection_model.clear_selection
+    application.process_events
+    selection_model.has_selection?.should be_false
+
+    selection_model.clear
+    application.process_events
+    selection_model.current_index.valid?.should be_false
+
+    terrain_index.release
+    units_index.release
+    parent_index.release
+    list_view.release
+  end
+
   it "hosts a vertical editor slice with docks, canvas interaction, and PNG export" do
     application = app
     state = EditorVerticalSliceSpecState.new

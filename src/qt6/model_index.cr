@@ -35,6 +35,26 @@ module Qt6
       LibQt6.qt6cr_model_index_internal_id(to_unsafe)
     end
 
+    # Returns role-backed data for this index from the given model.
+    def data(model : AbstractItemModel, role : ItemDataRole = ItemDataRole::Display) : ModelData
+      model.data(self, role)
+    end
+
+    # Sets role-backed data for this index on the given model.
+    def set_data(model : AbstractItemModel, value, role : ItemDataRole = ItemDataRole::Edit) : Bool
+      model.set_data(self, value, role)
+    end
+
+    # Returns the item flags for this index from the given model.
+    def flags(model : AbstractItemModel) : ItemFlag
+      model.flags(self)
+    end
+
+    # Returns the parent index for this index from the given model.
+    def parent(model : AbstractItemModel) : ModelIndex
+      model.parent_index(self)
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_model_index_destroy(to_unsafe)
     end

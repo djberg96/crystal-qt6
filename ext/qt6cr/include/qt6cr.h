@@ -418,6 +418,12 @@ void qt6cr_abstract_tree_model_data_changed(qt6cr_handle_t handle, qt6cr_handle_
 qt6cr_handle_t qt6cr_item_selection_model_create(qt6cr_handle_t model, qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_item_selection_model_model(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_item_selection_model_current_index(qt6cr_handle_t handle);
+void qt6cr_item_selection_model_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index, int command);
+void qt6cr_item_selection_model_select_index(qt6cr_handle_t handle, qt6cr_handle_t index, int command);
+void qt6cr_item_selection_model_clear(qt6cr_handle_t handle);
+void qt6cr_item_selection_model_clear_selection(qt6cr_handle_t handle);
+bool qt6cr_item_selection_model_has_selection(qt6cr_handle_t handle);
+bool qt6cr_item_selection_model_is_selected(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_item_selection_model_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_standard_item_create(const char *text);
