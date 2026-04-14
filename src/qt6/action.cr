@@ -49,6 +49,34 @@ module Qt6
       value
     end
 
+    def enabled? : Bool
+      LibQt6.qt6cr_action_is_enabled(to_unsafe)
+    end
+
+    def enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_action_set_enabled(to_unsafe, value)
+      value
+    end
+
+    def tool_tip : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_action_tool_tip(to_unsafe))
+    end
+
+    def tool_tip=(value : String) : String
+      LibQt6.qt6cr_action_set_tool_tip(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    def data : ModelData
+      Qt6.model_data_from_native(LibQt6.qt6cr_action_data(to_unsafe))
+    end
+
+    def data=(value) : ModelData
+      normalized = Qt6.normalize_model_data(value)
+      LibQt6.qt6cr_action_set_data(to_unsafe, Qt6.model_data_to_native(normalized))
+      normalized
+    end
+
     def on_triggered(&block : ->) : self
       @triggered.connect { block.call }
       self

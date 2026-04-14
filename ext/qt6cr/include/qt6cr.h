@@ -65,6 +65,11 @@ typedef struct {
 } qt6cr_byte_array_t;
 
 typedef struct {
+	char **data;
+	int size;
+} qt6cr_string_array_t;
+
+typedef struct {
 	int type;
 	bool bool_value;
 	int int_value;
@@ -251,6 +256,10 @@ void qt6cr_file_dialog_set_name_filter(qt6cr_handle_t handle, const char *filter
 char *qt6cr_file_dialog_name_filter(qt6cr_handle_t handle);
 void qt6cr_file_dialog_select_file(qt6cr_handle_t handle, const char *path);
 char *qt6cr_file_dialog_selected_file(qt6cr_handle_t handle);
+qt6cr_string_array_t qt6cr_file_dialog_selected_files(qt6cr_handle_t handle);
+char *qt6cr_file_dialog_get_open_file_name(qt6cr_handle_t parent, const char *title, const char *directory, const char *filter);
+qt6cr_string_array_t qt6cr_file_dialog_get_open_file_names(qt6cr_handle_t parent, const char *title, const char *directory, const char *filter);
+char *qt6cr_file_dialog_get_save_file_name(qt6cr_handle_t parent, const char *title, const char *directory, const char *filter);
 
 qt6cr_handle_t qt6cr_color_dialog_create(qt6cr_handle_t parent);
 void qt6cr_color_dialog_set_current_color(qt6cr_handle_t handle, qt6cr_color_t color);
@@ -765,6 +774,12 @@ void qt6cr_action_set_checkable(qt6cr_handle_t handle, bool value);
 bool qt6cr_action_is_checkable(qt6cr_handle_t handle);
 void qt6cr_action_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_action_is_checked(qt6cr_handle_t handle);
+void qt6cr_action_set_enabled(qt6cr_handle_t handle, bool value);
+bool qt6cr_action_is_enabled(qt6cr_handle_t handle);
+void qt6cr_action_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip);
+char *qt6cr_action_tool_tip(qt6cr_handle_t handle);
+void qt6cr_action_set_data(qt6cr_handle_t handle, qt6cr_variant_value_t value);
+qt6cr_variant_value_t qt6cr_action_data(qt6cr_handle_t handle);
 void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_action_trigger(qt6cr_handle_t handle);
 
@@ -783,6 +798,9 @@ char *qt6cr_menu_title(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title);
 void qt6cr_tool_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+void qt6cr_tool_bar_add_separator(qt6cr_handle_t handle);
+void qt6cr_tool_bar_set_movable(qt6cr_handle_t handle, bool value);
+bool qt6cr_tool_bar_is_movable(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent);
 void qt6cr_status_bar_show_message(qt6cr_handle_t handle, const char *message, int timeout_ms);
@@ -1113,6 +1131,7 @@ void qt6cr_layout_set_contents_margins(qt6cr_handle_t handle, double left, doubl
 void qt6cr_layout_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
 void qt6cr_string_free(char *value);
+void qt6cr_string_array_free(qt6cr_string_array_t value);
 
 #ifdef __cplusplus
 }

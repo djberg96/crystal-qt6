@@ -1370,6 +1370,50 @@ describe Qt6 do
     window.release
   end
 
+  it "supports app-shell helpers for actions, toolbars, timers, and file dialogs" do
+    app
+    window = Qt6::MainWindow.new
+    toolbar = Qt6::ToolBar.new("Shell", window)
+    action = Qt6::Action.new("Export", window)
+    file_dialog = Qt6::FileDialog.new(window, "/tmp", "Maps (*.map *.json)")
+    loop = Qt6::QEventLoop.new
+    triggered = [] of String
+
+    action.tool_tip = "Export the active map"
+    action.enabled = false
+    action.data = "export-png"
+    toolbar.movable = false
+    toolbar.add_separator
+    toolbar << action
+    action.on_triggered do
+      triggered << action.data.to_s
+    end
+
+    file_dialog.file_mode = Qt6::FileDialogFileMode::ExistingFiles
+    file_dialog.select_file("/tmp/first.map")
+    file_dialog.select_file("/tmp/second.map")
+
+    Qt6::QTimer.single_shot(0) do
+      action.enabled = true
+      action.trigger
+      loop.quit
+    end
+
+    loop.run.should eq(0)
+
+    action.tool_tip.should eq("Export the active map")
+    action.enabled?.should be_true
+    action.data.should eq("export-png")
+    toolbar.movable?.should be_false
+    file_dialog.file_mode.should eq(Qt6::FileDialogFileMode::ExistingFiles)
+    file_dialog.directory.should eq("/tmp")
+    file_dialog.name_filter.should eq("Maps (*.map *.json)")
+    triggered.should eq(["export-png"])
+
+    loop.release
+    window.release
+  end
+
   it "supports WargameMapTool-style panel primitives" do
     application = app
     dialog = Qt6::Dialog.new

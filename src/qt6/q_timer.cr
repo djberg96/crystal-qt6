@@ -1,11 +1,29 @@
 module Qt6
   # Wraps `QTimer`.
   class QTimer < QObject
+    @@single_shot_timers = [] of QTimer
+
     @timeout : Signal() = Signal().new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
     # Signal emitted whenever the timer times out.
     getter timeout : Signal()
+
+    # Schedules a one-shot callback after the given interval.
+    def self.single_shot(interval : Int, &block : ->) : Nil
+      timer = new
+      @@single_shot_timers << timer
+      timer.single_shot = true
+      timer.on_timeout do
+        begin
+          block.call
+        ensure
+          @@single_shot_timers.delete(timer)
+          timer.release
+        end
+      end
+      timer.start(interval)
+    end
 
     # Creates a timer, optionally parented to another `QObject`.
     def initialize(parent : QObject? = nil)

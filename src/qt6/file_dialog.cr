@@ -1,6 +1,23 @@
 module Qt6
   # Wraps `QFileDialog`.
   class FileDialog < Dialog
+    # Opens a modal file picker and returns the chosen path, if any.
+    def self.get_open_file_name(parent : Widget? = nil, title : String = "", directory : String = "", filter : String = "") : String?
+      pointer = LibQt6.qt6cr_file_dialog_get_open_file_name(parent.try(&.to_unsafe) || Pointer(Void).null, title.to_unsafe, directory.to_unsafe, filter.to_unsafe)
+      pointer.null? ? nil : Qt6.copy_and_release_string(pointer)
+    end
+
+    # Opens a modal file picker and returns the chosen paths.
+    def self.get_open_file_names(parent : Widget? = nil, title : String = "", directory : String = "", filter : String = "") : Array(String)
+      Qt6.copy_and_release_strings(LibQt6.qt6cr_file_dialog_get_open_file_names(parent.try(&.to_unsafe) || Pointer(Void).null, title.to_unsafe, directory.to_unsafe, filter.to_unsafe))
+    end
+
+    # Opens a modal save dialog and returns the chosen path, if any.
+    def self.get_save_file_name(parent : Widget? = nil, title : String = "", directory : String = "", filter : String = "") : String?
+      pointer = LibQt6.qt6cr_file_dialog_get_save_file_name(parent.try(&.to_unsafe) || Pointer(Void).null, title.to_unsafe, directory.to_unsafe, filter.to_unsafe)
+      pointer.null? ? nil : Qt6.copy_and_release_string(pointer)
+    end
+
     # Creates a file dialog with optional starting directory and name filter.
     def initialize(parent : Widget? = nil, directory : String = "", filter : String = "")
       super(LibQt6.qt6cr_file_dialog_create(parent.try(&.to_unsafe) || Pointer(Void).null, directory.to_unsafe, filter.to_unsafe), parent.nil?)
@@ -59,6 +76,11 @@ module Qt6
     # Returns the first selected file path, if any.
     def selected_file : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_file_dialog_selected_file(to_unsafe))
+    end
+
+    # Returns all selected file paths.
+    def selected_files : Array(String)
+      Qt6.copy_and_release_strings(LibQt6.qt6cr_file_dialog_selected_files(to_unsafe))
     end
   end
 end
