@@ -220,6 +220,25 @@ module Qt6
     bytes
   end
 
+  def self.copy_and_release_strings(value : LibQt6::StringArrayValue) : Array(String)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_string_array_free(value)
+      return [] of String
+    end
+
+    strings = Array(String).new(size)
+    size.times do |index|
+      item = pointer[index]
+      strings << (item.null? ? "" : String.new(item))
+    end
+
+    LibQt6.qt6cr_string_array_free(value)
+    strings
+  end
+
   def self.malloc_string(value : String) : UInt8*
     bytesize = value.bytesize
     pointer = LibC.malloc(bytesize + 1).as(UInt8*)

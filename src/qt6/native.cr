@@ -67,6 +67,11 @@ module Qt6
       size : LibC::Int
     end
 
+    struct StringArrayValue
+      data : UInt8**
+      size : LibC::Int
+    end
+
     struct VariantValue
       type : LibC::Int
       bool_value : Bool
@@ -221,6 +226,10 @@ module Qt6
     fun qt6cr_file_dialog_name_filter = qt6cr_file_dialog_name_filter(handle : Handle) : UInt8*
     fun qt6cr_file_dialog_select_file = qt6cr_file_dialog_select_file(handle : Handle, path : UInt8*)
     fun qt6cr_file_dialog_selected_file = qt6cr_file_dialog_selected_file(handle : Handle) : UInt8*
+    fun qt6cr_file_dialog_selected_files = qt6cr_file_dialog_selected_files(handle : Handle) : StringArrayValue
+    fun qt6cr_file_dialog_get_open_file_name = qt6cr_file_dialog_get_open_file_name(parent : Handle, title : UInt8*, directory : UInt8*, filter : UInt8*) : UInt8*
+    fun qt6cr_file_dialog_get_open_file_names = qt6cr_file_dialog_get_open_file_names(parent : Handle, title : UInt8*, directory : UInt8*, filter : UInt8*) : StringArrayValue
+    fun qt6cr_file_dialog_get_save_file_name = qt6cr_file_dialog_get_save_file_name(parent : Handle, title : UInt8*, directory : UInt8*, filter : UInt8*) : UInt8*
 
     fun qt6cr_color_dialog_create = qt6cr_color_dialog_create(parent : Handle) : Handle
     fun qt6cr_color_dialog_set_current_color = qt6cr_color_dialog_set_current_color(handle : Handle, color : ColorValue)
@@ -734,6 +743,12 @@ module Qt6
     fun qt6cr_action_is_checkable = qt6cr_action_is_checkable(handle : Handle) : Bool
     fun qt6cr_action_set_checked = qt6cr_action_set_checked(handle : Handle, value : Bool)
     fun qt6cr_action_is_checked = qt6cr_action_is_checked(handle : Handle) : Bool
+    fun qt6cr_action_set_enabled = qt6cr_action_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_action_is_enabled = qt6cr_action_is_enabled(handle : Handle) : Bool
+    fun qt6cr_action_set_tool_tip = qt6cr_action_set_tool_tip(handle : Handle, tool_tip : UInt8*)
+    fun qt6cr_action_tool_tip = qt6cr_action_tool_tip(handle : Handle) : UInt8*
+    fun qt6cr_action_set_data = qt6cr_action_set_data(handle : Handle, value : VariantValue)
+    fun qt6cr_action_data = qt6cr_action_data(handle : Handle) : VariantValue
     fun qt6cr_action_on_triggered = qt6cr_action_on_triggered(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_action_trigger = qt6cr_action_trigger(handle : Handle)
 
@@ -752,6 +767,9 @@ module Qt6
 
     fun qt6cr_tool_bar_create = qt6cr_tool_bar_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_tool_bar_add_action = qt6cr_tool_bar_add_action(handle : Handle, action : Handle)
+    fun qt6cr_tool_bar_add_separator = qt6cr_tool_bar_add_separator(handle : Handle)
+    fun qt6cr_tool_bar_set_movable = qt6cr_tool_bar_set_movable(handle : Handle, value : Bool)
+    fun qt6cr_tool_bar_is_movable = qt6cr_tool_bar_is_movable(handle : Handle) : Bool
 
     fun qt6cr_status_bar_create = qt6cr_status_bar_create(parent : Handle) : Handle
     fun qt6cr_status_bar_show_message = qt6cr_status_bar_show_message(handle : Handle, message : UInt8*, timeout_ms : LibC::Int)
@@ -1079,5 +1097,6 @@ module Qt6
     fun qt6cr_layout_remove_widget = qt6cr_layout_remove_widget(handle : Handle, widget : Handle)
 
     fun qt6cr_string_free = qt6cr_string_free(value : UInt8*)
+    fun qt6cr_string_array_free = qt6cr_string_array_free(value : StringArrayValue)
   end
 end

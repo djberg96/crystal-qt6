@@ -13,6 +13,23 @@ module Qt6
       action
     end
 
+    # Adds a separator to the toolbar.
+    def add_separator : self
+      LibQt6.qt6cr_tool_bar_add_separator(to_unsafe)
+      self
+    end
+
+    # Returns `true` when the toolbar can be repositioned by the user.
+    def movable? : Bool
+      LibQt6.qt6cr_tool_bar_is_movable(to_unsafe)
+    end
+
+    # Enables or disables toolbar repositioning.
+    def movable=(value : Bool) : Bool
+      LibQt6.qt6cr_tool_bar_set_movable(to_unsafe, value)
+      value
+    end
+
     # Appends an action to the toolbar and returns `self`.
     def <<(action : Action) : self
       add_action(action)

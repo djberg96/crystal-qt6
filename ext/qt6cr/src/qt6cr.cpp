@@ -135,6 +135,7 @@ qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QWidget *as_widget(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
+qt6cr_string_array_t to_string_array_value(const QStringList &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -829,6 +830,22 @@ qt6cr_byte_array_t to_byte_array_value(const QByteArray &value) {
   auto *copy = static_cast<unsigned char *>(std::malloc(static_cast<size_t>(size)));
   std::memcpy(copy, value.constData(), static_cast<size_t>(size));
   return qt6cr_byte_array_t{copy, size};
+}
+
+qt6cr_string_array_t to_string_array_value(const QStringList &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_string_array_t{nullptr, 0};
+  }
+
+  auto **copy = new char *[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = duplicate_string(values.at(index));
+  }
+
+  return qt6cr_string_array_t{copy, size};
 }
 
 QMimeData *clone_mime_data(const QMimeData *source) {
@@ -2272,6 +2289,38 @@ void qt6cr_file_dialog_select_file(qt6cr_handle_t handle, const char *path) {
 char *qt6cr_file_dialog_selected_file(qt6cr_handle_t handle) {
   auto *file_dialog = as_file_dialog(handle);
   return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->selectedFiles().value(0));
+}
+
+qt6cr_string_array_t qt6cr_file_dialog_selected_files(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(file_dialog->selectedFiles());
+}
+
+char *qt6cr_file_dialog_get_open_file_name(qt6cr_handle_t parent, const char *title, const char *directory, const char *filter) {
+  const auto result = QFileDialog::getOpenFileName(
+      as_widget(parent),
+      QString::fromUtf8(title == nullptr ? "" : title),
+      QString::fromUtf8(directory == nullptr ? "" : directory),
+      QString::fromUtf8(filter == nullptr ? "" : filter));
+  return result.isEmpty() ? nullptr : duplicate_string(result);
+}
+
+qt6cr_string_array_t qt6cr_file_dialog_get_open_file_names(qt6cr_handle_t parent, const char *title, const char *directory, const char *filter) {
+  const auto result = QFileDialog::getOpenFileNames(
+      as_widget(parent),
+      QString::fromUtf8(title == nullptr ? "" : title),
+      QString::fromUtf8(directory == nullptr ? "" : directory),
+      QString::fromUtf8(filter == nullptr ? "" : filter));
+  return to_string_array_value(result);
+}
+
+char *qt6cr_file_dialog_get_save_file_name(qt6cr_handle_t parent, const char *title, const char *directory, const char *filter) {
+  const auto result = QFileDialog::getSaveFileName(
+      as_widget(parent),
+      QString::fromUtf8(title == nullptr ? "" : title),
+      QString::fromUtf8(directory == nullptr ? "" : directory),
+      QString::fromUtf8(filter == nullptr ? "" : filter));
+  return result.isEmpty() ? nullptr : duplicate_string(result);
 }
 
 qt6cr_handle_t qt6cr_color_dialog_create(qt6cr_handle_t parent) {
@@ -5577,6 +5626,45 @@ bool qt6cr_action_is_checked(qt6cr_handle_t handle) {
   return action != nullptr && action->isChecked();
 }
 
+void qt6cr_action_set_enabled(qt6cr_handle_t handle, bool value) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setEnabled(value);
+  }
+}
+
+bool qt6cr_action_is_enabled(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action != nullptr && action->isEnabled();
+}
+
+void qt6cr_action_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setToolTip(QString::fromUtf8(tool_tip == nullptr ? "" : tool_tip));
+  }
+}
+
+char *qt6cr_action_tool_tip(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action == nullptr ? duplicate_string("") : duplicate_string(action->toolTip());
+}
+
+void qt6cr_action_set_data(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
+  auto *action = as_action(handle);
+
+  if (action != nullptr) {
+    action->setData(from_variant_value(value));
+  }
+}
+
+qt6cr_variant_value_t qt6cr_action_data(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action == nullptr ? to_variant_value(QVariant()) : to_variant_value(action->data());
+}
+
 void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *action = as_action(handle);
 
@@ -5674,6 +5762,27 @@ void qt6cr_tool_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
   if (tool_bar != nullptr && tool_bar_action != nullptr) {
     tool_bar->addAction(tool_bar_action);
   }
+}
+
+void qt6cr_tool_bar_add_separator(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->addSeparator();
+  }
+}
+
+void qt6cr_tool_bar_set_movable(qt6cr_handle_t handle, bool value) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->setMovable(value);
+  }
+}
+
+bool qt6cr_tool_bar_is_movable(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar != nullptr && tool_bar->isMovable();
 }
 
 qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent) {
@@ -7762,6 +7871,18 @@ void qt6cr_layout_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
 
 void qt6cr_string_free(char *value) {
   delete[] value;
+}
+
+void qt6cr_string_array_free(qt6cr_string_array_t value) {
+  if (value.data == nullptr || value.size <= 0) {
+    return;
+  }
+
+  for (int index = 0; index < value.size; ++index) {
+    delete[] value.data[index];
+  }
+
+  delete[] value.data;
 }
 
 }  // extern "C"
