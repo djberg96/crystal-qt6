@@ -1982,6 +1982,125 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports table views and table widgets" do
+    application = app
+    table_view = Qt6::TableView.new
+    table_widget = Qt6::TableWidget.new
+    model = Qt6::StandardItemModel.new(table_view)
+    current_index_changes = 0
+    current_cell_changes = 0
+    changed_item_texts = [] of String
+
+    table_view.on_current_index_changed do
+      current_index_changes += 1
+    end
+
+    table_widget.on_current_cell_changed do
+      current_cell_changes += 1
+    end
+
+    table_widget.on_item_changed do |item|
+      changed_item_texts << item.text
+    end
+
+    model.set_horizontal_header_label(0, "Layer")
+    model.set_horizontal_header_label(1, "State")
+    model.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+    model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+    model.set_item(1, 0, Qt6::StandardItem.new("Units"))
+    model.set_item(1, 1, Qt6::StandardItem.new("Hidden"))
+
+    table_view.model = model
+    table_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    table_view.alternating_row_colors = true
+    table_view.show_grid = false
+    table_view.word_wrap = false
+    table_view.sorting_enabled = true
+    table_view.drag_enabled = true
+    table_view.drag_drop_mode = Qt6::ItemViewDragDropMode::DragOnly
+    table_view.default_drop_action = Qt6::DropAction::CopyAction
+    table_view.drop_indicator_shown = true
+
+    horizontal_header = table_view.horizontal_header
+    horizontal_header.default_section_size = 96
+    horizontal_header.stretch_last_section = true
+    vertical_header = table_view.vertical_header
+    vertical_header.set_section_hidden(1, true)
+
+    selected_index = model.index(1, 1)
+    table_view.current_index = selected_index
+
+    table_widget.row_count = 2
+    table_widget.column_count = 2
+    table_widget.set_horizontal_header_label(0, "Layer")
+    table_widget.set_horizontal_header_label(1, "Visible")
+    table_widget.set_vertical_header_label(0, "Base")
+    table_widget.set_vertical_header_label(1, "Overlay")
+    table_widget.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    table_widget.alternating_row_colors = true
+    table_widget.show_grid = false
+
+    terrain_item = Qt6::TableWidgetItem.new("Terrain")
+    terrain_item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable
+    terrain_item.set_data("terrain", Qt6::ItemDataRole::User)
+    visible_item = Qt6::TableWidgetItem.new("Shown")
+    visible_item.check_state = Qt6::CheckState::Checked
+    visible_item.foreground = Qt6::Color.new(24, 120, 48)
+
+    table_widget.set_item(0, 0, terrain_item)
+    table_widget.set_item(0, 1, visible_item)
+    terrain_item.text = "Terrain Layer"
+    table_widget.set_current_cell(0, 1)
+    application.process_events
+
+    current_index = table_view.current_index
+
+    table_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    table_view.alternating_row_colors?.should be_true
+    table_view.show_grid?.should be_false
+    table_view.word_wrap?.should be_false
+    table_view.sorting_enabled?.should be_true
+    table_view.drag_enabled?.should be_true
+    table_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragOnly)
+    table_view.default_drop_action.should eq(Qt6::DropAction::CopyAction)
+    table_view.drop_indicator_shown?.should be_true
+    current_index.valid?.should be_true
+    current_index.row.should eq(1)
+    current_index.column.should eq(1)
+    current_index_changes.should be >= 1
+    horizontal_header.count.should eq(2)
+    horizontal_header.default_section_size.should eq(96)
+    horizontal_header.stretch_last_section?.should be_true
+    vertical_header.count.should eq(2)
+    vertical_header.section_hidden?(1).should be_true
+
+    table_widget.row_count.should eq(2)
+    table_widget.column_count.should eq(2)
+    table_widget.horizontal_header_label.should eq("Layer")
+    table_widget.horizontal_header_label(1).should eq("Visible")
+    table_widget.vertical_header_label.should eq("Base")
+    table_widget.vertical_header_label(1).should eq("Overlay")
+    table_widget.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    table_widget.alternating_row_colors?.should be_true
+    table_widget.show_grid?.should be_false
+    table_widget.current_row.should eq(0)
+    table_widget.current_column.should eq(1)
+    table_widget.current_item.not_nil!.text.should eq("Shown")
+    table_widget.item(0, 0).not_nil!.text.should eq("Terrain Layer")
+    table_widget.item(0, 0).not_nil!.data(Qt6::ItemDataRole::User).should eq("terrain")
+    table_widget.item(0, 1).not_nil!.check_state.should eq(Qt6::CheckState::Checked)
+    table_widget.item(0, 1).not_nil!.foreground.should eq(Qt6::Color.new(24, 120, 48, 255))
+    current_cell_changes.should be >= 1
+    changed_item_texts.includes?("Terrain Layer").should be_true
+    table_widget.horizontal_header.count.should eq(2)
+    table_widget.vertical_header.count.should eq(2)
+
+    current_index.release
+    selected_index.release
+    table_view.release
+    table_widget.release
+  end
+
   it "supports custom delegate editor creation and commit hooks" do
     app
     host = Qt6::Widget.new
