@@ -16,5 +16,16 @@ module Qt6
       LibQt6.qt6cr_label_set_text(to_unsafe, value.to_unsafe)
       value
     end
+
+    # Returns `true` when the label wraps text across multiple lines.
+    def word_wrap? : Bool
+      LibQt6.qt6cr_label_word_wrap(to_unsafe)
+    end
+
+    # Enables or disables word wrapping.
+    def word_wrap=(value : Bool) : Bool
+      LibQt6.qt6cr_label_set_word_wrap(to_unsafe, value)
+      value
+    end
   end
 end

@@ -152,6 +152,8 @@ module Qt6
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
     fun qt6cr_widget_style_sheet = qt6cr_widget_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
+    fun qt6cr_widget_tool_tip = qt6cr_widget_tool_tip(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_tool_tip = qt6cr_widget_set_tool_tip(handle : Handle, tool_tip : UInt8*)
     fun qt6cr_widget_window_icon = qt6cr_widget_window_icon(handle : Handle) : Handle
     fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
     fun qt6cr_widget_is_enabled = qt6cr_widget_is_enabled(handle : Handle) : Bool
@@ -161,13 +163,24 @@ module Qt6
     fun qt6cr_widget_set_focus_policy = qt6cr_widget_set_focus_policy(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_focus = qt6cr_widget_set_focus(handle : Handle)
     fun qt6cr_widget_clear_focus = qt6cr_widget_clear_focus(handle : Handle)
+    fun qt6cr_widget_move = qt6cr_widget_move(handle : Handle, x : LibC::Int, y : LibC::Int)
+    fun qt6cr_widget_adjust_size = qt6cr_widget_adjust_size(handle : Handle)
+    fun qt6cr_widget_raise_to_front = qt6cr_widget_raise_to_front(handle : Handle)
+    fun qt6cr_widget_set_fixed_width = qt6cr_widget_set_fixed_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_set_fixed_height = qt6cr_widget_set_fixed_height(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_fixed_size = qt6cr_widget_set_fixed_size(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_widget_maximum_width = qt6cr_widget_maximum_width(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_maximum_width = qt6cr_widget_set_maximum_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_maximum_height = qt6cr_widget_maximum_height(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_maximum_height = qt6cr_widget_set_maximum_height(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_simulate_wheel = qt6cr_widget_simulate_wheel(handle : Handle, position : PointFValue, pixel_delta : PointFValue, angle_delta : PointFValue, buttons : LibC::Int, modifiers : LibC::Int)
     fun qt6cr_widget_horizontal_size_policy = qt6cr_widget_horizontal_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_vertical_size_policy = qt6cr_widget_vertical_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_size_policy = qt6cr_widget_set_size_policy(handle : Handle, horizontal : LibC::Int, vertical : LibC::Int)
     fun qt6cr_widget_minimum_width = qt6cr_widget_minimum_width(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_minimum_width = qt6cr_widget_set_minimum_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_minimum_height = qt6cr_widget_minimum_height(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_minimum_height = qt6cr_widget_set_minimum_height(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_accept_drops = qt6cr_widget_accept_drops(handle : Handle) : Bool
     fun qt6cr_widget_set_accept_drops = qt6cr_widget_set_accept_drops(handle : Handle, value : Bool)
 
@@ -779,6 +792,8 @@ module Qt6
     fun qt6cr_label_create = qt6cr_label_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_label_set_text = qt6cr_label_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_label_text = qt6cr_label_text(handle : Handle) : UInt8*
+    fun qt6cr_label_word_wrap = qt6cr_label_word_wrap(handle : Handle) : Bool
+    fun qt6cr_label_set_word_wrap = qt6cr_label_set_word_wrap(handle : Handle, value : Bool)
 
     fun qt6cr_abstract_button_text = qt6cr_abstract_button_text(handle : Handle) : UInt8*
     fun qt6cr_abstract_button_set_text = qt6cr_abstract_button_set_text(handle : Handle, text : UInt8*)
@@ -803,6 +818,8 @@ module Qt6
     fun qt6cr_line_edit_create = qt6cr_line_edit_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_line_edit_set_text = qt6cr_line_edit_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_line_edit_text = qt6cr_line_edit_text(handle : Handle) : UInt8*
+    fun qt6cr_line_edit_placeholder_text = qt6cr_line_edit_placeholder_text(handle : Handle) : UInt8*
+    fun qt6cr_line_edit_set_placeholder_text = qt6cr_line_edit_set_placeholder_text(handle : Handle, text : UInt8*)
 
     fun qt6cr_check_box_create = qt6cr_check_box_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_check_box_set_text = qt6cr_check_box_set_text(handle : Handle, text : UInt8*)

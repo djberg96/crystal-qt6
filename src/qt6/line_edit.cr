@@ -16,5 +16,16 @@ module Qt6
       LibQt6.qt6cr_line_edit_set_text(to_unsafe, value.to_unsafe)
       value
     end
+
+    # Returns the placeholder text shown when the line edit is empty.
+    def placeholder_text : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_line_edit_placeholder_text(to_unsafe))
+    end
+
+    # Sets the placeholder text and returns the assigned value.
+    def placeholder_text=(value : String) : String
+      LibQt6.qt6cr_line_edit_set_placeholder_text(to_unsafe, value.to_unsafe)
+      value
+    end
   end
 end

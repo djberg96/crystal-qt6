@@ -80,6 +80,17 @@ module Qt6
       value
     end
 
+    # Returns the widget's tooltip text.
+    def tool_tip : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_tool_tip(@to_unsafe))
+    end
+
+    # Sets the widget's tooltip text.
+    def tool_tip=(value : String) : String
+      LibQt6.qt6cr_widget_set_tool_tip(@to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns the widget's current window icon.
     def window_icon : QIcon
       QIcon.wrap(LibQt6.qt6cr_widget_window_icon(@to_unsafe), true)
@@ -130,6 +141,38 @@ module Qt6
       self
     end
 
+    # Moves the widget to the given parent-relative position and returns `self`.
+    def move(x : Int, y : Int) : self
+      LibQt6.qt6cr_widget_move(@to_unsafe, x, y)
+      self
+    end
+
+    # Recomputes the widget size from its contents and returns `self`.
+    def adjust_size : self
+      LibQt6.qt6cr_widget_adjust_size(@to_unsafe)
+      self
+    end
+
+    # Raises the widget above overlapping siblings and returns `self`.
+    def raise_to_front : self
+      LibQt6.qt6cr_widget_raise_to_front(@to_unsafe)
+      self
+    end
+
+    # Locks the widget width and returns the assigned value.
+    def fixed_width=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_widget_set_fixed_width(@to_unsafe, int_value)
+      int_value
+    end
+
+    # Locks the widget height and returns the assigned value.
+    def fixed_height=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_widget_set_fixed_height(@to_unsafe, int_value)
+      int_value
+    end
+
     # Locks the widget to a fixed size and returns `self`.
     def set_fixed_size(width : Int, height : Int) : self
       LibQt6.qt6cr_widget_set_fixed_size(@to_unsafe, width, height)
@@ -166,6 +209,39 @@ module Qt6
     # Sets the widget's minimum width.
     def minimum_width=(value : Int) : Int32
       LibQt6.qt6cr_widget_set_minimum_width(@to_unsafe, value)
+      value.to_i
+    end
+
+    # Returns the widget's minimum height.
+    def minimum_height : Int32
+      LibQt6.qt6cr_widget_minimum_height(@to_unsafe)
+    end
+
+    # Sets the widget's minimum height.
+    def minimum_height=(value : Int) : Int32
+      LibQt6.qt6cr_widget_set_minimum_height(@to_unsafe, value)
+      value.to_i
+    end
+
+    # Returns the widget's maximum width.
+    def maximum_width : Int32
+      LibQt6.qt6cr_widget_maximum_width(@to_unsafe)
+    end
+
+    # Sets the widget's maximum width.
+    def maximum_width=(value : Int) : Int32
+      LibQt6.qt6cr_widget_set_maximum_width(@to_unsafe, value)
+      value.to_i
+    end
+
+    # Returns the widget's maximum height.
+    def maximum_height : Int32
+      LibQt6.qt6cr_widget_maximum_height(@to_unsafe)
+    end
+
+    # Sets the widget's maximum height.
+    def maximum_height=(value : Int) : Int32
+      LibQt6.qt6cr_widget_set_maximum_height(@to_unsafe, value)
       value.to_i
     end
 

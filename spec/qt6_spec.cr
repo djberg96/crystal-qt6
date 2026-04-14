@@ -2497,6 +2497,42 @@ describe Qt6 do
     window.release
   end
 
+  it "supports core widget sizing and tooltip controls" do
+    app
+    label = Qt6::Label.new("Widget Controls")
+    line_edit = Qt6::LineEdit.new
+
+    label.tool_tip = "Shared widget affordances"
+    label.word_wrap = true
+    label.minimum_width = 120
+    label.minimum_height = 32
+    label.maximum_width = 360
+    label.maximum_height = 120
+    label.move(14, 18)
+    label.adjust_size
+    line_edit.placeholder_text = "Enter a layer name"
+
+    label.tool_tip.should eq("Shared widget affordances")
+    label.word_wrap?.should be_true
+    label.minimum_width.should eq(120)
+    label.minimum_height.should eq(32)
+    label.maximum_width.should eq(360)
+    label.maximum_height.should eq(120)
+    label.size.width.should be > 0
+    label.size.height.should be > 0
+    line_edit.placeholder_text.should eq("Enter a layer name")
+
+    label.fixed_width = 200
+    label.fixed_height = 48
+    label.minimum_width.should eq(200)
+    label.maximum_width.should eq(200)
+    label.minimum_height.should eq(48)
+    label.maximum_height.should eq(48)
+
+    line_edit.release
+    label.release
+  end
+
   it "supports application metadata, stylesheets, and window icons" do
     application = app
     icon_path = File.join(Dir.tempdir, "crystal-qt6-window-icon-#{Process.pid}.png")
