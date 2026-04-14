@@ -18,6 +18,13 @@
 #include <QColorDialog>
 #include <QComboBox>
 #include <QCoreApplication>
+#include <QCalendarWidget>
+#include <QCommandLinkButton>
+#include <QDate>
+#include <QDateEdit>
+#include <QDateTime>
+#include <QDateTimeEdit>
+#include <QDial>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDockWidget>
@@ -44,6 +51,7 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QLineEdit>
+#include <QLCDNumber>
 #include <QMainWindow>
 #include <QMenu>
 #include <QBrush>
@@ -63,6 +71,7 @@
 #include <QPen>
 #include <QPdfWriter>
 #include <QPixmap>
+#include <QProgressBar>
 #include <QPolygonF>
 #include <QProgressDialog>
 #include <QPushButton>
@@ -78,15 +87,19 @@
 #include <QDoubleSpinBox>
 #include <QSizePolicy>
 #include <QStackedWidget>
+#include <QStackedLayout>
 #include <QStatusBar>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
+#include <QTabBar>
 #include <QTextCursor>
 #include <QTextBrowser>
 #include <QTextDocument>
 #include <QTextEdit>
 #include <QPlainTextEdit>
+#include <QTime>
+#include <QTimeEdit>
 #include <QGroupBox>
 #include <QSplashScreen>
 #include <QSvgGenerator>
@@ -1164,6 +1177,14 @@ QSlider *as_slider(qt6cr_handle_t handle) {
   return static_cast<QSlider *>(handle);
 }
 
+QScrollBar *as_scroll_bar(qt6cr_handle_t handle) {
+  return static_cast<QScrollBar *>(handle);
+}
+
+QDial *as_dial(qt6cr_handle_t handle) {
+  return static_cast<QDial *>(handle);
+}
+
 QSpinBox *as_spin_box(qt6cr_handle_t handle) {
   return static_cast<QSpinBox *>(handle);
 }
@@ -1178,6 +1199,46 @@ QGroupBox *as_group_box(qt6cr_handle_t handle) {
 
 QFrame *as_frame(qt6cr_handle_t handle) {
   return static_cast<QFrame *>(handle);
+}
+
+QProgressBar *as_progress_bar(qt6cr_handle_t handle) {
+  return static_cast<QProgressBar *>(handle);
+}
+
+QDate *as_qdate(qt6cr_handle_t handle) {
+  return static_cast<QDate *>(handle);
+}
+
+QTime *as_qtime(qt6cr_handle_t handle) {
+  return static_cast<QTime *>(handle);
+}
+
+QDateTime *as_qdatetime(qt6cr_handle_t handle) {
+  return static_cast<QDateTime *>(handle);
+}
+
+QDateTimeEdit *as_date_time_edit(qt6cr_handle_t handle) {
+  return static_cast<QDateTimeEdit *>(handle);
+}
+
+QDateEdit *as_date_edit(qt6cr_handle_t handle) {
+  return static_cast<QDateEdit *>(handle);
+}
+
+QTimeEdit *as_time_edit(qt6cr_handle_t handle) {
+  return static_cast<QTimeEdit *>(handle);
+}
+
+QCalendarWidget *as_calendar_widget(qt6cr_handle_t handle) {
+  return static_cast<QCalendarWidget *>(handle);
+}
+
+QLCDNumber *as_lcd_number(qt6cr_handle_t handle) {
+  return static_cast<QLCDNumber *>(handle);
+}
+
+QCommandLinkButton *as_command_link_button(qt6cr_handle_t handle) {
+  return static_cast<QCommandLinkButton *>(handle);
 }
 
 QTextDocument *as_text_document(qt6cr_handle_t handle) {
@@ -1204,8 +1265,16 @@ QTabWidget *as_tab_widget(qt6cr_handle_t handle) {
   return static_cast<QTabWidget *>(handle);
 }
 
+QTabBar *as_tab_bar(qt6cr_handle_t handle) {
+  return static_cast<QTabBar *>(handle);
+}
+
 QStackedWidget *as_stacked_widget(qt6cr_handle_t handle) {
   return static_cast<QStackedWidget *>(handle);
+}
+
+QStackedLayout *as_stacked_layout(qt6cr_handle_t handle) {
+  return static_cast<QStackedLayout *>(handle);
 }
 
 QScrollArea *as_scroll_area(qt6cr_handle_t handle) {

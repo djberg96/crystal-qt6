@@ -696,6 +696,29 @@ double qt6cr_qfont_metrics_f_descent(qt6cr_handle_t handle);
 double qt6cr_qfont_metrics_f_horizontal_advance(qt6cr_handle_t handle, const char *text);
 qt6cr_rectf_t qt6cr_qfont_metrics_f_bounding_rect(qt6cr_handle_t handle, const char *text);
 
+qt6cr_handle_t qt6cr_qdate_create(int year, int month, int day);
+void qt6cr_qdate_destroy(qt6cr_handle_t handle);
+int qt6cr_qdate_year(qt6cr_handle_t handle);
+int qt6cr_qdate_month(qt6cr_handle_t handle);
+int qt6cr_qdate_day(qt6cr_handle_t handle);
+bool qt6cr_qdate_is_valid(qt6cr_handle_t handle);
+char *qt6cr_qdate_to_string(qt6cr_handle_t handle, const char *format);
+
+qt6cr_handle_t qt6cr_qtime_create(int hour, int minute, int second);
+void qt6cr_qtime_destroy(qt6cr_handle_t handle);
+int qt6cr_qtime_hour(qt6cr_handle_t handle);
+int qt6cr_qtime_minute(qt6cr_handle_t handle);
+int qt6cr_qtime_second(qt6cr_handle_t handle);
+bool qt6cr_qtime_is_valid(qt6cr_handle_t handle);
+char *qt6cr_qtime_to_string(qt6cr_handle_t handle, const char *format);
+
+qt6cr_handle_t qt6cr_qdatetime_create(int year, int month, int day, int hour, int minute, int second);
+void qt6cr_qdatetime_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qdatetime_date(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qdatetime_time(qt6cr_handle_t handle);
+bool qt6cr_qdatetime_is_valid(qt6cr_handle_t handle);
+char *qt6cr_qdatetime_to_string(qt6cr_handle_t handle, const char *format);
+
 qt6cr_handle_t qt6cr_qtransform_create(void);
 void qt6cr_qtransform_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_qtransform_copy(qt6cr_handle_t handle);
@@ -938,6 +961,21 @@ qt6cr_handle_t qt6cr_font_combo_box_current_font(qt6cr_handle_t handle);
 void qt6cr_font_combo_box_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font);
 void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_progress_bar_create(qt6cr_handle_t parent);
+int qt6cr_progress_bar_minimum(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_minimum(qt6cr_handle_t handle, int value);
+int qt6cr_progress_bar_maximum(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_maximum(qt6cr_handle_t handle, int value);
+void qt6cr_progress_bar_set_range(qt6cr_handle_t handle, int minimum, int maximum);
+int qt6cr_progress_bar_value(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_value(qt6cr_handle_t handle, int value);
+bool qt6cr_progress_bar_text_visible(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_text_visible(qt6cr_handle_t handle, bool value);
+char *qt6cr_progress_bar_format(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_format(qt6cr_handle_t handle, const char *value);
+int qt6cr_progress_bar_orientation(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_orientation(qt6cr_handle_t handle, int value);
+
 qt6cr_handle_t qt6cr_list_widget_item_create(const char *text);
 qt6cr_handle_t qt6cr_list_widget_item_create_with_icon(qt6cr_handle_t icon, const char *text);
 void qt6cr_list_widget_item_destroy(qt6cr_handle_t handle);
@@ -1064,6 +1102,35 @@ int qt6cr_slider_value(qt6cr_handle_t handle);
 int qt6cr_slider_orientation(qt6cr_handle_t handle);
 void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation);
+void qt6cr_scroll_bar_set_minimum(qt6cr_handle_t handle, int value);
+int qt6cr_scroll_bar_minimum(qt6cr_handle_t handle);
+void qt6cr_scroll_bar_set_maximum(qt6cr_handle_t handle, int value);
+int qt6cr_scroll_bar_maximum(qt6cr_handle_t handle);
+void qt6cr_scroll_bar_set_range(qt6cr_handle_t handle, int minimum, int maximum);
+void qt6cr_scroll_bar_set_value(qt6cr_handle_t handle, int value);
+int qt6cr_scroll_bar_value(qt6cr_handle_t handle);
+void qt6cr_scroll_bar_set_single_step(qt6cr_handle_t handle, int value);
+int qt6cr_scroll_bar_single_step(qt6cr_handle_t handle);
+void qt6cr_scroll_bar_set_page_step(qt6cr_handle_t handle, int value);
+int qt6cr_scroll_bar_page_step(qt6cr_handle_t handle);
+int qt6cr_scroll_bar_orientation(qt6cr_handle_t handle);
+void qt6cr_scroll_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_dial_create(qt6cr_handle_t parent);
+void qt6cr_dial_set_minimum(qt6cr_handle_t handle, int value);
+int qt6cr_dial_minimum(qt6cr_handle_t handle);
+void qt6cr_dial_set_maximum(qt6cr_handle_t handle, int value);
+int qt6cr_dial_maximum(qt6cr_handle_t handle);
+void qt6cr_dial_set_range(qt6cr_handle_t handle, int minimum, int maximum);
+void qt6cr_dial_set_value(qt6cr_handle_t handle, int value);
+int qt6cr_dial_value(qt6cr_handle_t handle);
+bool qt6cr_dial_wrapping(qt6cr_handle_t handle);
+void qt6cr_dial_set_wrapping(qt6cr_handle_t handle, bool value);
+bool qt6cr_dial_notches_visible(qt6cr_handle_t handle);
+void qt6cr_dial_set_notches_visible(qt6cr_handle_t handle, bool value);
+void qt6cr_dial_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
 int qt6cr_abstract_spin_box_button_symbols(qt6cr_handle_t handle);
 void qt6cr_abstract_spin_box_set_button_symbols(qt6cr_handle_t handle, int value);
 bool qt6cr_abstract_spin_box_is_read_only(qt6cr_handle_t handle);
@@ -1127,6 +1194,53 @@ int qt6cr_frame_shape(qt6cr_handle_t handle);
 void qt6cr_frame_set_shape(qt6cr_handle_t handle, int shape);
 int qt6cr_frame_shadow(qt6cr_handle_t handle);
 void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow);
+
+qt6cr_handle_t qt6cr_date_time_edit_create(qt6cr_handle_t parent);
+char *qt6cr_date_time_edit_display_format(qt6cr_handle_t handle);
+void qt6cr_date_time_edit_set_display_format(qt6cr_handle_t handle, const char *value);
+bool qt6cr_date_time_edit_calendar_popup(qt6cr_handle_t handle);
+void qt6cr_date_time_edit_set_calendar_popup(qt6cr_handle_t handle, bool value);
+qt6cr_handle_t qt6cr_date_time_edit_date(qt6cr_handle_t handle);
+void qt6cr_date_time_edit_set_date(qt6cr_handle_t handle, qt6cr_handle_t value);
+qt6cr_handle_t qt6cr_date_time_edit_time(qt6cr_handle_t handle);
+void qt6cr_date_time_edit_set_time(qt6cr_handle_t handle, qt6cr_handle_t value);
+qt6cr_handle_t qt6cr_date_time_edit_date_time(qt6cr_handle_t handle);
+void qt6cr_date_time_edit_set_date_time(qt6cr_handle_t handle, qt6cr_handle_t value);
+void qt6cr_date_time_edit_on_date_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_date_edit_create(qt6cr_handle_t parent);
+void qt6cr_date_edit_on_date_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_time_edit_create(qt6cr_handle_t parent);
+void qt6cr_time_edit_on_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_calendar_widget_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_calendar_widget_selected_date(qt6cr_handle_t handle);
+void qt6cr_calendar_widget_set_selected_date(qt6cr_handle_t handle, qt6cr_handle_t value);
+qt6cr_handle_t qt6cr_calendar_widget_minimum_date(qt6cr_handle_t handle);
+void qt6cr_calendar_widget_set_minimum_date(qt6cr_handle_t handle, qt6cr_handle_t value);
+qt6cr_handle_t qt6cr_calendar_widget_maximum_date(qt6cr_handle_t handle);
+void qt6cr_calendar_widget_set_maximum_date(qt6cr_handle_t handle, qt6cr_handle_t value);
+bool qt6cr_calendar_widget_grid_visible(qt6cr_handle_t handle);
+void qt6cr_calendar_widget_set_grid_visible(qt6cr_handle_t handle, bool value);
+void qt6cr_calendar_widget_on_selection_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_lcd_number_create(qt6cr_handle_t parent);
+int qt6cr_lcd_number_digit_count(qt6cr_handle_t handle);
+void qt6cr_lcd_number_set_digit_count(qt6cr_handle_t handle, int value);
+int qt6cr_lcd_number_mode(qt6cr_handle_t handle);
+void qt6cr_lcd_number_set_mode(qt6cr_handle_t handle, int value);
+int qt6cr_lcd_number_segment_style(qt6cr_handle_t handle);
+void qt6cr_lcd_number_set_segment_style(qt6cr_handle_t handle, int value);
+double qt6cr_lcd_number_value(qt6cr_handle_t handle);
+int qt6cr_lcd_number_int_value(qt6cr_handle_t handle);
+void qt6cr_lcd_number_display_int(qt6cr_handle_t handle, int value);
+void qt6cr_lcd_number_display_double(qt6cr_handle_t handle, double value);
+void qt6cr_lcd_number_display_string(qt6cr_handle_t handle, const char *value);
+
+qt6cr_handle_t qt6cr_command_link_button_create(qt6cr_handle_t parent, const char *text, const char *description);
+char *qt6cr_command_link_button_description(qt6cr_handle_t handle);
+void qt6cr_command_link_button_set_description(qt6cr_handle_t handle, const char *value);
 
 qt6cr_handle_t qt6cr_text_document_create(qt6cr_handle_t parent);
 char *qt6cr_text_document_plain_text(qt6cr_handle_t handle);
