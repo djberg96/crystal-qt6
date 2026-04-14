@@ -17,6 +17,7 @@
 #include <QColor>
 #include <QColorDialog>
 #include <QComboBox>
+#include <QCompleter>
 #include <QCoreApplication>
 #include <QCalendarWidget>
 #include <QCommandLinkButton>
@@ -66,6 +67,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QPageLayout>
 #include <QPageSize>
 #include <QPen>
@@ -113,6 +116,9 @@
 #include <QTransform>
 #include <QToolBar>
 #include <QToolButton>
+#include <QValidator>
+#include <QIntValidator>
+#include <QDoubleValidator>
 #include <QTreeView>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -124,6 +130,7 @@
 #include <QMetaType>
 #include <QLocale>
 #include <QDropEvent>
+#include <QStringListModel>
 
 #include <QPoint>
 
@@ -1139,6 +1146,26 @@ QToolButton *as_tool_button(qt6cr_handle_t handle) {
 
 QLineEdit *as_line_edit(qt6cr_handle_t handle) {
   return static_cast<QLineEdit *>(handle);
+}
+
+QValidator *as_validator(qt6cr_handle_t handle) {
+  return static_cast<QValidator *>(handle);
+}
+
+QIntValidator *as_int_validator(qt6cr_handle_t handle) {
+  return static_cast<QIntValidator *>(handle);
+}
+
+QDoubleValidator *as_double_validator(qt6cr_handle_t handle) {
+  return static_cast<QDoubleValidator *>(handle);
+}
+
+QRegularExpressionValidator *as_regex_validator(qt6cr_handle_t handle) {
+  return static_cast<QRegularExpressionValidator *>(handle);
+}
+
+QCompleter *as_completer(qt6cr_handle_t handle) {
+  return static_cast<QCompleter *>(handle);
 }
 
 QCheckBox *as_check_box(qt6cr_handle_t handle) {
@@ -5253,6 +5280,100 @@ qt6cr_rectf_t qt6cr_qfont_metrics_f_bounding_rect(qt6cr_handle_t handle, const c
   return metrics == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(metrics->boundingRect(QString::fromUtf8(text == nullptr ? "" : text)));
 }
 
+qt6cr_handle_t qt6cr_qdate_create(int year, int month, int day) {
+  return new QDate(year, month, day);
+}
+
+void qt6cr_qdate_destroy(qt6cr_handle_t handle) {
+  delete as_qdate(handle);
+}
+
+int qt6cr_qdate_year(qt6cr_handle_t handle) {
+  auto *date = as_qdate(handle);
+  return date == nullptr ? 0 : date->year();
+}
+
+int qt6cr_qdate_month(qt6cr_handle_t handle) {
+  auto *date = as_qdate(handle);
+  return date == nullptr ? 0 : date->month();
+}
+
+int qt6cr_qdate_day(qt6cr_handle_t handle) {
+  auto *date = as_qdate(handle);
+  return date == nullptr ? 0 : date->day();
+}
+
+bool qt6cr_qdate_is_valid(qt6cr_handle_t handle) {
+  auto *date = as_qdate(handle);
+  return date != nullptr && date->isValid();
+}
+
+char *qt6cr_qdate_to_string(qt6cr_handle_t handle, const char *format) {
+  auto *date = as_qdate(handle);
+  return date == nullptr ? duplicate_string("") : duplicate_string(date->toString(QString::fromUtf8(format == nullptr ? "" : format)));
+}
+
+qt6cr_handle_t qt6cr_qtime_create(int hour, int minute, int second) {
+  return new QTime(hour, minute, second);
+}
+
+void qt6cr_qtime_destroy(qt6cr_handle_t handle) {
+  delete as_qtime(handle);
+}
+
+int qt6cr_qtime_hour(qt6cr_handle_t handle) {
+  auto *time = as_qtime(handle);
+  return time == nullptr ? 0 : time->hour();
+}
+
+int qt6cr_qtime_minute(qt6cr_handle_t handle) {
+  auto *time = as_qtime(handle);
+  return time == nullptr ? 0 : time->minute();
+}
+
+int qt6cr_qtime_second(qt6cr_handle_t handle) {
+  auto *time = as_qtime(handle);
+  return time == nullptr ? 0 : time->second();
+}
+
+bool qt6cr_qtime_is_valid(qt6cr_handle_t handle) {
+  auto *time = as_qtime(handle);
+  return time != nullptr && time->isValid();
+}
+
+char *qt6cr_qtime_to_string(qt6cr_handle_t handle, const char *format) {
+  auto *time = as_qtime(handle);
+  return time == nullptr ? duplicate_string("") : duplicate_string(time->toString(QString::fromUtf8(format == nullptr ? "" : format)));
+}
+
+qt6cr_handle_t qt6cr_qdatetime_create(int year, int month, int day, int hour, int minute, int second) {
+  return new QDateTime(QDate(year, month, day), QTime(hour, minute, second));
+}
+
+void qt6cr_qdatetime_destroy(qt6cr_handle_t handle) {
+  delete as_qdatetime(handle);
+}
+
+qt6cr_handle_t qt6cr_qdatetime_date(qt6cr_handle_t handle) {
+  auto *datetime = as_qdatetime(handle);
+  return datetime == nullptr ? nullptr : new QDate(datetime->date());
+}
+
+qt6cr_handle_t qt6cr_qdatetime_time(qt6cr_handle_t handle) {
+  auto *datetime = as_qdatetime(handle);
+  return datetime == nullptr ? nullptr : new QTime(datetime->time());
+}
+
+bool qt6cr_qdatetime_is_valid(qt6cr_handle_t handle) {
+  auto *datetime = as_qdatetime(handle);
+  return datetime != nullptr && datetime->isValid();
+}
+
+char *qt6cr_qdatetime_to_string(qt6cr_handle_t handle, const char *format) {
+  auto *datetime = as_qdatetime(handle);
+  return datetime == nullptr ? duplicate_string("") : duplicate_string(datetime->toString(QString::fromUtf8(format == nullptr ? "" : format)));
+}
+
 qt6cr_handle_t qt6cr_qtransform_create(void) {
   return new QTransform();
 }
@@ -6621,6 +6742,328 @@ void qt6cr_line_edit_set_placeholder_text(qt6cr_handle_t handle, const char *tex
 
   if (line_edit != nullptr) {
     line_edit->setPlaceholderText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+int qt6cr_line_edit_echo_mode(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? static_cast<int>(QLineEdit::Normal) : static_cast<int>(line_edit->echoMode());
+}
+
+void qt6cr_line_edit_set_echo_mode(qt6cr_handle_t handle, int value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setEchoMode(static_cast<QLineEdit::EchoMode>(value));
+  }
+}
+
+char *qt6cr_line_edit_input_mask(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? duplicate_string("") : duplicate_string(line_edit->inputMask());
+}
+
+void qt6cr_line_edit_set_input_mask(qt6cr_handle_t handle, const char *value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setInputMask(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+int qt6cr_line_edit_alignment(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter) : static_cast<int>(line_edit->alignment());
+}
+
+void qt6cr_line_edit_set_alignment(qt6cr_handle_t handle, int value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setAlignment(static_cast<Qt::Alignment>(value));
+  }
+}
+
+int qt6cr_line_edit_cursor_position(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? 0 : line_edit->cursorPosition();
+}
+
+void qt6cr_line_edit_set_cursor_position(qt6cr_handle_t handle, int value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setCursorPosition(value);
+  }
+}
+
+char *qt6cr_line_edit_selected_text(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? duplicate_string("") : duplicate_string(line_edit->selectedText());
+}
+
+bool qt6cr_line_edit_has_selected_text(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit != nullptr && line_edit->hasSelectedText();
+}
+
+int qt6cr_line_edit_selection_start(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? -1 : line_edit->selectionStart();
+}
+
+void qt6cr_line_edit_select_all(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->selectAll();
+  }
+}
+
+void qt6cr_line_edit_clear_selection(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->deselect();
+  }
+}
+
+void qt6cr_line_edit_set_selection(qt6cr_handle_t handle, int start, int length) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setSelection(start, length);
+  }
+}
+
+void qt6cr_line_edit_clear(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->clear();
+  }
+}
+
+qt6cr_handle_t qt6cr_line_edit_validator(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? nullptr : const_cast<QValidator *>(line_edit->validator());
+}
+
+void qt6cr_line_edit_set_validator(qt6cr_handle_t handle, qt6cr_handle_t validator) {
+  auto *line_edit = as_line_edit(handle);
+  auto *value = as_validator(validator);
+
+  if (line_edit != nullptr) {
+    line_edit->setValidator(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_line_edit_completer(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? nullptr : line_edit->completer();
+}
+
+void qt6cr_line_edit_set_completer(qt6cr_handle_t handle, qt6cr_handle_t completer) {
+  auto *line_edit = as_line_edit(handle);
+  auto *value = as_completer(completer);
+
+  if (line_edit != nullptr) {
+    line_edit->setCompleter(value);
+  }
+}
+
+void qt6cr_line_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(line_edit, &QLineEdit::textChanged, line_edit, [callback, userdata](const QString &text) {
+    char *value = duplicate_string(text);
+    callback(userdata, value);
+    delete[] value;
+  });
+}
+
+int qt6cr_validator_validate(qt6cr_handle_t handle, const char *input) {
+  auto *validator = as_validator(handle);
+
+  if (validator == nullptr) {
+    return static_cast<int>(QValidator::Invalid);
+  }
+
+  QString text = QString::fromUtf8(input == nullptr ? "" : input);
+  int position = 0;
+  return static_cast<int>(validator->validate(text, position));
+}
+
+qt6cr_handle_t qt6cr_int_validator_create(qt6cr_handle_t parent, int bottom, int top) {
+  return new QIntValidator(bottom, top, as_object(parent));
+}
+
+int qt6cr_int_validator_bottom(qt6cr_handle_t handle) {
+  auto *validator = as_int_validator(handle);
+  return validator == nullptr ? 0 : validator->bottom();
+}
+
+void qt6cr_int_validator_set_bottom(qt6cr_handle_t handle, int value) {
+  auto *validator = as_int_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setBottom(value);
+  }
+}
+
+int qt6cr_int_validator_top(qt6cr_handle_t handle) {
+  auto *validator = as_int_validator(handle);
+  return validator == nullptr ? 0 : validator->top();
+}
+
+void qt6cr_int_validator_set_top(qt6cr_handle_t handle, int value) {
+  auto *validator = as_int_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setTop(value);
+  }
+}
+
+void qt6cr_int_validator_set_range(qt6cr_handle_t handle, int bottom, int top) {
+  auto *validator = as_int_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setRange(bottom, top);
+  }
+}
+
+qt6cr_handle_t qt6cr_double_validator_create(qt6cr_handle_t parent, double bottom, double top, int decimals) {
+  return new QDoubleValidator(bottom, top, decimals, as_object(parent));
+}
+
+double qt6cr_double_validator_bottom(qt6cr_handle_t handle) {
+  auto *validator = as_double_validator(handle);
+  return validator == nullptr ? 0.0 : validator->bottom();
+}
+
+void qt6cr_double_validator_set_bottom(qt6cr_handle_t handle, double value) {
+  auto *validator = as_double_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setBottom(value);
+  }
+}
+
+double qt6cr_double_validator_top(qt6cr_handle_t handle) {
+  auto *validator = as_double_validator(handle);
+  return validator == nullptr ? 0.0 : validator->top();
+}
+
+void qt6cr_double_validator_set_top(qt6cr_handle_t handle, double value) {
+  auto *validator = as_double_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setTop(value);
+  }
+}
+
+int qt6cr_double_validator_decimals(qt6cr_handle_t handle) {
+  auto *validator = as_double_validator(handle);
+  return validator == nullptr ? 0 : validator->decimals();
+}
+
+void qt6cr_double_validator_set_decimals(qt6cr_handle_t handle, int value) {
+  auto *validator = as_double_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setDecimals(value);
+  }
+}
+
+void qt6cr_double_validator_set_range(qt6cr_handle_t handle, double bottom, double top, int decimals) {
+  auto *validator = as_double_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setRange(bottom, top, decimals);
+  }
+}
+
+qt6cr_handle_t qt6cr_regex_validator_create(qt6cr_handle_t parent, const char *pattern) {
+  return new QRegularExpressionValidator(QRegularExpression(QString::fromUtf8(pattern == nullptr ? "" : pattern)), as_object(parent));
+}
+
+char *qt6cr_regex_validator_pattern(qt6cr_handle_t handle) {
+  auto *validator = as_regex_validator(handle);
+  return validator == nullptr ? duplicate_string("") : duplicate_string(validator->regularExpression().pattern());
+}
+
+void qt6cr_regex_validator_set_pattern(qt6cr_handle_t handle, const char *pattern) {
+  auto *validator = as_regex_validator(handle);
+
+  if (validator != nullptr) {
+    validator->setRegularExpression(QRegularExpression(QString::fromUtf8(pattern == nullptr ? "" : pattern)));
+  }
+}
+
+qt6cr_handle_t qt6cr_completer_create(qt6cr_handle_t parent) {
+  return new QCompleter(as_object(parent));
+}
+
+void qt6cr_completer_set_items(qt6cr_handle_t handle, const char *const *items, int count) {
+  auto *completer = as_completer(handle);
+
+  if (completer == nullptr) {
+    return;
+  }
+
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    values << QString::fromUtf8(items[index] == nullptr ? "" : items[index]);
+  }
+
+  completer->setModel(new QStringListModel(values, completer));
+}
+
+char *qt6cr_completer_completion_prefix(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? duplicate_string("") : duplicate_string(completer->completionPrefix());
+}
+
+void qt6cr_completer_set_completion_prefix(qt6cr_handle_t handle, const char *value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setCompletionPrefix(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_completer_current_completion(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? duplicate_string("") : duplicate_string(completer->currentCompletion());
+}
+
+int qt6cr_completer_case_sensitivity(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? static_cast<int>(Qt::CaseSensitive) : static_cast<int>(completer->caseSensitivity());
+}
+
+void qt6cr_completer_set_case_sensitivity(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setCaseSensitivity(static_cast<Qt::CaseSensitivity>(value));
+  }
+}
+
+int qt6cr_completer_completion_mode(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? static_cast<int>(QCompleter::PopupCompletion) : static_cast<int>(completer->completionMode());
+}
+
+void qt6cr_completer_set_completion_mode(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setCompletionMode(static_cast<QCompleter::CompletionMode>(value));
   }
 }
 

@@ -2812,6 +2812,77 @@ describe Qt6 do
     label.release
   end
 
+  it "supports validators, completers, and rich line-edit editing helpers" do
+    application = app
+    host = Qt6::Widget.new
+    line_edit = Qt6::LineEdit.new("Alpha", host)
+    int_validator = Qt6::IntValidator.new(10, 99, line_edit)
+    double_validator = Qt6::DoubleValidator.new(0.5, 9.5, 2, line_edit)
+    regex_validator = Qt6::RegexValidator.new("^[A-Z][a-z]+$", line_edit)
+    completer = Qt6::Completer.new(["Terrain", "Units", "Roads"], line_edit)
+    changed_texts = [] of String
+
+    line_edit.on_text_changed do |value|
+      changed_texts << value
+    end
+
+    completer.case_sensitivity = Qt6::CaseSensitivity::Insensitive
+    completer.completion_mode = Qt6::CompleterCompletionMode::PopupCompletion
+    completer.completion_prefix = "uni"
+
+    line_edit.echo_mode = Qt6::EchoMode::Password
+    line_edit.input_mask = "00-00;_"
+    line_edit.alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    line_edit.validator = regex_validator
+    line_edit.completer = completer
+    line_edit.input_mask.should eq("00-00;_")
+    line_edit.input_mask = ""
+    line_edit.text = "Bravo"
+    line_edit.cursor_position = 2
+    line_edit.set_selection(1, 2)
+    application.process_events
+
+    int_validator.validate("42").should eq(Qt6::ValidatorState::Acceptable)
+    int_validator.validate("abc").should eq(Qt6::ValidatorState::Invalid)
+    double_validator.validate("1.25").should eq(Qt6::ValidatorState::Acceptable)
+    double_validator.validate("oops").should eq(Qt6::ValidatorState::Invalid)
+    regex_validator.validate("Terrain").should eq(Qt6::ValidatorState::Acceptable)
+    regex_validator.validate("terrain").should eq(Qt6::ValidatorState::Invalid)
+
+    int_validator.bottom.should eq(10)
+    int_validator.top.should eq(99)
+    double_validator.bottom.should eq(0.5)
+    double_validator.top.should eq(9.5)
+    double_validator.decimals.should eq(2)
+    regex_validator.pattern.should eq("^[A-Z][a-z]+$")
+    completer.case_sensitivity.should eq(Qt6::CaseSensitivity::Insensitive)
+    completer.completion_mode.should eq(Qt6::CompleterCompletionMode::PopupCompletion)
+    completer.completion_prefix.should eq("uni")
+    completer.current_completion.should eq("Units")
+
+    line_edit.echo_mode.should eq(Qt6::EchoMode::Password)
+    line_edit.input_mask.should eq("")
+    line_edit.alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+    line_edit.alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    line_edit.validator.not_nil!.validate("Roads").should eq(Qt6::ValidatorState::Acceptable)
+    line_edit.completer.not_nil!.completion_prefix.should eq("uni")
+    line_edit.text.should eq("Bravo")
+    line_edit.cursor_position.should eq(3)
+    line_edit.selected_text.should eq("ra")
+    line_edit.has_selected_text?.should be_true
+    line_edit.selection_start.should eq(1)
+    changed_texts.last.should eq("Bravo")
+
+    line_edit.select_all
+    line_edit.selected_text.should eq("Bravo")
+    line_edit.clear_selection
+    line_edit.has_selected_text?.should be_false
+    line_edit.clear
+    line_edit.text.should eq("")
+
+    host.release
+  end
+
   it "supports application metadata, stylesheets, and window icons" do
     application = app
     icon_path = File.join(Dir.tempdir, "crystal-qt6-window-icon-#{Process.pid}.png")
