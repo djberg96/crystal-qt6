@@ -3583,6 +3583,60 @@ qt6cr_handle_t qt6cr_item_selection_model_current_index(qt6cr_handle_t handle) {
   return selection_model == nullptr ? new QModelIndex() : new QModelIndex(selection_model->currentIndex());
 }
 
+void qt6cr_item_selection_model_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index, int command) {
+  auto *selection_model = as_item_selection_model(handle);
+  auto *model_index = as_model_index(index);
+
+  if (selection_model == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  selection_model->setCurrentIndex(*model_index, static_cast<QItemSelectionModel::SelectionFlags>(command));
+}
+
+void qt6cr_item_selection_model_select_index(qt6cr_handle_t handle, qt6cr_handle_t index, int command) {
+  auto *selection_model = as_item_selection_model(handle);
+  auto *model_index = as_model_index(index);
+
+  if (selection_model == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  selection_model->select(*model_index, static_cast<QItemSelectionModel::SelectionFlags>(command));
+}
+
+void qt6cr_item_selection_model_clear(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+
+  if (selection_model != nullptr) {
+    selection_model->clear();
+  }
+}
+
+void qt6cr_item_selection_model_clear_selection(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+
+  if (selection_model != nullptr) {
+    selection_model->clearSelection();
+  }
+}
+
+bool qt6cr_item_selection_model_has_selection(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+  return selection_model == nullptr ? false : selection_model->hasSelection();
+}
+
+bool qt6cr_item_selection_model_is_selected(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *selection_model = as_item_selection_model(handle);
+  auto *model_index = as_model_index(index);
+
+  if (selection_model == nullptr || model_index == nullptr) {
+    return false;
+  }
+
+  return selection_model->isSelected(*model_index);
+}
+
 void qt6cr_item_selection_model_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *selection_model = as_item_selection_model(handle);
 

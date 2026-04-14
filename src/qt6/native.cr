@@ -387,6 +387,12 @@ module Qt6
     fun qt6cr_item_selection_model_create = qt6cr_item_selection_model_create(model : Handle, parent : Handle) : Handle
     fun qt6cr_item_selection_model_model = qt6cr_item_selection_model_model(handle : Handle) : Handle
     fun qt6cr_item_selection_model_current_index = qt6cr_item_selection_model_current_index(handle : Handle) : Handle
+    fun qt6cr_item_selection_model_set_current_index = qt6cr_item_selection_model_set_current_index(handle : Handle, index : Handle, command : LibC::Int)
+    fun qt6cr_item_selection_model_select_index = qt6cr_item_selection_model_select_index(handle : Handle, index : Handle, command : LibC::Int)
+    fun qt6cr_item_selection_model_clear = qt6cr_item_selection_model_clear(handle : Handle)
+    fun qt6cr_item_selection_model_clear_selection = qt6cr_item_selection_model_clear_selection(handle : Handle)
+    fun qt6cr_item_selection_model_has_selection = qt6cr_item_selection_model_has_selection(handle : Handle) : Bool
+    fun qt6cr_item_selection_model_is_selected = qt6cr_item_selection_model_is_selected(handle : Handle, index : Handle) : Bool
     fun qt6cr_item_selection_model_on_current_index_changed = qt6cr_item_selection_model_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_standard_item_create = qt6cr_standard_item_create(text : UInt8*) : Handle

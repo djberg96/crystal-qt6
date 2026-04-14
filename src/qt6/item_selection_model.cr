@@ -34,6 +34,45 @@ module Qt6
       ModelIndex.wrap(LibQt6.qt6cr_item_selection_model_current_index(to_unsafe), true)
     end
 
+    # Changes the current index using the provided selection command.
+    def set_current_index(index : ModelIndex, command : SelectionFlag = SelectionFlag::Current) : ModelIndex
+      LibQt6.qt6cr_item_selection_model_set_current_index(to_unsafe, index.to_unsafe, command.value)
+      index
+    end
+
+    # Changes the current index and returns it.
+    def current_index=(index : ModelIndex) : ModelIndex
+      set_current_index(index)
+    end
+
+    # Applies a selection command to the given index and returns it.
+    def select(index : ModelIndex, command : SelectionFlag = SelectionFlag::Select) : ModelIndex
+      LibQt6.qt6cr_item_selection_model_select_index(to_unsafe, index.to_unsafe, command.value)
+      index
+    end
+
+    # Clears the current index and selection state.
+    def clear : self
+      LibQt6.qt6cr_item_selection_model_clear(to_unsafe)
+      self
+    end
+
+    # Clears only the current selection.
+    def clear_selection : self
+      LibQt6.qt6cr_item_selection_model_clear_selection(to_unsafe)
+      self
+    end
+
+    # Returns whether the selection model currently holds any selected indexes.
+    def has_selection? : Bool
+      LibQt6.qt6cr_item_selection_model_has_selection(to_unsafe)
+    end
+
+    # Returns whether the given index is selected.
+    def selected?(index : ModelIndex) : Bool
+      LibQt6.qt6cr_item_selection_model_is_selected(to_unsafe, index.to_unsafe)
+    end
+
     # Registers a block to run when the current index changes.
     def on_current_index_changed(&block : ->) : self
       register_current_index_callback
