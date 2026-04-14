@@ -2422,6 +2422,89 @@ describe Qt6 do
     host.release
   end
 
+  it "supports edit triggers and persistent editors in item views" do
+    application = app
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    table_view = Qt6::TableView.new
+    table_widget = Qt6::TableWidget.new
+
+    list_model = Qt6::StandardItemModel.new(list_view)
+    list_model << Qt6::StandardItem.new("Terrain")
+
+    tree_model = Qt6::StandardItemModel.new(tree_view)
+    branch = Qt6::StandardItem.new("Units")
+    branch.append_row(Qt6::StandardItem.new("Infantry"))
+    tree_model.append_row(branch)
+
+    table_model = Qt6::StandardItemModel.new(table_view)
+    table_model.set_item(0, 0, Qt6::StandardItem.new("Layer"))
+
+    delegate = Qt6::StyledItemDelegate.new(list_view)
+    delegate.on_create_editor do |parent, _index|
+      Qt6::LineEdit.new(parent: parent)
+    end
+
+    list_view.model = list_model
+    tree_view.model = tree_model
+    table_view.model = table_model
+
+    list_view.item_delegate = delegate
+    tree_view.item_delegate = delegate
+    table_view.item_delegate = delegate
+
+    list_index = list_model.index(0)
+    tree_index = tree_model.index(0, 0)
+    table_index = table_model.index(0, 0)
+
+    list_view.edit_triggers = Qt6::EditTrigger::DoubleClicked | Qt6::EditTrigger::EditKeyPressed
+    tree_view.edit_triggers = Qt6::EditTrigger::CurrentChanged | Qt6::EditTrigger::SelectedClicked
+    table_view.edit_triggers = Qt6::EditTrigger::AllEditTriggers
+
+    list_view.open_persistent_editor(list_index)
+    tree_view.open_persistent_editor(tree_index)
+    table_view.open_persistent_editor(table_index)
+
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+    table_widget.edit_triggers = Qt6::EditTrigger::AnyKeyPressed | Qt6::EditTrigger::EditKeyPressed
+    table_item = Qt6::TableWidgetItem.new("Visible")
+    table_widget.set_item(0, 0, table_item)
+    table_widget.open_persistent_editor(table_item)
+
+    application.process_events
+
+    list_view.edit_triggers.should eq(Qt6::EditTrigger::DoubleClicked | Qt6::EditTrigger::EditKeyPressed)
+    tree_view.edit_triggers.should eq(Qt6::EditTrigger::CurrentChanged | Qt6::EditTrigger::SelectedClicked)
+    table_view.edit_triggers.should eq(Qt6::EditTrigger::AllEditTriggers)
+    table_widget.edit_triggers.should eq(Qt6::EditTrigger::AnyKeyPressed | Qt6::EditTrigger::EditKeyPressed)
+
+    list_view.persistent_editor_open?(list_index).should be_true
+    tree_view.persistent_editor_open?(tree_index).should be_true
+    table_view.persistent_editor_open?(table_index).should be_true
+    table_widget.persistent_editor_open?(table_item).should be_true
+
+    list_view.close_persistent_editor(list_index)
+    tree_view.close_persistent_editor(tree_index)
+    table_view.close_persistent_editor(table_index)
+    table_widget.close_persistent_editor(table_item)
+
+    application.process_events
+
+    list_view.persistent_editor_open?(list_index).should be_false
+    tree_view.persistent_editor_open?(tree_index).should be_false
+    table_view.persistent_editor_open?(table_index).should be_false
+    table_widget.persistent_editor_open?(table_item).should be_false
+
+    list_index.release
+    tree_index.release
+    table_index.release
+    list_view.release
+    tree_view.release
+    table_view.release
+    table_widget.release
+  end
+
   it "supports proxy headers and shared selection models across views" do
     application = app
     list_view = Qt6::ListView.new

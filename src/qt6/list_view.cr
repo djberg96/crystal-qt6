@@ -61,6 +61,17 @@ module Qt6
       value
     end
 
+    # Returns the edit triggers currently enabled for the view.
+    def edit_triggers : EditTrigger
+      EditTrigger.from_value(LibQt6.qt6cr_list_view_edit_triggers(to_unsafe))
+    end
+
+    # Sets the edit triggers enabled for the view.
+    def edit_triggers=(value : EditTrigger) : EditTrigger
+      LibQt6.qt6cr_list_view_set_edit_triggers(to_unsafe, value.value)
+      value
+    end
+
     # Returns whether alternating row colors are enabled.
     def alternating_row_colors? : Bool
       LibQt6.qt6cr_list_view_alternating_row_colors(to_unsafe)
@@ -114,6 +125,23 @@ module Qt6
     def drop_indicator_shown=(value : Bool) : Bool
       LibQt6.qt6cr_list_view_set_drop_indicator_shown(to_unsafe, value)
       value
+    end
+
+    # Opens a persistent editor for the given index.
+    def open_persistent_editor(index : ModelIndex) : self
+      LibQt6.qt6cr_list_view_open_persistent_editor(to_unsafe, index.to_unsafe)
+      self
+    end
+
+    # Closes a persistent editor for the given index.
+    def close_persistent_editor(index : ModelIndex) : self
+      LibQt6.qt6cr_list_view_close_persistent_editor(to_unsafe, index.to_unsafe)
+      self
+    end
+
+    # Returns whether a persistent editor is open for the given index.
+    def persistent_editor_open?(index : ModelIndex) : Bool
+      LibQt6.qt6cr_list_view_is_persistent_editor_open(to_unsafe, index.to_unsafe)
     end
 
     # Registers a block to run when the current index changes.

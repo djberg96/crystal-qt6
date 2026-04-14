@@ -455,6 +455,8 @@ module Qt6
     fun qt6cr_list_view_set_current_index = qt6cr_list_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_list_view_selection_mode = qt6cr_list_view_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_list_view_set_selection_mode = qt6cr_list_view_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_list_view_edit_triggers = qt6cr_list_view_edit_triggers(handle : Handle) : LibC::Int
+    fun qt6cr_list_view_set_edit_triggers = qt6cr_list_view_set_edit_triggers(handle : Handle, triggers : LibC::Int)
     fun qt6cr_list_view_alternating_row_colors = qt6cr_list_view_alternating_row_colors(handle : Handle) : Bool
     fun qt6cr_list_view_set_alternating_row_colors = qt6cr_list_view_set_alternating_row_colors(handle : Handle, value : Bool)
     fun qt6cr_list_view_drag_enabled = qt6cr_list_view_drag_enabled(handle : Handle) : Bool
@@ -465,6 +467,9 @@ module Qt6
     fun qt6cr_list_view_set_default_drop_action = qt6cr_list_view_set_default_drop_action(handle : Handle, action : LibC::Int)
     fun qt6cr_list_view_drop_indicator_shown = qt6cr_list_view_drop_indicator_shown(handle : Handle) : Bool
     fun qt6cr_list_view_set_drop_indicator_shown = qt6cr_list_view_set_drop_indicator_shown(handle : Handle, value : Bool)
+    fun qt6cr_list_view_open_persistent_editor = qt6cr_list_view_open_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_list_view_close_persistent_editor = qt6cr_list_view_close_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_list_view_is_persistent_editor_open = qt6cr_list_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
     fun qt6cr_list_view_on_current_index_changed = qt6cr_list_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_tree_view_create = qt6cr_tree_view_create(parent : Handle) : Handle
@@ -476,6 +481,8 @@ module Qt6
     fun qt6cr_tree_view_set_current_index = qt6cr_tree_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_tree_view_selection_mode = qt6cr_tree_view_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_tree_view_set_selection_mode = qt6cr_tree_view_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_tree_view_edit_triggers = qt6cr_tree_view_edit_triggers(handle : Handle) : LibC::Int
+    fun qt6cr_tree_view_set_edit_triggers = qt6cr_tree_view_set_edit_triggers(handle : Handle, triggers : LibC::Int)
     fun qt6cr_tree_view_alternating_row_colors = qt6cr_tree_view_alternating_row_colors(handle : Handle) : Bool
     fun qt6cr_tree_view_set_alternating_row_colors = qt6cr_tree_view_set_alternating_row_colors(handle : Handle, value : Bool)
     fun qt6cr_tree_view_header_hidden = qt6cr_tree_view_header_hidden(handle : Handle) : Bool
@@ -494,6 +501,9 @@ module Qt6
     fun qt6cr_tree_view_set_default_drop_action = qt6cr_tree_view_set_default_drop_action(handle : Handle, action : LibC::Int)
     fun qt6cr_tree_view_drop_indicator_shown = qt6cr_tree_view_drop_indicator_shown(handle : Handle) : Bool
     fun qt6cr_tree_view_set_drop_indicator_shown = qt6cr_tree_view_set_drop_indicator_shown(handle : Handle, value : Bool)
+    fun qt6cr_tree_view_open_persistent_editor = qt6cr_tree_view_open_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_tree_view_close_persistent_editor = qt6cr_tree_view_close_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_tree_view_is_persistent_editor_open = qt6cr_tree_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
     fun qt6cr_tree_view_expand_all = qt6cr_tree_view_expand_all(handle : Handle)
     fun qt6cr_tree_view_collapse_all = qt6cr_tree_view_collapse_all(handle : Handle)
     fun qt6cr_tree_view_on_current_index_changed = qt6cr_tree_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -518,6 +528,8 @@ module Qt6
     fun qt6cr_table_view_set_current_index = qt6cr_table_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_table_view_selection_mode = qt6cr_table_view_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_table_view_set_selection_mode = qt6cr_table_view_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_table_view_edit_triggers = qt6cr_table_view_edit_triggers(handle : Handle) : LibC::Int
+    fun qt6cr_table_view_set_edit_triggers = qt6cr_table_view_set_edit_triggers(handle : Handle, triggers : LibC::Int)
     fun qt6cr_table_view_selection_behavior = qt6cr_table_view_selection_behavior(handle : Handle) : LibC::Int
     fun qt6cr_table_view_set_selection_behavior = qt6cr_table_view_set_selection_behavior(handle : Handle, behavior : LibC::Int)
     fun qt6cr_table_view_alternating_row_colors = qt6cr_table_view_alternating_row_colors(handle : Handle) : Bool
@@ -541,6 +553,9 @@ module Qt6
     fun qt6cr_table_view_set_span = qt6cr_table_view_set_span(handle : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)
     fun qt6cr_table_view_row_span = qt6cr_table_view_row_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
     fun qt6cr_table_view_column_span = qt6cr_table_view_column_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
+    fun qt6cr_table_view_open_persistent_editor = qt6cr_table_view_open_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_table_view_close_persistent_editor = qt6cr_table_view_close_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_table_view_is_persistent_editor_open = qt6cr_table_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
     fun qt6cr_table_view_on_current_index_changed = qt6cr_table_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_qsvg_generator_create = qt6cr_qsvg_generator_create : Handle
@@ -1091,6 +1106,8 @@ module Qt6
     fun qt6cr_table_widget_clear_contents = qt6cr_table_widget_clear_contents(handle : Handle)
     fun qt6cr_table_widget_selection_mode = qt6cr_table_widget_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_table_widget_set_selection_mode = qt6cr_table_widget_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_table_widget_edit_triggers = qt6cr_table_widget_edit_triggers(handle : Handle) : LibC::Int
+    fun qt6cr_table_widget_set_edit_triggers = qt6cr_table_widget_set_edit_triggers(handle : Handle, triggers : LibC::Int)
     fun qt6cr_table_widget_selection_behavior = qt6cr_table_widget_selection_behavior(handle : Handle) : LibC::Int
     fun qt6cr_table_widget_set_selection_behavior = qt6cr_table_widget_set_selection_behavior(handle : Handle, behavior : LibC::Int)
     fun qt6cr_table_widget_alternating_row_colors = qt6cr_table_widget_alternating_row_colors(handle : Handle) : Bool
@@ -1102,6 +1119,9 @@ module Qt6
     fun qt6cr_table_widget_set_span = qt6cr_table_widget_set_span(handle : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)
     fun qt6cr_table_widget_row_span = qt6cr_table_widget_row_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
     fun qt6cr_table_widget_column_span = qt6cr_table_widget_column_span(handle : Handle, row : LibC::Int, column : LibC::Int) : LibC::Int
+    fun qt6cr_table_widget_open_persistent_editor = qt6cr_table_widget_open_persistent_editor(handle : Handle, item : Handle)
+    fun qt6cr_table_widget_close_persistent_editor = qt6cr_table_widget_close_persistent_editor(handle : Handle, item : Handle)
+    fun qt6cr_table_widget_is_persistent_editor_open = qt6cr_table_widget_is_persistent_editor_open(handle : Handle, item : Handle) : Bool
     fun qt6cr_table_widget_on_current_cell_changed = qt6cr_table_widget_on_current_cell_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_table_widget_on_item_changed = qt6cr_table_widget_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
 
