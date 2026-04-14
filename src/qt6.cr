@@ -287,7 +287,7 @@ module Qt6
   end
 
   def self.untrack_object(object : ManagedResource) : Nil
-    @@tracked_objects.delete(object)
+    @@tracked_objects.reject! { |entry| entry.same?(object) }
   end
 
   private def self.register_shutdown_hook : Nil

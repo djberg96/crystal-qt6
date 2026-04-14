@@ -1377,11 +1377,29 @@ int qt6cr_tab_widget_current_index(qt6cr_handle_t handle);
 void qt6cr_tab_widget_set_current_index(qt6cr_handle_t handle, int index);
 void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_tab_bar_create(qt6cr_handle_t parent);
+int qt6cr_tab_bar_add_tab(qt6cr_handle_t handle, const char *label);
+int qt6cr_tab_bar_count(qt6cr_handle_t handle);
+int qt6cr_tab_bar_current_index(qt6cr_handle_t handle);
+void qt6cr_tab_bar_set_current_index(qt6cr_handle_t handle, int index);
+char *qt6cr_tab_bar_tab_text(qt6cr_handle_t handle, int index);
+void qt6cr_tab_bar_set_tab_text(qt6cr_handle_t handle, int index, const char *value);
+bool qt6cr_tab_bar_draw_base(qt6cr_handle_t handle);
+void qt6cr_tab_bar_set_draw_base(qt6cr_handle_t handle, bool value);
+void qt6cr_tab_bar_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_stacked_widget_create(qt6cr_handle_t parent);
 int qt6cr_stacked_widget_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 int qt6cr_stacked_widget_count(qt6cr_handle_t handle);
 int qt6cr_stacked_widget_current_index(qt6cr_handle_t handle);
 void qt6cr_stacked_widget_set_current_index(qt6cr_handle_t handle, int index);
+
+qt6cr_handle_t qt6cr_stacked_layout_create(qt6cr_handle_t parent);
+int qt6cr_stacked_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+int qt6cr_stacked_layout_count(qt6cr_handle_t handle);
+int qt6cr_stacked_layout_current_index(qt6cr_handle_t handle);
+void qt6cr_stacked_layout_set_current_index(qt6cr_handle_t handle, int index);
+void qt6cr_stacked_layout_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent);
 void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

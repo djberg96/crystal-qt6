@@ -1103,6 +1103,35 @@ module Qt6
     fun qt6cr_slider_orientation = qt6cr_slider_orientation(handle : Handle) : LibC::Int
     fun qt6cr_slider_on_value_changed = qt6cr_slider_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
+    fun qt6cr_scroll_bar_create = qt6cr_scroll_bar_create(parent : Handle, orientation : LibC::Int) : Handle
+    fun qt6cr_scroll_bar_set_minimum = qt6cr_scroll_bar_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_scroll_bar_minimum = qt6cr_scroll_bar_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_bar_set_maximum = qt6cr_scroll_bar_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_scroll_bar_maximum = qt6cr_scroll_bar_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_bar_set_range = qt6cr_scroll_bar_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
+    fun qt6cr_scroll_bar_set_value = qt6cr_scroll_bar_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_scroll_bar_value = qt6cr_scroll_bar_value(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_bar_set_single_step = qt6cr_scroll_bar_set_single_step(handle : Handle, value : LibC::Int)
+    fun qt6cr_scroll_bar_single_step = qt6cr_scroll_bar_single_step(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_bar_set_page_step = qt6cr_scroll_bar_set_page_step(handle : Handle, value : LibC::Int)
+    fun qt6cr_scroll_bar_page_step = qt6cr_scroll_bar_page_step(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_bar_orientation = qt6cr_scroll_bar_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_bar_on_value_changed = qt6cr_scroll_bar_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_dial_create = qt6cr_dial_create(parent : Handle) : Handle
+    fun qt6cr_dial_set_minimum = qt6cr_dial_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_dial_minimum = qt6cr_dial_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_dial_set_maximum = qt6cr_dial_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_dial_maximum = qt6cr_dial_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_dial_set_range = qt6cr_dial_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
+    fun qt6cr_dial_set_value = qt6cr_dial_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_dial_value = qt6cr_dial_value(handle : Handle) : LibC::Int
+    fun qt6cr_dial_wrapping = qt6cr_dial_wrapping(handle : Handle) : Bool
+    fun qt6cr_dial_set_wrapping = qt6cr_dial_set_wrapping(handle : Handle, value : Bool)
+    fun qt6cr_dial_notches_visible = qt6cr_dial_notches_visible(handle : Handle) : Bool
+    fun qt6cr_dial_set_notches_visible = qt6cr_dial_set_notches_visible(handle : Handle, value : Bool)
+    fun qt6cr_dial_on_value_changed = qt6cr_dial_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
     fun qt6cr_abstract_spin_box_button_symbols = qt6cr_abstract_spin_box_button_symbols(handle : Handle) : LibC::Int
     fun qt6cr_abstract_spin_box_set_button_symbols = qt6cr_abstract_spin_box_set_button_symbols(handle : Handle, value : LibC::Int)
     fun qt6cr_abstract_spin_box_is_read_only = qt6cr_abstract_spin_box_is_read_only(handle : Handle) : Bool
@@ -1166,6 +1195,68 @@ module Qt6
     fun qt6cr_frame_set_shape = qt6cr_frame_set_shape(handle : Handle, shape : LibC::Int)
     fun qt6cr_frame_shadow = qt6cr_frame_shadow(handle : Handle) : LibC::Int
     fun qt6cr_frame_set_shadow = qt6cr_frame_set_shadow(handle : Handle, shadow : LibC::Int)
+
+    fun qt6cr_progress_bar_create = qt6cr_progress_bar_create(parent : Handle) : Handle
+    fun qt6cr_progress_bar_minimum = qt6cr_progress_bar_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_progress_bar_set_minimum = qt6cr_progress_bar_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_bar_maximum = qt6cr_progress_bar_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_progress_bar_set_maximum = qt6cr_progress_bar_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_bar_set_range = qt6cr_progress_bar_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
+    fun qt6cr_progress_bar_value = qt6cr_progress_bar_value(handle : Handle) : LibC::Int
+    fun qt6cr_progress_bar_set_value = qt6cr_progress_bar_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_bar_text_visible = qt6cr_progress_bar_text_visible(handle : Handle) : Bool
+    fun qt6cr_progress_bar_set_text_visible = qt6cr_progress_bar_set_text_visible(handle : Handle, value : Bool)
+    fun qt6cr_progress_bar_format = qt6cr_progress_bar_format(handle : Handle) : UInt8*
+    fun qt6cr_progress_bar_set_format = qt6cr_progress_bar_set_format(handle : Handle, value : UInt8*)
+    fun qt6cr_progress_bar_orientation = qt6cr_progress_bar_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_progress_bar_set_orientation = qt6cr_progress_bar_set_orientation(handle : Handle, value : LibC::Int)
+
+    fun qt6cr_date_time_edit_create = qt6cr_date_time_edit_create(parent : Handle) : Handle
+    fun qt6cr_date_time_edit_display_format = qt6cr_date_time_edit_display_format(handle : Handle) : UInt8*
+    fun qt6cr_date_time_edit_set_display_format = qt6cr_date_time_edit_set_display_format(handle : Handle, value : UInt8*)
+    fun qt6cr_date_time_edit_calendar_popup = qt6cr_date_time_edit_calendar_popup(handle : Handle) : Bool
+    fun qt6cr_date_time_edit_set_calendar_popup = qt6cr_date_time_edit_set_calendar_popup(handle : Handle, value : Bool)
+    fun qt6cr_date_time_edit_date = qt6cr_date_time_edit_date(handle : Handle) : Handle
+    fun qt6cr_date_time_edit_set_date = qt6cr_date_time_edit_set_date(handle : Handle, value : Handle)
+    fun qt6cr_date_time_edit_time = qt6cr_date_time_edit_time(handle : Handle) : Handle
+    fun qt6cr_date_time_edit_set_time = qt6cr_date_time_edit_set_time(handle : Handle, value : Handle)
+    fun qt6cr_date_time_edit_date_time = qt6cr_date_time_edit_date_time(handle : Handle) : Handle
+    fun qt6cr_date_time_edit_set_date_time = qt6cr_date_time_edit_set_date_time(handle : Handle, value : Handle)
+    fun qt6cr_date_time_edit_on_date_time_changed = qt6cr_date_time_edit_on_date_time_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+
+    fun qt6cr_date_edit_create = qt6cr_date_edit_create(parent : Handle) : Handle
+    fun qt6cr_date_edit_on_date_changed = qt6cr_date_edit_on_date_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+
+    fun qt6cr_time_edit_create = qt6cr_time_edit_create(parent : Handle) : Handle
+    fun qt6cr_time_edit_on_time_changed = qt6cr_time_edit_on_time_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+
+    fun qt6cr_calendar_widget_create = qt6cr_calendar_widget_create(parent : Handle) : Handle
+    fun qt6cr_calendar_widget_selected_date = qt6cr_calendar_widget_selected_date(handle : Handle) : Handle
+    fun qt6cr_calendar_widget_set_selected_date = qt6cr_calendar_widget_set_selected_date(handle : Handle, value : Handle)
+    fun qt6cr_calendar_widget_minimum_date = qt6cr_calendar_widget_minimum_date(handle : Handle) : Handle
+    fun qt6cr_calendar_widget_set_minimum_date = qt6cr_calendar_widget_set_minimum_date(handle : Handle, value : Handle)
+    fun qt6cr_calendar_widget_maximum_date = qt6cr_calendar_widget_maximum_date(handle : Handle) : Handle
+    fun qt6cr_calendar_widget_set_maximum_date = qt6cr_calendar_widget_set_maximum_date(handle : Handle, value : Handle)
+    fun qt6cr_calendar_widget_grid_visible = qt6cr_calendar_widget_grid_visible(handle : Handle) : Bool
+    fun qt6cr_calendar_widget_set_grid_visible = qt6cr_calendar_widget_set_grid_visible(handle : Handle, value : Bool)
+    fun qt6cr_calendar_widget_on_selection_changed = qt6cr_calendar_widget_on_selection_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_lcd_number_create = qt6cr_lcd_number_create(parent : Handle) : Handle
+    fun qt6cr_lcd_number_digit_count = qt6cr_lcd_number_digit_count(handle : Handle) : LibC::Int
+    fun qt6cr_lcd_number_set_digit_count = qt6cr_lcd_number_set_digit_count(handle : Handle, value : LibC::Int)
+    fun qt6cr_lcd_number_mode = qt6cr_lcd_number_mode(handle : Handle) : LibC::Int
+    fun qt6cr_lcd_number_set_mode = qt6cr_lcd_number_set_mode(handle : Handle, value : LibC::Int)
+    fun qt6cr_lcd_number_segment_style = qt6cr_lcd_number_segment_style(handle : Handle) : LibC::Int
+    fun qt6cr_lcd_number_set_segment_style = qt6cr_lcd_number_set_segment_style(handle : Handle, value : LibC::Int)
+    fun qt6cr_lcd_number_value = qt6cr_lcd_number_value(handle : Handle) : Float64
+    fun qt6cr_lcd_number_int_value = qt6cr_lcd_number_int_value(handle : Handle) : LibC::Int
+    fun qt6cr_lcd_number_display_int = qt6cr_lcd_number_display_int(handle : Handle, value : LibC::Int)
+    fun qt6cr_lcd_number_display_double = qt6cr_lcd_number_display_double(handle : Handle, value : Float64)
+    fun qt6cr_lcd_number_display_string = qt6cr_lcd_number_display_string(handle : Handle, value : UInt8*)
+
+    fun qt6cr_command_link_button_create = qt6cr_command_link_button_create(parent : Handle, text : UInt8*, description : UInt8*) : Handle
+    fun qt6cr_command_link_button_description = qt6cr_command_link_button_description(handle : Handle) : UInt8*
+    fun qt6cr_command_link_button_set_description = qt6cr_command_link_button_set_description(handle : Handle, value : UInt8*)
 
     fun qt6cr_text_document_create = qt6cr_text_document_create(parent : Handle) : Handle
     fun qt6cr_text_document_plain_text = qt6cr_text_document_plain_text(handle : Handle) : UInt8*
@@ -1249,11 +1340,30 @@ module Qt6
     fun qt6cr_tab_widget_current_index = qt6cr_tab_widget_current_index(handle : Handle) : LibC::Int
     fun qt6cr_tab_widget_set_current_index = qt6cr_tab_widget_set_current_index(handle : Handle, index : LibC::Int)
     fun qt6cr_tab_widget_on_current_index_changed = qt6cr_tab_widget_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
+    fun qt6cr_tab_bar_create = qt6cr_tab_bar_create(parent : Handle) : Handle
+    fun qt6cr_tab_bar_add_tab = qt6cr_tab_bar_add_tab(handle : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tab_bar_count = qt6cr_tab_bar_count(handle : Handle) : LibC::Int
+    fun qt6cr_tab_bar_current_index = qt6cr_tab_bar_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_tab_bar_set_current_index = qt6cr_tab_bar_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_tab_bar_tab_text = qt6cr_tab_bar_tab_text(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_tab_bar_set_tab_text = qt6cr_tab_bar_set_tab_text(handle : Handle, index : LibC::Int, value : UInt8*)
+    fun qt6cr_tab_bar_draw_base = qt6cr_tab_bar_draw_base(handle : Handle) : Bool
+    fun qt6cr_tab_bar_set_draw_base = qt6cr_tab_bar_set_draw_base(handle : Handle, value : Bool)
+    fun qt6cr_tab_bar_on_current_index_changed = qt6cr_tab_bar_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
     fun qt6cr_stacked_widget_create = qt6cr_stacked_widget_create(parent : Handle) : Handle
     fun qt6cr_stacked_widget_add_widget = qt6cr_stacked_widget_add_widget(handle : Handle, widget : Handle) : LibC::Int
     fun qt6cr_stacked_widget_count = qt6cr_stacked_widget_count(handle : Handle) : LibC::Int
     fun qt6cr_stacked_widget_current_index = qt6cr_stacked_widget_current_index(handle : Handle) : LibC::Int
     fun qt6cr_stacked_widget_set_current_index = qt6cr_stacked_widget_set_current_index(handle : Handle, index : LibC::Int)
+
+    fun qt6cr_stacked_layout_create = qt6cr_stacked_layout_create(parent : Handle) : Handle
+    fun qt6cr_stacked_layout_add_widget = qt6cr_stacked_layout_add_widget(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_stacked_layout_count = qt6cr_stacked_layout_count(handle : Handle) : LibC::Int
+    fun qt6cr_stacked_layout_current_index = qt6cr_stacked_layout_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_stacked_layout_set_current_index = qt6cr_stacked_layout_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_stacked_layout_on_current_index_changed = qt6cr_stacked_layout_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_scroll_area_create = qt6cr_scroll_area_create(parent : Handle) : Handle
     fun qt6cr_scroll_area_set_widget = qt6cr_scroll_area_set_widget(handle : Handle, widget : Handle)
