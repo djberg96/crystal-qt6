@@ -1204,8 +1204,23 @@ describe Qt6 do
 
     spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::NoButtons
     spin_box.read_only = true
+    spin_box.wrapping = true
+    spin_box.accelerated = true
+    spin_box.prefix = "Zoom "
+    spin_box.suffix = "%"
+    spin_box.special_value_text = "Auto"
+    spin_box.set_range(0, 100)
+    spin_box.value = 25
     double_spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::PlusMinus
     double_spin_box.read_only = false
+    double_spin_box.wrapping = false
+    double_spin_box.accelerated = true
+    double_spin_box.prefix = "~"
+    double_spin_box.suffix = "x"
+    double_spin_box.special_value_text = "Default"
+    double_spin_box.decimals = 3
+    double_spin_box.set_range(0.0, 10.0)
+    double_spin_box.value = 1.25
 
     rect = Qt6::Rect.new(1, 2, 30, 40)
     rect_f = rect.to_rect_f
@@ -1217,8 +1232,21 @@ describe Qt6 do
     double_spin_box.should be_a(Qt6::AbstractSpinBox)
     spin_box.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::NoButtons)
     spin_box.read_only?.should be_true
+    spin_box.wrapping?.should be_true
+    spin_box.accelerated?.should be_true
+    spin_box.prefix.should eq("Zoom ")
+    spin_box.suffix.should eq("%")
+    spin_box.special_value_text.should eq("Auto")
+    spin_box.clean_text.should eq("25")
     double_spin_box.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::PlusMinus)
     double_spin_box.read_only?.should be_false
+    double_spin_box.wrapping?.should be_false
+    double_spin_box.accelerated?.should be_true
+    double_spin_box.decimals.should eq(3)
+    double_spin_box.prefix.should eq("~")
+    double_spin_box.suffix.should eq("x")
+    double_spin_box.special_value_text.should eq("Default")
+    double_spin_box.clean_text.should eq("1.250")
 
     rect_f.should eq(Qt6::RectF.new(1.0, 2.0, 30.0, 40.0))
     rect_f.to_rect.should eq(rect)

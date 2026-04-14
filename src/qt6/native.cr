@@ -939,6 +939,10 @@ module Qt6
     fun qt6cr_abstract_spin_box_set_button_symbols = qt6cr_abstract_spin_box_set_button_symbols(handle : Handle, value : LibC::Int)
     fun qt6cr_abstract_spin_box_is_read_only = qt6cr_abstract_spin_box_is_read_only(handle : Handle) : Bool
     fun qt6cr_abstract_spin_box_set_read_only = qt6cr_abstract_spin_box_set_read_only(handle : Handle, value : Bool)
+    fun qt6cr_abstract_spin_box_wrapping = qt6cr_abstract_spin_box_wrapping(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_set_wrapping = qt6cr_abstract_spin_box_set_wrapping(handle : Handle, value : Bool)
+    fun qt6cr_abstract_spin_box_is_accelerated = qt6cr_abstract_spin_box_is_accelerated(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_set_accelerated = qt6cr_abstract_spin_box_set_accelerated(handle : Handle, value : Bool)
 
     fun qt6cr_spin_box_create = qt6cr_spin_box_create(parent : Handle) : Handle
     fun qt6cr_spin_box_set_minimum = qt6cr_spin_box_set_minimum(handle : Handle, value : LibC::Int)
@@ -950,6 +954,13 @@ module Qt6
     fun qt6cr_spin_box_value = qt6cr_spin_box_value(handle : Handle) : LibC::Int
     fun qt6cr_spin_box_set_single_step = qt6cr_spin_box_set_single_step(handle : Handle, value : LibC::Int)
     fun qt6cr_spin_box_single_step = qt6cr_spin_box_single_step(handle : Handle) : LibC::Int
+    fun qt6cr_spin_box_prefix = qt6cr_spin_box_prefix(handle : Handle) : UInt8*
+    fun qt6cr_spin_box_set_prefix = qt6cr_spin_box_set_prefix(handle : Handle, value : UInt8*)
+    fun qt6cr_spin_box_suffix = qt6cr_spin_box_suffix(handle : Handle) : UInt8*
+    fun qt6cr_spin_box_set_suffix = qt6cr_spin_box_set_suffix(handle : Handle, value : UInt8*)
+    fun qt6cr_spin_box_special_value_text = qt6cr_spin_box_special_value_text(handle : Handle) : UInt8*
+    fun qt6cr_spin_box_set_special_value_text = qt6cr_spin_box_set_special_value_text(handle : Handle, value : UInt8*)
+    fun qt6cr_spin_box_clean_text = qt6cr_spin_box_clean_text(handle : Handle) : UInt8*
     fun qt6cr_spin_box_on_value_changed = qt6cr_spin_box_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_double_spin_box_create = qt6cr_double_spin_box_create(parent : Handle) : Handle
@@ -962,6 +973,15 @@ module Qt6
     fun qt6cr_double_spin_box_value = qt6cr_double_spin_box_value(handle : Handle) : Float64
     fun qt6cr_double_spin_box_set_single_step = qt6cr_double_spin_box_set_single_step(handle : Handle, value : Float64)
     fun qt6cr_double_spin_box_single_step = qt6cr_double_spin_box_single_step(handle : Handle) : Float64
+    fun qt6cr_double_spin_box_decimals = qt6cr_double_spin_box_decimals(handle : Handle) : LibC::Int
+    fun qt6cr_double_spin_box_set_decimals = qt6cr_double_spin_box_set_decimals(handle : Handle, value : LibC::Int)
+    fun qt6cr_double_spin_box_prefix = qt6cr_double_spin_box_prefix(handle : Handle) : UInt8*
+    fun qt6cr_double_spin_box_set_prefix = qt6cr_double_spin_box_set_prefix(handle : Handle, value : UInt8*)
+    fun qt6cr_double_spin_box_suffix = qt6cr_double_spin_box_suffix(handle : Handle) : UInt8*
+    fun qt6cr_double_spin_box_set_suffix = qt6cr_double_spin_box_set_suffix(handle : Handle, value : UInt8*)
+    fun qt6cr_double_spin_box_special_value_text = qt6cr_double_spin_box_special_value_text(handle : Handle) : UInt8*
+    fun qt6cr_double_spin_box_set_special_value_text = qt6cr_double_spin_box_set_special_value_text(handle : Handle, value : UInt8*)
+    fun qt6cr_double_spin_box_clean_text = qt6cr_double_spin_box_clean_text(handle : Handle) : UInt8*
     fun qt6cr_double_spin_box_on_value_changed = qt6cr_double_spin_box_on_value_changed(handle : Handle, callback : (Handle, Float64 ->), userdata : Handle)
 
     fun qt6cr_group_box_create = qt6cr_group_box_create(parent : Handle, title : UInt8*) : Handle

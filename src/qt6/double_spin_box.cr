@@ -71,6 +71,56 @@ module Qt6
       float_value
     end
 
+    # Returns the number of displayed decimal places.
+    def decimals : Int32
+      LibQt6.qt6cr_double_spin_box_decimals(to_unsafe)
+    end
+
+    # Sets the number of displayed decimal places.
+    def decimals=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_double_spin_box_set_decimals(to_unsafe, int_value)
+      int_value
+    end
+
+    # Returns the text shown before the numeric value.
+    def prefix : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_double_spin_box_prefix(to_unsafe))
+    end
+
+    # Sets the text shown before the numeric value.
+    def prefix=(value : String) : String
+      LibQt6.qt6cr_double_spin_box_set_prefix(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the text shown after the numeric value.
+    def suffix : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_double_spin_box_suffix(to_unsafe))
+    end
+
+    # Sets the text shown after the numeric value.
+    def suffix=(value : String) : String
+      LibQt6.qt6cr_double_spin_box_set_suffix(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the special text displayed at the minimum value.
+    def special_value_text : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_double_spin_box_special_value_text(to_unsafe))
+    end
+
+    # Sets the special text displayed at the minimum value.
+    def special_value_text=(value : String) : String
+      LibQt6.qt6cr_double_spin_box_set_special_value_text(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the current text without prefix, suffix, or surrounding spaces.
+    def clean_text : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_double_spin_box_clean_text(to_unsafe))
+    end
+
     # Registers a block to run when the double spin-box value changes.
     def on_value_changed(&block : Float64 ->) : self
       @value_changed.connect { |value| block.call(value) }
