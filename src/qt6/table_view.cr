@@ -61,6 +61,17 @@ module Qt6
       value
     end
 
+    # Returns the edit triggers currently enabled for the view.
+    def edit_triggers : EditTrigger
+      EditTrigger.from_value(LibQt6.qt6cr_table_view_edit_triggers(to_unsafe))
+    end
+
+    # Sets the edit triggers enabled for the view.
+    def edit_triggers=(value : EditTrigger) : EditTrigger
+      LibQt6.qt6cr_table_view_set_edit_triggers(to_unsafe, value.value)
+      value
+    end
+
     # Returns how selections expand across table cells.
     def selection_behavior : ItemSelectionBehavior
       ItemSelectionBehavior.from_value(LibQt6.qt6cr_table_view_selection_behavior(to_unsafe))
@@ -184,6 +195,23 @@ module Qt6
     # Returns the current visual column span for the given cell.
     def column_span(row : Int, column : Int) : Int32
       LibQt6.qt6cr_table_view_column_span(to_unsafe, row.to_i32, column.to_i32)
+    end
+
+    # Opens a persistent editor for the given index.
+    def open_persistent_editor(index : ModelIndex) : self
+      LibQt6.qt6cr_table_view_open_persistent_editor(to_unsafe, index.to_unsafe)
+      self
+    end
+
+    # Closes a persistent editor for the given index.
+    def close_persistent_editor(index : ModelIndex) : self
+      LibQt6.qt6cr_table_view_close_persistent_editor(to_unsafe, index.to_unsafe)
+      self
+    end
+
+    # Returns whether a persistent editor is open for the given index.
+    def persistent_editor_open?(index : ModelIndex) : Bool
+      LibQt6.qt6cr_table_view_is_persistent_editor_open(to_unsafe, index.to_unsafe)
     end
 
     # Registers a block to run when the current index changes.
