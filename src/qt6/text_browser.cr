@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QTextBrowser`.
-  class TextBrowser < Frame
+  class TextBrowser < TextEdit
     @anchor_clicked : Signal(String) = Signal(String).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 

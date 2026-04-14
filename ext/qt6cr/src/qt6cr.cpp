@@ -82,8 +82,11 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
+#include <QTextCursor>
 #include <QTextBrowser>
 #include <QTextDocument>
+#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QGroupBox>
 #include <QSplashScreen>
 #include <QSvgGenerator>
@@ -1175,6 +1178,22 @@ QGroupBox *as_group_box(qt6cr_handle_t handle) {
 
 QFrame *as_frame(qt6cr_handle_t handle) {
   return static_cast<QFrame *>(handle);
+}
+
+QTextDocument *as_text_document(qt6cr_handle_t handle) {
+  return static_cast<QTextDocument *>(handle);
+}
+
+QTextCursor *as_text_cursor(qt6cr_handle_t handle) {
+  return static_cast<QTextCursor *>(handle);
+}
+
+QTextEdit *as_text_edit(qt6cr_handle_t handle) {
+  return static_cast<QTextEdit *>(handle);
+}
+
+QPlainTextEdit *as_plain_text_edit(qt6cr_handle_t handle) {
+  return static_cast<QPlainTextEdit *>(handle);
 }
 
 QTextBrowser *as_text_browser(qt6cr_handle_t handle) {
@@ -7970,6 +7989,400 @@ void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow) {
   if (frame != nullptr) {
     frame->setFrameShadow(static_cast<QFrame::Shadow>(shadow));
   }
+}
+
+qt6cr_handle_t qt6cr_text_document_create(qt6cr_handle_t parent) {
+  return new QTextDocument(as_object(parent));
+}
+
+char *qt6cr_text_document_plain_text(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? duplicate_string("") : duplicate_string(document->toPlainText());
+}
+
+void qt6cr_text_document_set_plain_text(qt6cr_handle_t handle, const char *text) {
+  auto *document = as_text_document(handle);
+
+  if (document != nullptr) {
+    document->setPlainText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_text_document_html(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? duplicate_string("") : duplicate_string(document->toHtml());
+}
+
+void qt6cr_text_document_set_html(qt6cr_handle_t handle, const char *html) {
+  auto *document = as_text_document(handle);
+
+  if (document != nullptr) {
+    document->setHtml(QString::fromUtf8(html == nullptr ? "" : html));
+  }
+}
+
+char *qt6cr_text_document_default_style_sheet(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? duplicate_string("") : duplicate_string(document->defaultStyleSheet());
+}
+
+void qt6cr_text_document_set_default_style_sheet(qt6cr_handle_t handle, const char *css) {
+  auto *document = as_text_document(handle);
+
+  if (document != nullptr) {
+    document->setDefaultStyleSheet(QString::fromUtf8(css == nullptr ? "" : css));
+  }
+}
+
+bool qt6cr_text_document_is_modified(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document != nullptr && document->isModified();
+}
+
+void qt6cr_text_document_set_modified(qt6cr_handle_t handle, bool value) {
+  auto *document = as_text_document(handle);
+
+  if (document != nullptr) {
+    document->setModified(value);
+  }
+}
+
+bool qt6cr_text_document_is_empty(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document == nullptr || document->isEmpty();
+}
+
+int qt6cr_text_document_character_count(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? 0 : document->characterCount();
+}
+
+qt6cr_handle_t qt6cr_text_cursor_create(qt6cr_handle_t document) {
+  auto *text_document = as_text_document(document);
+  return text_document == nullptr ? static_cast<qt6cr_handle_t>(new QTextCursor()) : static_cast<qt6cr_handle_t>(new QTextCursor(text_document));
+}
+
+void qt6cr_text_cursor_destroy(qt6cr_handle_t handle) {
+  delete as_text_cursor(handle);
+}
+
+int qt6cr_text_cursor_position(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor == nullptr ? 0 : cursor->position();
+}
+
+void qt6cr_text_cursor_set_position(qt6cr_handle_t handle, int position, bool keep_anchor) {
+  auto *cursor = as_text_cursor(handle);
+
+  if (cursor != nullptr) {
+    cursor->setPosition(position, keep_anchor ? QTextCursor::KeepAnchor : QTextCursor::MoveAnchor);
+  }
+}
+
+bool qt6cr_text_cursor_move_position(qt6cr_handle_t handle, int operation, int mode, int count) {
+  auto *cursor = as_text_cursor(handle);
+
+  if (cursor == nullptr) {
+    return false;
+  }
+
+  return cursor->movePosition(static_cast<QTextCursor::MoveOperation>(operation), static_cast<QTextCursor::MoveMode>(mode), count);
+}
+
+void qt6cr_text_cursor_insert_text(qt6cr_handle_t handle, const char *text) {
+  auto *cursor = as_text_cursor(handle);
+
+  if (cursor != nullptr) {
+    cursor->insertText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_text_cursor_selected_text(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor == nullptr ? duplicate_string("") : duplicate_string(cursor->selectedText());
+}
+
+bool qt6cr_text_cursor_has_selection(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor != nullptr && cursor->hasSelection();
+}
+
+int qt6cr_text_cursor_selection_start(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor == nullptr ? 0 : cursor->selectionStart();
+}
+
+int qt6cr_text_cursor_selection_end(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor == nullptr ? 0 : cursor->selectionEnd();
+}
+
+void qt6cr_text_cursor_clear_selection(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+
+  if (cursor != nullptr) {
+    cursor->clearSelection();
+  }
+}
+
+bool qt6cr_text_cursor_at_start(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor != nullptr && cursor->atStart();
+}
+
+bool qt6cr_text_cursor_at_end(qt6cr_handle_t handle) {
+  auto *cursor = as_text_cursor(handle);
+  return cursor != nullptr && cursor->atEnd();
+}
+
+qt6cr_handle_t qt6cr_text_edit_create(qt6cr_handle_t parent) {
+  return new QTextEdit(as_widget(parent));
+}
+
+char *qt6cr_text_edit_html(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? duplicate_string("") : duplicate_string(text_edit->toHtml());
+}
+
+void qt6cr_text_edit_set_html(qt6cr_handle_t handle, const char *html) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setHtml(QString::fromUtf8(html == nullptr ? "" : html));
+  }
+}
+
+char *qt6cr_text_edit_plain_text(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? duplicate_string("") : duplicate_string(text_edit->toPlainText());
+}
+
+void qt6cr_text_edit_set_plain_text(qt6cr_handle_t handle, const char *text) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setPlainText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_text_edit_append(qt6cr_handle_t handle, const char *text) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->append(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+bool qt6cr_text_edit_is_read_only(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->isReadOnly();
+}
+
+void qt6cr_text_edit_set_read_only(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setReadOnly(value);
+  }
+}
+
+bool qt6cr_text_edit_accept_rich_text(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->acceptRichText();
+}
+
+void qt6cr_text_edit_set_accept_rich_text(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setAcceptRichText(value);
+  }
+}
+
+bool qt6cr_text_edit_undo_redo_enabled(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->isUndoRedoEnabled();
+}
+
+void qt6cr_text_edit_set_undo_redo_enabled(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setUndoRedoEnabled(value);
+  }
+}
+
+char *qt6cr_text_edit_placeholder_text(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? duplicate_string("") : duplicate_string(text_edit->placeholderText());
+}
+
+void qt6cr_text_edit_set_placeholder_text(qt6cr_handle_t handle, const char *text) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setPlaceholderText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+qt6cr_handle_t qt6cr_text_edit_document(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? nullptr : static_cast<qt6cr_handle_t>(text_edit->document());
+}
+
+void qt6cr_text_edit_set_document(qt6cr_handle_t handle, qt6cr_handle_t document) {
+  auto *text_edit = as_text_edit(handle);
+  auto *text_document = as_text_document(document);
+
+  if (text_edit != nullptr && text_document != nullptr) {
+    text_edit->setDocument(text_document);
+  }
+}
+
+qt6cr_handle_t qt6cr_text_edit_text_cursor(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? nullptr : static_cast<qt6cr_handle_t>(new QTextCursor(text_edit->textCursor()));
+}
+
+void qt6cr_text_edit_set_text_cursor(qt6cr_handle_t handle, qt6cr_handle_t cursor) {
+  auto *text_edit = as_text_edit(handle);
+  auto *text_cursor = as_text_cursor(cursor);
+
+  if (text_edit != nullptr && text_cursor != nullptr) {
+    text_edit->setTextCursor(*text_cursor);
+  }
+}
+
+void qt6cr_text_edit_clear(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->clear();
+  }
+}
+
+void qt6cr_text_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_edit, &QTextEdit::textChanged, text_edit, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+qt6cr_handle_t qt6cr_plain_text_edit_create(qt6cr_handle_t parent) {
+  return new QPlainTextEdit(as_widget(parent));
+}
+
+char *qt6cr_plain_text_edit_plain_text(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? duplicate_string("") : duplicate_string(plain_text_edit->toPlainText());
+}
+
+void qt6cr_plain_text_edit_set_plain_text(qt6cr_handle_t handle, const char *text) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setPlainText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_plain_text_edit_append_plain_text(qt6cr_handle_t handle, const char *text) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->appendPlainText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+bool qt6cr_plain_text_edit_is_read_only(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit != nullptr && plain_text_edit->isReadOnly();
+}
+
+void qt6cr_plain_text_edit_set_read_only(qt6cr_handle_t handle, bool value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setReadOnly(value);
+  }
+}
+
+bool qt6cr_plain_text_edit_undo_redo_enabled(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit != nullptr && plain_text_edit->isUndoRedoEnabled();
+}
+
+void qt6cr_plain_text_edit_set_undo_redo_enabled(qt6cr_handle_t handle, bool value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setUndoRedoEnabled(value);
+  }
+}
+
+char *qt6cr_plain_text_edit_placeholder_text(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? duplicate_string("") : duplicate_string(plain_text_edit->placeholderText());
+}
+
+void qt6cr_plain_text_edit_set_placeholder_text(qt6cr_handle_t handle, const char *text) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setPlaceholderText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+qt6cr_handle_t qt6cr_plain_text_edit_document(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? nullptr : static_cast<qt6cr_handle_t>(plain_text_edit->document());
+}
+
+void qt6cr_plain_text_edit_set_document(qt6cr_handle_t handle, qt6cr_handle_t document) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  auto *text_document = as_text_document(document);
+
+  if (plain_text_edit != nullptr && text_document != nullptr) {
+    plain_text_edit->setDocument(text_document);
+  }
+}
+
+qt6cr_handle_t qt6cr_plain_text_edit_text_cursor(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? nullptr : static_cast<qt6cr_handle_t>(new QTextCursor(plain_text_edit->textCursor()));
+}
+
+void qt6cr_plain_text_edit_set_text_cursor(qt6cr_handle_t handle, qt6cr_handle_t cursor) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  auto *text_cursor = as_text_cursor(cursor);
+
+  if (plain_text_edit != nullptr && text_cursor != nullptr) {
+    plain_text_edit->setTextCursor(*text_cursor);
+  }
+}
+
+void qt6cr_plain_text_edit_clear(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->clear();
+  }
+}
+
+void qt6cr_plain_text_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(plain_text_edit, &QPlainTextEdit::textChanged, plain_text_edit, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 qt6cr_handle_t qt6cr_text_browser_create(qt6cr_handle_t parent) {
