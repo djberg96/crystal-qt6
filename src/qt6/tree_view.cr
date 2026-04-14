@@ -50,6 +50,73 @@ module Qt6
       index
     end
 
+    # Returns the current selection mode.
+    def selection_mode : ItemSelectionMode
+      ItemSelectionMode.from_value(LibQt6.qt6cr_tree_view_selection_mode(to_unsafe))
+    end
+
+    # Sets the current selection mode.
+    def selection_mode=(value : ItemSelectionMode) : ItemSelectionMode
+      LibQt6.qt6cr_tree_view_set_selection_mode(to_unsafe, value.value)
+      value
+    end
+
+    # Returns whether alternating row colors are enabled.
+    def alternating_row_colors? : Bool
+      LibQt6.qt6cr_tree_view_alternating_row_colors(to_unsafe)
+    end
+
+    # Enables or disables alternating row colors.
+    def alternating_row_colors=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_view_set_alternating_row_colors(to_unsafe, value)
+      value
+    end
+
+    # Returns whether the header is hidden.
+    def header_hidden? : Bool
+      LibQt6.qt6cr_tree_view_header_hidden(to_unsafe)
+    end
+
+    # Shows or hides the header.
+    def header_hidden=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_view_set_header_hidden(to_unsafe, value)
+      value
+    end
+
+    # Returns whether root items draw expand/collapse decoration.
+    def root_is_decorated? : Bool
+      LibQt6.qt6cr_tree_view_root_is_decorated(to_unsafe)
+    end
+
+    # Enables or disables root item decoration.
+    def root_is_decorated=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_view_set_root_is_decorated(to_unsafe, value)
+      value
+    end
+
+    # Returns whether uniform row heights are enabled.
+    def uniform_row_heights? : Bool
+      LibQt6.qt6cr_tree_view_uniform_row_heights(to_unsafe)
+    end
+
+    # Enables or disables uniform row heights.
+    def uniform_row_heights=(value : Bool) : Bool
+      LibQt6.qt6cr_tree_view_set_uniform_row_heights(to_unsafe, value)
+      value
+    end
+
+    # Returns the indentation used for each level.
+    def indentation : Int32
+      LibQt6.qt6cr_tree_view_indentation(to_unsafe)
+    end
+
+    # Sets the indentation used for each level.
+    def indentation=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_tree_view_set_indentation(to_unsafe, int_value)
+      int_value
+    end
+
     # Returns whether the view can start drag operations.
     def drag_enabled? : Bool
       LibQt6.qt6cr_tree_view_drag_enabled(to_unsafe)

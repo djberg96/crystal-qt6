@@ -1641,6 +1641,71 @@ describe Qt6 do
     list_widget.release
   end
 
+  it "supports item-view editor polish for widgets and model views" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    tree_widget = Qt6::TreeWidget.new
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    list_model = Qt6::StandardItemModel.new(list_view)
+    tree_model = Qt6::StandardItemModel.new(tree_view)
+
+    list_widget.spacing = 2
+
+    tree_widget.header_hidden = true
+    category_item = Qt6::TreeWidgetItem.new("Guides")
+    category_item.flags = category_item.flags & ~Qt6::ItemFlag::Selectable
+    category_font = category_item.font
+    category_font.bold = true
+    category_item.font = category_font
+    category_item.foreground = Qt6::Color.new(90, 90, 90)
+    category_item << Qt6::TreeWidgetItem.new("  Layers")
+    tree_widget << category_item
+    tree_widget.expand_all
+
+    list_model << Qt6::StandardItem.new("Terrain")
+    list_model << Qt6::StandardItem.new("Units")
+
+    root_item = Qt6::StandardItem.new("Terrain")
+    root_item.set_child(0, 0, Qt6::StandardItem.new("Contours"))
+    tree_model << root_item
+
+    list_view.model = list_model
+    list_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    list_view.alternating_row_colors = true
+
+    tree_view.model = tree_model
+    tree_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    tree_view.alternating_row_colors = true
+    tree_view.header_hidden = true
+    tree_view.root_is_decorated = false
+    tree_view.uniform_row_heights = true
+    tree_view.indentation = 14
+    tree_view.expand_all
+    application.process_events
+
+    list_widget.spacing.should eq(2)
+    tree_widget.header_hidden?.should be_true
+    category_item.flags.includes?(Qt6::ItemFlag::Selectable).should be_false
+    category_item.font.bold?.should be_true
+    category_item.foreground.should eq(Qt6::Color.new(90, 90, 90, 255))
+    category_item.child_count.should eq(1)
+
+    list_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    list_view.alternating_row_colors?.should be_true
+    tree_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    tree_view.alternating_row_colors?.should be_true
+    tree_view.header_hidden?.should be_true
+    tree_view.root_is_decorated?.should be_false
+    tree_view.uniform_row_heights?.should be_true
+    tree_view.indentation.should eq(14)
+
+    list_view.release
+    tree_view.release
+    list_widget.release
+    tree_widget.release
+  end
+
   it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do
     application = app
     list_view = Qt6::ListView.new
