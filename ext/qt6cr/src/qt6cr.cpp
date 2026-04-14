@@ -6914,6 +6914,32 @@ void qt6cr_abstract_spin_box_set_read_only(qt6cr_handle_t handle, bool value) {
   }
 }
 
+bool qt6cr_abstract_spin_box_wrapping(qt6cr_handle_t handle) {
+  auto *spin_box = as_abstract_spin_box(handle);
+  return spin_box != nullptr && spin_box->wrapping();
+}
+
+void qt6cr_abstract_spin_box_set_wrapping(qt6cr_handle_t handle, bool value) {
+  auto *spin_box = as_abstract_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setWrapping(value);
+  }
+}
+
+bool qt6cr_abstract_spin_box_is_accelerated(qt6cr_handle_t handle) {
+  auto *spin_box = as_abstract_spin_box(handle);
+  return spin_box != nullptr && spin_box->isAccelerated();
+}
+
+void qt6cr_abstract_spin_box_set_accelerated(qt6cr_handle_t handle, bool value) {
+  auto *spin_box = as_abstract_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setAccelerated(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent) {
   return new QSpinBox(as_widget(parent));
 }
@@ -6976,6 +7002,50 @@ void qt6cr_spin_box_set_single_step(qt6cr_handle_t handle, int value) {
 int qt6cr_spin_box_single_step(qt6cr_handle_t handle) {
   auto *spin_box = as_spin_box(handle);
   return spin_box == nullptr ? 1 : spin_box->singleStep();
+}
+
+char *qt6cr_spin_box_prefix(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->prefix());
+}
+
+void qt6cr_spin_box_set_prefix(qt6cr_handle_t handle, const char *value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setPrefix(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_spin_box_suffix(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->suffix());
+}
+
+void qt6cr_spin_box_set_suffix(qt6cr_handle_t handle, const char *value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setSuffix(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_spin_box_special_value_text(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->specialValueText());
+}
+
+void qt6cr_spin_box_set_special_value_text(qt6cr_handle_t handle, const char *value) {
+  auto *spin_box = as_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setSpecialValueText(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_spin_box_clean_text(qt6cr_handle_t handle) {
+  auto *spin_box = as_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->cleanText());
 }
 
 void qt6cr_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
@@ -7052,6 +7122,63 @@ void qt6cr_double_spin_box_set_single_step(qt6cr_handle_t handle, double value) 
 double qt6cr_double_spin_box_single_step(qt6cr_handle_t handle) {
   auto *spin_box = as_double_spin_box(handle);
   return spin_box == nullptr ? 1.0 : spin_box->singleStep();
+}
+
+int qt6cr_double_spin_box_decimals(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? 2 : spin_box->decimals();
+}
+
+void qt6cr_double_spin_box_set_decimals(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setDecimals(value);
+  }
+}
+
+char *qt6cr_double_spin_box_prefix(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->prefix());
+}
+
+void qt6cr_double_spin_box_set_prefix(qt6cr_handle_t handle, const char *value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setPrefix(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_double_spin_box_suffix(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->suffix());
+}
+
+void qt6cr_double_spin_box_set_suffix(qt6cr_handle_t handle, const char *value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setSuffix(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_double_spin_box_special_value_text(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->specialValueText());
+}
+
+void qt6cr_double_spin_box_set_special_value_text(qt6cr_handle_t handle, const char *value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setSpecialValueText(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_double_spin_box_clean_text(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->cleanText());
 }
 
 void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {

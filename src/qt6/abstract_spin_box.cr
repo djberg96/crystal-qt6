@@ -30,5 +30,27 @@ module Qt6
       LibQt6.qt6cr_abstract_spin_box_set_read_only(to_unsafe, value)
       value
     end
+
+    # Returns `true` when stepping wraps at the range edges.
+    def wrapping? : Bool
+      LibQt6.qt6cr_abstract_spin_box_wrapping(to_unsafe)
+    end
+
+    # Enables or disables range wrapping while stepping.
+    def wrapping=(value : Bool) : Bool
+      LibQt6.qt6cr_abstract_spin_box_set_wrapping(to_unsafe, value)
+      value
+    end
+
+    # Returns `true` when long presses accelerate stepping.
+    def accelerated? : Bool
+      LibQt6.qt6cr_abstract_spin_box_is_accelerated(to_unsafe)
+    end
+
+    # Enables or disables accelerated stepping.
+    def accelerated=(value : Bool) : Bool
+      LibQt6.qt6cr_abstract_spin_box_set_accelerated(to_unsafe, value)
+      value
+    end
   end
 end
