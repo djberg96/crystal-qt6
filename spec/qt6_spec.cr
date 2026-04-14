@@ -1568,6 +1568,94 @@ describe Qt6 do
     host.release
   end
 
+  it "supports text editors, documents, and cursors" do
+    application = app
+    host = Qt6::Widget.new
+    host.resize(360, 260)
+
+    rich_document = Qt6::TextDocument.new(host)
+    rich_document.default_style_sheet = "p { color: #333; }"
+    rich_document.html = "<p>Alpha beta</p>"
+    rich_document.modified = false
+
+    document_cursor = Qt6::TextCursor.new(rich_document)
+    document_cursor.move_position(Qt6::TextCursorMoveOperation::End)
+    document_cursor.insert_text("!")
+    document_cursor.set_position(0)
+    document_cursor.move_position(Qt6::TextCursorMoveOperation::Right, Qt6::TextCursorMoveMode::KeepAnchor, 5)
+
+    text_edit = Qt6::TextEdit.new(parent: host)
+    rich_text_changes = 0
+    text_edit.on_text_changed do
+      rich_text_changes += 1
+    end
+    text_edit.accept_rich_text = true
+    text_edit.undo_redo_enabled = true
+    text_edit.read_only = false
+    text_edit.placeholder_text = "Describe the selected layer"
+    text_edit.document = rich_document
+    editor_cursor = text_edit.text_cursor
+    editor_cursor.move_position(Qt6::TextCursorMoveOperation::End)
+    text_edit.text_cursor = editor_cursor
+    text_edit.append("Gamma")
+
+    plain_edit = Qt6::PlainTextEdit.new(parent: host)
+    plain_text_changes = 0
+    plain_edit.on_text_changed do
+      plain_text_changes += 1
+    end
+    plain_edit.placeholder_text = "Notes"
+    plain_edit.undo_redo_enabled = true
+    plain_edit.read_only = false
+    plain_edit.plain_text = "Terrain"
+    plain_document = plain_edit.document
+    plain_cursor = plain_edit.text_cursor
+    plain_cursor.move_position(Qt6::TextCursorMoveOperation::End)
+    plain_cursor.insert_text("\nUnits")
+    plain_edit.text_cursor = plain_cursor
+    plain_edit.append_plain_text("Roads")
+    application.process_events
+
+    rich_document.default_style_sheet.should contain("#333")
+    rich_document.plain_text.should contain("Alpha beta!")
+    rich_document.plain_text.should contain("Gamma")
+    rich_document.empty?.should be_false
+    rich_document.character_count.should be > 0
+    rich_document.modified?.should be_true
+
+    document_cursor.position.should eq(5)
+    document_cursor.has_selection?.should be_true
+    document_cursor.selection_start.should eq(0)
+    document_cursor.selection_end.should eq(5)
+    document_cursor.selected_text.should eq("Alpha")
+    document_cursor.at_end?.should be_false
+
+    text_edit.accept_rich_text?.should be_true
+    text_edit.undo_redo_enabled?.should be_true
+    text_edit.read_only?.should be_false
+    text_edit.placeholder_text.should eq("Describe the selected layer")
+    text_edit.plain_text.should contain("Alpha beta!")
+    text_edit.plain_text.should contain("Gamma")
+    text_edit.document.plain_text.should eq(text_edit.plain_text)
+    rich_text_changes.should be >= 1
+
+    plain_document.plain_text.should contain("Terrain")
+    plain_document.plain_text.should contain("Units")
+    plain_document.plain_text.should contain("Roads")
+    plain_edit.undo_redo_enabled?.should be_true
+    plain_edit.read_only?.should be_false
+    plain_edit.placeholder_text.should eq("Notes")
+    plain_edit.plain_text.should contain("Units")
+    plain_edit.plain_text.should contain("Roads")
+    plain_edit.document.plain_text.should eq(plain_edit.plain_text)
+    plain_text_changes.should be >= 1
+
+    editor_cursor.release
+    plain_cursor.release
+    document_cursor.release
+    host.release
+  end
+
   it "provides QObject-derived signals and timer callbacks" do
     application = app
     timer = Qt6::QTimer.new
