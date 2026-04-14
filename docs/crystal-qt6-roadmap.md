@@ -2,13 +2,13 @@
 
 This document describes a practical path for growing `crystal-qt6` from its current `0.3.0` state into a library capable of supporting large desktop applications.
 
-The current motivating example is `WargameMapTool`, a substantial Python/PySide6 application, but the roadmap is intentionally broader than a single downstream project.
+The current motivating example is `WargameMapTool`, a substantial Python/PySide6 application, but the roadmap is intentionally broader than a single downstream project. The goal is not API or naming compatibility with PySide6. The goal is practical Qt6 feature and widget parity, expressed in idiomatic Crystal wrappers.
 
 ## Conclusion First
 
 Large PySide6-style desktop applications should still not be ported directly today.
 
-`crystal-qt6` is now well beyond simple widget demos: it can host a reduced desktop shell, custom event-driven widgets, a usable raster/SVG/PDF rendering stack, and deterministic teardown. That is enough to prototype real editor subsystems, but not yet enough to replace a large application wholesale.
+`crystal-qt6` is now well beyond simple widget demos: it can host a reduced desktop shell, custom event-driven widgets, a usable raster/SVG/PDF rendering stack, and deterministic teardown. That is enough to prototype real editor subsystems, and the project is now moving from "can this be done at all?" to "which Qt6 surface areas should reach general-purpose parity next?"
 
 Larger editor-style applications still typically need:
 
@@ -31,9 +31,9 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
-- common form/layout and model/view support through line edits, checkboxes, combo boxes, list widgets, tree widgets, `QStandardItemModel`, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
+- common form/layout and model/view support through line edits, checkboxes, combo boxes, font combo boxes, stacked widgets, text browsers, button groups, dialog button boxes, list widgets, tree widgets, table views, table widgets, `QStandardItemModel`, callback-backed tree models, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
 - basic clipboard and MIME/data-transfer support through text, image, pixmap, `QMimeData`, model/view drag-drop payload helpers, and widget-side drop hooks
-- custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, key, and drop callbacks
+- custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, key, and drop callbacks, plus installable event filters and scroll-guard hooks
 
 That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
 
@@ -43,6 +43,26 @@ Applications in the target class still usually depend on at least these Qt areas
 - `QtGui`: actions, colors, fonts, images, pixmaps, painting, paths, pens, brushes, transforms, painter events, keyboard and mouse events
 - `QtWidgets`: main windows, dialogs, dock widgets, toolbars, menus, status bars, standard dialogs, forms, scrolling containers, and custom widgets
 - `QtSvg` or related modules for vector export in some applications
+
+## Qt6 Parity Goals
+
+The next stage of the roadmap should be driven by broad Qt6 usefulness, not by one downstream application's private checklist.
+
+Recommended parity targets for the next development cycles:
+
+1. Reach strong coverage for the common `QtWidgets` subset used by desktop editors, data tools, and internal application shells.
+2. Prefer binding reusable base classes and shared infrastructure before adding one-off convenience widgets.
+3. Keep Crystal naming and ownership conventions even when PySide6 uses different method names.
+4. Validate each new surface with focused specs and at least one maintained in-repo example path.
+
+The highest-value parity areas still missing are:
+
+- richer table support beyond the initial `QTableView` and `QTableWidget` layer
+- the text-edit stack: `QTextEdit`, `QPlainTextEdit`, `QTextDocument`, `QTextCursor`, and related rich-text helpers
+- validators, completers, and editor helper APIs such as `QValidator`, `QIntValidator`, `QDoubleValidator`, regex validation, and `QCompleter`
+- additional common widgets such as `QProgressBar`, `QScrollBar`, `QDateEdit`, `QTimeEdit`, `QDateTimeEdit`, `QCalendarWidget`, `QDial`, and `QCommandLinkButton`
+- broader application-service and utility coverage such as `QSettings`, `QUrl`, `QFile`, `QDir`, `QFileInfo`, and desktop-integration helpers
+- deeper action, menu, toolbar, and window-polish APIs
 
 ## Architectural Recommendation
 
@@ -197,24 +217,28 @@ Goal: support panel-heavy control surfaces and editor tooling.
   - checkboxes
   - radio buttons
   - combo boxes
+  - font combo boxes
   - list widgets
   - tree widgets or model/view alternatives
+  - table views and table widgets
   - sliders
   - spin boxes and double spin boxes
   - tab widgets
+  - stacked widgets
   - group boxes
   - scroll areas
   - splitters
   - form, grid, horizontal, and vertical layouts
 - drag and drop support where required
-- font selection widgets if text tools remain Qt-native
+- delegates, selection models, and header configuration for model/view editors
+- event filters and related widget-level interaction hooks
 
 ### Acceptance Criteria
 
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list and tree panels plus a broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view path with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, `QInputDialog.getItem`-style item selection, richer `QListWidget` item state and reorder hooks, model-level MIME payload/drop hooks, `ListView` and `TreeView` drag/drop configuration, widget drop acceptance, and `EventWidget` drag-enter/drag-move/drop callbacks. The remaining priorities are abstract-model bridges beyond the standard-item path, especially real custom tree models, plus any higher-level drag/drop polish the maintained editor slice still exposes.
+Most of the widget-level work in this phase is now in place, including list, tree, and initial table support; broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view paths with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, and callback-backed tree models; richer item-widget state and reorder hooks; model-level MIME payload/drop hooks; model/view drag/drop configuration; widget drop acceptance; and installable event filters. The remaining priorities are deeper table behavior, the text-edit stack, validators and completers, and the long tail of common editor-widget polish.
 
 ## Phase 6: Export And Document Features
 
@@ -259,9 +283,9 @@ With phases 1 through 4 now mostly complete, port applications in this order:
 5. One or two primary editable layers or tools.
 6. PNG export.
 7. Remaining panels, tools, and advanced export features.
+8. Advanced processing and niche features.
 
 The immediate next milestone is to keep one simplified editor vertical slice in the repository that combines these steps in a single maintained example and verification path.
-8. Advanced processing and niche features.
 
 This order gives visible progress early and avoids starting with the most complex editor features before the platform is ready.
 
@@ -285,7 +309,7 @@ Before serious application rewrite work begins, `crystal-qt6` should be able to 
 - PNG export
 - stable shutdown and passing automated tests on macOS and Linux
 
-`crystal-qt6` now satisfies most of this bar except for the editor-control layer, image-loading helpers, and some richer container widgets. That is why the next tranche should focus on controls and panels rather than more shell or export work.
+`crystal-qt6` now satisfies most of this bar except for a few still-thin editor layers: richer table and text-edit support, validators and editor helpers, and some application-service utilities. That is why the next tranche should focus on parity within common `QtWidgets` and `QtCore` utility surfaces rather than more shell or export work.
 
 If that sample app exists and is reliable, then application ports become realistic engineering projects rather than speculative rewrites.
 
@@ -293,10 +317,11 @@ If that sample app exists and is reliable, then application ports become realist
 
 Recommended order for the next development cycle in `crystal-qt6`:
 
-1. Add `QObject`, generic signal bridging, and `QTimer`.
-2. Add `QMainWindow`, `QDialog`, `QDockWidget`, `QMenuBar`, `QMenu`, and `QAction`.
-3. Add custom `QWidget` event callbacks for paint, mouse, wheel, and key events.
-4. Add `QPainter`, `QImage`, `QPixmap`, `QPen`, `QBrush`, and `QPainterPath`.
-5. Build a `map_canvas_demo` sample app that proves those layers together.
+1. Expand table parity with header resize modes, selection behavior, persistent editors, and the most common `QTableView` and `QTableWidget` conveniences.
+2. Add the text-edit stack: `QTextEdit`, `QPlainTextEdit`, `QTextDocument`, `QTextCursor`, and closely related rich-text APIs.
+3. Add validators, completers, and editor helpers so form controls can express real-world editing constraints.
+4. Add the next wave of common widgets such as progress, calendar, date/time, scrollbar, and dial controls.
+5. Add broader application-service and utility types such as `QSettings`, `QUrl`, `QFile`, `QDir`, and `QFileInfo`.
+6. Keep a maintained example application and focused spec coverage aligned with each parity batch.
 
-That would create the first legitimate platform milestone for future ports.
+That would turn the library from "large editor subsystems are possible" into "common Qt6 desktop application patterns are routinely supported."
