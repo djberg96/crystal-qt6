@@ -61,6 +61,27 @@ module Qt6
       self
     end
 
+    # Announces that rows are about to move and returns whether Qt accepted the move.
+    #
+    # `destination_child` follows Qt's `beginMoveRows` semantics: it is the row
+    # before which the moved rows will be inserted in the destination parent.
+    def begin_move_rows(source_first : Int, source_last : Int, destination_child : Int, source_parent : ModelIndex? = nil, destination_parent : ModelIndex? = nil) : Bool
+      LibQt6.qt6cr_abstract_list_model_begin_move_rows(
+        to_unsafe,
+        source_first.to_i32,
+        source_last.to_i32,
+        source_parent.try(&.to_unsafe) || Pointer(Void).null,
+        destination_child.to_i32,
+        destination_parent.try(&.to_unsafe) || Pointer(Void).null
+      )
+    end
+
+    # Announces that a row move has completed.
+    def end_move_rows : self
+      LibQt6.qt6cr_abstract_list_model_end_move_rows(to_unsafe)
+      self
+    end
+
     # Emits `dataChanged` for one or more indexes after backing data mutates.
     def data_changed(top_left : ModelIndex, bottom_right : ModelIndex = top_left) : self
       LibQt6.qt6cr_abstract_list_model_data_changed(to_unsafe, top_left.to_unsafe, bottom_right.to_unsafe)

@@ -153,6 +153,11 @@ private class DraggableLayerListModel < Qt6::AbstractListModel
                     @layers.size
                   end
 
+    if action.includes?(Qt6::DropAction::MoveAction) && names.size == 1
+      source_index = @layers.index(names.first)
+      return move_layer(source_index.to_i32, destination) if source_index
+    end
+
     if action.includes?(Qt6::DropAction::MoveAction)
       moved_names = names.select { |name| @layers.includes?(name) }
       return false if moved_names.empty?
@@ -184,6 +189,20 @@ private class DraggableLayerListModel < Qt6::AbstractListModel
 
   protected def model_supported_drop_actions : Qt6::DropAction
     Qt6::DropAction::CopyAction | Qt6::DropAction::MoveAction
+  end
+
+  private def move_layer(source_index : Int32, destination_child : Int32) : Bool
+    bounded_destination = destination_child.clamp(0, @layers.size)
+    return true if bounded_destination == source_index || bounded_destination == source_index + 1
+    return false unless source_index >= 0 && source_index < @layers.size
+    return false unless begin_move_rows(source_index, source_index, bounded_destination)
+
+    layer = @layers.delete_at(source_index)
+    insert_at = bounded_destination
+    insert_at -= 1 if source_index < bounded_destination
+    @layers.insert(insert_at, layer)
+    end_move_rows
+    true
   end
 end
 
@@ -265,6 +284,168 @@ private class LayerTreeModel < Qt6::AbstractTreeModel
   end
 
   private def child_ids_for(parent : Qt6::ModelIndex) : Array(UInt64)
+    return @roots unless parent.valid?
+
+    @nodes[parent.internal_id]?.try(&.children) || ([] of UInt64)
+  end
+end
+
+private class MutableTreeNode
+  property label : String
+  property parent_id : UInt64?
+  getter children : Array(UInt64)
+
+  def initialize(@label : String, @parent_id : UInt64?, @children : Array(UInt64) = [] of UInt64)
+  end
+end
+
+private class MutableLayerTreeModel < Qt6::AbstractTreeModel
+  def initialize(parent : Qt6::QObject? = nil)
+    @nodes = {} of UInt64 => MutableTreeNode
+    @roots = [] of UInt64
+    @next_id = 1_u64
+
+    terrain_id = create_node("Terrain")
+    contours_id = create_node("Contours", terrain_id)
+    labels_id = create_node("Labels", terrain_id)
+    units_id = create_node("Units")
+
+    @roots << terrain_id << units_id
+    @nodes[terrain_id].children.concat([contours_id, labels_id])
+
+    super(parent)
+  end
+
+  def append_child(label : String, parent : Qt6::ModelIndex? = nil) : UInt64
+    target_parent = valid_parent(parent)
+    siblings = child_ids_for(target_parent)
+    row = siblings.size
+
+    begin_insert_rows(row, row, target_parent)
+    id = create_node(label, target_parent.try(&.internal_id))
+    siblings << id
+    end_insert_rows
+    id
+  end
+
+  def remove_child(row : Int, parent : Qt6::ModelIndex? = nil) : String?
+    target_parent = valid_parent(parent)
+    siblings = child_ids_for(target_parent)
+    node_id = siblings[row]?
+    return nil unless node_id
+
+    removed_label = @nodes[node_id].label
+    begin_remove_rows(row, row, target_parent)
+    siblings.delete_at(row)
+    delete_subtree(node_id)
+    end_remove_rows
+    removed_label
+  end
+
+  def move_child(row : Int, destination_child : Int, parent : Qt6::ModelIndex? = nil) : Bool
+    target_parent = valid_parent(parent)
+    siblings = child_ids_for(target_parent)
+    return false unless row >= 0 && row < siblings.size
+
+    bounded_destination = destination_child.clamp(0, siblings.size)
+    return true if bounded_destination == row || bounded_destination == row + 1
+    return false unless begin_move_rows(row, row, bounded_destination, target_parent, target_parent)
+
+    moved_id = siblings.delete_at(row)
+    insert_at = bounded_destination
+    insert_at -= 1 if row < bounded_destination
+    siblings.insert(insert_at, moved_id)
+    end_move_rows
+    true
+  end
+
+  protected def model_row_count(parent : Qt6::ModelIndex) : Int32
+    child_ids_for(parent).size.to_i32
+  end
+
+  protected def model_column_count(parent : Qt6::ModelIndex) : Int32
+    1
+  end
+
+  protected def model_index_internal_id(row : Int32, column : Int32, parent : Qt6::ModelIndex) : UInt64?
+    return nil unless column == 0
+
+    child_ids_for(parent)[row]?
+  end
+
+  protected def model_parent(index : Qt6::ModelIndex) : Qt6::ModelIndexSpec?
+    return nil unless index.valid?
+
+    node = @nodes[index.internal_id]?
+    parent_id = node.try(&.parent_id)
+    return nil unless node && parent_id
+
+    parent_node = @nodes[parent_id]?
+    return nil unless parent_node
+
+    siblings = parent_node.parent_id ? @nodes[parent_node.parent_id].not_nil!.children : @roots
+    row = siblings.index(parent_id)
+    return nil unless row
+
+    Qt6::ModelIndexSpec.new(row.to_i32, 0, parent_id)
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+    return nil unless role == Qt6::ItemDataRole::Display.value || role == Qt6::ItemDataRole::Edit.value
+
+    @nodes[index.internal_id]?.try(&.label)
+  end
+
+  protected def model_set_data(index : Qt6::ModelIndex, value : Qt6::ModelData, role : Int32) : Bool
+    return false unless index.valid? && role == Qt6::ItemDataRole::Edit.value
+
+    node = @nodes[index.internal_id]?
+    return false unless node
+
+    node.label = value.to_s
+    data_changed(index)
+    true
+  end
+
+  protected def model_header_data(section : Int32, orientation : Qt6::Orientation, role : Int32) : Qt6::ModelData
+    return nil unless section == 0 && orientation == Qt6::Orientation::Horizontal && role == Qt6::ItemDataRole::Display.value
+
+    "Layer"
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::None unless index.valid?
+
+    Qt6::ItemFlag::Enabled |
+      Qt6::ItemFlag::Selectable |
+      Qt6::ItemFlag::Editable |
+      Qt6::ItemFlag::DragEnabled |
+      Qt6::ItemFlag::DropEnabled
+  end
+
+  private def create_node(label : String, parent_id : UInt64? = nil) : UInt64
+    id = @next_id
+    @next_id += 1
+    @nodes[id] = MutableTreeNode.new(label, parent_id)
+    id
+  end
+
+  private def delete_subtree(id : UInt64) : Nil
+    node = @nodes[id]?
+    return unless node
+
+    node.children.each { |child_id| delete_subtree(child_id) }
+    @nodes.delete(id)
+  end
+
+  private def valid_parent(parent : Qt6::ModelIndex?) : Qt6::ModelIndex?
+    return nil unless parent
+    parent.valid? ? parent : nil
+  end
+
+  private def child_ids_for(parent : Qt6::ModelIndex?) : Array(UInt64)
+    return @roots unless parent
     return @roots unless parent.valid?
 
     @nodes[parent.internal_id]?.try(&.children) || ([] of UInt64)
@@ -3359,6 +3540,54 @@ describe Qt6 do
     parent_index.release
     units_index.release
     contours_index.release
+    terrain_index.release
+    tree_view.release
+    model.release
+  end
+
+  it "supports mutable callback-backed tree models with row inserts, removals, and moves" do
+    application = app
+    model = MutableLayerTreeModel.new
+    tree_view = Qt6::TreeView.new
+    tree_view.model = model
+    tree_view.expand_all
+
+    terrain_index = model.index(0)
+    terrain_index.internal_id.should eq(1_u64)
+
+    model.append_child("Roads", terrain_index)
+    application.process_events
+
+    refreshed_terrain_index = model.index(0)
+    roads_index = model.index(2, 0, refreshed_terrain_index)
+    tree_view.current_index = roads_index
+    application.process_events
+
+    model.row_count(refreshed_terrain_index).should eq(3)
+    model.data(roads_index).should eq("Roads")
+    tree_view.current_index.internal_id.should eq(5_u64)
+
+    model.move_child(2, 0, refreshed_terrain_index).should be_true
+    application.process_events
+
+    moved_first_index = model.index(0, 0, refreshed_terrain_index)
+    model.data(moved_first_index).should eq("Roads")
+
+    removed_label = model.remove_child(1, refreshed_terrain_index)
+    application.process_events
+
+    removed_label.should eq("Contours")
+    model.row_count(refreshed_terrain_index).should eq(2)
+    remaining_first_index = model.index(0, 0, refreshed_terrain_index)
+    remaining_second_index = model.index(1, 0, refreshed_terrain_index)
+    model.data(remaining_first_index).should eq("Roads")
+    model.data(remaining_second_index).should eq("Labels")
+
+    remaining_second_index.release
+    remaining_first_index.release
+    moved_first_index.release
+    roads_index.release
+    refreshed_terrain_index.release
     terrain_index.release
     tree_view.release
     model.release

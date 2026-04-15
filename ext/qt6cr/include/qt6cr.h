@@ -403,6 +403,8 @@ void qt6cr_abstract_list_model_begin_insert_rows(qt6cr_handle_t handle, int firs
 void qt6cr_abstract_list_model_end_insert_rows(qt6cr_handle_t handle);
 void qt6cr_abstract_list_model_begin_remove_rows(qt6cr_handle_t handle, int first, int last, qt6cr_handle_t parent_index);
 void qt6cr_abstract_list_model_end_remove_rows(qt6cr_handle_t handle);
+bool qt6cr_abstract_list_model_begin_move_rows(qt6cr_handle_t handle, int source_first, int source_last, qt6cr_handle_t source_parent_index, int destination_child, qt6cr_handle_t destination_parent_index);
+void qt6cr_abstract_list_model_end_move_rows(qt6cr_handle_t handle);
 void qt6cr_abstract_list_model_data_changed(qt6cr_handle_t handle, qt6cr_handle_t top_left, qt6cr_handle_t bottom_right);
 
 qt6cr_handle_t qt6cr_abstract_tree_model_create(qt6cr_handle_t parent);
@@ -426,6 +428,8 @@ void qt6cr_abstract_tree_model_begin_insert_rows(qt6cr_handle_t handle, int firs
 void qt6cr_abstract_tree_model_end_insert_rows(qt6cr_handle_t handle);
 void qt6cr_abstract_tree_model_begin_remove_rows(qt6cr_handle_t handle, int first, int last, qt6cr_handle_t parent_index);
 void qt6cr_abstract_tree_model_end_remove_rows(qt6cr_handle_t handle);
+bool qt6cr_abstract_tree_model_begin_move_rows(qt6cr_handle_t handle, int source_first, int source_last, qt6cr_handle_t source_parent_index, int destination_child, qt6cr_handle_t destination_parent_index);
+void qt6cr_abstract_tree_model_end_move_rows(qt6cr_handle_t handle);
 void qt6cr_abstract_tree_model_data_changed(qt6cr_handle_t handle, qt6cr_handle_t top_left, qt6cr_handle_t bottom_right);
 
 qt6cr_handle_t qt6cr_item_selection_model_create(qt6cr_handle_t model, qt6cr_handle_t parent);

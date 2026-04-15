@@ -620,6 +620,14 @@ class CrystalAbstractListModel final : public QAbstractListModel {
     endRemoveRows();
   }
 
+  bool beginMoveRowsBridge(int source_first, int source_last, const QModelIndex &source_parent, int destination_child, const QModelIndex &destination_parent) {
+    return beginMoveRows(source_parent, source_first, source_last, destination_parent, destination_child);
+  }
+
+  void endMoveRowsBridge() {
+    endMoveRows();
+  }
+
   void emitDataChangedBridge(const QModelIndex &top_left, const QModelIndex &bottom_right) {
     emit dataChanged(top_left, bottom_right);
   }
@@ -813,6 +821,14 @@ class CrystalAbstractTreeModel final : public QAbstractItemModel {
 
   void endRemoveRowsBridge() {
     endRemoveRows();
+  }
+
+  bool beginMoveRowsBridge(int source_first, int source_last, const QModelIndex &source_parent, int destination_child, const QModelIndex &destination_parent) {
+    return beginMoveRows(source_parent, source_first, source_last, destination_parent, destination_child);
+  }
+
+  void endMoveRowsBridge() {
+    endMoveRows();
   }
 
   void emitDataChangedBridge(const QModelIndex &top_left, const QModelIndex &bottom_right) {
@@ -3476,6 +3492,31 @@ void qt6cr_abstract_list_model_end_remove_rows(qt6cr_handle_t handle) {
   }
 }
 
+bool qt6cr_abstract_list_model_begin_move_rows(qt6cr_handle_t handle, int source_first, int source_last, qt6cr_handle_t source_parent_index, int destination_child, qt6cr_handle_t destination_parent_index) {
+  auto *model = as_abstract_list_model(handle);
+  auto *source_parent = as_model_index(source_parent_index);
+  auto *destination_parent = as_model_index(destination_parent_index);
+
+  if (model == nullptr) {
+    return false;
+  }
+
+  return model->beginMoveRowsBridge(
+      source_first,
+      source_last,
+      source_parent == nullptr ? QModelIndex() : *source_parent,
+      destination_child,
+      destination_parent == nullptr ? QModelIndex() : *destination_parent);
+}
+
+void qt6cr_abstract_list_model_end_move_rows(qt6cr_handle_t handle) {
+  auto *model = as_abstract_list_model(handle);
+
+  if (model != nullptr) {
+    model->endMoveRowsBridge();
+  }
+}
+
 void qt6cr_abstract_list_model_data_changed(qt6cr_handle_t handle, qt6cr_handle_t top_left, qt6cr_handle_t bottom_right) {
   auto *model = as_abstract_list_model(handle);
   auto *top_left_index = as_model_index(top_left);
@@ -3693,6 +3734,31 @@ void qt6cr_abstract_tree_model_end_remove_rows(qt6cr_handle_t handle) {
 
   if (model != nullptr) {
     model->endRemoveRowsBridge();
+  }
+}
+
+bool qt6cr_abstract_tree_model_begin_move_rows(qt6cr_handle_t handle, int source_first, int source_last, qt6cr_handle_t source_parent_index, int destination_child, qt6cr_handle_t destination_parent_index) {
+  auto *model = as_abstract_tree_model(handle);
+  auto *source_parent = as_model_index(source_parent_index);
+  auto *destination_parent = as_model_index(destination_parent_index);
+
+  if (model == nullptr) {
+    return false;
+  }
+
+  return model->beginMoveRowsBridge(
+      source_first,
+      source_last,
+      source_parent == nullptr ? QModelIndex() : *source_parent,
+      destination_child,
+      destination_parent == nullptr ? QModelIndex() : *destination_parent);
+}
+
+void qt6cr_abstract_tree_model_end_move_rows(qt6cr_handle_t handle) {
+  auto *model = as_abstract_tree_model(handle);
+
+  if (model != nullptr) {
+    model->endMoveRowsBridge();
   }
 }
 
