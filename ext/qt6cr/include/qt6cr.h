@@ -762,6 +762,18 @@ int64_t qt6cr_qfile_write(qt6cr_handle_t handle, const unsigned char *data, int 
 bool qt6cr_qfile_flush(qt6cr_handle_t handle);
 bool qt6cr_qfile_remove(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_qsettings_create_from_file(const char *file_name, int format);
+qt6cr_handle_t qt6cr_qsettings_create_for_application(const char *organization, const char *application, int format);
+void qt6cr_qsettings_destroy(qt6cr_handle_t handle);
+char *qt6cr_qsettings_file_name(qt6cr_handle_t handle);
+bool qt6cr_qsettings_contains(qt6cr_handle_t handle, const char *key);
+qt6cr_variant_value_t qt6cr_qsettings_value(qt6cr_handle_t handle, const char *key, qt6cr_variant_value_t default_value);
+void qt6cr_qsettings_set_value(qt6cr_handle_t handle, const char *key, qt6cr_variant_value_t value);
+void qt6cr_qsettings_remove(qt6cr_handle_t handle, const char *key);
+void qt6cr_qsettings_clear(qt6cr_handle_t handle);
+void qt6cr_qsettings_sync(qt6cr_handle_t handle);
+qt6cr_string_array_t qt6cr_qsettings_all_keys(qt6cr_handle_t handle);
+
 qt6cr_handle_t qt6cr_qfile_info_create(const char *path);
 void qt6cr_qfile_info_destroy(qt6cr_handle_t handle);
 char *qt6cr_qfile_info_file_name(qt6cr_handle_t handle);

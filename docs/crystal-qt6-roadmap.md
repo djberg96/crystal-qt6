@@ -334,3 +334,5 @@ The practical implementation order inside the utility tranche should be:
 2. File-handle and byte-oriented helpers next: `QFile` and any missing `QIODevice`-adjacent utilities.
 3. Application persistence next: `QSettings`.
 4. Desktop-integration helpers after that, once there is already a clear path vocabulary to build on.
+
+The first three utility steps are now in place, so the next utility-focused work should center on desktop-integration helpers and any remaining `QIODevice`-adjacent gaps.
