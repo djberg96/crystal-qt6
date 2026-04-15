@@ -473,10 +473,12 @@ render_summary = -> do
 end
 
 inspect_clipboard = -> do
+  inspector_tabs.current_index = 2
   if mime = Qt6.clipboard.mime_data
     custom_payload = mime.has_format?("application/x-crystal-qt6-showcase") ? String.new(mime.data("application/x-crystal-qt6-showcase")) : "(none)"
     clipboard_browser.html = <<-HTML
-      <h3>Clipboard Payload</h3>
+      <h3>Clipboard Snapshot</h3>
+      <p>Showing the clipboard contents captured at the moment you clicked <strong>Inspect Clipboard</strong>.</p>
       <p><strong>Has Text:</strong> #{mime.has_text?}</p>
       <p><strong>Has HTML:</strong> #{mime.has_html?}</p>
       <p><strong>Has Image:</strong> #{mime.has_image?}</p>
@@ -484,9 +486,9 @@ inspect_clipboard = -> do
       <p><strong>Text:</strong> #{mime.has_text? ? mime.text : "(none)"}</p>
       <p><strong>Custom:</strong> <code>#{custom_payload}</code></p>
     HTML
-    status_bar.show_message("Inspected clipboard payload", 1600)
+    status_bar.show_message("Clipboard tab refreshed from the current clipboard", 1800)
   else
-    clipboard_browser.html = "<h3>Clipboard Payload</h3><p>Clipboard MIME data is currently unavailable.</p>"
+    clipboard_browser.html = "<h3>Clipboard Snapshot</h3><p>Clipboard MIME data is currently unavailable.</p>"
     status_bar.show_message("Clipboard MIME data unavailable", 1600)
   end
 end
