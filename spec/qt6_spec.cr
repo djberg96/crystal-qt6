@@ -773,6 +773,52 @@ describe Qt6 do
     File.delete?(renamed_path) if renamed_path
   end
 
+  it "supports shared qiodevice-style helpers for buffers and files" do
+    app
+
+    backing = Qt6::QByteArray.new
+    buffer = Qt6::QBuffer.new(backing)
+
+    buffer.open(Qt6::IODeviceOpenMode::ReadWrite).should be_true
+    buffer.open?.should be_true
+    buffer.position.should eq(0_i64)
+    buffer.at_end?.should be_true
+    buffer.write("roads").should eq(5_i64)
+    buffer.size.should eq(5_i64)
+    buffer.position.should eq(5_i64)
+    buffer.at_end?.should be_true
+    buffer.seek(0).should be_true
+    buffer.position.should eq(0_i64)
+    buffer.bytes_available.should eq(5_i64)
+    buffer.at_end?.should be_false
+    buffer.read_all.bytes.should eq("roads".to_slice)
+    buffer.at_end?.should be_true
+    buffer.seek(2).should be_true
+    buffer.write("X").should eq(1_i64)
+    buffer.close
+    buffer.data.bytes.should eq("roXds".to_slice)
+
+    file_path = File.join(Dir.tempdir, "crystal-qt6-iodevice-#{Process.pid}.txt")
+    file = Qt6::QFile.new(file_path)
+    file.open(Qt6::IODeviceOpenMode::WriteOnly).should be_true
+    file.write("terrain\nroads").should eq(13_i64)
+    file.position.should eq(13_i64)
+    file.size.should eq(13_i64)
+    file.close
+
+    file.open(Qt6::IODeviceOpenMode::ReadOnly).should be_true
+    file.position.should eq(0_i64)
+    file.bytes_available.should eq(13_i64)
+    file.at_end?.should be_false
+    file.seek(8).should be_true
+    file.position.should eq(8_i64)
+    file.read_all.bytes.should eq("roads".to_slice)
+    file.at_end?.should be_true
+    file.close
+  ensure
+    File.delete?(file_path) if file_path
+  end
+
   it "supports persisted settings stores" do
     app
 

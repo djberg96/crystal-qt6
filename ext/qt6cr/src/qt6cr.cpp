@@ -48,6 +48,7 @@
 #include <QIcon>
 #include <QInputDialog>
 #include <QItemSelectionModel>
+#include <QIODevice>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLinearGradient>
@@ -1045,6 +1046,10 @@ QByteArray *as_qbyte_array(qt6cr_handle_t handle) {
 
 QBuffer *as_qbuffer(qt6cr_handle_t handle) {
   return static_cast<QBuffer *>(handle);
+}
+
+QIODevice *as_qio_device(qt6cr_handle_t handle) {
+  return static_cast<QIODevice *>(handle);
 }
 
 QPen *as_qpen(qt6cr_handle_t handle) {
@@ -5149,6 +5154,64 @@ void qt6cr_qbyte_array_clear(qt6cr_handle_t handle) {
   if (value != nullptr) {
     value->clear();
   }
+}
+
+bool qt6cr_io_device_open(qt6cr_handle_t handle, int open_mode) {
+  auto *device = as_qio_device(handle);
+  return device != nullptr && device->open(QIODevice::OpenMode(open_mode));
+}
+
+void qt6cr_io_device_close(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+
+  if (device != nullptr) {
+    device->close();
+  }
+}
+
+bool qt6cr_io_device_is_open(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+  return device != nullptr && device->isOpen();
+}
+
+int64_t qt6cr_io_device_size(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+  return device == nullptr ? 0 : static_cast<int64_t>(device->size());
+}
+
+int64_t qt6cr_io_device_position(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+  return device == nullptr ? 0 : static_cast<int64_t>(device->pos());
+}
+
+bool qt6cr_io_device_seek(qt6cr_handle_t handle, int64_t position) {
+  auto *device = as_qio_device(handle);
+  return device != nullptr && device->seek(position);
+}
+
+bool qt6cr_io_device_at_end(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+  return device != nullptr && device->atEnd();
+}
+
+int64_t qt6cr_io_device_bytes_available(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+  return device == nullptr ? 0 : static_cast<int64_t>(device->bytesAvailable());
+}
+
+qt6cr_byte_array_t qt6cr_io_device_read_all(qt6cr_handle_t handle) {
+  auto *device = as_qio_device(handle);
+  return device == nullptr ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(device->readAll());
+}
+
+int64_t qt6cr_io_device_write(qt6cr_handle_t handle, const unsigned char *data, int size) {
+  auto *device = as_qio_device(handle);
+
+  if (device == nullptr || data == nullptr || size <= 0) {
+    return 0;
+  }
+
+  return static_cast<int64_t>(device->write(reinterpret_cast<const char *>(data), size));
 }
 
 qt6cr_handle_t qt6cr_qbuffer_create(qt6cr_handle_t byte_array) {

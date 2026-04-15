@@ -652,6 +652,17 @@ int qt6cr_qbyte_array_size(qt6cr_handle_t handle);
 qt6cr_byte_array_t qt6cr_qbyte_array_data(qt6cr_handle_t handle);
 void qt6cr_qbyte_array_clear(qt6cr_handle_t handle);
 
+bool qt6cr_io_device_open(qt6cr_handle_t handle, int open_mode);
+void qt6cr_io_device_close(qt6cr_handle_t handle);
+bool qt6cr_io_device_is_open(qt6cr_handle_t handle);
+int64_t qt6cr_io_device_size(qt6cr_handle_t handle);
+int64_t qt6cr_io_device_position(qt6cr_handle_t handle);
+bool qt6cr_io_device_seek(qt6cr_handle_t handle, int64_t position);
+bool qt6cr_io_device_at_end(qt6cr_handle_t handle);
+int64_t qt6cr_io_device_bytes_available(qt6cr_handle_t handle);
+qt6cr_byte_array_t qt6cr_io_device_read_all(qt6cr_handle_t handle);
+int64_t qt6cr_io_device_write(qt6cr_handle_t handle, const unsigned char *data, int size);
+
 qt6cr_handle_t qt6cr_qbuffer_create(qt6cr_handle_t byte_array);
 void qt6cr_qbuffer_destroy(qt6cr_handle_t handle);
 bool qt6cr_qbuffer_open(qt6cr_handle_t handle, int open_mode);

@@ -621,6 +621,17 @@ module Qt6
     fun qt6cr_qbyte_array_data = qt6cr_qbyte_array_data(handle : Handle) : ByteArrayValue
     fun qt6cr_qbyte_array_clear = qt6cr_qbyte_array_clear(handle : Handle)
 
+    fun qt6cr_io_device_open = qt6cr_io_device_open(handle : Handle, open_mode : LibC::Int) : Bool
+    fun qt6cr_io_device_close = qt6cr_io_device_close(handle : Handle)
+    fun qt6cr_io_device_is_open = qt6cr_io_device_is_open(handle : Handle) : Bool
+    fun qt6cr_io_device_size = qt6cr_io_device_size(handle : Handle) : Int64
+    fun qt6cr_io_device_position = qt6cr_io_device_position(handle : Handle) : Int64
+    fun qt6cr_io_device_seek = qt6cr_io_device_seek(handle : Handle, position : Int64) : Bool
+    fun qt6cr_io_device_at_end = qt6cr_io_device_at_end(handle : Handle) : Bool
+    fun qt6cr_io_device_bytes_available = qt6cr_io_device_bytes_available(handle : Handle) : Int64
+    fun qt6cr_io_device_read_all = qt6cr_io_device_read_all(handle : Handle) : ByteArrayValue
+    fun qt6cr_io_device_write = qt6cr_io_device_write(handle : Handle, data : UInt8*, size : LibC::Int) : Int64
+
     fun qt6cr_qbuffer_create = qt6cr_qbuffer_create(byte_array : Handle) : Handle
     fun qt6cr_qbuffer_destroy = qt6cr_qbuffer_destroy(handle : Handle)
     fun qt6cr_qbuffer_open = qt6cr_qbuffer_open(handle : Handle, open_mode : LibC::Int) : Bool
