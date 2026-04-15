@@ -676,6 +676,61 @@ describe Qt6 do
     pdf_header.should eq("%PDF-")
   end
 
+  it "supports url and filesystem utility wrappers" do
+    app
+
+    root_path = File.join(Dir.tempdir, "crystal-qt6-utils-#{Process.pid}")
+    nested_relative = "maps/exports"
+    nested_path = File.join(root_path, "maps", "exports")
+    maps_path = File.join(root_path, "maps")
+    file_path = File.join(root_path, "terrain.map")
+
+    Dir.mkdir_p(root_path)
+    File.write(file_path, "terrain")
+
+    url = Qt6::QUrl.from_local_file(file_path)
+    web_url = Qt6::QUrl.new("https://example.com/maps/view?id=7")
+    dir = Qt6::QDir.new(root_path)
+    file_info = Qt6::QFileInfo.new(file_path)
+
+    url.valid?.should be_true
+    url.local_file?.should be_true
+    url.scheme.should eq("file")
+    url.to_local_file.should eq(file_path)
+    url.to_string.should contain(file_path)
+
+    web_url.valid?.should be_true
+    web_url.local_file?.should be_false
+    web_url.scheme.should eq("https")
+    web_url.path.should eq("/maps/view")
+
+    dir.exists?.should be_true
+    dir.path.should eq(root_path)
+    dir.file_path("terrain.map").should eq(file_path)
+    dir.absolute_file_path("terrain.map").should eq(file_path)
+    dir.mkpath(nested_relative).should be_true
+
+    Qt6::QDir.clean_path("#{root_path}/maps/../maps/exports").should eq(nested_path)
+    Qt6::QDir.current_path.should eq(Dir.current)
+    Qt6::QDir.home_path.should_not be_empty
+
+    file_info.exists?.should be_true
+    file_info.file?.should be_true
+    file_info.dir?.should be_false
+    file_info.file_name.should eq("terrain.map")
+    file_info.base_name.should eq("terrain")
+    file_info.suffix.should eq("map")
+    file_info.absolute_file_path.should eq(file_path)
+    file_info.absolute_path.should eq(root_path)
+    file_info.directory.absolute_path.should eq(root_path)
+    file_info.size.should eq(7_i64)
+  ensure
+    File.delete?(file_path) if file_path
+    Dir.delete?(nested_path) if nested_path
+    Dir.delete?(maps_path) if maps_path
+    Dir.delete?(root_path) if root_path
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")

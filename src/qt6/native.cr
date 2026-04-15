@@ -694,6 +694,40 @@ module Qt6
     fun qt6cr_qfont_metrics_f_horizontal_advance = qt6cr_qfont_metrics_f_horizontal_advance(handle : Handle, text : UInt8*) : Float64
     fun qt6cr_qfont_metrics_f_bounding_rect = qt6cr_qfont_metrics_f_bounding_rect(handle : Handle, text : UInt8*) : RectFValue
 
+    fun qt6cr_qurl_create = qt6cr_qurl_create(value : UInt8*) : Handle
+    fun qt6cr_qurl_create_from_local_file = qt6cr_qurl_create_from_local_file(path : UInt8*) : Handle
+    fun qt6cr_qurl_destroy = qt6cr_qurl_destroy(handle : Handle)
+    fun qt6cr_qurl_is_valid = qt6cr_qurl_is_valid(handle : Handle) : Bool
+    fun qt6cr_qurl_is_local_file = qt6cr_qurl_is_local_file(handle : Handle) : Bool
+    fun qt6cr_qurl_scheme = qt6cr_qurl_scheme(handle : Handle) : UInt8*
+    fun qt6cr_qurl_path = qt6cr_qurl_path(handle : Handle) : UInt8*
+    fun qt6cr_qurl_to_string = qt6cr_qurl_to_string(handle : Handle) : UInt8*
+    fun qt6cr_qurl_to_local_file = qt6cr_qurl_to_local_file(handle : Handle) : UInt8*
+
+    fun qt6cr_qdir_create = qt6cr_qdir_create(path : UInt8*) : Handle
+    fun qt6cr_qdir_destroy = qt6cr_qdir_destroy(handle : Handle)
+    fun qt6cr_qdir_path = qt6cr_qdir_path(handle : Handle) : UInt8*
+    fun qt6cr_qdir_absolute_path = qt6cr_qdir_absolute_path(handle : Handle) : UInt8*
+    fun qt6cr_qdir_exists = qt6cr_qdir_exists(handle : Handle) : Bool
+    fun qt6cr_qdir_file_path = qt6cr_qdir_file_path(handle : Handle, name : UInt8*) : UInt8*
+    fun qt6cr_qdir_absolute_file_path = qt6cr_qdir_absolute_file_path(handle : Handle, name : UInt8*) : UInt8*
+    fun qt6cr_qdir_mkpath = qt6cr_qdir_mkpath(handle : Handle, path : UInt8*) : Bool
+    fun qt6cr_qdir_current_path = qt6cr_qdir_current_path : UInt8*
+    fun qt6cr_qdir_home_path = qt6cr_qdir_home_path : UInt8*
+    fun qt6cr_qdir_clean_path = qt6cr_qdir_clean_path(path : UInt8*) : UInt8*
+
+    fun qt6cr_qfile_info_create = qt6cr_qfile_info_create(path : UInt8*) : Handle
+    fun qt6cr_qfile_info_destroy = qt6cr_qfile_info_destroy(handle : Handle)
+    fun qt6cr_qfile_info_file_name = qt6cr_qfile_info_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qfile_info_base_name = qt6cr_qfile_info_base_name(handle : Handle) : UInt8*
+    fun qt6cr_qfile_info_suffix = qt6cr_qfile_info_suffix(handle : Handle) : UInt8*
+    fun qt6cr_qfile_info_absolute_file_path = qt6cr_qfile_info_absolute_file_path(handle : Handle) : UInt8*
+    fun qt6cr_qfile_info_absolute_path = qt6cr_qfile_info_absolute_path(handle : Handle) : UInt8*
+    fun qt6cr_qfile_info_exists = qt6cr_qfile_info_exists(handle : Handle) : Bool
+    fun qt6cr_qfile_info_is_file = qt6cr_qfile_info_is_file(handle : Handle) : Bool
+    fun qt6cr_qfile_info_is_dir = qt6cr_qfile_info_is_dir(handle : Handle) : Bool
+    fun qt6cr_qfile_info_size = qt6cr_qfile_info_size(handle : Handle) : Int64
+
     fun qt6cr_qdate_create = qt6cr_qdate_create(year : LibC::Int, month : LibC::Int, day : LibC::Int) : Handle
     fun qt6cr_qdate_destroy = qt6cr_qdate_destroy(handle : Handle)
     fun qt6cr_qdate_year = qt6cr_qdate_year(handle : Handle) : LibC::Int

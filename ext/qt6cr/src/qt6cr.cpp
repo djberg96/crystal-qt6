@@ -26,6 +26,7 @@
 #include <QDateTime>
 #include <QDateTimeEdit>
 #include <QDial>
+#include <QDir>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDockWidget>
@@ -34,6 +35,7 @@
 #include <QEvent>
 #include <QEventLoop>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFontComboBox>
 #include <QFrame>
 #include <QFont>
@@ -122,6 +124,7 @@
 #include <QTreeView>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QUrl>
 #include <QVBoxLayout>
 #include <QWheelEvent>
 #include <QWidget>
@@ -1234,6 +1237,18 @@ QProgressBar *as_progress_bar(qt6cr_handle_t handle) {
 
 QDate *as_qdate(qt6cr_handle_t handle) {
   return static_cast<QDate *>(handle);
+}
+
+QUrl *as_qurl(qt6cr_handle_t handle) {
+  return static_cast<QUrl *>(handle);
+}
+
+QDir *as_qdir(qt6cr_handle_t handle) {
+  return static_cast<QDir *>(handle);
+}
+
+QFileInfo *as_qfile_info(qt6cr_handle_t handle) {
+  return static_cast<QFileInfo *>(handle);
 }
 
 QTime *as_qtime(qt6cr_handle_t handle) {
@@ -5495,6 +5510,151 @@ double qt6cr_qfont_metrics_f_horizontal_advance(qt6cr_handle_t handle, const cha
 qt6cr_rectf_t qt6cr_qfont_metrics_f_bounding_rect(qt6cr_handle_t handle, const char *text) {
   auto *metrics = as_qfont_metrics_f(handle);
   return metrics == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(metrics->boundingRect(QString::fromUtf8(text == nullptr ? "" : text)));
+}
+
+qt6cr_handle_t qt6cr_qurl_create(const char *value) {
+  return new QUrl(QString::fromUtf8(value == nullptr ? "" : value));
+}
+
+qt6cr_handle_t qt6cr_qurl_create_from_local_file(const char *path) {
+  return new QUrl(QUrl::fromLocalFile(QString::fromUtf8(path == nullptr ? "" : path)));
+}
+
+void qt6cr_qurl_destroy(qt6cr_handle_t handle) {
+  delete as_qurl(handle);
+}
+
+bool qt6cr_qurl_is_valid(qt6cr_handle_t handle) {
+  auto *url = as_qurl(handle);
+  return url == nullptr ? false : url->isValid();
+}
+
+bool qt6cr_qurl_is_local_file(qt6cr_handle_t handle) {
+  auto *url = as_qurl(handle);
+  return url == nullptr ? false : url->isLocalFile();
+}
+
+char *qt6cr_qurl_scheme(qt6cr_handle_t handle) {
+  auto *url = as_qurl(handle);
+  return url == nullptr ? duplicate_string("") : duplicate_string(url->scheme());
+}
+
+char *qt6cr_qurl_path(qt6cr_handle_t handle) {
+  auto *url = as_qurl(handle);
+  return url == nullptr ? duplicate_string("") : duplicate_string(url->path());
+}
+
+char *qt6cr_qurl_to_string(qt6cr_handle_t handle) {
+  auto *url = as_qurl(handle);
+  return url == nullptr ? duplicate_string("") : duplicate_string(url->toString());
+}
+
+char *qt6cr_qurl_to_local_file(qt6cr_handle_t handle) {
+  auto *url = as_qurl(handle);
+  return url == nullptr ? duplicate_string("") : duplicate_string(url->toLocalFile());
+}
+
+qt6cr_handle_t qt6cr_qdir_create(const char *path) {
+  return new QDir(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+void qt6cr_qdir_destroy(qt6cr_handle_t handle) {
+  delete as_qdir(handle);
+}
+
+char *qt6cr_qdir_path(qt6cr_handle_t handle) {
+  auto *dir = as_qdir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->path());
+}
+
+char *qt6cr_qdir_absolute_path(qt6cr_handle_t handle) {
+  auto *dir = as_qdir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->absolutePath());
+}
+
+bool qt6cr_qdir_exists(qt6cr_handle_t handle) {
+  auto *dir = as_qdir(handle);
+  return dir == nullptr ? false : dir->exists();
+}
+
+char *qt6cr_qdir_file_path(qt6cr_handle_t handle, const char *name) {
+  auto *dir = as_qdir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->filePath(QString::fromUtf8(name == nullptr ? "" : name)));
+}
+
+char *qt6cr_qdir_absolute_file_path(qt6cr_handle_t handle, const char *name) {
+  auto *dir = as_qdir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->absoluteFilePath(QString::fromUtf8(name == nullptr ? "" : name)));
+}
+
+bool qt6cr_qdir_mkpath(qt6cr_handle_t handle, const char *path) {
+  auto *dir = as_qdir(handle);
+  return dir == nullptr ? false : dir->mkpath(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+char *qt6cr_qdir_current_path(void) {
+  return duplicate_string(QDir::currentPath());
+}
+
+char *qt6cr_qdir_home_path(void) {
+  return duplicate_string(QDir::homePath());
+}
+
+char *qt6cr_qdir_clean_path(const char *path) {
+  return duplicate_string(QDir::cleanPath(QString::fromUtf8(path == nullptr ? "" : path)));
+}
+
+qt6cr_handle_t qt6cr_qfile_info_create(const char *path) {
+  return new QFileInfo(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+void qt6cr_qfile_info_destroy(qt6cr_handle_t handle) {
+  delete as_qfile_info(handle);
+}
+
+char *qt6cr_qfile_info_file_name(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->fileName());
+}
+
+char *qt6cr_qfile_info_base_name(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->baseName());
+}
+
+char *qt6cr_qfile_info_suffix(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->suffix());
+}
+
+char *qt6cr_qfile_info_absolute_file_path(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->absoluteFilePath());
+}
+
+char *qt6cr_qfile_info_absolute_path(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->absolutePath());
+}
+
+bool qt6cr_qfile_info_exists(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? false : info->exists();
+}
+
+bool qt6cr_qfile_info_is_file(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? false : info->isFile();
+}
+
+bool qt6cr_qfile_info_is_dir(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? false : info->isDir();
+}
+
+int64_t qt6cr_qfile_info_size(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? 0 : static_cast<int64_t>(info->size());
 }
 
 qt6cr_handle_t qt6cr_qdate_create(int year, int month, int day) {
