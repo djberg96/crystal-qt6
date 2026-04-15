@@ -17,7 +17,8 @@ Larger editor-style applications still typically need:
 - heavy use of `QPainter`, `QImage`, `QPixmap`, `QPainterPath`, `QTransform`, fonts, pens, brushes, and geometry types
 - export paths for formats such as PDF and SVG
 - richer editor controls, containers, and list/tree surfaces
-- richer clipboard/data-transfer features beyond the new MIME and drop-receive basics, a few higher-end image-loading helpers beyond the new `QImageReader` basics, and a few remaining document-oriented APIs
+- maintained integration examples that keep shell, editor, image, and data-transfer features working together
+- stronger routine GUI verification on macOS and Linux
 - image processing or other high-throughput data operations outside simple UI code
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
@@ -59,12 +60,11 @@ Recommended parity targets for the next development cycles:
 
 The highest-value parity areas still missing are:
 
-- broader application-service and utility coverage such as `QSettings`, `QUrl`, `QFile`, `QDir`, `QFileInfo`, and desktop-integration helpers
-- deeper text/document and table/view polish beyond the now-established first layer
-- more complete action, menu, toolbar, and window-polish APIs
-- richer clipboard/data-transfer, document, and image-loading helpers where real applications still hit rough edges
 - a maintained in-repo example application that exercises the current readiness bar continuously
 - stronger macOS and Linux GUI-spec reliability so parity claims are backed by routine test runs
+- deeper text/document and table/view polish beyond the now-established first layer
+- the remaining long tail of export, document, image-reader, and print-adjacent helpers exposed by real editor-style workflows
+- a practical strategy for higher-throughput image and data-processing work beyond UI bindings
 
 ## Architectural Recommendation
 
@@ -204,7 +204,7 @@ Goal: support the heavy `QtGui` drawing usage common to editor-style application
 
 - Render grids, text labels, paths, fills, and image assets from Crystal.
 - Export a rendered image buffer to PNG.
-- Remaining gaps in this phase are now mostly secondary helper APIs such as scaled or stream-backed image reading, plus any extra painter and page-layout polish the real editor slice exposes.
+- Remaining gaps in this phase are now mostly niche helper APIs such as extra painter and page-layout polish, plus any additional image-reader behavior the maintained editor examples expose.
 
 ## Phase 5: Forms And Editor Controls
 
@@ -258,7 +258,7 @@ Goal: close the feature gap for external outputs.
 ### Acceptance Criteria
 
 - Reproduce current PNG, PDF, and SVG export behavior for a representative sample document.
-- PDF and SVG export are already in place, including custom PDF page layout control. The remaining work here is mostly richer clipboard/data-transfer support beyond the new `QMimeData` basics, any additional image-reader capabilities the real editor slice exposes, and any truly needed print-related APIs.
+- PDF and SVG export are already in place, including custom PDF page layout control. The remaining work here is now mostly the long tail of print-related APIs, richer document/export conveniences, and any additional image-reader behavior the maintained editor examples expose.
 
 ## Phase 7: High-Throughput Data And Image Processing
 
@@ -311,7 +311,7 @@ Before serious application rewrite work begins, `crystal-qt6` should be able to 
 - PNG export
 - stable shutdown and passing automated tests on macOS and Linux
 
-`crystal-qt6` now satisfies most of this bar except for a few still-thin layers around application services, deeper text/table polish, and broad cross-platform GUI-spec confidence. That is why the next tranche should focus on utility surfaces, maintained example coverage, and reliability rather than more shell bootstrap work.
+`crystal-qt6` now satisfies most of this bar in isolated examples and focused specs. The next tranche should focus on a stronger maintained integration example, deeper editor-stack polish where that example exposes gaps, and broad cross-platform GUI-spec confidence.
 
 If that sample app exists and is reliable, then application ports become realistic engineering projects rather than speculative rewrites.
 
@@ -319,20 +319,12 @@ If that sample app exists and is reliable, then application ports become realist
 
 Recommended order for the next development cycle in `crystal-qt6`:
 
-1. Add broader application-service and utility types such as `QSettings`, `QUrl`, `QFile`, `QDir`, and `QFileInfo`.
-2. Deepen the text/document and table/view stacks with the next layer of polish rather than only new widget classes.
-3. Expand action, menu, toolbar, and window-polish APIs so desktop-shell behavior feels less partial.
-4. Strengthen clipboard, data-transfer, document, and image-loading helpers where real applications still need glue code.
-5. Keep a maintained example application and focused spec coverage aligned with each parity batch.
-6. Improve routine macOS and Linux GUI-spec reliability so the roadmap tracks capabilities that are continuously verified.
+1. Keep a maintained integration example application aligned with the current readiness bar, not just isolated widget showcases.
+2. Add a matching focused verification path for that example so it becomes an ongoing regression target.
+3. Improve routine macOS and Linux GUI-spec reliability so the roadmap tracks capabilities that are continuously verified.
+4. Use the maintained example to drive the next layer of text/document, table/view, export, and document-helper polish.
+5. Decide how the project wants to approach Phase 7 style image-processing and higher-throughput helper work.
 
-That would turn the library from "large editor subsystems are possible" into "common Qt6 desktop application patterns are routinely supported."
+That would turn the library from "large editor subsystems are possible" into "common Qt6 desktop application patterns are continuously exercised and routinely supported."
 
-The practical implementation order inside the utility tranche should be:
-
-1. Path and URL types first: `QUrl`, `QFileInfo`, and `QDir`.
-2. File-handle and byte-oriented helpers next: `QFile` and any missing `QIODevice`-adjacent utilities.
-3. Application persistence next: `QSettings`.
-4. Desktop-integration helpers after that, once there is already a clear path vocabulary to build on.
-
-The first three utility steps are now in place, so the next utility-focused work should center on desktop-integration helpers and any remaining `QIODevice`-adjacent gaps.
+The first utility and shell-polish tranche is now in place, including path and settings types, desktop-integration helpers, richer `QIODevice`-style support, deeper text/table/editor helpers, stronger shell polish, and a broader clipboard/data-transfer/image-loading layer. The next repository-level work should therefore be driven less by raw binding count and more by maintained integration coverage and cross-platform confidence.
