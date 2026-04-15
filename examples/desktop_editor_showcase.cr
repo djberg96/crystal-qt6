@@ -63,10 +63,18 @@ class DesktopEditorShowcaseState
     @source_description = source_description
   end
 
-  def reset_view : Nil
-    @zoom = 1.0
-    @pan_x = 46.0
-    @pan_y = 42.0
+  def reset_view(viewport_size : Qt6::Size) : Nil
+    image_width = @preview_image.width.to_f64
+    image_height = @preview_image.height.to_f64
+    viewport_width = viewport_size.width.to_f64
+    viewport_height = viewport_size.height.to_f64
+    fit_width_zoom = (viewport_width - 48.0) / image_width
+    fit_height_zoom = (viewport_height - 48.0) / image_height
+
+    @zoom = [1.0, [fit_width_zoom, fit_height_zoom].min].min
+    @zoom = [0.45, @zoom].max
+    @pan_x = (viewport_width - image_width * @zoom) / 2.0
+    @pan_y = (viewport_height - image_height * @zoom) / 2.0
   end
 end
 
@@ -149,13 +157,46 @@ app.organization_domain = "crystal-qt6.example"
 app.style_sheet = <<-CSS
   QWidget { font-family: "Avenir Next"; font-size: 13px; color: rgb(52, 48, 42); }
   QMainWindow { background: rgb(246, 242, 235); }
-  QDockWidget { font-size: 13px; }
+  QDockWidget {
+    font-size: 13px;
+    background: rgb(244, 239, 231);
+  }
+  QDockWidget::title {
+    background: rgb(225, 217, 206);
+    color: rgb(58, 54, 48);
+    padding: 8px 10px;
+    border-bottom: 1px solid rgb(206, 198, 186);
+  }
+  QStatusBar {
+    background: rgb(233, 227, 217);
+    color: rgb(70, 64, 58);
+    border-top: 1px solid rgb(208, 201, 191);
+  }
+  QToolBar {
+    background: rgb(239, 233, 224);
+    border-bottom: 1px solid rgb(207, 200, 190);
+    spacing: 4px;
+    padding: 4px 6px;
+  }
+  QToolBar QToolButton {
+    color: rgb(54, 50, 44);
+    background: rgb(232, 226, 217);
+    border: 1px solid rgb(201, 194, 184);
+    padding: 6px 10px;
+  }
+  QToolBar QToolButton:checked {
+    background: rgb(214, 223, 237);
+    border-color: rgb(128, 142, 186);
+  }
   QLineEdit, QTextEdit, QPlainTextEdit, QTextBrowser {
     background: rgb(255, 255, 255);
     color: rgb(40, 44, 49);
     border: 1px solid rgb(205, 198, 188);
     selection-background-color: rgb(88, 104, 176);
     selection-color: rgb(255, 255, 255);
+  }
+  QLineEdit {
+    padding: 5px 8px;
   }
   QPushButton {
     padding: 6px 12px;
@@ -165,6 +206,21 @@ app.style_sheet = <<-CSS
   }
   QPushButton:pressed {
     background: rgb(224, 216, 205);
+  }
+  QTreeView {
+    background: rgb(252, 250, 246);
+    alternate-background-color: rgb(245, 240, 232);
+    border: 1px solid rgb(210, 204, 194);
+    selection-background-color: rgb(94, 110, 182);
+    selection-color: rgb(255, 255, 255);
+  }
+  QHeaderView::section {
+    background: rgb(228, 221, 211);
+    color: rgb(72, 66, 60);
+    border: none;
+    border-right: 1px solid rgb(206, 198, 186);
+    border-bottom: 1px solid rgb(206, 198, 186);
+    padding: 6px 8px;
   }
   QTabWidget::pane {
     background: rgb(252, 250, 246);
@@ -179,6 +235,9 @@ app.style_sheet = <<-CSS
   QTabBar::tab:selected {
     color: rgb(40, 44, 49);
     background: rgb(252, 250, 246);
+  }
+  QLabel {
+    color: rgb(76, 70, 64);
   }
 CSS
 
@@ -196,6 +255,7 @@ preview = Qt6::EventWidget.new
 preview.resize(860, 620)
 preview.accept_drops = true
 preview.tool_tip = "Wheel to zoom, drag to pan, drop plain text into the preview to append it to notes."
+state.reset_view(preview.size)
 
 layer_model = Qt6::StandardItemModel.new(main)
 layer_model.set_horizontal_header_label(0, "Layer")
@@ -475,6 +535,7 @@ load_image = -> do
       image = reader.read
       unless image.null?
         state.use_loaded_image(state.active_layer, state.active_status, image, File.basename(selected_path))
+        state.reset_view(preview.size)
         render_summary.call
         preview.update
         settings.set_value("ui/last_image_path", selected_path)
@@ -537,7 +598,7 @@ inspect_action.on_triggered do
 end
 
 reset_view_action.on_triggered do
-  state.reset_view
+  state.reset_view(preview.size)
   preview.update
   render_summary.call
   status_bar.show_message("Preview view reset", 1400)
