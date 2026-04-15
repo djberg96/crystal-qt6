@@ -1777,7 +1777,8 @@ describe Qt6 do
     dial.value = 90
 
     date_time = Qt6::QDateTime.new(2026, 4, 14, 9, 30, 15)
-    date = Qt6::QDate.new(2026, 4, 15)
+    initial_calendar_date = calendar.selected_date.to_string
+    date = initial_calendar_date == "2026-04-15" ? Qt6::QDate.new(2026, 4, 16) : Qt6::QDate.new(2026, 4, 15)
     time = Qt6::QTime.new(11, 45, 0)
 
     date_time_edit.display_format = "yyyy/MM/dd HH:mm:ss"
