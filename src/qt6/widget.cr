@@ -287,7 +287,6 @@ module Qt6
     # Stops tracking this widget as independently owned because a Qt parent now
     # controls its lifetime.
     def adopt_by_parent! : Nil
-      Qt6.untrack_object(self) if @owned
       @owned = false
     end
   end

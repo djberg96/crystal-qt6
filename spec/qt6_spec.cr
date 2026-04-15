@@ -2179,6 +2179,27 @@ describe Qt6 do
     destroyed.should eq(1)
   end
 
+  it "keeps parent-owned QObject wrappers alive until Qt destroys them" do
+    app
+    content_destroyed = 0
+    layout_destroyed = 0
+    scroll_area = Qt6::ScrollArea.new
+
+    begin
+      content = Qt6::Widget.new
+      layout = Qt6::VBoxLayout.new(content)
+      content.destroyed.connect { content_destroyed += 1 }
+      layout.destroyed.connect { layout_destroyed += 1 }
+      scroll_area.widget = content
+    end
+
+    GC.collect
+    scroll_area.release
+
+    content_destroyed.should eq(1)
+    layout_destroyed.should eq(1)
+  end
+
   it "supports nested event loops driven by timers" do
     app
     exit_loop = Qt6::QEventLoop.new
