@@ -196,7 +196,7 @@ require "./qt6/v_box_layout"
 
 module Qt6
   # Current shard version.
-  VERSION = "0.3.0"
+  VERSION = "0.4.0"
   @@application : Application?
   @@tracked_objects = [] of ManagedResource
   @@shutdown_registered = false

@@ -8,6 +8,26 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Added
 
+## [0.4.0] - 2026-04-14
+
+### Added
+
+- Broader widget and editor coverage including abstract/button infrastructure, tool buttons, button groups, dialog button boxes, frames, font combo boxes, stacked widgets, stacked layouts, text browsers, progress bars, scroll bars, dials, date/time editors, calendar widgets, LCD numbers, command-link buttons, tab bars, and richer widget sizing and tooltip helpers.
+- Deeper text and editor tooling through `QTextEdit`, `QPlainTextEdit`, `QTextDocument`, `QTextCursor`, validators, completers, richer line-edit APIs, `QAbstractSpinBox`, expanded spin-box editor behavior, and additional item-view edit-trigger, persistent-editor, selection-model, and model-index convenience layers.
+- Expanded model/view and item-widget support with table views, table widgets, header resize modes, selection behavior, spans, callback-backed tree-model paths, event filters, and shared item-view polish for list/tree/table workflows.
+- Broader application-service and desktop-integration coverage through `QUrl`, `QDir`, `QFileInfo`, `QFile`, `QSettings`, standard paths, desktop services, and a shared `QIODevice` layer.
+- Stronger clipboard, MIME/data-transfer, document, and image-loading helpers, including device-backed image load/save paths and richer clipboard HTML/image/custom-format support.
+- A maintained `desktop_editor_showcase` example that combines main-window shell, docks, model/view, text editing, clipboard flows, drag/drop, image IO, and custom preview rendering in one integration path.
+
+### Changed
+
+- Refreshed the roadmap and README to reflect the project’s broader Qt6 feature/widget parity goals and the newer maintained integration-example focus.
+
+### Fixed
+
+- Stabilized object-lifecycle tracking for parent-owned `QObject` wrappers so Qt `destroyed` callbacks stay valid through parent teardown, addressing Linux CI shutdown crashes.
+- Hardened calendar-widget specs against platform-specific default date selection so macOS CI no longer flakes on `selection_changed` assertions.
+
 ## [0.3.0] - 2026-04-12
 
 ### Added
