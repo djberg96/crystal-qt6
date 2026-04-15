@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QListWidget` for simple item-based side panels.
-  class ListWidget < Widget
+  class ListWidget < AbstractItemView
     @current_row_changed : Signal(Int32) = Signal(Int32).new
     @item_changed : Signal(ListWidgetItem) = Signal(ListWidgetItem).new
     @item_double_clicked : Signal(ListWidgetItem) = Signal(ListWidgetItem).new
@@ -109,39 +109,6 @@ module Qt6
       int_value = value.to_i32
       LibQt6.qt6cr_list_widget_set_spacing(to_unsafe, int_value)
       int_value
-    end
-
-    # Returns the current drag/drop mode.
-    def drag_drop_mode : ItemViewDragDropMode
-      ItemViewDragDropMode.from_value(LibQt6.qt6cr_list_widget_drag_drop_mode(to_unsafe))
-    end
-
-    # Sets the drag/drop mode.
-    def drag_drop_mode=(value : ItemViewDragDropMode) : ItemViewDragDropMode
-      LibQt6.qt6cr_list_widget_set_drag_drop_mode(to_unsafe, value.value)
-      value
-    end
-
-    # Returns the current selection mode.
-    def selection_mode : ItemSelectionMode
-      ItemSelectionMode.from_value(LibQt6.qt6cr_list_widget_selection_mode(to_unsafe))
-    end
-
-    # Sets the selection mode.
-    def selection_mode=(value : ItemSelectionMode) : ItemSelectionMode
-      LibQt6.qt6cr_list_widget_set_selection_mode(to_unsafe, value.value)
-      value
-    end
-
-    # Returns the default drop action.
-    def default_drop_action : DropAction
-      DropAction.from_value(LibQt6.qt6cr_list_widget_default_drop_action(to_unsafe))
-    end
-
-    # Sets the default drop action.
-    def default_drop_action=(value : DropAction) : DropAction
-      LibQt6.qt6cr_list_widget_set_default_drop_action(to_unsafe, value.value)
-      value
     end
 
     # Reorders an item within the list.

@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QTableWidget` for simple item-based tables.
-  class TableWidget < Widget
+  class TableWidget < AbstractItemView
     @current_cell_changed : Signal() = Signal().new
     @item_changed : Signal(TableWidgetItem) = Signal(TableWidgetItem).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
@@ -117,50 +117,6 @@ module Qt6
     def clear_contents : self
       LibQt6.qt6cr_table_widget_clear_contents(to_unsafe)
       self
-    end
-
-    # Returns the current selection mode.
-    def selection_mode : ItemSelectionMode
-      ItemSelectionMode.from_value(LibQt6.qt6cr_table_widget_selection_mode(to_unsafe))
-    end
-
-    # Sets the selection mode.
-    def selection_mode=(value : ItemSelectionMode) : ItemSelectionMode
-      LibQt6.qt6cr_table_widget_set_selection_mode(to_unsafe, value.value)
-      value
-    end
-
-    # Returns the edit triggers currently enabled for the widget.
-    def edit_triggers : EditTrigger
-      EditTrigger.from_value(LibQt6.qt6cr_table_widget_edit_triggers(to_unsafe))
-    end
-
-    # Sets the edit triggers enabled for the widget.
-    def edit_triggers=(value : EditTrigger) : EditTrigger
-      LibQt6.qt6cr_table_widget_set_edit_triggers(to_unsafe, value.value)
-      value
-    end
-
-    # Returns how selections expand across table cells.
-    def selection_behavior : ItemSelectionBehavior
-      ItemSelectionBehavior.from_value(LibQt6.qt6cr_table_widget_selection_behavior(to_unsafe))
-    end
-
-    # Sets how selections expand across table cells.
-    def selection_behavior=(value : ItemSelectionBehavior) : ItemSelectionBehavior
-      LibQt6.qt6cr_table_widget_set_selection_behavior(to_unsafe, value.value)
-      value
-    end
-
-    # Returns whether alternating row colors are enabled.
-    def alternating_row_colors? : Bool
-      LibQt6.qt6cr_table_widget_alternating_row_colors(to_unsafe)
-    end
-
-    # Enables or disables alternating row colors.
-    def alternating_row_colors=(value : Bool) : Bool
-      LibQt6.qt6cr_table_widget_set_alternating_row_colors(to_unsafe, value)
-      value
     end
 
     # Returns whether the cell grid is drawn.

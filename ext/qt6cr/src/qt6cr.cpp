@@ -1424,6 +1424,14 @@ QAbstractSpinBox *as_abstract_spin_box(qt6cr_handle_t handle) {
   return static_cast<QAbstractSpinBox *>(handle);
 }
 
+QAbstractItemView *as_abstract_item_view(qt6cr_handle_t handle) {
+  return static_cast<QAbstractItemView *>(handle);
+}
+
+QAbstractScrollArea *as_abstract_scroll_area(qt6cr_handle_t handle) {
+  return static_cast<QAbstractScrollArea *>(handle);
+}
+
 QTimer *as_timer(qt6cr_handle_t handle) {
   return static_cast<QTimer *>(handle);
 }
@@ -4180,6 +4188,174 @@ void qt6cr_styled_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_hand
   }
 
   delegate->setModelData(editor_widget, abstract_item_model, *model_index);
+}
+
+qt6cr_handle_t qt6cr_abstract_item_view_model(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? nullptr : view->model();
+}
+
+void qt6cr_abstract_item_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setItemDelegate(as_styled_item_delegate(delegate));
+  }
+}
+
+qt6cr_handle_t qt6cr_abstract_item_view_selection_model(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? nullptr : view->selectionModel();
+}
+
+void qt6cr_abstract_item_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionModel(as_item_selection_model(selection_model));
+  }
+}
+
+qt6cr_handle_t qt6cr_abstract_item_view_current_index(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? new QModelIndex() : new QModelIndex(view->currentIndex());
+}
+
+void qt6cr_abstract_item_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_abstract_item_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr) {
+    view->setCurrentIndex(model_index == nullptr ? QModelIndex() : *model_index);
+  }
+}
+
+int qt6cr_abstract_item_view_selection_mode(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->selectionMode());
+}
+
+void qt6cr_abstract_item_view_set_selection_mode(qt6cr_handle_t handle, int mode) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionMode(static_cast<QAbstractItemView::SelectionMode>(mode));
+  }
+}
+
+int qt6cr_abstract_item_view_edit_triggers(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? static_cast<int>(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed) : static_cast<int>(view->editTriggers());
+}
+
+void qt6cr_abstract_item_view_set_edit_triggers(qt6cr_handle_t handle, int triggers) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setEditTriggers(static_cast<QAbstractItemView::EditTriggers>(triggers));
+  }
+}
+
+int qt6cr_abstract_item_view_selection_behavior(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? static_cast<int>(QAbstractItemView::SelectItems) : static_cast<int>(view->selectionBehavior());
+}
+
+void qt6cr_abstract_item_view_set_selection_behavior(qt6cr_handle_t handle, int behavior) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionBehavior(static_cast<QAbstractItemView::SelectionBehavior>(behavior));
+  }
+}
+
+bool qt6cr_abstract_item_view_alternating_row_colors(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view != nullptr && view->alternatingRowColors();
+}
+
+void qt6cr_abstract_item_view_set_alternating_row_colors(qt6cr_handle_t handle, bool value) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setAlternatingRowColors(value);
+  }
+}
+
+bool qt6cr_abstract_item_view_drag_enabled(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view != nullptr && view->dragEnabled();
+}
+
+void qt6cr_abstract_item_view_set_drag_enabled(qt6cr_handle_t handle, bool value) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setDragEnabled(value);
+  }
+}
+
+int qt6cr_abstract_item_view_drag_drop_mode(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->dragDropMode());
+}
+
+void qt6cr_abstract_item_view_set_drag_drop_mode(qt6cr_handle_t handle, int mode) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setDragDropMode(static_cast<QAbstractItemView::DragDropMode>(mode));
+  }
+}
+
+int qt6cr_abstract_item_view_default_drop_action(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? 0 : static_cast<int>(view->defaultDropAction());
+}
+
+void qt6cr_abstract_item_view_set_default_drop_action(qt6cr_handle_t handle, int action) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setDefaultDropAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
+bool qt6cr_abstract_item_view_drop_indicator_shown(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view != nullptr && view->showDropIndicator();
+}
+
+void qt6cr_abstract_item_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setDropIndicatorShown(value);
+  }
+}
+
+void qt6cr_abstract_item_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_abstract_item_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->openPersistentEditor(*model_index);
+  }
+}
+
+void qt6cr_abstract_item_view_close_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_abstract_item_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->closePersistentEditor(*model_index);
+  }
+}
+
+bool qt6cr_abstract_item_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_abstract_item_view(handle);
+  auto *model_index = as_model_index(index);
+  return view != nullptr && model_index != nullptr && view->isPersistentEditorOpen(*model_index);
 }
 
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent) {
@@ -10797,6 +10973,42 @@ void qt6cr_stacked_layout_on_current_index_changed(qt6cr_handle_t handle, qt6cr_
   });
 }
 
+int qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? static_cast<int>(Qt::ScrollBarAsNeeded) : static_cast<int>(scroll_area->verticalScrollBarPolicy());
+}
+
+void qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->setVerticalScrollBarPolicy(static_cast<Qt::ScrollBarPolicy>(policy));
+  }
+}
+
+int qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? static_cast<int>(Qt::ScrollBarAsNeeded) : static_cast<int>(scroll_area->horizontalScrollBarPolicy());
+}
+
+void qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->setHorizontalScrollBarPolicy(static_cast<Qt::ScrollBarPolicy>(policy));
+  }
+}
+
+qt6cr_handle_t qt6cr_abstract_scroll_area_vertical_scroll_bar(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? nullptr : scroll_area->verticalScrollBar();
+}
+
+qt6cr_handle_t qt6cr_abstract_scroll_area_horizontal_scroll_bar(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? nullptr : scroll_area->horizontalScrollBar();
+}
+
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent) {
   return new QScrollArea(as_widget(parent));
 }
@@ -10824,29 +11036,19 @@ bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle) {
 }
 
 int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle) {
-  auto *scroll_area = as_scroll_area(handle);
-  return scroll_area == nullptr ? static_cast<int>(Qt::ScrollBarAsNeeded) : static_cast<int>(scroll_area->verticalScrollBarPolicy());
+  return qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(handle);
 }
 
 void qt6cr_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy) {
-  auto *scroll_area = as_scroll_area(handle);
-
-  if (scroll_area != nullptr) {
-    scroll_area->setVerticalScrollBarPolicy(static_cast<Qt::ScrollBarPolicy>(policy));
-  }
+  qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(handle, policy);
 }
 
 int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle) {
-  auto *scroll_area = as_scroll_area(handle);
-  return scroll_area == nullptr ? static_cast<int>(Qt::ScrollBarAsNeeded) : static_cast<int>(scroll_area->horizontalScrollBarPolicy());
+  return qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(handle);
 }
 
 void qt6cr_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy) {
-  auto *scroll_area = as_scroll_area(handle);
-
-  if (scroll_area != nullptr) {
-    scroll_area->setHorizontalScrollBarPolicy(static_cast<Qt::ScrollBarPolicy>(policy));
-  }
+  qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(handle, policy);
 }
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation) {

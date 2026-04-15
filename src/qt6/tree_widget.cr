@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QTreeWidget` for hierarchical side panels and managers.
-  class TreeWidget < Widget
+  class TreeWidget < AbstractItemView
     @current_item_changed : Signal() = Signal().new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 

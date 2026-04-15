@@ -2953,6 +2953,101 @@ describe Qt6 do
     list_view.release
   end
 
+  it "shares abstract item-view coverage across item-based widgets" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    tree_widget = Qt6::TreeWidget.new
+    table_widget = Qt6::TableWidget.new
+
+    list_widget << "Terrain"
+    list_widget << "Units"
+    tree_widget.column_count = 1
+    tree_root = Qt6::TreeWidgetItem.new("Layers")
+    tree_widget << tree_root
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+    table_widget.set_item(0, 0, Qt6::TableWidgetItem.new("Visible"))
+
+    list_widget.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
+    list_widget.drag_enabled = true
+    list_widget.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+    list_widget.default_drop_action = Qt6::DropAction::MoveAction
+    list_widget.drop_indicator_shown = true
+    list_widget.edit_triggers = Qt6::EditTrigger::SelectedClicked
+
+    tree_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+    tree_widget.alternating_row_colors = true
+    tree_widget.drag_enabled = true
+    tree_widget.drop_indicator_shown = true
+
+    table_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+    table_widget.alternating_row_colors = true
+
+    list_widget.current_row = 1
+    tree_widget.current_item = tree_root
+    table_widget.set_current_cell(0, 0)
+    application.process_events
+
+    list_index = list_widget.current_index
+    tree_index = tree_widget.current_index
+    table_index = table_widget.current_index
+
+    list_widget.selection_mode.should eq(Qt6::ItemSelectionMode::ExtendedSelection)
+    list_widget.drag_enabled?.should be_true
+    list_widget.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::InternalMove)
+    list_widget.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    list_widget.drop_indicator_shown?.should be_true
+    list_widget.edit_triggers.should eq(Qt6::EditTrigger::SelectedClicked)
+    list_widget.selection_model.should_not be_nil
+    list_index.row.should eq(1)
+
+    tree_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
+    tree_widget.alternating_row_colors?.should be_true
+    tree_widget.drag_enabled?.should be_true
+    tree_widget.drop_indicator_shown?.should be_true
+    tree_widget.selection_model.should_not be_nil
+    tree_index.valid?.should be_true
+    tree_index.row.should eq(0)
+
+    table_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
+    table_widget.alternating_row_colors?.should be_true
+    table_widget.selection_model.should_not be_nil
+    table_index.row.should eq(0)
+    table_index.column.should eq(0)
+
+    list_index.release
+    tree_index.release
+    table_index.release
+    list_widget.release
+    tree_widget.release
+    table_widget.release
+  end
+
+  it "shares abstract scroll-area policies and scroll bars across descendants" do
+    app
+    scroll_area = Qt6::ScrollArea.new
+    text_edit = Qt6::TextEdit.new("alpha\nbeta\ngamma")
+    plain_text_edit = Qt6::PlainTextEdit.new("delta\nepsilon\nzeta")
+
+    scroll_area.widget = Qt6::Label.new("Scrollable")
+    scroll_area.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOff
+    text_edit.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+    plain_text_edit.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+
+    scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
+    text_edit.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
+    plain_text_edit.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
+
+    scroll_area.vertical_scroll_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    scroll_area.horizontal_scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
+    text_edit.vertical_scroll_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    plain_text_edit.horizontal_scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
+
+    scroll_area.release
+    text_edit.release
+    plain_text_edit.release
+  end
+
   it "hosts a vertical editor slice with docks, canvas interaction, and PNG export" do
     application = app
     state = EditorVerticalSliceSpecState.new
