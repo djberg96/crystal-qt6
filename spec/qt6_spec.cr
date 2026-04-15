@@ -1611,6 +1611,71 @@ describe Qt6 do
     window.release
   end
 
+  it "supports desktop-shell action, menu, toolbar, and window polish" do
+    application = app
+    window = Qt6::MainWindow.new
+    toggled = [] of Bool
+
+    window.window_title = "Shell Polish"
+    file_menu = window.menu_bar.add_menu("File")
+    view_menu = window.menu_bar.add_menu("View")
+    quick_open = file_menu.add_action("Quick Open")
+    separator_action = file_menu.add_action("Separator Marker")
+    toolbar = Qt6::ToolBar.new("Inspector", window)
+    search = Qt6::LineEdit.new(parent: window)
+
+    quick_open.shortcut = "Ctrl+Shift+O"
+    quick_open.checkable = true
+    quick_open.status_tip = "Open a project quickly"
+    quick_open.tool_tip = "Quick Open"
+    quick_open.visible = false
+    quick_open.visible = true
+    quick_open.on_toggled do |value|
+      toggled << value
+    end
+    quick_open.checked = true
+    quick_open.checked = false
+
+    separator_action.separator = true
+    view_menu.title = "Panels"
+    menu_action = view_menu.menu_action
+    menu_action.text.should eq("Panels")
+
+    window.add_tool_bar(toolbar)
+    toolbar.movable = false
+    toolbar.add_widget(search)
+    toolbar.add_separator
+    toolbar_action = toolbar.add_action("Refresh")
+    toggle_view_action = toolbar.toggle_view_action
+    toolbar_action.text.should eq("Refresh")
+    toolbar.title = "Inspector Tools"
+    window.remove_tool_bar(toolbar)
+    window.add_tool_bar(toolbar)
+    toolbar.clear
+    toolbar << quick_open
+    application.process_events
+
+    quick_open.shortcut.to_s.should eq("Ctrl+Shift+O")
+    quick_open.status_tip.should eq("Open a project quickly")
+    quick_open.tool_tip.should eq("Quick Open")
+    quick_open.visible?.should be_true
+    quick_open.checkable?.should be_true
+    quick_open.checked?.should be_false
+    toggled.should eq([true, false])
+    separator_action.separator?.should be_true
+    file_menu.add_action(Qt6::Action.new("Manual", window)).text.should eq("Manual")
+    file_menu.clear
+    toolbar.movable?.should be_false
+    toolbar.title.should eq("Inspector Tools")
+    toggle_view_action.checkable?.should be_true
+    toggle_view_action.text.should eq("Inspector Tools")
+    window.window_title.should eq("Shell Polish")
+
+    menu_action.release
+    toggle_view_action.release
+    window.release
+  end
+
   it "supports common control widgets and date-based editors" do
     application = app
     progress_bar = Qt6::ProgressBar.new

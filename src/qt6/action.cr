@@ -1,15 +1,34 @@
 module Qt6
   class Action < QObject
     @triggered : Signal() = Signal().new
+    @toggled : Signal(Bool) = Signal(Bool).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
+    @toggled_userdata : LibQt6::Handle = Pointer(Void).null
 
     getter triggered : Signal()
+    getter toggled : Signal(Bool)
+
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
 
     def initialize(text : String = "", parent : QObject? = nil)
       super(LibQt6.qt6cr_action_create(parent.try(&.to_unsafe) || Pointer(Void).null, text.to_unsafe), parent.nil?)
+      register_callbacks
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      register_callbacks
+    end
+
+    private def register_callbacks : Nil
       @triggered = Signal().new
+      @toggled = Signal(Bool).new
       @callback_userdata = Box.box(self)
+      @toggled_userdata = Box.box(self)
       LibQt6.qt6cr_action_on_triggered(to_unsafe, TRIGGERED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_action_on_toggled(to_unsafe, TOGGLED_TRAMPOLINE, @toggled_userdata)
     end
 
     def text : String
@@ -67,6 +86,33 @@ module Qt6
       value
     end
 
+    def status_tip : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_action_status_tip(to_unsafe))
+    end
+
+    def status_tip=(value : String) : String
+      LibQt6.qt6cr_action_set_status_tip(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    def visible? : Bool
+      LibQt6.qt6cr_action_is_visible(to_unsafe)
+    end
+
+    def visible=(value : Bool) : Bool
+      LibQt6.qt6cr_action_set_visible(to_unsafe, value)
+      value
+    end
+
+    def separator? : Bool
+      LibQt6.qt6cr_action_is_separator(to_unsafe)
+    end
+
+    def separator=(value : Bool) : Bool
+      LibQt6.qt6cr_action_set_separator(to_unsafe, value)
+      value
+    end
+
     def data : ModelData
       Qt6.model_data_from_native(LibQt6.qt6cr_action_data(to_unsafe))
     end
@@ -82,6 +128,11 @@ module Qt6
       self
     end
 
+    def on_toggled(&block : Bool ->) : self
+      @toggled.connect { |value| block.call(value) }
+      self
+    end
+
     def trigger : self
       LibQt6.qt6cr_action_trigger(to_unsafe)
       self
@@ -91,8 +142,16 @@ module Qt6
       @triggered.emit
     end
 
+    protected def emit_toggled(value : Bool) : Nil
+      @toggled.emit(value)
+    end
+
     private TRIGGERED_TRAMPOLINE = ->(userdata : Void*) do
       Box(Action).unbox(userdata).emit_triggered
+    end
+
+    private TOGGLED_TRAMPOLINE = ->(userdata : Void*, value : Bool) do
+      Box(Action).unbox(userdata).emit_toggled(value)
     end
   end
 end

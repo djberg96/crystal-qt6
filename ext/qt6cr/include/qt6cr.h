@@ -224,6 +224,7 @@ void qt6cr_main_window_set_central_widget(qt6cr_handle_t handle, qt6cr_handle_t 
 qt6cr_handle_t qt6cr_main_window_menu_bar(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_main_window_status_bar(qt6cr_handle_t handle);
 void qt6cr_main_window_add_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t toolbar);
+void qt6cr_main_window_remove_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t toolbar);
 void qt6cr_main_window_add_dock_widget(qt6cr_handle_t handle, int area, qt6cr_handle_t dock_widget);
 
 qt6cr_handle_t qt6cr_dialog_create(qt6cr_handle_t parent);
@@ -945,9 +946,16 @@ void qt6cr_action_set_enabled(qt6cr_handle_t handle, bool value);
 bool qt6cr_action_is_enabled(qt6cr_handle_t handle);
 void qt6cr_action_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip);
 char *qt6cr_action_tool_tip(qt6cr_handle_t handle);
+void qt6cr_action_set_status_tip(qt6cr_handle_t handle, const char *status_tip);
+char *qt6cr_action_status_tip(qt6cr_handle_t handle);
+void qt6cr_action_set_visible(qt6cr_handle_t handle, bool value);
+bool qt6cr_action_is_visible(qt6cr_handle_t handle);
+void qt6cr_action_set_separator(qt6cr_handle_t handle, bool value);
+bool qt6cr_action_is_separator(qt6cr_handle_t handle);
 void qt6cr_action_set_data(qt6cr_handle_t handle, qt6cr_variant_value_t value);
 qt6cr_variant_value_t qt6cr_action_data(qt6cr_handle_t handle);
 void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_action_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 void qt6cr_action_trigger(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_action_group_create(qt6cr_handle_t parent);
@@ -956,18 +964,26 @@ void qt6cr_action_group_set_exclusive(qt6cr_handle_t handle, bool value);
 bool qt6cr_action_group_is_exclusive(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title);
+void qt6cr_menu_bar_clear(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_menu_add_menu(qt6cr_handle_t handle, const char *title);
+qt6cr_handle_t qt6cr_menu_add_text_action(qt6cr_handle_t handle, const char *text);
 void qt6cr_menu_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
 void qt6cr_menu_add_separator(qt6cr_handle_t handle);
 void qt6cr_menu_set_title(qt6cr_handle_t handle, const char *title);
 char *qt6cr_menu_title(qt6cr_handle_t handle);
+void qt6cr_menu_clear(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_menu_menu_action(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title);
+qt6cr_handle_t qt6cr_tool_bar_add_text_action(qt6cr_handle_t handle, const char *text);
 void qt6cr_tool_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+void qt6cr_tool_bar_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_tool_bar_add_separator(qt6cr_handle_t handle);
+void qt6cr_tool_bar_clear(qt6cr_handle_t handle);
 void qt6cr_tool_bar_set_movable(qt6cr_handle_t handle, bool value);
 bool qt6cr_tool_bar_is_movable(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_tool_bar_toggle_view_action(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent);
 void qt6cr_status_bar_show_message(qt6cr_handle_t handle, const char *message, int timeout_ms);
