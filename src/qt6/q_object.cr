@@ -20,7 +20,7 @@ module Qt6
       @destroyed_signal = Signal().new
       @destroyed_userdata = Box.box(self.as(QObject))
       LibQt6.qt6cr_object_on_destroyed(@to_unsafe, OBJECT_DESTROYED_TRAMPOLINE, @destroyed_userdata)
-      Qt6.track_object(self) if @owned
+      Qt6.track_object(self)
     end
 
     # Explicitly releases the wrapped native object when this wrapper owns it.
@@ -65,9 +65,6 @@ module Qt6
     # Marks this object as owned by a native parent so the wrapper stops trying
     # to release it directly.
     def adopt_by_parent! : Nil
-      return unless @owned
-
-      Qt6.untrack_object(self)
       @owned = false
     end
 

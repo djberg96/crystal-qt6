@@ -221,13 +221,14 @@ module Qt6
   def self.shutdown : Nil
     tracked_objects = @@tracked_objects.dup
     tracked_objects.reverse_each(&.release)
-    @@tracked_objects.clear
 
     application = @@application
-    return unless application
+    if application
+      application.shutdown
+      @@application = nil
+    end
 
-    application.shutdown
-    @@application = nil
+    @@tracked_objects.clear
   end
 
   # Builds a top-level `Widget`, applies a title and initial size, and yields
