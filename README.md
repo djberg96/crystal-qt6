@@ -72,6 +72,7 @@ Example highlights:
 - `examples/counter.cr`: simple stateful widget wiring with button callbacks
 - `examples/editor_shell.cr`: `QMainWindow`, menus, actions, action groups, shortcuts, toolbars, docks, convenience dialog helpers, and form/grid layout composition
 - `examples/editor_vertical_slice.cr`: one maintained “real editor slice” with a `QMainWindow` shell, two docks, a live `EventWidget` canvas, pan/zoom input, model/view layer management, and PNG export
+- `examples/desktop_editor_showcase.cr`: broader integration showcase with docks, model/view layer browsing, text/document editing, clipboard `QMimeData`, device-backed image loading, drag/drop notes, custom preview rendering, and PNG export
 - `examples/event_monitor.cr`: `QTimer` plus `EventWidget` resize, paint, mouse, wheel, and key hooks
 - `examples/rendering_stack.cr`: offscreen rendering plus file-backed and in-memory SVG import/export, named-element SVG rasterization, and PDF export with `QImage`, `QPixmap`, `QSvgGenerator`, `QSvgRenderer`, `QPdfWriter`, `QPainter`, `QPainterPath`, and `QTransform`
 - `examples/svg_widget_renderer.cr`: embedded `QSvgWidget` display, in-memory `load_data`, borrowed `QSvgWidget#renderer` access, named-element preview rendering, and widget grab export
