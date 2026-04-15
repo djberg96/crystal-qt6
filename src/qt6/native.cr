@@ -127,10 +127,13 @@ module Qt6
 
     fun qt6cr_clipboard_text = qt6cr_clipboard_text(handle : Handle) : UInt8*
     fun qt6cr_clipboard_set_text = qt6cr_clipboard_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_clipboard_has_text = qt6cr_clipboard_has_text(handle : Handle) : Bool
     fun qt6cr_clipboard_image = qt6cr_clipboard_image(handle : Handle) : Handle
     fun qt6cr_clipboard_set_image = qt6cr_clipboard_set_image(handle : Handle, image : Handle)
+    fun qt6cr_clipboard_has_image = qt6cr_clipboard_has_image(handle : Handle) : Bool
     fun qt6cr_clipboard_pixmap = qt6cr_clipboard_pixmap(handle : Handle) : Handle
     fun qt6cr_clipboard_set_pixmap = qt6cr_clipboard_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_clipboard_has_pixmap = qt6cr_clipboard_has_pixmap(handle : Handle) : Bool
     fun qt6cr_clipboard_mime_data = qt6cr_clipboard_mime_data(handle : Handle) : Handle
     fun qt6cr_clipboard_set_mime_data = qt6cr_clipboard_set_mime_data(handle : Handle, mime_data : Handle)
     fun qt6cr_clipboard_clear = qt6cr_clipboard_clear(handle : Handle)
@@ -139,6 +142,13 @@ module Qt6
     fun qt6cr_mime_data_has_text = qt6cr_mime_data_has_text(handle : Handle) : Bool
     fun qt6cr_mime_data_text = qt6cr_mime_data_text(handle : Handle) : UInt8*
     fun qt6cr_mime_data_set_text = qt6cr_mime_data_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_mime_data_has_html = qt6cr_mime_data_has_html(handle : Handle) : Bool
+    fun qt6cr_mime_data_html = qt6cr_mime_data_html(handle : Handle) : UInt8*
+    fun qt6cr_mime_data_set_html = qt6cr_mime_data_set_html(handle : Handle, html : UInt8*)
+    fun qt6cr_mime_data_has_image = qt6cr_mime_data_has_image(handle : Handle) : Bool
+    fun qt6cr_mime_data_image = qt6cr_mime_data_image(handle : Handle) : Handle
+    fun qt6cr_mime_data_set_image = qt6cr_mime_data_set_image(handle : Handle, image : Handle)
+    fun qt6cr_mime_data_formats = qt6cr_mime_data_formats(handle : Handle) : StringArrayValue
     fun qt6cr_mime_data_has_format = qt6cr_mime_data_has_format(handle : Handle, format : UInt8*) : Bool
     fun qt6cr_mime_data_data = qt6cr_mime_data_data(handle : Handle, format : UInt8*) : ByteArrayValue
     fun qt6cr_mime_data_set_data = qt6cr_mime_data_set_data(handle : Handle, format : UInt8*, data : UInt8*, size : LibC::Int)
@@ -272,13 +282,15 @@ module Qt6
     fun qt6cr_qimage_fill = qt6cr_qimage_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qimage_load = qt6cr_qimage_load(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qimage_load_from_data = qt6cr_qimage_load_from_data(handle : Handle, data : UInt8*, size : LibC::Int, format : UInt8*) : Bool
+    fun qt6cr_qimage_load_from_device = qt6cr_qimage_load_from_device(handle : Handle, device : Handle, format : UInt8*) : Bool
     fun qt6cr_qimage_save = qt6cr_qimage_save(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qimage_save_to_data = qt6cr_qimage_save_to_data(handle : Handle, format : UInt8*) : ByteArrayValue
-    fun qt6cr_qimage_save_to_buffer = qt6cr_qimage_save_to_buffer(handle : Handle, buffer : Handle, format : UInt8*) : Bool
+    fun qt6cr_qimage_save_to_device = qt6cr_qimage_save_to_device(handle : Handle, device : Handle, format : UInt8*) : Bool
     fun qt6cr_qimage_pixel_color = qt6cr_qimage_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int) : ColorValue
     fun qt6cr_qimage_set_pixel_color = qt6cr_qimage_set_pixel_color(handle : Handle, x : LibC::Int, y : LibC::Int, color : ColorValue)
 
     fun qt6cr_qimage_reader_create = qt6cr_qimage_reader_create(file_name : UInt8*, format : UInt8*) : Handle
+    fun qt6cr_qimage_reader_create_from_device = qt6cr_qimage_reader_create_from_device(device : Handle, format : UInt8*) : Handle
     fun qt6cr_qimage_reader_destroy = qt6cr_qimage_reader_destroy(handle : Handle)
     fun qt6cr_qimage_reader_file_name = qt6cr_qimage_reader_file_name(handle : Handle) : UInt8*
     fun qt6cr_qimage_reader_set_file_name = qt6cr_qimage_reader_set_file_name(handle : Handle, file_name : UInt8*)
@@ -630,6 +642,8 @@ module Qt6
     fun qt6cr_io_device_seek = qt6cr_io_device_seek(handle : Handle, position : Int64) : Bool
     fun qt6cr_io_device_at_end = qt6cr_io_device_at_end(handle : Handle) : Bool
     fun qt6cr_io_device_bytes_available = qt6cr_io_device_bytes_available(handle : Handle) : Int64
+    fun qt6cr_io_device_read = qt6cr_io_device_read(handle : Handle, size : LibC::Int) : ByteArrayValue
+    fun qt6cr_io_device_peek = qt6cr_io_device_peek(handle : Handle, size : LibC::Int) : ByteArrayValue
     fun qt6cr_io_device_read_all = qt6cr_io_device_read_all(handle : Handle) : ByteArrayValue
     fun qt6cr_io_device_write = qt6cr_io_device_write(handle : Handle, data : UInt8*, size : LibC::Int) : Int64
 

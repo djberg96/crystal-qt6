@@ -967,27 +967,57 @@ describe Qt6 do
     reused_reader_image.size.should eq(Qt6::Size.new(12, 10))
     reused_reader_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
 
+    encoded_png = source.save_to_data("PNG")
+    buffer = Qt6::QBuffer.new
+    buffer.open(Qt6::IODeviceOpenMode::ReadWrite).should be_true
+    source.save(buffer, "PNG").should be_true
+    buffer.position.should be > 0
+    buffer.seek(0).should be_true
+    buffer.peek(8).bytes.should eq(encoded_png[0, 8])
+    buffer.read(8).bytes.should eq(encoded_png[0, 8])
+
+    device_loaded_image = Qt6::QImage.new(1, 1)
+    buffer.seek(0).should be_true
+    device_loaded_image.load(buffer, "PNG").should be_true
+    device_loaded_image.size.should eq(Qt6::Size.new(12, 10))
+    device_loaded_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    buffer.seek(0).should be_true
+    device_reader = Qt6::QImageReader.new(buffer, "png")
+    device_reader.can_read?.should be_true
+    device_reader.size.should eq(Qt6::Size.new(12, 10))
+    device_reader.read.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
     clipboard = application.clipboard
     clipboard.clear
     clipboard.text = "clipboard sample"
     application.process_events
+    clipboard.has_text?.should be_true
     clipboard.text.should eq("clipboard sample")
 
     clipboard.image = loaded_image
     application.process_events
+    clipboard.has_image?.should be_true
     clipboard_image = clipboard.image
     clipboard_image.null?.should be_false
     clipboard_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
 
     clipboard.pixmap = loaded_pixmap
     application.process_events
+    clipboard.has_pixmap?.should be_true
     clipboard_pixmap = clipboard.pixmap
     clipboard_pixmap.null?.should be_false
     clipboard_pixmap.to_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
 
     mime_data = Qt6::MimeData.new
     mime_data.text = "mime sample"
+    mime_data.html = "<b>mime sample</b>"
+    mime_data.image = loaded_image
     mime_data.set_data("application/x-crystal-qt6-layer", Bytes[1_u8, 7_u8, 9_u8])
+    mime_data.has_html?.should be_true
+    mime_data.has_image?.should be_true
+    mime_data.image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+    mime_data.formats.should contain("application/x-crystal-qt6-layer")
     clipboard.mime_data = mime_data
     application.process_events
 
@@ -996,6 +1026,9 @@ describe Qt6 do
     clipboard_mime = clipboard_mime.not_nil!
     clipboard_mime.has_text?.should be_true
     clipboard_mime.text.should eq("mime sample")
+    clipboard_mime.has_html?.should be_true
+    clipboard_mime.html.should contain("mime sample")
+    clipboard_mime.formats.should contain("application/x-crystal-qt6-layer")
     clipboard_mime.has_format?("application/x-crystal-qt6-layer").should be_true
     clipboard_mime.data("application/x-crystal-qt6-layer").should eq(Bytes[1_u8, 7_u8, 9_u8])
     clipboard.clear

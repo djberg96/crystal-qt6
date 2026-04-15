@@ -46,6 +46,16 @@ module Qt6
       LibQt6.qt6cr_io_device_bytes_available(to_unsafe)
     end
 
+    # Reads up to `size` bytes from the current position.
+    def read(size : Int) : QByteArray
+      QByteArray.new(Qt6.copy_and_release_bytes(LibQt6.qt6cr_io_device_read(to_unsafe, size.to_i32)))
+    end
+
+    # Peeks up to `size` bytes without advancing the current position.
+    def peek(size : Int) : QByteArray
+      QByteArray.new(Qt6.copy_and_release_bytes(LibQt6.qt6cr_io_device_peek(to_unsafe, size.to_i32)))
+    end
+
     # Reads all remaining bytes from the current position.
     def read_all : QByteArray
       QByteArray.new(Qt6.copy_and_release_bytes(LibQt6.qt6cr_io_device_read_all(to_unsafe)))

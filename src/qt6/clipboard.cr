@@ -21,6 +21,11 @@ module Qt6
       value
     end
 
+    # Returns `true` when the clipboard currently holds text.
+    def has_text? : Bool
+      LibQt6.qt6cr_clipboard_has_text(to_unsafe)
+    end
+
     # Returns a copy of the clipboard image.
     def image : QImage
       QImage.wrap(LibQt6.qt6cr_clipboard_image(to_unsafe), true)
@@ -32,6 +37,11 @@ module Qt6
       value
     end
 
+    # Returns `true` when the clipboard currently holds image data.
+    def has_image? : Bool
+      LibQt6.qt6cr_clipboard_has_image(to_unsafe)
+    end
+
     # Returns a copy of the clipboard pixmap.
     def pixmap : QPixmap
       QPixmap.wrap(LibQt6.qt6cr_clipboard_pixmap(to_unsafe), true)
@@ -41,6 +51,11 @@ module Qt6
     def pixmap=(value : QPixmap) : QPixmap
       LibQt6.qt6cr_clipboard_set_pixmap(to_unsafe, value.to_unsafe)
       value
+    end
+
+    # Returns `true` when the clipboard currently holds pixmap-compatible data.
+    def has_pixmap? : Bool
+      LibQt6.qt6cr_clipboard_has_pixmap(to_unsafe)
     end
 
     # Returns the current clipboard MIME payload.
