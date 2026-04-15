@@ -214,6 +214,13 @@ app.style_sheet = <<-CSS
     selection-background-color: rgb(94, 110, 182);
     selection-color: rgb(255, 255, 255);
   }
+  QListView, QAbstractItemView {
+    background: rgb(252, 250, 246);
+    color: rgb(46, 42, 37);
+    border: 1px solid rgb(210, 204, 194);
+    selection-background-color: rgb(94, 110, 182);
+    selection-color: rgb(255, 255, 255);
+  }
   QHeaderView::section {
     background: rgb(228, 221, 211);
     color: rgb(72, 66, 60);
@@ -221,6 +228,37 @@ app.style_sheet = <<-CSS
     border-right: 1px solid rgb(206, 198, 186);
     border-bottom: 1px solid rgb(206, 198, 186);
     padding: 6px 8px;
+  }
+  QMenuBar {
+    background: rgb(239, 233, 224);
+    color: rgb(54, 50, 44);
+  }
+  QMenuBar::item {
+    background: transparent;
+    color: rgb(54, 50, 44);
+    padding: 6px 10px;
+  }
+  QMenuBar::item:selected {
+    background: rgb(223, 216, 205);
+  }
+  QMenu {
+    background: rgb(252, 250, 246);
+    color: rgb(46, 42, 37);
+    border: 1px solid rgb(206, 198, 186);
+  }
+  QMenu::item {
+    background: transparent;
+    color: rgb(46, 42, 37);
+    padding: 6px 18px;
+  }
+  QMenu::item:selected {
+    background: rgb(94, 110, 182);
+    color: rgb(255, 255, 255);
+  }
+  QMenu::separator {
+    height: 1px;
+    background: rgb(214, 207, 197);
+    margin: 4px 10px;
   }
   QTabWidget::pane {
     background: rgb(252, 250, 246);
