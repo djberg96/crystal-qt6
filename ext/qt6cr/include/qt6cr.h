@@ -725,6 +725,40 @@ double qt6cr_qfont_metrics_f_descent(qt6cr_handle_t handle);
 double qt6cr_qfont_metrics_f_horizontal_advance(qt6cr_handle_t handle, const char *text);
 qt6cr_rectf_t qt6cr_qfont_metrics_f_bounding_rect(qt6cr_handle_t handle, const char *text);
 
+qt6cr_handle_t qt6cr_qurl_create(const char *value);
+qt6cr_handle_t qt6cr_qurl_create_from_local_file(const char *path);
+void qt6cr_qurl_destroy(qt6cr_handle_t handle);
+bool qt6cr_qurl_is_valid(qt6cr_handle_t handle);
+bool qt6cr_qurl_is_local_file(qt6cr_handle_t handle);
+char *qt6cr_qurl_scheme(qt6cr_handle_t handle);
+char *qt6cr_qurl_path(qt6cr_handle_t handle);
+char *qt6cr_qurl_to_string(qt6cr_handle_t handle);
+char *qt6cr_qurl_to_local_file(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_qdir_create(const char *path);
+void qt6cr_qdir_destroy(qt6cr_handle_t handle);
+char *qt6cr_qdir_path(qt6cr_handle_t handle);
+char *qt6cr_qdir_absolute_path(qt6cr_handle_t handle);
+bool qt6cr_qdir_exists(qt6cr_handle_t handle);
+char *qt6cr_qdir_file_path(qt6cr_handle_t handle, const char *name);
+char *qt6cr_qdir_absolute_file_path(qt6cr_handle_t handle, const char *name);
+bool qt6cr_qdir_mkpath(qt6cr_handle_t handle, const char *path);
+char *qt6cr_qdir_current_path(void);
+char *qt6cr_qdir_home_path(void);
+char *qt6cr_qdir_clean_path(const char *path);
+
+qt6cr_handle_t qt6cr_qfile_info_create(const char *path);
+void qt6cr_qfile_info_destroy(qt6cr_handle_t handle);
+char *qt6cr_qfile_info_file_name(qt6cr_handle_t handle);
+char *qt6cr_qfile_info_base_name(qt6cr_handle_t handle);
+char *qt6cr_qfile_info_suffix(qt6cr_handle_t handle);
+char *qt6cr_qfile_info_absolute_file_path(qt6cr_handle_t handle);
+char *qt6cr_qfile_info_absolute_path(qt6cr_handle_t handle);
+bool qt6cr_qfile_info_exists(qt6cr_handle_t handle);
+bool qt6cr_qfile_info_is_file(qt6cr_handle_t handle);
+bool qt6cr_qfile_info_is_dir(qt6cr_handle_t handle);
+int64_t qt6cr_qfile_info_size(qt6cr_handle_t handle);
+
 qt6cr_handle_t qt6cr_qdate_create(int year, int month, int day);
 void qt6cr_qdate_destroy(qt6cr_handle_t handle);
 int qt6cr_qdate_year(qt6cr_handle_t handle);

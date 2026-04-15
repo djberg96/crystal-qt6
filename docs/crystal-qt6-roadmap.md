@@ -31,7 +31,9 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
-- common form/layout and model/view support through line edits, checkboxes, combo boxes, font combo boxes, stacked widgets, text browsers, button groups, dialog button boxes, list widgets, tree widgets, table views, table widgets, `QStandardItemModel`, callback-backed tree models, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
+- common form/layout and model/view support through line edits, checkboxes, combo boxes, font combo boxes, stacked widgets, stacked layouts, text edits, plain-text edits, text browsers, button groups, dialog button boxes, list widgets, tree widgets, table views, table widgets, `QStandardItemModel`, callback-backed tree models, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
+- editor-helper coverage through validators, completers, richer line-edit APIs, spin-box base abstractions, persistent editors, edit triggers, and shared selection-model/index conveniences
+- additional common widgets through progress, scrollbar, dial, date/time, calendar, LCD, command-link, and tab-bar controls
 - basic clipboard and MIME/data-transfer support through text, image, pixmap, `QMimeData`, model/view drag-drop payload helpers, and widget-side drop hooks
 - custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, key, and drop callbacks, plus installable event filters and scroll-guard hooks
 
@@ -57,12 +59,12 @@ Recommended parity targets for the next development cycles:
 
 The highest-value parity areas still missing are:
 
-- richer table support beyond the initial `QTableView` and `QTableWidget` layer
-- the text-edit stack: `QTextEdit`, `QPlainTextEdit`, `QTextDocument`, `QTextCursor`, and related rich-text helpers
-- validators, completers, and editor helper APIs such as `QValidator`, `QIntValidator`, `QDoubleValidator`, regex validation, and `QCompleter`
-- additional common widgets such as `QProgressBar`, `QScrollBar`, `QDateEdit`, `QTimeEdit`, `QDateTimeEdit`, `QCalendarWidget`, `QDial`, and `QCommandLinkButton`
 - broader application-service and utility coverage such as `QSettings`, `QUrl`, `QFile`, `QDir`, `QFileInfo`, and desktop-integration helpers
-- deeper action, menu, toolbar, and window-polish APIs
+- deeper text/document and table/view polish beyond the now-established first layer
+- more complete action, menu, toolbar, and window-polish APIs
+- richer clipboard/data-transfer, document, and image-loading helpers where real applications still hit rough edges
+- a maintained in-repo example application that exercises the current readiness bar continuously
+- stronger macOS and Linux GUI-spec reliability so parity claims are backed by routine test runs
 
 ## Architectural Recommendation
 
@@ -238,7 +240,7 @@ Goal: support panel-heavy control surfaces and editor tooling.
 - Port one options sidebar and one manager dialog end to end.
 - Validate live updates between controls and a custom canvas.
 
-Most of the widget-level work in this phase is now in place, including list, tree, and initial table support; broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view paths with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, and callback-backed tree models; richer item-widget state and reorder hooks; model-level MIME payload/drop hooks; model/view drag/drop configuration; widget drop acceptance; and installable event filters. The remaining priorities are deeper table behavior, the text-edit stack, validators and completers, and the long tail of common editor-widget polish.
+Most of the widget-level work in this phase is now in place, including list, tree, and table support; broader `QStandardItemModel`/`QSortFilterProxyModel`-based model/view paths with roles, header data, selection models, delegate formatting, delegate editor lifecycle hooks, edit triggers, persistent editors, and callback-backed tree models; richer item-widget state and reorder hooks; text editors and document/cursor wrappers; validators, completers, and richer line-edit helpers; a broader set of common controls; model-level MIME payload/drop hooks; model/view drag/drop configuration; widget drop acceptance; and installable event filters. The remaining priorities are depth and polish within the text/table stacks, the long tail of editor-widget behavior, and the adjacent application-service utilities that real tools depend on.
 
 ## Phase 6: Export And Document Features
 
@@ -309,7 +311,7 @@ Before serious application rewrite work begins, `crystal-qt6` should be able to 
 - PNG export
 - stable shutdown and passing automated tests on macOS and Linux
 
-`crystal-qt6` now satisfies most of this bar except for a few still-thin editor layers: richer table and text-edit support, validators and editor helpers, and some application-service utilities. That is why the next tranche should focus on parity within common `QtWidgets` and `QtCore` utility surfaces rather than more shell or export work.
+`crystal-qt6` now satisfies most of this bar except for a few still-thin layers around application services, deeper text/table polish, and broad cross-platform GUI-spec confidence. That is why the next tranche should focus on utility surfaces, maintained example coverage, and reliability rather than more shell bootstrap work.
 
 If that sample app exists and is reliable, then application ports become realistic engineering projects rather than speculative rewrites.
 
@@ -317,11 +319,18 @@ If that sample app exists and is reliable, then application ports become realist
 
 Recommended order for the next development cycle in `crystal-qt6`:
 
-1. Expand table parity with header resize modes, selection behavior, persistent editors, and the most common `QTableView` and `QTableWidget` conveniences.
-2. Add the text-edit stack: `QTextEdit`, `QPlainTextEdit`, `QTextDocument`, `QTextCursor`, and closely related rich-text APIs.
-3. Add validators, completers, and editor helpers so form controls can express real-world editing constraints.
-4. Add the next wave of common widgets such as progress, calendar, date/time, scrollbar, and dial controls.
-5. Add broader application-service and utility types such as `QSettings`, `QUrl`, `QFile`, `QDir`, and `QFileInfo`.
-6. Keep a maintained example application and focused spec coverage aligned with each parity batch.
+1. Add broader application-service and utility types such as `QSettings`, `QUrl`, `QFile`, `QDir`, and `QFileInfo`.
+2. Deepen the text/document and table/view stacks with the next layer of polish rather than only new widget classes.
+3. Expand action, menu, toolbar, and window-polish APIs so desktop-shell behavior feels less partial.
+4. Strengthen clipboard, data-transfer, document, and image-loading helpers where real applications still need glue code.
+5. Keep a maintained example application and focused spec coverage aligned with each parity batch.
+6. Improve routine macOS and Linux GUI-spec reliability so the roadmap tracks capabilities that are continuously verified.
 
 That would turn the library from "large editor subsystems are possible" into "common Qt6 desktop application patterns are routinely supported."
+
+The practical implementation order inside the utility tranche should be:
+
+1. Path and URL types first: `QUrl`, `QFileInfo`, and `QDir`.
+2. File-handle and byte-oriented helpers next: `QFile` and any missing `QIODevice`-adjacent utilities.
+3. Application persistence next: `QSettings`.
+4. Desktop-integration helpers after that, once there is already a clear path vocabulary to build on.
