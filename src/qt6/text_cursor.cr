@@ -71,6 +71,24 @@ module Qt6
       self
     end
 
+    # Removes the selected text without moving the cursor out of the document.
+    def remove_selected_text : self
+      LibQt6.qt6cr_text_cursor_remove_selected_text(to_unsafe)
+      self
+    end
+
+    # Deletes the character after the cursor.
+    def delete_char : self
+      LibQt6.qt6cr_text_cursor_delete_char(to_unsafe)
+      self
+    end
+
+    # Deletes the character before the cursor.
+    def delete_previous_char : self
+      LibQt6.qt6cr_text_cursor_delete_previous_char(to_unsafe)
+      self
+    end
+
     # Returns `true` when the cursor is at the beginning of the document.
     def at_start? : Bool
       LibQt6.qt6cr_text_cursor_at_start(to_unsafe)
