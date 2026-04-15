@@ -70,6 +70,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
+#include <QDesktopServices>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QPageLayout>
@@ -83,6 +84,7 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QSortFilterProxyModel>
+#include <QStandardPaths>
 #include <QKeySequence>
 #include <QRadioButton>
 #include <QRadialGradient>
@@ -5767,6 +5769,23 @@ void qt6cr_qsettings_sync(qt6cr_handle_t handle) {
 qt6cr_string_array_t qt6cr_qsettings_all_keys(qt6cr_handle_t handle) {
   auto *settings = as_qsettings(handle);
   return settings == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(settings->allKeys());
+}
+
+char *qt6cr_standard_paths_writable_location(int location) {
+  return duplicate_string(QStandardPaths::writableLocation(static_cast<QStandardPaths::StandardLocation>(location)));
+}
+
+qt6cr_string_array_t qt6cr_standard_paths_standard_locations(int location) {
+  return to_string_array_value(QStandardPaths::standardLocations(static_cast<QStandardPaths::StandardLocation>(location)));
+}
+
+char *qt6cr_standard_paths_display_name(int location) {
+  return duplicate_string(QStandardPaths::displayName(static_cast<QStandardPaths::StandardLocation>(location)));
+}
+
+bool qt6cr_desktop_services_open_url(qt6cr_handle_t url) {
+  auto *target = as_qurl(url);
+  return target != nullptr && QDesktopServices::openUrl(*target);
 }
 
 qt6cr_handle_t qt6cr_qfile_info_create(const char *path) {
