@@ -6,6 +6,11 @@ module Qt6
       super(LibQt6.qt6cr_qimage_reader_create(file_name.to_unsafe, format.try(&.to_unsafe) || Pointer(UInt8).null))
     end
 
+    # Creates a reader for an already-open device, optionally forcing the image format.
+    def initialize(device : IODevice, format : String? = nil)
+      super(LibQt6.qt6cr_qimage_reader_create_from_device(device.to_unsafe, format.try(&.to_unsafe) || Pointer(UInt8).null))
+    end
+
     # Returns the current source file name.
     def file_name : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_qimage_reader_file_name(to_unsafe))

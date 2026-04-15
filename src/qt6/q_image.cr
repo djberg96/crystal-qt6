@@ -73,6 +73,11 @@ module Qt6
       LibQt6.qt6cr_qimage_load_from_data(to_unsafe, data.to_unsafe, data.size, format.try(&.to_unsafe) || Pointer(UInt8).null)
     end
 
+    # Loads image contents from an already-open device.
+    def load(device : IODevice, format : String? = nil) : Bool
+      LibQt6.qt6cr_qimage_load_from_device(to_unsafe, device.to_unsafe, format.try(&.to_unsafe) || Pointer(UInt8).null)
+    end
+
     # Saves the image to disk.
     def save(path : String) : Bool
       LibQt6.qt6cr_qimage_save(to_unsafe, path.to_unsafe)
@@ -84,8 +89,8 @@ module Qt6
     end
 
     # Saves the image into an open buffer using the given format.
-    def save(buffer : QBuffer, format : String? = nil) : Bool
-      LibQt6.qt6cr_qimage_save_to_buffer(to_unsafe, buffer.to_unsafe, format.try(&.to_unsafe) || Pointer(UInt8).null)
+    def save(device : IODevice, format : String? = nil) : Bool
+      LibQt6.qt6cr_qimage_save_to_device(to_unsafe, device.to_unsafe, format.try(&.to_unsafe) || Pointer(UInt8).null)
     end
 
     # Returns the color of a single pixel.

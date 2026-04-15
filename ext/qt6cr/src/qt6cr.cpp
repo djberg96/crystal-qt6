@@ -1856,6 +1856,11 @@ void qt6cr_clipboard_set_text(qt6cr_handle_t handle, const char *text) {
   }
 }
 
+bool qt6cr_clipboard_has_text(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasText();
+}
+
 qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
 
@@ -1879,6 +1884,11 @@ void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
   if (clipboard != nullptr && source != nullptr) {
     clipboard->setImage(*source);
   }
+}
+
+bool qt6cr_clipboard_has_image(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasImage();
 }
 
 qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle) {
@@ -1906,6 +1916,11 @@ void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
   }
 }
 
+bool qt6cr_clipboard_has_pixmap(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasImage();
+}
+
 qt6cr_handle_t qt6cr_clipboard_mime_data(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
   return clipboard == nullptr ? nullptr : const_cast<QMimeData *>(clipboard->mimeData());
@@ -1923,6 +1938,14 @@ void qt6cr_clipboard_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_da
 
   if (source->hasText()) {
     copy->setText(source->text());
+  }
+
+  if (source->hasHtml()) {
+    copy->setHtml(source->html());
+  }
+
+  if (source->hasImage()) {
+    copy->setImageData(source->imageData());
   }
 
   const auto formats = source->formats();
@@ -1961,6 +1984,62 @@ void qt6cr_mime_data_set_text(qt6cr_handle_t handle, const char *text) {
   if (mime_data != nullptr) {
     mime_data->setText(QString::fromUtf8(text == nullptr ? "" : text));
   }
+}
+
+bool qt6cr_mime_data_has_html(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data != nullptr && mime_data->hasHtml();
+}
+
+char *qt6cr_mime_data_html(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data == nullptr ? duplicate_string("") : duplicate_string(mime_data->html());
+}
+
+void qt6cr_mime_data_set_html(qt6cr_handle_t handle, const char *html) {
+  auto *mime_data = as_mime_data(handle);
+
+  if (mime_data != nullptr) {
+    mime_data->setHtml(QString::fromUtf8(html == nullptr ? "" : html));
+  }
+}
+
+bool qt6cr_mime_data_has_image(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data != nullptr && mime_data->hasImage();
+}
+
+qt6cr_handle_t qt6cr_mime_data_image(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+
+  if (mime_data == nullptr || !mime_data->hasImage()) {
+    return new QImage();
+  }
+
+  const auto image_data = mime_data->imageData();
+  if (image_data.canConvert<QImage>()) {
+    return new QImage(qvariant_cast<QImage>(image_data));
+  }
+
+  if (image_data.canConvert<QPixmap>()) {
+    return new QImage(qvariant_cast<QPixmap>(image_data).toImage());
+  }
+
+  return new QImage();
+}
+
+void qt6cr_mime_data_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
+  auto *mime_data = as_mime_data(handle);
+  auto *source = as_qimage(image);
+
+  if (mime_data != nullptr && source != nullptr) {
+    mime_data->setImageData(*source);
+  }
+}
+
+qt6cr_string_array_t qt6cr_mime_data_formats(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(mime_data->formats());
 }
 
 bool qt6cr_mime_data_has_format(qt6cr_handle_t handle, const char *format) {
@@ -2793,6 +2872,12 @@ bool qt6cr_qimage_load_from_data(qt6cr_handle_t handle, const unsigned char *dat
   return image != nullptr && image->loadFromData(data, size, format == nullptr ? nullptr : format);
 }
 
+bool qt6cr_qimage_load_from_device(qt6cr_handle_t handle, qt6cr_handle_t device, const char *format) {
+  auto *image = as_qimage(handle);
+  auto *source = as_qio_device(device);
+  return image != nullptr && source != nullptr && image->load(source, format == nullptr ? nullptr : format);
+}
+
 bool qt6cr_qimage_save(qt6cr_handle_t handle, const char *path) {
   auto *image = as_qimage(handle);
   return image != nullptr && image->save(QString::fromUtf8(path == nullptr ? "" : path));
@@ -2813,9 +2898,9 @@ qt6cr_byte_array_t qt6cr_qimage_save_to_data(qt6cr_handle_t handle, const char *
   return to_byte_array_value(output);
 }
 
-bool qt6cr_qimage_save_to_buffer(qt6cr_handle_t handle, qt6cr_handle_t buffer, const char *format) {
+bool qt6cr_qimage_save_to_device(qt6cr_handle_t handle, qt6cr_handle_t buffer, const char *format) {
   auto *image = as_qimage(handle);
-  auto *target = as_qbuffer(buffer);
+  auto *target = as_qio_device(buffer);
   return image != nullptr && target != nullptr && image->save(target, format == nullptr ? nullptr : format);
 }
 
@@ -2836,6 +2921,11 @@ qt6cr_handle_t qt6cr_qimage_reader_create(const char *file_name, const char *for
   return new QImageReader(
       QString::fromUtf8(file_name == nullptr ? "" : file_name),
       QByteArray(format == nullptr ? "" : format));
+}
+
+qt6cr_handle_t qt6cr_qimage_reader_create_from_device(qt6cr_handle_t device, const char *format) {
+  auto *source = as_qio_device(device);
+  return source == nullptr ? static_cast<qt6cr_handle_t>(new QImageReader()) : static_cast<qt6cr_handle_t>(new QImageReader(source, QByteArray(format == nullptr ? "" : format)));
 }
 
 void qt6cr_qimage_reader_destroy(qt6cr_handle_t handle) {
@@ -5206,6 +5296,16 @@ bool qt6cr_io_device_at_end(qt6cr_handle_t handle) {
 int64_t qt6cr_io_device_bytes_available(qt6cr_handle_t handle) {
   auto *device = as_qio_device(handle);
   return device == nullptr ? 0 : static_cast<int64_t>(device->bytesAvailable());
+}
+
+qt6cr_byte_array_t qt6cr_io_device_read(qt6cr_handle_t handle, int size) {
+  auto *device = as_qio_device(handle);
+  return device == nullptr || size <= 0 ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(device->read(size));
+}
+
+qt6cr_byte_array_t qt6cr_io_device_peek(qt6cr_handle_t handle, int size) {
+  auto *device = as_qio_device(handle);
+  return device == nullptr || size <= 0 ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(device->peek(size));
 }
 
 qt6cr_byte_array_t qt6cr_io_device_read_all(qt6cr_handle_t handle) {

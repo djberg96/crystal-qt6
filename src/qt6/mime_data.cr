@@ -31,6 +31,43 @@ module Qt6
       value
     end
 
+    # Returns `true` when an HTML payload is present.
+    def has_html? : Bool
+      LibQt6.qt6cr_mime_data_has_html(to_unsafe)
+    end
+
+    # Returns the HTML payload.
+    def html : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_mime_data_html(to_unsafe))
+    end
+
+    # Sets the HTML payload.
+    def html=(value : String) : String
+      LibQt6.qt6cr_mime_data_set_html(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns `true` when an image payload is present.
+    def has_image? : Bool
+      LibQt6.qt6cr_mime_data_has_image(to_unsafe)
+    end
+
+    # Returns a copy of the image payload.
+    def image : QImage
+      QImage.wrap(LibQt6.qt6cr_mime_data_image(to_unsafe), true)
+    end
+
+    # Sets the image payload.
+    def image=(value : QImage) : QImage
+      LibQt6.qt6cr_mime_data_set_image(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the MIME formats currently stored in the payload.
+    def formats : Array(String)
+      Qt6.copy_and_release_strings(LibQt6.qt6cr_mime_data_formats(to_unsafe))
+    end
+
     # Returns `true` when the payload contains the requested MIME format.
     def has_format?(format : String) : Bool
       LibQt6.qt6cr_mime_data_has_format(to_unsafe, format.to_unsafe)
