@@ -80,6 +80,24 @@ module Qt6
       LibQt6.qt6cr_table_view_column_span(to_unsafe, row.to_i32, column.to_i32)
     end
 
+    # Sorts rows by the given column and order.
+    def sort_by_column(column : Int, order : SortOrder = SortOrder::Ascending) : self
+      LibQt6.qt6cr_table_view_sort_by_column(to_unsafe, column.to_i32, order.value)
+      self
+    end
+
+    # Resizes all columns to fit their current contents.
+    def resize_columns_to_contents : self
+      LibQt6.qt6cr_table_view_resize_columns_to_contents(to_unsafe)
+      self
+    end
+
+    # Resizes all rows to fit their current contents.
+    def resize_rows_to_contents : self
+      LibQt6.qt6cr_table_view_resize_rows_to_contents(to_unsafe)
+      self
+    end
+
     # Registers a block to run when the current index changes.
     def on_current_index_changed(&block : ->) : self
       @current_index_changed.connect { block.call }

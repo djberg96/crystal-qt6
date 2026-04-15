@@ -173,6 +173,24 @@ module Qt6
       LibQt6.qt6cr_table_widget_is_persistent_editor_open(to_unsafe, item.to_unsafe)
     end
 
+    # Sorts items by the given column and order.
+    def sort_by_column(column : Int, order : SortOrder = SortOrder::Ascending) : self
+      LibQt6.qt6cr_table_widget_sort_by_column(to_unsafe, column.to_i32, order.value)
+      self
+    end
+
+    # Resizes all columns to fit their current contents.
+    def resize_columns_to_contents : self
+      LibQt6.qt6cr_table_widget_resize_columns_to_contents(to_unsafe)
+      self
+    end
+
+    # Resizes all rows to fit their current contents.
+    def resize_rows_to_contents : self
+      LibQt6.qt6cr_table_widget_resize_rows_to_contents(to_unsafe)
+      self
+    end
+
     # Registers a block to run when the current cell changes.
     def on_current_cell_changed(&block : ->) : self
       @current_cell_changed.connect { block.call }

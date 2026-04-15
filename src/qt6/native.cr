@@ -443,8 +443,12 @@ module Qt6
     fun qt6cr_sort_filter_proxy_model_map_to_source = qt6cr_sort_filter_proxy_model_map_to_source(handle : Handle, proxy_index : Handle) : Handle
     fun qt6cr_sort_filter_proxy_model_map_from_source = qt6cr_sort_filter_proxy_model_map_from_source(handle : Handle, source_index : Handle) : Handle
     fun qt6cr_sort_filter_proxy_model_sort = qt6cr_sort_filter_proxy_model_sort(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_sort_filter_proxy_model_sort_column = qt6cr_sort_filter_proxy_model_sort_column(handle : Handle) : LibC::Int
+    fun qt6cr_sort_filter_proxy_model_sort_order = qt6cr_sort_filter_proxy_model_sort_order(handle : Handle) : LibC::Int
     fun qt6cr_sort_filter_proxy_model_set_filter_fixed_string = qt6cr_sort_filter_proxy_model_set_filter_fixed_string(handle : Handle, value : UInt8*)
     fun qt6cr_sort_filter_proxy_model_set_filter_wildcard = qt6cr_sort_filter_proxy_model_set_filter_wildcard(handle : Handle, value : UInt8*)
+    fun qt6cr_sort_filter_proxy_model_set_filter_regular_expression = qt6cr_sort_filter_proxy_model_set_filter_regular_expression(handle : Handle, value : UInt8*)
+    fun qt6cr_sort_filter_proxy_model_filter_pattern = qt6cr_sort_filter_proxy_model_filter_pattern(handle : Handle) : UInt8*
     fun qt6cr_sort_filter_proxy_model_set_filter_key_column = qt6cr_sort_filter_proxy_model_set_filter_key_column(handle : Handle, column : LibC::Int)
     fun qt6cr_sort_filter_proxy_model_filter_key_column = qt6cr_sort_filter_proxy_model_filter_key_column(handle : Handle) : LibC::Int
     fun qt6cr_sort_filter_proxy_model_set_filter_role = qt6cr_sort_filter_proxy_model_set_filter_role(handle : Handle, role : LibC::Int)
@@ -458,6 +462,7 @@ module Qt6
     fun qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled = qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled(handle : Handle, value : Bool)
     fun qt6cr_sort_filter_proxy_model_recursive_filtering_enabled = qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(handle : Handle) : Bool
     fun qt6cr_sort_filter_proxy_model_invalidate = qt6cr_sort_filter_proxy_model_invalidate(handle : Handle)
+    fun qt6cr_sort_filter_proxy_model_clear_filter = qt6cr_sort_filter_proxy_model_clear_filter(handle : Handle)
 
     fun qt6cr_styled_item_delegate_create = qt6cr_styled_item_delegate_create(parent : Handle) : Handle
     fun qt6cr_styled_item_delegate_on_display_text = qt6cr_styled_item_delegate_on_display_text(handle : Handle, callback : (Handle, UInt8* -> UInt8*), userdata : Handle)
@@ -541,6 +546,7 @@ module Qt6
     fun qt6cr_header_view_section_resize_mode = qt6cr_header_view_section_resize_mode(handle : Handle, index : LibC::Int) : LibC::Int
     fun qt6cr_header_view_set_section_resize_mode = qt6cr_header_view_set_section_resize_mode(handle : Handle, index : LibC::Int, value : LibC::Int)
     fun qt6cr_header_view_resize_section = qt6cr_header_view_resize_section(handle : Handle, index : LibC::Int, size : LibC::Int)
+    fun qt6cr_header_view_section_size = qt6cr_header_view_section_size(handle : Handle, index : LibC::Int) : LibC::Int
 
     fun qt6cr_table_view_create = qt6cr_table_view_create(parent : Handle) : Handle
     fun qt6cr_table_view_set_model = qt6cr_table_view_set_model(handle : Handle, model : Handle)
@@ -580,6 +586,9 @@ module Qt6
     fun qt6cr_table_view_close_persistent_editor = qt6cr_table_view_close_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_table_view_is_persistent_editor_open = qt6cr_table_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
     fun qt6cr_table_view_on_current_index_changed = qt6cr_table_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_table_view_sort_by_column = qt6cr_table_view_sort_by_column(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_table_view_resize_columns_to_contents = qt6cr_table_view_resize_columns_to_contents(handle : Handle)
+    fun qt6cr_table_view_resize_rows_to_contents = qt6cr_table_view_resize_rows_to_contents(handle : Handle)
 
     fun qt6cr_qsvg_generator_create = qt6cr_qsvg_generator_create : Handle
     fun qt6cr_qsvg_generator_destroy = qt6cr_qsvg_generator_destroy(handle : Handle)
@@ -1242,6 +1251,9 @@ module Qt6
     fun qt6cr_table_widget_is_persistent_editor_open = qt6cr_table_widget_is_persistent_editor_open(handle : Handle, item : Handle) : Bool
     fun qt6cr_table_widget_on_current_cell_changed = qt6cr_table_widget_on_current_cell_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_table_widget_on_item_changed = qt6cr_table_widget_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_table_widget_sort_by_column = qt6cr_table_widget_sort_by_column(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_table_widget_resize_columns_to_contents = qt6cr_table_widget_resize_columns_to_contents(handle : Handle)
+    fun qt6cr_table_widget_resize_rows_to_contents = qt6cr_table_widget_resize_rows_to_contents(handle : Handle)
 
     fun qt6cr_slider_create = qt6cr_slider_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_slider_set_minimum = qt6cr_slider_set_minimum(handle : Handle, value : LibC::Int)
@@ -1451,9 +1463,11 @@ module Qt6
     fun qt6cr_text_document_is_empty = qt6cr_text_document_is_empty(handle : Handle) : Bool
     fun qt6cr_text_document_block_count = qt6cr_text_document_block_count(handle : Handle) : LibC::Int
     fun qt6cr_text_document_character_count = qt6cr_text_document_character_count(handle : Handle) : LibC::Int
+    fun qt6cr_text_document_find = qt6cr_text_document_find(handle : Handle, text : UInt8*, from_cursor : Handle) : Handle
 
     fun qt6cr_text_cursor_create = qt6cr_text_cursor_create(document : Handle) : Handle
     fun qt6cr_text_cursor_destroy = qt6cr_text_cursor_destroy(handle : Handle)
+    fun qt6cr_text_cursor_is_null = qt6cr_text_cursor_is_null(handle : Handle) : Bool
     fun qt6cr_text_cursor_position = qt6cr_text_cursor_position(handle : Handle) : LibC::Int
     fun qt6cr_text_cursor_set_position = qt6cr_text_cursor_set_position(handle : Handle, position : LibC::Int, keep_anchor : Bool)
     fun qt6cr_text_cursor_move_position = qt6cr_text_cursor_move_position(handle : Handle, operation : LibC::Int, mode : LibC::Int, count : LibC::Int) : Bool
@@ -1475,6 +1489,9 @@ module Qt6
     fun qt6cr_text_edit_plain_text = qt6cr_text_edit_plain_text(handle : Handle) : UInt8*
     fun qt6cr_text_edit_set_plain_text = qt6cr_text_edit_set_plain_text(handle : Handle, text : UInt8*)
     fun qt6cr_text_edit_append = qt6cr_text_edit_append(handle : Handle, text : UInt8*)
+    fun qt6cr_text_edit_append_html = qt6cr_text_edit_append_html(handle : Handle, html : UInt8*)
+    fun qt6cr_text_edit_insert_plain_text = qt6cr_text_edit_insert_plain_text(handle : Handle, text : UInt8*)
+    fun qt6cr_text_edit_insert_html = qt6cr_text_edit_insert_html(handle : Handle, html : UInt8*)
     fun qt6cr_text_edit_is_read_only = qt6cr_text_edit_is_read_only(handle : Handle) : Bool
     fun qt6cr_text_edit_set_read_only = qt6cr_text_edit_set_read_only(handle : Handle, value : Bool)
     fun qt6cr_text_edit_accept_rich_text = qt6cr_text_edit_accept_rich_text(handle : Handle) : Bool
@@ -1502,6 +1519,7 @@ module Qt6
     fun qt6cr_plain_text_edit_plain_text = qt6cr_plain_text_edit_plain_text(handle : Handle) : UInt8*
     fun qt6cr_plain_text_edit_set_plain_text = qt6cr_plain_text_edit_set_plain_text(handle : Handle, text : UInt8*)
     fun qt6cr_plain_text_edit_append_plain_text = qt6cr_plain_text_edit_append_plain_text(handle : Handle, text : UInt8*)
+    fun qt6cr_plain_text_edit_insert_plain_text = qt6cr_plain_text_edit_insert_plain_text(handle : Handle, text : UInt8*)
     fun qt6cr_plain_text_edit_is_read_only = qt6cr_plain_text_edit_is_read_only(handle : Handle) : Bool
     fun qt6cr_plain_text_edit_set_read_only = qt6cr_plain_text_edit_set_read_only(handle : Handle, value : Bool)
     fun qt6cr_plain_text_edit_undo_redo_enabled = qt6cr_plain_text_edit_undo_redo_enabled(handle : Handle) : Bool
