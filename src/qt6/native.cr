@@ -1288,6 +1288,32 @@ module Qt6
     fun qt6cr_abstract_spin_box_is_accelerated = qt6cr_abstract_spin_box_is_accelerated(handle : Handle) : Bool
     fun qt6cr_abstract_spin_box_set_accelerated = qt6cr_abstract_spin_box_set_accelerated(handle : Handle, value : Bool)
 
+    fun qt6cr_abstract_item_view_model = qt6cr_abstract_item_view_model(handle : Handle) : Handle
+    fun qt6cr_abstract_item_view_set_item_delegate = qt6cr_abstract_item_view_set_item_delegate(handle : Handle, delegate : Handle)
+    fun qt6cr_abstract_item_view_selection_model = qt6cr_abstract_item_view_selection_model(handle : Handle) : Handle
+    fun qt6cr_abstract_item_view_set_selection_model = qt6cr_abstract_item_view_set_selection_model(handle : Handle, selection_model : Handle)
+    fun qt6cr_abstract_item_view_current_index = qt6cr_abstract_item_view_current_index(handle : Handle) : Handle
+    fun qt6cr_abstract_item_view_set_current_index = qt6cr_abstract_item_view_set_current_index(handle : Handle, index : Handle)
+    fun qt6cr_abstract_item_view_selection_mode = qt6cr_abstract_item_view_selection_mode(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_view_set_selection_mode = qt6cr_abstract_item_view_set_selection_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_abstract_item_view_edit_triggers = qt6cr_abstract_item_view_edit_triggers(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_view_set_edit_triggers = qt6cr_abstract_item_view_set_edit_triggers(handle : Handle, triggers : LibC::Int)
+    fun qt6cr_abstract_item_view_selection_behavior = qt6cr_abstract_item_view_selection_behavior(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_view_set_selection_behavior = qt6cr_abstract_item_view_set_selection_behavior(handle : Handle, behavior : LibC::Int)
+    fun qt6cr_abstract_item_view_alternating_row_colors = qt6cr_abstract_item_view_alternating_row_colors(handle : Handle) : Bool
+    fun qt6cr_abstract_item_view_set_alternating_row_colors = qt6cr_abstract_item_view_set_alternating_row_colors(handle : Handle, value : Bool)
+    fun qt6cr_abstract_item_view_drag_enabled = qt6cr_abstract_item_view_drag_enabled(handle : Handle) : Bool
+    fun qt6cr_abstract_item_view_set_drag_enabled = qt6cr_abstract_item_view_set_drag_enabled(handle : Handle, value : Bool)
+    fun qt6cr_abstract_item_view_drag_drop_mode = qt6cr_abstract_item_view_drag_drop_mode(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_view_set_drag_drop_mode = qt6cr_abstract_item_view_set_drag_drop_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_abstract_item_view_default_drop_action = qt6cr_abstract_item_view_default_drop_action(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_view_set_default_drop_action = qt6cr_abstract_item_view_set_default_drop_action(handle : Handle, action : LibC::Int)
+    fun qt6cr_abstract_item_view_drop_indicator_shown = qt6cr_abstract_item_view_drop_indicator_shown(handle : Handle) : Bool
+    fun qt6cr_abstract_item_view_set_drop_indicator_shown = qt6cr_abstract_item_view_set_drop_indicator_shown(handle : Handle, value : Bool)
+    fun qt6cr_abstract_item_view_open_persistent_editor = qt6cr_abstract_item_view_open_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_abstract_item_view_close_persistent_editor = qt6cr_abstract_item_view_close_persistent_editor(handle : Handle, index : Handle)
+    fun qt6cr_abstract_item_view_is_persistent_editor_open = qt6cr_abstract_item_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
+
     fun qt6cr_spin_box_create = qt6cr_spin_box_create(parent : Handle) : Handle
     fun qt6cr_spin_box_set_minimum = qt6cr_spin_box_set_minimum(handle : Handle, value : LibC::Int)
     fun qt6cr_spin_box_minimum = qt6cr_spin_box_minimum(handle : Handle) : LibC::Int
@@ -1544,6 +1570,12 @@ module Qt6
     fun qt6cr_scroll_area_set_vertical_scroll_bar_policy = qt6cr_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_scroll_area_horizontal_scroll_bar_policy = qt6cr_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int
     fun qt6cr_scroll_area_set_horizontal_scroll_bar_policy = qt6cr_scroll_area_set_horizontal_scroll_bar_policy(handle : Handle, policy : LibC::Int)
+    fun qt6cr_abstract_scroll_area_vertical_scroll_bar_policy = qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy = qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
+    fun qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy = qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy = qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(handle : Handle, policy : LibC::Int)
+    fun qt6cr_abstract_scroll_area_vertical_scroll_bar = qt6cr_abstract_scroll_area_vertical_scroll_bar(handle : Handle) : Handle
+    fun qt6cr_abstract_scroll_area_horizontal_scroll_bar = qt6cr_abstract_scroll_area_horizontal_scroll_bar(handle : Handle) : Handle
 
     fun qt6cr_splitter_create = qt6cr_splitter_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_splitter_add_widget = qt6cr_splitter_add_widget(handle : Handle, widget : Handle)

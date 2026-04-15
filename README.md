@@ -137,6 +137,7 @@ app.run
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
 - `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, proxy sorting/filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration
+- `Qt6::AbstractItemView` and `Qt6::AbstractScrollArea` for shared item-view and scroll-surface infrastructure across list/tree/table widgets, model views, text editors, and scroll areas
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
 

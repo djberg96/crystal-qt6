@@ -1339,6 +1339,32 @@ void qt6cr_abstract_spin_box_set_wrapping(qt6cr_handle_t handle, bool value);
 bool qt6cr_abstract_spin_box_is_accelerated(qt6cr_handle_t handle);
 void qt6cr_abstract_spin_box_set_accelerated(qt6cr_handle_t handle, bool value);
 
+qt6cr_handle_t qt6cr_abstract_item_view_model(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate);
+qt6cr_handle_t qt6cr_abstract_item_view_selection_model(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model);
+qt6cr_handle_t qt6cr_abstract_item_view_current_index(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
+int qt6cr_abstract_item_view_selection_mode(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_selection_mode(qt6cr_handle_t handle, int mode);
+int qt6cr_abstract_item_view_edit_triggers(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_edit_triggers(qt6cr_handle_t handle, int triggers);
+int qt6cr_abstract_item_view_selection_behavior(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_selection_behavior(qt6cr_handle_t handle, int behavior);
+bool qt6cr_abstract_item_view_alternating_row_colors(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_alternating_row_colors(qt6cr_handle_t handle, bool value);
+bool qt6cr_abstract_item_view_drag_enabled(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_drag_enabled(qt6cr_handle_t handle, bool value);
+int qt6cr_abstract_item_view_drag_drop_mode(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_drag_drop_mode(qt6cr_handle_t handle, int mode);
+int qt6cr_abstract_item_view_default_drop_action(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_default_drop_action(qt6cr_handle_t handle, int action);
+bool qt6cr_abstract_item_view_drop_indicator_shown(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value);
+void qt6cr_abstract_item_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
+void qt6cr_abstract_item_view_close_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
+bool qt6cr_abstract_item_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t index);
+
 qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent);
 void qt6cr_spin_box_set_minimum(qt6cr_handle_t handle, int value);
 int qt6cr_spin_box_minimum(qt6cr_handle_t handle);
@@ -1580,6 +1606,13 @@ int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
 int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy);
+
+int qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
+void qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
+int qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle);
+void qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy);
+qt6cr_handle_t qt6cr_abstract_scroll_area_vertical_scroll_bar(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_abstract_scroll_area_horizontal_scroll_bar(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

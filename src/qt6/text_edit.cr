@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QTextEdit`.
-  class TextEdit < Frame
+  class TextEdit < AbstractScrollArea
     @text_changed : Signal() = Signal().new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 

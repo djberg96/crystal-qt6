@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QPlainTextEdit`.
-  class PlainTextEdit < Frame
+  class PlainTextEdit < AbstractScrollArea
     @text_changed : Signal() = Signal().new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
