@@ -194,6 +194,7 @@ module Qt6
     fun qt6cr_main_window_menu_bar = qt6cr_main_window_menu_bar(handle : Handle) : Handle
     fun qt6cr_main_window_status_bar = qt6cr_main_window_status_bar(handle : Handle) : Handle
     fun qt6cr_main_window_add_tool_bar = qt6cr_main_window_add_tool_bar(handle : Handle, toolbar : Handle)
+    fun qt6cr_main_window_remove_tool_bar = qt6cr_main_window_remove_tool_bar(handle : Handle, toolbar : Handle)
     fun qt6cr_main_window_add_dock_widget = qt6cr_main_window_add_dock_widget(handle : Handle, area : LibC::Int, dock_widget : Handle)
 
     fun qt6cr_dialog_create = qt6cr_dialog_create(parent : Handle) : Handle
@@ -914,9 +915,16 @@ module Qt6
     fun qt6cr_action_is_enabled = qt6cr_action_is_enabled(handle : Handle) : Bool
     fun qt6cr_action_set_tool_tip = qt6cr_action_set_tool_tip(handle : Handle, tool_tip : UInt8*)
     fun qt6cr_action_tool_tip = qt6cr_action_tool_tip(handle : Handle) : UInt8*
+    fun qt6cr_action_set_status_tip = qt6cr_action_set_status_tip(handle : Handle, status_tip : UInt8*)
+    fun qt6cr_action_status_tip = qt6cr_action_status_tip(handle : Handle) : UInt8*
+    fun qt6cr_action_set_visible = qt6cr_action_set_visible(handle : Handle, value : Bool)
+    fun qt6cr_action_is_visible = qt6cr_action_is_visible(handle : Handle) : Bool
+    fun qt6cr_action_set_separator = qt6cr_action_set_separator(handle : Handle, value : Bool)
+    fun qt6cr_action_is_separator = qt6cr_action_is_separator(handle : Handle) : Bool
     fun qt6cr_action_set_data = qt6cr_action_set_data(handle : Handle, value : VariantValue)
     fun qt6cr_action_data = qt6cr_action_data(handle : Handle) : VariantValue
     fun qt6cr_action_on_triggered = qt6cr_action_on_triggered(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_action_on_toggled = qt6cr_action_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
     fun qt6cr_action_trigger = qt6cr_action_trigger(handle : Handle)
 
     fun qt6cr_action_group_create = qt6cr_action_group_create(parent : Handle) : Handle
@@ -925,18 +933,26 @@ module Qt6
     fun qt6cr_action_group_is_exclusive = qt6cr_action_group_is_exclusive(handle : Handle) : Bool
 
     fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
+    fun qt6cr_menu_bar_clear = qt6cr_menu_bar_clear(handle : Handle)
 
     fun qt6cr_menu_add_menu = qt6cr_menu_add_menu(handle : Handle, title : UInt8*) : Handle
+    fun qt6cr_menu_add_text_action = qt6cr_menu_add_text_action(handle : Handle, text : UInt8*) : Handle
     fun qt6cr_menu_add_action = qt6cr_menu_add_action(handle : Handle, action : Handle)
     fun qt6cr_menu_add_separator = qt6cr_menu_add_separator(handle : Handle)
     fun qt6cr_menu_set_title = qt6cr_menu_set_title(handle : Handle, title : UInt8*)
     fun qt6cr_menu_title = qt6cr_menu_title(handle : Handle) : UInt8*
+    fun qt6cr_menu_clear = qt6cr_menu_clear(handle : Handle)
+    fun qt6cr_menu_menu_action = qt6cr_menu_menu_action(handle : Handle) : Handle
 
     fun qt6cr_tool_bar_create = qt6cr_tool_bar_create(parent : Handle, title : UInt8*) : Handle
+    fun qt6cr_tool_bar_add_text_action = qt6cr_tool_bar_add_text_action(handle : Handle, text : UInt8*) : Handle
     fun qt6cr_tool_bar_add_action = qt6cr_tool_bar_add_action(handle : Handle, action : Handle)
+    fun qt6cr_tool_bar_add_widget = qt6cr_tool_bar_add_widget(handle : Handle, widget : Handle)
     fun qt6cr_tool_bar_add_separator = qt6cr_tool_bar_add_separator(handle : Handle)
+    fun qt6cr_tool_bar_clear = qt6cr_tool_bar_clear(handle : Handle)
     fun qt6cr_tool_bar_set_movable = qt6cr_tool_bar_set_movable(handle : Handle, value : Bool)
     fun qt6cr_tool_bar_is_movable = qt6cr_tool_bar_is_movable(handle : Handle) : Bool
+    fun qt6cr_tool_bar_toggle_view_action = qt6cr_tool_bar_toggle_view_action(handle : Handle) : Handle
 
     fun qt6cr_status_bar_create = qt6cr_status_bar_create(parent : Handle) : Handle
     fun qt6cr_status_bar_show_message = qt6cr_status_bar_show_message(handle : Handle, message : UInt8*, timeout_ms : LibC::Int)

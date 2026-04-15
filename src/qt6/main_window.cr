@@ -30,6 +30,12 @@ module Qt6
       toolbar
     end
 
+    # Removes a toolbar from the main window.
+    def remove_tool_bar(toolbar : ToolBar) : ToolBar
+      LibQt6.qt6cr_main_window_remove_tool_bar(to_unsafe, toolbar.to_unsafe)
+      toolbar
+    end
+
     # Adds a dock widget to the main window in the given dock area.
     def add_dock_widget(dock_widget : DockWidget, area : DockArea = DockArea::Left) : DockWidget
       LibQt6.qt6cr_main_window_add_dock_widget(to_unsafe, area.value, dock_widget.to_unsafe)
