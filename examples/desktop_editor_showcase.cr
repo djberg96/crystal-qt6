@@ -147,11 +147,39 @@ app.name = "Desktop Editor Showcase"
 app.organization_name = "crystal-qt6"
 app.organization_domain = "crystal-qt6.example"
 app.style_sheet = <<-CSS
-  QWidget { font-family: "Avenir Next"; font-size: 13px; }
+  QWidget { font-family: "Avenir Next"; font-size: 13px; color: rgb(52, 48, 42); }
   QMainWindow { background: rgb(246, 242, 235); }
   QDockWidget { font-size: 13px; }
-  QLineEdit, QTextEdit, QPlainTextEdit, QTextBrowser { background: rgb(255, 255, 255); }
-  QPushButton { padding: 6px 12px; }
+  QLineEdit, QTextEdit, QPlainTextEdit, QTextBrowser {
+    background: rgb(255, 255, 255);
+    color: rgb(40, 44, 49);
+    border: 1px solid rgb(205, 198, 188);
+    selection-background-color: rgb(88, 104, 176);
+    selection-color: rgb(255, 255, 255);
+  }
+  QPushButton {
+    padding: 6px 12px;
+    color: rgb(52, 48, 42);
+    background: rgb(237, 231, 221);
+    border: 1px solid rgb(201, 193, 182);
+  }
+  QPushButton:pressed {
+    background: rgb(224, 216, 205);
+  }
+  QTabWidget::pane {
+    background: rgb(252, 250, 246);
+    border: 1px solid rgb(210, 204, 194);
+  }
+  QTabBar::tab {
+    color: rgb(90, 84, 76);
+    background: rgb(231, 225, 215);
+    border: 1px solid rgb(210, 204, 194);
+    padding: 6px 12px;
+  }
+  QTabBar::tab:selected {
+    color: rgb(40, 44, 49);
+    background: rgb(252, 250, 246);
+  }
 CSS
 
 settings = Qt6::QSettings.for_application("crystal-qt6", "desktop_editor_showcase")
