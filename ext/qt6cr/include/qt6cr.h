@@ -747,6 +747,21 @@ char *qt6cr_qdir_current_path(void);
 char *qt6cr_qdir_home_path(void);
 char *qt6cr_qdir_clean_path(const char *path);
 
+qt6cr_handle_t qt6cr_qfile_create(const char *file_name);
+void qt6cr_qfile_destroy(qt6cr_handle_t handle);
+char *qt6cr_qfile_file_name(qt6cr_handle_t handle);
+void qt6cr_qfile_set_file_name(qt6cr_handle_t handle, const char *file_name);
+bool qt6cr_qfile_exists(qt6cr_handle_t handle);
+bool qt6cr_qfile_exists_at_path(const char *file_name);
+bool qt6cr_qfile_open(qt6cr_handle_t handle, int open_mode);
+void qt6cr_qfile_close(qt6cr_handle_t handle);
+bool qt6cr_qfile_is_open(qt6cr_handle_t handle);
+int64_t qt6cr_qfile_size(qt6cr_handle_t handle);
+qt6cr_byte_array_t qt6cr_qfile_read_all(qt6cr_handle_t handle);
+int64_t qt6cr_qfile_write(qt6cr_handle_t handle, const unsigned char *data, int size);
+bool qt6cr_qfile_flush(qt6cr_handle_t handle);
+bool qt6cr_qfile_remove(qt6cr_handle_t handle);
+
 qt6cr_handle_t qt6cr_qfile_info_create(const char *path);
 void qt6cr_qfile_info_destroy(qt6cr_handle_t handle);
 char *qt6cr_qfile_info_file_name(qt6cr_handle_t handle);

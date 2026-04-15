@@ -731,6 +731,48 @@ describe Qt6 do
     Dir.delete?(root_path) if root_path
   end
 
+  it "supports file-backed qt io helpers" do
+    app
+
+    file_path = File.join(Dir.tempdir, "crystal-qt6-qfile-#{Process.pid}.txt")
+    file = Qt6::QFile.new(file_path)
+
+    Qt6::QFile.exists?(file_path).should be_false
+    file.exists?.should be_false
+    file.file_name.should eq(file_path)
+
+    file.open(Qt6::IODeviceOpenMode::WriteOnly).should be_true
+    file.open?.should be_true
+    file.write("terrain\n").should eq(8_i64)
+    file.flush.should be_true
+    file.size.should eq(8_i64)
+    file.close
+
+    Qt6::QFile.exists?(file_path).should be_true
+    file.exists?.should be_true
+
+    file.open(Qt6::IODeviceOpenMode::ReadOnly).should be_true
+    file.read_all.bytes.should eq("terrain\n".to_slice)
+    file.close
+    file.open?.should be_false
+
+    renamed_path = File.join(Dir.tempdir, "crystal-qt6-qfile-renamed-#{Process.pid}.txt")
+    file.file_name = renamed_path
+    file.file_name.should eq(renamed_path)
+    file.exists?.should be_false
+
+    renamed = Qt6::QFile.new(renamed_path)
+    renamed.open(Qt6::IODeviceOpenMode::WriteOnly).should be_true
+    renamed.write(Bytes[1_u8, 2_u8, 3_u8, 4_u8]).should eq(4_i64)
+    renamed.close
+    renamed.size.should eq(4_i64)
+    renamed.remove.should be_true
+    renamed.exists?.should be_false
+  ensure
+    File.delete?(file_path) if file_path
+    File.delete?(renamed_path) if renamed_path
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")

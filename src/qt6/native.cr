@@ -716,6 +716,21 @@ module Qt6
     fun qt6cr_qdir_home_path = qt6cr_qdir_home_path : UInt8*
     fun qt6cr_qdir_clean_path = qt6cr_qdir_clean_path(path : UInt8*) : UInt8*
 
+    fun qt6cr_qfile_create = qt6cr_qfile_create(file_name : UInt8*) : Handle
+    fun qt6cr_qfile_destroy = qt6cr_qfile_destroy(handle : Handle)
+    fun qt6cr_qfile_file_name = qt6cr_qfile_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qfile_set_file_name = qt6cr_qfile_set_file_name(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qfile_exists = qt6cr_qfile_exists(handle : Handle) : Bool
+    fun qt6cr_qfile_exists_at_path = qt6cr_qfile_exists_at_path(file_name : UInt8*) : Bool
+    fun qt6cr_qfile_open = qt6cr_qfile_open(handle : Handle, open_mode : LibC::Int) : Bool
+    fun qt6cr_qfile_close = qt6cr_qfile_close(handle : Handle)
+    fun qt6cr_qfile_is_open = qt6cr_qfile_is_open(handle : Handle) : Bool
+    fun qt6cr_qfile_size = qt6cr_qfile_size(handle : Handle) : Int64
+    fun qt6cr_qfile_read_all = qt6cr_qfile_read_all(handle : Handle) : ByteArrayValue
+    fun qt6cr_qfile_write = qt6cr_qfile_write(handle : Handle, data : UInt8*, size : LibC::Int) : Int64
+    fun qt6cr_qfile_flush = qt6cr_qfile_flush(handle : Handle) : Bool
+    fun qt6cr_qfile_remove = qt6cr_qfile_remove(handle : Handle) : Bool
+
     fun qt6cr_qfile_info_create = qt6cr_qfile_info_create(path : UInt8*) : Handle
     fun qt6cr_qfile_info_destroy = qt6cr_qfile_info_destroy(handle : Handle)
     fun qt6cr_qfile_info_file_name = qt6cr_qfile_info_file_name(handle : Handle) : UInt8*

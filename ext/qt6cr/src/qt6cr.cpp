@@ -34,6 +34,7 @@
 #include <QDragMoveEvent>
 #include <QEvent>
 #include <QEventLoop>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontComboBox>
@@ -1245,6 +1246,10 @@ QUrl *as_qurl(qt6cr_handle_t handle) {
 
 QDir *as_qdir(qt6cr_handle_t handle) {
   return static_cast<QDir *>(handle);
+}
+
+QFile *as_qfile(qt6cr_handle_t handle) {
+  return static_cast<QFile *>(handle);
 }
 
 QFileInfo *as_qfile_info(qt6cr_handle_t handle) {
@@ -5602,6 +5607,84 @@ char *qt6cr_qdir_home_path(void) {
 
 char *qt6cr_qdir_clean_path(const char *path) {
   return duplicate_string(QDir::cleanPath(QString::fromUtf8(path == nullptr ? "" : path)));
+}
+
+qt6cr_handle_t qt6cr_qfile_create(const char *file_name) {
+  return new QFile(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+void qt6cr_qfile_destroy(qt6cr_handle_t handle) {
+  delete as_qfile(handle);
+}
+
+char *qt6cr_qfile_file_name(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file == nullptr ? duplicate_string("") : duplicate_string(file->fileName());
+}
+
+void qt6cr_qfile_set_file_name(qt6cr_handle_t handle, const char *file_name) {
+  auto *file = as_qfile(handle);
+
+  if (file != nullptr) {
+    file->setFileName(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+bool qt6cr_qfile_exists(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file == nullptr ? false : file->exists();
+}
+
+bool qt6cr_qfile_exists_at_path(const char *file_name) {
+  return QFile::exists(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+bool qt6cr_qfile_open(qt6cr_handle_t handle, int open_mode) {
+  auto *file = as_qfile(handle);
+  return file != nullptr && file->open(QIODevice::OpenMode(open_mode));
+}
+
+void qt6cr_qfile_close(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+
+  if (file != nullptr) {
+    file->close();
+  }
+}
+
+bool qt6cr_qfile_is_open(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file != nullptr && file->isOpen();
+}
+
+int64_t qt6cr_qfile_size(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file == nullptr ? 0 : static_cast<int64_t>(file->size());
+}
+
+qt6cr_byte_array_t qt6cr_qfile_read_all(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file == nullptr ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(file->readAll());
+}
+
+int64_t qt6cr_qfile_write(qt6cr_handle_t handle, const unsigned char *data, int size) {
+  auto *file = as_qfile(handle);
+
+  if (file == nullptr || data == nullptr || size <= 0) {
+    return 0;
+  }
+
+  return static_cast<int64_t>(file->write(reinterpret_cast<const char *>(data), size));
+}
+
+bool qt6cr_qfile_flush(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file != nullptr && file->flush();
+}
+
+bool qt6cr_qfile_remove(qt6cr_handle_t handle) {
+  auto *file = as_qfile(handle);
+  return file != nullptr && file->remove();
 }
 
 qt6cr_handle_t qt6cr_qfile_info_create(const char *path) {
