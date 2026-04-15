@@ -810,6 +810,23 @@ describe Qt6 do
     File.delete?(settings_path) if settings_path
   end
 
+  it "supports desktop integration helpers" do
+    app
+
+    temp_path = Qt6::StandardPaths.writable_location(Qt6::StandardLocation::TempLocation)
+    home_path = Qt6::StandardPaths.writable_location(Qt6::StandardLocation::HomeLocation)
+    home_locations = Qt6::StandardPaths.standard_locations(Qt6::StandardLocation::HomeLocation)
+    app_config_locations = Qt6::StandardPaths.standard_locations(Qt6::StandardLocation::AppConfigLocation)
+
+    temp_path.should_not be_empty
+    home_path.should_not be_empty
+    home_locations.should contain(home_path)
+    app_config_locations.should_not be_empty
+    Qt6::StandardPaths.display_name(Qt6::StandardLocation::DocumentsLocation).should_not be_empty
+
+    Qt6::DesktopServices.open_url(Qt6::QUrl.new).should be_false
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")

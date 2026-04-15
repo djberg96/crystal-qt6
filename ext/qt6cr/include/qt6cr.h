@@ -774,6 +774,12 @@ void qt6cr_qsettings_clear(qt6cr_handle_t handle);
 void qt6cr_qsettings_sync(qt6cr_handle_t handle);
 qt6cr_string_array_t qt6cr_qsettings_all_keys(qt6cr_handle_t handle);
 
+char *qt6cr_standard_paths_writable_location(int location);
+qt6cr_string_array_t qt6cr_standard_paths_standard_locations(int location);
+char *qt6cr_standard_paths_display_name(int location);
+
+bool qt6cr_desktop_services_open_url(qt6cr_handle_t url);
+
 qt6cr_handle_t qt6cr_qfile_info_create(const char *path);
 void qt6cr_qfile_info_destroy(qt6cr_handle_t handle);
 char *qt6cr_qfile_info_file_name(qt6cr_handle_t handle);

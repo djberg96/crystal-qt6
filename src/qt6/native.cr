@@ -743,6 +743,12 @@ module Qt6
     fun qt6cr_qsettings_sync = qt6cr_qsettings_sync(handle : Handle)
     fun qt6cr_qsettings_all_keys = qt6cr_qsettings_all_keys(handle : Handle) : StringArrayValue
 
+    fun qt6cr_standard_paths_writable_location = qt6cr_standard_paths_writable_location(location : LibC::Int) : UInt8*
+    fun qt6cr_standard_paths_standard_locations = qt6cr_standard_paths_standard_locations(location : LibC::Int) : StringArrayValue
+    fun qt6cr_standard_paths_display_name = qt6cr_standard_paths_display_name(location : LibC::Int) : UInt8*
+
+    fun qt6cr_desktop_services_open_url = qt6cr_desktop_services_open_url(url : Handle) : Bool
+
     fun qt6cr_qfile_info_create = qt6cr_qfile_info_create(path : UInt8*) : Handle
     fun qt6cr_qfile_info_destroy = qt6cr_qfile_info_destroy(handle : Handle)
     fun qt6cr_qfile_info_file_name = qt6cr_qfile_info_file_name(handle : Handle) : UInt8*
