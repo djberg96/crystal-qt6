@@ -731,6 +731,18 @@ module Qt6
     fun qt6cr_qfile_flush = qt6cr_qfile_flush(handle : Handle) : Bool
     fun qt6cr_qfile_remove = qt6cr_qfile_remove(handle : Handle) : Bool
 
+    fun qt6cr_qsettings_create_from_file = qt6cr_qsettings_create_from_file(file_name : UInt8*, format : LibC::Int) : Handle
+    fun qt6cr_qsettings_create_for_application = qt6cr_qsettings_create_for_application(organization : UInt8*, application : UInt8*, format : LibC::Int) : Handle
+    fun qt6cr_qsettings_destroy = qt6cr_qsettings_destroy(handle : Handle)
+    fun qt6cr_qsettings_file_name = qt6cr_qsettings_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qsettings_contains = qt6cr_qsettings_contains(handle : Handle, key : UInt8*) : Bool
+    fun qt6cr_qsettings_value = qt6cr_qsettings_value(handle : Handle, key : UInt8*, default_value : VariantValue) : VariantValue
+    fun qt6cr_qsettings_set_value = qt6cr_qsettings_set_value(handle : Handle, key : UInt8*, value : VariantValue)
+    fun qt6cr_qsettings_remove = qt6cr_qsettings_remove(handle : Handle, key : UInt8*)
+    fun qt6cr_qsettings_clear = qt6cr_qsettings_clear(handle : Handle)
+    fun qt6cr_qsettings_sync = qt6cr_qsettings_sync(handle : Handle)
+    fun qt6cr_qsettings_all_keys = qt6cr_qsettings_all_keys(handle : Handle) : StringArrayValue
+
     fun qt6cr_qfile_info_create = qt6cr_qfile_info_create(path : UInt8*) : Handle
     fun qt6cr_qfile_info_destroy = qt6cr_qfile_info_destroy(handle : Handle)
     fun qt6cr_qfile_info_file_name = qt6cr_qfile_info_file_name(handle : Handle) : UInt8*

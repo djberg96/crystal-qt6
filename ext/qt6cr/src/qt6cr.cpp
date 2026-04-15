@@ -81,6 +81,7 @@
 #include <QPolygonF>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QSettings>
 #include <QSortFilterProxyModel>
 #include <QKeySequence>
 #include <QRadioButton>
@@ -1250,6 +1251,10 @@ QDir *as_qdir(qt6cr_handle_t handle) {
 
 QFile *as_qfile(qt6cr_handle_t handle) {
   return static_cast<QFile *>(handle);
+}
+
+QSettings *as_qsettings(qt6cr_handle_t handle) {
+  return static_cast<QSettings *>(handle);
 }
 
 QFileInfo *as_qfile_info(qt6cr_handle_t handle) {
@@ -5685,6 +5690,83 @@ bool qt6cr_qfile_flush(qt6cr_handle_t handle) {
 bool qt6cr_qfile_remove(qt6cr_handle_t handle) {
   auto *file = as_qfile(handle);
   return file != nullptr && file->remove();
+}
+
+qt6cr_handle_t qt6cr_qsettings_create_from_file(const char *file_name, int format) {
+  return new QSettings(QString::fromUtf8(file_name == nullptr ? "" : file_name), static_cast<QSettings::Format>(format));
+}
+
+qt6cr_handle_t qt6cr_qsettings_create_for_application(const char *organization, const char *application, int format) {
+  return new QSettings(
+    static_cast<QSettings::Format>(format),
+    QSettings::UserScope,
+    QString::fromUtf8(organization == nullptr ? "" : organization),
+    QString::fromUtf8(application == nullptr ? "" : application)
+  );
+}
+
+void qt6cr_qsettings_destroy(qt6cr_handle_t handle) {
+  delete as_qsettings(handle);
+}
+
+char *qt6cr_qsettings_file_name(qt6cr_handle_t handle) {
+  auto *settings = as_qsettings(handle);
+  return settings == nullptr ? duplicate_string("") : duplicate_string(settings->fileName());
+}
+
+bool qt6cr_qsettings_contains(qt6cr_handle_t handle, const char *key) {
+  auto *settings = as_qsettings(handle);
+  return settings == nullptr ? false : settings->contains(QString::fromUtf8(key == nullptr ? "" : key));
+}
+
+qt6cr_variant_value_t qt6cr_qsettings_value(qt6cr_handle_t handle, const char *key, qt6cr_variant_value_t default_value) {
+  auto *settings = as_qsettings(handle);
+
+  if (settings == nullptr) {
+    return qt6cr_variant_value_t{0, false, 0, 0.0, qt6cr_color_t{0, 0, 0, 0}, nullptr};
+  }
+
+  return to_variant_value(settings->value(
+    QString::fromUtf8(key == nullptr ? "" : key),
+    from_variant_value(default_value)
+  ));
+}
+
+void qt6cr_qsettings_set_value(qt6cr_handle_t handle, const char *key, qt6cr_variant_value_t value) {
+  auto *settings = as_qsettings(handle);
+
+  if (settings != nullptr) {
+    settings->setValue(QString::fromUtf8(key == nullptr ? "" : key), from_variant_value(value));
+  }
+}
+
+void qt6cr_qsettings_remove(qt6cr_handle_t handle, const char *key) {
+  auto *settings = as_qsettings(handle);
+
+  if (settings != nullptr) {
+    settings->remove(QString::fromUtf8(key == nullptr ? "" : key));
+  }
+}
+
+void qt6cr_qsettings_clear(qt6cr_handle_t handle) {
+  auto *settings = as_qsettings(handle);
+
+  if (settings != nullptr) {
+    settings->clear();
+  }
+}
+
+void qt6cr_qsettings_sync(qt6cr_handle_t handle) {
+  auto *settings = as_qsettings(handle);
+
+  if (settings != nullptr) {
+    settings->sync();
+  }
+}
+
+qt6cr_string_array_t qt6cr_qsettings_all_keys(qt6cr_handle_t handle) {
+  auto *settings = as_qsettings(handle);
+  return settings == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(settings->allKeys());
 }
 
 qt6cr_handle_t qt6cr_qfile_info_create(const char *path) {

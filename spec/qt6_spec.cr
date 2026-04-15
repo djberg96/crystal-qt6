@@ -773,6 +773,43 @@ describe Qt6 do
     File.delete?(renamed_path) if renamed_path
   end
 
+  it "supports persisted settings stores" do
+    app
+
+    settings_path = File.join(Dir.tempdir, "crystal-qt6-settings-#{Process.pid}.ini")
+    File.delete?(settings_path)
+
+    settings = Qt6::QSettings.new(settings_path)
+    settings.file_name.should eq(settings_path)
+    settings.contains?("window/title").should be_false
+    settings.value("window/title").should be_nil
+    settings.value("window/missing", "fallback").should eq("fallback")
+
+    settings.set_value("window/title", "Map Tool").should eq("Map Tool")
+    settings.set_value("window/width", 1280).should eq(1280)
+    settings.set_value("window/opacity", 0.85).should eq(0.85)
+    settings.set_value("window/pinned", true).should eq(true)
+    settings.sync
+
+    File.exists?(settings_path).should be_true
+
+    reopened = Qt6::QSettings.new(settings_path)
+    reopened.contains?("window/title").should be_true
+    reopened.value("window/title").should eq("Map Tool")
+    reopened.value("window/width").should eq(1280)
+    reopened.value("window/opacity").should eq(0.85)
+    reopened.value("window/pinned").should eq(true)
+    reopened.all_keys.sort.should eq(["window/opacity", "window/pinned", "window/title", "window/width"])
+
+    reopened.remove("window/title").sync
+    reopened.contains?("window/title").should be_false
+
+    reopened.clear.sync
+    reopened.all_keys.should be_empty
+  ensure
+    File.delete?(settings_path) if settings_path
+  end
+
   it "loads standalone SVG files and exposes element bounds" do
     app
     svg_path = File.join(Dir.tempdir, "crystal-qt6-standalone-#{Process.pid}.svg")
