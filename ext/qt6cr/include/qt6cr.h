@@ -474,8 +474,12 @@ qt6cr_handle_t qt6cr_sort_filter_proxy_model_source_model(qt6cr_handle_t handle)
 qt6cr_handle_t qt6cr_sort_filter_proxy_model_map_to_source(qt6cr_handle_t handle, qt6cr_handle_t proxy_index);
 qt6cr_handle_t qt6cr_sort_filter_proxy_model_map_from_source(qt6cr_handle_t handle, qt6cr_handle_t source_index);
 void qt6cr_sort_filter_proxy_model_sort(qt6cr_handle_t handle, int column, int order);
+int qt6cr_sort_filter_proxy_model_sort_column(qt6cr_handle_t handle);
+int qt6cr_sort_filter_proxy_model_sort_order(qt6cr_handle_t handle);
 void qt6cr_sort_filter_proxy_model_set_filter_fixed_string(qt6cr_handle_t handle, const char *value);
 void qt6cr_sort_filter_proxy_model_set_filter_wildcard(qt6cr_handle_t handle, const char *value);
+void qt6cr_sort_filter_proxy_model_set_filter_regular_expression(qt6cr_handle_t handle, const char *value);
+char *qt6cr_sort_filter_proxy_model_filter_pattern(qt6cr_handle_t handle);
 void qt6cr_sort_filter_proxy_model_set_filter_key_column(qt6cr_handle_t handle, int column);
 int qt6cr_sort_filter_proxy_model_filter_key_column(qt6cr_handle_t handle);
 void qt6cr_sort_filter_proxy_model_set_filter_role(qt6cr_handle_t handle, int role);
@@ -489,6 +493,7 @@ bool qt6cr_sort_filter_proxy_model_dynamic_sort_filter(qt6cr_handle_t handle);
 void qt6cr_sort_filter_proxy_model_set_recursive_filtering_enabled(qt6cr_handle_t handle, bool value);
 bool qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(qt6cr_handle_t handle);
 void qt6cr_sort_filter_proxy_model_invalidate(qt6cr_handle_t handle);
+void qt6cr_sort_filter_proxy_model_clear_filter(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent);
 void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);
@@ -572,6 +577,7 @@ void qt6cr_header_view_set_section_hidden(qt6cr_handle_t handle, int index, bool
 int qt6cr_header_view_section_resize_mode(qt6cr_handle_t handle, int index);
 void qt6cr_header_view_set_section_resize_mode(qt6cr_handle_t handle, int index, int value);
 void qt6cr_header_view_resize_section(qt6cr_handle_t handle, int index, int size);
+int qt6cr_header_view_section_size(qt6cr_handle_t handle, int index);
 
 qt6cr_handle_t qt6cr_table_view_create(qt6cr_handle_t parent);
 void qt6cr_table_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
@@ -611,6 +617,9 @@ void qt6cr_table_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle
 void qt6cr_table_view_close_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 bool qt6cr_table_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_table_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_table_view_sort_by_column(qt6cr_handle_t handle, int column, int order);
+void qt6cr_table_view_resize_columns_to_contents(qt6cr_handle_t handle);
+void qt6cr_table_view_resize_rows_to_contents(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qsvg_generator_create(void);
 void qt6cr_qsvg_generator_destroy(qt6cr_handle_t handle);
@@ -1293,6 +1302,9 @@ void qt6cr_table_widget_close_persistent_editor(qt6cr_handle_t handle, qt6cr_han
 bool qt6cr_table_widget_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t item);
 void qt6cr_table_widget_on_current_cell_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_table_widget_on_item_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_table_widget_sort_by_column(qt6cr_handle_t handle, int column, int order);
+void qt6cr_table_widget_resize_columns_to_contents(qt6cr_handle_t handle);
+void qt6cr_table_widget_resize_rows_to_contents(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value);
@@ -1487,9 +1499,11 @@ void qt6cr_text_document_set_undo_redo_enabled(qt6cr_handle_t handle, bool value
 bool qt6cr_text_document_is_empty(qt6cr_handle_t handle);
 int qt6cr_text_document_block_count(qt6cr_handle_t handle);
 int qt6cr_text_document_character_count(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_text_document_find(qt6cr_handle_t handle, const char *text, qt6cr_handle_t from_cursor);
 
 qt6cr_handle_t qt6cr_text_cursor_create(qt6cr_handle_t document);
 void qt6cr_text_cursor_destroy(qt6cr_handle_t handle);
+bool qt6cr_text_cursor_is_null(qt6cr_handle_t handle);
 int qt6cr_text_cursor_position(qt6cr_handle_t handle);
 void qt6cr_text_cursor_set_position(qt6cr_handle_t handle, int position, bool keep_anchor);
 bool qt6cr_text_cursor_move_position(qt6cr_handle_t handle, int operation, int mode, int count);
@@ -1511,6 +1525,9 @@ void qt6cr_text_edit_set_html(qt6cr_handle_t handle, const char *html);
 char *qt6cr_text_edit_plain_text(qt6cr_handle_t handle);
 void qt6cr_text_edit_set_plain_text(qt6cr_handle_t handle, const char *text);
 void qt6cr_text_edit_append(qt6cr_handle_t handle, const char *text);
+void qt6cr_text_edit_append_html(qt6cr_handle_t handle, const char *html);
+void qt6cr_text_edit_insert_plain_text(qt6cr_handle_t handle, const char *text);
+void qt6cr_text_edit_insert_html(qt6cr_handle_t handle, const char *html);
 bool qt6cr_text_edit_is_read_only(qt6cr_handle_t handle);
 void qt6cr_text_edit_set_read_only(qt6cr_handle_t handle, bool value);
 bool qt6cr_text_edit_accept_rich_text(qt6cr_handle_t handle);
@@ -1538,6 +1555,7 @@ qt6cr_handle_t qt6cr_plain_text_edit_create(qt6cr_handle_t parent);
 char *qt6cr_plain_text_edit_plain_text(qt6cr_handle_t handle);
 void qt6cr_plain_text_edit_set_plain_text(qt6cr_handle_t handle, const char *text);
 void qt6cr_plain_text_edit_append_plain_text(qt6cr_handle_t handle, const char *text);
+void qt6cr_plain_text_edit_insert_plain_text(qt6cr_handle_t handle, const char *text);
 bool qt6cr_plain_text_edit_is_read_only(qt6cr_handle_t handle);
 void qt6cr_plain_text_edit_set_read_only(qt6cr_handle_t handle, bool value);
 bool qt6cr_plain_text_edit_undo_redo_enabled(qt6cr_handle_t handle);

@@ -209,9 +209,9 @@ shared_selection.on_current_index_changed do
 end
 
 apply_filter = -> do
-  proxy.filter_fixed_string = filter_input.text
+  proxy.filter_regular_expression = filter_input.text
   proxy.invalidate
-  status_bar.show_message(filter_input.text.empty? ? "Filter cleared" : "Filtering for #{filter_input.text}", 1600)
+  status_bar.show_message(filter_input.text.empty? ? "Filter cleared" : "Filtering regex #{proxy.filter_pattern}", 1600)
 end
 
 filter_button = Qt6::PushButton.new("Apply Filter")
@@ -269,7 +269,7 @@ restore_button.on_clicked do
   source_model.restore_defaults
   proxy.sort
   filter_input.text = ""
-  proxy.filter_fixed_string = ""
+  proxy.clear_filter
   proxy.invalidate
   list_view.current_index = proxy.index(0)
   status_bar.show_message("Custom model reset and proxy refreshed", 1800)

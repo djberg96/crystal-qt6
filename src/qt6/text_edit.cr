@@ -55,6 +55,24 @@ module Qt6
       self
     end
 
+    # Appends a new block of HTML content to the editor.
+    def append_html(value : String) : self
+      LibQt6.qt6cr_text_edit_append_html(to_unsafe, value.to_unsafe)
+      self
+    end
+
+    # Inserts plain text at the current cursor position.
+    def insert_plain_text(value : String) : self
+      LibQt6.qt6cr_text_edit_insert_plain_text(to_unsafe, value.to_unsafe)
+      self
+    end
+
+    # Inserts HTML at the current cursor position.
+    def insert_html(value : String) : self
+      LibQt6.qt6cr_text_edit_insert_html(to_unsafe, value.to_unsafe)
+      self
+    end
+
     # Returns `true` when editing is disabled.
     def read_only? : Bool
       LibQt6.qt6cr_text_edit_is_read_only(to_unsafe)

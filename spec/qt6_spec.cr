@@ -2264,11 +2264,18 @@ describe Qt6 do
     plain_cursor.insert_text("\nUnits")
     plain_edit.text_cursor = plain_cursor
     plain_edit.append_plain_text("Roads")
+    plain_edit.insert_plain_text("\nSupply")
     document_cursor.remove_selected_text
     document_cursor.insert_text("Omega")
     document_cursor.delete_previous_char
     document_cursor.insert_text("a")
     document_cursor.clear_selection
+    text_edit.insert_html("<b> Delta</b>")
+    text_edit.insert_plain_text(" Epsilon")
+    found_omega = rich_document.find("Omega")
+    found_units = plain_document.find("Units")
+    missing_text = rich_document.find("Missing")
+    found_omega.replace_selected_text("Omega")
     text_edit.can_undo?.should be_true
     text_edit.undo
     text_edit.can_redo?.should be_true
@@ -2303,6 +2310,11 @@ describe Qt6 do
     document_cursor.selection_end.should eq(5)
     document_cursor.selected_text.should eq("")
     document_cursor.at_end?.should be_false
+    found_omega.null?.should be_false
+    found_omega.selected_text.should eq("")
+    found_units.null?.should be_false
+    found_units.selected_text.should eq("Units")
+    missing_text.null?.should be_true
 
     text_edit.accept_rich_text?.should be_true
     text_edit.undo_redo_enabled?.should be_true
@@ -2310,6 +2322,7 @@ describe Qt6 do
     text_edit.placeholder_text.should eq("Describe the selected layer")
     text_edit.plain_text.should contain("Omega beta!")
     text_edit.plain_text.should contain("Gamma")
+    text_edit.plain_text.should contain("Delta Epsilon")
     text_edit.can_undo?.should be_true
     text_edit.document.plain_text.should eq(text_edit.plain_text)
     rich_text_changes.should be >= 1
@@ -2317,6 +2330,7 @@ describe Qt6 do
     plain_document.plain_text.should contain("Terrain")
     plain_document.plain_text.should contain("Units")
     plain_document.plain_text.should contain("Roads")
+    plain_document.plain_text.should contain("Supply")
     plain_edit.undo_redo_enabled?.should be_true
     plain_edit.read_only?.should be_false
     plain_edit.placeholder_text.should eq("Notes")
@@ -2326,6 +2340,9 @@ describe Qt6 do
     plain_edit.document.plain_text.should eq(plain_edit.plain_text)
     plain_text_changes.should be >= 1
 
+    missing_text.release
+    found_units.release
+    found_omega.release
     editor_cursor.release
     plain_cursor.release
     document_cursor.release
@@ -2655,6 +2672,8 @@ describe Qt6 do
     proxy_model.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
     proxy_model.dynamic_sort_filter = true
     proxy_model.sort
+    proxy_model.sort_column.should eq(0)
+    proxy_model.sort_order.should eq(Qt6::SortOrder::Ascending)
 
     list_view.model = proxy_model
     list_view.item_delegate = delegate
@@ -2685,10 +2704,33 @@ describe Qt6 do
     source_list_index.row.should eq(1)
     list_changes.should be >= 1
 
-    proxy_model.filter_fixed_string = "unit"
+    proxy_model.filter_regular_expression = "uni.*"
+    proxy_model.filter_pattern.should eq("uni.*")
     proxy_model.invalidate
     application.process_events
     proxy_model.row_count.should eq(1)
+    proxy_model.clear_filter
+    proxy_model.invalidate
+    proxy_model.sort(0, Qt6::SortOrder::Descending)
+    application.process_events
+    proxy_model.row_count.should eq(2)
+    proxy_model.sort_column.should eq(0)
+    proxy_model.sort_order.should eq(Qt6::SortOrder::Descending)
+    sorted_proxy_index = proxy_model.index(0)
+    proxy_model.data(sorted_proxy_index).should eq("Terrain")
+
+    tree_proxy = Qt6::SortFilterProxyModel.new(tree_view)
+    tree_proxy.source_model = tree_model
+    tree_proxy.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
+    tree_proxy.recursive_filtering_enabled = true
+    tree_proxy.filter_regular_expression = "contour"
+    tree_proxy.invalidate
+    application.process_events
+
+    terrain_proxy_index = tree_proxy.index(0, 0)
+    contour_proxy_index = tree_proxy.index(0, 0, terrain_proxy_index)
+    contour_source_index = tree_proxy.map_to_source(contour_proxy_index)
+    contour_proxy_roundtrip = tree_proxy.map_from_source(tree_model.index_from_item(contour_item))
 
     tree_model.row_count.should eq(1)
     tree_model.column_count.should eq(2)
@@ -2703,7 +2745,22 @@ describe Qt6 do
     current_tree_index.column.should eq(0)
     tree_model.item_from_index(current_tree_index).not_nil!.text.should eq("Contours")
     tree_changes.should be >= 1
+    tree_proxy.recursive_filtering_enabled?.should be_true
+    tree_proxy.filter_pattern.should eq("contour")
+    tree_proxy.row_count.should eq(1)
+    tree_proxy.row_count(terrain_proxy_index).should eq(1)
+    tree_proxy.data(terrain_proxy_index).should eq("Terrain")
+    tree_proxy.data(contour_proxy_index).should eq("Contours")
+    tree_model.data(contour_source_index).should eq("Contours")
+    contour_proxy_roundtrip.valid?.should be_true
+    contour_proxy_roundtrip.row.should eq(0)
 
+    contour_proxy_roundtrip.release
+    contour_source_index.release
+    contour_proxy_index.release
+    terrain_proxy_index.release
+    sorted_proxy_index.release
+    tree_proxy.release
     current_list_index.release
     current_tree_index.release
     source_list_index.release
@@ -2818,6 +2875,9 @@ describe Qt6 do
     selected_index = model.index(1, 1)
     table_view.current_index = selected_index
     table_view.set_span(0, 0, 1, 2)
+    table_view.sort_by_column(0, Qt6::SortOrder::Descending)
+    table_view.resize_columns_to_contents
+    table_view.resize_rows_to_contents
 
     table_widget.row_count = 2
     table_widget.column_count = 2
@@ -2842,6 +2902,9 @@ describe Qt6 do
     terrain_item.text = "Terrain Layer"
     table_widget.set_span(1, 0, 1, 2)
     table_widget.set_current_cell(0, 1)
+    table_widget.sort_by_column(0, Qt6::SortOrder::Descending)
+    table_widget.resize_columns_to_contents
+    table_widget.resize_rows_to_contents
     application.process_events
 
     current_index = table_view.current_index
@@ -2863,11 +2926,14 @@ describe Qt6 do
     horizontal_header.count.should eq(2)
     horizontal_header.default_section_size.should eq(96)
     horizontal_header.stretch_last_section?.should be_true
+    horizontal_header.section_size(0).should be > 0
     horizontal_header.section_resize_mode(0).should eq(Qt6::HeaderResizeMode::Fixed)
     vertical_header.count.should eq(2)
     vertical_header.section_hidden?(1).should be_true
     table_view.row_span(0, 0).should eq(1)
     table_view.column_span(0, 0).should eq(2)
+    first_sorted_index = model.index(0, 0)
+    model.data(first_sorted_index).should eq("Units")
 
     table_widget.row_count.should eq(2)
     table_widget.column_count.should eq(2)
@@ -2889,10 +2955,12 @@ describe Qt6 do
     current_cell_changes.should be >= 1
     changed_item_texts.includes?("Terrain Layer").should be_true
     table_widget.horizontal_header.count.should eq(2)
+    table_widget.horizontal_header.section_size(0).should be > 0
     table_widget.vertical_header.count.should eq(2)
     table_widget.row_span(1, 0).should eq(1)
     table_widget.column_span(1, 0).should eq(2)
 
+    first_sorted_index.release
     current_index.release
     selected_index.release
     table_view.release

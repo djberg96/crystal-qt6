@@ -77,7 +77,7 @@ Example highlights:
 - `examples/rendering_stack.cr`: offscreen rendering plus file-backed and in-memory SVG import/export, named-element SVG rasterization, and PDF export with `QImage`, `QPixmap`, `QSvgGenerator`, `QSvgRenderer`, `QPdfWriter`, `QPainter`, `QPainterPath`, and `QTransform`
 - `examples/svg_widget_renderer.cr`: embedded `QSvgWidget` display, in-memory `load_data`, borrowed `QSvgWidget#renderer` access, named-element preview rendering, and widget grab export
 - `examples/inspector_workbench.cr`: inspector-style editor UI with `QScrollArea`, `QTabWidget`, `QSplitter`, `QGroupBox`, radio buttons, sliders, spin boxes, and a live `EventWidget` canvas
-- `examples/model_view_workbench.cr`: custom `AbstractListModel`, proxy sorting/filtering, shared selection models, proxy headers, and delegate-backed editor commit hooks
+- `examples/model_view_workbench.cr`: custom `AbstractListModel`, proxy sorting/filtering with regex filters, shared selection models, proxy headers, and delegate-backed editor commit hooks
 - `examples/application_services_showcase.cr`: application metadata, stylesheets, window icons, `QImageReader`, clipboard `QMimeData`, drop receiving, `QEventLoop`, `QProgressDialog`, and `QSplashScreen`
 
 ## Continuous Integration
@@ -136,7 +136,8 @@ app.run
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
-- `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::AbstractListModel`, `Qt6::AbstractTreeModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, mutable callback-backed list/tree models, row insert/remove/move notifications, proxy sorting/filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration
+- `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::AbstractListModel`, `Qt6::AbstractTreeModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, mutable callback-backed list/tree models, row insert/remove/move notifications, proxy sorting/filtering with regex and recursive tree filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration
+- richer text and table polish through `QTextDocument#find`, `QTextCursor` null/replace helpers, editor-side plain-text/HTML insertion helpers, header section-size access, and table sort/resize-to-contents helpers
 - `Qt6::AbstractItemView` and `Qt6::AbstractScrollArea` for shared item-view and scroll-surface infrastructure across list/tree/table widgets, model views, text editors, and scroll areas
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition

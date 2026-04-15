@@ -94,5 +94,10 @@ module Qt6
     def character_count : Int32
       LibQt6.qt6cr_text_document_character_count(to_unsafe)
     end
+
+    # Finds the next occurrence of the given text, optionally starting from a cursor.
+    def find(value : String, from : TextCursor? = nil) : TextCursor
+      TextCursor.wrap(LibQt6.qt6cr_text_document_find(to_unsafe, value.to_unsafe, from.try(&.to_unsafe) || Pointer(Void).null), true)
+    end
   end
 end

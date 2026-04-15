@@ -64,5 +64,10 @@ module Qt6
       LibQt6.qt6cr_header_view_resize_section(to_unsafe, index.to_i32, size.to_i32)
       self
     end
+
+    # Returns the current pixel size of the given section.
+    def section_size(index : Int) : Int32
+      LibQt6.qt6cr_header_view_section_size(to_unsafe, index.to_i32)
+    end
   end
 end

@@ -33,6 +33,16 @@ module Qt6
       self
     end
 
+    # Returns the column currently used for sorting.
+    def sort_column : Int32
+      LibQt6.qt6cr_sort_filter_proxy_model_sort_column(to_unsafe)
+    end
+
+    # Returns the current sort order.
+    def sort_order : SortOrder
+      SortOrder.from_value(LibQt6.qt6cr_sort_filter_proxy_model_sort_order(to_unsafe))
+    end
+
     # Sets an exact string filter and returns it.
     def filter_fixed_string=(value : String) : String
       LibQt6.qt6cr_sort_filter_proxy_model_set_filter_fixed_string(to_unsafe, value.to_unsafe)
@@ -43,6 +53,17 @@ module Qt6
     def filter_wildcard=(value : String) : String
       LibQt6.qt6cr_sort_filter_proxy_model_set_filter_wildcard(to_unsafe, value.to_unsafe)
       value
+    end
+
+    # Sets the filter regular expression pattern and returns it.
+    def filter_regular_expression=(value : String) : String
+      LibQt6.qt6cr_sort_filter_proxy_model_set_filter_regular_expression(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the current filter pattern.
+    def filter_pattern : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_sort_filter_proxy_model_filter_pattern(to_unsafe))
     end
 
     # Sets the column used for text filtering and returns it.
@@ -114,6 +135,12 @@ module Qt6
     # Refreshes the proxy after external state changes.
     def invalidate : self
       LibQt6.qt6cr_sort_filter_proxy_model_invalidate(to_unsafe)
+      self
+    end
+
+    # Clears any active proxy filter pattern.
+    def clear_filter : self
+      LibQt6.qt6cr_sort_filter_proxy_model_clear_filter(to_unsafe)
       self
     end
   end

@@ -44,6 +44,12 @@ module Qt6
       self
     end
 
+    # Inserts plain text at the current cursor position.
+    def insert_plain_text(value : String) : self
+      LibQt6.qt6cr_plain_text_edit_insert_plain_text(to_unsafe, value.to_unsafe)
+      self
+    end
+
     # Returns `true` when editing is disabled.
     def read_only? : Bool
       LibQt6.qt6cr_plain_text_edit_is_read_only(to_unsafe)

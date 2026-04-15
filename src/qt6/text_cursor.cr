@@ -14,6 +14,11 @@ module Qt6
       super(handle, owned)
     end
 
+    # Returns `true` when the cursor does not point at a valid document position.
+    def null? : Bool
+      LibQt6.qt6cr_text_cursor_is_null(to_unsafe)
+    end
+
     # Returns the current character position.
     def position : Int32
       LibQt6.qt6cr_text_cursor_position(to_unsafe)
@@ -74,6 +79,13 @@ module Qt6
     # Removes the selected text without moving the cursor out of the document.
     def remove_selected_text : self
       LibQt6.qt6cr_text_cursor_remove_selected_text(to_unsafe)
+      self
+    end
+
+    # Replaces the selected text with the provided string.
+    def replace_selected_text(value : String) : self
+      remove_selected_text
+      insert_text(value)
       self
     end
 
