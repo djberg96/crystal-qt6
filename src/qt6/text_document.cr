@@ -47,6 +47,17 @@ module Qt6
       value
     end
 
+    # Returns the document title metadata.
+    def title : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_text_document_title(to_unsafe))
+    end
+
+    # Sets the document title metadata.
+    def title=(value : String) : String
+      LibQt6.qt6cr_text_document_set_title(to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns `true` when the document has unsaved changes.
     def modified? : Bool
       LibQt6.qt6cr_text_document_is_modified(to_unsafe)
@@ -58,9 +69,25 @@ module Qt6
       value
     end
 
+    # Returns `true` when the document tracks undo and redo history.
+    def undo_redo_enabled? : Bool
+      LibQt6.qt6cr_text_document_undo_redo_enabled(to_unsafe)
+    end
+
+    # Enables or disables undo and redo history tracking.
+    def undo_redo_enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_text_document_set_undo_redo_enabled(to_unsafe, value)
+      value
+    end
+
     # Returns `true` when the document contains no user-visible content.
     def empty? : Bool
       LibQt6.qt6cr_text_document_is_empty(to_unsafe)
+    end
+
+    # Returns the number of text blocks in the document.
+    def block_count : Int32
+      LibQt6.qt6cr_text_document_block_count(to_unsafe)
     end
 
     # Returns the number of characters tracked by the document.

@@ -1944,6 +1944,8 @@ describe Qt6 do
     rich_document = Qt6::TextDocument.new(host)
     rich_document.default_style_sheet = "p { color: #333; }"
     rich_document.html = "<p>Alpha beta</p>"
+    rich_document.title = "Layer Notes"
+    rich_document.undo_redo_enabled = true
     rich_document.modified = false
 
     document_cursor = Qt6::TextCursor.new(rich_document)
@@ -1982,28 +1984,53 @@ describe Qt6 do
     plain_cursor.insert_text("\nUnits")
     plain_edit.text_cursor = plain_cursor
     plain_edit.append_plain_text("Roads")
+    document_cursor.remove_selected_text
+    document_cursor.insert_text("Omega")
+    document_cursor.delete_previous_char
+    document_cursor.insert_text("a")
+    document_cursor.clear_selection
+    text_edit.can_undo?.should be_true
+    text_edit.undo
+    text_edit.can_redo?.should be_true
+    text_edit.redo
+    plain_edit.can_undo?.should be_true
+    plain_edit.undo
+    plain_edit.can_redo?.should be_true
+    plain_edit.redo
+    text_edit.select_all
+    selected_rich_text = text_edit.text_cursor
+    selected_rich_text.has_selection?.should be_true
+    selected_rich_text.release
+    plain_edit.select_all
+    selected_plain_text = plain_edit.text_cursor
+    selected_plain_text.has_selection?.should be_true
+    selected_plain_text.release
     application.process_events
 
     rich_document.default_style_sheet.should contain("#333")
-    rich_document.plain_text.should contain("Alpha beta!")
+    rich_document.title.should eq("Layer Notes")
+    rich_document.undo_redo_enabled?.should be_true
+    rich_document.plain_text.should contain("Omega beta!")
     rich_document.plain_text.should contain("Gamma")
     rich_document.empty?.should be_false
+    rich_document.block_count.should be >= 1
     rich_document.character_count.should be > 0
     rich_document.modified?.should be_true
 
     document_cursor.position.should eq(5)
-    document_cursor.has_selection?.should be_true
-    document_cursor.selection_start.should eq(0)
+    document_cursor.has_selection?.should be_false
+    document_cursor.selection_start.should eq(5)
     document_cursor.selection_end.should eq(5)
-    document_cursor.selected_text.should eq("Alpha")
+    document_cursor.selected_text.should eq("")
     document_cursor.at_end?.should be_false
 
     text_edit.accept_rich_text?.should be_true
     text_edit.undo_redo_enabled?.should be_true
     text_edit.read_only?.should be_false
     text_edit.placeholder_text.should eq("Describe the selected layer")
-    text_edit.plain_text.should contain("Alpha beta!")
+    text_edit.plain_text.should contain("Omega beta!")
     text_edit.plain_text.should contain("Gamma")
+    text_edit.can_undo?.should be_true
     text_edit.document.plain_text.should eq(text_edit.plain_text)
     rich_text_changes.should be >= 1
 
@@ -2015,6 +2042,7 @@ describe Qt6 do
     plain_edit.placeholder_text.should eq("Notes")
     plain_edit.plain_text.should contain("Units")
     plain_edit.plain_text.should contain("Roads")
+    plain_edit.can_undo?.should be_true
     plain_edit.document.plain_text.should eq(plain_edit.plain_text)
     plain_text_changes.should be >= 1
 

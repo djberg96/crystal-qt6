@@ -105,6 +105,52 @@ module Qt6
       self
     end
 
+    # Returns `true` when the editor has an undo step available.
+    def can_undo? : Bool
+      LibQt6.qt6cr_plain_text_edit_can_undo(to_unsafe)
+    end
+
+    # Returns `true` when the editor has a redo step available.
+    def can_redo? : Bool
+      LibQt6.qt6cr_plain_text_edit_can_redo(to_unsafe)
+    end
+
+    # Undoes the last editing step.
+    def undo : self
+      LibQt6.qt6cr_plain_text_edit_undo(to_unsafe)
+      self
+    end
+
+    # Redoes the last undone editing step.
+    def redo : self
+      LibQt6.qt6cr_plain_text_edit_redo(to_unsafe)
+      self
+    end
+
+    # Selects the entire document contents.
+    def select_all : self
+      LibQt6.qt6cr_plain_text_edit_select_all(to_unsafe)
+      self
+    end
+
+    # Copies the current selection to the clipboard.
+    def copy : self
+      LibQt6.qt6cr_plain_text_edit_copy(to_unsafe)
+      self
+    end
+
+    # Cuts the current selection to the clipboard.
+    def cut : self
+      LibQt6.qt6cr_plain_text_edit_cut(to_unsafe)
+      self
+    end
+
+    # Pastes clipboard contents at the current cursor position.
+    def paste : self
+      LibQt6.qt6cr_plain_text_edit_paste(to_unsafe)
+      self
+    end
+
     # Registers a block to run when the text changes.
     def on_text_changed(&block : ->) : self
       @text_changed.connect { block.call }

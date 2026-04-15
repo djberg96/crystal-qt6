@@ -1382,9 +1382,14 @@ module Qt6
     fun qt6cr_text_document_set_html = qt6cr_text_document_set_html(handle : Handle, html : UInt8*)
     fun qt6cr_text_document_default_style_sheet = qt6cr_text_document_default_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_text_document_set_default_style_sheet = qt6cr_text_document_set_default_style_sheet(handle : Handle, css : UInt8*)
+    fun qt6cr_text_document_title = qt6cr_text_document_title(handle : Handle) : UInt8*
+    fun qt6cr_text_document_set_title = qt6cr_text_document_set_title(handle : Handle, title : UInt8*)
     fun qt6cr_text_document_is_modified = qt6cr_text_document_is_modified(handle : Handle) : Bool
     fun qt6cr_text_document_set_modified = qt6cr_text_document_set_modified(handle : Handle, value : Bool)
+    fun qt6cr_text_document_undo_redo_enabled = qt6cr_text_document_undo_redo_enabled(handle : Handle) : Bool
+    fun qt6cr_text_document_set_undo_redo_enabled = qt6cr_text_document_set_undo_redo_enabled(handle : Handle, value : Bool)
     fun qt6cr_text_document_is_empty = qt6cr_text_document_is_empty(handle : Handle) : Bool
+    fun qt6cr_text_document_block_count = qt6cr_text_document_block_count(handle : Handle) : LibC::Int
     fun qt6cr_text_document_character_count = qt6cr_text_document_character_count(handle : Handle) : LibC::Int
 
     fun qt6cr_text_cursor_create = qt6cr_text_cursor_create(document : Handle) : Handle
@@ -1398,6 +1403,9 @@ module Qt6
     fun qt6cr_text_cursor_selection_start = qt6cr_text_cursor_selection_start(handle : Handle) : LibC::Int
     fun qt6cr_text_cursor_selection_end = qt6cr_text_cursor_selection_end(handle : Handle) : LibC::Int
     fun qt6cr_text_cursor_clear_selection = qt6cr_text_cursor_clear_selection(handle : Handle)
+    fun qt6cr_text_cursor_remove_selected_text = qt6cr_text_cursor_remove_selected_text(handle : Handle)
+    fun qt6cr_text_cursor_delete_char = qt6cr_text_cursor_delete_char(handle : Handle)
+    fun qt6cr_text_cursor_delete_previous_char = qt6cr_text_cursor_delete_previous_char(handle : Handle)
     fun qt6cr_text_cursor_at_start = qt6cr_text_cursor_at_start(handle : Handle) : Bool
     fun qt6cr_text_cursor_at_end = qt6cr_text_cursor_at_end(handle : Handle) : Bool
 
@@ -1420,6 +1428,14 @@ module Qt6
     fun qt6cr_text_edit_text_cursor = qt6cr_text_edit_text_cursor(handle : Handle) : Handle
     fun qt6cr_text_edit_set_text_cursor = qt6cr_text_edit_set_text_cursor(handle : Handle, cursor : Handle)
     fun qt6cr_text_edit_clear = qt6cr_text_edit_clear(handle : Handle)
+    fun qt6cr_text_edit_can_undo = qt6cr_text_edit_can_undo(handle : Handle) : Bool
+    fun qt6cr_text_edit_can_redo = qt6cr_text_edit_can_redo(handle : Handle) : Bool
+    fun qt6cr_text_edit_undo = qt6cr_text_edit_undo(handle : Handle)
+    fun qt6cr_text_edit_redo = qt6cr_text_edit_redo(handle : Handle)
+    fun qt6cr_text_edit_select_all = qt6cr_text_edit_select_all(handle : Handle)
+    fun qt6cr_text_edit_copy = qt6cr_text_edit_copy(handle : Handle)
+    fun qt6cr_text_edit_cut = qt6cr_text_edit_cut(handle : Handle)
+    fun qt6cr_text_edit_paste = qt6cr_text_edit_paste(handle : Handle)
     fun qt6cr_text_edit_on_text_changed = qt6cr_text_edit_on_text_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_plain_text_edit_create = qt6cr_plain_text_edit_create(parent : Handle) : Handle
@@ -1437,6 +1453,14 @@ module Qt6
     fun qt6cr_plain_text_edit_text_cursor = qt6cr_plain_text_edit_text_cursor(handle : Handle) : Handle
     fun qt6cr_plain_text_edit_set_text_cursor = qt6cr_plain_text_edit_set_text_cursor(handle : Handle, cursor : Handle)
     fun qt6cr_plain_text_edit_clear = qt6cr_plain_text_edit_clear(handle : Handle)
+    fun qt6cr_plain_text_edit_can_undo = qt6cr_plain_text_edit_can_undo(handle : Handle) : Bool
+    fun qt6cr_plain_text_edit_can_redo = qt6cr_plain_text_edit_can_redo(handle : Handle) : Bool
+    fun qt6cr_plain_text_edit_undo = qt6cr_plain_text_edit_undo(handle : Handle)
+    fun qt6cr_plain_text_edit_redo = qt6cr_plain_text_edit_redo(handle : Handle)
+    fun qt6cr_plain_text_edit_select_all = qt6cr_plain_text_edit_select_all(handle : Handle)
+    fun qt6cr_plain_text_edit_copy = qt6cr_plain_text_edit_copy(handle : Handle)
+    fun qt6cr_plain_text_edit_cut = qt6cr_plain_text_edit_cut(handle : Handle)
+    fun qt6cr_plain_text_edit_paste = qt6cr_plain_text_edit_paste(handle : Handle)
     fun qt6cr_plain_text_edit_on_text_changed = qt6cr_plain_text_edit_on_text_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_text_browser_create = qt6cr_text_browser_create(parent : Handle) : Handle

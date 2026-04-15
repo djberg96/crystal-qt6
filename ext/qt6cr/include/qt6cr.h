@@ -1418,9 +1418,14 @@ char *qt6cr_text_document_html(qt6cr_handle_t handle);
 void qt6cr_text_document_set_html(qt6cr_handle_t handle, const char *html);
 char *qt6cr_text_document_default_style_sheet(qt6cr_handle_t handle);
 void qt6cr_text_document_set_default_style_sheet(qt6cr_handle_t handle, const char *css);
+char *qt6cr_text_document_title(qt6cr_handle_t handle);
+void qt6cr_text_document_set_title(qt6cr_handle_t handle, const char *title);
 bool qt6cr_text_document_is_modified(qt6cr_handle_t handle);
 void qt6cr_text_document_set_modified(qt6cr_handle_t handle, bool value);
+bool qt6cr_text_document_undo_redo_enabled(qt6cr_handle_t handle);
+void qt6cr_text_document_set_undo_redo_enabled(qt6cr_handle_t handle, bool value);
 bool qt6cr_text_document_is_empty(qt6cr_handle_t handle);
+int qt6cr_text_document_block_count(qt6cr_handle_t handle);
 int qt6cr_text_document_character_count(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_text_cursor_create(qt6cr_handle_t document);
@@ -1434,6 +1439,9 @@ bool qt6cr_text_cursor_has_selection(qt6cr_handle_t handle);
 int qt6cr_text_cursor_selection_start(qt6cr_handle_t handle);
 int qt6cr_text_cursor_selection_end(qt6cr_handle_t handle);
 void qt6cr_text_cursor_clear_selection(qt6cr_handle_t handle);
+void qt6cr_text_cursor_remove_selected_text(qt6cr_handle_t handle);
+void qt6cr_text_cursor_delete_char(qt6cr_handle_t handle);
+void qt6cr_text_cursor_delete_previous_char(qt6cr_handle_t handle);
 bool qt6cr_text_cursor_at_start(qt6cr_handle_t handle);
 bool qt6cr_text_cursor_at_end(qt6cr_handle_t handle);
 
@@ -1456,6 +1464,14 @@ void qt6cr_text_edit_set_document(qt6cr_handle_t handle, qt6cr_handle_t document
 qt6cr_handle_t qt6cr_text_edit_text_cursor(qt6cr_handle_t handle);
 void qt6cr_text_edit_set_text_cursor(qt6cr_handle_t handle, qt6cr_handle_t cursor);
 void qt6cr_text_edit_clear(qt6cr_handle_t handle);
+bool qt6cr_text_edit_can_undo(qt6cr_handle_t handle);
+bool qt6cr_text_edit_can_redo(qt6cr_handle_t handle);
+void qt6cr_text_edit_undo(qt6cr_handle_t handle);
+void qt6cr_text_edit_redo(qt6cr_handle_t handle);
+void qt6cr_text_edit_select_all(qt6cr_handle_t handle);
+void qt6cr_text_edit_copy(qt6cr_handle_t handle);
+void qt6cr_text_edit_cut(qt6cr_handle_t handle);
+void qt6cr_text_edit_paste(qt6cr_handle_t handle);
 void qt6cr_text_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_plain_text_edit_create(qt6cr_handle_t parent);
@@ -1473,6 +1489,14 @@ void qt6cr_plain_text_edit_set_document(qt6cr_handle_t handle, qt6cr_handle_t do
 qt6cr_handle_t qt6cr_plain_text_edit_text_cursor(qt6cr_handle_t handle);
 void qt6cr_plain_text_edit_set_text_cursor(qt6cr_handle_t handle, qt6cr_handle_t cursor);
 void qt6cr_plain_text_edit_clear(qt6cr_handle_t handle);
+bool qt6cr_plain_text_edit_can_undo(qt6cr_handle_t handle);
+bool qt6cr_plain_text_edit_can_redo(qt6cr_handle_t handle);
+void qt6cr_plain_text_edit_undo(qt6cr_handle_t handle);
+void qt6cr_plain_text_edit_redo(qt6cr_handle_t handle);
+void qt6cr_plain_text_edit_select_all(qt6cr_handle_t handle);
+void qt6cr_plain_text_edit_copy(qt6cr_handle_t handle);
+void qt6cr_plain_text_edit_cut(qt6cr_handle_t handle);
+void qt6cr_plain_text_edit_paste(qt6cr_handle_t handle);
 void qt6cr_plain_text_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_text_browser_create(qt6cr_handle_t parent);
