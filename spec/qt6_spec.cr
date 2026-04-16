@@ -4888,6 +4888,31 @@ describe Qt6 do
     scaled.release
   end
 
+  it "supports table widget item icons" do
+    application = app
+    table_widget = Qt6::TableWidget.new
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-table-item-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(16, 16)
+    icon_image.fill(Qt6::Color.new(0, 0, 0, 0))
+    icon_image.set_pixel_color(8, 8, Qt6::Color.new(32, 96, 180, 255))
+    icon_image.save(icon_path).should be_true
+
+    icon = Qt6::QIcon.from_file(icon_path)
+    item = Qt6::TableWidgetItem.new("Album")
+    item.icon = icon
+
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+    table_widget.set_item(0, 0, item)
+    application.process_events
+
+    icon.null?.should be_false
+    table_widget.item(0, 0).not_nil!.text.should eq("Album")
+    table_widget.item(0, 0).not_nil!.icon.null?.should be_false
+
+    table_widget.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
