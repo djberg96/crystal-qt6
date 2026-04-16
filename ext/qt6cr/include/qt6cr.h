@@ -1462,6 +1462,7 @@ void qt6cr_table_widget_on_item_double_clicked(qt6cr_handle_t handle, qt6cr_hand
 void qt6cr_table_widget_sort_by_column(qt6cr_handle_t handle, int column, int order);
 void qt6cr_table_widget_resize_columns_to_contents(qt6cr_handle_t handle);
 void qt6cr_table_widget_resize_rows_to_contents(qt6cr_handle_t handle);
+void qt6cr_table_widget_on_item_double_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value);
