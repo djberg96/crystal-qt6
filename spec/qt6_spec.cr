@@ -4913,6 +4913,35 @@ describe Qt6 do
     table_widget.release
   end
 
+  it "supports label pixmaps and scaled contents" do
+    application = app
+    window = Qt6::Widget.new
+    label = Qt6::Label.new
+    pixmap = Qt6::QPixmap.new(24, 12)
+    pixmap.fill(Qt6::Color.new(80, 120, 160))
+
+    window.vbox do |column|
+      column << label
+    end
+
+    label.scaled_contents?.should be_false
+    label.pixmap = pixmap
+    label.scaled_contents = true
+
+    window.resize(80, 40)
+    window.show
+    application.process_events
+
+    label.scaled_contents?.should be_true
+
+    label.scaled_contents = false
+    label.scaled_contents?.should be_false
+    window.visible?.should be_true
+
+    window.release
+    pixmap.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
