@@ -5005,6 +5005,20 @@ describe Qt6 do
     table_widget.release
   end
 
+  it "supports theme icon lookup" do
+    application = app
+    button = Qt6::ToolButton.new
+    icon = Qt6::QIcon.from_theme("document-open")
+
+    button.icon = icon
+    application.process_events
+
+    button.icon.should be_a(Qt6::QIcon)
+    button.icon.null?.should eq(icon.null?)
+
+    button.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
