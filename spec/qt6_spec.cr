@@ -4983,6 +4983,28 @@ describe Qt6 do
     slider.release
   end
 
+  it "supports table widget item double-click callbacks" do
+    application = app
+    table_widget = Qt6::TableWidget.new
+    double_clicked_texts = [] of String
+
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+
+    item = Qt6::TableWidgetItem.new("Track 1")
+    table_widget.set_item(0, 0, item)
+
+    table_widget.on_item_double_clicked do |clicked_item|
+      double_clicked_texts << clicked_item.text
+    end
+
+    table_widget.item_double_clicked.emit(item)
+    application.process_events
+
+    double_clicked_texts.should eq(["Track 1"])
+    table_widget.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
