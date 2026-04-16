@@ -4873,6 +4873,21 @@ describe Qt6 do
     File.delete?(icon_path) if icon_path
   end
 
+  it "supports pixmap scaling with aspect ratio preservation" do
+    app
+    pixmap = Qt6::QPixmap.new(100, 300)
+    pixmap.fill(Qt6::Color.new(200, 80, 40))
+
+    scaled = pixmap.scaled(160, 160, keep_aspect_ratio: true, smooth: true)
+
+    scaled.null?.should be_false
+    scaled.height.should eq(160)
+    scaled.width.should eq(53)
+
+    pixmap.release
+    scaled.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
