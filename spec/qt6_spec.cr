@@ -4962,6 +4962,27 @@ describe Qt6 do
     label.release
   end
 
+  it "supports slider pressed and released callbacks" do
+    application = app
+    slider = Qt6::Slider.new
+    events = [] of String
+
+    slider.on_pressed do
+      events << "pressed"
+    end
+
+    slider.on_released do
+      events << "released"
+    end
+
+    slider.pressed.emit
+    slider.released.emit
+    application.process_events
+
+    events.should eq(["pressed", "released"])
+    slider.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
