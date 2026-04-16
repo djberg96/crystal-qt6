@@ -98,6 +98,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSlider>
+#include <QStyle>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QSizePolicy>
@@ -10642,6 +10643,28 @@ void qt6cr_table_widget_resize_rows_to_contents(qt6cr_handle_t handle) {
   if (table != nullptr) {
     table->resizeRowsToContents();
   }
+}
+
+namespace {
+class Qt6crSlider : public QSlider {
+public:
+  using QSlider::QSlider;
+
+protected:
+  void mousePressEvent(QMouseEvent *event) override {
+    if (event != nullptr && event->button() == Qt::LeftButton) {
+      const int pos = orientation() == Qt::Horizontal ? static_cast<int>(event->position().x()) : static_cast<int>(height() - event->position().y());
+      const int span = orientation() == Qt::Horizontal ? width() : height();
+
+      if (span > 0) {
+        const int value = QStyle::sliderValueFromPosition(minimum(), maximum(), pos, span, invertedAppearance());
+        setValue(value);
+      }
+    }
+
+    QSlider::mousePressEvent(event);
+  }
+};
 }
 
 qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation) {
