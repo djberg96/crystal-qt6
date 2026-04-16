@@ -4942,6 +4942,26 @@ describe Qt6 do
     pixmap.release
   end
 
+  it "supports queued application invocations" do
+    application = app
+    label = Qt6::Label.new("Waiting")
+    invoked = false
+
+    application.invoke_later do
+      invoked = true
+      label.text = "Updated"
+    end
+
+    invoked.should be_false
+    label.text.should eq("Waiting")
+
+    application.process_events
+
+    invoked.should be_true
+    label.text.should eq("Updated")
+    label.release
+  end
+
   it "builds a window with the helper DSL" do
     app
     window = Qt6.window("Helper Window", 420, 240) do |widget|
