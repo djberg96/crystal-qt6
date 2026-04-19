@@ -1,7 +1,9 @@
 module Qt6
   # Supported image formats for `QImage` creation.
   enum ImageFormat
-    ARGB32 = 0
-    RGB32 = 1
+    Invalid             = -1
+    ARGB32              =  0
+    RGB32               =  1
+    ARGB32Premultiplied =  2
   end
 end

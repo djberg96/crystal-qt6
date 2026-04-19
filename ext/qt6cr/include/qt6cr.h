@@ -320,7 +320,14 @@ qt6cr_handle_t qt6cr_qimage_create_from_raw_data(const unsigned char *data, int 
 void qt6cr_qimage_destroy(qt6cr_handle_t handle);
 int qt6cr_qimage_width(qt6cr_handle_t handle);
 int qt6cr_qimage_height(qt6cr_handle_t handle);
+int qt6cr_qimage_format(qt6cr_handle_t handle);
+int qt6cr_qimage_bytes_per_line(qt6cr_handle_t handle);
+int qt6cr_qimage_size_in_bytes(qt6cr_handle_t handle);
+qt6cr_byte_array_t qt6cr_qimage_const_bits(qt6cr_handle_t handle);
 bool qt6cr_qimage_is_null(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qimage_copy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qimage_copy_rect(qt6cr_handle_t handle, int x, int y, int width, int height);
+qt6cr_handle_t qt6cr_qimage_convert_to_format(qt6cr_handle_t handle, int format);
 void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color);
 bool qt6cr_qimage_load(qt6cr_handle_t handle, const char *path);
 bool qt6cr_qimage_load_from_data(qt6cr_handle_t handle, const unsigned char *data, int size, const char *format);

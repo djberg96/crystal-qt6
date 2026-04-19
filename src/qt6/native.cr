@@ -278,7 +278,14 @@ module Qt6
     fun qt6cr_qimage_destroy = qt6cr_qimage_destroy(handle : Handle)
     fun qt6cr_qimage_width = qt6cr_qimage_width(handle : Handle) : LibC::Int
     fun qt6cr_qimage_height = qt6cr_qimage_height(handle : Handle) : LibC::Int
+    fun qt6cr_qimage_format = qt6cr_qimage_format(handle : Handle) : LibC::Int
+    fun qt6cr_qimage_bytes_per_line = qt6cr_qimage_bytes_per_line(handle : Handle) : LibC::Int
+    fun qt6cr_qimage_size_in_bytes = qt6cr_qimage_size_in_bytes(handle : Handle) : LibC::Int
+    fun qt6cr_qimage_const_bits = qt6cr_qimage_const_bits(handle : Handle) : ByteArrayValue
     fun qt6cr_qimage_is_null = qt6cr_qimage_is_null(handle : Handle) : Bool
+    fun qt6cr_qimage_copy = qt6cr_qimage_copy(handle : Handle) : Handle
+    fun qt6cr_qimage_copy_rect = qt6cr_qimage_copy_rect(handle : Handle, x : LibC::Int, y : LibC::Int, width : LibC::Int, height : LibC::Int) : Handle
+    fun qt6cr_qimage_convert_to_format = qt6cr_qimage_convert_to_format(handle : Handle, format : LibC::Int) : Handle
     fun qt6cr_qimage_fill = qt6cr_qimage_fill(handle : Handle, color : ColorValue)
     fun qt6cr_qimage_load = qt6cr_qimage_load(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qimage_load_from_data = qt6cr_qimage_load_from_data(handle : Handle, data : UInt8*, size : LibC::Int, format : UInt8*) : Bool
