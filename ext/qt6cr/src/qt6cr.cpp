@@ -114,6 +114,7 @@
 #include <QTime>
 #include <QTimeEdit>
 #include <QGroupBox>
+#include <QtGlobal>
 #include <QSplashScreen>
 #include <QSvgGenerator>
 #include <QSvgRenderer>
@@ -1676,6 +1677,12 @@ QByteArray byte_array_from_data(const unsigned char *data, int size) {
 
 QImage::Format image_format_from_int(int format) {
   switch (format) {
+    case 5:
+      return QImage::Format_Alpha8;
+    case 4:
+      return QImage::Format_Grayscale8;
+    case 3:
+      return QImage::Format_RGB888;
     case 2:
       return QImage::Format_ARGB32_Premultiplied;
     case 1:
@@ -1694,6 +1701,12 @@ int image_format_to_int(QImage::Format format) {
       return 1;
     case QImage::Format_ARGB32_Premultiplied:
       return 2;
+    case QImage::Format_RGB888:
+      return 3;
+    case QImage::Format_Grayscale8:
+      return 4;
+    case QImage::Format_Alpha8:
+      return 5;
     default:
       return -1;
   }
@@ -3093,6 +3106,11 @@ int qt6cr_qimage_format(qt6cr_handle_t handle) {
   return image == nullptr ? -1 : image_format_to_int(image->format());
 }
 
+int qt6cr_qimage_depth(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? 0 : image->depth();
+}
+
 int qt6cr_qimage_bytes_per_line(qt6cr_handle_t handle) {
   auto *image = as_qimage(handle);
   return image == nullptr ? 0 : image->bytesPerLine();
@@ -3113,6 +3131,21 @@ qt6cr_byte_array_t qt6cr_qimage_const_bits(qt6cr_handle_t handle) {
   return to_byte_array_value(QByteArray(reinterpret_cast<const char *>(image->constBits()), static_cast<int>(image->sizeInBytes())));
 }
 
+bool qt6cr_qimage_has_alpha_channel(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image != nullptr && image->hasAlphaChannel();
+}
+
+bool qt6cr_qimage_all_gray(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image != nullptr && image->allGray();
+}
+
+bool qt6cr_qimage_is_grayscale(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image != nullptr && image->isGrayscale();
+}
+
 qt6cr_handle_t qt6cr_qimage_copy(qt6cr_handle_t handle) {
   auto *image = as_qimage(handle);
   return image == nullptr ? new QImage() : new QImage(image->copy());
@@ -3126,6 +3159,62 @@ qt6cr_handle_t qt6cr_qimage_copy_rect(qt6cr_handle_t handle, int x, int y, int w
 qt6cr_handle_t qt6cr_qimage_convert_to_format(qt6cr_handle_t handle, int format) {
   auto *image = as_qimage(handle);
   return image == nullptr ? new QImage() : new QImage(image->convertToFormat(image_format_from_int(format)));
+}
+
+qt6cr_handle_t qt6cr_qimage_scaled(qt6cr_handle_t handle, int width, int height, int aspect_ratio_mode, int transformation_mode) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->scaled(width, height, static_cast<Qt::AspectRatioMode>(aspect_ratio_mode), static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+qt6cr_handle_t qt6cr_qimage_scaled_to_width(qt6cr_handle_t handle, int width, int transformation_mode) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->scaledToWidth(width, static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+qt6cr_handle_t qt6cr_qimage_scaled_to_height(qt6cr_handle_t handle, int height, int transformation_mode) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->scaledToHeight(height, static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+qt6cr_handle_t qt6cr_qimage_mirrored(qt6cr_handle_t handle, bool horizontal, bool vertical) {
+  auto *image = as_qimage(handle);
+
+  if (image == nullptr) {
+    return new QImage();
+  }
+
+  Qt::Orientations orientations;
+  if (horizontal) {
+    orientations |= Qt::Horizontal;
+  }
+  if (vertical) {
+    orientations |= Qt::Vertical;
+  }
+  return new QImage(image->flipped(orientations));
+}
+
+qt6cr_handle_t qt6cr_qimage_rgb_swapped(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->rgbSwapped());
+}
+
+qt6cr_handle_t qt6cr_qimage_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform, int transformation_mode) {
+  auto *image = as_qimage(handle);
+  auto *matrix = as_qtransform(transform);
+
+  if (image == nullptr || matrix == nullptr) {
+    return new QImage();
+  }
+
+  return new QImage(image->transformed(*matrix, static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+void qt6cr_qimage_invert_pixels(qt6cr_handle_t handle, int mode) {
+  auto *image = as_qimage(handle);
+
+  if (image != nullptr) {
+    image->invertPixels(static_cast<QImage::InvertMode>(mode));
+  }
 }
 
 void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color) {
@@ -3303,9 +3392,45 @@ int qt6cr_qpixmap_height(qt6cr_handle_t handle) {
   return pixmap == nullptr ? 0 : pixmap->height();
 }
 
+int qt6cr_qpixmap_depth(qt6cr_handle_t handle) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? 0 : pixmap->depth();
+}
+
 bool qt6cr_qpixmap_is_null(qt6cr_handle_t handle) {
   auto *pixmap = as_qpixmap(handle);
   return pixmap == nullptr || pixmap->isNull();
+}
+
+bool qt6cr_qpixmap_has_alpha_channel(qt6cr_handle_t handle) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap != nullptr && pixmap->hasAlphaChannel();
+}
+
+qt6cr_handle_t qt6cr_qpixmap_scaled(qt6cr_handle_t handle, int width, int height, int aspect_ratio_mode, int transformation_mode) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? new QPixmap() : new QPixmap(pixmap->scaled(width, height, static_cast<Qt::AspectRatioMode>(aspect_ratio_mode), static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+qt6cr_handle_t qt6cr_qpixmap_scaled_to_width(qt6cr_handle_t handle, int width, int transformation_mode) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? new QPixmap() : new QPixmap(pixmap->scaledToWidth(width, static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+qt6cr_handle_t qt6cr_qpixmap_scaled_to_height(qt6cr_handle_t handle, int height, int transformation_mode) {
+  auto *pixmap = as_qpixmap(handle);
+  return pixmap == nullptr ? new QPixmap() : new QPixmap(pixmap->scaledToHeight(height, static_cast<Qt::TransformationMode>(transformation_mode)));
+}
+
+qt6cr_handle_t qt6cr_qpixmap_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform, int transformation_mode) {
+  auto *pixmap = as_qpixmap(handle);
+  auto *matrix = as_qtransform(transform);
+
+  if (pixmap == nullptr || matrix == nullptr) {
+    return new QPixmap();
+  }
+
+  return new QPixmap(pixmap->transformed(*matrix, static_cast<Qt::TransformationMode>(transformation_mode)));
 }
 
 void qt6cr_qpixmap_fill(qt6cr_handle_t handle, qt6cr_color_t color) {

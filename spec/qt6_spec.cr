@@ -900,6 +900,31 @@ describe Qt6 do
     premultiplied.format.should eq(Qt6::ImageFormat::ARGB32Premultiplied)
     premultiplied.bytes.size.should eq(premultiplied.size_in_bytes)
 
+    grayscale = raw_image.convert_to_format(Qt6::ImageFormat::Grayscale8)
+    grayscale.format.should eq(Qt6::ImageFormat::Grayscale8)
+    grayscale.grayscale?.should be_true
+    grayscale.depth.should eq(8)
+    raw_image.has_alpha_channel?.should be_true
+    raw_image.all_gray?.should be_false
+
+    scaled = raw_image.scaled(4, 8, Qt6::AspectRatioMode::Keep, Qt6::TransformationMode::Smooth)
+    scaled.size.should eq(Qt6::Size.new(4, 4))
+    raw_image.scaled_to_width(6).size.should eq(Qt6::Size.new(6, 6))
+    raw_image.scaled_to_height(8).size.should eq(Qt6::Size.new(8, 8))
+
+    mirrored_horizontal = raw_image.mirrored(horizontal: true, vertical: false)
+    mirrored_horizontal.pixel_color(0, 0).should eq(Qt6::Color.new(40, 50, 60, 255))
+    mirrored_vertical = raw_image.mirrored(horizontal: false, vertical: true)
+    mirrored_vertical.pixel_color(0, 0).should eq(Qt6::Color.new(70, 80, 90, 255))
+    raw_image.rgb_swapped.pixel_color(0, 0).should eq(Qt6::Color.new(30, 20, 10, 255))
+
+    inverted = raw_image.copy.invert_pixels
+    inverted.pixel_color(0, 0).should eq(Qt6::Color.new(245, 235, 225, 255))
+
+    image_scale = Qt6::QTransform.new.scale(2.0, 2.0)
+    transformed_image = raw_image.transformed(image_scale)
+    transformed_image.size.should eq(Qt6::Size.new(4, 4))
+
     image = Qt6::QImage.new(4, 4)
     image.fill(Qt6::Color.new(0, 0, 0, 0))
     image.set_pixel_color(1, 1, Qt6::Color.new(10, 20, 30))
@@ -923,7 +948,13 @@ describe Qt6 do
 
     pixmap_from_data = Qt6::QPixmap.from_data(encoded, "PNG")
     pixmap_from_data.null?.should be_false
+    pixmap_from_data.depth.should be > 0
+    pixmap_from_data.has_alpha_channel?.should be_true
     pixmap_from_data.to_image.pixel_color(2, 2).should eq(Qt6::Color.new(200, 150, 100, 255))
+    pixmap_from_data.scaled(8, 4, Qt6::AspectRatioMode::Ignore, Qt6::TransformationMode::Smooth).size.should eq(Qt6::Size.new(8, 4))
+    pixmap_from_data.scaled_to_width(8).size.should eq(Qt6::Size.new(8, 8))
+    pixmap_from_data.scaled_to_height(6).size.should eq(Qt6::Size.new(6, 6))
+    pixmap_from_data.transformed(image_scale).size.should eq(Qt6::Size.new(8, 8))
     pixmap_from_data.save_to_data("PNG").size.should be > 0
 
     implicit_buffer = Qt6::QBuffer.new
