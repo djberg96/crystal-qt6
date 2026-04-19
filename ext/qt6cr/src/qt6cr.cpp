@@ -6710,6 +6710,14 @@ void qt6cr_qpainter_path_destroy(qt6cr_handle_t handle) {
   delete as_qpainter_path(handle);
 }
 
+void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->clear();
+  }
+}
+
 void qt6cr_qpainter_path_move_to(qt6cr_handle_t handle, qt6cr_pointf_t point) {
   auto *path = as_qpainter_path(handle);
 
@@ -6767,6 +6775,24 @@ void qt6cr_qpainter_path_add_polygon(qt6cr_handle_t handle, qt6cr_handle_t polyg
   }
 }
 
+void qt6cr_qpainter_path_add_path(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *path = as_qpainter_path(handle);
+  auto *source = as_qpainter_path(other);
+
+  if (path != nullptr && source != nullptr) {
+    path->addPath(*source);
+  }
+}
+
+void qt6cr_qpainter_path_connect_path(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *path = as_qpainter_path(handle);
+  auto *source = as_qpainter_path(other);
+
+  if (path != nullptr && source != nullptr) {
+    path->connectPath(*source);
+  }
+}
+
 void qt6cr_qpainter_path_close_subpath(qt6cr_handle_t handle) {
   auto *path = as_qpainter_path(handle);
 
@@ -6775,9 +6801,35 @@ void qt6cr_qpainter_path_close_subpath(qt6cr_handle_t handle) {
   }
 }
 
+qt6cr_pointf_t qt6cr_qpainter_path_current_position(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(path->currentPosition());
+}
+
+int qt6cr_qpainter_path_element_count(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? 0 : path->elementCount();
+}
+
+qt6cr_painter_path_element_t qt6cr_qpainter_path_element_at(qt6cr_handle_t handle, int index) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path == nullptr || index < 0 || index >= path->elementCount()) {
+    return qt6cr_painter_path_element_t{0.0, 0.0, -1};
+  }
+
+  const auto element = path->elementAt(index);
+  return qt6cr_painter_path_element_t{element.x, element.y, static_cast<int>(element.type)};
+}
+
 qt6cr_rectf_t qt6cr_qpainter_path_bounding_rect(qt6cr_handle_t handle) {
   auto *path = as_qpainter_path(handle);
   return path == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(path->boundingRect());
+}
+
+qt6cr_rectf_t qt6cr_qpainter_path_control_point_rect(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(path->controlPointRect());
 }
 
 qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform) {
@@ -6786,9 +6838,29 @@ qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_hand
   return (path == nullptr || matrix == nullptr) ? nullptr : new QPainterPath(matrix->map(*path));
 }
 
+qt6cr_handle_t qt6cr_qpainter_path_translated(qt6cr_handle_t handle, double dx, double dy) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? nullptr : new QPainterPath(path->translated(dx, dy));
+}
+
+qt6cr_handle_t qt6cr_qpainter_path_simplified(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? nullptr : new QPainterPath(path->simplified());
+}
+
 bool qt6cr_qpainter_path_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
   auto *path = as_qpainter_path(handle);
   return path != nullptr && path->contains(from_pointf(point));
+}
+
+bool qt6cr_qpainter_path_contains_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *path = as_qpainter_path(handle);
+  return path != nullptr && path->contains(from_rectf(rect));
+}
+
+bool qt6cr_qpainter_path_intersects_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *path = as_qpainter_path(handle);
+  return path != nullptr && path->intersects(from_rectf(rect));
 }
 
 bool qt6cr_qpainter_path_is_empty(qt6cr_handle_t handle) {

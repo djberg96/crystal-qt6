@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- Deepened `QPainterPath` editing and inspection with element access, current position, control-point bounds, path clearing, path composition, rectangle hit testing, translation, and simplification helpers.
+
 ## [0.5.0] - 2026-04-19
 
 ### Added
