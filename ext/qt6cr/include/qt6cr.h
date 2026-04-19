@@ -1035,6 +1035,42 @@ void qt6cr_action_group_add_action(qt6cr_handle_t handle, qt6cr_handle_t action)
 void qt6cr_action_group_set_exclusive(qt6cr_handle_t handle, bool value);
 bool qt6cr_action_group_is_exclusive(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_undo_command_create(const char *text);
+void qt6cr_undo_command_destroy(qt6cr_handle_t handle);
+void qt6cr_undo_command_set_callbacks(qt6cr_handle_t handle, qt6cr_void_callback_t redo_callback, void *redo_userdata, qt6cr_void_callback_t undo_callback, void *undo_userdata, qt6cr_void_callback_t destroy_callback, void *destroy_userdata);
+char *qt6cr_undo_command_text(qt6cr_handle_t handle);
+void qt6cr_undo_command_set_text(qt6cr_handle_t handle, const char *text);
+
+qt6cr_handle_t qt6cr_undo_stack_create(qt6cr_handle_t parent);
+void qt6cr_undo_stack_push(qt6cr_handle_t handle, qt6cr_handle_t command);
+void qt6cr_undo_stack_clear(qt6cr_handle_t handle);
+void qt6cr_undo_stack_undo(qt6cr_handle_t handle);
+void qt6cr_undo_stack_redo(qt6cr_handle_t handle);
+bool qt6cr_undo_stack_can_undo(qt6cr_handle_t handle);
+bool qt6cr_undo_stack_can_redo(qt6cr_handle_t handle);
+bool qt6cr_undo_stack_is_clean(qt6cr_handle_t handle);
+void qt6cr_undo_stack_set_clean(qt6cr_handle_t handle);
+void qt6cr_undo_stack_reset_clean(qt6cr_handle_t handle);
+int qt6cr_undo_stack_count(qt6cr_handle_t handle);
+int qt6cr_undo_stack_index(qt6cr_handle_t handle);
+int qt6cr_undo_stack_clean_index(qt6cr_handle_t handle);
+int qt6cr_undo_stack_undo_limit(qt6cr_handle_t handle);
+void qt6cr_undo_stack_set_undo_limit(qt6cr_handle_t handle, int value);
+bool qt6cr_undo_stack_is_active(qt6cr_handle_t handle);
+void qt6cr_undo_stack_set_active(qt6cr_handle_t handle, bool value);
+char *qt6cr_undo_stack_undo_text(qt6cr_handle_t handle);
+char *qt6cr_undo_stack_redo_text(qt6cr_handle_t handle);
+void qt6cr_undo_stack_begin_macro(qt6cr_handle_t handle, const char *text);
+void qt6cr_undo_stack_end_macro(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_undo_stack_create_undo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix);
+qt6cr_handle_t qt6cr_undo_stack_create_redo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix);
+void qt6cr_undo_stack_on_can_undo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_undo_stack_on_can_redo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_undo_stack_on_clean_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_undo_stack_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_undo_stack_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+void qt6cr_undo_stack_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title);
 void qt6cr_menu_bar_clear(qt6cr_handle_t handle);
 

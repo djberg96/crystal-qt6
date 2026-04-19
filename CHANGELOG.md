@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - Deepened `QPainterPath` editing and inspection with element access, current position, control-point bounds, path clearing, path composition, rectangle hit testing, translation, and simplification helpers.
 - Added generic `QWidget` attribute helpers with a `WidgetAttribute` enum for toggling and testing Qt widget-level flags.
+- Added `QUndoStack` and Crystal-backed `QUndoCommand` wrappers for application-level undo/redo history, clean-state tracking, stack signals, macros, and undo/redo actions.
 
 ## [0.5.0] - 2026-04-19
 

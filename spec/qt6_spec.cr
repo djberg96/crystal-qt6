@@ -2488,6 +2488,91 @@ describe Qt6 do
     destroyed.should eq(1)
   end
 
+  it "supports standalone undo stacks with Crystal-backed commands" do
+    app
+    stack = Qt6::UndoStack.new
+    layers = [] of String
+    can_undo_values = [] of Bool
+    can_redo_values = [] of Bool
+    clean_values = [] of Bool
+    index_values = [] of Int32
+    undo_texts = [] of String
+    redo_texts = [] of String
+
+    stack.on_can_undo_changed { |value| can_undo_values << value }
+    stack.on_can_redo_changed { |value| can_redo_values << value }
+    stack.on_clean_changed { |value| clean_values << value }
+    stack.on_index_changed { |value| index_values << value }
+    stack.on_undo_text_changed { |value| undo_texts << value }
+    stack.on_redo_text_changed { |value| redo_texts << value }
+
+    command = Qt6::UndoCommand.new(
+      "Add roads",
+      redo: -> { layers << "roads" },
+      undo: -> { layers.pop }
+    )
+    command.text.should eq("Add roads")
+
+    stack.clean?.should be_true
+    stack.push(command)
+    layers.should eq(["roads"])
+    command.destroyed?.should be_false
+    stack.count.should eq(1)
+    stack.index.should eq(1)
+    stack.undo_text.should eq("Add roads")
+    stack.redo_text.should eq("")
+    stack.can_undo?.should be_true
+    stack.can_redo?.should be_false
+
+    undo_action = stack.create_undo_action(prefix: "Undo")
+    redo_action = stack.create_redo_action(prefix: "Redo")
+
+    undo_action.enabled?.should be_true
+    undo_action.trigger
+    layers.should eq([] of String)
+    stack.can_redo?.should be_true
+    stack.redo_text.should eq("Add roads")
+
+    redo_action.enabled?.should be_true
+    redo_action.trigger
+    layers.should eq(["roads"])
+    stack.can_undo?.should be_true
+
+    stack.set_clean
+    stack.clean?.should be_true
+    stack.clean_index.should eq(stack.index)
+
+    stack.begin_macro("Add forces")
+    stack.push(Qt6::UndoCommand.new("Add infantry", redo: -> { layers << "infantry" }, undo: -> { layers.pop }))
+    stack.push(Qt6::UndoCommand.new("Add armor", redo: -> { layers << "armor" }, undo: -> { layers.pop }))
+    stack.end_macro
+
+    layers.should eq(["roads", "infantry", "armor"])
+    stack.count.should eq(2)
+    stack.undo_text.should eq("Add forces")
+    stack.clean?.should be_false
+
+    stack.undo
+    layers.should eq(["roads"])
+    stack.clean?.should be_true
+
+    stack.redo
+    layers.should eq(["roads", "infantry", "armor"])
+    stack.clean?.should be_false
+
+    can_undo_values.includes?(true).should be_true
+    can_redo_values.includes?(true).should be_true
+    clean_values.includes?(false).should be_true
+    index_values.includes?(1).should be_true
+    undo_texts.includes?("Add roads").should be_true
+    redo_texts.includes?("Add roads").should be_true
+
+    stack.clear
+    stack.count.should eq(0)
+    command.destroyed?.should be_true
+    stack.release
+  end
+
   it "keeps parent-owned QObject wrappers alive until Qt destroys them" do
     app
     content_destroyed = 0

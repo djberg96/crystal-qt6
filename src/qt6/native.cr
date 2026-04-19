@@ -1004,6 +1004,42 @@ module Qt6
     fun qt6cr_action_group_set_exclusive = qt6cr_action_group_set_exclusive(handle : Handle, value : Bool)
     fun qt6cr_action_group_is_exclusive = qt6cr_action_group_is_exclusive(handle : Handle) : Bool
 
+    fun qt6cr_undo_command_create = qt6cr_undo_command_create(text : UInt8*) : Handle
+    fun qt6cr_undo_command_destroy = qt6cr_undo_command_destroy(handle : Handle)
+    fun qt6cr_undo_command_set_callbacks = qt6cr_undo_command_set_callbacks(handle : Handle, redo_callback : (Handle ->), redo_userdata : Handle, undo_callback : (Handle ->), undo_userdata : Handle, destroy_callback : (Handle ->), destroy_userdata : Handle)
+    fun qt6cr_undo_command_text = qt6cr_undo_command_text(handle : Handle) : UInt8*
+    fun qt6cr_undo_command_set_text = qt6cr_undo_command_set_text(handle : Handle, text : UInt8*)
+
+    fun qt6cr_undo_stack_create = qt6cr_undo_stack_create(parent : Handle) : Handle
+    fun qt6cr_undo_stack_push = qt6cr_undo_stack_push(handle : Handle, command : Handle)
+    fun qt6cr_undo_stack_clear = qt6cr_undo_stack_clear(handle : Handle)
+    fun qt6cr_undo_stack_undo = qt6cr_undo_stack_undo(handle : Handle)
+    fun qt6cr_undo_stack_redo = qt6cr_undo_stack_redo(handle : Handle)
+    fun qt6cr_undo_stack_can_undo = qt6cr_undo_stack_can_undo(handle : Handle) : Bool
+    fun qt6cr_undo_stack_can_redo = qt6cr_undo_stack_can_redo(handle : Handle) : Bool
+    fun qt6cr_undo_stack_is_clean = qt6cr_undo_stack_is_clean(handle : Handle) : Bool
+    fun qt6cr_undo_stack_set_clean = qt6cr_undo_stack_set_clean(handle : Handle)
+    fun qt6cr_undo_stack_reset_clean = qt6cr_undo_stack_reset_clean(handle : Handle)
+    fun qt6cr_undo_stack_count = qt6cr_undo_stack_count(handle : Handle) : LibC::Int
+    fun qt6cr_undo_stack_index = qt6cr_undo_stack_index(handle : Handle) : LibC::Int
+    fun qt6cr_undo_stack_clean_index = qt6cr_undo_stack_clean_index(handle : Handle) : LibC::Int
+    fun qt6cr_undo_stack_undo_limit = qt6cr_undo_stack_undo_limit(handle : Handle) : LibC::Int
+    fun qt6cr_undo_stack_set_undo_limit = qt6cr_undo_stack_set_undo_limit(handle : Handle, value : LibC::Int)
+    fun qt6cr_undo_stack_is_active = qt6cr_undo_stack_is_active(handle : Handle) : Bool
+    fun qt6cr_undo_stack_set_active = qt6cr_undo_stack_set_active(handle : Handle, value : Bool)
+    fun qt6cr_undo_stack_undo_text = qt6cr_undo_stack_undo_text(handle : Handle) : UInt8*
+    fun qt6cr_undo_stack_redo_text = qt6cr_undo_stack_redo_text(handle : Handle) : UInt8*
+    fun qt6cr_undo_stack_begin_macro = qt6cr_undo_stack_begin_macro(handle : Handle, text : UInt8*)
+    fun qt6cr_undo_stack_end_macro = qt6cr_undo_stack_end_macro(handle : Handle)
+    fun qt6cr_undo_stack_create_undo_action = qt6cr_undo_stack_create_undo_action(handle : Handle, parent : Handle, prefix : UInt8*) : Handle
+    fun qt6cr_undo_stack_create_redo_action = qt6cr_undo_stack_create_redo_action(handle : Handle, parent : Handle, prefix : UInt8*) : Handle
+    fun qt6cr_undo_stack_on_can_undo_changed = qt6cr_undo_stack_on_can_undo_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_undo_stack_on_can_redo_changed = qt6cr_undo_stack_on_can_redo_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_undo_stack_on_clean_changed = qt6cr_undo_stack_on_clean_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_undo_stack_on_index_changed = qt6cr_undo_stack_on_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_undo_stack_on_undo_text_changed = qt6cr_undo_stack_on_undo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+    fun qt6cr_undo_stack_on_redo_text_changed = qt6cr_undo_stack_on_redo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+
     fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
     fun qt6cr_menu_bar_clear = qt6cr_menu_bar_clear(handle : Handle)
 
