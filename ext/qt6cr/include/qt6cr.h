@@ -246,6 +246,8 @@ int qt6cr_widget_cursor_shape(qt6cr_handle_t handle);
 void qt6cr_widget_set_cursor_shape(qt6cr_handle_t handle, int value);
 bool qt6cr_widget_transparent_for_mouse_events(qt6cr_handle_t handle);
 void qt6cr_widget_set_transparent_for_mouse_events(qt6cr_handle_t handle, bool value);
+bool qt6cr_widget_test_attribute(qt6cr_handle_t handle, int attribute);
+void qt6cr_widget_set_attribute(qt6cr_handle_t handle, int attribute, bool value);
 
 qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent);
 void qt6cr_main_window_set_central_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

@@ -323,6 +323,22 @@ module Qt6
       value
     end
 
+    # Returns `true` when the Qt widget attribute is enabled.
+    def attribute?(attribute : WidgetAttribute) : Bool
+      LibQt6.qt6cr_widget_test_attribute(@to_unsafe, attribute.value)
+    end
+
+    # Enables or disables a Qt widget attribute and returns `self`.
+    def set_attribute(attribute : WidgetAttribute, value : Bool = true) : self
+      LibQt6.qt6cr_widget_set_attribute(@to_unsafe, attribute.value, value)
+      self
+    end
+
+    # Clears a Qt widget attribute and returns `self`.
+    def clear_attribute(attribute : WidgetAttribute) : self
+      set_attribute(attribute, false)
+    end
+
     # Creates a `VBoxLayout`, yields it for configuration, and returns it.
     def vbox(&block : VBoxLayout ->)
       layout = VBoxLayout.new(self)
