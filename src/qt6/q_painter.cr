@@ -79,6 +79,11 @@ module Qt6
       LibQt6.qt6cr_qpainter_is_active(to_unsafe)
     end
 
+    # Ends painting on the current target.
+    def end : Bool
+      LibQt6.qt6cr_qpainter_end(to_unsafe)
+    end
+
     # Enables or disables antialiasing.
     def antialiasing=(value : Bool) : Bool
       LibQt6.qt6cr_qpainter_set_antialiasing(to_unsafe, value)
@@ -145,6 +150,12 @@ module Qt6
       self
     end
 
+    # Applies a clockwise rotation in degrees to the current transform.
+    def rotate(angle : Number) : self
+      LibQt6.qt6cr_qpainter_rotate(to_unsafe, angle.to_f64)
+      self
+    end
+
     # Saves the current painter state.
     def save : self
       LibQt6.qt6cr_qpainter_save(to_unsafe)
@@ -192,6 +203,18 @@ module Qt6
       path
     end
 
+    # Replaces the current clip with the given rectangle.
+    def clip_rect=(rect : RectF) : RectF
+      LibQt6.qt6cr_qpainter_set_clip_rect(to_unsafe, rect.to_native)
+      rect
+    end
+
+    # Replaces the current clip with the given rectangle.
+    def set_clip_rect(rect : RectF) : self
+      self.clip_rect = rect
+      self
+    end
+
     # Draws a line between two points.
     def draw_line(from_point : PointF, to_point : PointF) : self
       LibQt6.qt6cr_qpainter_draw_line(to_unsafe, from_point.to_native, to_point.to_native)
@@ -207,6 +230,12 @@ module Qt6
     # Fills a rectangle with a solid color.
     def fill_rect(rect : RectF, color : Color) : self
       LibQt6.qt6cr_qpainter_fill_rect(to_unsafe, rect.to_native, color.to_native)
+      self
+    end
+
+    # Fills a rectangle with a brush.
+    def fill_rect(rect : RectF, brush : QBrush) : self
+      LibQt6.qt6cr_qpainter_fill_rect_brush(to_unsafe, rect.to_native, brush.to_unsafe)
       self
     end
 
@@ -246,6 +275,18 @@ module Qt6
       self
     end
 
+    # Draws an image scaled into the given target rectangle.
+    def draw_image(target : RectF, image : QImage) : self
+      LibQt6.qt6cr_qpainter_draw_image_rect(to_unsafe, target.to_native, image.to_unsafe)
+      self
+    end
+
+    # Draws a source rectangle from an image scaled into the target rectangle.
+    def draw_image(target : RectF, image : QImage, source : RectF) : self
+      LibQt6.qt6cr_qpainter_draw_image_rect_source(to_unsafe, target.to_native, image.to_unsafe, source.to_native)
+      self
+    end
+
     # Draws a pixmap with its top-left corner at the given position.
     def draw_pixmap(position : PointF, pixmap : QPixmap) : self
       LibQt6.qt6cr_qpainter_draw_pixmap(to_unsafe, position.to_native, pixmap.to_unsafe)
@@ -255,6 +296,24 @@ module Qt6
     # Draws a pixmap with its top-left corner at the given coordinates.
     def draw_pixmap(x : Number, y : Number, pixmap : QPixmap) : self
       LibQt6.qt6cr_qpainter_draw_pixmap_xy(to_unsafe, x.to_f64, y.to_f64, pixmap.to_unsafe)
+      self
+    end
+
+    # Draws a pixmap scaled into the given target rectangle.
+    def draw_pixmap(target : RectF, pixmap : QPixmap) : self
+      LibQt6.qt6cr_qpainter_draw_pixmap_rect(to_unsafe, target.to_native, pixmap.to_unsafe)
+      self
+    end
+
+    # Draws a source rectangle from a pixmap scaled into the target rectangle.
+    def draw_pixmap(target : RectF, pixmap : QPixmap, source : RectF) : self
+      LibQt6.qt6cr_qpainter_draw_pixmap_rect_source(to_unsafe, target.to_native, pixmap.to_unsafe, source.to_native)
+      self
+    end
+
+    # Draws a single point.
+    def draw_point(point : PointF) : self
+      LibQt6.qt6cr_qpainter_draw_point(to_unsafe, point.to_native)
       self
     end
 

@@ -711,6 +711,46 @@ describe Qt6 do
     faded.alpha.should eq(127)
     canvas.pixel_color(0, 8).should eq(Qt6::Color.new(30, 60, 220, 255))
     canvas.pixel_color(10, 2).should eq(Qt6::Color.new(70, 170, 240, 255))
+
+    deep_source = Qt6::QImage.new(4, 4)
+    deep_source.fill(Qt6::Color.new(0, 0, 0, 0))
+    deep_source.set_pixel_color(2, 2, Qt6::Color.new(240, 30, 30))
+    deep_pixmap = Qt6::QPixmap.from_image(deep_source)
+    deep_canvas = Qt6::QImage.new(12, 12)
+    deep_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    painter = Qt6::QPainter.new(deep_canvas)
+    painter.active?.should be_true
+    painter.antialiasing = false
+    painter.draw_image(
+      Qt6::RectF.new(0.0, 0.0, 4.0, 4.0),
+      deep_source,
+      Qt6::RectF.new(2.0, 2.0, 1.0, 1.0)
+    )
+    painter.draw_pixmap(
+      Qt6::RectF.new(4.0, 0.0, 4.0, 4.0),
+      deep_pixmap,
+      Qt6::RectF.new(2.0, 2.0, 1.0, 1.0)
+    )
+    painter.clip_rect = Qt6::RectF.new(0.0, 4.0, 2.0, 2.0)
+    painter.fill_rect(Qt6::RectF.new(0.0, 4.0, 4.0, 4.0), Qt6::QBrush.new(Qt6::Color.new(30, 220, 90)))
+    painter.clipping = false
+    painter.save
+    painter.translate(12, 12)
+    painter.rotate(180)
+    painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 2.0, 2.0), Qt6::Color.new(80, 40, 220))
+    painter.restore
+    painter.draw_point(Qt6::PointF.new(8.0, 8.0))
+    painter.end.should be_true
+    painter.active?.should be_false
+    painter.release
+
+    deep_canvas.pixel_color(0, 0).should eq(Qt6::Color.new(240, 30, 30, 255))
+    deep_canvas.pixel_color(4, 0).should eq(Qt6::Color.new(240, 30, 30, 255))
+    deep_canvas.pixel_color(1, 5).should eq(Qt6::Color.new(30, 220, 90, 255))
+    deep_canvas.pixel_color(3, 5).should eq(Qt6::Color.new(0, 0, 0, 0))
+    deep_canvas.pixel_color(10, 10).should eq(Qt6::Color.new(80, 40, 220, 255))
+    deep_canvas.pixel_color(8, 8).should eq(Qt6::Color.new(0, 0, 0, 255))
   end
 
   it "supports gradients and advanced pen styling" do
