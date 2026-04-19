@@ -3920,6 +3920,22 @@ describe Qt6 do
     application.process_events
     window.visible?.should be_true
 
+    window.visible = false
+    application.process_events
+    window.visible?.should be_false
+
+    window.visible = true
+    application.process_events
+    window.visible?.should be_true
+
+    window.hide
+    application.process_events
+    window.visible?.should be_false
+
+    window.show
+    application.process_events
+    window.visible?.should be_true
+
     window.close
     application.process_events
     window.visible?.should be_false
@@ -3937,16 +3953,26 @@ describe Qt6 do
     label.minimum_height = 32
     label.maximum_width = 360
     label.maximum_height = 120
+    label.set_minimum_size(140, 40)
+    label.set_maximum_size(420, 160)
+    label.mouse_tracking = true
+    label.cursor_shape = Qt6::CursorShape::PointingHand
+    label.transparent_for_mouse_events = true
     label.move(14, 18)
     label.adjust_size
     line_edit.placeholder_text = "Enter a layer name"
 
     label.tool_tip.should eq("Shared widget affordances")
     label.word_wrap?.should be_true
-    label.minimum_width.should eq(120)
-    label.minimum_height.should eq(32)
-    label.maximum_width.should eq(360)
-    label.maximum_height.should eq(120)
+    label.minimum_size.should eq(Qt6::Size.new(140, 40))
+    label.minimum_width.should eq(140)
+    label.minimum_height.should eq(40)
+    label.maximum_size.should eq(Qt6::Size.new(420, 160))
+    label.maximum_width.should eq(420)
+    label.maximum_height.should eq(160)
+    label.mouse_tracking?.should be_true
+    label.cursor_shape.should eq(Qt6::CursorShape::PointingHand)
+    label.transparent_for_mouse_events?.should be_true
     label.size.width.should be > 0
     label.size.height.should be > 0
     line_edit.placeholder_text.should eq("Enter a layer name")
