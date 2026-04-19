@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - Deeper `QPainter` coverage for explicit paint-device shutdown, rotation transforms, clip rectangles, brush-backed rectangle fills, point drawing, and target/source rectangle overloads for image and pixmap blits.
 - Expanded `EventWidget` callbacks with mouse double-click, key release, pointer enter/leave, and focus in/out hooks plus matching synthetic event helpers for tests.
+- Added raw `QImage` data operations for copied byte-buffer construction, raw byte readback, row/byte-size metadata, image copying, rectangular copies, and format conversion.
 
 ## [0.4.0] - 2026-04-14
 

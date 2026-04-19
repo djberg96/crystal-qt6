@@ -1646,6 +1646,19 @@ QImage::Format image_format_from_int(int format) {
   }
 }
 
+int image_format_to_int(QImage::Format format) {
+  switch (format) {
+    case QImage::Format_ARGB32:
+      return 0;
+    case QImage::Format_RGB32:
+      return 1;
+    case QImage::Format_ARGB32_Premultiplied:
+      return 2;
+    default:
+      return -1;
+  }
+}
+
 void send_mouse_event(QWidget *widget, QEvent::Type type, qt6cr_pointf_t position, int button, int buttons, int modifiers) {
   if (widget == nullptr) {
     return;
@@ -3020,6 +3033,46 @@ int qt6cr_qimage_height(qt6cr_handle_t handle) {
 bool qt6cr_qimage_is_null(qt6cr_handle_t handle) {
   auto *image = as_qimage(handle);
   return image == nullptr || image->isNull();
+}
+
+int qt6cr_qimage_format(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? -1 : image_format_to_int(image->format());
+}
+
+int qt6cr_qimage_bytes_per_line(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? 0 : image->bytesPerLine();
+}
+
+int qt6cr_qimage_size_in_bytes(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? 0 : static_cast<int>(image->sizeInBytes());
+}
+
+qt6cr_byte_array_t qt6cr_qimage_const_bits(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+
+  if (image == nullptr || image->constBits() == nullptr || image->sizeInBytes() <= 0) {
+    return qt6cr_byte_array_t{nullptr, 0};
+  }
+
+  return to_byte_array_value(QByteArray(reinterpret_cast<const char *>(image->constBits()), static_cast<int>(image->sizeInBytes())));
+}
+
+qt6cr_handle_t qt6cr_qimage_copy(qt6cr_handle_t handle) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->copy());
+}
+
+qt6cr_handle_t qt6cr_qimage_copy_rect(qt6cr_handle_t handle, int x, int y, int width, int height) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->copy(x, y, width, height));
+}
+
+qt6cr_handle_t qt6cr_qimage_convert_to_format(qt6cr_handle_t handle, int format) {
+  auto *image = as_qimage(handle);
+  return image == nullptr ? new QImage() : new QImage(image->convertToFormat(image_format_from_int(format)));
 }
 
 void qt6cr_qimage_fill(qt6cr_handle_t handle, qt6cr_color_t color) {

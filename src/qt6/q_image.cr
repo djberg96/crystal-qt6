@@ -11,6 +11,11 @@ module Qt6
       super(LibQt6.qt6cr_qimage_create(width, height, format.value))
     end
 
+    # Creates an image by copying raw pixel bytes.
+    def initialize(data : Bytes, width : Int, height : Int, bytes_per_line : Int, format : ImageFormat = ImageFormat::ARGB32)
+      super(LibQt6.qt6cr_qimage_create_from_raw_data(data.to_unsafe, data.size, width, height, bytes_per_line, format.value))
+    end
+
     # Loads an image from disk.
     def initialize(path : String)
       super(LibQt6.qt6cr_qimage_create_from_file(path.to_unsafe))
@@ -26,6 +31,11 @@ module Qt6
       image = new(0, 0)
       image.load(data, format)
       image
+    end
+
+    # Creates an image by copying raw pixel bytes.
+    def self.from_raw_data(data : Bytes, width : Int, height : Int, bytes_per_line : Int, format : ImageFormat = ImageFormat::ARGB32) : self
+      new(data, width, height, bytes_per_line, format)
     end
 
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
@@ -47,6 +57,26 @@ module Qt6
       Size.new(width, height)
     end
 
+    # Returns the pixel format for formats known by this shard.
+    def format : ImageFormat
+      ImageFormat.from_value(LibQt6.qt6cr_qimage_format(to_unsafe))
+    end
+
+    # Returns the bytes occupied by each image row, including padding.
+    def bytes_per_line : Int32
+      LibQt6.qt6cr_qimage_bytes_per_line(to_unsafe)
+    end
+
+    # Returns the number of bytes occupied by the image data.
+    def size_in_bytes : Int32
+      LibQt6.qt6cr_qimage_size_in_bytes(to_unsafe)
+    end
+
+    # Returns a copy of the image's raw pixel bytes.
+    def bytes : Bytes
+      Qt6.copy_and_release_bytes(LibQt6.qt6cr_qimage_const_bits(to_unsafe))
+    end
+
     # Returns the image bounds in pixels.
     def rect : Rect
       Rect.new(0, 0, width, height)
@@ -55,6 +85,26 @@ module Qt6
     # Returns `true` if the image does not contain valid pixel data.
     def null? : Bool
       LibQt6.qt6cr_qimage_is_null(to_unsafe)
+    end
+
+    # Returns a deep copy of the image.
+    def copy : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_copy(to_unsafe), true)
+    end
+
+    # Returns a deep copy of a rectangular region.
+    def copy(rect : Rect) : QImage
+      copy(rect.x, rect.y, rect.width, rect.height)
+    end
+
+    # Returns a deep copy of a rectangular region.
+    def copy(x : Int, y : Int, width : Int, height : Int) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_copy_rect(to_unsafe, x, y, width, height), true)
+    end
+
+    # Returns a converted copy of the image.
+    def convert_to_format(format : ImageFormat) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_convert_to_format(to_unsafe, format.value), true)
     end
 
     # Fills the entire image with a color.

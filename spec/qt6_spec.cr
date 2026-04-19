@@ -829,6 +829,35 @@ describe Qt6 do
     raw.clear
     raw.empty?.should be_true
 
+    raw_pixels = Bytes[
+      30_u8, 20_u8, 10_u8, 255_u8,
+      60_u8, 50_u8, 40_u8, 255_u8,
+      90_u8, 80_u8, 70_u8, 255_u8,
+      120_u8, 110_u8, 100_u8, 255_u8,
+    ]
+    raw_image = Qt6::QImage.from_raw_data(raw_pixels, 2, 2, 8, Qt6::ImageFormat::ARGB32)
+    raw_image.null?.should be_false
+    raw_image.format.should eq(Qt6::ImageFormat::ARGB32)
+    raw_image.bytes_per_line.should eq(8)
+    raw_image.size_in_bytes.should eq(16)
+    raw_image.bytes.should eq(raw_pixels)
+    raw_image.pixel_color(0, 0).should eq(Qt6::Color.new(10, 20, 30, 255))
+    raw_image.pixel_color(1, 1).should eq(Qt6::Color.new(100, 110, 120, 255))
+
+    raw_copy = raw_image.copy
+    raw_copy.set_pixel_color(0, 0, Qt6::Color.new(200, 10, 20, 255))
+    raw_image.pixel_color(0, 0).should eq(Qt6::Color.new(10, 20, 30, 255))
+    raw_copy.pixel_color(0, 0).should eq(Qt6::Color.new(200, 10, 20, 255))
+
+    raw_region = raw_image.copy(Qt6::Rect.new(1, 0, 1, 2))
+    raw_region.size.should eq(Qt6::Size.new(1, 2))
+    raw_region.pixel_color(0, 0).should eq(Qt6::Color.new(40, 50, 60, 255))
+    raw_region.pixel_color(0, 1).should eq(Qt6::Color.new(100, 110, 120, 255))
+
+    premultiplied = raw_image.convert_to_format(Qt6::ImageFormat::ARGB32Premultiplied)
+    premultiplied.format.should eq(Qt6::ImageFormat::ARGB32Premultiplied)
+    premultiplied.bytes.size.should eq(premultiplied.size_in_bytes)
+
     image = Qt6::QImage.new(4, 4)
     image.fill(Qt6::Color.new(0, 0, 0, 0))
     image.set_pixel_color(1, 1, Qt6::Color.new(10, 20, 30))
