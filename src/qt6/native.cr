@@ -33,6 +33,12 @@ module Qt6
       height : Float64
     end
 
+    struct PainterPathElementValue
+      x : Float64
+      y : Float64
+      type : LibC::Int
+    end
+
     struct MouseEventValue
       position : PointFValue
       button : LibC::Int
@@ -862,6 +868,7 @@ module Qt6
 
     fun qt6cr_qpainter_path_create = qt6cr_qpainter_path_create : Handle
     fun qt6cr_qpainter_path_destroy = qt6cr_qpainter_path_destroy(handle : Handle)
+    fun qt6cr_qpainter_path_clear = qt6cr_qpainter_path_clear(handle : Handle)
     fun qt6cr_qpainter_path_move_to = qt6cr_qpainter_path_move_to(handle : Handle, point : PointFValue)
     fun qt6cr_qpainter_path_line_to = qt6cr_qpainter_path_line_to(handle : Handle, point : PointFValue)
     fun qt6cr_qpainter_path_quad_to = qt6cr_qpainter_path_quad_to(handle : Handle, control_point : PointFValue, end_point : PointFValue)
@@ -869,10 +876,20 @@ module Qt6
     fun qt6cr_qpainter_path_add_rect = qt6cr_qpainter_path_add_rect(handle : Handle, rect : RectFValue)
     fun qt6cr_qpainter_path_add_ellipse = qt6cr_qpainter_path_add_ellipse(handle : Handle, rect : RectFValue)
     fun qt6cr_qpainter_path_add_polygon = qt6cr_qpainter_path_add_polygon(handle : Handle, polygon : Handle)
+    fun qt6cr_qpainter_path_add_path = qt6cr_qpainter_path_add_path(handle : Handle, other : Handle)
+    fun qt6cr_qpainter_path_connect_path = qt6cr_qpainter_path_connect_path(handle : Handle, other : Handle)
     fun qt6cr_qpainter_path_close_subpath = qt6cr_qpainter_path_close_subpath(handle : Handle)
+    fun qt6cr_qpainter_path_current_position = qt6cr_qpainter_path_current_position(handle : Handle) : PointFValue
+    fun qt6cr_qpainter_path_element_count = qt6cr_qpainter_path_element_count(handle : Handle) : LibC::Int
+    fun qt6cr_qpainter_path_element_at = qt6cr_qpainter_path_element_at(handle : Handle, index : LibC::Int) : PainterPathElementValue
     fun qt6cr_qpainter_path_bounding_rect = qt6cr_qpainter_path_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_qpainter_path_control_point_rect = qt6cr_qpainter_path_control_point_rect(handle : Handle) : RectFValue
     fun qt6cr_qpainter_path_transformed = qt6cr_qpainter_path_transformed(handle : Handle, transform : Handle) : Handle
+    fun qt6cr_qpainter_path_translated = qt6cr_qpainter_path_translated(handle : Handle, dx : Float64, dy : Float64) : Handle
+    fun qt6cr_qpainter_path_simplified = qt6cr_qpainter_path_simplified(handle : Handle) : Handle
     fun qt6cr_qpainter_path_contains = qt6cr_qpainter_path_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_qpainter_path_contains_rect = qt6cr_qpainter_path_contains_rect(handle : Handle, rect : RectFValue) : Bool
+    fun qt6cr_qpainter_path_intersects_rect = qt6cr_qpainter_path_intersects_rect(handle : Handle, rect : RectFValue) : Bool
     fun qt6cr_qpainter_path_is_empty = qt6cr_qpainter_path_is_empty(handle : Handle) : Bool
 
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle

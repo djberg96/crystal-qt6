@@ -31,6 +31,12 @@ typedef struct {
 } qt6cr_rectf_t;
 
 typedef struct {
+	double x;
+	double y;
+	int type;
+} qt6cr_painter_path_element_t;
+
+typedef struct {
 	qt6cr_pointf_t position;
 	int button;
 	int buttons;
@@ -893,6 +899,7 @@ qt6cr_rectf_t qt6cr_qpolygonf_bounding_rect(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qpainter_path_create(void);
 void qt6cr_qpainter_path_destroy(qt6cr_handle_t handle);
+void qt6cr_qpainter_path_clear(qt6cr_handle_t handle);
 void qt6cr_qpainter_path_move_to(qt6cr_handle_t handle, qt6cr_pointf_t point);
 void qt6cr_qpainter_path_line_to(qt6cr_handle_t handle, qt6cr_pointf_t point);
 void qt6cr_qpainter_path_quad_to(qt6cr_handle_t handle, qt6cr_pointf_t control_point, qt6cr_pointf_t end_point);
@@ -900,10 +907,20 @@ void qt6cr_qpainter_path_cubic_to(qt6cr_handle_t handle, qt6cr_pointf_t control_
 void qt6cr_qpainter_path_add_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_path_add_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_path_add_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
+void qt6cr_qpainter_path_add_path(qt6cr_handle_t handle, qt6cr_handle_t other);
+void qt6cr_qpainter_path_connect_path(qt6cr_handle_t handle, qt6cr_handle_t other);
 void qt6cr_qpainter_path_close_subpath(qt6cr_handle_t handle);
+qt6cr_pointf_t qt6cr_qpainter_path_current_position(qt6cr_handle_t handle);
+int qt6cr_qpainter_path_element_count(qt6cr_handle_t handle);
+qt6cr_painter_path_element_t qt6cr_qpainter_path_element_at(qt6cr_handle_t handle, int index);
 qt6cr_rectf_t qt6cr_qpainter_path_bounding_rect(qt6cr_handle_t handle);
+qt6cr_rectf_t qt6cr_qpainter_path_control_point_rect(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform);
+qt6cr_handle_t qt6cr_qpainter_path_translated(qt6cr_handle_t handle, double dx, double dy);
+qt6cr_handle_t qt6cr_qpainter_path_simplified(qt6cr_handle_t handle);
 bool qt6cr_qpainter_path_contains(qt6cr_handle_t handle, qt6cr_pointf_t point);
+bool qt6cr_qpainter_path_contains_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+bool qt6cr_qpainter_path_intersects_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 bool qt6cr_qpainter_path_is_empty(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qpainter_path_stroker_create(void);

@@ -471,6 +471,48 @@ describe Qt6 do
     path = Qt6::QPainterPath.new
     path.add_rect(Qt6::RectF.new(0.0, 0.0, 8.0, 8.0))
     moved_path = path.transformed(transform)
+    translated_path = path.translated(10, 12)
+    simplified_path = path.simplified
+
+    curve_path = Qt6::QPainterPath.new
+    curve_path.empty?.should be_true
+    curve_path.move_to(Qt6::PointF.new(1.0, 2.0))
+    curve_path.line_to(Qt6::PointF.new(5.0, 2.0))
+    curve_path.quad_to(Qt6::PointF.new(8.0, 8.0), Qt6::PointF.new(10.0, 2.0))
+
+    curve_path.empty?.should be_false
+    curve_path.current_position.should eq(Qt6::PointF.new(10.0, 2.0))
+    curve_path.element_count.should eq(5)
+    curve_path[0].type.should eq(Qt6::PainterPathElementType::MoveTo)
+    curve_path[0].point.should eq(Qt6::PointF.new(1.0, 2.0))
+    curve_path[1].type.should eq(Qt6::PainterPathElementType::LineTo)
+    curve_path[2].type.should eq(Qt6::PainterPathElementType::CurveTo)
+    curve_path[3].type.should eq(Qt6::PainterPathElementType::CurveToData)
+    curve_path[4].type.should eq(Qt6::PainterPathElementType::CurveToData)
+    curve_path.control_point_rect.height.should be > curve_path.bounding_rect.height
+
+    path.contains(Qt6::PointF.new(2.0, 2.0)).should be_true
+    path.contains(Qt6::RectF.new(1.0, 1.0, 2.0, 2.0)).should be_true
+    path.intersects?(Qt6::RectF.new(7.0, 7.0, 4.0, 4.0)).should be_true
+    path.intersects?(Qt6::RectF.new(20.0, 20.0, 4.0, 4.0)).should be_false
+    moved_path.bounding_rect.x.should eq(4.0)
+    moved_path.bounding_rect.y.should eq(5.0)
+    translated_path.bounding_rect.x.should eq(10.0)
+    translated_path.bounding_rect.y.should eq(12.0)
+    simplified_path.empty?.should be_false
+
+    overlay_path = Qt6::QPainterPath.new
+    overlay_path.add_rect(Qt6::RectF.new(10.0, 0.0, 4.0, 4.0))
+    path.add_path(overlay_path)
+    path.contains(Qt6::PointF.new(12.0, 2.0)).should be_true
+    path.connect_path(curve_path)
+    path.current_position.should eq(curve_path.current_position)
+
+    disposable_path = Qt6::QPainterPath.new
+    disposable_path.add_ellipse(Qt6::RectF.new(0.0, 0.0, 6.0, 6.0))
+    disposable_path.empty?.should be_false
+    disposable_path.clear
+    disposable_path.empty?.should be_true
 
     Qt6::QPainter.paint(image) do |painter|
       painter.active?.should be_true
