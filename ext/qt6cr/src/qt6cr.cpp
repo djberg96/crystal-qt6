@@ -132,6 +132,8 @@
 #include <QTreeView>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QUndoCommand>
+#include <QUndoStack>
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QWheelEvent>
@@ -358,6 +360,36 @@ class EventWidget final : public QWidget {
  private:
   static qt6cr_rectf_t to_rectf(const QRect &rect) {
     return qt6cr_rectf_t{static_cast<double>(rect.x()), static_cast<double>(rect.y()), static_cast<double>(rect.width()), static_cast<double>(rect.height())};
+  }
+};
+
+class CrystalUndoCommand final : public QUndoCommand {
+ public:
+  explicit CrystalUndoCommand(const QString &text = QString()) : QUndoCommand(text) {}
+
+  ~CrystalUndoCommand() override {
+    if (destroy_callback != nullptr) {
+      destroy_callback(destroy_userdata);
+    }
+  }
+
+  qt6cr_void_callback_t redo_callback = nullptr;
+  void *redo_userdata = nullptr;
+  qt6cr_void_callback_t undo_callback = nullptr;
+  void *undo_userdata = nullptr;
+  qt6cr_void_callback_t destroy_callback = nullptr;
+  void *destroy_userdata = nullptr;
+
+  void redo() override {
+    if (redo_callback != nullptr) {
+      redo_callback(redo_userdata);
+    }
+  }
+
+  void undo() override {
+    if (undo_callback != nullptr) {
+      undo_callback(undo_userdata);
+    }
   }
 };
 
@@ -1513,6 +1545,14 @@ QAbstractScrollArea *as_abstract_scroll_area(qt6cr_handle_t handle) {
 
 QTimer *as_timer(qt6cr_handle_t handle) {
   return static_cast<QTimer *>(handle);
+}
+
+CrystalUndoCommand *as_undo_command(qt6cr_handle_t handle) {
+  return static_cast<CrystalUndoCommand *>(handle);
+}
+
+QUndoStack *as_undo_stack(qt6cr_handle_t handle) {
+  return static_cast<QUndoStack *>(handle);
 }
 
 qt6cr_pointf_t to_pointf(const QPointF &point) {
@@ -7636,6 +7676,261 @@ void qt6cr_action_group_set_exclusive(qt6cr_handle_t handle, bool value) {
 bool qt6cr_action_group_is_exclusive(qt6cr_handle_t handle) {
   auto *action_group = as_action_group(handle);
   return action_group != nullptr && action_group->isExclusive();
+}
+
+qt6cr_handle_t qt6cr_undo_command_create(const char *text) {
+  return new CrystalUndoCommand(QString::fromUtf8(text == nullptr ? "" : text));
+}
+
+void qt6cr_undo_command_destroy(qt6cr_handle_t handle) {
+  delete as_undo_command(handle);
+}
+
+void qt6cr_undo_command_set_callbacks(qt6cr_handle_t handle, qt6cr_void_callback_t redo_callback, void *redo_userdata, qt6cr_void_callback_t undo_callback, void *undo_userdata, qt6cr_void_callback_t destroy_callback, void *destroy_userdata) {
+  auto *command = as_undo_command(handle);
+
+  if (command == nullptr) {
+    return;
+  }
+
+  command->redo_callback = redo_callback;
+  command->redo_userdata = redo_userdata;
+  command->undo_callback = undo_callback;
+  command->undo_userdata = undo_userdata;
+  command->destroy_callback = destroy_callback;
+  command->destroy_userdata = destroy_userdata;
+}
+
+char *qt6cr_undo_command_text(qt6cr_handle_t handle) {
+  auto *command = as_undo_command(handle);
+  return command == nullptr ? duplicate_string("") : duplicate_string(command->text());
+}
+
+void qt6cr_undo_command_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *command = as_undo_command(handle);
+
+  if (command != nullptr) {
+    command->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+qt6cr_handle_t qt6cr_undo_stack_create(qt6cr_handle_t parent) {
+  return new QUndoStack(as_object(parent));
+}
+
+void qt6cr_undo_stack_push(qt6cr_handle_t handle, qt6cr_handle_t command) {
+  auto *stack = as_undo_stack(handle);
+  auto *undo_command = as_undo_command(command);
+
+  if (stack != nullptr && undo_command != nullptr) {
+    stack->push(undo_command);
+  }
+}
+
+void qt6cr_undo_stack_clear(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->clear();
+  }
+}
+
+void qt6cr_undo_stack_undo(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->undo();
+  }
+}
+
+void qt6cr_undo_stack_redo(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->redo();
+  }
+}
+
+bool qt6cr_undo_stack_can_undo(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack != nullptr && stack->canUndo();
+}
+
+bool qt6cr_undo_stack_can_redo(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack != nullptr && stack->canRedo();
+}
+
+bool qt6cr_undo_stack_is_clean(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack != nullptr && stack->isClean();
+}
+
+void qt6cr_undo_stack_set_clean(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->setClean();
+  }
+}
+
+void qt6cr_undo_stack_reset_clean(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->resetClean();
+  }
+}
+
+int qt6cr_undo_stack_count(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? 0 : stack->count();
+}
+
+int qt6cr_undo_stack_index(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? 0 : stack->index();
+}
+
+int qt6cr_undo_stack_clean_index(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? -1 : stack->cleanIndex();
+}
+
+int qt6cr_undo_stack_undo_limit(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? 0 : stack->undoLimit();
+}
+
+void qt6cr_undo_stack_set_undo_limit(qt6cr_handle_t handle, int value) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->setUndoLimit(value);
+  }
+}
+
+bool qt6cr_undo_stack_is_active(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack != nullptr && stack->isActive();
+}
+
+void qt6cr_undo_stack_set_active(qt6cr_handle_t handle, bool value) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->setActive(value);
+  }
+}
+
+char *qt6cr_undo_stack_undo_text(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? duplicate_string("") : duplicate_string(stack->undoText());
+}
+
+char *qt6cr_undo_stack_redo_text(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? duplicate_string("") : duplicate_string(stack->redoText());
+}
+
+void qt6cr_undo_stack_begin_macro(qt6cr_handle_t handle, const char *text) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->beginMacro(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_undo_stack_end_macro(qt6cr_handle_t handle) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack != nullptr) {
+    stack->endMacro();
+  }
+}
+
+qt6cr_handle_t qt6cr_undo_stack_create_undo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? nullptr : stack->createUndoAction(as_object(parent), QString::fromUtf8(prefix == nullptr ? "" : prefix));
+}
+
+qt6cr_handle_t qt6cr_undo_stack_create_redo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix) {
+  auto *stack = as_undo_stack(handle);
+  return stack == nullptr ? nullptr : stack->createRedoAction(as_object(parent), QString::fromUtf8(prefix == nullptr ? "" : prefix));
+}
+
+void qt6cr_undo_stack_on_can_undo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stack, &QUndoStack::canUndoChanged, stack, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_stack_on_can_redo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stack, &QUndoStack::canRedoChanged, stack, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_stack_on_clean_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stack, &QUndoStack::cleanChanged, stack, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_stack_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stack, &QUndoStack::indexChanged, stack, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_stack_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stack, &QUndoStack::undoTextChanged, stack, [callback, userdata](const QString &value) {
+    const auto bytes = value.toUtf8();
+    callback(userdata, bytes.constData());
+  });
+}
+
+void qt6cr_undo_stack_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *stack = as_undo_stack(handle);
+
+  if (stack == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stack, &QUndoStack::redoTextChanged, stack, [callback, userdata](const QString &value) {
+    const auto bytes = value.toUtf8();
+    callback(userdata, bytes.constData());
+  });
 }
 
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title) {
