@@ -40,6 +40,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontComboBox>
+#include <QFontDialog>
 #include <QFrame>
 #include <QFont>
 #include <QFontMetrics>
@@ -1090,6 +1091,10 @@ QColorDialog *as_color_dialog(qt6cr_handle_t handle) {
 
 QProgressDialog *as_progress_dialog(qt6cr_handle_t handle) {
   return static_cast<QProgressDialog *>(handle);
+}
+
+QFontDialog *as_font_dialog(qt6cr_handle_t handle) {
+  return static_cast<QFontDialog *>(handle);
 }
 
 QImage *as_qimage(qt6cr_handle_t handle) {
@@ -2909,6 +2914,93 @@ void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle) {
   auto *color_dialog = as_color_dialog(handle);
   return color_dialog != nullptr && color_dialog->testOption(QColorDialog::ShowAlphaChannel);
+}
+
+qt6cr_handle_t qt6cr_font_dialog_create(qt6cr_handle_t parent, qt6cr_handle_t initial_font) {
+  auto *font = as_qfont(initial_font);
+  return font == nullptr ? new QFontDialog(as_widget(parent)) : new QFontDialog(*font, as_widget(parent));
+}
+
+void qt6cr_font_dialog_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *dialog = as_font_dialog(handle);
+  auto *value = as_qfont(font);
+
+  if (dialog != nullptr && value != nullptr) {
+    dialog->setCurrentFont(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_font_dialog_current_font(qt6cr_handle_t handle) {
+  auto *dialog = as_font_dialog(handle);
+  return dialog == nullptr ? new QFont() : new QFont(dialog->currentFont());
+}
+
+qt6cr_handle_t qt6cr_font_dialog_selected_font(qt6cr_handle_t handle) {
+  auto *dialog = as_font_dialog(handle);
+  return dialog == nullptr ? new QFont() : new QFont(dialog->selectedFont());
+}
+
+void qt6cr_font_dialog_set_options(qt6cr_handle_t handle, int options) {
+  auto *dialog = as_font_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setOptions(static_cast<QFontDialog::FontDialogOptions>(options));
+  }
+}
+
+int qt6cr_font_dialog_options(qt6cr_handle_t handle) {
+  auto *dialog = as_font_dialog(handle);
+  return dialog == nullptr ? 0 : static_cast<int>(dialog->options());
+}
+
+void qt6cr_font_dialog_set_option(qt6cr_handle_t handle, int option, bool value) {
+  auto *dialog = as_font_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setOption(static_cast<QFontDialog::FontDialogOption>(option), value);
+  }
+}
+
+bool qt6cr_font_dialog_test_option(qt6cr_handle_t handle, int option) {
+  auto *dialog = as_font_dialog(handle);
+  return dialog != nullptr && dialog->testOption(static_cast<QFontDialog::FontDialogOption>(option));
+}
+
+void qt6cr_font_dialog_set_native_dialog(qt6cr_handle_t handle, bool value) {
+  auto *dialog = as_font_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setOption(QFontDialog::DontUseNativeDialog, !value);
+  }
+}
+
+bool qt6cr_font_dialog_native_dialog(qt6cr_handle_t handle) {
+  auto *dialog = as_font_dialog(handle);
+  return dialog != nullptr && !dialog->testOption(QFontDialog::DontUseNativeDialog);
+}
+
+void qt6cr_font_dialog_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *dialog = as_font_dialog(handle);
+
+  if (dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dialog, &QFontDialog::currentFontChanged, dialog, [callback, userdata](const QFont &font) {
+    callback(userdata, new QFont(font));
+  });
+}
+
+void qt6cr_font_dialog_on_font_selected(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *dialog = as_font_dialog(handle);
+
+  if (dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dialog, &QFontDialog::fontSelected, dialog, [callback, userdata](const QFont &font) {
+    callback(userdata, new QFont(font));
+  });
 }
 
 qt6cr_handle_t qt6cr_progress_dialog_create(qt6cr_handle_t parent, const char *label_text, const char *cancel_button_text, int minimum, int maximum) {
