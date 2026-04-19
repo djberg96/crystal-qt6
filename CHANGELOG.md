@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-19
+
 ### Added
 
 - Deeper `QPainter` coverage for explicit paint-device shutdown, rotation transforms, clip rectangles, brush-backed rectangle fills, point drawing, and target/source rectangle overloads for image and pixmap blits.
