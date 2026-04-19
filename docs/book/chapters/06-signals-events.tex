@@ -1,0 +1,28 @@
+\chapter{Signals And Events}
+
+Most applications begin with ordinary control signals. Custom widgets need lower-level event hooks for painting, resizing, pointer input, keyboard input, focus, enter/leave, wheel events, and drag/drop.
+
+\section{EventWidget}
+
+\api{EventWidget} provides a Crystal-backed widget with callback hooks for the events that are most useful when building canvases and editors.
+
+\begin{lstlisting}[style=crystal]
+canvas = Qt6::EventWidget.new
+canvas.mouse_tracking = true
+
+canvas.on_mouse_press do |event|
+  status_bar.show_message("Pressed at #{event.position.x}, #{event.position.y}")
+end
+
+canvas.on_paint_with_painter do |_event, painter|
+  painter.fill_rect(Qt6::RectF.new(0, 0, 320, 180), Qt6::Color.new(245, 248, 252))
+end
+\end{lstlisting}
+
+\section{Synthetic Events}
+
+The spec suite uses synthetic event helpers to exercise custom widget callbacks without a manual GUI session. That keeps custom widget behavior covered on CI and makes event changes safer to extend.
+
+\section{Drag And Drop}
+
+\api{MimeData}, clipboard helpers, and \api{EventWidget} drag/drop callbacks cover the common receive side for text and custom payloads. More explicit drag-source helpers can be added when a downstream application needs them.

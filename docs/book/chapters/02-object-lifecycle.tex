@@ -1,0 +1,36 @@
+\chapter{Object Lifecycle}
+
+Qt has a parent-owned object model. Crystal has a garbage collector. The binding keeps those worlds separate by making Qt teardown deterministic rather than relying on finalizers.
+
+\section{Ownership Rules}
+
+Most wrapper constructors accept an optional parent. Passing a parent gives Qt ownership of the native object. Creating an object without a parent makes the wrapper responsible for releasing it.
+
+\begin{lstlisting}[style=crystal]
+main = Qt6::MainWindow.new
+
+# Parent-owned by the main window.
+toolbar = Qt6::ToolBar.new("Main", main)
+main.add_tool_bar(toolbar)
+
+# Top-level object; ordinary applications can rely on Qt6.shutdown.
+main.show
+\end{lstlisting}
+
+Applications should create and use widgets on the GUI thread. The binding registers process-exit cleanup through \api{Qt6.shutdown}, which keeps normal short examples pleasant while still avoiding Qt teardown from arbitrary GC finalizer timing.
+
+\section{Signals}
+
+Crystal-side callbacks are exposed through small helper methods such as \api{on_clicked}, \api{on_triggered}, and \api{on_timeout}. Internally these route Qt callbacks through stable Crystal \api{Signal} instances.
+
+\begin{lstlisting}[style=crystal]
+timer = Qt6::QTimer.new(main)
+timer.on_timeout do
+  status_bar.show_message("Autosaved", 1500)
+end
+timer.start(5_000)
+\end{lstlisting}
+
+\section{Practical Guidance}
+
+Keep parent relationships simple. Top-level windows own their menus, toolbars, docks, dialogs, and child widgets. Short-lived modal helper dialogs can be created through the class convenience methods, which release their native dialog after \api{exec} returns.

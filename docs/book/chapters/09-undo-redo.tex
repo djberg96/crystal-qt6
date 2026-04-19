@@ -1,0 +1,29 @@
+\chapter{Undo And Redo}
+
+Undo support is built around \api{QUndoStack} and Crystal-backed \api{QUndoCommand}. A command has a label plus redo and undo callbacks. The stack tracks command index, clean state, undo/redo availability, and user-facing action text.
+
+\begin{lstlisting}[style=crystal]
+stack = Qt6::UndoStack.new(main)
+
+command = Qt6::UndoCommand.new("Rename layer")
+command.on_redo { layer_name.text = "Roads" }
+command.on_undo { layer_name.text = "Terrain" }
+stack.push(command)
+
+toolbar << stack.create_undo_action(main, "Undo")
+toolbar << stack.create_redo_action(main, "Redo")
+\end{lstlisting}
+
+\section{Macros}
+
+Use macros to group several commands into one user-visible history entry. This is appropriate for multi-field inspector edits or operations that touch model data and canvas state together.
+
+\begin{lstlisting}[style=crystal]
+stack.begin_macro("Apply layer preset")
+# push several commands
+stack.end_macro
+\end{lstlisting}
+
+\section{Clean State}
+
+The clean marker lets editors know whether the current document differs from the last saved state. Wire \api{on_clean_changed} to update title bars, save actions, or status labels.

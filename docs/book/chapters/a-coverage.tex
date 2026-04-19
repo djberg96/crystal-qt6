@@ -1,0 +1,23 @@
+\chapter{Coverage Appendix}
+
+This appendix summarizes the current binding shape at a high level. Treat the README and specs as the executable source of truth when release boundaries move.
+
+\begin{longtable}{@{}p{0.26\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Area & Representative APIs \\
+\midrule
+Application & \api{Application}, \api{Qt6.application}, metadata, style sheets, clipboard, local event loops \\
+Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget} \\
+Dialogs & \api{Dialog}, \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox} \\
+Widgets & Labels, buttons, line edits, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, splitters, scroll areas, group boxes, progress bars, date/time controls, calendar widgets, text editors \\
+Events & \api{EventWidget}, paint, resize, mouse, wheel, key, focus, enter/leave, drag/drop callbacks, synthetic event helpers \\
+Rendering & \api{QPainter}, \api{QPainterPath}, \api{QTransform}, \api{QPen}, \api{QBrush}, \api{QFont}, font metrics, SVG, PDF \\
+Images & \api{QImage}, \api{QPixmap}, \api{QImageReader}, raw buffers, pixel operations, conversion, transforms, scaling, clipboard images \\
+Undo & \api{UndoStack}, \api{UndoCommand}, clean state, macros, undo/redo actions, stack signals \\
+Model/View & Item widgets, abstract list/tree models, standard item models, proxy sorting/filtering, selection models, delegates, list/tree/table views \\
+\bottomrule
+\end{longtable}
+
+\section{Near-Term Documentation Gaps}
+
+The guide should gain real screenshots, a fuller API index, a migration checklist for PySide users, and one complete long-form tutorial built from a maintained example.

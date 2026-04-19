@@ -1,0 +1,27 @@
+\chapter{Model/View}
+
+Qt's model/view architecture separates data, selection, filtering, sorting, and presentation. The binding includes item widgets for simple cases and model/view wrappers for richer data surfaces.
+
+\section{When To Use Item Widgets}
+
+\api{ListWidget}, \api{TreeWidget}, and \api{TableWidget} are efficient for fixed sidebars, small inspectors, and quick tools. They own their items directly and are easy to wire.
+
+\section{When To Use Models}
+
+Use model/view wrappers when data changes frequently, needs sorting/filtering, or should be shared across views. The common path combines source models such as \api{AbstractListModel}, \api{AbstractTreeModel}, or \api{StandardItemModel} with views such as \api{ListView}, \api{TreeView}, and \api{TableView}.
+
+\api{SortFilterProxyModel} sits between a source model and a view when the UI needs filtering or sorting.
+
+\begin{lstlisting}[style=crystal]
+proxy = Qt6::SortFilterProxyModel.new
+proxy.source_model = source_model
+proxy.filter_regular_expression = "terrain|roads"
+proxy.recursive_filtering_enabled = true
+
+view = Qt6::TreeView.new
+view.model = proxy
+\end{lstlisting}
+
+\section{Delegates}
+
+\api{StyledItemDelegate} supports display formatting and editor commit hooks, which is enough for many inspector and table workflows before a full custom delegate bridge is needed.

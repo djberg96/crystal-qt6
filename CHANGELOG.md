@@ -13,6 +13,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QUndoStack` and Crystal-backed `QUndoCommand` wrappers for application-level undo/redo history, clean-state tracking, stack signals, macros, and undo/redo actions.
 - Expanded `QImage` and `QPixmap` processing helpers with bit-depth/alpha/grayscale metadata, scaling, mirrored image copies, RGB channel swapping, transform copies, pixel inversion, and additional image formats.
 - Added `QFontDialog` bindings with option flags, native-dialog control, current/selected font access, font selection signals, and modal convenience helpers.
+- Added a dialog gallery example that exercises message, file, color, font, input, and progress dialogs from buttons, menus, and a toolbar.
+- Added a LaTeX guide scaffold under `docs/book/` for longer-form documentation with build-safe screenshot placeholders.
 
 ## [0.5.0] - 2026-04-19
 

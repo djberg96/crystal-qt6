@@ -1,0 +1,29 @@
+\chapter{Widgets And Layouts}
+
+The widget layer starts with \api{Qt6::Widget}, \api{Qt6::Label}, and \api{Qt6::PushButton}, then expands into common controls, containers, editors, and item widgets. Layout wrappers expose Qt's vertical, horizontal, form, and grid layout families.
+
+\section{Common Controls}
+
+Use ordinary Crystal objects for each control, connect callbacks with \api{on_*} helpers, then add the controls to a layout.
+
+\begin{lstlisting}[style=crystal]
+name = Qt6::LineEdit.new("Terrain")
+visible = Qt6::CheckBox.new("Visible")
+kind = Qt6::ComboBox.new
+kind << "Hexes" << "Terrain" << "Units"
+
+panel = Qt6::Widget.new
+panel.form do |form|
+  form.add_row("Name", name)
+  form.add_row("Kind", kind)
+  form.add_row(visible)
+end
+\end{lstlisting}
+
+\section{Layout Choice}
+
+\api{VBoxLayout} and \api{HBoxLayout} are best for stacked or row-oriented controls. \api{FormLayout} is best for editor sidebars. \api{GridLayout} is useful when visual comparison matters, such as command palettes or property matrices.
+
+\section{Generic Widget State}
+
+The wrapper exposes shared widget behavior such as title, visibility, sizing, tooltips, mouse tracking, cursor shape, style sheets, and generic Qt widget attributes. This keeps higher-level examples from needing per-widget escape hatches for ordinary desktop polish.

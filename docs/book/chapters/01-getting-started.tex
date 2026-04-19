@@ -1,0 +1,51 @@
+\chapter{Getting Started}
+
+\api{crystal-qt6} is a focused Qt6 Widgets binding for Crystal. It favors an explicit, tested desktop surface over automatic binding generation, so each exposed class has a Crystal wrapper, specs, and at least one practical usage path.
+
+\section{Requirements}
+
+You need Crystal, Qt6 development packages visible through \api{pkg-config}, and a C++ compiler compatible with the platform Qt build. The repository build currently expects Qt Widgets, Qt Svg, and Qt Svg Widgets.
+
+\begin{lstlisting}[style=crystal]
+require "qt6"
+
+app = Qt6.application
+
+window = Qt6.window("Counter", 320, 140) do |widget|
+  count = 0
+  label = Qt6::Label.new("0")
+  button = Qt6::PushButton.new("Increment")
+
+  button.on_clicked do
+    count += 1
+    label.text = count.to_s
+  end
+
+  widget.vbox do |layout|
+    layout << label
+    layout << button
+  end
+end
+
+window.show
+app.run
+\end{lstlisting}
+
+\section{Build Flow}
+
+The native shim builds automatically before Crystal compiles the shard. During development, the common commands are:
+
+\begin{lstlisting}[style=crystal]
+# Build the native bridge directly.
+make native
+
+# Run the spec suite.
+make spec
+
+# Launch a maintained example.
+make example-dialogs
+\end{lstlisting}
+
+\section{How To Read This Guide}
+
+The early chapters cover the object model and common widgets. Later chapters move into desktop-shell composition, dialogs, custom event handling, painting, image processing, undo stacks, and model/view patterns. Each topic includes a small API sketch and points to a maintained example when possible.

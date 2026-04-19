@@ -1,0 +1,26 @@
+\chapter{Worked Example Path}
+
+A small editor-style application is the best way to learn the binding because it exercises the same decisions as larger desktop tools.
+
+\section{Suggested Build Order}
+
+\begin{enumerate}
+\item Start with \api{MainWindow}, a central \api{EventWidget}, and a status bar.
+\item Add \api{Action} objects for open, save, undo, redo, and tool modes.
+\item Place actions in menus and toolbars.
+\item Add a left dock with a list or tree model for layers.
+\item Use dialogs for file selection, color selection, naming, and progress.
+\item Render the canvas with \api{QPainter} and \api{QPainterPath}.
+\item Store edits as \api{UndoCommand} instances on an \api{UndoStack}.
+\item Move image import/export through \api{QImage}, \api{QPixmap}, and \api{QImageReader}.
+\end{enumerate}
+
+\section{Reference Examples}
+
+\api{examples/editor_vertical_slice.cr} is the most direct maintained editor slice.
+
+\api{examples/desktop_editor_showcase.cr} is broader. It demonstrates application services, clipboard data, model/view panels, text editing, image loading, custom preview rendering, and PNG export.
+
+\section{Release Documentation}
+
+For release notes, prefer screenshots from maintained examples over mockups. The dialog gallery exists so standard dialog screenshots are reproducible and do not depend on an external application.

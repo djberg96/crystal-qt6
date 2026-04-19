@@ -1,4 +1,12 @@
 /.shards/
 /ext/qt6cr/build/
 /docs/_site/
+/docs/book/*.aux
+/docs/book/*.log
+/docs/book/*.out
+/docs/book/*.toc
+/docs/book/*.lof
+/docs/book/*.lot
+/docs/book/*.pdf
+/docs/book/chapters/*.aux
 .codex
