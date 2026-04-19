@@ -156,6 +156,8 @@ module Qt6
     fun qt6cr_widget_create = qt6cr_widget_create(parent : Handle) : Handle
     fun qt6cr_widget_destroy = qt6cr_widget_destroy(handle : Handle)
     fun qt6cr_widget_show = qt6cr_widget_show(handle : Handle)
+    fun qt6cr_widget_hide = qt6cr_widget_hide(handle : Handle)
+    fun qt6cr_widget_set_visible = qt6cr_widget_set_visible(handle : Handle, value : Bool)
     fun qt6cr_widget_close = qt6cr_widget_close(handle : Handle)
     fun qt6cr_widget_resize = qt6cr_widget_resize(handle : Handle, width : LibC::Int, height : LibC::Int)
     fun qt6cr_widget_set_window_title = qt6cr_widget_set_window_title(handle : Handle, title : UInt8*)
@@ -184,6 +186,10 @@ module Qt6
     fun qt6cr_widget_set_fixed_width = qt6cr_widget_set_fixed_width(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_fixed_height = qt6cr_widget_set_fixed_height(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_fixed_size = qt6cr_widget_set_fixed_size(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_widget_minimum_size = qt6cr_widget_minimum_size(handle : Handle) : SizeValue
+    fun qt6cr_widget_set_minimum_size = qt6cr_widget_set_minimum_size(handle : Handle, width : LibC::Int, height : LibC::Int)
+    fun qt6cr_widget_maximum_size = qt6cr_widget_maximum_size(handle : Handle) : SizeValue
+    fun qt6cr_widget_set_maximum_size = qt6cr_widget_set_maximum_size(handle : Handle, width : LibC::Int, height : LibC::Int)
     fun qt6cr_widget_maximum_width = qt6cr_widget_maximum_width(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_maximum_width = qt6cr_widget_set_maximum_width(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_maximum_height = qt6cr_widget_maximum_height(handle : Handle) : LibC::Int
@@ -198,6 +204,12 @@ module Qt6
     fun qt6cr_widget_set_minimum_height = qt6cr_widget_set_minimum_height(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_accept_drops = qt6cr_widget_accept_drops(handle : Handle) : Bool
     fun qt6cr_widget_set_accept_drops = qt6cr_widget_set_accept_drops(handle : Handle, value : Bool)
+    fun qt6cr_widget_mouse_tracking = qt6cr_widget_mouse_tracking(handle : Handle) : Bool
+    fun qt6cr_widget_set_mouse_tracking = qt6cr_widget_set_mouse_tracking(handle : Handle, value : Bool)
+    fun qt6cr_widget_cursor_shape = qt6cr_widget_cursor_shape(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_cursor_shape = qt6cr_widget_set_cursor_shape(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_transparent_for_mouse_events = qt6cr_widget_transparent_for_mouse_events(handle : Handle) : Bool
+    fun qt6cr_widget_set_transparent_for_mouse_events = qt6cr_widget_set_transparent_for_mouse_events(handle : Handle, value : Bool)
 
     fun qt6cr_main_window_create = qt6cr_main_window_create(parent : Handle) : Handle
     fun qt6cr_main_window_set_central_widget = qt6cr_main_window_set_central_widget(handle : Handle, widget : Handle)

@@ -37,6 +37,12 @@ module Qt6
       self
     end
 
+    # Hides the widget and returns `self` for chaining.
+    def hide : self
+      LibQt6.qt6cr_widget_hide(@to_unsafe)
+      self
+    end
+
     # Closes the widget and returns `self` for chaining.
     def close : self
       LibQt6.qt6cr_widget_close(@to_unsafe)
@@ -46,6 +52,12 @@ module Qt6
     # Returns `true` when Qt considers the widget visible.
     def visible? : Bool
       LibQt6.qt6cr_widget_is_visible(@to_unsafe)
+    end
+
+    # Shows or hides the widget.
+    def visible=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_visible(@to_unsafe, value)
+      value
     end
 
     # Returns the widget's current size.
@@ -201,6 +213,17 @@ module Qt6
       self
     end
 
+    # Returns the widget's minimum size.
+    def minimum_size : Size
+      Size.from_native(LibQt6.qt6cr_widget_minimum_size(@to_unsafe))
+    end
+
+    # Sets the widget's minimum size.
+    def set_minimum_size(width : Int, height : Int) : self
+      LibQt6.qt6cr_widget_set_minimum_size(@to_unsafe, width, height)
+      self
+    end
+
     # Returns the widget's minimum width.
     def minimum_width : Int32
       LibQt6.qt6cr_widget_minimum_width(@to_unsafe)
@@ -221,6 +244,17 @@ module Qt6
     def minimum_height=(value : Int) : Int32
       LibQt6.qt6cr_widget_set_minimum_height(@to_unsafe, value)
       value.to_i
+    end
+
+    # Returns the widget's maximum size.
+    def maximum_size : Size
+      Size.from_native(LibQt6.qt6cr_widget_maximum_size(@to_unsafe))
+    end
+
+    # Sets the widget's maximum size.
+    def set_maximum_size(width : Int, height : Int) : self
+      LibQt6.qt6cr_widget_set_maximum_size(@to_unsafe, width, height)
+      self
     end
 
     # Returns the widget's maximum width.
@@ -253,6 +287,39 @@ module Qt6
     # Enables or disables drop acceptance.
     def accept_drops=(value : Bool) : Bool
       LibQt6.qt6cr_widget_set_accept_drops(@to_unsafe, value)
+      value
+    end
+
+    # Returns `true` when mouse move events are delivered without a pressed button.
+    def mouse_tracking? : Bool
+      LibQt6.qt6cr_widget_mouse_tracking(@to_unsafe)
+    end
+
+    # Enables or disables mouse tracking.
+    def mouse_tracking=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_mouse_tracking(@to_unsafe, value)
+      value
+    end
+
+    # Returns the widget's cursor shape.
+    def cursor_shape : CursorShape
+      CursorShape.from_value(LibQt6.qt6cr_widget_cursor_shape(@to_unsafe))
+    end
+
+    # Sets the widget's cursor shape.
+    def cursor_shape=(value : CursorShape) : CursorShape
+      LibQt6.qt6cr_widget_set_cursor_shape(@to_unsafe, value.value)
+      value
+    end
+
+    # Returns `true` when mouse events pass through this widget to widgets below.
+    def transparent_for_mouse_events? : Bool
+      LibQt6.qt6cr_widget_transparent_for_mouse_events(@to_unsafe)
+    end
+
+    # Enables or disables transparent-for-mouse-events behavior.
+    def transparent_for_mouse_events=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_transparent_for_mouse_events(@to_unsafe, value)
       value
     end
 
