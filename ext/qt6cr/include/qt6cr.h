@@ -300,6 +300,19 @@ bool qt6cr_color_dialog_native_dialog(qt6cr_handle_t handle);
 void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value);
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_font_dialog_create(qt6cr_handle_t parent, qt6cr_handle_t initial_font);
+void qt6cr_font_dialog_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font);
+qt6cr_handle_t qt6cr_font_dialog_current_font(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_font_dialog_selected_font(qt6cr_handle_t handle);
+void qt6cr_font_dialog_set_options(qt6cr_handle_t handle, int options);
+int qt6cr_font_dialog_options(qt6cr_handle_t handle);
+void qt6cr_font_dialog_set_option(qt6cr_handle_t handle, int option, bool value);
+bool qt6cr_font_dialog_test_option(qt6cr_handle_t handle, int option);
+void qt6cr_font_dialog_set_native_dialog(qt6cr_handle_t handle, bool value);
+bool qt6cr_font_dialog_native_dialog(qt6cr_handle_t handle);
+void qt6cr_font_dialog_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_font_dialog_on_font_selected(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_progress_dialog_create(qt6cr_handle_t parent, const char *label_text, const char *cancel_button_text, int minimum, int maximum);
 char *qt6cr_progress_dialog_label_text(qt6cr_handle_t handle);
 void qt6cr_progress_dialog_set_label_text(qt6cr_handle_t handle, const char *label_text);

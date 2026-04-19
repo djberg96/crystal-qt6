@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added generic `QWidget` attribute helpers with a `WidgetAttribute` enum for toggling and testing Qt widget-level flags.
 - Added `QUndoStack` and Crystal-backed `QUndoCommand` wrappers for application-level undo/redo history, clean-state tracking, stack signals, macros, and undo/redo actions.
 - Expanded `QImage` and `QPixmap` processing helpers with bit-depth/alpha/grayscale metadata, scaling, mirrored image copies, RGB channel swapping, transform copies, pixel inversion, and additional image formats.
+- Added `QFontDialog` bindings with option flags, native-dialog control, current/selected font access, font selection signals, and modal convenience helpers.
 
 ## [0.5.0] - 2026-04-19
 

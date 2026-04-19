@@ -1453,6 +1453,15 @@ describe Qt6 do
       timer.start(0)
     end
 
+    selected_font = Qt6::FontDialog.get_font(window, Qt6::QFont.new("Courier", 11), title: "Typeface") do |dialog|
+      dialog.native_dialog = false
+      dialog.current_font = Qt6::QFont.new("Helvetica", 13, true, true)
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
     text_value = Qt6::InputDialog.get_text(window, title: "Rename", label: "Layer", value: "Terrain") do |dialog|
       dialog.text_value = "Roads"
       timer = Qt6::QTimer.new(dialog)
@@ -1489,23 +1498,43 @@ describe Qt6 do
 
     message_result.should eq(Qt6::MessageBoxButton::Ok)
     selected_color.should eq(Qt6::Color.new(32, 64, 96, 128))
+    selected_font.not_nil!.point_size.should eq(13)
     text_value.should eq("Roads")
     int_value.should eq(7)
     double_value.should eq(1.25)
     item_value.should eq("Roads")
+    selected_font.try(&.release)
     window.release
   end
 
-  it "configures color and input dialogs" do
+  it "configures color, font, and input dialogs" do
     app
     window = Qt6::MainWindow.new
     color_dialog = Qt6::ColorDialog.new(window)
+    font_dialog = Qt6::FontDialog.new(window, Qt6::QFont.new("Courier", 10))
     input_dialog = Qt6::InputDialog.new(window)
+    current_font_changes = [] of Qt6::QFont
+    selected_fonts = [] of Qt6::QFont
+
+    font_dialog.on_current_font_changed do |font|
+      current_font_changes << font
+    end
+
+    font_dialog.on_font_selected do |font|
+      selected_fonts << font
+    end
 
     color_dialog.window_title = "Pick Accent Color"
     color_dialog.native_dialog = false
     color_dialog.show_alpha_channel = true
     color_dialog.current_color = Qt6::Color.new(32, 96, 192, 180)
+
+    font_dialog.window_title = "Pick Label Font"
+    font_dialog.options = Qt6::FontDialogOption::ScalableFonts | Qt6::FontDialogOption::MonospacedFonts
+    font_dialog.native_dialog = false
+    font_dialog.set_option(Qt6::FontDialogOption::NoButtons)
+    font_dialog.clear_option(Qt6::FontDialogOption::NoButtons)
+    font_dialog.current_font = Qt6::QFont.new("Helvetica", 14, true, false)
 
     input_dialog.window_title = "Layer Details"
     input_dialog.input_mode = Qt6::InputDialogInputMode::Text
@@ -1526,6 +1555,17 @@ describe Qt6 do
     color_dialog.native_dialog?.should be_false
     color_dialog.current_color.should eq(Qt6::Color.new(32, 96, 192, 180))
     color_dialog.show_alpha_channel?.should be_true
+
+    font_dialog.window_title.should eq("Pick Label Font")
+    font_dialog.native_dialog?.should be_false
+    font_dialog.option?(Qt6::FontDialogOption::ScalableFonts).should be_true
+    font_dialog.option?(Qt6::FontDialogOption::MonospacedFonts).should be_true
+    font_dialog.option?(Qt6::FontDialogOption::NoButtons).should be_false
+    font_dialog.current_font.point_size.should eq(14)
+    font_dialog.accept
+    font_dialog.selected_font.point_size.should eq(14)
+    current_font_changes.empty?.should be_false
+    selected_fonts.empty?.should be_false
 
     input_dialog.window_title.should eq("Layer Details")
     input_dialog.label_text.should eq("Layer name")
