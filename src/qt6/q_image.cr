@@ -62,6 +62,11 @@ module Qt6
       ImageFormat.from_value(LibQt6.qt6cr_qimage_format(to_unsafe))
     end
 
+    # Returns the image bit depth.
+    def depth : Int32
+      LibQt6.qt6cr_qimage_depth(to_unsafe)
+    end
+
     # Returns the bytes occupied by each image row, including padding.
     def bytes_per_line : Int32
       LibQt6.qt6cr_qimage_bytes_per_line(to_unsafe)
@@ -87,6 +92,21 @@ module Qt6
       LibQt6.qt6cr_qimage_is_null(to_unsafe)
     end
 
+    # Returns `true` when the image format carries an alpha channel.
+    def has_alpha_channel? : Bool
+      LibQt6.qt6cr_qimage_has_alpha_channel(to_unsafe)
+    end
+
+    # Returns `true` when every pixel is gray.
+    def all_gray? : Bool
+      LibQt6.qt6cr_qimage_all_gray(to_unsafe)
+    end
+
+    # Returns `true` when the image is stored in a grayscale format.
+    def grayscale? : Bool
+      LibQt6.qt6cr_qimage_is_grayscale(to_unsafe)
+    end
+
     # Returns a deep copy of the image.
     def copy : QImage
       QImage.wrap(LibQt6.qt6cr_qimage_copy(to_unsafe), true)
@@ -105,6 +125,47 @@ module Qt6
     # Returns a converted copy of the image.
     def convert_to_format(format : ImageFormat) : QImage
       QImage.wrap(LibQt6.qt6cr_qimage_convert_to_format(to_unsafe, format.value), true)
+    end
+
+    # Returns a scaled copy of the image.
+    def scaled(width : Int, height : Int, aspect_ratio_mode : AspectRatioMode = AspectRatioMode::Ignore, transformation_mode : TransformationMode = TransformationMode::Fast) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_scaled(to_unsafe, width, height, aspect_ratio_mode.value, transformation_mode.value), true)
+    end
+
+    # Returns a scaled copy of the image.
+    def scaled(size : Size, aspect_ratio_mode : AspectRatioMode = AspectRatioMode::Ignore, transformation_mode : TransformationMode = TransformationMode::Fast) : QImage
+      scaled(size.width, size.height, aspect_ratio_mode, transformation_mode)
+    end
+
+    # Returns a copy scaled to the requested width while preserving aspect ratio.
+    def scaled_to_width(width : Int, transformation_mode : TransformationMode = TransformationMode::Fast) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_scaled_to_width(to_unsafe, width, transformation_mode.value), true)
+    end
+
+    # Returns a copy scaled to the requested height while preserving aspect ratio.
+    def scaled_to_height(height : Int, transformation_mode : TransformationMode = TransformationMode::Fast) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_scaled_to_height(to_unsafe, height, transformation_mode.value), true)
+    end
+
+    # Returns a mirrored copy of the image.
+    def mirrored(horizontal : Bool = false, vertical : Bool = true) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_mirrored(to_unsafe, horizontal, vertical), true)
+    end
+
+    # Returns a copy with red and blue channels swapped.
+    def rgb_swapped : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_rgb_swapped(to_unsafe), true)
+    end
+
+    # Returns a transformed copy of the image.
+    def transformed(transform : QTransform, transformation_mode : TransformationMode = TransformationMode::Fast) : QImage
+      QImage.wrap(LibQt6.qt6cr_qimage_transformed(to_unsafe, transform.to_unsafe, transformation_mode.value), true)
+    end
+
+    # Inverts the image pixels in place.
+    def invert_pixels(mode : ImageInvertMode = ImageInvertMode::RGB) : self
+      LibQt6.qt6cr_qimage_invert_pixels(to_unsafe, mode.value)
+      self
     end
 
     # Fills the entire image with a color.

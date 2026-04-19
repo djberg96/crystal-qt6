@@ -48,6 +48,11 @@ module Qt6
       LibQt6.qt6cr_qpixmap_height(to_unsafe)
     end
 
+    # Returns the pixmap bit depth.
+    def depth : Int32
+      LibQt6.qt6cr_qpixmap_depth(to_unsafe)
+    end
+
     # Returns the pixmap size in pixels.
     def size : Size
       Size.new(width, height)
@@ -61,6 +66,36 @@ module Qt6
     # Returns `true` if the pixmap is null.
     def null? : Bool
       LibQt6.qt6cr_qpixmap_is_null(to_unsafe)
+    end
+
+    # Returns `true` when the pixmap has an alpha channel.
+    def has_alpha_channel? : Bool
+      LibQt6.qt6cr_qpixmap_has_alpha_channel(to_unsafe)
+    end
+
+    # Returns a scaled copy of the pixmap.
+    def scaled(width : Int, height : Int, aspect_ratio_mode : AspectRatioMode = AspectRatioMode::Ignore, transformation_mode : TransformationMode = TransformationMode::Fast) : QPixmap
+      QPixmap.wrap(LibQt6.qt6cr_qpixmap_scaled(to_unsafe, width, height, aspect_ratio_mode.value, transformation_mode.value), true)
+    end
+
+    # Returns a scaled copy of the pixmap.
+    def scaled(size : Size, aspect_ratio_mode : AspectRatioMode = AspectRatioMode::Ignore, transformation_mode : TransformationMode = TransformationMode::Fast) : QPixmap
+      scaled(size.width, size.height, aspect_ratio_mode, transformation_mode)
+    end
+
+    # Returns a copy scaled to the requested width while preserving aspect ratio.
+    def scaled_to_width(width : Int, transformation_mode : TransformationMode = TransformationMode::Fast) : QPixmap
+      QPixmap.wrap(LibQt6.qt6cr_qpixmap_scaled_to_width(to_unsafe, width, transformation_mode.value), true)
+    end
+
+    # Returns a copy scaled to the requested height while preserving aspect ratio.
+    def scaled_to_height(height : Int, transformation_mode : TransformationMode = TransformationMode::Fast) : QPixmap
+      QPixmap.wrap(LibQt6.qt6cr_qpixmap_scaled_to_height(to_unsafe, height, transformation_mode.value), true)
+    end
+
+    # Returns a transformed copy of the pixmap.
+    def transformed(transform : QTransform, transformation_mode : TransformationMode = TransformationMode::Fast) : QPixmap
+      QPixmap.wrap(LibQt6.qt6cr_qpixmap_transformed(to_unsafe, transform.to_unsafe, transformation_mode.value), true)
     end
 
     # Fills the entire pixmap with a color.
