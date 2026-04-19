@@ -57,6 +57,7 @@ make example-svg
 make example-inspector
 make example-modelview
 make example-services
+make example-dialogs
 ```
 
 Direct Crystal commands also work without a separate native build step:
@@ -79,6 +80,15 @@ Example highlights:
 - `examples/inspector_workbench.cr`: inspector-style editor UI with `QScrollArea`, `QTabWidget`, `QSplitter`, `QGroupBox`, radio buttons, sliders, spin boxes, and a live `EventWidget` canvas
 - `examples/model_view_workbench.cr`: custom `AbstractListModel`, proxy sorting/filtering with regex filters, shared selection models, proxy headers, and delegate-backed editor commit hooks
 - `examples/application_services_showcase.cr`: application metadata, stylesheets, window icons, `QImageReader`, clipboard `QMimeData`, drop receiving, `QEventLoop`, `QProgressDialog`, and `QSplashScreen`
+- `examples/dialog_gallery.cr`: standard dialog gallery for `QMessageBox`, `QFileDialog`, `QColorDialog`, `QFontDialog`, `QInputDialog`, and `QProgressDialog`
+
+Build the long-form LaTeX guide:
+
+```sh
+make docs-book
+```
+
+The guide source lives under `docs/book/` and includes screenshot placeholders for publishable dialog and example documentation.
 
 ## Continuous Integration
 
@@ -176,6 +186,7 @@ You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but
 - `spec/qt6_spec.cr`: end-to-end specs
 - `examples/`: sample applications
 - `docs/design.md`: architecture notes
+- `docs/book/`: LaTeX guide source for longer-form, screenshot-oriented documentation
 - `docs/crystal-qt6-roadmap.md`: phased roadmap for growing `crystal-qt6` toward larger application ports
 
 ## Extending The Bindings

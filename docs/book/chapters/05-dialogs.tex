@@ -1,0 +1,49 @@
+\chapter{Dialogs}
+
+Standard dialogs are one of the highest-value parts of the binding because they unlock native-feeling file selection, confirmation flows, color picking, font selection, text input, and progress reporting.
+
+\section{Dialog Gallery}
+
+The maintained gallery at \api{examples/dialog_gallery.cr} opens each supported dialog from buttons, menu actions, and toolbar actions. It is the recommended source for documentation screenshots.
+
+\screenshotplaceholder{docs/book/images/dialogs-main-window.png}{The dialog gallery main window.}
+\screenshotplaceholder{docs/book/images/dialogs-message-box.png}{A message box helper returning a selected button enum.}
+\screenshotplaceholder{docs/book/images/dialogs-file-dialog.png}{A file dialog using a name filter.}
+\screenshotplaceholder{docs/book/images/dialogs-color-dialog.png}{A color dialog with alpha-channel support.}
+\screenshotplaceholder{docs/book/images/dialogs-font-dialog.png}{A font dialog returning a selected \api{QFont}.}
+\screenshotplaceholder{docs/book/images/dialogs-input-dialog.png}{Input dialogs for text, integer, and item choice values.}
+\screenshotplaceholder{docs/book/images/dialogs-progress-dialog.png}{A progress dialog driven by \api{QTimer}.}
+
+\section{Convenience Helpers}
+
+Helpers create a modal dialog, execute it, return the chosen value, and release the native dialog.
+
+\begin{lstlisting}[style=crystal]
+if color = Qt6::ColorDialog.get_color(
+  main,
+  current_color: Qt6::Color.new(52, 112, 176),
+  title: "Pick Accent Color",
+  show_alpha_channel: true
+)
+  status_bar.show_message("Selected #{color.red},#{color.green},#{color.blue}")
+end
+\end{lstlisting}
+
+\section{Instance Configuration}
+
+Use explicit dialog instances when you need to configure modes before execution or inspect state after acceptance.
+
+\begin{lstlisting}[style=crystal]
+dialog = Qt6::FileDialog.new(main, Dir.current, "Maps (*.map *.json);;All Files (*)")
+dialog.window_title = "Open Map"
+dialog.accept_mode = Qt6::FileDialogAcceptMode::Open
+dialog.file_mode = Qt6::FileDialogFileMode::ExistingFile
+
+if dialog.exec == Qt6::DialogCode::Accepted
+  status_bar.show_message(dialog.selected_file)
+end
+\end{lstlisting}
+
+\section{Current Coverage}
+
+The dialog surface includes \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox}, and base \api{Dialog} accepted/rejected callbacks.

@@ -1,0 +1,37 @@
+\chapter{Application Shells}
+
+Desktop applications usually need more than a central widget. \api{Qt6::MainWindow} provides a menu bar, toolbars, dock widgets, and a status bar.
+
+\section{Actions First}
+
+Create \api{Action} objects for user commands, then place the same action in menus and toolbars. This keeps shortcut, enabled state, checked state, and callback behavior shared.
+
+\begin{lstlisting}[style=crystal]
+open_action = Qt6::Action.new("Open", main)
+open_action.shortcut = "Ctrl+O"
+open_action.status_tip = "Open a project file"
+open_action.on_triggered do
+  # open dialog or command handler
+end
+
+file_menu = main.menu_bar.add_menu("File")
+file_menu << open_action
+
+toolbar = Qt6::ToolBar.new("Main", main)
+toolbar << open_action
+main.add_tool_bar(toolbar)
+\end{lstlisting}
+
+\section{Docks And Status}
+
+Docks work well for inspectors, layer lists, logs, and tools that should remain near the main canvas. The status bar should report command results, transient validation feedback, and progress summaries.
+
+\begin{lstlisting}[style=crystal]
+inspector = Qt6::DockWidget.new("Inspector", main)
+inspector.widget = properties_panel
+main.add_dock_widget(inspector, Qt6::DockArea::Left)
+
+main.status_bar.show_message("Ready")
+\end{lstlisting}
+
+See \api{examples/editor_shell.cr} and \api{examples/desktop_editor_showcase.cr} for maintained shell examples.

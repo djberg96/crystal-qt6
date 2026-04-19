@@ -1,0 +1,79 @@
+\documentclass[11pt,oneside]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{xcolor}
+
+\definecolor{codebg}{HTML}{F7F7F8}
+\definecolor{codeframe}{HTML}{D7DCE2}
+\definecolor{linkblue}{HTML}{185ABC}
+\emergencystretch=3em
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  urlcolor=linkblue,
+  pdftitle={crystal-qt6 Guide},
+  pdfauthor={crystal-qt6 contributors}
+}
+
+\lstdefinestyle{crystal}{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false
+}
+
+\newcommand{\api}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\screenshotplaceholder}[2]{%
+  \begin{figure}[htbp]
+    \centering
+    \fbox{%
+      \begin{minipage}[c][2.15in][c]{0.82\textwidth}
+        \centering
+        Screenshot placeholder\\[0.5em]
+        \api{#1}
+      \end{minipage}
+    }
+    \caption{#2}
+  \end{figure}
+}
+
+\title{crystal-qt6 Guide}
+\author{crystal-qt6 contributors}
+\date{Draft for the next release}
+
+\begin{document}
+\frontmatter
+\hypersetup{pageanchor=false}
+\maketitle
+\hypersetup{pageanchor=true}
+\tableofcontents
+
+\mainmatter
+\input{chapters/01-getting-started}
+\input{chapters/02-object-lifecycle}
+\input{chapters/03-widgets-layouts}
+\input{chapters/04-application-shells}
+\input{chapters/05-dialogs}
+\input{chapters/06-signals-events}
+\input{chapters/07-painting}
+\input{chapters/08-images}
+\input{chapters/09-undo-redo}
+\input{chapters/10-model-view}
+\input{chapters/11-worked-example}
+
+\appendix
+\input{chapters/a-coverage}
+
+\end{document}

@@ -1,0 +1,24 @@
+\chapter{Images And Pixmaps}
+
+\api{QImage} is the preferred representation for direct pixel and byte-buffer work. \api{QPixmap} is best for widget-facing images and platform-backed drawing.
+
+\section{Raw Data}
+
+The binding exposes copied byte-buffer construction, raw byte readback, row and byte-size metadata, format conversion, rectangular copies, scaling, mirroring, channel swapping, transform copies, pixel inversion, and per-pixel color access.
+
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.new(256, 256, Qt6::ImageFormat::ARGB32)
+image.fill(Qt6::Color.new(20, 24, 28))
+image.set_pixel_color(12, 12, Qt6::Color.new(255, 80, 80))
+
+thumbnail = image.scaled(96, 96)
+pixmap = thumbnail.to_pixmap
+\end{lstlisting}
+
+\section{Loading And Probing}
+
+\api{QImageReader} can inspect image size, format, and auto-transform settings before decode. This is useful for editor workflows where the UI should preview metadata before loading a large asset.
+
+\section{Clipboard}
+
+The clipboard wrapper supports text, images, pixmaps, HTML, and custom MIME formats through \api{MimeData}. That gives editor examples a path for copy/paste and drag/drop integration without leaving Crystal.
