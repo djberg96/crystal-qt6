@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <QCalendarWidget>
 #include <QCommandLinkButton>
+#include <QCursor>
 #include <QDate>
 #include <QDateEdit>
 #include <QDateTime>
@@ -2162,6 +2163,22 @@ void qt6cr_widget_show(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_widget_hide(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->hide();
+  }
+}
+
+void qt6cr_widget_set_visible(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setVisible(value);
+  }
+}
+
 void qt6cr_widget_close(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 
@@ -2354,6 +2371,32 @@ void qt6cr_widget_set_fixed_size(qt6cr_handle_t handle, int width, int height) {
   }
 }
 
+qt6cr_size_t qt6cr_widget_minimum_size(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->minimumSize());
+}
+
+void qt6cr_widget_set_minimum_size(qt6cr_handle_t handle, int width, int height) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setMinimumSize(width, height);
+  }
+}
+
+qt6cr_size_t qt6cr_widget_maximum_size(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_size_t{QWIDGETSIZE_MAX, QWIDGETSIZE_MAX} : to_size(widget->maximumSize());
+}
+
+void qt6cr_widget_set_maximum_size(qt6cr_handle_t handle, int width, int height) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setMaximumSize(width, height);
+  }
+}
+
 int qt6cr_widget_maximum_width(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? QWIDGETSIZE_MAX : widget->maximumWidth();
@@ -2438,6 +2481,45 @@ void qt6cr_widget_set_accept_drops(qt6cr_handle_t handle, bool value) {
 
   if (widget != nullptr) {
     widget->setAcceptDrops(value);
+  }
+}
+
+bool qt6cr_widget_mouse_tracking(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->hasMouseTracking();
+}
+
+void qt6cr_widget_set_mouse_tracking(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setMouseTracking(value);
+  }
+}
+
+int qt6cr_widget_cursor_shape(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(Qt::ArrowCursor) : static_cast<int>(widget->cursor().shape());
+}
+
+void qt6cr_widget_set_cursor_shape(qt6cr_handle_t handle, int value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setCursor(static_cast<Qt::CursorShape>(value));
+  }
+}
+
+bool qt6cr_widget_transparent_for_mouse_events(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->testAttribute(Qt::WA_TransparentForMouseEvents);
+}
+
+void qt6cr_widget_set_transparent_for_mouse_events(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAttribute(Qt::WA_TransparentForMouseEvents, value);
   }
 }
 
