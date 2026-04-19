@@ -4000,6 +4000,9 @@ describe Qt6 do
     label.mouse_tracking = true
     label.cursor_shape = Qt6::CursorShape::PointingHand
     label.transparent_for_mouse_events = true
+    label.set_attribute(Qt6::WidgetAttribute::OpaquePaintEvent)
+    label.set_attribute(Qt6::WidgetAttribute::ShowWithoutActivating, true)
+    label.clear_attribute(Qt6::WidgetAttribute::ShowWithoutActivating)
     label.move(14, 18)
     label.adjust_size
     line_edit.placeholder_text = "Enter a layer name"
@@ -4015,6 +4018,9 @@ describe Qt6 do
     label.mouse_tracking?.should be_true
     label.cursor_shape.should eq(Qt6::CursorShape::PointingHand)
     label.transparent_for_mouse_events?.should be_true
+    label.attribute?(Qt6::WidgetAttribute::TransparentForMouseEvents).should be_true
+    label.attribute?(Qt6::WidgetAttribute::OpaquePaintEvent).should be_true
+    label.attribute?(Qt6::WidgetAttribute::ShowWithoutActivating).should be_false
     label.size.width.should be > 0
     label.size.height.should be > 0
     line_edit.placeholder_text.should eq("Enter a layer name")
@@ -4025,6 +4031,9 @@ describe Qt6 do
     label.maximum_width.should eq(200)
     label.minimum_height.should eq(48)
     label.maximum_height.should eq(48)
+
+    label.set_attribute(Qt6::WidgetAttribute::TransparentForMouseEvents, false)
+    label.transparent_for_mouse_events?.should be_false
 
     line_edit.release
     label.release

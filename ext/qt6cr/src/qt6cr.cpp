@@ -2536,6 +2536,19 @@ void qt6cr_widget_set_transparent_for_mouse_events(qt6cr_handle_t handle, bool v
   }
 }
 
+bool qt6cr_widget_test_attribute(qt6cr_handle_t handle, int attribute) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->testAttribute(static_cast<Qt::WidgetAttribute>(attribute));
+}
+
+void qt6cr_widget_set_attribute(qt6cr_handle_t handle, int attribute, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAttribute(static_cast<Qt::WidgetAttribute>(attribute), value);
+  }
+}
+
 qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent) {
   return new QMainWindow(as_widget(parent));
 }

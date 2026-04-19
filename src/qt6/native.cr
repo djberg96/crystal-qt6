@@ -216,6 +216,8 @@ module Qt6
     fun qt6cr_widget_set_cursor_shape = qt6cr_widget_set_cursor_shape(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_transparent_for_mouse_events = qt6cr_widget_transparent_for_mouse_events(handle : Handle) : Bool
     fun qt6cr_widget_set_transparent_for_mouse_events = qt6cr_widget_set_transparent_for_mouse_events(handle : Handle, value : Bool)
+    fun qt6cr_widget_test_attribute = qt6cr_widget_test_attribute(handle : Handle, attribute : LibC::Int) : Bool
+    fun qt6cr_widget_set_attribute = qt6cr_widget_set_attribute(handle : Handle, attribute : LibC::Int, value : Bool)
 
     fun qt6cr_main_window_create = qt6cr_main_window_create(parent : Handle) : Handle
     fun qt6cr_main_window_set_central_widget = qt6cr_main_window_set_central_widget(handle : Handle, widget : Handle)
