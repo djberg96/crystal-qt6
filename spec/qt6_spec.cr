@@ -3752,8 +3752,14 @@ describe Qt6 do
     mouse_presses = [] of Qt6::MouseEvent
     mouse_moves = [] of Qt6::MouseEvent
     mouse_releases = [] of Qt6::MouseEvent
+    mouse_double_clicks = [] of Qt6::MouseEvent
     wheels = [] of Qt6::WheelEvent
     keys = [] of Qt6::KeyEvent
+    key_releases = [] of Qt6::KeyEvent
+    enters = [] of Qt6::WidgetEvent
+    leaves = [] of Qt6::WidgetEvent
+    focus_ins = [] of Qt6::WidgetEvent
+    focus_outs = [] of Qt6::WidgetEvent
 
     widget.on_paint { |event| paint_events << event }
     widget.on_paint_with_painter do |event, painter|
@@ -3765,8 +3771,14 @@ describe Qt6 do
     widget.on_mouse_press { |event| mouse_presses << event }
     widget.on_mouse_move { |event| mouse_moves << event }
     widget.on_mouse_release { |event| mouse_releases << event }
+    widget.on_mouse_double_click { |event| mouse_double_clicks << event }
     widget.on_wheel { |event| wheels << event }
     widget.on_key_press { |event| keys << event }
+    widget.on_key_release { |event| key_releases << event }
+    widget.on_enter { |event| enters << event }
+    widget.on_leave { |event| leaves << event }
+    widget.on_focus_in { |event| focus_ins << event }
+    widget.on_focus_out { |event| focus_outs << event }
 
     widget.resize(200, 120)
     widget.show
@@ -3780,8 +3792,14 @@ describe Qt6 do
     widget.simulate_mouse_press(Qt6::PointF.new(10.0, 20.0))
     widget.simulate_mouse_move(Qt6::PointF.new(15.0, 25.0))
     widget.simulate_mouse_release(Qt6::PointF.new(18.0, 28.0))
+    widget.simulate_mouse_double_click(Qt6::PointF.new(22.0, 32.0))
     widget.simulate_wheel(Qt6::PointF.new(20.0, 30.0), angle_delta: Qt6::PointF.new(0.0, 120.0))
     widget.simulate_key_press(65)
+    widget.simulate_key_release(65)
+    widget.simulate_enter(Qt6::PointF.new(4.0, 5.0))
+    widget.simulate_leave
+    widget.simulate_focus_in
+    widget.simulate_focus_out
     application.process_events
     snapshot = widget.grab.to_image
 
@@ -3793,8 +3811,14 @@ describe Qt6 do
     mouse_presses.last.position.should eq(Qt6::PointF.new(10.0, 20.0))
     mouse_moves.last.position.should eq(Qt6::PointF.new(15.0, 25.0))
     mouse_releases.last.position.should eq(Qt6::PointF.new(18.0, 28.0))
+    mouse_double_clicks.last.position.should eq(Qt6::PointF.new(22.0, 32.0))
     wheels.last.angle_delta.should eq(Qt6::PointF.new(0.0, 120.0))
     keys.last.key.should eq(65)
+    key_releases.last.key.should eq(65)
+    enters.last.type.should eq(Qt6::EventType::Enter)
+    leaves.last.type.should eq(Qt6::EventType::Leave)
+    focus_ins.last.type.should eq(Qt6::EventType::FocusIn)
+    focus_outs.last.type.should eq(Qt6::EventType::FocusOut)
     snapshot.pixel_color(5, 5).should eq(Qt6::Color.new(255, 0, 0, 255))
     widget.release
   end

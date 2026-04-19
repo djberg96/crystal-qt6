@@ -32,6 +32,7 @@
 #include <QDockWidget>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
+#include <QEnterEvent>
 #include <QEvent>
 #include <QEventLoop>
 #include <QFile>
@@ -41,6 +42,7 @@
 #include <QFrame>
 #include <QFont>
 #include <QFontMetrics>
+#include <QFocusEvent>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QHeaderView>
@@ -193,10 +195,22 @@ class EventWidget final : public QWidget {
   void *mouse_move_userdata = nullptr;
   qt6cr_mouse_callback_t mouse_release_callback = nullptr;
   void *mouse_release_userdata = nullptr;
+  qt6cr_mouse_callback_t mouse_double_click_callback = nullptr;
+  void *mouse_double_click_userdata = nullptr;
   qt6cr_wheel_callback_t wheel_callback = nullptr;
   void *wheel_userdata = nullptr;
   qt6cr_key_callback_t key_press_callback = nullptr;
   void *key_press_userdata = nullptr;
+  qt6cr_key_callback_t key_release_callback = nullptr;
+  void *key_release_userdata = nullptr;
+  qt6cr_void_callback_t enter_callback = nullptr;
+  void *enter_userdata = nullptr;
+  qt6cr_void_callback_t leave_callback = nullptr;
+  void *leave_userdata = nullptr;
+  qt6cr_void_callback_t focus_in_callback = nullptr;
+  void *focus_in_userdata = nullptr;
+  qt6cr_void_callback_t focus_out_callback = nullptr;
+  void *focus_out_userdata = nullptr;
   qt6cr_drop_event_callback_t drag_enter_callback = nullptr;
   void *drag_enter_userdata = nullptr;
   qt6cr_drop_event_callback_t drag_move_callback = nullptr;
@@ -252,6 +266,14 @@ class EventWidget final : public QWidget {
     QWidget::mouseReleaseEvent(event);
   }
 
+  void mouseDoubleClickEvent(QMouseEvent *event) override {
+    if (mouse_double_click_callback != nullptr) {
+      mouse_double_click_callback(mouse_double_click_userdata, to_mouse_event(event));
+    }
+
+    event->accept();
+  }
+
   void wheelEvent(QWheelEvent *event) override {
     if (wheel_callback != nullptr) {
       wheel_callback(wheel_userdata, to_wheel_event(event));
@@ -266,6 +288,46 @@ class EventWidget final : public QWidget {
     }
 
     QWidget::keyPressEvent(event);
+  }
+
+  void keyReleaseEvent(QKeyEvent *event) override {
+    if (key_release_callback != nullptr) {
+      key_release_callback(key_release_userdata, to_key_event(event));
+    }
+
+    QWidget::keyReleaseEvent(event);
+  }
+
+  void enterEvent(QEnterEvent *event) override {
+    if (enter_callback != nullptr) {
+      enter_callback(enter_userdata);
+    }
+
+    QWidget::enterEvent(event);
+  }
+
+  void leaveEvent(QEvent *event) override {
+    if (leave_callback != nullptr) {
+      leave_callback(leave_userdata);
+    }
+
+    QWidget::leaveEvent(event);
+  }
+
+  void focusInEvent(QFocusEvent *event) override {
+    if (focus_in_callback != nullptr) {
+      focus_in_callback(focus_in_userdata);
+    }
+
+    QWidget::focusInEvent(event);
+  }
+
+  void focusOutEvent(QFocusEvent *event) override {
+    if (focus_out_callback != nullptr) {
+      focus_out_callback(focus_out_userdata);
+    }
+
+    QWidget::focusOutEvent(event);
   }
 
   void dragEnterEvent(QDragEnterEvent *event) override {
@@ -7566,6 +7628,15 @@ void qt6cr_event_widget_on_mouse_release(qt6cr_handle_t handle, qt6cr_mouse_call
   }
 }
 
+void qt6cr_event_widget_on_mouse_double_click(qt6cr_handle_t handle, qt6cr_mouse_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->mouse_double_click_callback = callback;
+    widget->mouse_double_click_userdata = userdata;
+  }
+}
+
 void qt6cr_event_widget_on_wheel(qt6cr_handle_t handle, qt6cr_wheel_callback_t callback, void *userdata) {
   auto *widget = as_event_widget(handle);
 
@@ -7581,6 +7652,51 @@ void qt6cr_event_widget_on_key_press(qt6cr_handle_t handle, qt6cr_key_callback_t
   if (widget != nullptr) {
     widget->key_press_callback = callback;
     widget->key_press_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_key_release(qt6cr_handle_t handle, qt6cr_key_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->key_release_callback = callback;
+    widget->key_release_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_enter(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->enter_callback = callback;
+    widget->enter_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_leave(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->leave_callback = callback;
+    widget->leave_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_focus_in(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->focus_in_callback = callback;
+    widget->focus_in_userdata = userdata;
+  }
+}
+
+void qt6cr_event_widget_on_focus_out(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget != nullptr) {
+    widget->focus_out_callback = callback;
+    widget->focus_out_userdata = userdata;
   }
 }
 
@@ -7631,6 +7747,10 @@ void qt6cr_event_widget_send_mouse_release(qt6cr_handle_t handle, qt6cr_pointf_t
   send_mouse_event(as_event_widget(handle), QEvent::MouseButtonRelease, position, button, buttons, modifiers);
 }
 
+void qt6cr_event_widget_send_mouse_double_click(qt6cr_handle_t handle, qt6cr_pointf_t position, int button, int buttons, int modifiers) {
+  send_mouse_event(as_event_widget(handle), QEvent::MouseButtonDblClick, position, button, buttons, modifiers);
+}
+
 void qt6cr_event_widget_send_wheel(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_pointf_t pixel_delta, qt6cr_pointf_t angle_delta, int buttons, int modifiers) {
   auto *widget = as_event_widget(handle);
 
@@ -7653,6 +7773,62 @@ void qt6cr_event_widget_send_key_press(qt6cr_handle_t handle, int key, int modif
   }
 
   QKeyEvent event(QEvent::KeyPress, key, Qt::KeyboardModifiers(modifiers), QString(), auto_repeat, static_cast<quint16>(count));
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_key_release(qt6cr_handle_t handle, int key, int modifiers, bool auto_repeat, int count) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QKeyEvent event(QEvent::KeyRelease, key, Qt::KeyboardModifiers(modifiers), QString(), auto_repeat, static_cast<quint16>(count));
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_enter(qt6cr_handle_t handle, qt6cr_pointf_t position) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  const QPointF pos(position.x, position.y);
+  QEnterEvent event(pos, pos, pos);
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_leave(qt6cr_handle_t handle) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QEvent event(QEvent::Leave);
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_focus_in(qt6cr_handle_t handle) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QFocusEvent event(QEvent::FocusIn);
+  QApplication::sendEvent(widget, &event);
+}
+
+void qt6cr_event_widget_send_focus_out(qt6cr_handle_t handle) {
+  auto *widget = as_event_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QFocusEvent event(QEvent::FocusOut);
   QApplication::sendEvent(widget, &event);
 }
 
