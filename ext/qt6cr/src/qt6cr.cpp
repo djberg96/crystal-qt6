@@ -2001,6 +2001,54 @@ bool qt6cr_event_loop_is_running(qt6cr_handle_t handle) {
   return event_loop != nullptr && event_loop->isRunning();
 }
 
+static QByteArray encoded_png_data(const QImage &image) {
+  QByteArray bytes;
+  QBuffer buffer(&bytes);
+  if (buffer.open(QIODevice::WriteOnly)) {
+    image.save(&buffer, "PNG");
+  }
+  return bytes;
+}
+
+static void set_mime_image_data(QMimeData *mime_data, const QImage &image) {
+  if (mime_data == nullptr) {
+    return;
+  }
+
+  mime_data->setImageData(image);
+
+  const auto png_data = encoded_png_data(image);
+  if (!png_data.isEmpty()) {
+    mime_data->setData("image/png", png_data);
+  }
+}
+
+static bool mime_data_has_image_data(const QMimeData *mime_data) {
+  return mime_data != nullptr && (mime_data->hasImage() || mime_data->hasFormat("image/png"));
+}
+
+static QImage image_from_mime_data(const QMimeData *mime_data) {
+  if (mime_data == nullptr) {
+    return QImage();
+  }
+
+  if (mime_data->hasImage()) {
+    const auto image_data = mime_data->imageData();
+    if (image_data.canConvert<QImage>()) {
+      return qvariant_cast<QImage>(image_data);
+    }
+    if (image_data.canConvert<QPixmap>()) {
+      return qvariant_cast<QPixmap>(image_data).toImage();
+    }
+  }
+
+  if (mime_data->hasFormat("image/png")) {
+    return QImage::fromData(mime_data->data("image/png"), "PNG");
+  }
+
+  return QImage();
+}
+
 char *qt6cr_clipboard_text(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
   return clipboard == nullptr ? duplicate_string("") : duplicate_string(clipboard->text());
@@ -2026,6 +2074,11 @@ qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle) {
     return new QImage();
   }
 
+  auto mime_image = image_from_mime_data(clipboard->mimeData());
+  if (!mime_image.isNull()) {
+    return new QImage(mime_image);
+  }
+
   auto image = clipboard->image();
   if (!image.isNull()) {
     return new QImage(image);
@@ -2040,13 +2093,15 @@ void qt6cr_clipboard_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
   auto *source = as_qimage(image);
 
   if (clipboard != nullptr && source != nullptr) {
-    clipboard->setImage(*source);
+    auto *mime_data = new QMimeData();
+    set_mime_image_data(mime_data, *source);
+    clipboard->setMimeData(mime_data);
   }
 }
 
 bool qt6cr_clipboard_has_image(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
-  return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasImage();
+  return clipboard != nullptr && mime_data_has_image_data(clipboard->mimeData());
 }
 
 qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle) {
@@ -2054,6 +2109,11 @@ qt6cr_handle_t qt6cr_clipboard_pixmap(qt6cr_handle_t handle) {
 
   if (clipboard == nullptr) {
     return new QPixmap();
+  }
+
+  auto mime_image = image_from_mime_data(clipboard->mimeData());
+  if (!mime_image.isNull()) {
+    return new QPixmap(QPixmap::fromImage(mime_image));
   }
 
   auto pixmap = clipboard->pixmap();
@@ -2070,13 +2130,15 @@ void qt6cr_clipboard_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
   auto *source = as_qpixmap(pixmap);
 
   if (clipboard != nullptr && source != nullptr) {
-    clipboard->setPixmap(*source);
+    auto *mime_data = new QMimeData();
+    set_mime_image_data(mime_data, source->toImage());
+    clipboard->setMimeData(mime_data);
   }
 }
 
 bool qt6cr_clipboard_has_pixmap(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
-  return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasImage();
+  return clipboard != nullptr && mime_data_has_image_data(clipboard->mimeData());
 }
 
 qt6cr_handle_t qt6cr_clipboard_mime_data(qt6cr_handle_t handle) {
@@ -2164,26 +2226,12 @@ void qt6cr_mime_data_set_html(qt6cr_handle_t handle, const char *html) {
 
 bool qt6cr_mime_data_has_image(qt6cr_handle_t handle) {
   auto *mime_data = as_mime_data(handle);
-  return mime_data != nullptr && mime_data->hasImage();
+  return mime_data_has_image_data(mime_data);
 }
 
 qt6cr_handle_t qt6cr_mime_data_image(qt6cr_handle_t handle) {
   auto *mime_data = as_mime_data(handle);
-
-  if (mime_data == nullptr || !mime_data->hasImage()) {
-    return new QImage();
-  }
-
-  const auto image_data = mime_data->imageData();
-  if (image_data.canConvert<QImage>()) {
-    return new QImage(qvariant_cast<QImage>(image_data));
-  }
-
-  if (image_data.canConvert<QPixmap>()) {
-    return new QImage(qvariant_cast<QPixmap>(image_data).toImage());
-  }
-
-  return new QImage();
+  return new QImage(image_from_mime_data(mime_data));
 }
 
 void qt6cr_mime_data_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
@@ -2191,7 +2239,7 @@ void qt6cr_mime_data_set_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
   auto *source = as_qimage(image);
 
   if (mime_data != nullptr && source != nullptr) {
-    mime_data->setImageData(*source);
+    set_mime_image_data(mime_data, *source);
   }
 }
 
