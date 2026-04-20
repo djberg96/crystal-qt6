@@ -1,36 +1,164 @@
-\chapter{Object Lifecycle}
+\chapter{Object Ownership}
 
-Qt has a parent-owned object model. Crystal has a garbage collector. The binding keeps those worlds separate by making Qt teardown deterministic rather than relying on finalizers.
+Qt has a parent-owned object model. Crystal has a garbage collector. \api{crystal-qt6} keeps those two worlds separate by making native Qt cleanup deterministic instead of depending on Crystal finalizers.
 
-\section{Ownership Rules}
+This chapter explains the two wrapper families in the binding, how ownership moves through parent relationships, when \api{release} matters, and which pitfalls to avoid when building larger applications.
 
-Most wrapper constructors accept an optional parent. Passing a parent gives Qt ownership of the native object. Creating an object without a parent makes the wrapper responsible for releasing it.
+\section{\api{QObject} Wrappers}
+
+Most visible desktop objects in Qt inherit from \api{QObject}: widgets, timers, actions, menus, models, dialogs, and many support objects. In this binding, those classes inherit from \api{Qt6::QObject}.
+
+A \api{QObject} wrapper stores a native handle, knows whether the Crystal wrapper owns that handle, and listens for Qt's native \api{destroyed} signal. When Qt destroys the native object, the wrapper marks itself as destroyed and stops participating in shutdown cleanup.
+
+\begin{lstlisting}[style=crystal]
+main = Qt6::MainWindow.new
+button = Qt6::PushButton.new("Apply", main)
+
+button.destroyed.connect do
+  puts "button native object was destroyed"
+end
+\end{lstlisting}
+
+The \api{destroyed?} predicate is mostly useful for defensive code and tests. Ordinary application code should be structured so it does not keep using widgets after their owning window has been torn down.
+
+\section{Parent-Owned Objects}
+
+Qt's basic ownership rule is simple: a parent destroys its children. The Crystal wrappers follow that rule. Constructors usually accept an optional parent. If you pass a parent, Qt owns the native object. If you omit the parent, the wrapper owns it until release or process shutdown.
 
 \begin{lstlisting}[style=crystal]
 main = Qt6::MainWindow.new
 
-# Parent-owned by the main window.
+# Owned by the Crystal wrapper until Qt6.shutdown.
+floating_timer = Qt6::QTimer.new
+
+# Owned by main because main is passed as the parent.
+window_timer = Qt6::QTimer.new(main)
+
+# Owned by main after it is added to the window.
 toolbar = Qt6::ToolBar.new("Main", main)
 main.add_tool_bar(toolbar)
-
-# Top-level object; ordinary applications can rely on Qt6.shutdown.
-main.show
 \end{lstlisting}
 
-Applications should create and use widgets on the GUI thread. The binding registers process-exit cleanup through \api{Qt6.shutdown}, which keeps normal short examples pleasant while still avoiding Qt teardown from arbitrary GC finalizer timing.
+Top-level windows are normally wrapper-owned. Child widgets, actions, timers, menus, docks, layouts, and helper objects should usually be parented to a durable object such as the main window.
 
-\section{Signals}
+\section{\api{NativeResource} Wrappers}
 
-Crystal-side callbacks are exposed through small helper methods such as \api{on_clicked}, \api{on_triggered}, and \api{on_timeout}. Internally these route Qt callbacks through stable Crystal \api{Signal} instances.
+Not every Qt type is a \api{QObject}. Value-like or device-like objects such as images, pixmaps, painters, paths, brushes, pens, fonts, transforms, dates, URLs, directories, and settings are represented by \api{Qt6::NativeResource}.
+
+\api{NativeResource} is simpler than \api{QObject}. It tracks whether the wrapper owns a native handle, exposes \api{release}, and calls a type-specific native destructor. It does not have Qt parent ownership or a native \api{destroyed} signal.
+
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.new(320, 180, Qt6::ImageFormat::ARGB32)
+image.fill(Qt6::Color.new(245, 248, 252))
+
+path = Qt6::QPainterPath.new
+path.move_to(20, 20)
+path.line_to(180, 80)
+\end{lstlisting}
+
+Most small applications can rely on the automatic shutdown path for these resources. Explicit release becomes more important when you create many short-lived native resources in a loop, when a file/device needs to be finalized before reading it back, or when an example intentionally demonstrates deterministic cleanup.
+
+\section{\api{release}}
+
+Both \api{QObject} and \api{NativeResource} implement \api{release}. Calling \api{release} asks the wrapper to destroy its native object, but only if the wrapper owns it. If the object is parent-owned or already destroyed, \api{release} is a no-op.
+
+\begin{lstlisting}[style=crystal]
+dialog = Qt6::InputDialog.new(main)
+dialog.window_title = "Rename Layer"
+
+begin
+  if dialog.exec == Qt6::DialogCode::Accepted
+    puts dialog.text_value
+  end
+ensure
+  dialog.release
+end
+\end{lstlisting}
+
+The convenience dialog helpers use this pattern internally. They create a dialog, run it modally, return the chosen value, and release the native dialog before returning.
+
+\begin{lstlisting}[style=crystal]
+name = Qt6::InputDialog.get_text(
+  main,
+  title: "Rename Layer",
+  label: "Layer name",
+  value: "Terrain"
+)
+\end{lstlisting}
+
+For child widgets and parented objects, prefer parent ownership over manual release. Manual release is best for short-lived unparented resources whose lifetime is obvious.
+
+\section{Tracked Shutdown}
+
+The first call to \api{Qt6.application} registers an \api{at_exit} hook. At shutdown, \api{Qt6.shutdown} releases tracked objects in reverse creation order and then destroys the shared application wrapper.
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+window = Qt6.window("Example", 320, 160) do |widget|
+  widget.vbox do |layout|
+    layout << Qt6::Label.new("Hello")
+  end
+end
+
+window.show
+app.run
+# Qt6.shutdown runs automatically at process exit.
+\end{lstlisting}
+
+You can call \api{Qt6.shutdown} yourself if your program has a clear boundary where all Qt work is finished. Most GUI applications do not need to. The important part is that Qt objects are not left to Crystal's garbage collector to destroy at arbitrary times.
+
+\section{Borrowed Handles And Wrapped Objects}
+
+Some methods return wrappers around native objects owned elsewhere. These wrappers are borrowed views of Qt state. For example, \api{main.status_bar} returns the main window's status bar, and \api{Qt6.clipboard} returns the process-wide clipboard wrapper.
+
+\begin{lstlisting}[style=crystal]
+status = main.status_bar
+status.show_message("Ready")
+
+clipboard = Qt6.clipboard
+clipboard.text = "Copied from Crystal"
+\end{lstlisting}
+
+Borrowed wrappers should not be manually released. Their native lifetime belongs to the object that returned them. Use them while the owner is alive.
+
+\section{Signals And Callback Lifetime}
+
+Signal helper methods such as \api{on_clicked}, \api{on_triggered}, and \api{on_timeout} store Crystal callbacks on the wrapper. The native Qt signal routes back through that wrapper.
 
 \begin{lstlisting}[style=crystal]
 timer = Qt6::QTimer.new(main)
 timer.on_timeout do
-  status_bar.show_message("Autosaved", 1500)
+  main.status_bar.show_message("Autosaved", 1500)
 end
 timer.start(5_000)
 \end{lstlisting}
 
+This is another reason to keep ordinary GUI objects parented to a durable owner. If the timer belongs to the main window, the timer's native lifetime and its Crystal callback lifetime both naturally end with that window.
+
+\section{Common Pitfalls}
+
+The common ownership mistakes are predictable:
+
+\begin{enumerate}
+\item Releasing a parent-owned object manually, then expecting the parent to keep using it.
+\item Keeping a wrapper in a long-lived variable after its native owner has been destroyed.
+\item Creating many unparented objects in a long-running workflow and relying entirely on process shutdown.
+\item Treating borrowed wrappers, such as a status bar or clipboard wrapper, as objects you own.
+\item Creating or destroying widgets from background threads instead of the GUI thread.
+\end{enumerate}
+
+The usual remedy is to make ownership boring. Give child objects a parent, keep top-level windows alive for as long as the UI needs them, use convenience helpers for modal dialogs, and reserve explicit \api{release} for short-lived unparented resources.
+
 \section{Practical Guidance}
 
-Keep parent relationships simple. Top-level windows own their menus, toolbars, docks, dialogs, and child widgets. Short-lived modal helper dialogs can be created through the class convenience methods, which release their native dialog after \api{exec} returns.
+For application code, these defaults work well:
+
+\begin{enumerate}
+\item Create one application object with \api{Qt6.application}.
+\item Parent controls, timers, actions, models, and dialogs to a durable widget or object.
+\item Let top-level windows be wrapper-owned.
+\item Use \api{app.quit} to leave the event loop.
+\item Let \api{Qt6.shutdown} run automatically unless you have a clear reason to call it yourself.
+\end{enumerate}
+
+That model is deliberately conservative. It matches Qt's expectations, keeps Crystal's garbage collector out of native teardown decisions, and gives larger applications a stable base for menus, dialogs, custom widgets, rendering resources, and model/view objects.
