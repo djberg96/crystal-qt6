@@ -10,7 +10,7 @@ BUILD_SCRIPT := scripts/build_qt6cr.sh
 native:
 	QT_PKG='$(QT_PKG)' PKG_CONFIG=$(PKG_CONFIG) CXX=$(CXX) AR=$(AR) CXXFLAGS='$(CXXFLAGS)' sh $(BUILD_SCRIPT)
 
-spec:
+spec: native
 	crystal spec
 
 docs-book:
