@@ -1,10 +1,44 @@
 \chapter{Widgets And Layouts}
 
-The widget layer starts with \api{Qt6::Widget}, \api{Qt6::Label}, and \api{Qt6::PushButton}, then expands into common controls, containers, editors, and item widgets. Layout wrappers expose Qt's vertical, horizontal, form, and grid layout families.
+Widgets are the visible building blocks of a Qt application. Layouts decide how those widgets share space. This chapter introduces the core widget surface in \api{crystal-qt6}: common controls, sizing, attributes, layout composition, styling, and small bits of top-level window polish.
 
-\section{Common Controls}
+\section{The Widget Base}
 
-Use ordinary Crystal objects for each control, connect callbacks with \api{on_*} helpers, then add the controls to a layout.
+\api{Qt6::Widget} wraps \api{QWidget}, the base class for most visible controls. It exposes shared behavior such as titles, visibility, enabled state, focus, tooltips, sizing, style sheets, cursor shape, drop acceptance, widget attributes, repaint scheduling, and screenshot capture.
+
+\begin{lstlisting}[style=crystal]
+panel = Qt6::Widget.new
+panel.tool_tip = "Layer inspector"
+panel.enabled = true
+panel.set_minimum_size(280, 220)
+panel.set_size_policy(Qt6::SizePolicy::Preferred, Qt6::SizePolicy::Expanding)
+\end{lstlisting}
+
+A widget can be top-level, parented to another widget, or placed inside a layout. Top-level widgets need a title and usually an initial size. Child widgets usually let their layout choose the final geometry.
+
+\begin{lstlisting}[style=crystal]
+window = Qt6::Widget.new
+window.window_title = "Inspector"
+window.resize(420, 320)
+window.show
+\end{lstlisting}
+
+\section{Core Controls}
+
+The simplest controls are labels and buttons. Labels show text. Buttons emit callbacks when clicked.
+
+\begin{lstlisting}[style=crystal]
+count = 0
+value = Qt6::Label.new("0")
+button = Qt6::PushButton.new("Increment")
+
+button.on_clicked do
+  count += 1
+  value.text = count.to_s
+end
+\end{lstlisting}
+
+Forms are usually built from a small family of input widgets:
 
 \begin{lstlisting}[style=crystal]
 name = Qt6::LineEdit.new("Terrain")
@@ -12,18 +46,216 @@ visible = Qt6::CheckBox.new("Visible")
 kind = Qt6::ComboBox.new
 kind << "Hexes" << "Terrain" << "Units"
 
+opacity = Qt6::SpinBox.new
+opacity.set_range(0, 100)
+opacity.value = 72
+
+scale = Qt6::DoubleSpinBox.new
+scale.set_range(0.25, 4.0)
+scale.value = 1.0
+\end{lstlisting}
+
+The binding also includes radio buttons, sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
+
+\section{Visibility, Enabled State, And Focus}
+
+Visibility and enabled state are shared widget features:
+
+\begin{lstlisting}[style=crystal]
+advanced_panel.visible = show_advanced.checked?
+apply_button.enabled = !name.text.empty?
+\end{lstlisting}
+
+Focus is explicit when you need keyboard input to land in a particular control.
+
+\begin{lstlisting}[style=crystal]
+name.focus_policy = Qt6::FocusPolicy::StrongFocus
+name.set_focus
+\end{lstlisting}
+
+For ordinary forms, Qt's default focus behavior is usually enough. Use explicit focus control for editor workflows, search fields, modal flows, and custom canvases.
+
+\section{Sizing}
+
+Qt layouts negotiate size from several pieces of information: each widget's size hint, its minimum and maximum size, and its size policy. \api{crystal-qt6} exposes the common controls for that negotiation.
+
+\begin{lstlisting}[style=crystal]
+preview = Qt6::Label.new("Preview")
+preview.set_minimum_size(240, 160)
+preview.maximum_height = 240
+
+swatch = Qt6::Label.new("")
+swatch.set_fixed_size(96, 24)
+
+notes = Qt6::PlainTextEdit.new
+notes.set_size_policy(Qt6::SizePolicy::Expanding, Qt6::SizePolicy::Expanding)
+\end{lstlisting}
+
+Use fixed sizes sparingly. They are appropriate for swatches, icon previews, compact counters, and controls whose physical dimensions are part of the UI. For panels and editors, prefer minimum sizes plus expanding or preferred size policies.
+
+\section{Widget Attributes And Cursors}
+
+Qt widget attributes are lower-level flags for behavior that is not always worth a dedicated high-level method. The binding exposes them through \api{WidgetAttribute}.
+
+\begin{lstlisting}[style=crystal]
+overlay = Qt6::Label.new("Drop files here")
+overlay.set_attribute(Qt6::WidgetAttribute::StyledBackground)
+overlay.set_attribute(Qt6::WidgetAttribute::TransparentForMouseEvents)
+\end{lstlisting}
+
+Some attributes also have convenience methods. Prefer the clearer method when one exists:
+
+\begin{lstlisting}[style=crystal]
+canvas = Qt6::EventWidget.new
+canvas.mouse_tracking = true
+canvas.accept_drops = true
+canvas.cursor_shape = Qt6::CursorShape::Cross
+\end{lstlisting}
+
+Attributes are powerful, but they are close to Qt itself. Use them to express known Qt behavior, not as a substitute for ordinary widget APIs.
+
+\section{Layout Families}
+
+Qt layouts are parent-owned objects that place child widgets. In Crystal, \api{Widget#vbox}, \api{#hbox}, \api{#form}, and \api{#grid} create the corresponding layout and yield it for composition.
+
+\api{VBoxLayout} stacks widgets vertically:
+
+\begin{lstlisting}[style=crystal]
 panel = Qt6::Widget.new
-panel.form do |form|
+panel.vbox do |column|
+  column << Qt6::Label.new("Layers")
+  column << layer_list
+  column << apply_button
+end
+\end{lstlisting}
+
+\api{HBoxLayout} is useful for command rows:
+
+\begin{lstlisting}[style=crystal]
+buttons = Qt6::Widget.new
+buttons.hbox do |row|
+  row << Qt6::PushButton.new("Add")
+  row << Qt6::PushButton.new("Remove")
+  row << Qt6::PushButton.new("Apply")
+end
+\end{lstlisting}
+
+\api{FormLayout} is best for labeled editor fields:
+
+\begin{lstlisting}[style=crystal]
+properties = Qt6::Widget.new
+properties.form do |form|
   form.add_row("Name", name)
   form.add_row("Kind", kind)
+  form.add_row("Opacity", opacity)
   form.add_row(visible)
 end
 \end{lstlisting}
 
-\section{Layout Choice}
+\api{GridLayout} works well for matrix-like tools, command palettes, and compact dashboards:
 
-\api{VBoxLayout} and \api{HBoxLayout} are best for stacked or row-oriented controls. \api{FormLayout} is best for editor sidebars. \api{GridLayout} is useful when visual comparison matters, such as command palettes or property matrices.
+\begin{lstlisting}[style=crystal]
+grid = Qt6::Widget.new
+grid.grid do |layout|
+  layout.add(Qt6::Label.new("X"), 0, 0)
+  layout.add(Qt6::Label.new("Y"), 0, 1)
+  layout.add(x_spin, 1, 0)
+  layout.add(y_spin, 1, 1)
+end
+\end{lstlisting}
 
-\section{Generic Widget State}
+\section{Composing A Panel}
 
-The wrapper exposes shared widget behavior such as title, visibility, sizing, tooltips, mouse tracking, cursor shape, style sheets, and generic Qt widget attributes. This keeps higher-level examples from needing per-widget escape hatches for ordinary desktop polish.
+Most desktop panels combine several layouts. A common pattern is a vertical column containing a form plus a row of actions.
+
+\begin{lstlisting}[style=crystal]
+name = Qt6::LineEdit.new("Terrain")
+kind = Qt6::ComboBox.new
+kind << "Hexes" << "Terrain" << "Units"
+
+visible = Qt6::CheckBox.new("Visible")
+apply = Qt6::PushButton.new("Apply")
+reset = Qt6::PushButton.new("Reset")
+
+panel = Qt6::Widget.new
+panel.set_minimum_size(320, 220)
+panel.vbox do |column|
+  form_host = Qt6::Widget.new
+  form_host.form do |form|
+    form.add_row("Name", name)
+    form.add_row("Kind", kind)
+    form.add_row(visible)
+  end
+
+  actions = Qt6::Widget.new
+  actions.hbox do |row|
+    row << reset
+    row << apply
+  end
+
+  column << form_host
+  column << actions
+end
+\end{lstlisting}
+
+This is not the only way to compose a panel, but it scales well. The form stays responsible for labels and fields. The horizontal layout stays responsible for commands. The outer vertical layout controls overall flow.
+
+\section{Styling}
+
+Qt style sheets are CSS-like strings applied to widgets or the whole application. They are useful for lightweight polish, warnings, previews, and demo styling.
+
+\begin{lstlisting}[style=crystal]
+swatch = Qt6::Label.new("")
+swatch.set_fixed_size(96, 24)
+swatch.style_sheet = "background-color: #3470b0; border: 1px solid #6b7280;"
+
+name.tool_tip = "Layer name shown in the layer list"
+\end{lstlisting}
+
+Application-wide style sheets are available from the application wrapper:
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+app.style_sheet = "
+  QGroupBox { font-weight: bold; }
+  QPushButton { padding: 4px 10px; }
+"
+\end{lstlisting}
+
+Use style sheets to support the interface rather than replace layout. Sizing, hierarchy, and interaction should come from the widget tree and layout structure first.
+
+\section{Window Polish}
+
+Top-level widgets and windows expose title, icon, size, visibility, and capture helpers.
+
+\begin{lstlisting}[style=crystal]
+main = Qt6::MainWindow.new
+main.window_title = "Map Tool"
+main.resize(960, 640)
+
+icon = Qt6::QIcon.new("assets/app-icon.png")
+main.window_icon = icon
+
+main.status_bar.show_message("Ready")
+main.show
+\end{lstlisting}
+
+The application object can also hold application-wide metadata and window icon state:
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+app.name = "Map Tool"
+app.organization_name = "Example Studio"
+app.window_icon = icon
+\end{lstlisting}
+
+For quick exports and documentation screenshots, \api{Widget#grab} captures a widget into a \api{QPixmap}.
+
+\begin{lstlisting}[style=crystal]
+pixmap = main.grab
+pixmap.save("window.png")
+\end{lstlisting}
+
+\section{Where To Look Next}
+
+\api{examples/inspector_workbench.cr} is the best example for form controls, group boxes, sliders, spin boxes, tabs, splitters, and a live custom canvas. \api{examples/editor_shell.cr} shows how ordinary widgets fit into a main-window shell with actions, menus, toolbars, docks, dialogs, and a status bar.

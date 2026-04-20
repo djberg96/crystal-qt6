@@ -27,3 +27,5 @@ Recommended first screenshot set:
 - `dialogs-progress-dialog.png`
 
 Use `make example-dialogs` to launch the dialog gallery that these screenshots should document.
+
+Deferred chapter ideas are tracked in `TODO.md`.
