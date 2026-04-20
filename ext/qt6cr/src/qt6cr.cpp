@@ -3275,6 +3275,7 @@ qt6cr_handle_t qt6cr_qimage_mirrored(qt6cr_handle_t handle, bool horizontal, boo
     return new QImage();
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
   Qt::Orientations orientations;
   if (horizontal) {
     orientations |= Qt::Horizontal;
@@ -3283,6 +3284,9 @@ qt6cr_handle_t qt6cr_qimage_mirrored(qt6cr_handle_t handle, bool horizontal, boo
     orientations |= Qt::Vertical;
   }
   return new QImage(image->flipped(orientations));
+#else
+  return new QImage(image->mirrored(horizontal, vertical));
+#endif
 }
 
 qt6cr_handle_t qt6cr_qimage_rgb_swapped(qt6cr_handle_t handle) {
