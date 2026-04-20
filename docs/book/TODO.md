@@ -25,3 +25,12 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Add a short container-widget section covering `TabWidget`, `ScrollArea`, `Splitter`, `GroupBox`, and possibly `StackedWidget`.
 - Add a "layout pitfalls" note about avoiding excessive fixed sizes, avoiding manual positioning inside layouts, and letting layout/parent ownership do its job.
 - Add a small exercise, such as building a preferences panel or layer inspector, if the book becomes more tutorial-oriented.
+
+## Chapter 4: Application Shells
+
+- Add an action reference table covering text, shortcut, tooltip, status tip, enabled, visible, checkable, checked, and `data`.
+- Add menu and toolbar design guidance, including what usually belongs in File/Edit/View/Tools/Help and when a command should not be promoted to a toolbar.
+- Add `ToolBar#toggle_view_action` coverage and dock visibility patterns if fuller dock visibility APIs are exposed later.
+- Add a shell screenshot once screenshot capture is set up, using either the small shell example or `examples/editor_shell.cr`.
+- Add a more complete document-dirty pattern, including modified title state, save enabled state, and status messages. This may fit better near undo/document chapters.
+- Add platform-convention notes for macOS vs Linux command naming and placement, such as quit/menu behavior.
