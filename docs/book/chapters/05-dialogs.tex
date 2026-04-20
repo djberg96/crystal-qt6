@@ -109,9 +109,6 @@ Explicit instances expose \api{accept_mode}, \api{file_mode}, \api{directory}, \
 
 \api{ColorDialog} returns a \api{Color}. It is useful for theme colors, layer colors, brush colors, annotation colors, and any workflow where the user needs a visual picker.
 
-\screenshotplaceholder{docs/book/images/dialogs-color-dialog.png}{A color dialog initialized with the current accent color.}
-\screenshotplaceholder{docs/book/images/dialogs-color-alpha.png}{A color dialog with alpha-channel editing enabled.}
-
 \begin{lstlisting}[style=crystal]
 accent = Qt6::Color.new(52, 112, 176)
 
@@ -129,14 +126,17 @@ if color = Qt6::ColorDialog.get_color(
 end
 \end{lstlisting}
 
+\smallscreenshotplaceholder{docs/book/images/dialogs-color-dialog.png}{A color dialog initialized with the current accent color.}
+\smallscreenshotplaceholder{docs/book/images/dialogs-color-alpha.png}{A color dialog with alpha-channel editing enabled.}
+
 \api{ColorDialog#native_dialog=} can disable the platform-native picker. That is mainly useful for deterministic tests, where the widget-backed dialog behaves like an ordinary Qt dialog.
 
 \section{Font Dialogs}
 
 \api{FontDialog} returns a \api{QFont}. It supports initial fonts, selected fonts, option flags, native-dialog control, and signals for highlighted or selected fonts.
 
-\screenshotplaceholder{docs/book/images/dialogs-font-dialog.png}{A font dialog initialized from the current label font.}
-\screenshotplaceholder{docs/book/images/dialogs-font-monospaced.png}{A font dialog filtered toward monospaced fonts.}
+\smallscreenshotplaceholder{docs/book/images/dialogs-font-dialog.png}{A font dialog initialized from the current label font.}
+\smallscreenshotplaceholder{docs/book/images/dialogs-font-monospaced.png}{A font dialog filtered toward monospaced fonts.}
 
 \begin{lstlisting}[style=crystal]
 current_font = Qt6::QFont.new("Sans Serif", 12)
@@ -161,10 +161,6 @@ font = Qt6::FontDialog.get_font(
 \section{Input Dialogs}
 
 \api{InputDialog} is a compact way to request one value from the user. The convenience helpers cover text, integers, floating-point values, and item choices.
-
-\screenshotplaceholder{docs/book/images/dialogs-input-text.png}{A text input dialog for renaming a layer.}
-\screenshotplaceholder{docs/book/images/dialogs-input-int.png}{An integer input dialog with a bounded opacity range.}
-\screenshotplaceholder{docs/book/images/dialogs-input-choice.png}{An item-selection input dialog for choosing a layer kind.}
 
 \begin{lstlisting}[style=crystal]
 name = Qt6::InputDialog.get_text(
@@ -196,6 +192,8 @@ kind = Qt6::InputDialog.get_item(
   editable: false
 )
 \end{lstlisting}
+
+\inputdialogscreenshots
 
 Use explicit \api{InputDialog} instances when you need to change the input mode, inspect range values, or configure combo-box editability directly.
 
