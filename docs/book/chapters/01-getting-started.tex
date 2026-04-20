@@ -76,6 +76,10 @@ pkg-config --modversion Qt6Widgets Qt6Svg Qt6SvgWidgets
 
 That command should print version numbers without errors. If it fails, Crystal may still be installed correctly, but the Qt development packages are not visible to \api{pkg-config}. Fix that before building the shard.
 
+\section{A First Window}
+
+Every Qt application has one application object and one event loop. In \api{crystal-qt6}, \api{Qt6.application} creates or returns the process-wide application wrapper. Widgets are then created, shown, and kept responsive by entering \api{app.run}.
+
 \begin{lstlisting}[style=crystal]
 require "qt6"
 
@@ -100,6 +104,24 @@ end
 window.show
 app.run
 \end{lstlisting}
+
+The call to \api{window.show} makes the top-level widget visible. The call to \api{app.run} hands control to Qt's event loop. From that point on, user input, timers, painting, dialog results, and signal callbacks are delivered by Qt until the application exits.
+
+\section{Lifecycle And Shutdown}
+
+Crystal and Qt manage object lifetimes differently. Qt uses parent-owned objects: a window can own its menu bar, toolbars, child widgets, dialogs, timers, and layout objects. Crystal uses garbage collection for ordinary Crystal objects. The binding keeps these two models predictable by making native Qt cleanup deterministic instead of depending on Crystal finalizers.
+
+For ordinary applications, create widgets on the GUI thread, give child widgets a parent when possible, show the top-level window, and let \api{app.run} return when the last window closes or when \api{app.quit} is called. The binding registers \api{Qt6.shutdown} for process exit so short examples do not need explicit teardown code.
+
+\begin{lstlisting}[style=crystal]
+quit = Qt6::Action.new("Quit", main)
+quit.shortcut = "Ctrl+Q"
+quit.on_triggered do
+  app.quit
+end
+\end{lstlisting}
+
+You may call \api{Qt6.shutdown} yourself at a clear application boundary, but most GUI programs should not need to. The important rule is to avoid treating Qt widgets like disposable background objects. Create and use them on the GUI thread, prefer parent ownership, and allow Qt to finish its event loop before process shutdown.
 
 \section{Build Flow}
 
