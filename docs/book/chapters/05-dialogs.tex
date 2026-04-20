@@ -46,9 +46,6 @@ end
 
 \api{MessageBox} is for confirmation, warnings, errors, and short informational messages. The convenience helpers match common message-box intent: \api{information}, \api{warning}, \api{critical}, and \api{question}.
 
-\screenshotplaceholder{docs/book/images/dialogs-message-question.png}{A question message box with Yes, No, and Cancel buttons.}
-\screenshotplaceholder{docs/book/images/dialogs-message-warning.png}{A warning message box for a recoverable problem.}
-
 \begin{lstlisting}[style=crystal]
 answer = Qt6::MessageBox.question(
   main,
@@ -69,6 +66,9 @@ else
   status_bar.show_message("Open canceled", 1500)
 end
 \end{lstlisting}
+
+\smallscreenshotplaceholder{docs/book/images/dialogs-message-question.png}{A question message box with Yes, No, and Cancel buttons.}
+\smallscreenshotplaceholder{docs/book/images/dialogs-message-warning.png}{A warning message box for a recoverable problem.}
 
 For noninteractive testing or deeper configuration, create \api{MessageBox} directly, set \api{text}, \api{informative_text}, \api{icon}, and \api{standard_buttons}, then call \api{show_modal}.
 
