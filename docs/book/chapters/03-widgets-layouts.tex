@@ -55,7 +55,7 @@ scale.set_range(0.25, 4.0)
 scale.value = 1.0
 \end{lstlisting}
 
-The binding also includes radio buttons, sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
+The \api{crystal-qt6} library also includes radio buttons, sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
 
 \section{Visibility, Enabled State, And Focus}
 
@@ -95,7 +95,7 @@ Use fixed sizes sparingly. They are appropriate for swatches, icon previews, com
 
 \section{Widget Attributes And Cursors}
 
-Qt widget attributes are lower-level flags for behavior that is not always worth a dedicated high-level method. The binding exposes them through \api{WidgetAttribute}.
+Qt widget attributes are lower-level flags for behavior that is not always worth a dedicated high-level method. \api{crystal-qt6} exposes them through \api{WidgetAttribute}.
 
 \begin{lstlisting}[style=crystal]
 overlay = Qt6::Label.new("Drop files here")

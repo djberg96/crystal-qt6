@@ -12,7 +12,7 @@ The type system is also a useful design partner. Widget state, model data, callb
 
 Qt is one of the most mature cross-platform GUI toolkits available. Its Widgets stack includes native windows, layouts, menus, actions, dialogs, item views, text editing, painting, images, SVG, PDF output, timers, clipboard access, drag and drop, and much more. These are not separate pieces that merely happen to coexist; they are designed to work together inside one event loop and object model.
 
-That depth is the reason \api{crystal-qt6} is useful. Instead of building a small custom UI layer and then discovering that file dialogs, model/view tables, undo stacks, text editing, or image rendering are missing, this binding grows around Qt's existing desktop vocabulary. The goal is not to hide Qt. The goal is to make Qt feel natural from Crystal.
+That depth is the reason \api{crystal-qt6} is useful. Instead of building a small custom UI layer and then discovering that file dialogs, model/view tables, undo stacks, text editing, or image rendering are missing, the \api{crystal-qt6} library grows around Qt's existing desktop vocabulary. The goal is not to hide Qt. The goal is to make Qt feel natural from Crystal.
 
 \section{Requirements}
 
@@ -121,9 +121,9 @@ The call to \api{window.show} makes the top-level widget visible. The call to \a
 
 \section{Lifecycle And Shutdown}
 
-Crystal and Qt manage object lifetimes differently. Qt uses parent-owned objects: a window can own its menu bar, toolbars, child widgets, dialogs, timers, and layout objects. Crystal uses garbage collection for ordinary Crystal objects. The binding keeps these two models predictable by making native Qt cleanup deterministic instead of depending on Crystal finalizers.
+Crystal and Qt manage object lifetimes differently. Qt uses parent-owned objects: a window can own its menu bar, toolbars, child widgets, dialogs, timers, and layout objects. Crystal uses garbage collection for ordinary Crystal objects. The \api{crystal-qt6} library keeps these two models predictable by making native Qt cleanup deterministic instead of depending on Crystal finalizers.
 
-For ordinary applications, create widgets on the GUI thread, give child widgets a parent when possible, show the top-level window, and let \api{app.run} return when the last window closes or when \api{app.quit} is called. The binding registers \api{Qt6.shutdown} for process exit so short examples do not need explicit teardown code.
+For ordinary applications, create widgets on the GUI thread, give child widgets a parent when possible, show the top-level window, and let \api{app.run} return when the last window closes or when \api{app.quit} is called. The \api{crystal-qt6} library registers \api{Qt6.shutdown} for process exit so short examples do not need explicit teardown code.
 
 \begin{lstlisting}[style=crystal]
 quit = Qt6::Action.new("Quit", main)
@@ -150,7 +150,7 @@ make spec
 make example-dialogs
 \end{lstlisting}
 
-Those targets are not special entry points into the binding. They wrap ordinary Crystal commands, so direct commands work as well:
+Those targets are not special entry points into the library. They wrap ordinary Crystal commands, so direct commands work as well:
 
 \begin{lstlisting}[style=crystal]
 # Run the same spec suite without make.
