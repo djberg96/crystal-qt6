@@ -7,7 +7,17 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.markdown"
+      - "**/*.tex"
+      - "**/*.ltx"
   pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.markdown"
+      - "**/*.tex"
+      - "**/*.ltx"
 
 permissions:
   contents: read
