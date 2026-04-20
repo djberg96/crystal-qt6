@@ -2,6 +2,18 @@
 
 \api{crystal-qt6} is a focused Qt6 Widgets binding for Crystal. It favors an explicit, tested desktop surface over automatic binding generation, so each exposed class has a Crystal wrapper, specs, and at least one practical usage path.
 
+\section{Why Crystal?}
+
+Crystal is attractive for desktop application work because it gives you a compact, expressive syntax while still compiling to native code. A Crystal program can feel close to Ruby while keeping static types, ahead-of-time compilation, and direct C interop. That combination matters for GUI code: you want application logic to stay readable, but you also want the process to start quickly, call native libraries directly, and package like a compiled program.
+
+The type system is also a useful design partner. Widget state, model data, callback signatures, and value objects such as colors, rectangles, fonts, and indexes all benefit from APIs that say what they accept and return. The result is a programming style that remains pleasant for small examples but scales better as the interface grows.
+
+\section{Why Qt?}
+
+Qt is one of the most mature cross-platform GUI toolkits available. Its Widgets stack includes native windows, layouts, menus, actions, dialogs, item views, text editing, painting, images, SVG, PDF output, timers, clipboard access, drag and drop, and much more. These are not separate pieces that merely happen to coexist; they are designed to work together inside one event loop and object model.
+
+That depth is the reason \api{crystal-qt6} is useful. Instead of building a small custom UI layer and then discovering that file dialogs, model/view tables, undo stacks, text editing, or image rendering are missing, this binding grows around Qt's existing desktop vocabulary. The goal is not to hide Qt. The goal is to make Qt feel natural from Crystal.
+
 \section{Requirements}
 
 You need Crystal, Qt6 development packages visible through \api{pkg-config}, and a C++ compiler compatible with the platform Qt build. The repository build currently expects Qt Widgets, Qt Svg, and Qt Svg Widgets.
