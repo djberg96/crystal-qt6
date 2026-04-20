@@ -2,11 +2,11 @@
 
 Qt has a parent-owned object model. Crystal has a garbage collector. \api{crystal-qt6} keeps those two worlds separate by making native Qt cleanup deterministic instead of depending on Crystal finalizers.
 
-This chapter explains the two wrapper families in the binding, how ownership moves through parent relationships, when \api{release} matters, and which pitfalls to avoid when building larger applications.
+This chapter explains the two wrapper families in the \api{crystal-qt6} library, how ownership moves through parent relationships, when \api{release} matters, and which pitfalls to avoid when building larger applications.
 
 \section{\api{QObject} Wrappers}
 
-Most visible desktop objects in Qt inherit from \api{QObject}: widgets, timers, actions, menus, models, dialogs, and many support objects. In this binding, those classes inherit from \api{Qt6::QObject}.
+Most visible desktop objects in Qt inherit from \api{QObject}: widgets, timers, actions, menus, models, dialogs, and many support objects. In \api{crystal-qt6}, those classes inherit from \api{Qt6::QObject}.
 
 A \api{QObject} wrapper stores a native handle, knows whether the Crystal wrapper owns that handle, and listens for Qt's native \api{destroyed} signal. When Qt destroys the native object, the wrapper marks itself as destroyed and stops participating in shutdown cleanup.
 
