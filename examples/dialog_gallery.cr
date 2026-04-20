@@ -1,10 +1,12 @@
 require "../src/qt6"
 
 app = Qt6.application
+auto_dialog = ARGV.find { |arg| arg.starts_with?("--auto=") }.try { |arg| arg.split("=", 2)[1]? || "" }
 
 main = Qt6::MainWindow.new
 main.window_title = "Dialog Gallery"
 main.resize(760, 520)
+main.move(120, 80) if auto_dialog
 
 status_bar = main.status_bar
 status_bar.show_message("Ready")
@@ -39,8 +41,28 @@ show_message = -> do
   record_result.call("MessageBox", "selected #{answer}")
 end
 
+show_warning_message = -> do
+  answer = Qt6::MessageBox.warning(
+    main,
+    title: "Layer Warning",
+    text: "The selected layer is locked.",
+    informative_text: "Unlock the layer before editing its geometry.",
+    buttons: Qt6::MessageBoxButton::Ok | Qt6::MessageBoxButton::Cancel
+  )
+  record_result.call("MessageBox", "selected #{answer}")
+end
+
 show_file = -> do
   if path = Qt6::FileDialog.get_open_file_name(main, "Open Example File", Dir.current, "Crystal files (*.cr);;All Files (*)")
+    file_summary.text = path.empty? ? "No file selected" : path
+    record_result.call("FileDialog", path.empty? ? "no file selected" : File.basename(path))
+  else
+    record_result.call("FileDialog", "canceled")
+  end
+end
+
+show_save_file = -> do
+  if path = Qt6::FileDialog.get_save_file_name(main, "Save Example File", Dir.current, "Map files (*.json *.map);;All Files (*)")
     file_summary.text = path.empty? ? "No file selected" : path
     record_result.call("FileDialog", path.empty? ? "no file selected" : File.basename(path))
   else
@@ -60,8 +82,32 @@ show_color = -> do
   end
 end
 
+show_color_without_alpha = -> do
+  if color = Qt6::ColorDialog.get_color(main, current_color: last_color, title: "Pick Layer Color", show_alpha_channel: false)
+    last_color = color
+    rgba = "rgba(#{color.red}, #{color.green}, #{color.blue}, #{color.alpha})"
+    color_summary.text = "Current color: #{rgba}"
+    swatch.style_sheet = "background-color: #{rgba}; border: 1px solid #6b7280;"
+    record_result.call("ColorDialog", rgba)
+  else
+    record_result.call("ColorDialog", "canceled")
+  end
+end
+
 show_font = -> do
   if font = Qt6::FontDialog.get_font(main, last_font, "Choose Label Font")
+    last_font = font
+    style = [font.bold? ? "bold" : nil, font.italic? ? "italic" : nil].compact.join(", ")
+    style = "regular" if style.empty?
+    font_summary.text = "Current font: #{font.family}, #{font.point_size} pt, #{style}"
+    record_result.call("FontDialog", "#{font.family}, #{font.point_size} pt")
+  else
+    record_result.call("FontDialog", "canceled")
+  end
+end
+
+show_monospaced_font = -> do
+  if font = Qt6::FontDialog.get_font(main, last_font, "Choose Code Font", Qt6::FontDialogOption::MonospacedFonts)
     last_font = font
     style = [font.bold? ? "bold" : nil, font.italic? ? "italic" : nil].compact.join(", ")
     style = "regular" if style.empty?
@@ -134,6 +180,225 @@ show_progress = -> do
   timer.start(80)
 end
 
+show_custom_settings = -> do
+  dialog = Qt6::Dialog.new(main)
+  dialog.window_title = "Layer Settings"
+  dialog.resize(420, 220)
+
+  name_edit = Qt6::LineEdit.new("Terrain", dialog)
+  opacity_spin = Qt6::SpinBox.new(dialog)
+  opacity_spin.set_range(0, 100)
+  opacity_spin.value = 72
+  opacity_spin.suffix = "%"
+
+  kind_combo = Qt6::ComboBox.new(dialog)
+  ["Terrain", "Roads", "Units", "Annotations"].each { |item| kind_combo << item }
+  kind_combo.current_index = 1
+
+  visible_check = Qt6::CheckBox.new("Visible", dialog)
+  visible_check.checked = true
+
+  buttons = Qt6::DialogButtonBox.new(
+    Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel,
+    dialog
+  )
+  buttons.on_accepted { dialog.accept }
+  buttons.on_rejected { dialog.reject }
+
+  dialog.vbox do |layout|
+    form_host = Qt6::Widget.new(dialog)
+    form_host.form do |form|
+      form.add_row("Name", name_edit)
+      form.add_row("Opacity", opacity_spin)
+      form.add_row("Kind", kind_combo)
+      form.add_row("", visible_check)
+    end
+    layout << form_host
+    layout << buttons
+  end
+
+  begin
+    if dialog.exec == Qt6::DialogCode::Accepted
+      input_summary.text = "Settings: #{name_edit.text}, #{opacity_spin.value}%, #{kind_combo.current_text}"
+      record_result.call("Dialog", "accepted layer settings")
+    else
+      record_result.call("Dialog", "canceled")
+    end
+  ensure
+    dialog.release
+  end
+end
+
+auto_widgets = [] of Qt6::Widget
+
+auto_message_question = -> do
+  dialog = Qt6::MessageBox.new(main)
+  dialog.window_title = "Save Changes?"
+  dialog.icon = Qt6::MessageBoxIcon::Question
+  dialog.text = "This is a QMessageBox convenience helper."
+  dialog.informative_text = "The selected button is returned as a Crystal enum."
+  dialog.standard_buttons = Qt6::MessageBoxButton::Yes | Qt6::MessageBoxButton::No | Qt6::MessageBoxButton::Cancel
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_message_warning = -> do
+  dialog = Qt6::MessageBox.new(main)
+  dialog.window_title = "Layer Warning"
+  dialog.icon = Qt6::MessageBoxIcon::Warning
+  dialog.text = "The selected layer is locked."
+  dialog.informative_text = "Unlock the layer before editing its geometry."
+  dialog.standard_buttons = Qt6::MessageBoxButton::Ok | Qt6::MessageBoxButton::Cancel
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_file_open = -> do
+  dialog = Qt6::FileDialog.new(main, Dir.current, "Crystal files (*.cr);;All Files (*)")
+  dialog.window_title = "Open Example File"
+  dialog.accept_mode = Qt6::FileDialogAcceptMode::Open
+  dialog.file_mode = Qt6::FileDialogFileMode::ExistingFile
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_file_save = -> do
+  dialog = Qt6::FileDialog.new(main, Dir.current, "Map files (*.json *.map);;All Files (*)")
+  dialog.window_title = "Save Example File"
+  dialog.accept_mode = Qt6::FileDialogAcceptMode::Save
+  dialog.file_mode = Qt6::FileDialogFileMode::AnyFile
+  dialog.select_file("project-output.map")
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_color_dialog = -> do
+  dialog = Qt6::ColorDialog.new(main)
+  dialog.window_title = "Pick Layer Color"
+  dialog.current_color = last_color
+  dialog.native_dialog = false
+  dialog.show_alpha_channel = false
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_color_alpha = -> do
+  dialog = Qt6::ColorDialog.new(main)
+  dialog.window_title = "Pick Accent Color"
+  dialog.current_color = last_color
+  dialog.native_dialog = false
+  dialog.show_alpha_channel = true
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_font_dialog = -> do
+  dialog = Qt6::FontDialog.new(main, last_font)
+  dialog.window_title = "Choose Label Font"
+  dialog.native_dialog = false
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_font_monospaced = -> do
+  dialog = Qt6::FontDialog.new(main, Qt6::QFont.new("Monospace", 12))
+  dialog.window_title = "Choose Code Font"
+  dialog.native_dialog = false
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_input_text = -> do
+  dialog = Qt6::InputDialog.new(main)
+  dialog.window_title = "Rename Layer"
+  dialog.input_mode = Qt6::InputDialogInputMode::Text
+  dialog.label_text = "Layer name"
+  dialog.text_value = "Terrain"
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_input_int = -> do
+  dialog = Qt6::InputDialog.new(main)
+  dialog.window_title = "Layer Opacity"
+  dialog.input_mode = Qt6::InputDialogInputMode::Int
+  dialog.label_text = "Opacity percent"
+  dialog.int_range = 0..100
+  dialog.int_value = 72
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_input_choice = -> do
+  dialog = Qt6::InputDialog.new(main)
+  dialog.window_title = "Layer Kind"
+  dialog.input_mode = Qt6::InputDialogInputMode::Text
+  dialog.label_text = "Kind"
+  dialog.combo_box_items = ["Terrain", "Roads", "Units", "Annotations"]
+  dialog.combo_box_editable = false
+  dialog.text_value = "Roads"
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_custom_settings = -> do
+  dialog = Qt6::Dialog.new(main)
+  dialog.window_title = "Layer Settings"
+  dialog.resize(420, 220)
+
+  name_edit = Qt6::LineEdit.new("Terrain", dialog)
+  opacity_spin = Qt6::SpinBox.new(dialog)
+  opacity_spin.set_range(0, 100)
+  opacity_spin.value = 72
+  opacity_spin.suffix = "%"
+
+  kind_combo = Qt6::ComboBox.new(dialog)
+  ["Terrain", "Roads", "Units", "Annotations"].each { |item| kind_combo << item }
+  kind_combo.current_index = 1
+
+  visible_check = Qt6::CheckBox.new("Visible", dialog)
+  visible_check.checked = true
+
+  buttons = Qt6::DialogButtonBox.new(
+    Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel,
+    dialog
+  )
+  buttons.on_accepted { dialog.accept }
+  buttons.on_rejected { dialog.reject }
+
+  dialog.vbox do |layout|
+    form_host = Qt6::Widget.new(dialog)
+    form_host.form do |form|
+      form.add_row("Name", name_edit)
+      form.add_row("Opacity", opacity_spin)
+      form.add_row("Kind", kind_combo)
+      form.add_row("", visible_check)
+    end
+    layout << form_host
+    layout << buttons
+  end
+
+  dialog.show
+  auto_widgets << dialog
+end
+
+auto_actions = {} of String => Proc(Nil)
+auto_actions["main"] = -> { }
+auto_actions["message-question"] = auto_message_question
+auto_actions["message-warning"] = auto_message_warning
+auto_actions["file-open"] = show_file
+auto_actions["file-save"] = show_save_file
+auto_actions["color-dialog"] = auto_color_dialog
+auto_actions["color-alpha"] = auto_color_alpha
+auto_actions["font-dialog"] = auto_font_dialog
+auto_actions["font-monospaced"] = auto_font_monospaced
+auto_actions["input-text"] = auto_input_text
+auto_actions["input-int"] = auto_input_int
+auto_actions["input-choice"] = auto_input_choice
+auto_actions["progress-dialog"] = show_progress
+auto_actions["progress-canceled"] = show_progress
+auto_actions["custom-settings"] = auto_custom_settings
+
 open_message_action = Qt6::Action.new("Message Box", main)
 open_file_action = Qt6::Action.new("Open File", main)
 open_color_action = Qt6::Action.new("Color", main)
@@ -142,6 +407,7 @@ open_text_action = Qt6::Action.new("Text Input", main)
 open_int_action = Qt6::Action.new("Integer Input", main)
 open_choice_action = Qt6::Action.new("Choice Input", main)
 open_progress_action = Qt6::Action.new("Progress", main)
+open_settings_action = Qt6::Action.new("Settings", main)
 quit_action = Qt6::Action.new("Quit", main)
 
 open_message_action.on_triggered { show_message.call }
@@ -152,6 +418,7 @@ open_text_action.on_triggered { show_input.call }
 open_int_action.on_triggered { show_numeric_input.call }
 open_choice_action.on_triggered { show_choice_input.call }
 open_progress_action.on_triggered { show_progress.call }
+open_settings_action.on_triggered { show_custom_settings.call }
 quit_action.on_triggered { app.quit }
 
 file_menu = main.menu_bar.add_menu("File")
@@ -167,6 +434,7 @@ dialogs_menu << open_text_action
 dialogs_menu << open_int_action
 dialogs_menu << open_choice_action
 dialogs_menu << open_progress_action
+dialogs_menu << open_settings_action
 
 toolbar = Qt6::ToolBar.new("Dialogs", main)
 toolbar << open_message_action
@@ -175,6 +443,7 @@ toolbar << open_color_action
 toolbar << open_font_action
 toolbar << open_text_action
 toolbar << open_progress_action
+toolbar << open_settings_action
 main.add_tool_bar(toolbar)
 
 message_button = Qt6::PushButton.new("Message Box")
@@ -201,6 +470,9 @@ choice_button.on_clicked { show_choice_input.call }
 progress_button = Qt6::PushButton.new("Progress Dialog")
 progress_button.on_clicked { show_progress.call }
 
+settings_button = Qt6::PushButton.new("Settings Dialog")
+settings_button.on_clicked { show_custom_settings.call }
+
 central = Qt6::Widget.new
 central.vbox do |layout|
   intro = Qt6::GroupBox.new("Standard dialog helpers")
@@ -220,6 +492,7 @@ central.vbox do |layout|
     grid.add(int_button, 1, 1)
     grid.add(choice_button, 1, 2)
     grid.add(progress_button, 1, 3)
+    grid.add(settings_button, 2, 0)
   end
   layout << controls
 
@@ -237,4 +510,13 @@ end
 
 main.central_widget = central
 main.show
+if auto_dialog
+  Qt6::QTimer.single_shot(600) do
+    if action = auto_actions[auto_dialog]?
+      action.call
+    else
+      status_bar.show_message("Unknown auto dialog: #{auto_dialog}", 3000)
+    end
+  end
+end
 app.run
