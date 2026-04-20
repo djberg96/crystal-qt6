@@ -93,6 +93,26 @@
     \caption{#2}
   \end{figure}
 }
+\newcommand{\inputdialogscreenshots}{%
+  \begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+      \centering
+      \screenshotimage{docs/book/images/dialogs-input-text.png}{width=0.88\linewidth,height=0.24\textheight,keepaspectratio}%
+      \caption{A text input dialog for renaming a layer.}
+    \end{minipage}\par\medskip
+    \begin{minipage}{0.48\textwidth}
+      \centering
+      \screenshotimage{docs/book/images/dialogs-input-int.png}{width=0.88\linewidth,height=0.24\textheight,keepaspectratio}%
+      \caption{An integer input dialog with a bounded opacity range.}
+    \end{minipage}\par\medskip
+    \begin{minipage}{0.48\textwidth}
+      \centering
+      \screenshotimage{docs/book/images/dialogs-input-choice.png}{width=0.88\linewidth,height=0.24\textheight,keepaspectratio}%
+      \caption{An item-selection input dialog for choosing a layer kind.}
+    \end{minipage}
+  \end{figure}
+}
 
 \title{Programming QT 6 with Crystal}
 \author{Daniel J. Berger}
