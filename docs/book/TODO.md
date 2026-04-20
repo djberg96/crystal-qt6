@@ -17,3 +17,11 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Add a note about painter/device lifetime, especially ending or releasing a `QPainter` before reading or saving its target device. This may belong in the painting chapter instead.
 - Add a dedicated GUI-thread section if later chapters do not cover threading expectations clearly enough.
 - Consider an internal design sidebar about tracked resources being released in reverse creation order. Keep it contributor-oriented so the user-facing lifecycle advice stays simple.
+
+## Chapter 3: Widgets And Layouts
+
+- Add a skim-friendly widget/control reference table, such as `LineEdit` for short text, `ComboBox` for choices, `SpinBox` for bounded integers, and `PlainTextEdit` for multiline text.
+- Add a screenshot-backed panel example once screenshots are being captured for the guide.
+- Add a short container-widget section covering `TabWidget`, `ScrollArea`, `Splitter`, `GroupBox`, and possibly `StackedWidget`.
+- Add a "layout pitfalls" note about avoiding excessive fixed sizes, avoiding manual positioning inside layouts, and letting layout/parent ownership do its job.
+- Add a small exercise, such as building a preferences panel or layer inspector, if the book becomes more tutorial-oriented.

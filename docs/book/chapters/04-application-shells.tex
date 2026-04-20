@@ -1,37 +1,250 @@
 \chapter{Application Shells}
 
-Desktop applications usually need more than a central widget. \api{Qt6::MainWindow} provides a menu bar, toolbars, dock widgets, and a status bar.
+Once you can compose widgets, the next layer is the application shell: the main window, menu bar, toolbars, status bar, dock widgets, and reusable commands. In Qt, this shell is centered on \api{QMainWindow}. In \api{crystal-qt6}, the wrapper is \api{Qt6::MainWindow}.
+
+\section{Main Window Basics}
+
+\api{MainWindow} is a specialized top-level window. It owns a central widget and reserves standard regions for menus, toolbars, docks, and a status bar.
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+
+main = Qt6::MainWindow.new
+main.window_title = "Map Tool"
+main.resize(960, 640)
+
+canvas = Qt6::Label.new("Canvas")
+main.central_widget = canvas
+
+main.status_bar.show_message("Ready")
+main.show
+app.run
+\end{lstlisting}
+
+The central widget is the primary work area. In an editor, it might be a custom canvas. In a document tool, it might be a text editor. In a data tool, it might be a table or a split panel.
 
 \section{Actions First}
 
-Create \api{Action} objects for user commands, then place the same action in menus and toolbars. This keeps shortcut, enabled state, checked state, and callback behavior shared.
+Qt applications usually model user commands as actions. An action can have text, a shortcut, enabled state, checked state, tooltip text, status-tip text, and callbacks. The same action can appear in a menu and a toolbar without duplicating behavior.
 
 \begin{lstlisting}[style=crystal]
 open_action = Qt6::Action.new("Open", main)
 open_action.shortcut = "Ctrl+O"
+open_action.tool_tip = "Open a project"
 open_action.status_tip = "Open a project file"
 open_action.on_triggered do
-  # open dialog or command handler
+  main.status_bar.show_message("Open requested", 1500)
 end
+\end{lstlisting}
 
+This pattern scales better than wiring every menu item and toolbar button separately. Menus and toolbars become views of the same command model.
+
+\section{Shortcuts}
+
+Shortcuts can be assigned as strings or explicit \api{KeySequence} values. The string form is concise and works well for common shortcuts:
+
+\begin{lstlisting}[style=crystal]
+save_action = Qt6::Action.new("Save", main)
+save_action.shortcut = "Ctrl+S"
+
+apply_action = Qt6::Action.new("Apply", main)
+apply_action.shortcut = Qt6::KeySequence.new("Ctrl+Return")
+\end{lstlisting}
+
+Prefer familiar platform conventions. Use shortcuts for commands that users repeat often: open, save, undo, redo, find, apply, close, and mode switching.
+
+\section{Menus}
+
+The main window owns a menu bar. Top-level menus are created from the menu bar, and each menu can contain actions, separators, and submenus.
+
+\begin{lstlisting}[style=crystal]
 file_menu = main.menu_bar.add_menu("File")
 file_menu << open_action
+file_menu << save_action
+file_menu.add_separator
 
+quit_action = Qt6::Action.new("Quit", main)
+quit_action.shortcut = "Ctrl+Q"
+quit_action.on_triggered { app.quit }
+file_menu << quit_action
+
+view_menu = main.menu_bar.add_menu("View")
+\end{lstlisting}
+
+Menus should be organized by intent. \api{File} usually holds document or project commands. \api{Edit} holds undo, redo, cut, copy, paste, and selection commands. \api{View} controls panes and presentation. \api{Tools} or \api{Mode} can hold domain-specific commands.
+
+\section{Toolbars}
+
+Toolbars expose frequent commands as visible controls. In \api{crystal-qt6}, a toolbar can contain actions, separators, and ordinary widgets.
+
+\begin{lstlisting}[style=crystal]
 toolbar = Qt6::ToolBar.new("Main", main)
 toolbar << open_action
+toolbar << save_action
+toolbar.add_separator
+toolbar << apply_action
+toolbar.movable = true
+
 main.add_tool_bar(toolbar)
 \end{lstlisting}
 
-\section{Docks And Status}
+Toolbar actions should be a curated subset of menu actions. A toolbar is most useful when it keeps high-frequency operations close to the work area without replacing the menu bar as the complete command catalog.
 
-Docks work well for inspectors, layer lists, logs, and tools that should remain near the main canvas. The status bar should report command results, transient validation feedback, and progress summaries.
+\section{Status Bars}
+
+The status bar is for quiet, transient feedback. Use it for command results, validation summaries, progress hints, selection details, and mode changes.
 
 \begin{lstlisting}[style=crystal]
-inspector = Qt6::DockWidget.new("Inspector", main)
-inspector.widget = properties_panel
-main.add_dock_widget(inspector, Qt6::DockArea::Left)
+status = main.status_bar
+status.show_message("Ready")
 
-main.status_bar.show_message("Ready")
+save_action.on_triggered do
+  status.show_message("Saved project", 2000)
+end
 \end{lstlisting}
 
-See \api{examples/editor_shell.cr} and \api{examples/desktop_editor_showcase.cr} for maintained shell examples.
+A timeout of \api{0} keeps the message until it is replaced or cleared. Nonzero timeouts are useful for short command confirmations.
+
+\section{Docks}
+
+Dock widgets attach secondary panels to a main window. They are a natural fit for inspectors, layer lists, logs, search results, palettes, and tool options.
+
+\begin{lstlisting}[style=crystal]
+layers = Qt6::ListWidget.new
+layers << "Terrain" << "Roads" << "Units"
+
+layers_dock = Qt6::DockWidget.new("Layers", main)
+layers_dock.widget = layers
+main.add_dock_widget(layers_dock, Qt6::DockArea::Left)
+
+properties = Qt6::Widget.new
+properties.form do |form|
+  form.add_row("Name", Qt6::LineEdit.new("Terrain"))
+  form.add_row("Visible", Qt6::CheckBox.new("Visible"))
+end
+
+properties_dock = Qt6::DockWidget.new("Properties", main)
+properties_dock.widget = properties
+main.add_dock_widget(properties_dock, Qt6::DockArea::Right)
+\end{lstlisting}
+
+Keep docks focused. A dock should have one clear purpose, and its title should make that purpose obvious.
+
+\section{Checkable Actions And Mode Groups}
+
+Actions can be checkable. Related checkable actions can be placed in an \api{ActionGroup}. When the group is exclusive, only one action can be checked at a time.
+
+\begin{lstlisting}[style=crystal]
+mode_group = Qt6::ActionGroup.new(main)
+mode_group.exclusive = true
+
+select_mode = Qt6::Action.new("Select", main)
+select_mode.checkable = true
+select_mode.checked = true
+
+draw_mode = Qt6::Action.new("Draw", main)
+draw_mode.checkable = true
+
+pan_mode = Qt6::Action.new("Pan", main)
+pan_mode.checkable = true
+
+mode_group << select_mode
+mode_group << draw_mode
+mode_group << pan_mode
+\end{lstlisting}
+
+Mode actions can appear in both menus and toolbars:
+
+\begin{lstlisting}[style=crystal]
+mode_menu = main.menu_bar.add_menu("Mode")
+mode_menu << select_mode
+mode_menu << draw_mode
+mode_menu << pan_mode
+
+toolbar.add_separator
+toolbar << select_mode
+toolbar << draw_mode
+toolbar << pan_mode
+\end{lstlisting}
+
+\section{A Small Shell}
+
+The following shell combines the main pieces: central widget, actions, shortcuts, menus, toolbar, status bar, and a dock.
+
+\begin{lstlisting}[style=crystal]
+require "qt6"
+
+app = Qt6.application
+
+main = Qt6::MainWindow.new
+main.window_title = "Project Shell"
+main.resize(900, 600)
+
+status = main.status_bar
+status.show_message("Ready")
+
+canvas = Qt6::Label.new("Project canvas")
+canvas.set_minimum_size(480, 320)
+main.central_widget = canvas
+
+open_action = Qt6::Action.new("Open", main)
+open_action.shortcut = "Ctrl+O"
+open_action.status_tip = "Open a project"
+open_action.on_triggered do
+  status.show_message("Open requested", 1500)
+end
+
+save_action = Qt6::Action.new("Save", main)
+save_action.shortcut = "Ctrl+S"
+save_action.status_tip = "Save the current project"
+save_action.on_triggered do
+  status.show_message("Saved", 1500)
+end
+
+quit_action = Qt6::Action.new("Quit", main)
+quit_action.shortcut = "Ctrl+Q"
+quit_action.on_triggered { app.quit }
+
+file_menu = main.menu_bar.add_menu("File")
+file_menu << open_action
+file_menu << save_action
+file_menu.add_separator
+file_menu << quit_action
+
+toolbar = Qt6::ToolBar.new("Main", main)
+toolbar << open_action
+toolbar << save_action
+main.add_tool_bar(toolbar)
+
+inspector = Qt6::Widget.new
+inspector.form do |form|
+  form.add_row("Name", Qt6::LineEdit.new("Terrain"))
+  form.add_row("Visible", Qt6::CheckBox.new("Visible"))
+end
+
+dock = Qt6::DockWidget.new("Inspector", main)
+dock.widget = inspector
+main.add_dock_widget(dock, Qt6::DockArea::Right)
+
+main.show
+app.run
+\end{lstlisting}
+
+\section{Shell Design Guidelines}
+
+A good shell gives users stable places to look:
+
+\begin{enumerate}
+\item Put the primary work surface in the central widget.
+\item Put complete command access in menus.
+\item Put frequent commands in toolbars.
+\item Put persistent secondary tools in docks.
+\item Put transient feedback in the status bar.
+\item Reuse actions instead of duplicating callbacks.
+\end{enumerate}
+
+That structure is familiar to users of desktop applications, and it keeps the code organized as the application grows.
+
+\section{Examples}
+
+\api{examples/editor_shell.cr} is the smallest maintained example focused on the main-window shell. \api{examples/desktop_editor_showcase.cr} is broader and shows how shell structure combines with model/view panels, text editing, clipboard data, image loading, custom preview rendering, and application-service helpers.
