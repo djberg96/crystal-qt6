@@ -125,7 +125,7 @@ You may call \api{Qt6.shutdown} yourself at a clear application boundary, but mo
 
 \section{Build Flow}
 
-The native shim builds automatically before Crystal compiles the shard. During development, the common commands are:
+The native shim builds automatically before Crystal compiles the shard. The repository \api{Makefile} provides convenient shortcuts for common tasks:
 
 \begin{lstlisting}[style=crystal]
 # Build the native bridge directly.
@@ -137,6 +137,19 @@ make spec
 # Launch a maintained example.
 make example-dialogs
 \end{lstlisting}
+
+Those targets are not special entry points into the binding. They wrap ordinary Crystal commands, so direct commands work as well:
+
+\begin{lstlisting}[style=crystal]
+# Run the same spec suite without make.
+crystal spec
+
+# Compile or run an example directly.
+crystal build examples/dialog_gallery.cr
+crystal run examples/dialog_gallery.cr
+\end{lstlisting}
+
+For day-to-day work, use whichever form is clearer in context. The \api{make} targets are nice for discoverability and CI-style repetition; direct \api{crystal} commands are useful when you are experimenting with one file or passing compiler options.
 
 \section{How To Read This Guide}
 
