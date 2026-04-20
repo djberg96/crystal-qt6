@@ -68,12 +68,16 @@
     \IfFileExists{#1}{%
       \includegraphics[width=0.82\textwidth,height=0.55\textheight,keepaspectratio]{#1}%
     }{%
-      \fbox{%
-        \begin{minipage}[c][2.15in][c]{0.82\textwidth}
-          \centering
-          Screenshot placeholder\\[0.5em]
-          \api{#1}
-        \end{minipage}
+      \IfFileExists{../../#1}{%
+        \includegraphics[width=0.82\textwidth,height=0.55\textheight,keepaspectratio]{../../#1}%
+      }{%
+        \fbox{%
+          \begin{minipage}[c][2.15in][c]{0.82\textwidth}
+            \centering
+            Screenshot placeholder\\[0.5em]
+            \api{#1}
+          \end{minipage}
+        }%
       }%
     }%
     \caption{#2}
