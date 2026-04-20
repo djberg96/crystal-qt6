@@ -1,28 +1,263 @@
 \chapter{Signals And Events}
 
-Most applications begin with ordinary control signals. Custom widgets need lower-level event hooks for painting, resizing, pointer input, keyboard input, focus, enter/leave, wheel events, and drag/drop.
+Most application behavior starts with signals. Buttons emit clicks, actions emit triggers, item views emit selection changes, and timers emit timeouts. Events sit one level lower: they are the raw input, paint, resize, focus, wheel, and drag/drop notifications that Qt delivers to widgets.
 
-\section{EventWidget}
+Use signals when a widget or object already offers the behavior you need. Reach for event callbacks when you are building a custom surface: a canvas, viewport, editor, preview, timeline, or drop target.
 
-\api{EventWidget} provides a Crystal-backed widget with callback hooks for the events that are most useful when building canvases and editors.
+\section{Signals First}
+
+The common wrapper pattern is an \api{on_} helper for the signal you care about. The helper registers a Crystal block and returns the receiver, so it composes naturally with widget setup.
 
 \begin{lstlisting}[style=crystal]
-canvas = Qt6::EventWidget.new
-canvas.mouse_tracking = true
-
-canvas.on_mouse_press do |event|
-  status_bar.show_message("Pressed at #{event.position.x}, #{event.position.y}")
+save_button = Qt6::PushButton.new("Save")
+save_button.on_clicked do
+  status_bar.show_message("Saved", 1500)
 end
 
-canvas.on_paint_with_painter do |_event, painter|
-  painter.fill_rect(Qt6::RectF.new(0, 0, 320, 180), Qt6::Color.new(245, 248, 252))
+snap_action = Qt6::Action.new("Snap to Grid", main)
+snap_action.checkable = true
+snap_action.on_toggled do |enabled|
+  editor.snap_to_grid = enabled
+  canvas.update
 end
 \end{lstlisting}
 
-\section{Synthetic Events}
+Signals can also be accessed directly through their \api{Signal} object. This is useful when you want to treat application-level callbacks and Qt callbacks the same way.
 
-The spec suite uses synthetic event helpers to exercise custom widget callbacks without a manual GUI session. That keeps custom widget behavior covered on CI and makes event changes safer to extend.
+\begin{lstlisting}[style=crystal]
+save_button.clicked.connect do
+  status_bar.show_message("Save requested", 1500)
+end
+
+snap_action.toggled.connect do |enabled|
+  canvas.tool_tip = enabled ? "Snap is on" : "Snap is off"
+end
+\end{lstlisting}
+
+Signal handlers run on the GUI thread as part of normal event delivery. Keep them short: update state, schedule repaint work with \api{update}, show feedback, or dispatch work elsewhere. A callback that blocks for a long time will also block repainting and input.
+
+\section{Actions, Widgets, And State}
+
+Signals work best when they update a small piece of shared state and let the UI redraw from that state. This keeps menu items, toolbar buttons, and widgets from drifting apart.
+
+\begin{lstlisting}[style=crystal]
+mode = "select"
+
+select_action = Qt6::Action.new("Select", main)
+select_action.checkable = true
+select_action.checked = true
+select_action.on_triggered do
+  mode = "select"
+  status_bar.show_message("Select mode", 1200)
+end
+
+draw_action = Qt6::Action.new("Draw", main)
+draw_action.checkable = true
+draw_action.on_triggered do
+  mode = "draw"
+  status_bar.show_message("Draw mode", 1200)
+end
+\end{lstlisting}
+
+For exclusive modes, place related actions in an \api{ActionGroup} as shown in Chapter 4. The important idea is the same: one command changes the model, and the rest of the interface observes or redraws from it.
+
+\section{Timers And The Event Loop}
+
+\api{QTimer} is the usual way to schedule delayed or repeated GUI work. A timer timeout is delivered by the event loop, so it has the same rule as other callbacks: do a small amount of work, then return.
+
+\begin{lstlisting}[style=crystal]
+timer = Qt6::QTimer.new(main)
+timer.interval = 1000
+timer.on_timeout do
+  clock_label.text = Time.local.to_s("%H:%M:%S")
+end
+timer.start
+
+Qt6::QTimer.single_shot(0) do
+  canvas.set_focus
+end
+\end{lstlisting}
+
+A zero-delay single shot is a handy way to run something after the current setup finishes and control returns to Qt. For example, a window can show first, then a widget can take focus.
+
+Tests and short progress flows sometimes call \api{process_events} explicitly:
+
+\begin{lstlisting}[style=crystal]
+10.times do
+  app.process_events
+  break if operation_finished?
+end
+\end{lstlisting}
+
+That is useful in specs and small modal workflows, but it should not become the main structure of an application. In normal UI code, prefer timers, signals, and callbacks over manual event pumping.
+
+\section{Custom Event Widgets}
+
+\api{EventWidget} is the custom-widget bridge for Crystal code. It exposes paint, resize, mouse, wheel, key, focus, enter/leave, and drag/drop callbacks without requiring a C++ subclass.
+
+\begin{longtable}{@{}p{0.36\textwidth}p{0.58\textwidth}@{}}
+\toprule
+Callback & Payload \\
+\midrule
+\api{on_paint} & \api{PaintEvent} with the dirty rectangle \\
+\api{on_paint_with_painter} & \api{PaintEvent} and a live \api{QPainter} \\
+\api{on_resize} & \api{ResizeEvent} with old and new sizes \\
+\api{on_mouse_press} & \api{MouseEvent} with position, buttons, and modifiers \\
+\api{on_mouse_move} & \api{MouseEvent} with position, buttons, and modifiers \\
+\api{on_mouse_release} & \api{MouseEvent} with position, buttons, and modifiers \\
+\api{on_mouse_double_click} & \api{MouseEvent} with position, buttons, and modifiers \\
+\api{on_wheel} & \api{WheelEvent} with pixel and angle deltas \\
+\api{on_key_press} & \api{KeyEvent} with key, modifiers, repeat, and count \\
+\api{on_key_release} & \api{KeyEvent} with key, modifiers, repeat, and count \\
+\api{on_enter} & \api{WidgetEvent} with the event type \\
+\api{on_leave} & \api{WidgetEvent} with the event type \\
+\api{on_focus_in} & \api{WidgetEvent} with the event type \\
+\api{on_focus_out} & \api{WidgetEvent} with the event type \\
+\api{on_drag_enter} & \api{DropEvent} with position and MIME data \\
+\api{on_drag_move} & \api{DropEvent} with position and MIME data \\
+\api{on_drop} & \api{DropEvent} with position and MIME data \\
+\bottomrule
+\end{longtable}
+
+The paint callback is where a custom surface draws itself. Other callbacks should update state and schedule a repaint.
+
+\begin{lstlisting}[style=crystal]
+canvas = Qt6::EventWidget.new
+canvas.resize(480, 320)
+canvas.mouse_tracking = true
+canvas.focus_policy = Qt6::FocusPolicy::StrongFocus
+
+points = [] of Qt6::PointF
+hover = Qt6::PointF.new(0.0, 0.0)
+
+canvas.on_mouse_press do |event|
+  points << event.position
+  canvas.set_focus
+  canvas.update
+end
+
+canvas.on_mouse_move do |event|
+  hover = event.position
+  canvas.update
+end
+
+canvas.on_key_press do |event|
+  if event.key == 67 # C
+    points.clear
+    canvas.update
+  end
+end
+
+canvas.on_paint_with_painter do |event, painter|
+  painter.fill_rect(event.rect, Qt6::Color.new(245, 248, 252))
+  painter.pen = Qt6::Color.new(50, 60, 70)
+
+  points.each do |point|
+    painter.draw_ellipse(Qt6::RectF.new(point.x - 4.0, point.y - 4.0, 8.0, 8.0))
+  end
+
+  painter.draw_text(Qt6::PointF.new(12.0, 24.0), "Pointer #{hover.x.round}, #{hover.y.round}")
+end
+\end{lstlisting}
+
+\api{mouse_tracking} enables move events even when no mouse button is pressed. \api{focus_policy} allows the canvas to receive keyboard focus; calling \api{set_focus} on mouse press makes keyboard shortcuts feel natural after the user clicks the canvas.
+
+The \api{QPainter} passed to \api{on_paint_with_painter} is only valid for that callback. Do not store it. Store drawing state instead, and let the next paint event create the pixels.
+
+\section{Event Filters}
+
+An event filter lets one object inspect events before another widget handles them. Filters are useful when you want to adjust behavior on an existing widget without replacing it with an \api{EventWidget}.
+
+\begin{lstlisting}[style=crystal]
+spin_box = Qt6::SpinBox.new(panel)
+spin_box.set_range(0, 100)
+spin_box.focus_policy = Qt6::FocusPolicy::StrongFocus
+
+filter = Qt6::EventFilter.new(panel)
+filter.on_event do |watched, event|
+  watched.try(&.to_unsafe) == spin_box.to_unsafe &&
+    event.type == Qt6::EventType::Wheel &&
+    !spin_box.has_focus?
+end
+
+spin_box.install_event_filter(filter)
+\end{lstlisting}
+
+The filter block returns \api{true} to consume the event and \api{false} to let Qt continue delivering it. In this example, wheel events are swallowed unless the spin box has focus. That avoids accidental value changes when a user scrolls a panel.
+
+Keep the filter alive for as long as it is installed. Parenting it to a durable widget, such as the panel above, is the simplest pattern.
 
 \section{Drag And Drop}
 
-\api{MimeData}, clipboard helpers, and \api{EventWidget} drag/drop callbacks cover the common receive side for text and custom payloads. More explicit drag-source helpers can be added when a downstream application needs them.
+Drag/drop is a combination of widget setup, event acceptance, and MIME data. The receiving widget must accept drops, then drag-enter and drag-move callbacks should accept only payloads the widget understands.
+
+\begin{lstlisting}[style=crystal]
+drop_surface = Qt6::EventWidget.new
+drop_surface.accept_drops = true
+
+drop_surface.on_drag_enter do |event|
+  if payload = event.mime_data
+    if payload.has_text?
+      event.accept_proposed_action
+    else
+      event.ignore
+    end
+  else
+    event.ignore
+  end
+end
+
+drop_surface.on_drag_move do |event|
+  if event.mime_data.try(&.has_text?)
+    event.accept_proposed_action
+  else
+    event.ignore
+  end
+end
+
+drop_surface.on_drop do |event|
+  if payload = event.mime_data
+    if payload.has_text?
+      label.text = payload.text
+      event.accept_proposed_action
+    else
+      event.ignore
+    end
+  else
+    event.ignore
+  end
+end
+\end{lstlisting}
+
+\api{MimeData} can carry plain text, HTML, images, and custom byte payloads by MIME format. For a drop target, check \api{has_text?}, \api{has_html?}, \api{has_image?}, or \api{has_format?} before reading the data. Calling \api{accept_proposed_action} tells Qt that the target can handle the current payload.
+
+\section{Testing Event Code}
+
+Event-driven code is easiest to test when the state changes are separated from painting. Let input callbacks mutate state, let paint callbacks render that state, and use synthetic helpers to exercise the input path.
+
+\begin{lstlisting}[style=crystal]
+canvas = Qt6::EventWidget.new
+clicks = [] of Qt6::PointF
+
+canvas.on_mouse_press do |event|
+  clicks << event.position
+end
+
+canvas.show
+app.process_events
+
+canvas.simulate_mouse_press(Qt6::PointF.new(10.0, 20.0))
+app.process_events
+
+clicks.should eq([Qt6::PointF.new(10.0, 20.0)])
+\end{lstlisting}
+
+\api{EventWidget} also provides synthetic helpers for mouse move, release, double-click, wheel, key press/release, enter/leave, focus, and text drag/drop events. These helpers are designed for specs and automation; production applications normally receive the real Qt events from the operating system.
+
+\section{Practical Guidelines}
+
+Prefer high-level signals for ordinary widgets and commands. Use \api{EventWidget} when the user is interacting with a custom surface. Use \api{EventFilter} when an existing widget is almost right but needs one specific event rule.
+
+For custom painting, change state outside the paint callback and call \api{update}. Draw only inside the paint callback. For timers, parent or retain the timer so it stays alive, stop repeated timers when the work is finished, and keep timeout handlers brief.
+
+For live event wrappers such as \api{DropEvent} and \api{QEvent}, read what you need during the callback. Do not store the event object for later. Store copied values such as text, positions, sizes, key codes, or your own domain state instead.
