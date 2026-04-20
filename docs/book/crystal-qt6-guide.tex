@@ -12,6 +12,9 @@
 
 \definecolor{codebg}{HTML}{F7F7F8}
 \definecolor{codeframe}{HTML}{D7DCE2}
+\definecolor{codekeyword}{HTML}{6F42C1}
+\definecolor{codecomment}{HTML}{5C6370}
+\definecolor{codestring}{HTML}{0A7F3F}
 \definecolor{linkblue}{HTML}{185ABC}
 \emergencystretch=3em
 
@@ -24,14 +27,38 @@
 }
 
 \lstdefinestyle{crystal}{
+  language=Crystal,
   basicstyle=\ttfamily\small,
   backgroundcolor=\color{codebg},
+  keywordstyle=\color{codekeyword}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{codestring},
   frame=single,
   rulecolor=\color{codeframe},
   breaklines=true,
   columns=fullflexible,
   keepspaces=true,
   showstringspaces=false
+}
+
+\lstdefinelanguage{Crystal}{
+  sensitive=true,
+  morecomment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+  morekeywords={
+    abstract,alias,annotation,as,as?,asm,begin,break,case,class,def,do,else,
+    elsif,end,ensure,enum,extend,false,for,fun,if,in,include,instance_sizeof,
+    is_a?,lib,macro,module,next,nil,of,out,pointerof,private,protected,
+    require,rescue,return,select,self,sizeof,struct,super,then,true,type,
+    typeof,uninitialized,union,unless,until,verbatim,when,while,with,yield
+  },
+  morekeywords=[2]{
+    Array,Bool,Char,Class,Enum,Float32,Float64,Hash,Int,Int8,Int16,Int32,
+    Int64,Nil,Number,Pointer,Proc,Range,Self,String,Symbol,Tuple,UInt8,
+    UInt16,UInt32,UInt64,Void
+  },
+  keywordstyle=[2]\color{linkblue}\bfseries
 }
 
 \newcommand{\api}[1]{\texttt{\detokenize{#1}}}
