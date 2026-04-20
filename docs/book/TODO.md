@@ -34,3 +34,15 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Add a shell screenshot once screenshot capture is set up, using either the small shell example or `examples/editor_shell.cr`.
 - Add a more complete document-dirty pattern, including modified title state, save enabled state, and status messages. This may fit better near undo/document chapters.
 - Add platform-convention notes for macOS vs Linux command naming and placement, such as quit/menu behavior.
+
+## Chapter 5: Dialogs
+
+- Revisit the full chapter layout after the first screenshot pass. Tune float placement, code/example ordering, figure sizes, page breaks, and whether related screenshots should be grouped into shared figure blocks.
+- Add a short note that `make docs-book` does not currently track image timestamp changes; after replacing screenshots, run `pdflatex` directly or teach the Makefile about image dependencies.
+- Expand the dialog gallery and chapter coverage beyond the first pass. Candidates include information and critical message boxes, multi-file open dialogs, directory selection, double input dialogs, editable item input dialogs, splash screens, and richer custom dialogs.
+- Add small "created with" code snippets for screenshots that do not already have an adjacent example, while avoiding duplicate snippets where the main example already creates the figure.
+- Decide whether native dialogs and widget-backed dialogs should both be shown for color/font/file workflows, especially where native dialogs look very different across macOS, Linux, and Windows.
+- Improve screenshot automation for native modal dialogs. The current capture workflow works, but native dialogs may need foreground launches or manual recapture on macOS.
+- Consider refreshing the dialog screenshots with a consistent light/dark theme decision, window scale, and crop style before publication.
+- Add guidance about when to prefer convenience helpers versus explicit dialog instances, including testability, customization, signals, and ownership/release behavior.
+- Add a troubleshooting sidebar for dialogs that do not appear, appear behind the main window, or behave differently when launched from scripts.
