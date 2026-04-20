@@ -39,10 +39,6 @@ fi
 
 mkdir -p "$BUILD_DIR"
 
-if [ -f "$LIB" ] && [ -f "$OBJ" ] && [ "$OBJ" -nt "$SRC" ] && [ "$OBJ" -nt "$HEADER" ]; then
-  exit 0
-fi
-
 "$CXX" -std=c++17 -fPIC -I"$INCLUDE_DIR" $("$PKG_CONFIG" --cflags $QT_PKG) ${CXXFLAGS:-} -c "$SRC" -o "$OBJ"
 rm -f "$LIB"
 "$AR" rcs "$LIB" "$OBJ"
