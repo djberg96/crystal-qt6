@@ -107,7 +107,7 @@ show_font = -> do
 end
 
 show_monospaced_font = -> do
-  if font = Qt6::FontDialog.get_font(main, last_font, "Choose Code Font", Qt6::FontDialogOption::MonospacedFonts)
+  if font = Qt6::FontDialog.get_font(main, Qt6::QFont.new("Menlo", 12), "Choose Code Font", Qt6::FontDialogOption::MonospacedFonts)
     last_font = font
     style = [font.bold? ? "bold" : nil, font.italic? ? "italic" : nil].compact.join(", ")
     style = "regular" if style.empty?
@@ -303,7 +303,7 @@ end
 auto_font_monospaced = -> do
   dialog = Qt6::FontDialog.new(main, Qt6::QFont.new("Monospace", 12))
   dialog.window_title = "Choose Code Font"
-  dialog.native_dialog = false
+  dialog.options = Qt6::FontDialogOption::MonospacedFonts
   dialog.show
   auto_widgets << dialog
 end
@@ -391,7 +391,7 @@ auto_actions["file-save"] = show_save_file
 auto_actions["color-dialog"] = auto_color_dialog
 auto_actions["color-alpha"] = auto_color_alpha
 auto_actions["font-dialog"] = auto_font_dialog
-auto_actions["font-monospaced"] = auto_font_monospaced
+auto_actions["font-monospaced"] = show_monospaced_font
 auto_actions["input-text"] = auto_input_text
 auto_actions["input-int"] = auto_input_int
 auto_actions["input-choice"] = auto_input_choice
