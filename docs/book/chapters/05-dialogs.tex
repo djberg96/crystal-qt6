@@ -68,7 +68,23 @@ end
 \end{lstlisting}
 
 \smallscreenshotplaceholder{docs/book/images/dialogs-message-question.png}{A question message box with Yes, No, and Cancel buttons.}
-\smallscreenshotplaceholder{docs/book/images/dialogs-message-warning.png}{A warning message box for a recoverable problem.}
+
+\begin{figure}[htbp]
+  \begin{lstlisting}[style=crystal]
+Qt6::MessageBox.warning(
+  main,
+  title: "Layer Warning",
+  text: "The selected layer is locked.",
+  buttons: Qt6::MessageBoxButton::Ok |
+           Qt6::MessageBoxButton::Cancel
+)
+  \end{lstlisting}
+  \centering
+  \screenshotimage{docs/book/images/dialogs-message-warning.png}{width=0.42\textwidth,height=0.24\textheight,keepaspectratio}%
+  \caption{A warning message box for a recoverable problem.}
+\end{figure}
+
+\clearpage
 
 For noninteractive testing or deeper configuration, create \api{MessageBox} directly, set \api{text}, \api{informative_text}, \api{icon}, and \api{standard_buttons}, then call \api{show_modal}.
 
