@@ -62,24 +62,34 @@
 }
 
 \newcommand{\api}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\screenshotimage}[2]{%
+  \IfFileExists{#1}{%
+    \includegraphics[#2]{#1}%
+  }{%
+    \IfFileExists{../../#1}{%
+      \includegraphics[#2]{../../#1}%
+    }{%
+      \fbox{%
+        \begin{minipage}[c][2.15in][c]{0.82\textwidth}
+          \centering
+          Screenshot placeholder\\[0.5em]
+          \api{#1}
+        \end{minipage}
+      }%
+    }%
+  }%
+}
 \newcommand{\screenshotplaceholder}[2]{%
   \begin{figure}[htbp]
     \centering
-    \IfFileExists{#1}{%
-      \includegraphics[width=0.82\textwidth,height=0.55\textheight,keepaspectratio]{#1}%
-    }{%
-      \IfFileExists{../../#1}{%
-        \includegraphics[width=0.82\textwidth,height=0.55\textheight,keepaspectratio]{../../#1}%
-      }{%
-        \fbox{%
-          \begin{minipage}[c][2.15in][c]{0.82\textwidth}
-            \centering
-            Screenshot placeholder\\[0.5em]
-            \api{#1}
-          \end{minipage}
-        }%
-      }%
-    }%
+    \screenshotimage{#1}{width=0.82\textwidth,height=0.55\textheight,keepaspectratio}%
+    \caption{#2}
+  \end{figure}
+}
+\newcommand{\smallscreenshotplaceholder}[2]{%
+  \begin{figure}[htbp]
+    \centering
+    \screenshotimage{#1}{width=0.48\textwidth,height=0.30\textheight,keepaspectratio}%
     \caption{#2}
   \end{figure}
 }
