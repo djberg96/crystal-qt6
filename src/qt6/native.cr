@@ -361,7 +361,6 @@ module Qt6
     fun qt6cr_qpixmap_destroy = qt6cr_qpixmap_destroy(handle : Handle)
     fun qt6cr_qpixmap_from_image = qt6cr_qpixmap_from_image(image : Handle) : Handle
     fun qt6cr_qpixmap_to_image = qt6cr_qpixmap_to_image(handle : Handle) : Handle
-    fun qt6cr_qpixmap_scaled = qt6cr_qpixmap_scaled(handle : Handle, width : LibC::Int, height : LibC::Int, keep_aspect_ratio : Bool, smooth : Bool) : Handle
     fun qt6cr_qpixmap_width = qt6cr_qpixmap_width(handle : Handle) : LibC::Int
     fun qt6cr_qpixmap_height = qt6cr_qpixmap_height(handle : Handle) : LibC::Int
     fun qt6cr_qpixmap_depth = qt6cr_qpixmap_depth(handle : Handle) : LibC::Int

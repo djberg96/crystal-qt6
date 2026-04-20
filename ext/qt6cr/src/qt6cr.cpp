@@ -3577,17 +3577,6 @@ qt6cr_handle_t qt6cr_qpixmap_to_image(qt6cr_handle_t handle) {
   return pixmap == nullptr ? nullptr : new QImage(pixmap->toImage());
 }
 
-qt6cr_handle_t qt6cr_qpixmap_scaled(qt6cr_handle_t handle, int width, int height, bool keep_aspect_ratio, bool smooth) {
-  auto *pixmap = as_qpixmap(handle);
-  if (pixmap == nullptr) {
-    return nullptr;
-  }
-
-  auto aspect_mode = keep_aspect_ratio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-  auto transform_mode = smooth ? Qt::SmoothTransformation : Qt::FastTransformation;
-  return new QPixmap(pixmap->scaled(width, height, aspect_mode, transform_mode));
-}
-
 int qt6cr_qpixmap_width(qt6cr_handle_t handle) {
   auto *pixmap = as_qpixmap(handle);
   return pixmap == nullptr ? 0 : pixmap->width();
