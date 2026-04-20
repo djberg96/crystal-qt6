@@ -19,12 +19,20 @@ The guide is intentionally written with screenshot placeholders so it can compil
 Recommended first screenshot set:
 
 - `dialogs-main-window.png`
-- `dialogs-message-box.png`
-- `dialogs-file-dialog.png`
+- `dialogs-message-question.png`
+- `dialogs-message-warning.png`
+- `dialogs-file-open.png`
+- `dialogs-file-save.png`
 - `dialogs-color-dialog.png`
+- `dialogs-color-alpha.png`
 - `dialogs-font-dialog.png`
-- `dialogs-input-dialog.png`
+- `dialogs-font-monospaced.png`
+- `dialogs-input-text.png`
+- `dialogs-input-int.png`
+- `dialogs-input-choice.png`
 - `dialogs-progress-dialog.png`
+- `dialogs-progress-canceled.png`
+- `dialogs-custom-settings.png`
 
 Use `make example-dialogs` to launch the dialog gallery that these screenshots should document.
 

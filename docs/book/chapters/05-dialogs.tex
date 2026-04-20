@@ -1,37 +1,35 @@
 \chapter{Dialogs}
 
-Standard dialogs are one of the highest-value parts of the \api{crystal-qt6} library because they unlock native-feeling file selection, confirmation flows, color picking, font selection, text input, and progress reporting.
+Standard dialogs are one of the highest-value parts of the \api{crystal-qt6} library because they unlock native-feeling file selection, confirmation flows, color picking, font selection, text input, and progress reporting. A desktop application can feel dramatically more complete once these flows use the platform's expected dialogs.
+
+This chapter is intentionally screenshot-heavy. The figures are build-safe placeholders until the screenshots are captured, but each placeholder names the image file that should eventually be stored under \api{docs/book/images}.
 
 \section{Dialog Gallery}
 
-The maintained gallery at \api{examples/dialog_gallery.cr} opens each supported dialog from buttons, menu actions, and toolbar actions. It is the recommended source for documentation screenshots.
-
-\screenshotplaceholder{docs/book/images/dialogs-main-window.png}{The dialog gallery main window.}
-\screenshotplaceholder{docs/book/images/dialogs-message-box.png}{A message box helper returning a selected button enum.}
-\screenshotplaceholder{docs/book/images/dialogs-file-dialog.png}{A file dialog using a name filter.}
-\screenshotplaceholder{docs/book/images/dialogs-color-dialog.png}{A color dialog with alpha-channel support.}
-\screenshotplaceholder{docs/book/images/dialogs-font-dialog.png}{A font dialog returning a selected \api{QFont}.}
-\screenshotplaceholder{docs/book/images/dialogs-input-dialog.png}{Input dialogs for text, integer, and item choice values.}
-\screenshotplaceholder{docs/book/images/dialogs-progress-dialog.png}{A progress dialog driven by \api{QTimer}.}
-
-\section{Convenience Helpers}
-
-Helpers create a modal dialog, execute it, return the chosen value, and release the native dialog.
+The maintained gallery at \api{examples/dialog_gallery.cr} opens each supported dialog from buttons, menu actions, and toolbar actions. It is the recommended source for documentation screenshots because it keeps all dialog flows in one small, reproducible application.
 
 \begin{lstlisting}[style=crystal]
-if color = Qt6::ColorDialog.get_color(
+make example-dialogs
+\end{lstlisting}
+
+\screenshotplaceholder{docs/book/images/dialogs-main-window.png}{The dialog gallery main window with buttons, menus, toolbar actions, and result labels.}
+
+\section{Convenience Helpers And Explicit Instances}
+
+Most dialog APIs offer a convenience helper for the common modal flow. The helper creates the dialog, configures it, runs it, returns the result, and releases the native dialog.
+
+\begin{lstlisting}[style=crystal]
+if name = Qt6::InputDialog.get_text(
   main,
-  current_color: Qt6::Color.new(52, 112, 176),
-  title: "Pick Accent Color",
-  show_alpha_channel: true
+  title: "Rename Layer",
+  label: "Layer name",
+  value: "Terrain"
 )
-  status_bar.show_message("Selected #{color.red},#{color.green},#{color.blue}")
+  status_bar.show_message("Renamed to #{name}", 1500)
 end
 \end{lstlisting}
 
-\section{Instance Configuration}
-
-Use explicit dialog instances when you need to configure modes before execution or inspect state after acceptance.
+Use an explicit dialog instance when you need more configuration, signals, or post-acceptance inspection.
 
 \begin{lstlisting}[style=crystal]
 dialog = Qt6::FileDialog.new(main, Dir.current, "Maps (*.map *.json);;All Files (*)")
@@ -43,6 +41,266 @@ if dialog.exec == Qt6::DialogCode::Accepted
   status_bar.show_message(dialog.selected_file)
 end
 \end{lstlisting}
+
+\section{Message Boxes}
+
+\api{MessageBox} is for confirmation, warnings, errors, and short informational messages. The convenience helpers match common message-box intent: \api{information}, \api{warning}, \api{critical}, and \api{question}.
+
+\screenshotplaceholder{docs/book/images/dialogs-message-question.png}{A question message box with Yes, No, and Cancel buttons.}
+\screenshotplaceholder{docs/book/images/dialogs-message-warning.png}{A warning message box for a recoverable problem.}
+
+\begin{lstlisting}[style=crystal]
+answer = Qt6::MessageBox.question(
+  main,
+  title: "Save Changes?",
+  text: "The current map has unsaved changes.",
+  informative_text: "Save before opening another file?",
+  buttons: Qt6::MessageBoxButton::Yes |
+           Qt6::MessageBoxButton::No |
+           Qt6::MessageBoxButton::Cancel
+)
+
+case answer
+when Qt6::MessageBoxButton::Yes
+  save_project
+when Qt6::MessageBoxButton::No
+  open_next_project
+else
+  status_bar.show_message("Open canceled", 1500)
+end
+\end{lstlisting}
+
+For noninteractive testing or deeper configuration, create \api{MessageBox} directly, set \api{text}, \api{informative_text}, \api{icon}, and \api{standard_buttons}, then call \api{show_modal}.
+
+\section{File Dialogs}
+
+\api{FileDialog} covers open, multi-open, save, and explicitly configured file picker flows. File dialogs should use a starting directory and a useful name filter whenever possible.
+
+\screenshotplaceholder{docs/book/images/dialogs-file-open.png}{An open-file dialog with Crystal source and all-file filters.}
+\screenshotplaceholder{docs/book/images/dialogs-file-save.png}{A save-file dialog configured for project output.}
+
+\begin{lstlisting}[style=crystal]
+path = Qt6::FileDialog.get_open_file_name(
+  main,
+  "Open Project",
+  Dir.current,
+  "Project files (*.json *.map);;All Files (*)"
+)
+
+if path
+  status_bar.show_message("Opened #{File.basename(path)}", 1500)
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+paths = Qt6::FileDialog.get_open_file_names(
+  main,
+  "Import Assets",
+  Dir.current,
+  "Images (*.png *.jpg *.jpeg);;All Files (*)"
+)
+
+status_bar.show_message("Selected #{paths.size} asset files", 1500)
+\end{lstlisting}
+
+Explicit instances expose \api{accept_mode}, \api{file_mode}, \api{directory}, \api{name_filter}, \api{select_file}, \api{selected_file}, and \api{selected_files}. Use them when a file workflow needs to be configured before the dialog is shown.
+
+\section{Color Dialogs}
+
+\api{ColorDialog} returns a \api{Color}. It is useful for theme colors, layer colors, brush colors, annotation colors, and any workflow where the user needs a visual picker.
+
+\screenshotplaceholder{docs/book/images/dialogs-color-dialog.png}{A color dialog initialized with the current accent color.}
+\screenshotplaceholder{docs/book/images/dialogs-color-alpha.png}{A color dialog with alpha-channel editing enabled.}
+
+\begin{lstlisting}[style=crystal]
+accent = Qt6::Color.new(52, 112, 176)
+
+if color = Qt6::ColorDialog.get_color(
+  main,
+  current_color: accent,
+  title: "Pick Accent Color",
+  show_alpha_channel: true
+)
+  accent = color
+  status_bar.show_message(
+    "Accent #{color.red},#{color.green},#{color.blue},#{color.alpha}",
+    1500
+  )
+end
+\end{lstlisting}
+
+\api{ColorDialog#native_dialog=} can disable the platform-native picker. That is mainly useful for deterministic tests, where the widget-backed dialog behaves like an ordinary Qt dialog.
+
+\section{Font Dialogs}
+
+\api{FontDialog} returns a \api{QFont}. It supports initial fonts, selected fonts, option flags, native-dialog control, and signals for highlighted or selected fonts.
+
+\screenshotplaceholder{docs/book/images/dialogs-font-dialog.png}{A font dialog initialized from the current label font.}
+\screenshotplaceholder{docs/book/images/dialogs-font-monospaced.png}{A font dialog filtered toward monospaced fonts.}
+
+\begin{lstlisting}[style=crystal]
+current_font = Qt6::QFont.new("Sans Serif", 12)
+
+if font = Qt6::FontDialog.get_font(main, current_font, "Choose Label Font")
+  current_font = font
+  status_bar.show_message("#{font.family}, #{font.point_size} pt", 1500)
+end
+\end{lstlisting}
+
+Use font-dialog options when the workflow cares about font category:
+
+\begin{lstlisting}[style=crystal]
+font = Qt6::FontDialog.get_font(
+  main,
+  Qt6::QFont.new("Monospace", 12),
+  "Choose Code Font",
+  Qt6::FontDialogOption::MonospacedFonts
+)
+\end{lstlisting}
+
+\section{Input Dialogs}
+
+\api{InputDialog} is a compact way to request one value from the user. The convenience helpers cover text, integers, floating-point values, and item choices.
+
+\screenshotplaceholder{docs/book/images/dialogs-input-text.png}{A text input dialog for renaming a layer.}
+\screenshotplaceholder{docs/book/images/dialogs-input-int.png}{An integer input dialog with a bounded opacity range.}
+\screenshotplaceholder{docs/book/images/dialogs-input-choice.png}{An item-selection input dialog for choosing a layer kind.}
+
+\begin{lstlisting}[style=crystal]
+name = Qt6::InputDialog.get_text(
+  main,
+  title: "Rename Layer",
+  label: "Layer name",
+  value: "Terrain"
+)
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+opacity = Qt6::InputDialog.get_int(
+  main,
+  title: "Layer Opacity",
+  label: "Opacity percent",
+  value: 72,
+  minimum: 0,
+  maximum: 100
+)
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+kind = Qt6::InputDialog.get_item(
+  main,
+  title: "Layer Kind",
+  label: "Kind",
+  items: ["Terrain", "Roads", "Units", "Annotations"],
+  current: 1,
+  editable: false
+)
+\end{lstlisting}
+
+Use explicit \api{InputDialog} instances when you need to change the input mode, inspect range values, or configure combo-box editability directly.
+
+\section{Progress Dialogs}
+
+\api{ProgressDialog} reports long-running work and gives the user a chance to cancel. It has a label, cancel-button text, range, current value, auto-close behavior, auto-reset behavior, minimum display duration, and a canceled signal.
+
+\screenshotplaceholder{docs/book/images/dialogs-progress-dialog.png}{A progress dialog updating from a timer.}
+\screenshotplaceholder{docs/book/images/dialogs-progress-canceled.png}{A progress dialog after user cancellation.}
+
+\begin{lstlisting}[style=crystal]
+progress = Qt6::ProgressDialog.new(
+  main,
+  "Generating preview assets...",
+  "Cancel",
+  0,
+  100
+)
+progress.window_title = "Export"
+progress.minimum_duration = 0
+progress.auto_close = true
+progress.auto_reset = true
+progress.value = 0
+
+timer = Qt6::QTimer.new(main)
+value = 0
+
+progress.on_canceled do
+  timer.stop
+  status_bar.show_message("Export canceled", 1500)
+end
+
+timer.on_timeout do
+  value += 10
+  value = 100 if value > 100
+  progress.value = value
+
+  if value >= 100
+    timer.stop
+    status_bar.show_message("Export complete", 1500)
+  end
+end
+
+progress.show
+timer.start(100)
+\end{lstlisting}
+
+For real long-running work, make sure the GUI thread can continue processing events. A progress dialog that never repaints or never receives cancel input is usually a sign that too much work is blocking the event loop.
+
+\section{Custom Dialogs And Button Boxes}
+
+Some workflows need a custom dialog body with standard buttons. \api{Dialog} provides accepted and rejected callbacks. \api{DialogButtonBox} provides standard button layouts and accept/reject signals.
+
+\screenshotplaceholder{docs/book/images/dialogs-custom-settings.png}{A custom settings dialog with a form body and standard buttons.}
+
+\begin{lstlisting}[style=crystal]
+dialog = Qt6::Dialog.new(main)
+dialog.window_title = "Layer Settings"
+
+name = Qt6::LineEdit.new("Terrain")
+visible = Qt6::CheckBox.new("Visible")
+buttons = Qt6::DialogButtonBox.new(
+  Qt6::DialogButtonBoxStandardButton::Ok |
+  Qt6::DialogButtonBoxStandardButton::Cancel,
+  dialog
+)
+
+dialog.vbox do |column|
+  form_host = Qt6::Widget.new(dialog)
+  form_host.form do |form|
+    form.add_row("Name", name)
+    form.add_row(visible)
+  end
+
+  column << form_host
+  column << buttons
+end
+
+buttons.on_accepted { dialog.accept }
+buttons.on_rejected { dialog.reject }
+\end{lstlisting}
+
+Custom dialogs should still follow the same ownership rules as other widgets: parent child controls to the dialog, keep the body focused, and let the button box handle standard accept/reject controls.
+
+\section{Screenshot Checklist}
+
+When replacing placeholders with real screenshots, capture the gallery in a consistent theme and window size. The first pass should include these files:
+
+\begin{itemize}
+\item \api{dialogs-main-window.png}
+\item \api{dialogs-message-question.png}
+\item \api{dialogs-message-warning.png}
+\item \api{dialogs-file-open.png}
+\item \api{dialogs-file-save.png}
+\item \api{dialogs-color-dialog.png}
+\item \api{dialogs-color-alpha.png}
+\item \api{dialogs-font-dialog.png}
+\item \api{dialogs-font-monospaced.png}
+\item \api{dialogs-input-text.png}
+\item \api{dialogs-input-int.png}
+\item \api{dialogs-input-choice.png}
+\item \api{dialogs-progress-dialog.png}
+\item \api{dialogs-progress-canceled.png}
+\item \api{dialogs-custom-settings.png}
+\end{itemize}
 
 \section{Current Coverage}
 
