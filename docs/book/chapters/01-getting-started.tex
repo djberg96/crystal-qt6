@@ -6,6 +6,76 @@
 
 You need Crystal, Qt6 development packages visible through \api{pkg-config}, and a C++ compiler compatible with the platform Qt build. The repository build currently expects Qt Widgets, Qt Svg, and Qt Svg Widgets.
 
+\section{Installing On macOS}
+
+The most direct macOS setup uses Homebrew. Install Apple's command line tools first if they are not already present:
+
+\begin{lstlisting}[style=crystal]
+xcode-select --install
+\end{lstlisting}
+
+Then install Crystal, Qt6, and \api{pkg-config}:
+
+\begin{lstlisting}[style=crystal]
+brew update
+brew install crystal qt pkg-config
+\end{lstlisting}
+
+Homebrew's Qt formula is also known as \api{qt6} or \api{qt@6}, but \api{qt} is the usual package name. On most Homebrew installations, \api{pkg-config} can find Qt after installation. If it cannot, add Qt's package configuration directory to \api{PKG_CONFIG_PATH}:
+
+\begin{lstlisting}[style=crystal]
+export PKG_CONFIG_PATH="$(brew --prefix qt)/lib/pkgconfig:${PKG_CONFIG_PATH}"
+\end{lstlisting}
+
+Put that export in your shell startup file if the verification step below only works after setting it manually.
+
+\section{Installing On Linux}
+
+Crystal provides an official installer for DEB- and RPM-based Linux distributions. It configures the Crystal package repository and installs the \api{crystal} package:
+
+\begin{lstlisting}[style=crystal]
+curl -fsSL https://crystal-lang.org/install.sh | sudo bash
+\end{lstlisting}
+
+After Crystal is installed, install a compiler, \api{make}, \api{pkg-config}, and the Qt6 development packages that provide \api{Qt6Widgets}, \api{Qt6Svg}, and \api{Qt6SvgWidgets}.
+
+On Debian or Ubuntu:
+
+\begin{lstlisting}[style=crystal]
+sudo apt update
+sudo apt install -y build-essential pkg-config qt6-base-dev libqt6svg6-dev
+\end{lstlisting}
+
+On Fedora, Red Hat, or compatible \api{dnf}-based systems:
+
+\begin{lstlisting}[style=crystal]
+sudo dnf install -y gcc-c++ make pkgconf-pkg-config qt6-qtbase-devel qt6-qtsvg-devel
+\end{lstlisting}
+
+On openSUSE or SUSE Linux Enterprise:
+
+\begin{lstlisting}[style=crystal]
+sudo zypper install -y gcc-c++ make pkgconf-pkg-config qt6-base-devel qt6-svg-devel
+\end{lstlisting}
+
+Distribution package names vary, especially for Qt modules. If your package manager uses different names, search for the Qt6 base and SVG development packages and verify that they install \api{pkg-config} metadata for all three Qt modules listed above.
+
+\section{Verifying The Toolchain}
+
+Check Crystal first:
+
+\begin{lstlisting}[style=crystal]
+crystal --version
+\end{lstlisting}
+
+Then confirm that \api{pkg-config} can resolve every Qt module required by the native bridge:
+
+\begin{lstlisting}[style=crystal]
+pkg-config --modversion Qt6Widgets Qt6Svg Qt6SvgWidgets
+\end{lstlisting}
+
+That command should print version numbers without errors. If it fails, Crystal may still be installed correctly, but the Qt development packages are not visible to \api{pkg-config}. Fix that before building the shard.
+
 \begin{lstlisting}[style=crystal]
 require "qt6"
 
