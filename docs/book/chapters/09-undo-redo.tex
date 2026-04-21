@@ -1,29 +1,238 @@
 \chapter{Undo And Redo}
 
-Undo support is built around \api{QUndoStack} and Crystal-backed \api{QUndoCommand}. A command has a label plus redo and undo callbacks. The stack tracks command index, clean state, undo/redo availability, and user-facing action text.
+Undo support is built around \api{UndoStack} and Crystal-backed \api{UndoCommand}. A command describes one reversible edit. The stack owns the history, tracks the current index, exposes clean/dirty state, and creates ordinary \api{Action} objects for menus and toolbars.
+
+Qt uses a simple rule: pushing a command calls its \api{redo} behavior immediately. That means an undo command is not just a historical record; it is the object that performs the edit, reverses it, and performs it again.
+
+\section{The Command Model}
+
+A command needs a user-facing label and two callbacks: redo and undo. The label appears in action text such as \api{Undo Rename layer}.
 
 \begin{lstlisting}[style=crystal]
 stack = Qt6::UndoStack.new(main)
+layer_name = "Terrain"
 
-command = Qt6::UndoCommand.new("Rename layer")
-command.on_redo { layer_name.text = "Roads" }
-command.on_undo { layer_name.text = "Terrain" }
-stack.push(command)
+command = Qt6::UndoCommand.new(
+  "Rename layer",
+  redo: -> { layer_name = "Roads" },
+  undo: -> { layer_name = "Terrain" }
+)
 
-toolbar << stack.create_undo_action(main, "Undo")
-toolbar << stack.create_redo_action(main, "Redo")
+stack.push(command) # calls redo, so layer_name is now "Roads"
 \end{lstlisting}
 
-\section{Macros}
-
-Use macros to group several commands into one user-visible history entry. This is appropriate for multi-field inspector edits or operations that touch model data and canvas state together.
+The same command can be written with setters when that reads better:
 
 \begin{lstlisting}[style=crystal]
-stack.begin_macro("Apply layer preset")
-# push several commands
-stack.end_macro
+command = Qt6::UndoCommand.new("Rename layer")
+command.on_redo { layer_name = "Roads" }
+command.on_undo { layer_name = "Terrain" }
+
+stack.push(command)
+\end{lstlisting}
+
+After a command is pushed, the native stack owns it. Do not call \api{release} on a pushed command. The Crystal wrapper keeps the callbacks alive until Qt destroys the command.
+
+\section{Capture Before And After State}
+
+Most commands should capture the old value and the new value before they are pushed. The redo callback applies the new value; the undo callback restores the old value.
+
+\begin{lstlisting}[style=crystal]
+old_name = layer.name
+new_name = name_edit.text
+
+if old_name != new_name
+  stack.push(Qt6::UndoCommand.new(
+    "Rename layer",
+    redo: -> {
+      layer.name = new_name
+      name_label.text = new_name
+      canvas.update
+    },
+    undo: -> {
+      layer.name = old_name
+      name_label.text = old_name
+      canvas.update
+    }
+  ))
+end
+\end{lstlisting}
+
+Notice that both directions update the model and the view. A command should leave the application in a complete state whether it is run forward or backward.
+
+\section{Undo And Redo Actions}
+
+\api{UndoStack} can create \api{Action} objects that are already connected to the stack. Add those actions to menus and toolbars the same way you would add any other application command.
+
+\begin{lstlisting}[style=crystal]
+undo_action = stack.create_undo_action(main, "Undo")
+undo_action.shortcut = "Ctrl+Z"
+
+redo_action = stack.create_redo_action(main, "Redo")
+redo_action.shortcut = "Ctrl+Shift+Z"
+
+edit_menu = main.menu_bar.add_menu("Edit")
+edit_menu << undo_action
+edit_menu << redo_action
+
+toolbar << undo_action
+toolbar << redo_action
+\end{lstlisting}
+
+The actions update their enabled state and text as the stack changes. When the next undo step is \api{Rename layer}, the undo action can present that operation to the user.
+
+\section{Stack State}
+
+The stack exposes the current history position and user-facing text for the next undo or redo step.
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+API & Meaning \\
+\midrule
+\api{can_undo?} & Returns whether an undo step is available. \\
+\api{can_redo?} & Returns whether a redo step is available. \\
+\api{undo_text} & Returns the label for the next undo step. \\
+\api{redo_text} & Returns the label for the next redo step. \\
+\api{count} & Returns the number of retained history entries. \\
+\api{index} & Returns the current position in the history. \\
+\api{undo_limit} & Limits retained commands; set it before pushing commands. \\
+\api{clear} & Removes all commands from the stack. \\
+\bottomrule
+\end{longtable}
+
+\begin{lstlisting}[style=crystal]
+status_bar.show_message(
+  "#{stack.index}/#{stack.count} undo: #{stack.undo_text}",
+  1500
+)
+
+stack.undo if stack.can_undo?
+stack.redo if stack.can_redo?
 \end{lstlisting}
 
 \section{Clean State}
 
-The clean marker lets editors know whether the current document differs from the last saved state. Wire \api{on_clean_changed} to update title bars, save actions, or status labels.
+The clean marker records which stack index corresponds to the saved document. When the current index equals the clean index, \api{clean?} is true.
+
+\begin{lstlisting}[style=crystal]
+save_action.on_triggered do
+  save_document
+  stack.set_clean
+end
+
+stack.on_clean_changed do |clean|
+  save_action.enabled = !clean
+  main.window_title = clean ? "Map Tool" : "Map Tool *"
+end
+\end{lstlisting}
+
+Use \api{set_clean} after a successful save. Use \api{reset_clean} when there is no meaningful saved state anymore, such as after loading a new unsaved document or importing content that cannot be matched to a file.
+
+\begin{lstlisting}[style=crystal]
+stack.clear
+load_document(path)
+stack.set_clean
+\end{lstlisting}
+
+If the user undoes back to the saved index, \api{clean?} becomes true again. That is one reason clean state is more useful than a single boolean dirty flag.
+
+\section{Macros}
+
+Use macros to group several commands into one user-visible history entry. This is appropriate when one user gesture changes several pieces of state.
+
+\begin{lstlisting}[style=crystal]
+stack.begin_macro("Apply layer preset")
+
+stack.push(Qt6::UndoCommand.new(
+  "Set color",
+  redo: -> { layer.color = preset.color },
+  undo: -> { layer.color = old_color }
+))
+
+stack.push(Qt6::UndoCommand.new(
+  "Set opacity",
+  redo: -> { layer.opacity = preset.opacity },
+  undo: -> { layer.opacity = old_opacity }
+))
+
+stack.end_macro
+\end{lstlisting}
+
+The stack will show one entry, \api{Apply layer preset}. Undoing that entry runs the child commands backward; redoing it runs them forward.
+
+Always balance \api{begin_macro} with \api{end_macro}. If the operation can fail in the middle, gather the values first, then open the macro only when you are ready to push all of its commands.
+
+\section{Stack Signals}
+
+\api{UndoStack} emits signals whenever availability, clean state, index, or action text changes.
+
+\begin{lstlisting}[style=crystal]
+stack.on_can_undo_changed do |available|
+  undo_badge.visible = available
+end
+
+stack.on_index_changed do |index|
+  history_label.text = "#{index} / #{stack.count}"
+end
+
+stack.on_undo_text_changed do |text|
+  status_bar.show_message(text.empty? ? "Nothing to undo" : "Next undo: #{text}", 1200)
+end
+\end{lstlisting}
+
+The generated undo and redo actions already listen to the stack. Use these signals for secondary UI: title bars, status bars, history labels, dirty indicators, or custom command palettes.
+
+\section{Text Editing}
+
+Text widgets have their own built-in undo history. Use that for ordinary text editing inside \api{TextEdit}, \api{PlainTextEdit}, and \api{TextDocument}.
+
+\begin{lstlisting}[style=crystal]
+notes = Qt6::PlainTextEdit.new
+notes.undo_redo_enabled = true
+
+notes.insert_plain_text("Roads")
+notes.undo if notes.can_undo?
+notes.redo if notes.can_redo?
+\end{lstlisting}
+
+Use an application-level \api{UndoStack} for domain edits: renaming layers, changing map objects, importing assets, moving nodes, applying presets, or changing application modes. Do not mirror every keystroke from a text editor into your application stack unless the text edit itself is the document model you are building.
+
+\section{A Small Pattern}
+
+It is useful to hide repetitive command setup behind small helper functions. This keeps UI handlers readable and makes all undoable edits follow the same shape.
+
+\begin{lstlisting}[style=crystal]
+def push_change(stack, text, apply, revert)
+  stack.push(Qt6::UndoCommand.new(text, redo: apply, undo: revert))
+end
+
+old_visible = layer.visible?
+new_visible = visible_check.checked?
+
+push_change(
+  stack,
+  new_visible ? "Show layer" : "Hide layer",
+  -> {
+    layer.visible = new_visible
+    canvas.update
+  },
+  -> {
+    layer.visible = old_visible
+    canvas.update
+  }
+)
+\end{lstlisting}
+
+The command owns the edit. The button, checkbox, or menu action simply decides which command to push.
+
+\section{Practical Guidelines}
+
+Name commands from the user's point of view: \api{Rename layer}, \api{Move waypoint}, \api{Delete selection}, \api{Apply preset}. Short labels make undo and redo actions feel natural.
+
+Do not push commands for no-op changes. If the old value and new value are equal, skip the command.
+
+Make redo and undo symmetrical. Each direction should update model state, derived state, and visible UI that depends on the edit.
+
+Set \api{undo_limit} before commands are pushed if the document can generate a large history. Clear the stack when the document changes identity.
+
+Prefer macros for one user gesture that touches several fields. Prefer separate commands for separate gestures, even when they happen close together in time.
