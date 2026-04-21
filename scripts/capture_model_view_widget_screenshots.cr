@@ -128,3 +128,73 @@ table.horizontal_header.stretch_last_section = true
 table.horizontal_header.resize_section(0, 190)
 table.horizontal_header.resize_section(1, 150)
 save_widget(app, table, "model-view-table-view.png")
+
+tree_model = Qt6::StandardItemModel.new
+tree_model.set_horizontal_header_label(0, "Layer")
+tree_model.set_horizontal_header_label(1, "State")
+
+terrain_root = Qt6::StandardItem.new("Terrain")
+terrain_root.set_child(0, 0, Qt6::StandardItem.new("Grid"))
+terrain_root.set_child(0, 1, Qt6::StandardItem.new("Visible"))
+terrain_root.set_child(1, 0, Qt6::StandardItem.new("Shade"))
+terrain_root.set_child(1, 1, Qt6::StandardItem.new("Locked"))
+
+units_root = Qt6::StandardItem.new("Units")
+units_root.set_child(0, 0, Qt6::StandardItem.new("Inf"))
+units_root.set_child(0, 1, Qt6::StandardItem.new("Draft"))
+units_root.set_child(1, 0, Qt6::StandardItem.new("Pins"))
+units_root.set_child(1, 1, Qt6::StandardItem.new("Visible"))
+
+tree_model.set_item(0, 0, terrain_root)
+tree_model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+tree_model.set_item(1, 0, units_root)
+tree_model.set_item(1, 1, Qt6::StandardItem.new("Visible"))
+
+tree_view = Qt6::TreeView.new
+tree_view.window_title = "TreeView Headers"
+tree_view.resize(520, 300)
+tree_view.model = tree_model
+tree_view.header_hidden = false
+tree_view.root_is_decorated = true
+tree_view.uniform_row_heights = true
+tree_view.indentation = 22
+tree_view.alternating_row_colors = true
+tree_view.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+tree_view.current_index = tree_model.index(1, 0)
+tree_view.expand_all
+save_widget(app, tree_view, "model-view-tree-view-headers.png")
+
+header_model = Qt6::StandardItemModel.new
+header_model.set_horizontal_header_label(0, "Layer")
+header_model.set_horizontal_header_label(1, "State")
+header_model.set_horizontal_header_label(2, "Priority")
+header_model.set_horizontal_header_label(3, "Notes")
+
+[
+  {"Terrain", "Visible", 10, "grid overlay"},
+  {"Roads", "Visible", 20, "route layer"},
+  {"Labels", "Draft", 30, "annotations"},
+  {"Logistics", "Locked", 40, "supply routes"},
+].each_with_index do |entry, row|
+  name, state, priority, notes = entry
+  header_model.set_item(row, 0, Qt6::StandardItem.new(name))
+  header_model.set_item(row, 1, Qt6::StandardItem.new(state))
+  header_model.set_item(row, 2, Qt6::StandardItem.new(priority.to_s))
+  header_model.set_item(row, 3, Qt6::StandardItem.new(notes))
+end
+
+header_table = Qt6::TableView.new
+header_table.window_title = "TableView Headers"
+header_table.resize(620, 260)
+header_table.model = header_model
+header_table.alternating_row_colors = true
+header_table.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+header_table.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+header_table.sorting_enabled = true
+header_table.sort_by_column(2, Qt6::SortOrder::Descending)
+header_table.current_index = header_model.index(2, 0)
+header_table.horizontal_header.resize_section(0, 190)
+header_table.horizontal_header.resize_section(1, 150)
+header_table.horizontal_header.stretch_last_section = true
+header_table.horizontal_header.set_section_hidden(3, true)
+save_widget(app, header_table, "model-view-table-headers.png")
