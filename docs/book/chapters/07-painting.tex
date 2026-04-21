@@ -102,6 +102,12 @@ Qt6::QPainter.paint(image) do |painter|
 end
 \end{lstlisting}
 
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/painting-painter-state.png}{width=0.92\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{Painter state in action: a saved transform, restored clipping, opacity, and composition mode.}
+\end{figure}
+
 \section{Paths}
 
 \api{QPainterPath} is the main vector geometry type. A path can contain multiple subpaths, straight segments, Bezier curves, rectangles, ellipses, and polygons.
@@ -157,6 +163,12 @@ if clickable_route.contains(Qt6::PointF.new(pointer_x, pointer_y))
   selected = true
 end
 \end{lstlisting}
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/painting-paths.png}{width=0.92\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{A painter path with cubic control points, its bounding rectangle, and a stroked hit-test region.}
+\end{figure}
 
 \section{Pens, Brushes, And Gradients}
 
@@ -287,6 +299,12 @@ painter.composition_mode = Qt6::PainterCompositionMode::SourceOver
 \section{SVG And PDF Export}
 
 \api{QSvgGenerator} and \api{QPdfWriter} are painter targets. The same drawing function can often render to an image preview, an SVG file, and a PDF file.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/painting-export-targets.png}{width=0.92\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{The same drawing routine can render into raster, SVG, and PDF painter targets.}
+\end{figure}
 
 \begin{lstlisting}[style=crystal]
 def draw_badge(painter : Qt6::QPainter)
