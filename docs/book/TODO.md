@@ -75,3 +75,9 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Add a macro helper pattern that guarantees `end_macro` runs, possibly with an `ensure` block or a small wrapper method.
 - Add command compression/merge guidance if the binding later exposes `QUndoCommand#id`, `mergeWith`, or equivalent Crystal APIs.
 - Add multi-document undo guidance if an `UndoGroup`/`QUndoGroup` wrapper is added later.
+
+## Chapter 10: Model/View
+
+- Consider a delegate-editing screenshot that shows a cell editor open inside a view, if persistent editor behavior becomes worth emphasizing visually.
+- Consider a drag/drop or row-reordering screenshot pair if the chapter later expands that section beyond the current overview.
+- Consider one full `examples/model_view_workbench.cr` screenshot near the end if the chapter needs a larger "all pieces together" visual.
