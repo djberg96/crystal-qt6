@@ -53,3 +53,10 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Add a more visible event-object lifetime callout, especially for live wrappers such as `DropEvent` and `QEvent`.
 - Consider a small combined example that uses an `Action`, `QTimer`, and `EventWidget` together; this might fit better in the worked example chapter.
 - Add GUI-thread and background-work guidance if the binding grows thread helpers later.
+
+## Chapter 7: Painting And Vector Geometry
+
+- Add a compact "common mistakes" box: storing the paint-callback painter, forgetting `save`/`restore`, saving a target before the painter is released, and painting from input callbacks instead of calling `update`.
+- Add a target-choice table comparing `QImage`, `QPixmap`, `QSvgGenerator`, and `QPdfWriter`.
+- Add coordinate-system and high-DPI guidance if the binding exposes more device-pixel-ratio APIs later.
+- Consider expanding the PNG/SVG/PDF export section into a full runnable listing.
