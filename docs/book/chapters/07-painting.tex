@@ -1,29 +1,333 @@
 \chapter{Painting And Vector Geometry}
 
-The rendering layer centers on \api{QPainter}, \api{QPainterPath}, \api{QTransform}, \api{QPen}, \api{QBrush}, \api{QFont}, \api{QImage}, and \api{QPixmap}. The same painter concepts work for custom widgets, raster images, SVG generation, and PDF output.
+Qt's painting model is deliberately broad. The same \api{QPainter} ideas apply when drawing a custom widget, rendering into a \api{QImage}, decorating a \api{QPixmap}, generating SVG, or writing a PDF. Once you know how painter state works, most targets feel like different surfaces for the same drawing code.
 
-\section{Paths}
+The main pieces are:
 
-\api{QPainterPath} supports path construction, element inspection, bounds queries, hit testing, translation, simplification, and path composition.
+\begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Type & Role \\
+\midrule
+\api{QPainter} & Draws lines, shapes, paths, text, images, and pixmaps onto a target. \\
+\api{QPen} & Controls strokes: color, width, line style, caps, joins, and dash patterns. \\
+\api{QBrush} & Controls fills: solid colors, gradients, image textures, and pixmap textures. \\
+\api{QPainterPath} & Stores vector outlines built from lines, curves, rectangles, ellipses, and polygons. \\
+\api{QTransform} & Maps coordinates with translation, scaling, and rotation. \\
+\api{QFont} and metrics & Style and measure text before drawing it. \\
+\api{QImage} & Raster target with pixel access and encoding helpers. \\
+\api{QPixmap} & Display-oriented raster target and image source. \\
+\api{QSvgGenerator} & SVG export target. \\
+\api{QPdfWriter} & PDF export target. \\
+\bottomrule
+\end{longtable}
+
+\section{Where Painting Happens}
+
+For a custom widget, paint in the \api{EventWidget} paint callback. The callback receives the dirty rectangle and a live painter that is valid only during that callback.
 
 \begin{lstlisting}[style=crystal]
-path = Qt6::QPainterPath.new
-path.move_to(20, 20)
-path.cubic_to(90, 0, 140, 120, 220, 40)
-path.line_to(220, 160)
-path.close_subpath
+canvas = Qt6::EventWidget.new
+canvas.resize(480, 300)
 
-if path.contains(Qt6::PointF.new(80, 64))
-  path.translate(12, 0)
+canvas.on_paint_with_painter do |event, painter|
+  painter.fill_rect(event.rect, Qt6::Color.new(245, 248, 252))
+  painter.pen = Qt6::Color.new(45, 55, 65)
+  painter.draw_text(Qt6::PointF.new(16.0, 28.0), "Custom canvas")
 end
+\end{lstlisting}
+
+For offscreen rendering and export, create a target and use \api{QPainter.paint}. The block opens the painter, yields it, and releases it afterward.
+
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.new(320, 180)
+image.fill(Qt6::Color.new(255, 255, 255))
+
+Qt6::QPainter.paint(image) do |painter|
+  painter.antialiasing = true
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(40, 72, 120), 2.0)
+  painter.brush = Qt6::Color.new(220, 235, 255)
+  painter.draw_ellipse(Qt6::RectF.new(40.0, 32.0, 120.0, 80.0))
+end
+
+image.save("preview.png")
+\end{lstlisting}
+
+Prefer the block form unless you specifically need to control \api{end}. If you create a painter manually, end or release it before reading or saving the target.
+
+\begin{lstlisting}[style=crystal]
+painter = Qt6::QPainter.new(image)
+painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 64.0, 64.0), Qt6::Color.new(240, 240, 240))
+painter.end
+painter.release
 \end{lstlisting}
 
 \section{Painter State}
 
-Use pens for strokes, brushes for fills, transforms for coordinate-space changes, and clipping to constrain drawing. When painting to image, SVG, or PDF devices, call the explicit painter shutdown helper before reading or saving the target.
+A painter has mutable state: pen, brush, font, opacity, clipping, transform, composition mode, and render hints such as antialiasing. Drawing commands use the current state at the moment they are called.
 
-\section{Examples}
+\begin{lstlisting}[style=crystal]
+pen = Qt6::QPen.new(Qt6::Color.new(25, 68, 120), 3.0)
+pen.cap_style = Qt6::PenCapStyle::RoundCap
+pen.join_style = Qt6::PenJoinStyle::RoundJoin
 
-\api{examples/rendering_stack.cr} demonstrates raster, SVG, and PDF targets.
+brush = Qt6::QBrush.new(Qt6::Color.new(215, 232, 250))
+font = Qt6::QFont.new(point_size: 13, bold: true)
 
-\api{examples/event_monitor.cr} demonstrates direct widget painting and input hooks.
+Qt6::QPainter.paint(image) do |painter|
+  painter.antialiasing = true
+  painter.pen = pen
+  painter.brush = brush
+  painter.font = font
+
+  painter.draw_rect(Qt6::RectF.new(20.0, 20.0, 140.0, 72.0))
+  painter.draw_text(Qt6::PointF.new(34.0, 64.0), "Layer 1")
+end
+\end{lstlisting}
+
+Use \api{save} and \api{restore} around temporary state changes. This is especially helpful for transforms, clipping, and opacity.
+
+\begin{lstlisting}[style=crystal]
+Qt6::QPainter.paint(image) do |painter|
+  painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 240.0, 160.0), Qt6::Color.new(250, 250, 250))
+
+  painter.save
+  painter.translate(120, 80)
+  painter.rotate(25)
+  painter.opacity = 0.65
+  painter.fill_rect(Qt6::RectF.new(-40.0, -24.0, 80.0, 48.0), Qt6::Color.new(210, 80, 70))
+  painter.restore
+
+  painter.pen = Qt6::Color.new(40, 40, 40)
+  painter.draw_text(Qt6::PointF.new(16.0, 144.0), "State restored")
+end
+\end{lstlisting}
+
+\section{Paths}
+
+\api{QPainterPath} is the main vector geometry type. A path can contain multiple subpaths, straight segments, Bezier curves, rectangles, ellipses, and polygons.
+
+\begin{lstlisting}[style=crystal]
+route = Qt6::QPainterPath.new
+route.move_to(Qt6::PointF.new(24.0, 80.0))
+route.cubic_to(
+  Qt6::PointF.new(72.0, 18.0),
+  Qt6::PointF.new(146.0, 142.0),
+  Qt6::PointF.new(220.0, 52.0)
+)
+
+badge = Qt6::QPainterPath.new
+badge.add_ellipse(Qt6::RectF.new(188.0, 28.0, 64.0, 48.0))
+
+scene = Qt6::QPainterPath.new
+scene.add_path(route)
+scene.add_path(badge)
+\end{lstlisting}
+
+Paths are useful for both drawing and geometry queries.
+
+\begin{lstlisting}[style=crystal]
+if badge.contains(Qt6::PointF.new(pointer_x, pointer_y))
+  status_bar.show_message("Pointer is inside the badge", 1000)
+end
+
+bounds = scene.bounding_rect
+if scene.intersects?(Qt6::RectF.new(0.0, 0.0, 200.0, 120.0))
+  canvas.update
+end
+\end{lstlisting}
+
+Transforms can be applied to paths without mutating the original.
+
+\begin{lstlisting}[style=crystal]
+transform = Qt6::QTransform.new
+transform.translate(12, 8)
+transform.scale(1.25, 1.25)
+
+expanded_scene = scene.transformed(transform)
+\end{lstlisting}
+
+\api{QPainterPathStroker} creates a filled outline for a stroke. That is useful for hit testing wide lines or building selection halos.
+
+\begin{lstlisting}[style=crystal]
+stroker = Qt6::QPainterPathStroker.new
+stroker.width = 8.0
+
+clickable_route = stroker.create_stroke(route)
+if clickable_route.contains(Qt6::PointF.new(pointer_x, pointer_y))
+  selected = true
+end
+\end{lstlisting}
+
+\section{Pens, Brushes, And Gradients}
+
+A \api{QPen} controls stroke drawing. Solid lines are the default, but the binding also exposes dash styles, caps, joins, and custom dash patterns.
+
+\begin{lstlisting}[style=crystal]
+road_pen = Qt6::QPen.new(Qt6::Color.new(64, 88, 112), 4.0)
+road_pen.cap_style = Qt6::PenCapStyle::RoundCap
+road_pen.join_style = Qt6::PenJoinStyle::RoundJoin
+
+selection_pen = Qt6::QPen.new(Qt6::Color.new(30, 120, 220), 2.0)
+selection_pen.dash_pattern = [4.0, 2.0]
+
+painter.pen = road_pen
+painter.draw_path(route)
+
+painter.pen = selection_pen
+painter.draw_rect(scene.bounding_rect)
+\end{lstlisting}
+
+A \api{QBrush} controls fills. It can be a solid color, a texture from an image or pixmap, or a gradient.
+
+\begin{lstlisting}[style=crystal]
+gradient = Qt6::QLinearGradient.new(0.0, 0.0, 0.0, 120.0)
+gradient.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
+gradient.set_color_at(1.0, Qt6::Color.new(190, 220, 245))
+
+painter.brush = Qt6::QBrush.new(gradient)
+painter.pen = Qt6::QPen.new(Qt6::Color.new(90, 110, 130), 1.0)
+painter.draw_rect(Qt6::RectF.new(0.0, 0.0, 240.0, 120.0))
+\end{lstlisting}
+
+Use \api{PenStyle::NoPen} when you want a fill with no outline.
+
+\begin{lstlisting}[style=crystal]
+fill_only = Qt6::QPen.new
+fill_only.style = Qt6::PenStyle::NoPen
+
+painter.pen = fill_only
+painter.brush = Qt6::Color.new(230, 90, 80)
+painter.draw_ellipse(Qt6::PointF.new(80.0, 64.0), 24.0, 24.0)
+\end{lstlisting}
+
+\section{Text And Metrics}
+
+\api{QFont} controls text style, and font metrics let you measure text before drawing. Use metrics when centering labels, aligning baselines, reserving space, or trimming layouts.
+
+\begin{lstlisting}[style=crystal]
+font = Qt6::QFont.new("Helvetica", point_size: 14, bold: true)
+metrics = font.metrics_f
+
+label = "Export ready"
+label_width = metrics.horizontal_advance(label)
+baseline_y = 72.0 + metrics.ascent / 2.0
+
+painter.font = font
+painter.pen = Qt6::Color.new(30, 40, 50)
+painter.draw_text(Qt6::PointF.new(120.0 - label_width / 2.0, baseline_y), label)
+\end{lstlisting}
+
+\api{QFontMetrics} returns integer measurements. \api{QFontMetricsF} returns floating-point measurements and is usually the better fit for painter coordinates.
+
+\section{Images And Pixmaps}
+
+\api{QImage} is a good offscreen raster target and a good place to inspect or manipulate pixels. \api{QPixmap} is display-oriented and can be drawn by a painter, saved, converted to an image, or obtained from \api{Widget#grab}.
+
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.new(96, 96)
+image.fill(Qt6::Color.new(0, 0, 0, 0))
+image.set_pixel_color(8, 8, Qt6::Color.new(255, 0, 0))
+
+copy = image.copy(Qt6::Rect.new(0, 0, 48, 48))
+scaled = copy.scaled(96, 96, Qt6::AspectRatioMode::Keep, Qt6::TransformationMode::Smooth)
+
+pixmap = scaled.to_pixmap
+pixmap.save("thumbnail.png")
+\end{lstlisting}
+
+Images and pixmaps can also be used as sources in painter calls.
+
+\begin{lstlisting}[style=crystal]
+source = Qt6::QImage.from_file("icon.png")
+
+Qt6::QPainter.paint(image) do |painter|
+  painter.smooth_pixmap_transform = true
+  painter.draw_image(Qt6::RectF.new(12.0, 12.0, 48.0, 48.0), source)
+end
+\end{lstlisting}
+
+The overloads that take both target and source rectangles are useful for sprite sheets and thumbnails.
+
+\begin{lstlisting}[style=crystal]
+sprite_source = Qt6::RectF.new(32.0, 0.0, 32.0, 32.0)
+sprite_target = Qt6::RectF.new(80.0, 20.0, 64.0, 64.0)
+
+painter.draw_image(sprite_target, source, sprite_source)
+\end{lstlisting}
+
+\section{Clipping, Opacity, And Composition}
+
+Clipping constrains drawing to a rectangle or path. Turn it off or restore painter state when the constrained drawing is finished.
+
+\begin{lstlisting}[style=crystal]
+painter.save
+painter.clip_path = badge
+painter.fill_rect(scene.bounding_rect, Qt6::Color.new(255, 230, 160))
+painter.restore
+\end{lstlisting}
+
+Opacity affects subsequent drawing until it is changed or restored.
+
+\begin{lstlisting}[style=crystal]
+painter.save
+painter.opacity = 0.35
+painter.brush = Qt6::Color.new(30, 140, 220)
+painter.draw_ellipse(Qt6::RectF.new(40.0, 24.0, 96.0, 96.0))
+painter.restore
+\end{lstlisting}
+
+Composition modes control how new pixels combine with existing pixels. The default is \api{PainterCompositionMode::SourceOver}. Other modes are useful for masks, erasing, and blend effects.
+
+\begin{lstlisting}[style=crystal]
+painter.composition_mode = Qt6::PainterCompositionMode::Clear
+painter.fill_rect(Qt6::RectF.new(24.0, 24.0, 32.0, 32.0), Qt6::Color.new(0, 0, 0))
+painter.composition_mode = Qt6::PainterCompositionMode::SourceOver
+\end{lstlisting}
+
+\section{SVG And PDF Export}
+
+\api{QSvgGenerator} and \api{QPdfWriter} are painter targets. The same drawing function can often render to an image preview, an SVG file, and a PDF file.
+
+\begin{lstlisting}[style=crystal]
+def draw_badge(painter : Qt6::QPainter)
+  painter.antialiasing = true
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(48, 70, 92), 2.0)
+  painter.brush = Qt6::Color.new(236, 244, 252)
+  painter.draw_rect(Qt6::RectF.new(12.0, 12.0, 136.0, 72.0))
+  painter.draw_text(Qt6::PointF.new(28.0, 56.0), "crystal-qt6")
+end
+
+png = Qt6::QImage.new(160, 96)
+png.fill(Qt6::Color.new(255, 255, 255))
+Qt6::QPainter.paint(png) { |painter| draw_badge(painter) }
+png.save("badge.png")
+
+svg = Qt6::QSvgGenerator.new("badge.svg", 160, 96, title: "Badge")
+Qt6::QPainter.paint(svg) { |painter| draw_badge(painter) }
+svg.release
+
+pdf = Qt6::QPdfWriter.new("badge.pdf", title: "Badge", creator: "crystal-qt6")
+pdf.page_size_points = Qt6::Size.new(160, 96)
+Qt6::QPainter.paint(pdf) { |painter| draw_badge(painter) }
+pdf.release
+\end{lstlisting}
+
+For SVG and PDF, release the generator or writer before reading the output file. The painter block ends the drawing session, and releasing the target lets Qt flush the file metadata and final bytes.
+
+\section{Practical Guidelines}
+
+Paint from state. Mouse, keyboard, timer, and action callbacks should update model data and call \api{update}; the paint callback should render the current state.
+
+Keep painters short-lived. Use the \api{QPainter.paint} block for images, pixmaps, SVG, and PDF targets. For the painter passed to \api{on_paint_with_painter}, never store or release it.
+
+Use \api{save} and \api{restore} around temporary transforms, clipping, opacity, and composition modes. This keeps later drawing predictable.
+
+Use \api{QImage} when you need pixel access, encoding, raw bytes, or offscreen rendering. Use \api{QPixmap} when you are working with display-oriented snapshots or widget grabs.
+
+The repository examples are good companions to this chapter:
+
+\begin{itemize}
+\item \api{examples/rendering_stack.cr}: compact raster, SVG, and PDF tour.
+\item \api{examples/svg_widget_renderer.cr}: SVG rendering inside a widget.
+\item \api{examples/event_monitor.cr}: direct widget painting with event hooks.
+\end{itemize}
