@@ -60,3 +60,10 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Add a target-choice table comparing `QImage`, `QPixmap`, `QSvgGenerator`, and `QPdfWriter`.
 - Add coordinate-system and high-DPI guidance if the binding exposes more device-pixel-ratio APIs later.
 - Consider expanding the PNG/SVG/PDF export section into a full runnable listing.
+
+## Chapter 8: Images And Pixmaps
+
+- Add a compact "common mistakes" note: wrong raw byte order, forgetting to check `null?`, stretching thumbnails with `AspectRatioMode::Ignore`, and converting to `QPixmap` too early when pixel access is still needed.
+- Add a fuller image import/export mini-example, possibly based on `examples/desktop_editor_showcase.cr`.
+- Add a short format-support note that exact readable formats depend on Qt plugins and platform installation, so `QImageReader#can_read?` is the source of truth.
+- Add writer quality, compression, and metadata coverage if later APIs expose image writer options.
