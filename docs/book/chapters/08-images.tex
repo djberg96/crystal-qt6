@@ -35,6 +35,12 @@ round_trip = pixmap.to_image
 round_trip.pixel_color(12, 12)
 \end{lstlisting}
 
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/images-pipeline.png}{width=0.92\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{A typical image workflow: bytes become a \api{QImage}, transforms produce derived rasters, and \api{QPixmap} sits at the widget boundary.}
+\end{figure}
+
 \section{Creating And Editing Images}
 
 \api{QImage.new} creates an image with dimensions and an optional format. The common default is \api{ImageFormat::ARGB32}, which stores a full alpha channel.
@@ -206,6 +212,12 @@ buffer.seek(0)
 reader = Qt6::QImageReader.new(buffer, "png")
 image = reader.read if reader.can_read?
 \end{lstlisting}
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/images-io-clipboard.png}{width=0.92\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{Images can move from files through \api{QImageReader}, into memory buffers, and onward through \api{MimeData} and the clipboard.}
+\end{figure}
 
 \section{QByteArray}
 

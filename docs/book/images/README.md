@@ -22,7 +22,7 @@ Chapter 5 expects a first screenshot pass for:
 - `dialogs-progress-canceled.png`
 - `dialogs-custom-settings.png`
 
-Chapter 7 uses generated painter figures. Refresh them with:
+Chapters 7 and 8 use generated painter figures. Refresh them with:
 
 ```sh
 CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/generate_painting_figures.cr
@@ -31,3 +31,5 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/generate_painting_figur
 - `painting-painter-state.png`
 - `painting-paths.png`
 - `painting-export-targets.png`
+- `images-pipeline.png`
+- `images-io-clipboard.png`
