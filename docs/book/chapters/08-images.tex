@@ -1,24 +1,287 @@
 \chapter{Images And Pixmaps}
 
-\api{QImage} is the preferred representation for direct pixel and byte-buffer work. \api{QPixmap} is best for widget-facing images and platform-backed drawing.
+Chapter 7 used images as painter targets. This chapter looks at images as data: loading files, probing metadata, reading and writing bytes, transforming raster content, moving pixels between \api{QImage} and \api{QPixmap}, and using the clipboard.
 
-\section{Raw Data}
+\api{QImage} is the preferred representation for direct pixel and byte-buffer work. \api{QPixmap} is best for widget-facing images, grabs, and display-oriented raster data.
 
-The \api{crystal-qt6} library exposes copied byte-buffer construction, raw byte readback, row and byte-size metadata, format conversion, rectangular copies, scaling, mirroring, channel swapping, transform copies, pixel inversion, and per-pixel color access.
+\begin{longtable}{@{}p{0.24\textwidth}p{0.70\textwidth}@{}}
+\toprule
+Type & Use it for \\
+\midrule
+\api{QImage} & Pixel access, raw bytes, format conversion, offscreen drawing, file encoding, clipboard images. \\
+\api{QPixmap} & Widget grabs, display-oriented images, pixmap brushes, conversion to and from \api{QImage}. \\
+\api{QImageReader} & Probing and decoding image files or image data from an \api{IODevice}. \\
+\api{QBuffer} & Treating an in-memory byte array as a readable or writable Qt device. \\
+\api{QByteArray} & Passing copied binary payloads between Qt APIs and Crystal code. \\
+\api{MimeData} & Clipboard and drag/drop payloads that combine text, HTML, images, and custom bytes. \\
+\bottomrule
+\end{longtable}
+
+\section{Image Or Pixmap?}
+
+Use \api{QImage} when your code needs to inspect pixels, edit pixels, encode bytes, decode from bytes, or render offscreen. It is the natural choice for import pipelines, thumbnails, generated previews, image-processing steps, and tests that assert exact pixel colors.
+
+Use \api{QPixmap} when the image is tied to widgets. \api{Widget#grab} returns a pixmap, and pixmaps can be used for display snapshots, textured brushes, splash screens, and conversions back to \api{QImage} when pixel inspection is needed.
 
 \begin{lstlisting}[style=crystal]
 image = Qt6::QImage.new(256, 256, Qt6::ImageFormat::ARGB32)
 image.fill(Qt6::Color.new(20, 24, 28))
 image.set_pixel_color(12, 12, Qt6::Color.new(255, 80, 80))
 
-thumbnail = image.scaled(96, 96)
+thumbnail = image.scaled(96, 96, Qt6::AspectRatioMode::Keep, Qt6::TransformationMode::Smooth)
 pixmap = thumbnail.to_pixmap
+
+round_trip = pixmap.to_image
+round_trip.pixel_color(12, 12)
 \end{lstlisting}
 
-\section{Loading And Probing}
+\section{Creating And Editing Images}
 
-\api{QImageReader} can inspect image size, format, and auto-transform settings before decode. This is useful for editor workflows where the UI should preview metadata before loading a large asset.
+\api{QImage.new} creates an image with dimensions and an optional format. The common default is \api{ImageFormat::ARGB32}, which stores a full alpha channel.
 
-\section{Clipboard}
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.new(320, 180)
+image.fill(Qt6::Color.new(255, 255, 255))
 
-The clipboard wrapper supports text, images, pixmaps, HTML, and custom MIME formats through \api{MimeData}. That gives editor examples a path for copy/paste and drag/drop integration without leaving Crystal.
+image.set_pixel_color(40, 32, Qt6::Color.new(220, 72, 60))
+image.set_pixel_color(41, 32, Qt6::Color.new(220, 72, 60))
+
+color = image.pixel_color(40, 32)
+status_bar.show_message("Red #{color.red}, alpha #{color.alpha}", 1200)
+\end{lstlisting}
+
+For rectangular edits, prefer copy and painter operations over per-pixel loops when possible.
+
+\begin{lstlisting}[style=crystal]
+tile = image.copy(Qt6::Rect.new(32, 24, 96, 96))
+tile = tile.convert_to_format(Qt6::ImageFormat::ARGB32Premultiplied)
+tile.invert_pixels
+\end{lstlisting}
+
+The binding exposes common metadata:
+
+\begin{lstlisting}[style=crystal]
+image.width
+image.height
+image.size
+image.format
+image.depth
+image.bytes_per_line
+image.size_in_bytes
+image.has_alpha_channel?
+image.null?
+\end{lstlisting}
+
+\section{Raw Bytes}
+
+\api{QImage.from_raw_data} copies raw pixel bytes into a new image. You provide the width, height, bytes per line, and format.
+
+\begin{lstlisting}[style=crystal]
+pixels = Bytes[
+  30_u8, 20_u8, 10_u8, 255_u8,
+  60_u8, 50_u8, 40_u8, 255_u8,
+  90_u8, 80_u8, 70_u8, 255_u8,
+  120_u8, 110_u8, 100_u8, 255_u8,
+]
+
+image = Qt6::QImage.from_raw_data(
+  pixels,
+  width: 2,
+  height: 2,
+  bytes_per_line: 8,
+  format: Qt6::ImageFormat::ARGB32
+)
+\end{lstlisting}
+
+For \api{ARGB32}, the in-memory byte order for little-endian systems is commonly blue, green, red, alpha. The example above reads back as red \api{10}, green \api{20}, blue \api{30} for the first pixel.
+
+\begin{lstlisting}[style=crystal]
+first = image.pixel_color(0, 0)
+first.red   # 10
+first.green # 20
+first.blue  # 30
+\end{lstlisting}
+
+\api{QImage#bytes} returns a copied byte slice. That makes it safe to inspect or pass to ordinary Crystal code without keeping a borrowed Qt pointer alive.
+
+\section{Scaling And Transforms}
+
+\api{QImage} and \api{QPixmap} both support fixed-size scaling, aspect-ratio-preserving scaling, and transform copies.
+
+\begin{lstlisting}[style=crystal]
+preview = image.scaled(
+  480,
+  320,
+  Qt6::AspectRatioMode::Keep,
+  Qt6::TransformationMode::Smooth
+)
+
+wide = image.scaled_to_width(640, Qt6::TransformationMode::Smooth)
+tall = image.scaled_to_height(480)
+\end{lstlisting}
+
+Choose the aspect-ratio mode by intent:
+
+\begin{itemize}
+\item \api{Keep}: fit inside a box.
+\item \api{KeepByExpanding}: fill a box, then crop if needed.
+\item \api{Ignore}: stretch to the requested dimensions.
+\end{itemize}
+
+\begin{lstlisting}[style=crystal]
+transform = Qt6::QTransform.new
+transform.rotate(90)
+
+rotated = image.transformed(transform, Qt6::TransformationMode::Smooth)
+mirrored = image.mirrored(horizontal: true, vertical: false)
+swapped = image.rgb_swapped
+\end{lstlisting}
+
+\section{Loading Files}
+
+For direct loading, use \api{QImage.from_file}, \api{QPixmap.from_file}, or \api{load} on an existing object.
+
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.from_file("assets/terrain.png")
+unless image.null?
+  preview.pixmap = image.scaled_to_width(320).to_pixmap
+end
+
+pixmap = Qt6::QPixmap.from_file("assets/icon.png")
+\end{lstlisting}
+
+For editor-style workflows, prefer \api{QImageReader}. It can probe a file before decoding it, report the image size, expose the detected format, enable auto transforms, and provide an error string when decoding fails.
+
+\begin{lstlisting}[style=crystal]
+reader = Qt6::QImageReader.new(path)
+reader.auto_transform = true
+
+if reader.can_read?
+  size = reader.size
+  status_bar.show_message("#{reader.format.upcase} #{size.width}x#{size.height}", 1500)
+  image = reader.read
+else
+  status_bar.show_message(reader.error_string, 2200)
+end
+\end{lstlisting}
+
+You can also decode into an existing image instance:
+
+\begin{lstlisting}[style=crystal]
+destination = Qt6::QImage.new(1, 1)
+if reader.read(destination)
+  preview.pixmap = destination.to_pixmap
+end
+\end{lstlisting}
+
+\section{Encoding And In-Memory IO}
+
+\api{save} writes to a file path. \api{save_to_data} returns encoded bytes for a named format such as \api{PNG}.
+
+\begin{lstlisting}[style=crystal]
+image.save("preview.png")
+
+png_bytes = image.save_to_data("PNG")
+File.write("preview-copy.png", png_bytes)
+\end{lstlisting}
+
+\api{QBuffer} lets Qt APIs read from or write to memory through the same \api{IODevice} interface they use for files.
+
+\begin{lstlisting}[style=crystal]
+buffer = Qt6::QBuffer.new
+buffer.open(Qt6::IODeviceOpenMode::ReadWrite)
+
+image.save(buffer, "PNG")
+buffer.seek(0)
+
+decoded = Qt6::QImage.new(1, 1)
+decoded.load(buffer, "PNG")
+buffer.close
+\end{lstlisting}
+
+That pattern is useful when you want to round-trip generated images without touching disk, store encoded images in a database, send images over the network, or feed encoded bytes into \api{QImageReader}.
+
+\begin{lstlisting}[style=crystal]
+buffer.seek(0)
+reader = Qt6::QImageReader.new(buffer, "png")
+image = reader.read if reader.can_read?
+\end{lstlisting}
+
+\section{QByteArray}
+
+\api{QByteArray} is the small binary payload wrapper used by \api{QBuffer}, \api{IODevice}, and some MIME flows.
+
+\begin{lstlisting}[style=crystal]
+payload = Qt6::QByteArray.new(Bytes[1_u8, 7_u8, 9_u8])
+payload.size
+payload.bytes
+payload.clear
+\end{lstlisting}
+
+Many APIs return copied bytes, either as \api{Bytes} or as a \api{QByteArray} that can be converted to \api{Bytes}. Treat those as ordinary Crystal data after the call returns.
+
+\section{Widget Grabs}
+
+Any widget can be captured with \api{grab}. The result is a \api{QPixmap}, which can be saved directly or converted to a \api{QImage}.
+
+\begin{lstlisting}[style=crystal]
+pixmap = preview.grab
+pixmap.save("preview-widget.png")
+
+image = pixmap.to_image
+sample = image.pixel_color(10, 10)
+\end{lstlisting}
+
+This is handy for export commands, documentation screenshots, tests, and preview thumbnails. If you need the widget to repaint before grabbing it, call \api{update}, process events, and then grab.
+
+\section{Clipboard And MIME Data}
+
+The application clipboard supports text, images, pixmaps, and MIME payloads.
+
+\begin{lstlisting}[style=crystal]
+clipboard = Qt6.application.clipboard
+
+clipboard.image = image
+if clipboard.has_image?
+  pasted = clipboard.image
+  preview.pixmap = pasted.to_pixmap
+end
+
+clipboard.pixmap = preview.grab
+\end{lstlisting}
+
+Use \api{MimeData} when clipboard or drag/drop data needs to carry multiple representations at once.
+
+\begin{lstlisting}[style=crystal]
+mime = Qt6::MimeData.new
+mime.text = "Layer preview"
+mime.html = "<b>Layer preview</b>"
+mime.image = image
+mime.set_data("application/x-crystal-qt6-layer", Bytes[1_u8, 7_u8, 9_u8])
+
+clipboard.mime_data = mime
+\end{lstlisting}
+
+On the receiving side, check for the representation you want before reading it.
+
+\begin{lstlisting}[style=crystal]
+if data = clipboard.mime_data
+  if data.has_image?
+    preview.pixmap = data.image.to_pixmap
+  elsif data.has_text?
+    status_bar.show_message(data.text, 1500)
+  end
+end
+\end{lstlisting}
+
+\section{Practical Guidelines}
+
+Keep import code defensive. Check \api{null?}, \api{can_read?}, or return values from \api{load} and \api{save}; surface \api{QImageReader#error_string} when loading fails.
+
+Use \api{QImage} as the working format for generated images, pixel tests, and encoded data. Convert to \api{QPixmap} at the UI boundary.
+
+Use \api{TransformationMode::Smooth} for user-facing thumbnails and previews. Use \api{Fast} when speed matters more than filtering quality.
+
+Prefer \api{QImageReader} before decoding large user-selected assets. It lets the UI show useful metadata and reject unsupported files gracefully.
+
+Use \api{QBuffer} for in-memory round trips and \api{MimeData} for clipboard or drag/drop flows that need more than one representation.
