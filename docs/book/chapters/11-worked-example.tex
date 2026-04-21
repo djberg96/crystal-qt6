@@ -17,6 +17,12 @@ The vertical slice has four visible regions:
 
 The goal is not to build every feature at once. The goal is to make one thin path work from end to end: select a layer, redraw the canvas, adjust state, and export the result. Once that loop is reliable, larger features have somewhere sensible to attach.
 
+\begin{figure}[tbp]
+  \centering
+  \screenshotimage{docs/book/images/putting-together-editor-shell.png}{width=0.95\textwidth,height=0.42\textheight,keepaspectratio}%
+  \caption{The vertical slice combines a central canvas, model/view layer dock, inspector dock, toolbar, menus, and status bar.}
+\end{figure}
+
 \section{Start With Application State}
 
 Keep document-ish state separate from the widgets. In the example, \api{EditorVerticalSliceState} stores the current layer, zoom, pan, grid spacing, marker size, accent color, and drag state.
@@ -99,6 +105,12 @@ end
 \end{lstlisting}
 
 The real example adds a grid, a route, markers, and a small heads-up display. The important shape is the same: read state, transform scene coordinates into view coordinates, draw, and return. When state changes, call \api{canvas.update}; do not paint from mouse or wheel callbacks.
+
+\begin{figure}[tbp]
+  \centering
+  \screenshotimage{docs/book/images/putting-together-canvas.png}{width=0.84\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{The central \api{EventWidget} paints the current layer from ordinary application state.}
+\end{figure}
 
 \section{Add Pointer Interaction}
 
@@ -245,6 +257,21 @@ inspector_dock = Qt6::DockWidget.new("Inspector", main)
 inspector_dock.widget = inspector
 main.add_dock_widget(inspector_dock, Qt6::DockArea::Right)
 \end{lstlisting}
+
+\begin{figure}[tbp]
+  \centering
+  \begin{minipage}{0.46\textwidth}
+    \centering
+    \textbf{Layer dock}\par\smallskip
+    \screenshotimage{docs/book/images/putting-together-layers-dock.png}{width=0.96\linewidth,height=0.34\textheight,keepaspectratio}%
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \textbf{Inspector dock}\par\smallskip
+    \screenshotimage{docs/book/images/putting-together-inspector-dock.png}{width=0.96\linewidth,height=0.34\textheight,keepaspectratio}%
+  \end{minipage}
+  \caption{The left dock selects scene state; the right dock edits values that repaint the canvas.}
+\end{figure}
 
 \section{Use Dialogs At The Edges}
 

@@ -48,3 +48,16 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_model_view_widg
 - `model-view-table-view.png`
 - `model-view-tree-view-headers.png`
 - `model-view-table-headers.png`
+
+Chapter 11 uses live widget grabs from the worked example. Refresh them with:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_worked_example_screenshots.cr
+```
+
+The script uses ImageMagick's `magick` command to flatten transparent widget grabs for PDF output.
+
+- `putting-together-editor-shell.png`
+- `putting-together-canvas.png`
+- `putting-together-layers-dock.png`
+- `putting-together-inspector-dock.png`
