@@ -280,13 +280,8 @@ render_image("images-pipeline.png") do |painter, rect|
   arrow(painter, Qt6::PointF.new(575.0, 248.0), Qt6::PointF.new(635.0, 248.0))
   arrow(painter, Qt6::PointF.new(860.0, 248.0), Qt6::PointF.new(920.0, 248.0))
 
-  painter.pen = Qt6::QPen.new(Qt6::Color.new(155, 165, 175), 4.0)
-  painter.draw_line(Qt6::PointF.new(1035.0, 330.0), Qt6::PointF.new(1035.0, 448.0))
-  arrow(painter, Qt6::PointF.new(1035.0, 448.0), Qt6::PointF.new(685.0, 448.0))
-  arrow(painter, Qt6::PointF.new(685.0, 448.0), Qt6::PointF.new(470.0, 338.0))
-
-  label(painter, 662, 430, "to_image for pixel work", 23, true)
-  label(painter, 842, 520, "to_pixmap for UI", 24, true)
+  label(painter, 666, 420, "QImage <-> QPixmap", 24, true)
+  label(painter, 674, 454, "to_pixmap / to_image", 21)
 
   painter.pen = Qt6::QPen.new(Qt6::Color.new(70, 84, 98), 3.0)
   painter.brush = Qt6::Color.new(255, 255, 255)
