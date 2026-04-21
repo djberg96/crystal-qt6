@@ -1,26 +1,371 @@
-\chapter{Worked Example Path}
+\chapter{Putting It All Together}
 
-A small editor-style application is the best way to learn the \api{crystal-qt6} library because it exercises the same decisions as larger desktop tools.
+A small editor-style application is the best way to practice \api{crystal-qt6}. It uses almost every desktop concept from the earlier chapters: a main window, actions, menus, toolbars, docks, model/view panels, dialogs, custom painting, pointer events, widget grabs, and status messages.
 
-\section{Suggested Build Order}
+The maintained reference for this chapter is \api{examples/editor_vertical_slice.cr}. It is intentionally smaller than a full editor, but it is complete enough to run, pan, zoom, switch layers, adjust inspector values, choose a color, and export a PNG snapshot.
+
+\section{What The Slice Builds}
+
+The vertical slice has four visible regions:
+
+\begin{itemize}
+\item a central canvas implemented with \api{EventWidget};
+\item a left \api{DockWidget} containing a model-backed layer tree;
+\item a right \api{DockWidget} containing inspector controls;
+\item a menu bar, toolbar, and status bar for application commands.
+\end{itemize}
+
+The goal is not to build every feature at once. The goal is to make one thin path work from end to end: select a layer, redraw the canvas, adjust state, and export the result. Once that loop is reliable, larger features have somewhere sensible to attach.
+
+\section{Start With Application State}
+
+Keep document-ish state separate from the widgets. In the example, \api{EditorVerticalSliceState} stores the current layer, zoom, pan, grid spacing, marker size, accent color, and drag state.
+
+\begin{lstlisting}[style=crystal]
+class EditorVerticalSliceState
+  property active_layer : String
+  property zoom : Float64
+  property pan_x : Float64
+  property pan_y : Float64
+  property grid_spacing : Int32
+  property marker_size : Int32
+  property show_grid : Bool
+  property accent : Qt6::Color
+
+  def initialize
+    @active_layer = "Terrain"
+    @zoom = 1.0
+    @pan_x = 32.0
+    @pan_y = 36.0
+    @grid_spacing = 48
+    @marker_size = 18
+    @show_grid = true
+    @accent = Qt6::Color.new(62, 130, 109)
+  end
+end
+\end{lstlisting}
+
+This object is deliberately ordinary Crystal code. It can be tested, serialized, or replaced later without rewriting the UI. Widgets read from it and write to it, but they do not become the document model.
+
+\section{Create The Shell}
+
+Start with a \api{MainWindow}, a status bar, and a central canvas. Leave the docks and actions until the central workflow can draw something.
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+state = EditorVerticalSliceState.new
+
+main = Qt6::MainWindow.new
+main.window_title = "Editor Vertical Slice"
+main.resize(1240, 780)
+
+status_bar = main.status_bar
+status_bar.show_message("Ready")
+
+canvas = Qt6::EventWidget.new
+canvas.resize(860, 620)
+main.central_widget = canvas
+\end{lstlisting}
+
+This shell is small, but it already establishes ownership. The main window owns the central widget, status bar, docks, menus, and toolbars that will be added later.
+
+\section{Draw The Canvas}
+
+The canvas uses \api{EventWidget#on_paint_with_painter}. The callback receives a live paint event and a live \api{QPainter}; use them only inside the callback.
+
+\begin{lstlisting}[style=crystal]
+scene_to_view = ->(point : Qt6::PointF) do
+  Qt6::PointF.new(
+    state.pan_x + point.x * state.zoom,
+    state.pan_y + point.y * state.zoom
+  )
+end
+
+canvas.on_paint_with_painter do |event, painter|
+  painter.fill_rect(event.rect, Qt6::Color.new(245, 243, 238))
+
+  scene_rect = Qt6::RectF.new(0.0, 0.0, 640.0, 420.0)
+  visible_rect = Qt6::RectF.new(
+    state.pan_x,
+    state.pan_y,
+    scene_rect.width * state.zoom,
+    scene_rect.height * state.zoom
+  )
+
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(74, 82, 91), 2.0)
+  painter.brush = Qt6::Color.new(255, 255, 255)
+  painter.draw_rect(visible_rect)
+end
+\end{lstlisting}
+
+The real example adds a grid, a route, markers, and a small heads-up display. The important shape is the same: read state, transform scene coordinates into view coordinates, draw, and return. When state changes, call \api{canvas.update}; do not paint from mouse or wheel callbacks.
+
+\section{Add Pointer Interaction}
+
+Pointer callbacks mutate state and schedule a repaint. The pan interaction needs only the last pointer position and a dragging flag.
+
+\begin{lstlisting}[style=crystal]
+canvas.on_mouse_press do |event|
+  state.dragging = true
+  state.last_pointer = event.position
+  status_bar.show_message("Dragging canvas", 1000)
+end
+
+canvas.on_mouse_move do |event|
+  next unless state.dragging
+
+  state.pan_x += event.position.x - state.last_pointer.x
+  state.pan_y += event.position.y - state.last_pointer.y
+  state.last_pointer = event.position
+  canvas.update
+end
+
+canvas.on_mouse_release do |_event|
+  state.dragging = false
+  status_bar.show_message("Canvas settled", 900)
+end
+\end{lstlisting}
+
+Wheel and key callbacks follow the same rule. Change the zoom, clamp it to a reasonable range, update the canvas, and show a short status message.
+
+\section{Add A Layer Model}
+
+The layer panel is model/view rather than a hand-managed list. The source model stores names, states, priorities, and colors. A proxy sorts the layers by priority.
+
+\begin{lstlisting}[style=crystal]
+layer_model = Qt6::StandardItemModel.new(main)
+layer_model.set_horizontal_header_label(0, "Layer")
+layer_model.set_horizontal_header_label(1, "State")
+
+[
+  {"Terrain", "Visible", 10, Qt6::Color.new(62, 130, 109)},
+  {"Units", "Visible", 20, Qt6::Color.new(204, 86, 62)},
+  {"Labels", "Draft", 30, Qt6::Color.new(92, 88, 176)},
+].each_with_index do |entry, row|
+  name = Qt6::StandardItem.new(entry[0])
+  name.set_data(entry[2], Qt6::ItemDataRole::User)
+  name.set_data(entry[3], Qt6::ItemDataRole::Foreground)
+
+  layer_model.set_item(row, 0, name)
+  layer_model.set_item(row, 1, Qt6::StandardItem.new(entry[1]))
+end
+\end{lstlisting}
+
+The view sees the proxy, not the source model:
+
+\begin{lstlisting}[style=crystal]
+layers_proxy = Qt6::SortFilterProxyModel.new(main)
+layers_proxy.source_model = layer_model
+layers_proxy.sort_role = Qt6::ItemDataRole::User
+layers_proxy.sort
+
+layer_tree = Qt6::TreeView.new
+layer_tree.model = layers_proxy
+layer_tree.expand_all
+
+layer_selection = Qt6::ItemSelectionModel.new(layers_proxy, layer_tree)
+layer_tree.selection_model = layer_selection
+\end{lstlisting}
+
+When the current index changes, the example reads the selected layer name through the proxy and applies it to the state object. The canvas and inspector then refresh from state.
+
+\section{Dock The Layer Panel}
+
+A dock is just a titled container. Build a small widget for the dock body, then assign it to \api{DockWidget#widget}.
+
+\begin{lstlisting}[style=crystal]
+layer_summary = Qt6::Label.new("Active layer: Terrain")
+
+layers_panel = Qt6::Widget.new
+layers_panel.vbox do |column|
+  column << Qt6::Label.new("Layer Manager")
+  column << layer_tree
+  column << layer_summary
+end
+
+layers_dock = Qt6::DockWidget.new("Layers", main)
+layers_dock.widget = layers_panel
+main.add_dock_widget(layers_dock, Qt6::DockArea::Left)
+\end{lstlisting}
+
+This is a good pattern for desktop tools: the central widget handles the primary work, and docks provide secondary views or controls without taking over the main surface.
+
+\section{Build The Inspector}
+
+The inspector is ordinary form UI: spin boxes for numeric state, a checkbox for grid visibility, buttons for commands, and a label explaining the relationship to the canvas.
+
+\begin{lstlisting}[style=crystal]
+zoom_spin = Qt6::DoubleSpinBox.new
+zoom_spin.set_range(0.5, 3.0)
+zoom_spin.single_step = 0.1
+zoom_spin.value = state.zoom
+
+spacing_spin = Qt6::SpinBox.new
+spacing_spin.set_range(24, 96)
+spacing_spin.value = state.grid_spacing
+
+show_grid = Qt6::CheckBox.new("Show grid")
+show_grid.checked = state.show_grid
+
+accent_button = Qt6::PushButton.new("Accent Color")
+reset_button = Qt6::PushButton.new("Reset View")
+export_button = Qt6::PushButton.new("Export PNG")
+\end{lstlisting}
+
+Each control writes to state and schedules a repaint:
+
+\begin{lstlisting}[style=crystal]
+zoom_spin.on_value_changed do |value|
+  state.zoom = value
+  canvas.update
+  status_bar.show_message("Zoom #{value.round(2)}x")
+end
+
+show_grid.on_toggled do |checked|
+  state.show_grid = checked
+  canvas.update
+  status_bar.show_message(checked ? "Grid enabled" : "Grid hidden")
+end
+\end{lstlisting}
+
+The right dock is assembled the same way as the layer dock.
+
+\begin{lstlisting}[style=crystal]
+inspector = Qt6::Widget.new
+inspector.form do |form|
+  form.add_row("Zoom", zoom_spin)
+  form.add_row("Grid spacing", spacing_spin)
+  form.add_row(show_grid)
+  form.add_row(accent_button)
+  form.add_row(reset_button)
+  form.add_row(export_button)
+end
+
+inspector_dock = Qt6::DockWidget.new("Inspector", main)
+inspector_dock.widget = inspector
+main.add_dock_widget(inspector_dock, Qt6::DockArea::Right)
+\end{lstlisting}
+
+\section{Use Dialogs At The Edges}
+
+Dialogs work best at workflow boundaries: choosing a file, choosing a color, confirming a destructive operation, or showing progress. The vertical slice uses a color dialog to change the layer accent.
+
+\begin{lstlisting}[style=crystal]
+accent_button.on_clicked do
+  color = Qt6::ColorDialog.get_color(
+    main,
+    current_color: state.accent,
+    title: "Choose Accent Color",
+    show_alpha_channel: false
+  )
+
+  if color
+    state.accent = color
+    canvas.update
+    status_bar.show_message("Accent color changed", 1400)
+  end
+end
+\end{lstlisting}
+
+It also uses a save-file dialog for PNG export. The export itself is just a widget grab.
+
+\begin{lstlisting}[style=crystal]
+export_png = -> do
+  suggested = File.join(Dir.current, "editor-slice.png")
+  output = Qt6::FileDialog.get_save_file_name(
+    main,
+    title: "Export Canvas Snapshot",
+    directory: suggested,
+    filter: "PNG Images (*.png);;All Files (*)"
+  )
+
+  if output && !output.empty?
+    output = "#{output}.png" unless output.downcase.ends_with?(".png")
+    canvas.grab.save(output)
+  end
+end
+\end{lstlisting}
+
+The broader showcase example adds image loading through \api{QImageReader}. It also demonstrates clipboard MIME payloads, settings persistence, text editing, and drag/drop.
+
+\section{Promote Commands To Actions}
+
+Once a command exists as a lambda or method, promote it to an \api{Action}. Actions can live in menus and toolbars at the same time.
+
+\begin{lstlisting}[style=crystal]
+export_action = Qt6::Action.new("Export PNG", main)
+export_action.shortcut = "Ctrl+E"
+export_action.on_triggered { export_png.call }
+
+reset_view_action = Qt6::Action.new("Reset View", main)
+reset_view_action.shortcut = "0"
+reset_view_action.on_triggered do
+  state.reset_view
+  canvas.update
+end
+
+file_menu = main.menu_bar.add_menu("File")
+file_menu << export_action
+
+view_menu = main.menu_bar.add_menu("View")
+view_menu << reset_view_action
+
+toolbar = Qt6::ToolBar.new("Editor", main)
+toolbar << export_action
+toolbar << reset_view_action
+main.add_tool_bar(toolbar)
+\end{lstlisting}
+
+This is the moment where a prototype begins to feel like a desktop application. The same command can be discovered from the menu, used quickly from the toolbar, and triggered from the keyboard.
+
+\section{Keep The Refresh Path Small}
+
+The example uses a small refresh helper so callbacks do not duplicate status-bar and repaint behavior.
+
+\begin{lstlisting}[style=crystal]
+refresh_canvas = ->(message : String?) do
+  canvas.update
+  if text = message
+    status_bar.show_message(text, 1800)
+  end
+end
+\end{lstlisting}
+
+That helper is intentionally modest. It does not hide the application architecture; it only removes repeated glue. As the app grows, this kind of helper can become a presenter object, document controller, or command layer.
+
+\section{Where Undo Fits}
+
+The vertical slice does not wire an \api{UndoStack}; it keeps the first pass focused on one live workflow. In a second pass, undo belongs around state-changing gestures:
+
+\begin{itemize}
+\item changing the active layer's name or status;
+\item toggling visibility or grid settings;
+\item moving scene objects;
+\item importing or replacing an image;
+\item applying a multi-field preset as a macro.
+\end{itemize}
+
+The rule from Chapter 9 still applies: capture old and new state, push a command, and let \api{redo} perform the forward edit.
+
+\section{A Reasonable Build Order}
 
 \begin{enumerate}
-\item Start with \api{MainWindow}, a central \api{EventWidget}, and a status bar.
-\item Add \api{Action} objects for open, save, undo, redo, and tool modes.
-\item Place actions in menus and toolbars.
-\item Add a left dock with a list or tree model for layers.
-\item Use dialogs for file selection, color selection, naming, and progress.
-\item Render the canvas with \api{QPainter} and \api{QPainterPath}.
-\item Store edits as \api{UndoCommand} instances on an \api{UndoStack}.
-\item Move image import/export through \api{QImage}, \api{QPixmap}, and \api{QImageReader}.
+\item Build the main window, central canvas, and status bar.
+\item Draw a static scene from an explicit state object.
+\item Add pan and zoom callbacks that mutate state and call \api{update}.
+\item Add a layer model, proxy, tree view, and selection model.
+\item Put the layer view in a left dock.
+\item Add inspector controls in a right dock.
+\item Promote repeated commands into \api{Action} objects.
+\item Add file/color dialogs at workflow boundaries.
+\item Add export through \api{Widget#grab}.
+\item Add undo, persistence, drag/drop, or clipboard support only after the loop above feels solid.
 \end{enumerate}
 
 \section{Reference Examples}
 
-\api{examples/editor_vertical_slice.cr} is the most direct maintained editor slice.
+\api{examples/editor_vertical_slice.cr} is the most direct worked example. It is the one to read when you want to see the whole vertical slice in one file.
 
-\api{examples/desktop_editor_showcase.cr} is broader. It demonstrates application services, clipboard data, model/view panels, text editing, image loading, custom preview rendering, and PNG export.
+\api{examples/desktop_editor_showcase.cr} is broader. It demonstrates application metadata, settings, model/view panels, image loading, clipboard MIME data, text editing, drag/drop, custom preview rendering, and PNG export.
 
-\section{Release Documentation}
-
-For release notes, prefer screenshots from maintained examples over mockups. The dialog gallery exists so standard dialog screenshots are reproducible and do not depend on an external application.
+For release documentation, prefer screenshots from maintained examples over mockups. The example programs are small enough to keep fresh as the binding evolves, and concrete screenshots make later chapters easier for readers to trust.
