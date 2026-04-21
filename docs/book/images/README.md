@@ -36,3 +36,13 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/generate_painting_figur
 - `model-view-architecture.png`
 - `model-view-choices.png`
 - `model-view-proxy-selection.png`
+
+Chapter 10 also uses live widget grabs. Refresh them with:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_model_view_widget_screenshots.cr
+```
+
+- `model-view-list-widget.png`
+- `model-view-tree-widget.png`
+- `model-view-table-view.png`

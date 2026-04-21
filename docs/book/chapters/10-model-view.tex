@@ -95,6 +95,19 @@ table.resize_columns_to_contents
 
 If you later need the same rows in multiple views, or if the data already belongs to a document model, switch to a model-backed view instead of copying values into item widgets.
 
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \screenshotimage{docs/book/images/model-view-list-widget.png}{width=0.98\linewidth,height=0.22\textheight,keepaspectratio}%
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \screenshotimage{docs/book/images/model-view-tree-widget.png}{width=0.98\linewidth,height=0.22\textheight,keepaspectratio}%
+  \end{minipage}
+  \caption{A checkable \api{ListWidget} and a hierarchical \api{TreeWidget}; both are item widgets that own their item objects directly.}
+\end{figure}
+
 \section{Standard Item Models}
 
 \api{StandardItemModel} is the simplest model-backed path. It stores \api{StandardItem} objects, but those items are exposed through the normal model/view API. A single model can be shown by \api{ListView}, \api{TreeView}, or \api{TableView}.
@@ -115,6 +128,12 @@ view.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
 view.alternating_row_colors = true
 view.resize_columns_to_contents
 \end{lstlisting}
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/model-view-table-view.png}{width=0.82\textwidth,height=0.24\textheight,keepaspectratio}%
+  \caption{A \api{TableView} backed by a \api{StandardItemModel}, sorted by the numeric priority column.}
+\end{figure}
 
 A \api{StandardItem} can also own child items, which makes the same model useful for tree views.
 
