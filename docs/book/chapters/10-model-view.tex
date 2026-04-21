@@ -388,6 +388,19 @@ header.resize_section(0, 180)
 header.set_section_hidden(3, true)
 \end{lstlisting}
 
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.86\textwidth}
+    \centering
+    \screenshotimage{docs/book/images/model-view-tree-view-headers.png}{width=0.96\linewidth,height=0.20\textheight,keepaspectratio}%
+  \end{minipage}\par\medskip
+  \begin{minipage}{0.86\textwidth}
+    \centering
+    \screenshotimage{docs/book/images/model-view-table-headers.png}{width=0.96\linewidth,height=0.20\textheight,keepaspectratio}%
+  \end{minipage}
+  \caption{Model-backed views with visible headers: a \api{TreeView} with indentation and root decoration, and a \api{TableView} with sorted and resized columns.}
+\end{figure}
+
 \section{Delegates}
 
 \api{StyledItemDelegate} controls how items are displayed and edited. Start with \api{on_display_text} for lightweight formatting. Add editor hooks when you need a custom editor widget.
