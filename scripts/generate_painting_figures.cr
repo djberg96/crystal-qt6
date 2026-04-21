@@ -54,6 +54,29 @@ def draw_box(painter : Qt6::QPainter, rect : Qt6::RectF, title : String, body : 
   end
 end
 
+def draw_node(painter : Qt6::QPainter, rect : Qt6::RectF, title : String, body : String, accent : Qt6::Color, title_size : Int32 = 24, body_size : Int32 = 18)
+  gradient = Qt6::QLinearGradient.new(rect.x, rect.y, rect.x, rect.y + rect.height)
+  gradient.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
+  gradient.set_color_at(1.0, Qt6::Color.new(238, 243, 246))
+
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(82, 96, 110), 3.0)
+  painter.brush = Qt6::QBrush.new(gradient)
+  painter.draw_rect(rect)
+
+  painter.pen = no_pen
+  painter.fill_rect(Qt6::RectF.new(rect.x, rect.y, rect.width, 12.0), accent)
+
+  painter.font = Qt6::QFont.new(point_size: title_size, bold: true)
+  painter.pen = Qt6::Color.new(34, 44, 54)
+  painter.draw_text(Qt6::PointF.new(rect.x + 20.0, rect.y + 48.0), title)
+
+  painter.font = Qt6::QFont.new(point_size: body_size)
+  painter.pen = Qt6::Color.new(62, 74, 86)
+  body.split('\n').each_with_index do |line, index|
+    painter.draw_text(Qt6::PointF.new(rect.x + 20.0, rect.y + 84.0 + index * (body_size + 8).to_f64), line)
+  end
+end
+
 def arrow(painter : Qt6::QPainter, from_point : Qt6::PointF, to_point : Qt6::PointF, color : Qt6::Color = Qt6::Color.new(120, 132, 144))
   pen = Qt6::QPen.new(color, 5.0)
   pen.cap_style = Qt6::PenCapStyle::RoundCap
@@ -328,4 +351,107 @@ render_image("images-io-clipboard.png") do |painter, rect|
 
   label(painter, 80, 390, "reader.error_string on failure", 23, true)
   label(painter, 786, 390, "save_to_data(\"PNG\")", 23, true)
+end
+
+render_image("model-view-architecture.png", 1400, 800) do |painter, rect|
+  background = Qt6::QLinearGradient.new(0.0, 0.0, 0.0, rect.height)
+  background.set_color_at(0.0, Qt6::Color.new(251, 252, 250))
+  background.set_color_at(1.0, Qt6::Color.new(235, 241, 238))
+  painter.fill_rect(rect, Qt6::QBrush.new(background))
+
+  label(painter, 56, 72, "Model/view separates data, presentation, and interaction", 30, true)
+
+  document_rect = Qt6::RectF.new(70.0, 178.0, 260.0, 155.0)
+  model_rect = Qt6::RectF.new(405.0, 178.0, 260.0, 155.0)
+  proxy_rect = Qt6::RectF.new(740.0, 178.0, 260.0, 155.0)
+  view_rect = Qt6::RectF.new(1075.0, 178.0, 260.0, 180.0)
+  delegate_rect = Qt6::RectF.new(405.0, 520.0, 260.0, 155.0)
+  selection_rect = Qt6::RectF.new(740.0, 520.0, 260.0, 155.0)
+
+  draw_node(painter, document_rect, "Document", "Crystal objects\narrays, ids, state", Qt6::Color.new(82, 132, 176))
+  draw_node(painter, model_rect, "Model", "rows and columns\nroles and flags", Qt6::Color.new(92, 154, 110))
+  draw_node(painter, proxy_rect, "Proxy", "sort and filter\nwithout copying", Qt6::Color.new(204, 132, 62))
+  draw_node(painter, view_rect, "Views", "ListView\nTreeView\nTableView", Qt6::Color.new(174, 91, 85))
+  draw_node(painter, delegate_rect, "Delegate", "display text\neditor widgets", Qt6::Color.new(118, 102, 174))
+  draw_node(painter, selection_rect, "Selection", "current index\nshared state", Qt6::Color.new(78, 144, 150))
+
+  arrow(painter, Qt6::PointF.new(330.0, 255.0), Qt6::PointF.new(400.0, 255.0))
+  arrow(painter, Qt6::PointF.new(665.0, 255.0), Qt6::PointF.new(735.0, 255.0))
+  arrow(painter, Qt6::PointF.new(1000.0, 255.0), Qt6::PointF.new(1070.0, 255.0))
+  arrow(painter, Qt6::PointF.new(1130.0, 358.0), Qt6::PointF.new(1005.0, 558.0))
+  arrow(painter, Qt6::PointF.new(870.0, 520.0), Qt6::PointF.new(870.0, 338.0))
+  arrow(painter, Qt6::PointF.new(665.0, 596.0), Qt6::PointF.new(1070.0, 332.0))
+  arrow(painter, Qt6::PointF.new(530.0, 520.0), Qt6::PointF.new(530.0, 338.0))
+
+  label(painter, 70, 724, "The model owns meaning; views, proxies, delegates, and selection shape the surface.", 21, true)
+end
+
+render_image("model-view-choices.png", 1400, 800) do |painter, rect|
+  painter.fill_rect(rect, Qt6::Color.new(249, 248, 244))
+  label(painter, 56, 72, "Item widgets vs model-backed views", 32, true)
+
+  item_rect = Qt6::RectF.new(80.0, 150.0, 560.0, 510.0)
+  model_rect = Qt6::RectF.new(760.0, 150.0, 560.0, 510.0)
+
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(80, 94, 108), 3.0)
+  painter.brush = Qt6::Color.new(255, 255, 255)
+  painter.draw_rect(item_rect)
+  painter.draw_rect(model_rect)
+
+  painter.pen = no_pen
+  painter.fill_rect(Qt6::RectF.new(80.0, 150.0, 560.0, 18.0), Qt6::Color.new(82, 132, 176))
+  painter.fill_rect(Qt6::RectF.new(760.0, 150.0, 560.0, 18.0), Qt6::Color.new(92, 154, 110))
+
+  label(painter, 120, 212, "Item widget", 29, true)
+  label(painter, 800, 212, "Model-backed view", 29, true)
+
+  draw_node(painter, Qt6::RectF.new(132.0, 258.0, 190.0, 125.0), "Widget", "owns its\nitem objects", Qt6::Color.new(82, 132, 176), 23, 18)
+  draw_node(painter, Qt6::RectF.new(398.0, 258.0, 190.0, 125.0), "Items", "text, roles\nflags, state", Qt6::Color.new(174, 91, 85), 23, 18)
+  arrow(painter, Qt6::PointF.new(322.0, 320.0), Qt6::PointF.new(393.0, 320.0))
+
+  label(painter, 132, 468, "Best for:", 23, true)
+  label(painter, 132, 506, "small owned lists", 22)
+  label(painter, 132, 540, "quick inspectors", 22)
+  label(painter, 132, 574, "fixed preference panes", 22)
+
+  draw_node(painter, Qt6::RectF.new(812.0, 238.0, 190.0, 125.0), "Model", "application\ndata", Qt6::Color.new(92, 154, 110), 23, 18)
+  draw_node(painter, Qt6::RectF.new(1078.0, 238.0, 190.0, 125.0), "Views", "list, tree\nor table", Qt6::Color.new(204, 132, 62), 23, 18)
+  draw_node(painter, Qt6::RectF.new(946.0, 414.0, 190.0, 125.0), "Proxy", "sort and\nfilter", Qt6::Color.new(118, 102, 174), 23, 18)
+  arrow(painter, Qt6::PointF.new(1002.0, 300.0), Qt6::PointF.new(1073.0, 300.0))
+  arrow(painter, Qt6::PointF.new(1040.0, 414.0), Qt6::PointF.new(1108.0, 363.0))
+  arrow(painter, Qt6::PointF.new(918.0, 363.0), Qt6::PointF.new(986.0, 414.0))
+
+  label(painter, 812, 606, "Best for shared or changing data", 22, true)
+end
+
+render_image("model-view-proxy-selection.png", 1400, 800) do |painter, rect|
+  background = Qt6::QLinearGradient.new(0.0, 0.0, 0.0, rect.height)
+  background.set_color_at(0.0, Qt6::Color.new(250, 252, 253))
+  background.set_color_at(1.0, Qt6::Color.new(236, 240, 244))
+  painter.fill_rect(rect, Qt6::QBrush.new(background))
+
+  label(painter, 56, 72, "Proxy indexes and shared selection", 32, true)
+
+  source_rect = Qt6::RectF.new(80.0, 220.0, 270.0, 155.0)
+  proxy_rect = Qt6::RectF.new(470.0, 220.0, 270.0, 155.0)
+  list_rect = Qt6::RectF.new(930.0, 150.0, 270.0, 145.0)
+  tree_rect = Qt6::RectF.new(930.0, 395.0, 270.0, 145.0)
+  selection_rect = Qt6::RectF.new(470.0, 570.0, 270.0, 145.0)
+
+  draw_node(painter, source_rect, "Source model", "true data order\nrows 0, 1, 2", Qt6::Color.new(92, 154, 110), 24, 18)
+  draw_node(painter, proxy_rect, "Proxy model", "visible order\nfiltered rows", Qt6::Color.new(204, 132, 62), 24, 18)
+  draw_node(painter, list_rect, "ListView", "shows proxy\ncurrent index", Qt6::Color.new(82, 132, 176), 24, 18)
+  draw_node(painter, tree_rect, "TreeView", "same proxy\nsame selection", Qt6::Color.new(174, 91, 85), 24, 18)
+  draw_node(painter, selection_rect, "Selection model", "one current index\nfor both views", Qt6::Color.new(78, 144, 150), 24, 18)
+
+  arrow(painter, Qt6::PointF.new(350.0, 298.0), Qt6::PointF.new(465.0, 298.0))
+  arrow(painter, Qt6::PointF.new(740.0, 270.0), Qt6::PointF.new(925.0, 220.0))
+  arrow(painter, Qt6::PointF.new(740.0, 330.0), Qt6::PointF.new(925.0, 468.0))
+  arrow(painter, Qt6::PointF.new(1060.0, 295.0), Qt6::PointF.new(743.0, 625.0))
+  arrow(painter, Qt6::PointF.new(1060.0, 540.0), Qt6::PointF.new(743.0, 660.0))
+  arrow(painter, Qt6::PointF.new(470.0, 640.0), Qt6::PointF.new(220.0, 380.0))
+
+  label(painter, 356, 200, "map_from_source", 20, true)
+  label(painter, 116, 534, "map_to_source before edit", 20, true)
+  label(painter, 820, 690, "shared selection tracks the proxy model", 20, true)
 end
