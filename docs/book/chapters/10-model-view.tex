@@ -1,27 +1,411 @@
 \chapter{Model/View}
 
-Qt's model/view architecture separates data, selection, filtering, sorting, and presentation. The \api{crystal-qt6} library includes item widgets for simple cases and model/view wrappers for richer data surfaces.
+Qt's model/view architecture separates data, selection, filtering, sorting, editing, and presentation. That separation matters once a list or table becomes more than a small pile of labels. The same model can feed multiple views, a proxy can sort or filter without changing the source data, and a selection model can keep several views synchronized.
 
-\section{When To Use Item Widgets}
+\api{crystal-qt6} exposes both sides of that design. Use item widgets for simple panels. Use models and views when the data is shared, large, filtered, sorted, edited, or represented in more than one place.
 
-\api{ListWidget}, \api{TreeWidget}, and \api{TableWidget} are efficient for fixed sidebars, small inspectors, and quick tools. They own their items directly and are easy to wire.
+\section{Choosing A Data Surface}
 
-\section{When To Use Models}
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Use & When \\
+\midrule
+Item widgets & \api{ListWidget}, \api{TreeWidget}, and \api{TableWidget} own a small set of items directly. This is ideal for sidebars, quick inspectors, preference lists, and fixed tables. \\
+\api{StandardItemModel} & You want model/view behavior without writing a custom model. This is a good first step for editable trees and tables. \\
+\api{AbstractListModel} & Your data already lives in Crystal objects or arrays, and you want a model to expose those objects to one or more views. \\
+\api{AbstractTreeModel} & Your data is hierarchical and should remain owned by your application instead of copied into item objects. \\
+\api{SortFilterProxyModel} & The UI needs sorting or filtering layered over an existing source model. \\
+\bottomrule
+\end{longtable}
 
-Use model/view wrappers when data changes frequently, needs sorting/filtering, or should be shared across views. The common path combines source models such as \api{AbstractListModel}, \api{AbstractTreeModel}, or \api{StandardItemModel} with views such as \api{ListView}, \api{TreeView}, and \api{TableView}.
+The dividing line is ownership. Item widgets store item objects inside the widget. Model/view keeps the data in a model, then lets views ask for rows, columns, indexes, roles, and flags.
 
-\api{SortFilterProxyModel} sits between a source model and a view when the UI needs filtering or sorting.
+\section{Item Widgets}
+
+Item widgets are the shortest path to a working list, tree, or table. They are still Qt item views internally, so they share selection modes, drag/drop settings, alternating row colors, and edit triggers with model-driven views.
 
 \begin{lstlisting}[style=crystal]
-proxy = Qt6::SortFilterProxyModel.new
+layers = Qt6::ListWidget.new
+layers.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+layers << "Terrain"
+layers << "Roads"
+layers << "Labels"
+
+layers.on_current_row_changed do |row|
+  status_bar.show_message("Selected #{layers.item_text(row)}", 1200)
+end
+\end{lstlisting}
+
+Use item objects when the row needs roles, flags, check state, icons, or colors.
+
+\begin{lstlisting}[style=crystal]
+item = Qt6::ListWidgetItem.new("Terrain")
+item.flags = Qt6::ItemFlag::Enabled |
+  Qt6::ItemFlag::Selectable |
+  Qt6::ItemFlag::UserCheckable
+item.check_state = Qt6::CheckState::Checked
+item.set_data("terrain", Qt6::ItemDataRole::User)
+
+layers << item
+\end{lstlisting}
+
+\api{TreeWidget} and \api{TreeWidgetItem} follow the same idea, but items can contain children.
+
+\begin{lstlisting}[style=crystal]
+tree = Qt6::TreeWidget.new
+tree.header_label = "Layer"
+
+terrain = Qt6::TreeWidgetItem.new("Terrain")
+terrain << Qt6::TreeWidgetItem.new("Contours")
+terrain << Qt6::TreeWidgetItem.new("Hillshade")
+
+tree << terrain
+tree.expand_all
+\end{lstlisting}
+
+\api{TableWidget} is convenient when the table itself is the data store.
+
+\begin{lstlisting}[style=crystal]
+table = Qt6::TableWidget.new
+table.row_count = 2
+table.column_count = 2
+table.set_horizontal_header_label(0, "Layer")
+table.set_horizontal_header_label(1, "State")
+
+table.set_item(0, 0, Qt6::TableWidgetItem.new("Terrain"))
+table.set_item(0, 1, Qt6::TableWidgetItem.new("Visible"))
+table.set_item(1, 0, Qt6::TableWidgetItem.new("Labels"))
+table.set_item(1, 1, Qt6::TableWidgetItem.new("Draft"))
+
+table.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+table.resize_columns_to_contents
+\end{lstlisting}
+
+If you later need the same rows in multiple views, or if the data already belongs to a document model, switch to a model-backed view instead of copying values into item widgets.
+
+\section{Standard Item Models}
+
+\api{StandardItemModel} is the simplest model-backed path. It stores \api{StandardItem} objects, but those items are exposed through the normal model/view API. A single model can be shown by \api{ListView}, \api{TreeView}, or \api{TableView}.
+
+\begin{lstlisting}[style=crystal]
+model = Qt6::StandardItemModel.new(main)
+model.set_horizontal_header_label(0, "Layer")
+model.set_horizontal_header_label(1, "State")
+
+model.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+model.set_item(1, 0, Qt6::StandardItem.new("Roads"))
+model.set_item(1, 1, Qt6::StandardItem.new("Locked"))
+
+view = Qt6::TableView.new
+view.model = model
+view.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+view.alternating_row_colors = true
+view.resize_columns_to_contents
+\end{lstlisting}
+
+A \api{StandardItem} can also own child items, which makes the same model useful for tree views.
+
+\begin{lstlisting}[style=crystal]
+terrain = Qt6::StandardItem.new("Terrain")
+terrain << Qt6::StandardItem.new("Contours")
+terrain << Qt6::StandardItem.new("Hillshade")
+
+model << terrain
+
+tree = Qt6::TreeView.new
+tree.model = model
+tree.expand_all
+\end{lstlisting}
+
+When an item is inserted into a \api{StandardItemModel} or into another \api{StandardItem}, Qt owns the native item. Do not release it manually after insertion.
+
+\section{Roles, Flags, And Indexes}
+
+Model/view data is role-based. The same index can return display text, edit text, tooltip text, foreground color, sort keys, or application-specific values.
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Role & Typical use \\
+\midrule
+\api{ItemDataRole::Display} & Text or value painted by the view. \\
+\api{ItemDataRole::Edit} & Value edited by the delegate. Often the same as display data. \\
+\api{ItemDataRole::ToolTip} & Hover text for the item. \\
+\api{ItemDataRole::Foreground} & Text color for display. \\
+\api{ItemDataRole::Background} & Cell or row background color. \\
+\api{ItemDataRole::CheckState} & Checked, unchecked, or partially checked state. \\
+\api{ItemDataRole::User} & Application data, such as ids, priorities, or numeric sort keys. \\
+\bottomrule
+\end{longtable}
+
+\api{ModelIndex} identifies one cell in one model. It carries a row, column, validity state, and for tree models an internal id.
+
+\begin{lstlisting}[style=crystal]
+index = model.index(0, 0)
+if index.valid?
+  name = index.data(model).to_s
+  priority = index.data(model, Qt6::ItemDataRole::User)
+  status_bar.show_message("#{name}: #{priority}", 1200)
+end
+\end{lstlisting}
+
+Flags tell the view how an item behaves.
+
+\begin{lstlisting}[style=crystal]
+flags = Qt6::ItemFlag::Enabled |
+  Qt6::ItemFlag::Selectable |
+  Qt6::ItemFlag::Editable
+
+item.flags = flags
+\end{lstlisting}
+
+For custom models, return matching flags from \api{model_flags}. Editable indexes should return \api{ItemFlag::Editable}; disabled or placeholder indexes should not return \api{ItemFlag::Enabled}.
+
+\section{Custom List Models}
+
+Use \api{AbstractListModel} when the real data lives in Crystal objects. The model answers Qt's questions by overriding protected methods. It must also notify Qt when rows are inserted, removed, moved, reset, or changed.
+
+\begin{lstlisting}[style=crystal]
+class LayerListModel < Qt6::AbstractListModel
+  getter layers
+
+  def initialize(@layers : Array(String), parent : Qt6::QObject? = nil)
+    super(parent)
+  end
+
+  def append(name : String) : Nil
+    row = @layers.size
+    begin_insert_rows(row, row)
+    @layers << name
+    end_insert_rows
+  end
+
+  protected def model_row_count : Int32
+    @layers.size.to_i32
+  end
+
+  protected def model_column_count : Int32
+    1
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+    return nil unless role == Qt6::ItemDataRole::Display.value ||
+      role == Qt6::ItemDataRole::Edit.value
+
+    @layers[index.row]?
+  end
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+  protected def model_set_data(index : Qt6::ModelIndex,
+                               value : Qt6::ModelData,
+                               role : Int32) : Bool
+    return false unless index.valid? && role == Qt6::ItemDataRole::Edit.value
+
+    @layers[index.row] = value.to_s
+    data_changed(index)
+    true
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::None unless index.valid?
+
+    Qt6::ItemFlag::Enabled |
+      Qt6::ItemFlag::Selectable |
+      Qt6::ItemFlag::Editable
+  end
+end
+\end{lstlisting}
+
+The notification order is important. Call \api{begin_insert_rows} before mutating the backing array, mutate the array, then call \api{end_insert_rows}. For removals, call \api{begin_remove_rows}, mutate, then call \api{end_remove_rows}. For a full replacement, bracket the change with \api{begin_reset_model} and \api{end_reset_model}.
+
+\section{Custom Tree Models}
+
+\api{AbstractTreeModel} adds two tree-specific questions: which internal id belongs to a child row, and which parent index belongs to a child index. A common pattern is to keep a hash of nodes keyed by stable ids.
+
+\begin{lstlisting}[style=crystal]
+protected def model_index_internal_id(row : Int32,
+                                      column : Int32,
+                                      parent : Qt6::ModelIndex) : UInt64?
+  return nil unless column == 0
+
+  child_ids_for(parent)[row]?
+end
+
+protected def model_parent(index : Qt6::ModelIndex) : Qt6::ModelIndexSpec?
+  return nil unless index.valid?
+
+  node = @nodes[index.internal_id]?
+  parent_id = node.try(&.parent_id)
+  return nil unless parent_id
+
+  row = row_for_node(parent_id)
+  Qt6::ModelIndexSpec.new(row, 0, parent_id)
+end
+\end{lstlisting}
+
+The model receives a \api{ModelIndex} for the parent whenever Qt asks for child rows. Invalid parent indexes mean "top level". Valid parent indexes carry the internal id returned earlier from \api{model_index_internal_id}.
+
+\begin{lstlisting}[style=crystal]
+protected def model_row_count(parent : Qt6::ModelIndex) : Int32
+  child_ids_for(parent).size.to_i32
+end
+
+private def child_ids_for(parent : Qt6::ModelIndex) : Array(UInt64)
+  return @roots unless parent.valid?
+
+  @nodes[parent.internal_id]?.try(&.children) || ([] of UInt64)
+end
+\end{lstlisting}
+
+Tree models are easiest to keep correct when ids are stable. Avoid using array positions as internal ids if rows can move, because views and selections may hold indexes while the model is changing.
+
+\section{Sorting And Filtering}
+
+\api{SortFilterProxyModel} sits between a source model and a view. The view talks to the proxy; the proxy talks to the source model. Sorting and filtering do not mutate the source model.
+
+\begin{lstlisting}[style=crystal]
+proxy = Qt6::SortFilterProxyModel.new(main)
 proxy.source_model = source_model
+proxy.filter_role = Qt6::ItemDataRole::Display
+proxy.filter_key_column = 0
+proxy.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
 proxy.filter_regular_expression = "terrain|roads"
-proxy.recursive_filtering_enabled = true
+proxy.dynamic_sort_filter = true
+
+proxy.sort_role = Qt6::ItemDataRole::User
+proxy.sort(0, Qt6::SortOrder::Ascending)
 
 view = Qt6::TreeView.new
 view.model = proxy
 \end{lstlisting}
 
+When a selection comes from a proxy view, map the index back before editing source-owned data directly.
+
+\begin{lstlisting}[style=crystal]
+proxy_index = view.current_index
+if proxy_index.valid?
+  source_index = proxy.map_to_source(proxy_index)
+  source_model.set_data(source_index, "Visible")
+end
+\end{lstlisting}
+
+If an external setting changes the way the proxy should filter, call \api{invalidate}. To remove an active filter, call \api{clear_filter}.
+
+\section{Selection Models}
+
+Views create their own selection models by default. Install a shared \api{ItemSelectionModel} when multiple views should track the same current index and selection.
+
+\begin{lstlisting}[style=crystal]
+list_view = Qt6::ListView.new
+tree_view = Qt6::TreeView.new
+
+list_view.model = proxy
+tree_view.model = proxy
+
+selection = Qt6::ItemSelectionModel.new(proxy, main)
+list_view.selection_model = selection
+tree_view.selection_model = selection
+
+selection.on_current_index_changed do
+  current = selection.current_index
+  next unless current.valid?
+
+  status_bar.show_message(proxy.data(current).to_s, 1200)
+end
+\end{lstlisting}
+
+Use \api{selection_mode} to decide how many items can be selected, and \api{selection_behavior} to decide whether a click selects cells, rows, or columns.
+
+\begin{lstlisting}[style=crystal]
+table.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
+table.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+\end{lstlisting}
+
+\section{Views And Headers}
+
+\api{ListView}, \api{TreeView}, and \api{TableView} share common \api{AbstractItemView} features: current index, selection model, item delegate, selection mode, edit triggers, alternating rows, persistent editors, and drag/drop behavior.
+
+\begin{lstlisting}[style=crystal]
+tree = Qt6::TreeView.new
+tree.model = proxy
+tree.header_hidden = false
+tree.root_is_decorated = true
+tree.uniform_row_heights = true
+tree.indentation = 18
+tree.expand_all
+\end{lstlisting}
+
+Table views expose header controls through \api{HeaderView}. This is useful for dense data where column sizing and hidden sections matter.
+
+\begin{lstlisting}[style=crystal]
+table = Qt6::TableView.new
+table.model = model
+table.sorting_enabled = true
+table.word_wrap = false
+
+header = table.horizontal_header
+header.stretch_last_section = true
+header.resize_section(0, 180)
+header.set_section_hidden(3, true)
+\end{lstlisting}
+
 \section{Delegates}
 
-\api{StyledItemDelegate} supports display formatting and editor commit hooks, which is enough for many inspector and table workflows before a full custom delegate bridge is needed.
+\api{StyledItemDelegate} controls how items are displayed and edited. Start with \api{on_display_text} for lightweight formatting. Add editor hooks when you need a custom editor widget.
+
+\begin{lstlisting}[style=crystal]
+delegate = Qt6::StyledItemDelegate.new(main)
+
+delegate.on_display_text do |text|
+  text.empty? ? "(none)" : text
+end
+
+delegate.on_create_editor do |parent, _index|
+  Qt6::LineEdit.new(parent: parent)
+end
+
+delegate.on_set_editor_data do |editor, value, _index|
+  editor.as(Qt6::LineEdit).text = value.to_s
+end
+
+delegate.on_set_model_data do |editor, target_model, index|
+  target_model.set_data(index, editor.as(Qt6::LineEdit).text)
+end
+
+view.item_delegate = delegate
+\end{lstlisting}
+
+The delegate talks to the model through \api{ItemDataRole::Edit}. If editing does not seem to commit, check three places: the model returns \api{ItemFlag::Editable}, the delegate calls \api{set_data}, and the model's \api{model_set_data} returns \api{true}.
+
+\section{Drag And Drop}
+
+Views decide how dragging feels. Models decide what data can be dragged or dropped.
+
+\begin{lstlisting}[style=crystal]
+view.drag_enabled = true
+view.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+view.default_drop_action = Qt6::DropAction::MoveAction
+view.drop_indicator_shown = true
+\end{lstlisting}
+
+For custom models, override the MIME hooks: \api{model_mime_types}, \api{model_mime_data}, and \api{model_drop_mime_data}.
+
+Use \api{model_supported_drag_actions} and \api{model_supported_drop_actions} to advertise actions. Also return \api{ItemFlag::DragEnabled} and \api{ItemFlag::DropEnabled} for indexes that participate.
+
+\section{Practical Guidelines}
+
+Use item widgets until they start fighting your data model. They are excellent for small owned collections.
+
+Use \api{StandardItemModel} when you want to learn model/view or build a modest tree or table quickly.
+
+Use \api{AbstractListModel} or \api{AbstractTreeModel} when the application already has domain objects, when rows are numerous, or when several views need the same data.
+
+Use roles deliberately. Display text is for users; user data is for ids, priorities, and stable sort keys.
+
+Always notify around structural changes. Views, proxies, delegates, and selection models depend on those signals to keep their indexes valid.
+
+Keep proxy indexes and source indexes straight. A proxy row is a presentation row; a source row is where the underlying data lives.
+
+Prefer shared \api{ItemSelectionModel} objects when split views should feel like one surface. Prefer separate selection models when each view represents a different task.
