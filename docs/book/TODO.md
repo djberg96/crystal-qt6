@@ -46,3 +46,10 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 - Consider refreshing the dialog screenshots with a consistent light/dark theme decision, window scale, and crop style before publication.
 - Add guidance about when to prefer convenience helpers versus explicit dialog instances, including testability, customization, signals, and ownership/release behavior.
 - Add a troubleshooting sidebar for dialogs that do not appear, appear behind the main window, or behave differently when launched from scripts.
+
+## Chapter 6: Signals And Events
+
+- Add a compact note on `block_signals=` and `signals_blocked?` for bulk UI updates where intermediate value changes should not emit callbacks.
+- Add a more visible event-object lifetime callout, especially for live wrappers such as `DropEvent` and `QEvent`.
+- Consider a small combined example that uses an `Action`, `QTimer`, and `EventWidget` together; this might fit better in the worked example chapter.
+- Add GUI-thread and background-work guidance if the binding grows thread helpers later.
