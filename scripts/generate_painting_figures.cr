@@ -30,6 +30,52 @@ def no_pen : Qt6::QPen
   Qt6::QPen.new.tap { |pen| pen.style = Qt6::PenStyle::NoPen }
 end
 
+def draw_box(painter : Qt6::QPainter, rect : Qt6::RectF, title : String, body : String, accent : Qt6::Color)
+  gradient = Qt6::QLinearGradient.new(rect.x, rect.y, rect.x, rect.y + rect.height)
+  gradient.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
+  gradient.set_color_at(1.0, Qt6::Color.new(236, 242, 246))
+
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(82, 96, 110), 3.0)
+  painter.brush = Qt6::QBrush.new(gradient)
+  painter.draw_rect(rect)
+
+  painter.pen = no_pen
+  painter.brush = accent
+  painter.fill_rect(Qt6::RectF.new(rect.x, rect.y, rect.width, 12.0), accent)
+
+  painter.font = Qt6::QFont.new(point_size: 25, bold: true)
+  painter.pen = Qt6::Color.new(34, 44, 54)
+  painter.draw_text(Qt6::PointF.new(rect.x + 22.0, rect.y + 58.0), title)
+
+  painter.font = Qt6::QFont.new(point_size: 20)
+  painter.pen = Qt6::Color.new(62, 74, 86)
+  body.split('\n').each_with_index do |line, index|
+    painter.draw_text(Qt6::PointF.new(rect.x + 22.0, rect.y + 100.0 + index * 28.0), line)
+  end
+end
+
+def arrow(painter : Qt6::QPainter, from_point : Qt6::PointF, to_point : Qt6::PointF, color : Qt6::Color = Qt6::Color.new(120, 132, 144))
+  pen = Qt6::QPen.new(color, 5.0)
+  pen.cap_style = Qt6::PenCapStyle::RoundCap
+  painter.pen = pen
+  painter.draw_line(from_point, to_point)
+
+  dx = to_point.x - from_point.x
+  dy = to_point.y - from_point.y
+  length = Math.sqrt(dx * dx + dy * dy)
+  return if length <= 0.0
+
+  ux = dx / length
+  uy = dy / length
+  size = 24.0
+  wing = 15.0
+
+  left = Qt6::PointF.new(to_point.x - ux * size - uy * wing, to_point.y - uy * size + ux * wing)
+  right = Qt6::PointF.new(to_point.x - ux * size + uy * wing, to_point.y - uy * size - ux * wing)
+  painter.draw_line(to_point, left)
+  painter.draw_line(to_point, right)
+end
+
 def draw_export_badge(painter : Qt6::QPainter, x : Float64, y : Float64, title : String, accent : Qt6::Color)
   painter.save
   painter.translate(x, y)
@@ -210,4 +256,81 @@ render_image("painting-export-targets.png") do |painter, rect|
   draw_export_badge(painter, 812.0, 142.0, "PDF", Qt6::Color.new(204, 94, 76))
 
   label(painter, 384, 596, "same draw_badge(painter) code", 26, true)
+end
+
+render_image("images-pipeline.png") do |painter, rect|
+  background = Qt6::QLinearGradient.new(0.0, 0.0, 0.0, rect.height)
+  background.set_color_at(0.0, Qt6::Color.new(250, 252, 253))
+  background.set_color_at(1.0, Qt6::Color.new(235, 241, 245))
+  painter.fill_rect(rect, Qt6::QBrush.new(background))
+
+  label(painter, 56, 72, "Image and pixmap workflow", 32, true)
+
+  raw_rect = Qt6::RectF.new(70.0, 168.0, 220.0, 160.0)
+  image_rect = Qt6::RectF.new(355.0, 168.0, 220.0, 160.0)
+  transform_rect = Qt6::RectF.new(640.0, 168.0, 220.0, 160.0)
+  pixmap_rect = Qt6::RectF.new(925.0, 168.0, 220.0, 160.0)
+
+  draw_box(painter, raw_rect, "Bytes", "raw pixels\nencoded PNG", Qt6::Color.new(88, 132, 176))
+  draw_box(painter, image_rect, "QImage", "inspect pixels\nedit data", Qt6::Color.new(92, 154, 110))
+  draw_box(painter, transform_rect, "Transform", "scale\nmirror\nrotate", Qt6::Color.new(204, 132, 62))
+  draw_box(painter, pixmap_rect, "QPixmap", "widget grabs\ndisplay edge", Qt6::Color.new(190, 86, 76))
+
+  arrow(painter, Qt6::PointF.new(290.0, 248.0), Qt6::PointF.new(350.0, 248.0))
+  arrow(painter, Qt6::PointF.new(575.0, 248.0), Qt6::PointF.new(635.0, 248.0))
+  arrow(painter, Qt6::PointF.new(860.0, 248.0), Qt6::PointF.new(920.0, 248.0))
+
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(155, 165, 175), 4.0)
+  painter.draw_line(Qt6::PointF.new(1035.0, 330.0), Qt6::PointF.new(1035.0, 448.0))
+  arrow(painter, Qt6::PointF.new(1035.0, 448.0), Qt6::PointF.new(685.0, 448.0))
+  arrow(painter, Qt6::PointF.new(685.0, 448.0), Qt6::PointF.new(470.0, 338.0))
+
+  label(painter, 662, 430, "to_image for pixel work", 23, true)
+  label(painter, 842, 520, "to_pixmap for UI", 24, true)
+
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(70, 84, 98), 3.0)
+  painter.brush = Qt6::Color.new(255, 255, 255)
+  painter.draw_rect(Qt6::RectF.new(120.0, 480.0, 250.0, 120.0))
+  painter.pen = no_pen
+  painter.brush = Qt6::Color.new(82, 137, 190)
+  painter.draw_ellipse(Qt6::PointF.new(172.0, 540.0), 26.0, 26.0)
+  painter.brush = Qt6::Color.new(92, 154, 110)
+  painter.fill_rect(Qt6::RectF.new(218.0, 512.0, 74.0, 54.0), Qt6::Color.new(92, 154, 110))
+  painter.brush = Qt6::Color.new(210, 92, 76)
+  painter.draw_ellipse(Qt6::PointF.new(316.0, 540.0), 22.0, 22.0)
+  label(painter, 132, 640, "same raster content", 22, true)
+end
+
+render_image("images-io-clipboard.png") do |painter, rect|
+  painter.fill_rect(rect, Qt6::Color.new(248, 250, 250))
+  label(painter, 56, 72, "Loading, encoding, and clipboard flow", 32, true)
+
+  file_rect = Qt6::RectF.new(66.0, 158.0, 215.0, 150.0)
+  reader_rect = Qt6::RectF.new(342.0, 158.0, 240.0, 150.0)
+  image_rect = Qt6::RectF.new(650.0, 158.0, 215.0, 150.0)
+  buffer_rect = Qt6::RectF.new(932.0, 158.0, 215.0, 150.0)
+
+  draw_box(painter, file_rect, "File", "png, jpg\nor bytes", Qt6::Color.new(84, 132, 180))
+  draw_box(painter, reader_rect, "QImageReader", "probe size\nread safely", Qt6::Color.new(92, 154, 110))
+  draw_box(painter, image_rect, "QImage", "working\nraster data", Qt6::Color.new(202, 126, 64))
+  draw_box(painter, buffer_rect, "QBuffer", "PNG bytes\nin memory", Qt6::Color.new(180, 88, 112))
+
+  arrow(painter, Qt6::PointF.new(281.0, 233.0), Qt6::PointF.new(337.0, 233.0))
+  arrow(painter, Qt6::PointF.new(582.0, 233.0), Qt6::PointF.new(645.0, 233.0))
+  arrow(painter, Qt6::PointF.new(865.0, 233.0), Qt6::PointF.new(927.0, 233.0))
+
+  mime_rect = Qt6::RectF.new(342.0, 438.0, 240.0, 150.0)
+  clip_rect = Qt6::RectF.new(650.0, 438.0, 215.0, 150.0)
+  app_rect = Qt6::RectF.new(932.0, 438.0, 215.0, 150.0)
+
+  draw_box(painter, mime_rect, "MimeData", "text + html\nimage + bytes", Qt6::Color.new(118, 98, 168))
+  draw_box(painter, clip_rect, "Clipboard", "copy/paste\nshared payload", Qt6::Color.new(76, 142, 150))
+  draw_box(painter, app_rect, "App UI", "preview\npaste target", Qt6::Color.new(206, 148, 72))
+
+  arrow(painter, Qt6::PointF.new(760.0, 308.0), Qt6::PointF.new(480.0, 433.0))
+  arrow(painter, Qt6::PointF.new(582.0, 513.0), Qt6::PointF.new(645.0, 513.0))
+  arrow(painter, Qt6::PointF.new(865.0, 513.0), Qt6::PointF.new(927.0, 513.0))
+
+  label(painter, 80, 390, "reader.error_string on failure", 23, true)
+  label(painter, 786, 390, "save_to_data(\"PNG\")", 23, true)
 end
