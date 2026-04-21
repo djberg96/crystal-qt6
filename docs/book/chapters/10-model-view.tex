@@ -4,6 +4,12 @@ Qt's model/view architecture separates data, selection, filtering, sorting, edit
 
 \api{crystal-qt6} exposes both sides of that design. Use item widgets for simple panels. Use models and views when the data is shared, large, filtered, sorted, edited, or represented in more than one place.
 
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/model-view-architecture.png}{width=0.94\textwidth,height=0.36\textheight,keepaspectratio}%
+  \caption{Model/view keeps application data separate from sorting, filtering, selection, editing, and the views that present it.}
+\end{figure}
+
 \section{Choosing A Data Surface}
 
 \begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
@@ -19,6 +25,12 @@ Item widgets & \api{ListWidget}, \api{TreeWidget}, and \api{TableWidget} own a s
 \end{longtable}
 
 The dividing line is ownership. Item widgets store item objects inside the widget. Model/view keeps the data in a model, then lets views ask for rows, columns, indexes, roles, and flags.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/model-view-choices.png}{width=0.94\textwidth,height=0.36\textheight,keepaspectratio}%
+  \caption{Item widgets are direct and owned by the widget; model-backed views are better when data is shared or changes shape through proxies.}
+\end{figure}
 
 \section{Item Widgets}
 
@@ -292,6 +304,12 @@ end
 \end{lstlisting}
 
 If an external setting changes the way the proxy should filter, call \api{invalidate}. To remove an active filter, call \api{clear_filter}.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/model-view-proxy-selection.png}{width=0.94\textwidth,height=0.36\textheight,keepaspectratio}%
+  \caption{A proxy model presents filtered or sorted indexes to views; map back to the source model before editing source-owned data.}
+\end{figure}
 
 \section{Selection Models}
 
