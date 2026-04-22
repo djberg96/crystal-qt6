@@ -10495,6 +10495,22 @@ int qt6cr_slider_orientation(qt6cr_handle_t handle) {
   return slider == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(slider->orientation());
 }
 
+void qt6cr_slider_emit_pressed(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    emit slider->sliderPressed();
+  }
+}
+
+void qt6cr_slider_emit_released(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    emit slider->sliderReleased();
+  }
+}
+
 void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   auto *slider = as_slider(handle);
 
@@ -10504,6 +10520,30 @@ void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t c
 
   QObject::connect(slider, &QSlider::valueChanged, slider, [callback, userdata](int value) {
     callback(userdata, value);
+  });
+}
+
+void qt6cr_slider_on_pressed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *slider = as_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QSlider::sliderPressed, slider, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_slider_on_released(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *slider = as_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QSlider::sliderReleased, slider, [callback, userdata]() {
+    callback(userdata);
   });
 }
 

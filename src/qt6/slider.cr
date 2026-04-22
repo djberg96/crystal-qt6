@@ -2,17 +2,27 @@ module Qt6
   # Wraps `QSlider`.
   class Slider < Widget
     @value_changed : Signal(Int32) = Signal(Int32).new
+    @pressed : Signal() = Signal().new
+    @released : Signal() = Signal().new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
     # Signal emitted whenever the slider value changes.
     getter value_changed : Signal(Int32)
+    # Signal emitted when the slider handle is pressed.
+    getter pressed : Signal()
+    # Signal emitted when the slider handle is released.
+    getter released : Signal()
 
     # Creates a slider with the requested orientation and optional parent.
     def initialize(orientation : Orientation = Orientation::Horizontal, parent : Widget? = nil)
       super(LibQt6.qt6cr_slider_create(parent.try(&.to_unsafe) || Pointer(Void).null, orientation.value), parent.nil?)
       @value_changed = Signal(Int32).new
+      @pressed = Signal().new
+      @released = Signal().new
       @callback_userdata = Box.box(self)
       LibQt6.qt6cr_slider_on_value_changed(to_unsafe, VALUE_CHANGED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_slider_on_pressed(to_unsafe, PRESSED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_slider_on_released(to_unsafe, RELEASED_TRAMPOLINE, @callback_userdata)
     end
 
     # Returns the slider orientation.
@@ -70,12 +80,40 @@ module Qt6
       self
     end
 
+    # Registers a block to run when the slider handle is pressed.
+    def on_pressed(&block : ->) : self
+      @pressed.connect { block.call }
+      self
+    end
+
+    # Registers a block to run when the slider handle is released.
+    def on_released(&block : ->) : self
+      @released.connect { block.call }
+      self
+    end
+
     protected def emit_value_changed(value : Int32) : Nil
       @value_changed.emit(value)
     end
 
+    protected def emit_pressed : Nil
+      @pressed.emit
+    end
+
+    protected def emit_released : Nil
+      @released.emit
+    end
+
     private VALUE_CHANGED_TRAMPOLINE = ->(userdata : Void*, value : Int32) do
       Box(Slider).unbox(userdata).emit_value_changed(value)
+    end
+
+    private PRESSED_TRAMPOLINE = ->(userdata : Void*) do
+      Box(Slider).unbox(userdata).emit_pressed
+    end
+
+    private RELEASED_TRAMPOLINE = ->(userdata : Void*) do
+      Box(Slider).unbox(userdata).emit_released
     end
   end
 end
