@@ -8,5 +8,7 @@
 /docs/book/*.lof
 /docs/book/*.lot
 /docs/book/*.pdf
+/docs/book/*.fdb_latexmk
+/docs/book/*.fls
 /docs/book/chapters/*.aux
 .codex
