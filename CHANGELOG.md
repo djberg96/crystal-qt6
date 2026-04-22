@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - Renamed the shard from `crystal-qt6` to `qt6` so dependency naming matches `require "qt6"`.
 - Expanded small widget/view surface coverage with layout stretch helpers, themed icon lookup, label alignment/pixmap settings, table-item icons, and item-view viewport/hit-test/drop-overwrite helpers.
+- Expanded `EventType` coverage for Qt event values from `None = 0` through `Drop = 63`.
 - Expanded the editor vertical-slice example with undo/redo commands, dirty-state tracking, persisted view/export settings, and a clipboard snapshot payload.
 - Strengthened the vertical-slice GUI spec so the maintained editor path now verifies undo/redo, clean-state transitions, persisted settings, clipboard MIME/image payloads, pan/zoom interaction, and PNG export together.
 - Added a shared `make gui-spec` path and GUI spec runner script so macOS and Linux CI use the same platform-selection logic as local verification.
