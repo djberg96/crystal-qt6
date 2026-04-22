@@ -28,6 +28,22 @@ The Crystal FFI layer links against the platform's default C++ runtime:
 - macOS: `libc++`
 - Linux: `libstdc++`
 
+## Installation
+
+Add this shard to your application's `shard.yml`:
+
+```yaml
+dependencies:
+  qt6:
+    github: djberg96/crystal-qt6
+```
+
+Then require the library from Crystal code:
+
+```crystal
+require "qt6"
+```
+
 ## Build
 
 The native Qt shim builds automatically the first time you compile, run, or spec the shard. You can still build it explicitly:
