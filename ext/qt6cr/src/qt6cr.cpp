@@ -101,6 +101,7 @@
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QSizePolicy>
+#include <QStyle>
 #include <QStackedWidget>
 #include <QStackedLayout>
 #include <QStatusBar>
@@ -411,6 +412,28 @@ class CrystalTableWidget final : public QTableWidget {
 
   void emitItemDoubleClickedBridge(QTableWidgetItem *item) {
     emit itemDoubleClicked(item);
+  }
+};
+
+class CrystalSlider final : public QSlider {
+ public:
+  using QSlider::QSlider;
+
+  bool click_to_position = false;
+
+ protected:
+  void mousePressEvent(QMouseEvent *event) override {
+    if (click_to_position && event != nullptr && event->button() == Qt::LeftButton) {
+      const int pos = orientation() == Qt::Horizontal ? static_cast<int>(event->position().x()) : static_cast<int>(height() - event->position().y());
+      const int span = orientation() == Qt::Horizontal ? width() : height();
+
+      if (span > 0) {
+        const int value = QStyle::sliderValueFromPosition(minimum(), maximum(), pos, span, invertedAppearance());
+        setValue(value);
+      }
+    }
+
+    QSlider::mousePressEvent(event);
   }
 };
 
@@ -10440,7 +10463,7 @@ void qt6cr_table_widget_resize_rows_to_contents(qt6cr_handle_t handle) {
 }
 
 qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation) {
-  return new QSlider(static_cast<Qt::Orientation>(orientation), as_widget(parent));
+  return new CrystalSlider(static_cast<Qt::Orientation>(orientation), as_widget(parent));
 }
 
 void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value) {
@@ -10493,6 +10516,19 @@ int qt6cr_slider_value(qt6cr_handle_t handle) {
 int qt6cr_slider_orientation(qt6cr_handle_t handle) {
   auto *slider = as_slider(handle);
   return slider == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(slider->orientation());
+}
+
+bool qt6cr_slider_click_to_position(qt6cr_handle_t handle) {
+  auto *slider = static_cast<CrystalSlider *>(as_slider(handle));
+  return slider != nullptr && slider->click_to_position;
+}
+
+void qt6cr_slider_set_click_to_position(qt6cr_handle_t handle, bool value) {
+  auto *slider = static_cast<CrystalSlider *>(as_slider(handle));
+
+  if (slider != nullptr) {
+    slider->click_to_position = value;
+  }
 }
 
 void qt6cr_slider_emit_pressed(qt6cr_handle_t handle) {

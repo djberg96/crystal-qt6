@@ -1980,6 +1980,8 @@ describe Qt6 do
     window.central_widget = splitter
 
     slider.set_range(0, 100)
+    slider.click_to_position?.should be_false
+    slider.click_to_position = true
     slider.value = 42
     spin_box.set_range(1, 9)
     spin_box.single_step = 2
@@ -2010,6 +2012,7 @@ describe Qt6 do
     slider.orientation.should eq(Qt6::Orientation::Horizontal)
     slider.minimum.should eq(0)
     slider.maximum.should eq(100)
+    slider.click_to_position?.should be_true
     slider.value.should eq(42)
     spin_box.minimum.should eq(1)
     spin_box.maximum.should eq(9)
