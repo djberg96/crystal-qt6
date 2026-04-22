@@ -4,6 +4,16 @@ Store PNG screenshots for the LaTeX guide in this directory.
 
 The current guide uses build-safe placeholders, so missing images do not block compilation. Replace placeholders with `\includegraphics` calls as screenshots become stable enough for release documentation.
 
+Chapter 3 uses a live widget grab. Refresh it with:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_widgets_layouts_screenshots.cr
+```
+
+The script uses ImageMagick's `magick` command to flatten transparent widget grabs for PDF output.
+
+- `widgets-layer-inspector-panel.png`
+
 Chapter 5 expects a first screenshot pass for:
 
 - `dialogs-main-window.png`

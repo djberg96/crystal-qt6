@@ -57,6 +57,28 @@ scale.value = 1.0
 
 The \api{crystal-qt6} library also includes radio buttons, sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
 
+\section{Common Control Choices}
+
+Most forms become easier to design when you choose the narrowest control that fits the value being edited.
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Control & Good fit \\
+\midrule
+\api{Label} & Static or read-only text. \\
+\api{PushButton} & Direct commands such as Add, Reset, Export, or Apply. \\
+\api{LineEdit} & Short single-line text such as a name, path, or search term. \\
+\api{PlainTextEdit} & Multiline notes, logs, source snippets, and longer plain text. \\
+\api{CheckBox} & Independent boolean options. \\
+\api{RadioButton} & One choice from a small visible set. \\
+\api{ComboBox} & A compact choice from a known option list. \\
+\api{SpinBox} and \api{DoubleSpinBox} & Bounded numeric values. \\
+\api{Slider} and \api{Dial} & Approximate numeric values where immediate feedback matters. \\
+\api{ProgressBar} & Progress, completion, or a read-only bounded value. \\
+Item widgets & \api{ListWidget}, \api{TreeWidget}, and \api{TableWidget} are good for small owned item collections. For larger or shared data, prefer the model/view APIs in Chapter 10. \\
+\bottomrule
+\end{longtable}
+
 \section{Visibility, Enabled State, And Focus}
 
 Visibility and enabled state are shared widget features:
@@ -164,6 +186,54 @@ grid.grid do |layout|
 end
 \end{lstlisting}
 
+\section{Container Widgets}
+
+Container widgets give a layout more structure than rows and columns alone. A \api{GroupBox} labels related controls and can optionally become checkable when the whole group represents an enabled feature.
+
+\begin{lstlisting}[style=crystal]
+appearance = Qt6::GroupBox.new("Appearance")
+appearance.checkable = true
+appearance.checked = true
+appearance.form do |form|
+  form.add_row("Opacity", opacity)
+  form.add_row("Scale", scale)
+end
+\end{lstlisting}
+
+\api{TabWidget} is useful when several peer pages need the same space. Keep tab labels short, and avoid hiding primary workflow controls several tabs deep.
+
+\begin{lstlisting}[style=crystal]
+tabs = Qt6::TabWidget.new
+tabs.add_tab(general_page, "General")
+tabs.add_tab(editor_page, "Editor")
+tabs.current_index = 0
+\end{lstlisting}
+
+Use \api{ScrollArea} when a panel can legitimately grow beyond the available window height. The common form pattern is to place one content widget inside the scroll area and let the area resize it with the viewport.
+
+\begin{lstlisting}[style=crystal]
+scroll = Qt6::ScrollArea.new
+scroll.widget = settings_panel
+scroll.widget_resizable = true
+\end{lstlisting}
+
+\api{Splitter} gives the user direct control over neighboring regions, such as a layer list and a property inspector.
+
+\begin{lstlisting}[style=crystal]
+splitter = Qt6::Splitter.new(Qt6::Orientation::Horizontal)
+splitter << layer_list
+splitter << properties_panel
+\end{lstlisting}
+
+\api{StackedWidget} is for mode switching when only one page should be visible and some other control chooses the active page.
+
+\begin{lstlisting}[style=crystal]
+stack = Qt6::StackedWidget.new
+stack << simple_page
+stack << advanced_page
+mode_combo.on_current_index_changed { |index| stack.current_index = index }
+\end{lstlisting}
+
 \section{Composing A Panel}
 
 Most desktop panels combine several layouts. A common pattern is a vertical column containing a form plus a row of actions.
@@ -199,6 +269,20 @@ end
 \end{lstlisting}
 
 This is not the only way to compose a panel, but it scales well. The form stays responsible for labels and fields. The horizontal layout stays responsible for commands. The outer vertical layout controls overall flow.
+
+\begin{figure}[H]
+  \centering
+  \screenshotimage{docs/book/images/widgets-layer-inspector-panel.png}{width=0.58\textwidth,height=0.42\textheight,keepaspectratio}%
+  \caption{A small layer inspector built from form rows, grouped controls, and a command row.}
+\end{figure}
+
+\section{Layout Pitfalls}
+
+Fixed geometry is the most common way to make a Qt interface brittle. Use fixed sizes for things whose dimensions are part of their meaning, such as swatches, icon previews, and compact counters. For editors and panels, prefer minimum sizes, maximum sizes, stretch, and size policies.
+
+Avoid manually positioning child widgets inside a widget that already has a layout. Once a layout owns the geometry, let it do the placement. If a page needs a custom drawing surface, keep that as a dedicated canvas widget and place it beside ordinary controls with layouts or splitters.
+
+Let parent and layout ownership do its job. In normal UI code, create widgets, add them to layouts or containers, and release only top-level objects or explicitly detached wrappers. If a panel becomes too tall, reach for \api{ScrollArea}, tabs, or a splitter before hard-coding coordinates or shrinking controls until labels no longer fit.
 
 \section{Styling}
 
@@ -255,6 +339,12 @@ For quick exports and documentation screenshots, \api{Widget#grab} captures a wi
 pixmap = main.grab
 pixmap.save("window.png")
 \end{lstlisting}
+
+\section{Exercise: Build A Preferences Panel}
+
+As a small practice project, build a preferences panel with two tabs. The General tab can hold a \api{LineEdit} for a profile name, a \api{ComboBox} for a theme choice, and a \api{CheckBox} for an option such as restoring the last project. The Editor tab can hold a \api{SpinBox} for tab width, a \api{Slider} for zoom, and a \api{PlainTextEdit} for notes.
+
+Use a \api{FormLayout} for each page, put the pages in a \api{TabWidget}, and add Reset and Apply buttons below the tabs. If the panel grows, put the tab widget or its pages in a \api{ScrollArea}. For extra practice, call \api{Widget#grab} and save a screenshot of the result.
 
 \section{Where To Look Next}
 
