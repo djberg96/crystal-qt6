@@ -3,21 +3,26 @@ module Qt6
   class TableWidget < AbstractItemView
     @current_cell_changed : Signal() = Signal().new
     @item_changed : Signal(TableWidgetItem) = Signal(TableWidgetItem).new
+    @item_double_clicked : Signal(TableWidgetItem) = Signal(TableWidgetItem).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
     # Signal emitted when the current cell changes.
     getter current_cell_changed : Signal()
     # Signal emitted when an item changes.
     getter item_changed : Signal(TableWidgetItem)
+    # Signal emitted when an item is double-clicked.
+    getter item_double_clicked : Signal(TableWidgetItem)
 
     # Creates a table widget with an optional parent.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_table_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
       @current_cell_changed = Signal().new
       @item_changed = Signal(TableWidgetItem).new
+      @item_double_clicked = Signal(TableWidgetItem).new
       @callback_userdata = Box.box(self)
       LibQt6.qt6cr_table_widget_on_current_cell_changed(to_unsafe, CURRENT_CELL_CHANGED_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_table_widget_on_item_changed(to_unsafe, ITEM_CHANGED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_table_widget_on_item_double_clicked(to_unsafe, ITEM_DOUBLE_CLICKED_TRAMPOLINE, @callback_userdata)
     end
 
     # Returns the number of rows.
@@ -203,6 +208,12 @@ module Qt6
       self
     end
 
+    # Registers a block to run when an item is double-clicked.
+    def on_item_double_clicked(&block : TableWidgetItem ->) : self
+      @item_double_clicked.connect { |item| block.call(item) }
+      self
+    end
+
     protected def emit_current_cell_changed : Nil
       @current_cell_changed.emit
     end
@@ -211,12 +222,20 @@ module Qt6
       @item_changed.emit(item)
     end
 
+    protected def emit_item_double_clicked(item : TableWidgetItem) : Nil
+      @item_double_clicked.emit(item)
+    end
+
     private CURRENT_CELL_CHANGED_TRAMPOLINE = ->(userdata : Void*) do
       Box(TableWidget).unbox(userdata).emit_current_cell_changed
     end
 
     private ITEM_CHANGED_TRAMPOLINE = ->(userdata : Void*, handle : Void*) do
       Box(TableWidget).unbox(userdata).emit_item_changed(TableWidgetItem.wrap(handle))
+    end
+
+    private ITEM_DOUBLE_CLICKED_TRAMPOLINE = ->(userdata : Void*, handle : Void*) do
+      Box(TableWidget).unbox(userdata).emit_item_double_clicked(TableWidgetItem.wrap(handle))
     end
   end
 end

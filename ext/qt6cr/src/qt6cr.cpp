@@ -405,6 +405,15 @@ class CrystalListWidget final : public QListWidget {
   }
 };
 
+class CrystalTableWidget final : public QTableWidget {
+ public:
+  using QTableWidget::QTableWidget;
+
+  void emitItemDoubleClickedBridge(QTableWidgetItem *item) {
+    emit itemDoubleClicked(item);
+  }
+};
+
 class ModelListView final : public QListView {
  public:
   explicit ModelListView(QWidget *parent = nullptr) : QListView(parent) {}
@@ -10099,7 +10108,7 @@ void qt6cr_table_widget_item_set_foreground(qt6cr_handle_t handle, qt6cr_color_t
 }
 
 qt6cr_handle_t qt6cr_table_widget_create(qt6cr_handle_t parent) {
-  return new QTableWidget(as_widget(parent));
+  return new CrystalTableWidget(as_widget(parent));
 }
 
 int qt6cr_table_widget_row_count(qt6cr_handle_t handle) {
@@ -10361,6 +10370,15 @@ bool qt6cr_table_widget_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_h
   return table != nullptr && table_item != nullptr && table->isPersistentEditorOpen(table_item);
 }
 
+void qt6cr_table_widget_emit_item_double_clicked(qt6cr_handle_t handle, int row, int column) {
+  auto *table = static_cast<CrystalTableWidget *>(as_table_widget(handle));
+  auto *item = table == nullptr ? nullptr : table->item(row, column);
+
+  if (table != nullptr && item != nullptr) {
+    table->emitItemDoubleClickedBridge(item);
+  }
+}
+
 void qt6cr_table_widget_on_current_cell_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *table = as_table_widget(handle);
 
@@ -10381,6 +10399,18 @@ void qt6cr_table_widget_on_item_changed(qt6cr_handle_t handle, qt6cr_handle_call
   }
 
   QObject::connect(table, &QTableWidget::itemChanged, table, [callback, userdata](QTableWidgetItem *item) {
+    callback(userdata, item);
+  });
+}
+
+void qt6cr_table_widget_on_item_double_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *table = as_table_widget(handle);
+
+  if (table == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(table, &QTableWidget::itemDoubleClicked, table, [callback, userdata](QTableWidgetItem *item) {
     callback(userdata, item);
   });
 }

@@ -9,6 +9,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Added
 
 - Added `Application#invoke_later` for scheduling Crystal callbacks on the Qt event loop.
+- Added `TableWidget#on_item_double_clicked` for item double-click callbacks.
 
 ### Changed
 

@@ -1381,8 +1381,10 @@ module Qt6
     fun qt6cr_table_widget_open_persistent_editor = qt6cr_table_widget_open_persistent_editor(handle : Handle, item : Handle)
     fun qt6cr_table_widget_close_persistent_editor = qt6cr_table_widget_close_persistent_editor(handle : Handle, item : Handle)
     fun qt6cr_table_widget_is_persistent_editor_open = qt6cr_table_widget_is_persistent_editor_open(handle : Handle, item : Handle) : Bool
+    fun qt6cr_table_widget_emit_item_double_clicked = qt6cr_table_widget_emit_item_double_clicked(handle : Handle, row : LibC::Int, column : LibC::Int)
     fun qt6cr_table_widget_on_current_cell_changed = qt6cr_table_widget_on_current_cell_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_table_widget_on_item_changed = qt6cr_table_widget_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_table_widget_on_item_double_clicked = qt6cr_table_widget_on_item_double_clicked(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
     fun qt6cr_table_widget_sort_by_column = qt6cr_table_widget_sort_by_column(handle : Handle, column : LibC::Int, order : LibC::Int)
     fun qt6cr_table_widget_resize_columns_to_contents = qt6cr_table_widget_resize_columns_to_contents(handle : Handle)
     fun qt6cr_table_widget_resize_rows_to_contents = qt6cr_table_widget_resize_rows_to_contents(handle : Handle)
