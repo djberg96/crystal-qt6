@@ -3289,6 +3289,48 @@ describe Qt6 do
     table_widget.release
   end
 
+  it "supports item view viewport access and hit testing" do
+    application = app
+    host = Qt6::Widget.new
+    table = Qt6::TableView.new(host)
+    model = Qt6::StandardItemModel.new(table)
+
+    model.set_item(0, 0, Qt6::StandardItem.new("One"))
+    model.set_item(1, 0, Qt6::StandardItem.new("Two"))
+
+    table.model = model
+    table.drag_enabled = true
+    table.accept_drops = true
+    table.drag_drop_mode = Qt6::ItemViewDragDropMode::DragDrop
+    table.drag_drop_overwrite_mode = false
+    table.default_drop_action = Qt6::DropAction::MoveAction
+    table.drop_indicator_shown = true
+
+    host.vbox do |column|
+      column << table
+    end
+    host.resize(240, 160)
+    host.show
+    application.process_events
+
+    viewport = table.viewport
+    index = table.index_at(Qt6::PointF.new(10.0, 10.0))
+    rect = table.visual_rect(index)
+
+    viewport.should be_a(Qt6::Widget)
+    index.valid?.should be_true
+    rect.width.should be > 0.0
+    rect.height.should be > 0.0
+    table.drag_enabled?.should be_true
+    table.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragDrop)
+    table.drag_drop_overwrite_mode?.should be_false
+    table.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    table.drop_indicator_shown?.should be_true
+
+    index.release
+    host.release
+  end
+
   it "supports custom delegate editor creation and commit hooks" do
     app
     host = Qt6::Widget.new
@@ -4580,8 +4622,11 @@ describe Qt6 do
       form.add_row(Qt6::Label.new("Kind"), kind_field)
       form.add_row(Qt6::Widget.new.tap do |button_row|
         button_row.hbox do |row|
+          row.add_stretch
           row << primary
+          row.add_stretch(2)
           row << secondary
+          row.add_stretch
         end
       end)
       form.add_row(Qt6::Widget.new.tap do |grid_host|
@@ -4599,6 +4644,89 @@ describe Qt6 do
     top_right.text.should eq("B")
     footer.text.should eq("Footer")
     window.release
+  end
+
+  it "supports vbox layout stretch helpers" do
+    app
+    window = Qt6::Widget.new
+    top = Qt6::Label.new("Top")
+    bottom = Qt6::Label.new("Bottom")
+
+    window.vbox do |column|
+      column << top
+      column.add_stretch(2)
+      column << bottom
+      column.add_stretch
+    end
+
+    top.text.should eq("Top")
+    bottom.text.should eq("Bottom")
+    window.release
+  end
+
+  it "supports label alignment and pixmap display settings" do
+    application = app
+    window = Qt6::Widget.new
+    label = Qt6::Label.new("Centered")
+    pixmap = Qt6::QPixmap.new(24, 12)
+    pixmap.fill(Qt6::Color.new(80, 120, 160))
+
+    window.vbox do |column|
+      column << label
+    end
+
+    label.alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    label.pixmap = pixmap
+    label.scaled_contents = true
+
+    window.resize(80, 40)
+    window.show
+    application.process_events
+
+    label.alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+    label.alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    label.scaled_contents?.should be_true
+
+    label.pixmap = nil
+    label.scaled_contents = false
+    label.scaled_contents?.should be_false
+
+    pixmap.release
+    window.release
+  end
+
+  it "supports table widget item icons and theme icon lookup" do
+    application = app
+    table_widget = Qt6::TableWidget.new
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-table-item-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(16, 16)
+    icon_image.fill(Qt6::Color.new(0, 0, 0, 0))
+    icon_image.set_pixel_color(8, 8, Qt6::Color.new(32, 96, 180, 255))
+    icon_image.save(icon_path).should be_true
+
+    icon = Qt6::QIcon.from_file(icon_path)
+    themed_icon = Qt6::QIcon.from_theme("document-open")
+    item = Qt6::TableWidgetItem.new("Album")
+    item.icon = icon
+
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+    table_widget.set_item(0, 0, item)
+    application.process_events
+
+    icon.null?.should be_false
+    themed_icon.should be_a(Qt6::QIcon)
+    table_widget.item(0, 0).not_nil!.text.should eq("Album")
+    returned_icon = table_widget.item(0, 0).not_nil!.icon
+    returned_icon.null?.should be_false
+
+    returned_icon.release
+    themed_icon.release
+    icon.release
+    icon_image.release
+    table_widget.release
+  ensure
+    File.delete?(icon_path) if icon_path
   end
 
   it "builds a window with the helper DSL" do

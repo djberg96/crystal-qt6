@@ -407,6 +407,7 @@ qt6cr_byte_array_t qt6cr_qpixmap_save_to_data(qt6cr_handle_t handle, const char 
 
 qt6cr_handle_t qt6cr_qicon_create(void);
 qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path);
+qt6cr_handle_t qt6cr_qicon_create_from_theme(const char *name);
 void qt6cr_qicon_destroy(qt6cr_handle_t handle);
 bool qt6cr_qicon_is_null(qt6cr_handle_t handle);
 
@@ -1174,8 +1175,13 @@ bool qt6cr_drop_event_is_accepted(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_label_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_label_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_label_text(qt6cr_handle_t handle);
+int qt6cr_label_alignment(qt6cr_handle_t handle);
+void qt6cr_label_set_alignment(qt6cr_handle_t handle, int value);
 bool qt6cr_label_word_wrap(qt6cr_handle_t handle);
 void qt6cr_label_set_word_wrap(qt6cr_handle_t handle, bool value);
+void qt6cr_label_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap);
+bool qt6cr_label_has_scaled_contents(qt6cr_handle_t handle);
+void qt6cr_label_set_scaled_contents(qt6cr_handle_t handle, bool value);
 
 char *qt6cr_abstract_button_text(qt6cr_handle_t handle);
 void qt6cr_abstract_button_set_text(qt6cr_handle_t handle, const char *text);
@@ -1378,6 +1384,8 @@ qt6cr_handle_t qt6cr_table_widget_item_create(const char *text);
 void qt6cr_table_widget_item_destroy(qt6cr_handle_t handle);
 void qt6cr_table_widget_item_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_table_widget_item_text(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_table_widget_item_icon(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 int qt6cr_table_widget_item_flags(qt6cr_handle_t handle);
 void qt6cr_table_widget_item_set_flags(qt6cr_handle_t handle, int flags);
 int qt6cr_table_widget_item_check_state(qt6cr_handle_t handle);
@@ -1496,10 +1504,15 @@ bool qt6cr_abstract_item_view_drag_enabled(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_set_drag_enabled(qt6cr_handle_t handle, bool value);
 int qt6cr_abstract_item_view_drag_drop_mode(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_set_drag_drop_mode(qt6cr_handle_t handle, int mode);
+bool qt6cr_abstract_item_view_drag_drop_overwrite_mode(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_drag_drop_overwrite_mode(qt6cr_handle_t handle, bool value);
 int qt6cr_abstract_item_view_default_drop_action(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_set_default_drop_action(qt6cr_handle_t handle, int action);
 bool qt6cr_abstract_item_view_drop_indicator_shown(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value);
+qt6cr_handle_t qt6cr_abstract_item_view_viewport(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_abstract_item_view_index_at(qt6cr_handle_t handle, qt6cr_pointf_t point);
+qt6cr_rectf_t qt6cr_abstract_item_view_visual_rect(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_abstract_item_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_abstract_item_view_close_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 bool qt6cr_abstract_item_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t index);
@@ -1789,10 +1802,12 @@ void qt6cr_timer_on_timeout(qt6cr_handle_t handle, qt6cr_void_callback_t callbac
 
 qt6cr_handle_t qt6cr_v_box_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_v_box_layout_add_stretch(qt6cr_handle_t handle, int stretch);
 void qt6cr_v_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget);
 
 qt6cr_handle_t qt6cr_h_box_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_h_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_h_box_layout_add_stretch(qt6cr_handle_t handle, int stretch);
 
 qt6cr_handle_t qt6cr_grid_layout_create(qt6cr_handle_t parent_widget);
 void qt6cr_grid_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int row, int column, int row_span, int column_span);

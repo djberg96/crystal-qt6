@@ -21,6 +21,11 @@ module Qt6
       new(path)
     end
 
+    # Loads an icon from the active desktop theme.
+    def self.from_theme(name : String) : self
+      new(LibQt6.qt6cr_qicon_create_from_theme(name.to_unsafe), true)
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end

@@ -25,6 +25,17 @@ module Qt6
       value
     end
 
+    # Returns the item's icon.
+    def icon : QIcon
+      QIcon.wrap(LibQt6.qt6cr_table_widget_item_icon(to_unsafe), true)
+    end
+
+    # Sets the item's icon.
+    def icon=(value : QIcon) : QIcon
+      LibQt6.qt6cr_table_widget_item_set_icon(to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns the item's current flags.
     def flags : ItemFlag
       ItemFlag.from_value(LibQt6.qt6cr_table_widget_item_flags(to_unsafe))

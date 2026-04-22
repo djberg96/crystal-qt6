@@ -377,6 +377,7 @@ module Qt6
 
     fun qt6cr_qicon_create = qt6cr_qicon_create : Handle
     fun qt6cr_qicon_create_from_file = qt6cr_qicon_create_from_file(path : UInt8*) : Handle
+    fun qt6cr_qicon_create_from_theme = qt6cr_qicon_create_from_theme(name : UInt8*) : Handle
     fun qt6cr_qicon_destroy = qt6cr_qicon_destroy(handle : Handle)
     fun qt6cr_qicon_is_null = qt6cr_qicon_is_null(handle : Handle) : Bool
 
@@ -1143,8 +1144,13 @@ module Qt6
     fun qt6cr_label_create = qt6cr_label_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_label_set_text = qt6cr_label_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_label_text = qt6cr_label_text(handle : Handle) : UInt8*
+    fun qt6cr_label_alignment = qt6cr_label_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_label_set_alignment = qt6cr_label_set_alignment(handle : Handle, value : LibC::Int)
     fun qt6cr_label_word_wrap = qt6cr_label_word_wrap(handle : Handle) : Bool
     fun qt6cr_label_set_word_wrap = qt6cr_label_set_word_wrap(handle : Handle, value : Bool)
+    fun qt6cr_label_set_pixmap = qt6cr_label_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_label_has_scaled_contents = qt6cr_label_has_scaled_contents(handle : Handle) : Bool
+    fun qt6cr_label_set_scaled_contents = qt6cr_label_set_scaled_contents(handle : Handle, value : Bool)
 
     fun qt6cr_abstract_button_text = qt6cr_abstract_button_text(handle : Handle) : UInt8*
     fun qt6cr_abstract_button_set_text = qt6cr_abstract_button_set_text(handle : Handle, text : UInt8*)
@@ -1327,6 +1333,8 @@ module Qt6
     fun qt6cr_table_widget_item_destroy = qt6cr_table_widget_item_destroy(handle : Handle)
     fun qt6cr_table_widget_item_set_text = qt6cr_table_widget_item_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_table_widget_item_text = qt6cr_table_widget_item_text(handle : Handle) : UInt8*
+    fun qt6cr_table_widget_item_icon = qt6cr_table_widget_item_icon(handle : Handle) : Handle
+    fun qt6cr_table_widget_item_set_icon = qt6cr_table_widget_item_set_icon(handle : Handle, icon : Handle)
     fun qt6cr_table_widget_item_flags = qt6cr_table_widget_item_flags(handle : Handle) : LibC::Int
     fun qt6cr_table_widget_item_set_flags = qt6cr_table_widget_item_set_flags(handle : Handle, flags : LibC::Int)
     fun qt6cr_table_widget_item_check_state = qt6cr_table_widget_item_check_state(handle : Handle) : LibC::Int
@@ -1445,10 +1453,15 @@ module Qt6
     fun qt6cr_abstract_item_view_set_drag_enabled = qt6cr_abstract_item_view_set_drag_enabled(handle : Handle, value : Bool)
     fun qt6cr_abstract_item_view_drag_drop_mode = qt6cr_abstract_item_view_drag_drop_mode(handle : Handle) : LibC::Int
     fun qt6cr_abstract_item_view_set_drag_drop_mode = qt6cr_abstract_item_view_set_drag_drop_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_abstract_item_view_drag_drop_overwrite_mode = qt6cr_abstract_item_view_drag_drop_overwrite_mode(handle : Handle) : Bool
+    fun qt6cr_abstract_item_view_set_drag_drop_overwrite_mode = qt6cr_abstract_item_view_set_drag_drop_overwrite_mode(handle : Handle, value : Bool)
     fun qt6cr_abstract_item_view_default_drop_action = qt6cr_abstract_item_view_default_drop_action(handle : Handle) : LibC::Int
     fun qt6cr_abstract_item_view_set_default_drop_action = qt6cr_abstract_item_view_set_default_drop_action(handle : Handle, action : LibC::Int)
     fun qt6cr_abstract_item_view_drop_indicator_shown = qt6cr_abstract_item_view_drop_indicator_shown(handle : Handle) : Bool
     fun qt6cr_abstract_item_view_set_drop_indicator_shown = qt6cr_abstract_item_view_set_drop_indicator_shown(handle : Handle, value : Bool)
+    fun qt6cr_abstract_item_view_viewport = qt6cr_abstract_item_view_viewport(handle : Handle) : Handle
+    fun qt6cr_abstract_item_view_index_at = qt6cr_abstract_item_view_index_at(handle : Handle, point : PointFValue) : Handle
+    fun qt6cr_abstract_item_view_visual_rect = qt6cr_abstract_item_view_visual_rect(handle : Handle, index : Handle) : RectFValue
     fun qt6cr_abstract_item_view_open_persistent_editor = qt6cr_abstract_item_view_open_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_close_persistent_editor = qt6cr_abstract_item_view_close_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_is_persistent_editor_open = qt6cr_abstract_item_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
@@ -1752,10 +1765,12 @@ module Qt6
 
     fun qt6cr_v_box_layout_create = qt6cr_v_box_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_v_box_layout_add_widget = qt6cr_v_box_layout_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_v_box_layout_add_stretch = qt6cr_v_box_layout_add_stretch(handle : Handle, stretch : LibC::Int)
     fun qt6cr_v_box_layout_insert_widget = qt6cr_v_box_layout_insert_widget(handle : Handle, index : LibC::Int, widget : Handle)
 
     fun qt6cr_h_box_layout_create = qt6cr_h_box_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_h_box_layout_add_widget = qt6cr_h_box_layout_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_h_box_layout_add_stretch = qt6cr_h_box_layout_add_stretch(handle : Handle, stretch : LibC::Int)
 
     fun qt6cr_grid_layout_create = qt6cr_grid_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_grid_layout_add_widget = qt6cr_grid_layout_add_widget(handle : Handle, widget : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)

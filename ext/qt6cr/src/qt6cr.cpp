@@ -3623,6 +3623,10 @@ qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path) {
   return new QIcon(QString::fromUtf8(path == nullptr ? "" : path));
 }
 
+qt6cr_handle_t qt6cr_qicon_create_from_theme(const char *name) {
+  return new QIcon(QIcon::fromTheme(QString::fromUtf8(name == nullptr ? "" : name)));
+}
+
 void qt6cr_qicon_destroy(qt6cr_handle_t handle) {
   delete as_qicon(handle);
 }
@@ -4924,6 +4928,19 @@ void qt6cr_abstract_item_view_set_drag_drop_mode(qt6cr_handle_t handle, int mode
   }
 }
 
+bool qt6cr_abstract_item_view_drag_drop_overwrite_mode(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view != nullptr && view->dragDropOverwriteMode();
+}
+
+void qt6cr_abstract_item_view_set_drag_drop_overwrite_mode(qt6cr_handle_t handle, bool value) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setDragDropOverwriteMode(value);
+  }
+}
+
 int qt6cr_abstract_item_view_default_drop_action(qt6cr_handle_t handle) {
   auto *view = as_abstract_item_view(handle);
   return view == nullptr ? 0 : static_cast<int>(view->defaultDropAction());
@@ -4948,6 +4965,32 @@ void qt6cr_abstract_item_view_set_drop_indicator_shown(qt6cr_handle_t handle, bo
   if (view != nullptr) {
     view->setDropIndicatorShown(value);
   }
+}
+
+qt6cr_handle_t qt6cr_abstract_item_view_viewport(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? nullptr : view->viewport();
+}
+
+qt6cr_handle_t qt6cr_abstract_item_view_index_at(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *view = as_abstract_item_view(handle);
+  if (view == nullptr) {
+    return new QModelIndex();
+  }
+
+  const QPoint qpoint{static_cast<int>(point.x), static_cast<int>(point.y)};
+  return new QModelIndex(view->indexAt(qpoint));
+}
+
+qt6cr_rectf_t qt6cr_abstract_item_view_visual_rect(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_abstract_item_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view == nullptr || model_index == nullptr) {
+    return qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0};
+  }
+
+  return to_rectf(view->visualRect(*model_index));
 }
 
 void qt6cr_abstract_item_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index) {
@@ -8721,6 +8764,19 @@ char *qt6cr_label_text(qt6cr_handle_t handle) {
   return label == nullptr ? duplicate_string("") : duplicate_string(label->text());
 }
 
+int qt6cr_label_alignment(qt6cr_handle_t handle) {
+  auto *label = as_label(handle);
+  return label == nullptr ? static_cast<int>(Qt::AlignCenter) : static_cast<int>(label->alignment());
+}
+
+void qt6cr_label_set_alignment(qt6cr_handle_t handle, int value) {
+  auto *label = as_label(handle);
+
+  if (label != nullptr) {
+    label->setAlignment(static_cast<Qt::Alignment>(value));
+  }
+}
+
 bool qt6cr_label_word_wrap(qt6cr_handle_t handle) {
   auto *label = as_label(handle);
   return label != nullptr && label->wordWrap();
@@ -8731,6 +8787,37 @@ void qt6cr_label_set_word_wrap(qt6cr_handle_t handle, bool value) {
 
   if (label != nullptr) {
     label->setWordWrap(value);
+  }
+}
+
+void qt6cr_label_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
+  auto *label = as_label(handle);
+
+  if (label == nullptr) {
+    return;
+  }
+
+  if (pixmap == nullptr) {
+    label->clear();
+    return;
+  }
+
+  auto *source = as_qpixmap(pixmap);
+  if (source != nullptr) {
+    label->setPixmap(*source);
+  }
+}
+
+bool qt6cr_label_has_scaled_contents(qt6cr_handle_t handle) {
+  auto *label = as_label(handle);
+  return label != nullptr && label->hasScaledContents();
+}
+
+void qt6cr_label_set_scaled_contents(qt6cr_handle_t handle, bool value) {
+  auto *label = as_label(handle);
+
+  if (label != nullptr) {
+    label->setScaledContents(value);
   }
 }
 
@@ -9928,6 +10015,20 @@ void qt6cr_table_widget_item_set_text(qt6cr_handle_t handle, const char *text) {
 char *qt6cr_table_widget_item_text(qt6cr_handle_t handle) {
   auto *item = as_table_widget_item(handle);
   return item == nullptr ? duplicate_string("") : duplicate_string(item->text());
+}
+
+qt6cr_handle_t qt6cr_table_widget_item_icon(qt6cr_handle_t handle) {
+  auto *item = as_table_widget_item(handle);
+  return item == nullptr ? nullptr : new QIcon(item->icon());
+}
+
+void qt6cr_table_widget_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *item = as_table_widget_item(handle);
+  auto *value = as_qicon(icon);
+
+  if (item != nullptr && value != nullptr) {
+    item->setIcon(*value);
+  }
 }
 
 int qt6cr_table_widget_item_flags(qt6cr_handle_t handle) {
@@ -12444,6 +12545,14 @@ void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget)
   }
 }
 
+void qt6cr_v_box_layout_add_stretch(qt6cr_handle_t handle, int stretch) {
+  auto *layout = as_v_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->addStretch(stretch);
+  }
+}
+
 void qt6cr_v_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
   auto *layout = as_v_box_layout(handle);
   auto *child = as_widget(widget);
@@ -12463,6 +12572,14 @@ void qt6cr_h_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget)
 
   if (layout != nullptr && child != nullptr) {
     layout->addWidget(child);
+  }
+}
+
+void qt6cr_h_box_layout_add_stretch(qt6cr_handle_t handle, int stretch) {
+  auto *layout = as_h_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->addStretch(stretch);
   }
 }
 
