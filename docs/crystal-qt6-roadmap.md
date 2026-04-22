@@ -1,6 +1,6 @@
 # crystal-qt6 Roadmap
 
-This document describes a practical path for growing `crystal-qt6` from its current `0.5.0` state into a library capable of supporting large desktop applications.
+This document describes a practical path for growing `crystal-qt6` from its current `0.6.0` state into a library capable of supporting large desktop applications.
 
 The current motivating example is `WargameMapTool`, a substantial Python/PySide6 application, but the roadmap is intentionally broader than a single downstream project. The goal is not API or naming compatibility with PySide6. The goal is practical Qt6 feature and widget parity, expressed in idiomatic Crystal wrappers.
 
@@ -23,15 +23,15 @@ Larger editor-style applications still typically need:
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
 
-## Current State At 0.5.0
+## Current State At 0.6.0
 
 Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core areas needed for editor-style applications:
 
 - `QtCore`-style foundations through `QObject`, Crystal-side `Signal`, `QTimer`, and geometry/event value types
-- `QtGui` rendering through `QPainter`, `QImage`, `QImageReader`, `QPixmap`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, `QFont`, `QFontMetrics`, and `QFontMetricsF`, including raw `QImage` byte-buffer construction and readback
+- `QtGui` rendering through `QPainter`, `QImage`, `QImageReader`, `QPixmap`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, `QFont`, `QFontMetrics`, and `QFontMetricsF`, including raw `QImage` byte-buffer construction and readback, richer path inspection, and image/pixmap transforms
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
-- `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, and standard dialogs
+- `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, `QUndoStack`, Crystal-backed `QUndoCommand`, and standard dialogs including font dialogs
 - common form/layout and model/view support through shared `QAbstractItemView`/`QAbstractScrollArea`-style base abstractions, line edits, checkboxes, combo boxes, font combo boxes, stacked widgets, stacked layouts, text edits, plain-text edits, text browsers, button groups, dialog button boxes, list widgets, tree widgets, table views, table widgets, `QStandardItemModel`, callback-backed tree models, `QSortFilterProxyModel`, delegates, selection models, header data, and vertical, horizontal, form, and grid layouts
 - editor-helper coverage through validators, completers, richer line-edit APIs, spin-box base abstractions, persistent editors, edit triggers, and shared selection-model/index conveniences
 - additional common widgets through progress, scrollbar, dial, date/time, calendar, LCD, command-link, and tab-bar controls

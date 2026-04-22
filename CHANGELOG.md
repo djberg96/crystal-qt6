@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-21
+
 ### Added
 
 - Deepened `QPainterPath` editing and inspection with element access, current position, control-point bounds, path clearing, path composition, rectangle hit testing, translation, and simplification helpers.
@@ -15,6 +17,15 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QFontDialog` bindings with option flags, native-dialog control, current/selected font access, font selection signals, and modal convenience helpers.
 - Added a dialog gallery example that exercises message, file, color, font, input, and progress dialogs from buttons, menus, and a toolbar.
 - Added a LaTeX guide scaffold under `docs/book/` for longer-form documentation with build-safe screenshot placeholders.
+
+### Changed
+
+- Updated CI to skip Markdown/LaTeX-only documentation changes and compile the maintained example applications.
+- Preserved compatibility across Qt versions where image mirroring APIs differ between older mirrored naming and newer flipped naming.
+
+### Fixed
+
+- Improved cross-platform clipboard image detection so `MimeData#has_image?` behaves consistently across supported platforms.
 
 ## [0.5.0] - 2026-04-19
 

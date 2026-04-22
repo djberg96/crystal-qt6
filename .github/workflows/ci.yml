@@ -83,7 +83,12 @@ jobs:
           crystal build examples/hello_world.cr -o /tmp/crystal-qt6-hello
           crystal build examples/counter.cr -o /tmp/crystal-qt6-counter
           crystal build examples/editor_shell.cr -o /tmp/crystal-qt6-shell
+          crystal build examples/editor_vertical_slice.cr -o /tmp/crystal-qt6-slice
+          crystal build examples/desktop_editor_showcase.cr -o /tmp/crystal-qt6-showcase
           crystal build examples/event_monitor.cr -o /tmp/crystal-qt6-events
           crystal build examples/rendering_stack.cr -o /tmp/crystal-qt6-render
           crystal build examples/svg_widget_renderer.cr -o /tmp/crystal-qt6-svg
           crystal build examples/inspector_workbench.cr -o /tmp/crystal-qt6-inspector
+          crystal build examples/model_view_workbench.cr -o /tmp/crystal-qt6-modelview
+          crystal build examples/application_services_showcase.cr -o /tmp/crystal-qt6-services
+          crystal build examples/dialog_gallery.cr -o /tmp/crystal-qt6-dialogs
