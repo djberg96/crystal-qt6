@@ -4,6 +4,8 @@ module Qt6
     @argv_storage : Array(String)
     @argv : Array(UInt8*)
     @handle : LibQt6::Handle
+    @pending_invocations : Array(DeferredInvocation)
+    @pending_invocations_lock : Mutex
     @destroyed = false
 
     # Creates a new Qt application wrapper using the provided command-line
@@ -12,6 +14,8 @@ module Qt6
       @argv_storage = args.empty? ? ["crystal-qt6"] : args
       @argv = @argv_storage.map(&.to_unsafe)
       @argv << Pointer(UInt8).null
+      @pending_invocations = [] of DeferredInvocation
+      @pending_invocations_lock = Mutex.new
       @handle = LibQt6.qt6cr_application_create(@argv_storage.size, @argv.to_unsafe)
     end
 
@@ -23,6 +27,20 @@ module Qt6
     # Processes any pending Qt events without entering the main loop.
     def process_events : Nil
       LibQt6.qt6cr_application_process_events(@handle)
+    end
+
+    # Schedules work to run later on the Qt event loop.
+    def invoke_later(&block : ->) : Nil
+      invocation = DeferredInvocation.new(self) { block.call }
+      @pending_invocations_lock.synchronize do
+        @pending_invocations << invocation
+      end
+
+      scheduled = LibQt6.qt6cr_application_invoke_later(@handle, INVOKE_LATER_TRAMPOLINE, invocation.userdata)
+      unless scheduled
+        remove_pending_invocation(invocation)
+        invocation.clear_userdata
+      end
     end
 
     # Requests that the Qt event loop exit.
@@ -96,6 +114,41 @@ module Qt6
 
       LibQt6.qt6cr_application_destroy(@handle)
       @destroyed = true
+    end
+
+    protected def remove_pending_invocation(invocation : DeferredInvocation) : Nil
+      @pending_invocations_lock.synchronize do
+        @pending_invocations.delete(invocation)
+      end
+    end
+
+    private class DeferredInvocation
+      @userdata : LibQt6::Handle = Pointer(Void).null
+
+      def initialize(@app : Application, &@block : ->)
+        @userdata = Box.box(self)
+      end
+
+      def userdata : LibQt6::Handle
+        @userdata
+      end
+
+      def call : Nil
+        begin
+          @block.call
+        ensure
+          @app.remove_pending_invocation(self)
+          clear_userdata
+        end
+      end
+
+      def clear_userdata : Nil
+        @userdata = Pointer(Void).null
+      end
+    end
+
+    private INVOKE_LATER_TRAMPOLINE = ->(userdata : Void*) do
+      Box(DeferredInvocation).unbox(userdata).call
     end
   end
 end

@@ -111,6 +111,7 @@ module Qt6
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)
     fun qt6cr_application_exec = qt6cr_application_exec(handle : Handle) : LibC::Int
     fun qt6cr_application_process_events = qt6cr_application_process_events(handle : Handle)
+    fun qt6cr_application_invoke_later = qt6cr_application_invoke_later(handle : Handle, callback : (Handle ->), userdata : Handle) : Bool
     fun qt6cr_application_quit = qt6cr_application_quit(handle : Handle)
     fun qt6cr_application_clipboard = qt6cr_application_clipboard(handle : Handle) : Handle
     fun qt6cr_application_name = qt6cr_application_name(handle : Handle) : UInt8*

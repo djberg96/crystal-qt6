@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- Added `Application#invoke_later` for scheduling Crystal callbacks on the Qt event loop.
+
 ### Changed
 
 - Renamed the shard from `crystal-qt6` to `qt6` so dependency naming matches `require "qt6"`.
