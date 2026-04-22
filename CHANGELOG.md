@@ -15,6 +15,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added a shared `make gui-spec` path and GUI spec runner script so macOS and Linux CI use the same platform-selection logic as local verification.
 - Filtered known Qt platform/font GUI-spec chatter without hiding other output or changing spec exit status.
 
+### Fixed
+
+- Preserved existing label text when clearing a `Label` pixmap with `label.pixmap = nil`.
+
 ## [0.6.0] - 2026-04-21
 
 ### Added

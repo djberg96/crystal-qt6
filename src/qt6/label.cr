@@ -39,7 +39,7 @@ module Qt6
       value
     end
 
-    # Sets or clears the label pixmap.
+    # Sets or clears the label pixmap without clearing the current text.
     def pixmap=(value : QPixmap?) : QPixmap?
       LibQt6.qt6cr_label_set_pixmap(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
       value
