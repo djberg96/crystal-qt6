@@ -3154,6 +3154,7 @@ describe Qt6 do
     current_index_changes = 0
     current_cell_changes = 0
     changed_item_texts = [] of String
+    double_clicked_item_texts = [] of String
 
     table_view.on_current_index_changed do
       current_index_changes += 1
@@ -3165,6 +3166,10 @@ describe Qt6 do
 
     table_widget.on_item_changed do |item|
       changed_item_texts << item.text
+    end
+
+    table_widget.on_item_double_clicked do |item|
+      double_clicked_item_texts << item.text
     end
 
     model.set_horizontal_header_label(0, "Layer")
@@ -3228,6 +3233,8 @@ describe Qt6 do
     table_widget.resize_columns_to_contents
     table_widget.resize_rows_to_contents
     application.process_events
+    Qt6::LibQt6.qt6cr_table_widget_emit_item_double_clicked(table_widget.to_unsafe, 0, 0)
+    application.process_events
 
     current_index = table_view.current_index
 
@@ -3276,6 +3283,7 @@ describe Qt6 do
     table_widget.item(0, 1).not_nil!.foreground.should eq(Qt6::Color.new(24, 120, 48, 255))
     current_cell_changes.should be >= 1
     changed_item_texts.includes?("Terrain Layer").should be_true
+    double_clicked_item_texts.should eq(["Terrain Layer"])
     table_widget.horizontal_header.count.should eq(2)
     table_widget.horizontal_header.section_size(0).should be > 0
     table_widget.vertical_header.count.should eq(2)
