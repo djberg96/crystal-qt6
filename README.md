@@ -150,7 +150,7 @@ app.run
 
 - `Qt6.application` for creating or reusing a single `QApplication`
 - `Qt6.window` for quick top-level window setup
-- `Qt6::QIcon` plus application and widget window-icon/style-sheet helpers for desktop polish
+- `Qt6::QIcon` plus file-backed and theme-backed icon loading, application and widget window-icon/style-sheet helpers for desktop polish
 - `Qt6::QObject` as the common wrapper base for owned Qt objects
 - `Qt6::Signal` for Crystal-side callback composition
 - `Qt6::QTimer` and `Qt6::QEventLoop` for timeout-driven work and nested local event loops
@@ -166,15 +166,15 @@ app.run
 - `Qt6::KeySequence` and `QAction` shortcuts for keyboard-driven commands
 - `Qt6::UndoStack` and `Qt6::UndoCommand` for application-level undo/redo history, clean-state tracking, macros, stack signals, and undo/redo actions
 - `Qt6::EventWidget` for custom widget event hooks
-- `Qt6::Label` for text display
+- `Qt6::Label` for text and pixmap display, including alignment, word wrapping, and scaled contents
 - `Qt6::PushButton` for push buttons and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
 - `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::AbstractListModel`, `Qt6::AbstractTreeModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, mutable callback-backed list/tree models, row insert/remove/move notifications, proxy sorting/filtering with regex and recursive tree filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration
 - richer text and table polish through `QTextDocument#find`, `QTextCursor` null/replace helpers, editor-side plain-text/HTML insertion helpers, header section-size access, and table sort/resize-to-contents helpers
-- `Qt6::AbstractItemView` and `Qt6::AbstractScrollArea` for shared item-view and scroll-surface infrastructure across list/tree/table widgets, model views, text editors, and scroll areas
+- `Qt6::AbstractItemView` and `Qt6::AbstractScrollArea` for shared item-view and scroll-surface infrastructure across list/tree/table widgets, model views, text editors, and scroll areas, including viewport access, index hit-testing, visual-rectangle lookup, and overwrite-mode drop configuration
 - `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
-- `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition
+- `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition, including box-layout stretch helpers
 
 ## Testing Strategy
 

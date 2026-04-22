@@ -12,6 +12,12 @@ module Qt6
       adopt(widget)
     end
 
+    # Adds stretchable empty space to the layout and returns `self`.
+    def add_stretch(stretch : Int = 0) : self
+      LibQt6.qt6cr_h_box_layout_add_stretch(@to_unsafe, stretch.to_i32)
+      self
+    end
+
     # Appends a widget to the layout and returns `self`.
     def <<(widget : Widget) : self
       add(widget)
