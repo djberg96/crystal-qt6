@@ -4688,7 +4688,10 @@ describe Qt6 do
     label.scaled_contents?.should be_true
 
     label.pixmap = nil
+    label.text = "Fallback text"
+    label.pixmap = nil
     label.scaled_contents = false
+    label.text.should eq("Fallback text")
     label.scaled_contents?.should be_false
 
     pixmap.release

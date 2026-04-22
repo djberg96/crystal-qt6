@@ -8798,7 +8798,9 @@ void qt6cr_label_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
   }
 
   if (pixmap == nullptr) {
-    label->clear();
+    const QString text = label->text();
+    label->setPixmap(QPixmap());
+    label->setText(text);
     return;
   }
 
