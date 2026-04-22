@@ -141,6 +141,7 @@ qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv);
 void qt6cr_application_destroy(qt6cr_handle_t handle);
 int qt6cr_application_exec(qt6cr_handle_t handle);
 void qt6cr_application_process_events(qt6cr_handle_t handle);
+bool qt6cr_application_invoke_later(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_application_quit(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_application_clipboard(qt6cr_handle_t handle);
 char *qt6cr_application_name(qt6cr_handle_t handle);

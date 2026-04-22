@@ -66,6 +66,7 @@
 #include <QBrush>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMetaObject>
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QImage>
@@ -1882,6 +1883,18 @@ void qt6cr_application_process_events(qt6cr_handle_t handle) {
   if (state != nullptr && state->application != nullptr) {
     state->application->processEvents();
   }
+}
+
+bool qt6cr_application_invoke_later(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *state = as_application_state(handle);
+
+  if (state == nullptr || state->application == nullptr || callback == nullptr) {
+    return false;
+  }
+
+  return QMetaObject::invokeMethod(state->application, [callback, userdata]() {
+    callback(userdata);
+  }, Qt::QueuedConnection);
 }
 
 void qt6cr_application_quit(qt6cr_handle_t handle) {

@@ -4564,6 +4564,31 @@ describe Qt6 do
     application.window_icon = previous_window_icon
   end
 
+  it "supports queued application invocations" do
+    application = app
+    label = Qt6::Label.new("Waiting")
+    events = [] of String
+
+    application.invoke_later do
+      events << "first"
+      label.text = "First"
+    end
+
+    application.invoke_later do
+      events << "second"
+      label.text = "Second"
+    end
+
+    events.should be_empty
+    label.text.should eq("Waiting")
+
+    application.process_events
+
+    events.should eq(["first", "second"])
+    label.text.should eq("Second")
+    label.release
+  end
+
   it "updates label and button text" do
     app
     label = Qt6::Label.new("Ready")
