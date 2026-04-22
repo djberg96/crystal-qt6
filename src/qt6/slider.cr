@@ -30,6 +30,17 @@ module Qt6
       Orientation.from_value(LibQt6.qt6cr_slider_orientation(to_unsafe))
     end
 
+    # Returns whether clicking the slider track jumps directly to that position.
+    def click_to_position? : Bool
+      LibQt6.qt6cr_slider_click_to_position(to_unsafe)
+    end
+
+    # Enables or disables click-to-position track behavior.
+    def click_to_position=(value : Bool) : Bool
+      LibQt6.qt6cr_slider_set_click_to_position(to_unsafe, value)
+      value
+    end
+
     # Returns the slider minimum value.
     def minimum : Int32
       LibQt6.qt6cr_slider_minimum(to_unsafe)

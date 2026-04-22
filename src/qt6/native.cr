@@ -1398,6 +1398,8 @@ module Qt6
     fun qt6cr_slider_set_value = qt6cr_slider_set_value(handle : Handle, value : LibC::Int)
     fun qt6cr_slider_value = qt6cr_slider_value(handle : Handle) : LibC::Int
     fun qt6cr_slider_orientation = qt6cr_slider_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_slider_click_to_position = qt6cr_slider_click_to_position(handle : Handle) : Bool
+    fun qt6cr_slider_set_click_to_position = qt6cr_slider_set_click_to_position(handle : Handle, value : Bool)
     fun qt6cr_slider_emit_pressed = qt6cr_slider_emit_pressed(handle : Handle)
     fun qt6cr_slider_emit_released = qt6cr_slider_emit_released(handle : Handle)
     fun qt6cr_slider_on_value_changed = qt6cr_slider_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)

@@ -1449,6 +1449,8 @@ void qt6cr_slider_set_range(qt6cr_handle_t handle, int minimum, int maximum);
 void qt6cr_slider_set_value(qt6cr_handle_t handle, int value);
 int qt6cr_slider_value(qt6cr_handle_t handle);
 int qt6cr_slider_orientation(qt6cr_handle_t handle);
+bool qt6cr_slider_click_to_position(qt6cr_handle_t handle);
+void qt6cr_slider_set_click_to_position(qt6cr_handle_t handle, bool value);
 void qt6cr_slider_emit_pressed(qt6cr_handle_t handle);
 void qt6cr_slider_emit_released(qt6cr_handle_t handle);
 void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
