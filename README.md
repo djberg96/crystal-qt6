@@ -44,6 +44,12 @@ Run the full test suite:
 make spec
 ```
 
+Run the GUI-oriented spec suite with the same platform defaults CI uses:
+
+```sh
+make gui-spec
+```
+
 Run the examples:
 
 ```sh
@@ -95,7 +101,7 @@ The guide source lives under `docs/book/` and includes screenshot placeholders f
 
 GitHub Actions runs the native build, spec suite, and example compilation on both macOS and Linux via `.github/workflows/ci.yml`.
 
-The Linux job uses `xvfb` with Qt's `xcb` platform plugin for headless widget tests so CI behaves like a normal X11 desktop session without the offscreen plugin warnings. The macOS job installs Homebrew Qt and runs the same specs with `QT_QPA_PLATFORM=offscreen`.
+The shared `make gui-spec` target runs `scripts/run_gui_specs.sh`, which uses `xvfb` with Qt's `xcb` platform plugin on headless Linux and `QT_QPA_PLATFORM=offscreen` on macOS. That keeps local GUI-spec runs and CI on the same platform-selection path.
 
 ## API Overview
 

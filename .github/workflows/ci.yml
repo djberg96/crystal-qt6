@@ -67,16 +67,8 @@ jobs:
           pkg-config --modversion Qt6Svg
           pkg-config --modversion Qt6SvgWidgets
 
-      - name: Build native shim
-        run: make native
-
-      - name: Run specs on Linux
-        if: runner.os == 'Linux'
-        run: xvfb-run -a env QT_QPA_PLATFORM=xcb make spec
-
-      - name: Run specs on macOS
-        if: runner.os == 'macOS'
-        run: QT_QPA_PLATFORM=offscreen make spec
+      - name: Run GUI specs
+        run: make gui-spec
 
       - name: Compile examples
         run: |
