@@ -39,6 +39,37 @@ end
 
 This pattern scales better than wiring every menu item and toolbar button separately. Menus and toolbars become views of the same command model.
 
+\section{Action Reference}
+
+Actions are small command objects. Treat them as the source of truth for command state, then place the same action wherever the command should appear.
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Property or method & Purpose \\
+\midrule
+\api{text} & The visible command label used by menus and toolbars. \\
+\api{shortcut} & A string or \api{KeySequence} for keyboard access. \\
+\api{tool_tip} & A short hover hint, especially useful for toolbar buttons. \\
+\api{status_tip} & A longer hint that Qt can show in the status bar. \\
+\api{enabled} & Whether the command can currently run. Disable unavailable commands instead of letting them fail silently. \\
+\api{visible} & Whether the action should appear in menus or toolbars. This is useful for contextual commands. \\
+\api{checkable} & Whether the action carries on/off state. Use this for modes, toggles, and view options. \\
+\api{checked} & The current on/off state for a checkable action. \\
+\api{data} & Optional command metadata, such as a mode id, recent-file path, or application-specific token. \\
+\api{on_triggered} & Runs when the user invokes the action. \\
+\api{on_toggled} & Runs when a checkable action changes state. \\
+\bottomrule
+\end{longtable}
+
+\begin{lstlisting}[style=crystal]
+export_action = Qt6::Action.new("Export PNG", main)
+export_action.shortcut = "Ctrl+E"
+export_action.tool_tip = "Export the current canvas"
+export_action.status_tip = "Write the current canvas to a PNG file"
+export_action.enabled = false
+export_action.data = "export-png"
+\end{lstlisting}
+
 \section{Shortcuts}
 
 Shortcuts can be assigned as strings or explicit \api{KeySequence} values. The string form is concise and works well for common shortcuts:
@@ -52,6 +83,12 @@ apply_action.shortcut = Qt6::KeySequence.new("Ctrl+Return")
 \end{lstlisting}
 
 Prefer familiar platform conventions. Use shortcuts for commands that users repeat often: open, save, undo, redo, find, apply, close, and mode switching.
+
+\section{Platform Conventions}
+
+Desktop shells feel better when they follow the platform before they follow the example code. On macOS, Qt may display the menu bar at the top of the screen instead of inside the window. On Linux and Windows, the menu bar usually belongs to the window itself. The same \api{MenuBar}, \api{Menu}, and \api{Action} code feeds both presentations.
+
+Use conventional command names and shortcuts where possible: Open, Save, Save As, Close, Quit, Undo, Redo, Cut, Copy, Paste, Find, Preferences or Settings, and About. On macOS, users expect Quit, Preferences, and About to follow system menu conventions; on Linux and Windows, those commands more often remain in File, Edit, Tools, or Help. The binding lets you build the command structure; Qt and the platform decide some of the final placement details.
 
 \section{Menus}
 
@@ -73,6 +110,18 @@ view_menu = main.menu_bar.add_menu("View")
 
 Menus should be organized by intent. \api{File} usually holds document or project commands. \api{Edit} holds undo, redo, cut, copy, paste, and selection commands. \api{View} controls panes and presentation. \api{Tools} or \api{Mode} can hold domain-specific commands.
 
+\begin{longtable}{@{}p{0.20\textwidth}p{0.74\textwidth}@{}}
+\toprule
+Menu & Typical contents \\
+\midrule
+\api{File} & New, Open, recent files, Save, Save As, Import, Export, Close, Quit. \\
+\api{Edit} & Undo, Redo, Cut, Copy, Paste, Delete, Select All, Find, Preferences or Settings. \\
+\api{View} & Toolbar and dock visibility, zoom, layout, theme, and presentation commands. \\
+\api{Tools} & Domain-specific commands, validators, generators, inspectors, and batch operations. \\
+\api{Help} & Documentation, diagnostics, About, and support links. \\
+\bottomrule
+\end{longtable}
+
 \section{Toolbars}
 
 Toolbars expose frequent commands as visible controls. In \api{crystal-qt6}, a toolbar can contain actions, separators, and ordinary widgets.
@@ -90,6 +139,15 @@ main.add_tool_bar(toolbar)
 
 Toolbar actions should be a curated subset of menu actions. A toolbar is most useful when it keeps high-frequency operations close to the work area without replacing the menu bar as the complete command catalog.
 
+Do not promote every command to a toolbar. Good toolbar candidates are frequent, recognizable, and safe to trigger deliberately: open, save, export, apply, selection modes, zoom controls, and view toggles. Keep rare setup commands, destructive commands, long-running commands, and commands that need explanation in menus or dialogs.
+
+\api{ToolBar#toggle_view_action} gives you a ready-made action for showing and hiding the toolbar from a View menu:
+
+\begin{lstlisting}[style=crystal]
+view_menu = main.menu_bar.add_menu("View")
+view_menu << toolbar.toggle_view_action
+\end{lstlisting}
+
 \section{Status Bars}
 
 The status bar is for quiet, transient feedback. Use it for command results, validation summaries, progress hints, selection details, and mode changes.
@@ -104,6 +162,32 @@ end
 \end{lstlisting}
 
 A timeout of \api{0} keeps the message until it is replaced or cleared. Nonzero timeouts are useful for short command confirmations.
+
+\section{Document State}
+
+Most shell applications eventually need a dirty flag: whether the current document has unsaved changes. Keep that state near the actions it affects, then update the title, Save action, and status bar together.
+
+\begin{lstlisting}[style=crystal]
+dirty = false
+save_action.enabled = false
+
+set_dirty = ->(value : Bool) do
+  dirty = value
+  save_action.enabled = dirty
+  main.window_title = dirty ? "Map Tool *" : "Map Tool"
+  status.show_message(dirty ? "Unsaved changes" : "Saved", 1500)
+end
+
+notes = Qt6::PlainTextEdit.new
+notes.on_text_changed { set_dirty.call(true) }
+
+save_action.on_triggered do
+  # Write the document here.
+  set_dirty.call(false)
+end
+\end{lstlisting}
+
+The exact title convention is up to the application. Some platforms have native modified-window indicators; until you need those details, a clear title suffix plus correct command enablement is enough.
 
 \section{Docks}
 
@@ -129,6 +213,21 @@ main.add_dock_widget(properties_dock, Qt6::DockArea::Right)
 \end{lstlisting}
 
 Keep docks focused. A dock should have one clear purpose, and its title should make that purpose obvious.
+
+Dock visibility belongs in the View menu. When you need a simple dock toggle, use a checkable action and connect it to the dock's visible state:
+
+\begin{lstlisting}[style=crystal]
+inspector_action = Qt6::Action.new("Inspector", main)
+inspector_action.checkable = true
+inspector_action.checked = properties_dock.visible?
+inspector_action.on_toggled do |visible|
+  properties_dock.visible = visible
+end
+
+view_menu << inspector_action
+\end{lstlisting}
+
+If a future wrapper exposes a dock-owned toggle action, prefer that for automatic synchronization with user-driven dock closing and showing. The explicit action pattern above is still useful for application-owned visibility rules.
 
 \section{Checkable Actions And Mode Groups}
 
@@ -229,6 +328,12 @@ main.add_dock_widget(dock, Qt6::DockArea::Right)
 main.show
 app.run
 \end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \screenshotimage{docs/book/images/application-shell-main-window.png}{width=0.92\textwidth,height=0.42\textheight,keepaspectratio}%
+  \caption{A main-window shell with a toolbar, central widget, inspector dock, and status bar. On macOS the menu bar may be displayed outside the captured window.}
+\end{figure}
 
 \section{Shell Design Guidelines}
 
