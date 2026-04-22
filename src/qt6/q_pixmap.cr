@@ -38,11 +38,6 @@ module Qt6
       new(LibQt6.qt6cr_qpixmap_from_image(image.to_unsafe), true)
     end
 
-    # Returns a scaled pixmap copy.
-    def scaled(width : Int, height : Int, *, keep_aspect_ratio : Bool = true, smooth : Bool = true) : self
-      self.class.wrap(LibQt6.qt6cr_qpixmap_scaled(to_unsafe, width.to_i32, height.to_i32, keep_aspect_ratio, smooth), true)
-    end
-
     # Returns the pixmap width in pixels.
     def width : Int32
       LibQt6.qt6cr_qpixmap_width(to_unsafe)
