@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.5.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, deeper raster/SVG/PDF rendering and export, raw `QImage` byte-buffer workflows, richer `EventWidget` input hooks, clipboard access, `QMimeData`, richer text/document editing, broader model/view and table support, validators and completers, application-service utilities, common desktop controls, maintained integration examples, and the lifecycle fixes needed to run that surface more reliably across macOS and Linux.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.6.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, undo/redo stacks, standard dialog galleries, font dialogs, deeper raster/SVG/PDF rendering and export, richer `QPainterPath` editing, raw `QImage` byte-buffer workflows, image and pixmap transforms, richer `EventWidget` input hooks, clipboard access, `QMimeData`, richer text/document editing, broader model/view and table support, validators and completers, application-service utilities, common desktop controls, maintained integration examples, and the lifecycle fixes needed to run that surface more reliably across macOS and Linux.
 
 ## Requirements
 
@@ -51,6 +51,7 @@ make example-hello
 make example-counter
 make example-shell
 make example-slice
+make example-showcase
 make example-events
 make example-render
 make example-svg
@@ -133,14 +134,15 @@ app.run
 - `Qt6::QTimer` and `Qt6::QEventLoop` for timeout-driven work and nested local event loops
 - `Qt6.clipboard` and `Qt6::Clipboard` for process-wide clipboard text, image, and pixmap access
 - `Qt6::Color`, `Qt6::PointF`, `Qt6::Size`, and `Qt6::RectF` for common value types
-- `Qt6::QImage`, `Qt6::QImageReader`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, probed image-reader metadata, file-backed and in-memory SVG loading, and `QSvgWidget#renderer`
+- `Qt6::QImage`, `Qt6::QImageReader`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, probed image-reader metadata, file-backed and in-memory SVG loading, `QSvgWidget#renderer`, image/pixmap scaling and transforms, pixel inversion, and richer painter-path inspection
 - `Qt6::Widget` for generic widgets and top-level windows
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
-- `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, `Qt6::InputDialog`, `Qt6::ProgressDialog`, and `Qt6::SplashScreen` for standard dialogs and shell polish widgets
+- `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, `Qt6::FontDialog`, `Qt6::InputDialog`, `Qt6::ProgressDialog`, and `Qt6::SplashScreen` for standard dialogs and shell polish widgets
 - convenience helpers such as `MessageBox.information`, `MessageBox.question`, `ColorDialog.get_color`, and `InputDialog.get_text` / `get_int` / `get_double` / `get_item`
 - `Qt6::InputDialogInputMode` plus message-box and file-dialog enums for dialog configuration
 - `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
 - `Qt6::KeySequence` and `QAction` shortcuts for keyboard-driven commands
+- `Qt6::UndoStack` and `Qt6::UndoCommand` for application-level undo/redo history, clean-state tracking, macros, stack signals, and undo/redo actions
 - `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text display
 - `Qt6::PushButton` for push buttons and click callbacks
@@ -157,13 +159,14 @@ app.run
 The specs cover:
 
 - process shutdown behavior on macOS so teardown stays free of the `QThreadStorage` exit warning
-- standard dialog configuration for `QMessageBox`, `QFileDialog`, `QColorDialog`, and `QInputDialog`
-- convenience helper flows for message, color, and input dialogs
+- standard dialog configuration for `QMessageBox`, `QFileDialog`, `QColorDialog`, `QFontDialog`, and `QInputDialog`
+- convenience helper flows for message, color, font, and input dialogs
 - layout composition through vertical, horizontal, form, and grid layouts
 - raster, SVG, and PDF rendering with images, pixmaps, painter paths, transforms, SVG generators, SVG renderers, SVG widgets, and PDF writers
 - `QObject` destruction signals, `QTimer` timeout delivery, and `QEventLoop` nested-loop behavior
 - geometry accessors and custom widget paint, resize, mouse, wheel, and key event hooks
 - reduced application-shell wiring for actions, menus, toolbars, dialogs, docks, status bars, and common controls
+- undo/redo stacks, command callbacks, clean-state tracking, macros, and generated undo/redo actions
 - widget lifecycle and visibility state
 - title and text round trips through the native bridge
 - layout composition
