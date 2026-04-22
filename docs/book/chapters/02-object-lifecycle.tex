@@ -110,7 +110,7 @@ image.save("preview.png")
 
 The same rule applies to \api{QPixmap}, \api{QSvgGenerator}, and \api{QPdfWriter}. Finish painting first; export or inspect second.
 
-\section{\api{release}}
+\section{The \api{release} method}
 
 Both \api{QObject} and \api{NativeResource} implement \api{release}. Calling \api{release} asks the wrapper to destroy its native object, but only if the wrapper owns it. If the object is parent-owned or already destroyed, \api{release} is a no-op.
 
