@@ -1916,6 +1916,7 @@ describe Qt6 do
     window = Qt6::MainWindow.new
     radio_states = [] of Bool
     slider_values = [] of Int32
+    slider_events = [] of String
     spin_values = [] of Int32
     double_values = [] of Float64
     group_states = [] of Bool
@@ -1937,6 +1938,12 @@ describe Qt6 do
     end
     slider.on_value_changed do |value|
       slider_values << value
+    end
+    slider.on_pressed do
+      slider_events << "pressed"
+    end
+    slider.on_released do
+      slider_events << "released"
     end
     spin_box.on_value_changed do |value|
       spin_values << value
@@ -1986,6 +1993,9 @@ describe Qt6 do
     tab_widget.current_index = 1
     splitter.orientation = Qt6::Orientation::Vertical
     application.process_events
+    Qt6::LibQt6.qt6cr_slider_emit_pressed(slider.to_unsafe)
+    Qt6::LibQt6.qt6cr_slider_emit_released(slider.to_unsafe)
+    application.process_events
 
     scroll_area.widget_resizable?.should be_true
     splitter.count.should eq(2)
@@ -2011,6 +2021,7 @@ describe Qt6 do
     double_spin_box.value.should eq(1.75)
     radio_states.last.should be_true
     slider_values.last.should eq(42)
+    slider_events.should eq(["pressed", "released"])
     spin_values.last.should eq(5)
     double_values.last.should eq(1.75)
     group_states.last.should be_true
