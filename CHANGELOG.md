@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Changed
+
+- Expanded the editor vertical-slice example with undo/redo commands, dirty-state tracking, persisted view/export settings, and a clipboard snapshot payload.
+
 ## [0.6.0] - 2026-04-21
 
 ### Added

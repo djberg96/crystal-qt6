@@ -11,4 +11,5 @@
 /docs/book/*.fdb_latexmk
 /docs/book/*.fls
 /docs/book/chapters/*.aux
+/docs/book/*.gz
 .codex

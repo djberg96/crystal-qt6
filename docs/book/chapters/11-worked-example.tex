@@ -326,19 +326,25 @@ export_action.on_triggered { export_png.call }
 
 reset_view_action = Qt6::Action.new("Reset View", main)
 reset_view_action.shortcut = "0"
-reset_view_action.on_triggered do
-  state.reset_view
-  canvas.update
-end
+reset_view_action.on_triggered { reset_button.click }
+
+undo_action = undo_stack.create_undo_action(main, "Undo")
+redo_action = undo_stack.create_redo_action(main, "Redo")
 
 file_menu = main.menu_bar.add_menu("File")
 file_menu << export_action
+
+edit_menu = main.menu_bar.add_menu("Edit")
+edit_menu << undo_action
+edit_menu << redo_action
 
 view_menu = main.menu_bar.add_menu("View")
 view_menu << reset_view_action
 
 toolbar = Qt6::ToolBar.new("Editor", main)
 toolbar << export_action
+toolbar << undo_action
+toolbar << redo_action
 toolbar << reset_view_action
 main.add_tool_bar(toolbar)
 \end{lstlisting}
@@ -362,17 +368,17 @@ That helper is intentionally modest. It does not hide the application architectu
 
 \section{Where Undo Fits}
 
-The vertical slice does not wire an \api{UndoStack}; it keeps the first pass focused on one live workflow. In a second pass, undo belongs around state-changing gestures:
+The vertical slice wires a small \api{UndoStack} around the changes that feel like editor commands: selecting a layer profile, changing inspector values, resetting the view, and choosing a new accent color. Each command captures a before and after snapshot, then lets \api{redo} and \api{undo} restore the appropriate state.
 
 \begin{itemize}
-\item changing the active layer's name or status;
-\item toggling visibility or grid settings;
-\item moving scene objects;
-\item importing or replacing an image;
-\item applying a multi-field preset as a macro.
+\item Inspector controls push undoable commands instead of mutating the state directly.
+\item The window title shows a dirty marker until the stack is marked clean.
+\item The menu and toolbar share the stack's generated undo and redo actions.
+\item Settings persistence keeps the active layer, view, grid, marker size, and export path between launches.
+\item A clipboard action copies text, HTML, image, and custom MIME data for the current canvas snapshot.
 \end{itemize}
 
-The rule from Chapter 9 still applies: capture old and new state, push a command, and let \api{redo} perform the forward edit.
+The rule from Chapter 9 still applies: capture old and new state, push a command, and let \api{redo} perform the forward edit. Later features, such as moving scene objects or dropping external image assets, should follow the same command shape.
 
 \section{A Reasonable Build Order}
 
@@ -386,7 +392,7 @@ The rule from Chapter 9 still applies: capture old and new state, push a command
 \item Promote repeated commands into \api{Action} objects.
 \item Add file/color dialogs at workflow boundaries.
 \item Add export through \api{Widget#grab}.
-\item Add undo, persistence, drag/drop, or clipboard support only after the loop above feels solid.
+\item Add undo, persistence, clipboard payloads, drag/drop, and richer document behavior after the loop above feels solid.
 \end{enumerate}
 
 \section{Reference Examples}
