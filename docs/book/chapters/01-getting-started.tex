@@ -14,6 +14,14 @@ Qt is one of the most mature cross-platform GUI toolkits available. Its Widgets 
 
 That depth is the reason \api{crystal-qt6} is useful. Instead of building a small custom UI layer and then discovering that file dialogs, model/view tables, undo stacks, text editing, or image rendering are missing, the \api{crystal-qt6} library grows around Qt's existing desktop vocabulary. The goal is not to hide Qt. The goal is to make Qt feel natural from Crystal.
 
+\section{What This Binding Is Not Yet}
+
+\api{crystal-qt6} is a growing Qt Widgets binding, not a complete replacement for PySide6, PyQt, or the full C++ Qt API. It intentionally exposes a focused desktop surface first: widgets, layouts, application shells, dialogs, events, painting, images, undo stacks, model/view, clipboard data, and maintained examples.
+
+That focus is useful, but it also means you should expect gaps. Some Qt modules are not wrapped. Some advanced overloads are omitted until there is a clear Crystal-facing use case. Some APIs are shaped around explicit ownership and typed values rather than exact source-level compatibility with another Qt binding.
+
+When you are deciding whether to build on this shard, treat the examples and specs as the source of truth for the current surface. If a class or method is documented in this guide, it should have a maintained usage path. If you need a missing Qt feature, the usual path is to add a small native bridge function, wrap it in \api{src/qt6}, add specs, and then update the relevant example or chapter.
+
 \section{Requirements}
 
 You need Crystal, Qt6 development packages visible through \api{pkg-config}, and a C++ compiler compatible with the platform Qt build. The repository build currently expects Qt Widgets, Qt Svg, and Qt Svg Widgets.
@@ -88,9 +96,27 @@ pkg-config --modversion Qt6Widgets Qt6Svg Qt6SvgWidgets
 
 That command should print version numbers without errors. If it fails, Crystal may still be installed correctly, but the Qt development packages are not visible to \api{pkg-config}. Fix that before building the shard.
 
+\section{First-Build Troubleshooting}
+
+Most first-build failures come from the native Qt toolchain rather than Crystal source code. Start by rerunning the exact \api{pkg-config} command from the previous section.
+
+\begin{description}
+\item[\api{pkg-config} is missing.] Install \api{pkg-config} or your distribution's equivalent package. Fedora and related systems often call it \api{pkgconf-pkg-config}.
+\item[\api{Qt6Widgets} is not found.] Install the Qt6 base development package. On Debian and Ubuntu this is usually \api{qt6-base-dev}; on Fedora it is \api{qt6-qtbase-devel}; on openSUSE it is \api{qt6-base-devel}.
+\item[\api{Qt6Svg} or \api{Qt6SvgWidgets} is not found.] Install the Qt6 SVG development package. The binding uses SVG support for rendering examples and documentation-friendly widgets, so base Qt alone is not enough.
+\item[Homebrew Qt.] If Qt is installed but not found, add Homebrew's Qt package configuration directories to \api{PKG_CONFIG_PATH}. Check both \api{lib/pkgconfig} and \api{share/pkgconfig}; the CI workflow uses the same idea.
+\item[Crystal cannot write compiler cache files.] Point Crystal's cache at a writable directory:
+\end{description}
+
+\begin{lstlisting}[style=crystal]
+export CRYSTAL_CACHE_DIR=/tmp/crystal-cache
+\end{lstlisting}
+
+After changing packages or environment variables, run \api{make native} once. That isolates native bridge errors from normal Crystal compile errors and gives shorter output while you are fixing the toolchain.
+
 \section{A First Window}
 
-Every Qt application has one application object and one event loop. In \api{crystal-qt6}, \api{Qt6.application} creates or returns the process-wide application wrapper. Widgets are then created, shown, and kept responsive by entering \api{app.run}.
+Every Qt program has one application object and one event loop. The \api{Qt6.application} helper creates or returns that process-wide wrapper. Widgets are then created, shown, and kept responsive by entering \api{app.run}.
 
 \begin{lstlisting}[style=crystal]
 require "qt6"
@@ -163,6 +189,41 @@ crystal run examples/dialog_gallery.cr
 
 For day-to-day work, use whichever form is clearer in context. The \api{make} targets are nice for discoverability and CI-style repetition; direct \api{crystal} commands are useful when you are experimenting with one file or passing compiler options.
 
+\section{Running Without A Desktop}
+
+GUI code still needs a Qt platform backend, even when it is running in automation. The repository CI uses two different approaches:
+
+\begin{itemize}
+\item Linux runs the specs under \api{xvfb-run} with \api{QT_QPA_PLATFORM=xcb}. This gives Qt an X11-like display without requiring a physical monitor.
+\item macOS runs the specs with \api{QT_QPA_PLATFORM=offscreen}. This is useful for noninteractive widget tests, but it is not a substitute for visually checking examples that depend on native window behavior.
+\end{itemize}
+
+For local Linux automation, the CI command is a good starting point:
+
+\begin{lstlisting}[style=crystal]
+xvfb-run -a env QT_QPA_PLATFORM=xcb make spec
+\end{lstlisting}
+
+For local macOS smoke tests, \api{QT_QPA_PLATFORM=offscreen make spec} can be useful when you only need the specs to run. For screenshots, native dialogs, or layout inspection, run the examples in a normal desktop session.
+
+\section{Project Layout}
+
+The repository is small enough to navigate directly:
+
+\begin{description}
+\item[\api{src/qt6}] Crystal wrappers, enums, value objects, callback helpers, and public APIs.
+\item[\api{ext/qt6cr}] The C++ native bridge that talks to Qt and exposes stable C-callable functions to Crystal.
+\item[\api{examples}] Maintained runnable programs that exercise real usage paths. These are the best place to learn how pieces fit together.
+\item[\api{spec}] End-to-end specs for wrappers, ownership behavior, callbacks, rendering, dialogs, models, and examples of supported edge cases.
+\item[\api{docs/book}] This guide, its LaTeX source, generated PDF, and screenshot assets.
+\item[\api{scripts}] Build and documentation helpers, including native bridge scripts and screenshot/figure generation.
+\item[\api{.github/workflows}] CI setup for macOS and Linux.
+\end{description}
+
+If you are reading as an application developer, start with \api{examples} and the matching chapters. If you are reading as a contributor, pair a wrapper in \api{src/qt6} with its bridge functions under \api{ext/qt6cr} and its coverage in \api{spec}.
+
 \section{How To Read This Guide}
 
 The early chapters cover the object model and common widgets. Later chapters move into desktop-shell composition, dialogs, custom event handling, painting, image processing, undo stacks, and model/view patterns. Each topic includes a small API sketch and points to a maintained example when possible.
+
+After this chapter, Chapter 2 is the most important conceptual stop: it explains how Qt ownership and Crystal wrappers cooperate. Chapter 3 then gives you the everyday widget and layout vocabulary. Chapter 5 is a good early payoff chapter because standard dialogs immediately make small applications feel complete. If you prefer to learn by following one thread from start to finish, skim Chapters 2 through 10 and then read Chapter 11 alongside \api{examples/editor_vertical_slice.cr}.
