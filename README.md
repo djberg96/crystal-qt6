@@ -101,7 +101,7 @@ The guide source lives under `docs/book/` and includes screenshot placeholders f
 
 GitHub Actions runs the native build, spec suite, and example compilation on both macOS and Linux via `.github/workflows/ci.yml`.
 
-The shared `make gui-spec` target runs `scripts/run_gui_specs.sh`, which uses `xvfb` with Qt's `xcb` platform plugin on headless Linux and `QT_QPA_PLATFORM=offscreen` on macOS. That keeps local GUI-spec runs and CI on the same platform-selection path.
+The shared `make gui-spec` target runs `scripts/run_gui_specs.sh`, which uses `xvfb` with Qt's `xcb` platform plugin on headless Linux and `QT_QPA_PLATFORM=offscreen` on macOS. That keeps local GUI-spec runs and CI on the same platform-selection path. The runner also quiets known Qt platform/font chatter while preserving other output and the spec exit status.
 
 ## API Overview
 
