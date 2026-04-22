@@ -9,6 +9,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Changed
 
 - Expanded the editor vertical-slice example with undo/redo commands, dirty-state tracking, persisted view/export settings, and a clipboard snapshot payload.
+- Strengthened the vertical-slice GUI spec so the maintained editor path now verifies undo/redo, clean-state transitions, persisted settings, clipboard MIME/image payloads, pan/zoom interaction, and PNG export together.
 
 ## [0.6.0] - 2026-04-21
 

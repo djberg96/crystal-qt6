@@ -5,6 +5,9 @@ private class EditorVerticalSliceSpecState
   property zoom : Float64
   property pan_x : Float64
   property pan_y : Float64
+  property grid_spacing : Int32
+  property marker_size : Int32
+  property show_grid : Bool
   property dragging : Bool
   property last_pointer : Qt6::PointF
   property accent : Qt6::Color
@@ -14,10 +17,62 @@ private class EditorVerticalSliceSpecState
     @zoom = 1.0
     @pan_x = 24.0
     @pan_y = 28.0
+    @grid_spacing = 48
+    @marker_size = 18
+    @show_grid = true
     @dragging = false
     @last_pointer = Qt6::PointF.new(0.0, 0.0)
     @accent = Qt6::Color.new(62, 130, 109)
   end
+
+  def apply_layer(name : String) : Nil
+    @active_layer = name
+
+    case name
+    when "Units"
+      @accent = Qt6::Color.new(204, 86, 62)
+      @grid_spacing = 44
+      @marker_size = 22
+    else
+      @accent = Qt6::Color.new(62, 130, 109)
+      @grid_spacing = 48
+      @marker_size = 18
+    end
+  end
+end
+
+private record EditorVerticalSliceSpecSnapshot,
+  active_layer : String,
+  zoom : Float64,
+  pan_x : Float64,
+  pan_y : Float64,
+  grid_spacing : Int32,
+  marker_size : Int32,
+  show_grid : Bool,
+  accent : Qt6::Color
+
+private def snapshot_editor_slice_spec(state : EditorVerticalSliceSpecState) : EditorVerticalSliceSpecSnapshot
+  EditorVerticalSliceSpecSnapshot.new(
+    state.active_layer,
+    state.zoom,
+    state.pan_x,
+    state.pan_y,
+    state.grid_spacing,
+    state.marker_size,
+    state.show_grid,
+    state.accent
+  )
+end
+
+private def restore_editor_slice_spec(state : EditorVerticalSliceSpecState, snapshot : EditorVerticalSliceSpecSnapshot) : Nil
+  state.active_layer = snapshot.active_layer
+  state.zoom = snapshot.zoom
+  state.pan_x = snapshot.pan_x
+  state.pan_y = snapshot.pan_y
+  state.grid_spacing = snapshot.grid_spacing
+  state.marker_size = snapshot.marker_size
+  state.show_grid = snapshot.show_grid
+  state.accent = snapshot.accent
 end
 
 private class EditableLayerListModel < Qt6::AbstractListModel
@@ -3564,7 +3619,7 @@ describe Qt6 do
     plain_text_edit.release
   end
 
-  it "hosts a vertical editor slice with docks, canvas interaction, and PNG export" do
+  it "hosts a verified editor slice with undo, settings, clipboard, canvas interaction, and PNG export" do
     application = app
     state = EditorVerticalSliceSpecState.new
     main = Qt6::MainWindow.new
@@ -3574,6 +3629,43 @@ describe Qt6 do
     canvas = Qt6::EventWidget.new
     canvas.resize(720, 480)
     export_path = File.join(Dir.tempdir, "crystal-qt6-vertical-slice-#{Process.pid}.png")
+    settings_path = File.join(Dir.tempdir, "crystal-qt6-vertical-slice-settings-#{Process.pid}.ini")
+    File.delete?(export_path)
+    File.delete?(settings_path)
+
+    settings = Qt6::QSettings.new(settings_path)
+    undo_stack = Qt6::UndoStack.new(main)
+    save_action = Qt6::Action.new("Mark Saved", main)
+    save_action.shortcut = "Ctrl+S"
+    undo_action = undo_stack.create_undo_action(main, "Undo")
+    redo_action = undo_stack.create_redo_action(main, "Redo")
+
+    persist_state = -> do
+      settings.set_value("ui/active_layer", state.active_layer)
+      settings.set_value("view/zoom", state.zoom)
+      settings.set_value("view/pan_x", state.pan_x)
+      settings.set_value("view/pan_y", state.pan_y)
+      settings.set_value("view/grid_spacing", state.grid_spacing)
+      settings.set_value("view/marker_size", state.marker_size)
+      settings.set_value("view/show_grid", state.show_grid)
+      settings.sync
+    end
+
+    update_dirty_state = -> do
+      dirty = !undo_stack.clean?
+      main.window_title = dirty ? "Vertical Slice Spec *" : "Vertical Slice Spec"
+      save_action.enabled = dirty
+    end
+
+    undo_stack.on_clean_changed { |_clean| update_dirty_state.call }
+    undo_stack.on_index_changed { |_index| update_dirty_state.call }
+
+    save_action.on_triggered do
+      undo_stack.set_clean
+      persist_state.call
+      update_dirty_state.call
+      status_bar.show_message("State marked saved", 1200)
+    end
 
     grid_pen = Qt6::QPen.new(Qt6::Color.new(198, 206, 214), 1.0)
     frame_pen = Qt6::QPen.new(Qt6::Color.new(72, 80, 90), 2.0)
@@ -3582,6 +3674,19 @@ describe Qt6 do
 
     scene_to_view = ->(point : Qt6::PointF) do
       Qt6::PointF.new(state.pan_x + point.x * state.zoom, state.pan_y + point.y * state.zoom)
+    end
+
+    copy_snapshot_action = Qt6::Action.new("Copy Snapshot", main)
+    copy_snapshot_action.shortcut = "Ctrl+Shift+X"
+    copy_snapshot_action.on_triggered do
+      summary = "Layer #{state.active_layer}, zoom #{state.zoom.round(2)}x, grid #{state.grid_spacing}, marker #{state.marker_size}"
+      payload = Qt6::MimeData.new
+      payload.text = summary
+      payload.html = "<strong>#{state.active_layer}</strong>"
+      payload.image = canvas.grab.to_image
+      payload.set_data("application/x-crystal-qt6-editor-state", summary)
+      Qt6.clipboard.mime_data = payload
+      status_bar.show_message("Copied snapshot", 1200)
     end
 
     canvas.on_mouse_press do |event|
@@ -3600,10 +3705,12 @@ describe Qt6 do
 
     canvas.on_mouse_release do |_event|
       state.dragging = false
+      persist_state.call
     end
 
     canvas.on_wheel do |event|
       state.zoom = (state.zoom * (event.angle_delta.y >= 0 ? 1.1 : 0.9)).clamp(0.5, 3.0)
+      persist_state.call
       canvas.update
     end
 
@@ -3615,17 +3722,19 @@ describe Qt6 do
       painter.brush = Qt6::Color.new(255, 255, 255)
       painter.draw_rect(Qt6::RectF.new(state.pan_x, state.pan_y, scene_rect.width * state.zoom, scene_rect.height * state.zoom))
 
-      painter.pen = grid_pen
-      x = 0
-      while x <= scene_rect.width
-        painter.draw_line(scene_to_view.call(Qt6::PointF.new(x.to_f, 0.0)), scene_to_view.call(Qt6::PointF.new(x.to_f, scene_rect.height)))
-        x += 48
-      end
+      if state.show_grid
+        painter.pen = grid_pen
+        x = 0
+        while x <= scene_rect.width
+          painter.draw_line(scene_to_view.call(Qt6::PointF.new(x.to_f, 0.0)), scene_to_view.call(Qt6::PointF.new(x.to_f, scene_rect.height)))
+          x += state.grid_spacing
+        end
 
-      y = 0
-      while y <= scene_rect.height
-        painter.draw_line(scene_to_view.call(Qt6::PointF.new(0.0, y.to_f)), scene_to_view.call(Qt6::PointF.new(scene_rect.width, y.to_f)))
-        y += 48
+        y = 0
+        while y <= scene_rect.height
+          painter.draw_line(scene_to_view.call(Qt6::PointF.new(0.0, y.to_f)), scene_to_view.call(Qt6::PointF.new(scene_rect.width, y.to_f)))
+          y += state.grid_spacing
+        end
       end
 
       route_pen.color = state.accent
@@ -3651,7 +3760,7 @@ describe Qt6 do
       end
 
       points.each_with_index do |point, index|
-        size = 18.0 * state.zoom
+        size = state.marker_size.to_f * state.zoom
         painter.draw_ellipse(Qt6::RectF.new(point.x - size / 2.0, point.y - size / 2.0, size, size))
         painter.draw_text(Qt6::PointF.new(point.x + size / 2.0 + 6.0, point.y + 4.0), "#{index + 1}")
       end
@@ -3684,13 +3793,56 @@ describe Qt6 do
     tree_view.model = proxy_model
     selection_model = Qt6::ItemSelectionModel.new(proxy_model, tree_view)
     tree_view.selection_model = selection_model
+
+    syncing_selection = false
+    select_layer = ->(layer_name : String) do
+      syncing_selection = true
+      begin
+        proxy_model.row_count.times do |row|
+          index = proxy_model.index(row, 0)
+          if proxy_model.data(index).to_s == layer_name
+            tree_view.current_index = index
+            index.release
+            break
+          end
+          index.release
+        end
+      ensure
+        syncing_selection = false
+      end
+    end
+
+    apply_snapshot = ->(snapshot : EditorVerticalSliceSpecSnapshot, message : String?) do
+      restore_editor_slice_spec(state, snapshot)
+      select_layer.call(state.active_layer)
+      persist_state.call
+      status_bar.show_message(message, 1200) if message
+      canvas.update
+    end
+
+    push_change = ->(label : String, before : EditorVerticalSliceSpecSnapshot, after : EditorVerticalSliceSpecSnapshot, message : String?) do
+      undo_stack.push(Qt6::UndoCommand.new(
+        label,
+        redo: -> { apply_snapshot.call(after, message) },
+        undo: -> { apply_snapshot.call(before, "Undid #{label.downcase}") }
+      ))
+      update_dirty_state.call
+    end
+
     tree_view.on_current_index_changed do
+      next if syncing_selection
+
       current = tree_view.current_index
       if current.valid?
         name_index = proxy_model.index(current.row, 0)
-        state.active_layer = proxy_model.data(name_index).to_s
-        state.accent = state.active_layer == "Units" ? Qt6::Color.new(204, 86, 62) : Qt6::Color.new(62, 130, 109)
-        status_bar.show_message("Active #{state.active_layer}", 1200)
+        layer_name = proxy_model.data(name_index).to_s
+        unless layer_name == state.active_layer
+          before = snapshot_editor_slice_spec(state)
+          state.apply_layer(layer_name)
+          after = snapshot_editor_slice_spec(state)
+          restore_editor_slice_spec(state, before)
+          push_change.call("Switch to #{layer_name}", before, after, "Active #{layer_name}")
+        end
         name_index.release
       end
       current.release
@@ -3712,10 +3864,13 @@ describe Qt6 do
         form.add_row("Layer", Qt6::Label.new("Driven by the manager dock"))
         form.add_row(Qt6::PushButton.new("Reset View").tap do |button|
           button.on_clicked do
+            before = snapshot_editor_slice_spec(state)
             state.zoom = 1.0
             state.pan_x = 24.0
             state.pan_y = 28.0
-            canvas.update
+            after = snapshot_editor_slice_spec(state)
+            restore_editor_slice_spec(state, before)
+            push_change.call("Reset view", before, after, "View reset")
           end
         end)
       end
@@ -3730,17 +3885,69 @@ describe Qt6 do
       status_bar.show_message("Exported PNG", 1200)
     end
     file_menu << export_action
+    file_menu << save_action
+
+    edit_menu = main.menu_bar.add_menu("Edit")
+    edit_menu << undo_action
+    edit_menu << redo_action
+    edit_menu << copy_snapshot_action
 
     toolbar = Qt6::ToolBar.new("Editor", main)
     toolbar << export_action
+    toolbar << save_action
+    toolbar << undo_action
+    toolbar << redo_action
+    toolbar << copy_snapshot_action
     main.add_tool_bar(toolbar)
 
-    initial_index = proxy_model.index(1, 0)
-    tree_view.current_index = initial_index
-    initial_index.release
+    terrain_index = proxy_model.index(0, 0)
+    tree_view.current_index = terrain_index
+    terrain_index.release
+    undo_stack.set_clean
+    update_dirty_state.call
+    persist_state.call
+
+    units_index = proxy_model.index(1, 0)
+    tree_view.current_index = units_index
+    units_index.release
 
     main.show
     application.process_events
+
+    state.active_layer.should eq("Units")
+    state.grid_spacing.should eq(44)
+    state.marker_size.should eq(22)
+    settings.value("ui/active_layer").should eq("Units")
+    settings.value("view/grid_spacing").should eq(44)
+    undo_stack.clean?.should be_false
+    undo_action.enabled?.should be_true
+    save_action.enabled?.should be_true
+    main.window_title.should eq("Vertical Slice Spec *")
+
+    undo_action.trigger
+    application.process_events
+    state.active_layer.should eq("Terrain")
+    undo_stack.clean?.should be_true
+    redo_action.enabled?.should be_true
+    main.window_title.should eq("Vertical Slice Spec")
+
+    redo_action.trigger
+    application.process_events
+    state.active_layer.should eq("Units")
+    undo_stack.clean?.should be_false
+
+    save_action.trigger
+    application.process_events
+    undo_stack.clean?.should be_true
+    save_action.enabled?.should be_false
+
+    copy_snapshot_action.trigger
+    application.process_events
+    clipboard_payload = Qt6.clipboard.mime_data.not_nil!
+    clipboard_payload.has_text?.should be_true
+    clipboard_payload.text.should contain("Layer Units")
+    clipboard_payload.has_image?.should be_true
+    String.new(clipboard_payload.data("application/x-crystal-qt6-editor-state")).should contain("marker 22")
 
     zoom_before = state.zoom
     pan_x_before = state.pan_x
@@ -3767,9 +3974,15 @@ describe Qt6 do
     state.zoom.should be > zoom_before
     state.pan_x.should be > pan_x_before
     state.pan_y.should be > pan_y_before
+    settings.value("view/zoom").should eq(state.zoom)
+    settings.value("view/pan_x").should eq(state.pan_x)
+    settings.value("view/pan_y").should eq(state.pan_y)
     File.exists?(export_path).should be_true
     png_header.should eq(Bytes[0x89_u8, 0x50_u8, 0x4E_u8, 0x47_u8, 0x0D_u8, 0x0A_u8, 0x1A_u8, 0x0A_u8])
 
+    Qt6.clipboard.clear
+    File.delete?(export_path)
+    File.delete?(settings_path)
     main.release
   end
 
