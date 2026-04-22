@@ -2,14 +2,6 @@
 
 Deferred ideas for the LaTeX guide. These are useful, but not required before continuing to later chapters.
 
-## Chapter 2: Object Ownership
-
-- Add a compact ownership table for common wrapper types, such as `Widget`, `Action`, `QTimer`, `QImage`, `QPainter`, `Clipboard`, and status bars.
-- Add a short checklist for when to call `release` and when to prefer parent ownership or automatic shutdown.
-- Add a note about painter/device lifetime, especially ending or releasing a `QPainter` before reading or saving its target device. This may belong in the painting chapter instead.
-- Add a dedicated GUI-thread section if later chapters do not cover threading expectations clearly enough.
-- Consider an internal design sidebar about tracked resources being released in reverse creation order. Keep it contributor-oriented so the user-facing lifecycle advice stays simple.
-
 ## Chapter 3: Widgets And Layouts
 
 - Add a skim-friendly widget/control reference table, such as `LineEdit` for short text, `ComboBox` for choices, `SpinBox` for bounded integers, and `PlainTextEdit` for multiline text.

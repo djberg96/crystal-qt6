@@ -41,6 +41,26 @@ main.add_tool_bar(toolbar)
 
 Top-level windows are normally wrapper-owned. Child widgets, actions, timers, menus, docks, layouts, and helper objects should usually be parented to a durable object such as the main window.
 
+\section{Ownership At A Glance}
+
+Most wrapper types fit into a small number of lifetime patterns:
+
+\begin{longtable}{p{0.24\textwidth}p{0.66\textwidth}}
+\toprule
+Wrapper & Ownership pattern \\
+\midrule
+\api{Widget} and subclasses & Usually parented, layout-adopted, or wrapper-owned as a top-level window. Parent child widgets or add them to layouts. Keep top-level windows alive until the UI is finished. \\
+\api{Action} & Usually parented to a \api{QObject}, menu, toolbar, or action group. Parent actions to the main window or let menus/toolbars adopt them. Do not release actions still installed in UI chrome. \\
+\api{QTimer} & Usually parented to a \api{QObject} or wrapper-owned. Parent repeating timers to a durable object. Stop or release short-lived unparented timers when work is finished. \\
+\api{QImage} and \api{QPixmap} & Wrapper-owned \api{NativeResource} objects. Use normally as values. Explicit release is only useful in tight loops or when freeing large rasters early matters. \\
+\api{QPainter} & Wrapper-owned active paint-device helper. End the painter's lifetime before reading or saving the target device. Prefer block forms when available. \\
+\api{Clipboard} & Borrowed process-wide object returned by \api{Qt6.clipboard}. Never release the returned wrapper. \\
+\api{StatusBar} & Borrowed from the main window through \api{main.status_bar}. Never release the borrowed status bar wrapper. \\
+\bottomrule
+\end{longtable}
+
+When in doubt, ask one question: who needs this native object to stay alive? If the answer is "the main window," give it a parent. If the answer is "only this short block of code," an explicit \api{ensure} release or a block helper is appropriate. If the object came from a getter such as \api{status_bar}, treat it as borrowed.
+
 \section{\api{NativeResource} Wrappers}
 
 Not every Qt type is a \api{QObject}. Value-like or device-like objects such as images, pixmaps, painters, paths, brushes, pens, fonts, transforms, dates, URLs, directories, and settings are represented by \api{Qt6::NativeResource}.
@@ -57,6 +77,38 @@ path.line_to(180, 80)
 \end{lstlisting}
 
 Most small applications can rely on the automatic shutdown path for these resources. Explicit release becomes more important when you create many short-lived native resources in a loop, when a file/device needs to be finalized before reading it back, or when an example intentionally demonstrates deterministic cleanup.
+
+\section{Painter And Device Lifetime}
+
+\api{QPainter} is a \api{NativeResource}, but it deserves special attention because it actively writes to another object. While a painter is active, Qt considers the target paint device in use. Release the painter before saving, reading, converting, or reusing that target.
+
+\begin{lstlisting}[style=crystal]
+image = Qt6::QImage.new(320, 180, Qt6::ImageFormat::ARGB32)
+image.fill(Qt6::Color.new(255, 255, 255))
+
+Qt6::QPainter.paint(image) do |painter|
+  painter.pen = Qt6::Color.new(40, 80, 120)
+  painter.draw_text(Qt6::PointF.new(24.0, 48.0), "Rendered")
+end
+
+# The painter has been released, so the image can now be saved.
+image.save("preview.png")
+\end{lstlisting}
+
+If you create a painter manually, use \api{ensure}:
+
+\begin{lstlisting}[style=crystal]
+painter = Qt6::QPainter.new(image)
+begin
+  painter.draw_rect(Qt6::RectF.new(10.0, 10.0, 120.0, 80.0))
+ensure
+  painter.release
+end
+
+image.save("preview.png")
+\end{lstlisting}
+
+The same rule applies to \api{QPixmap}, \api{QSvgGenerator}, and \api{QPdfWriter}. Finish painting first; export or inspect second.
 
 \section{\api{release}}
 
@@ -88,6 +140,20 @@ name = Qt6::InputDialog.get_text(
 
 For child widgets and parented objects, prefer parent ownership over manual release. Manual release is best for short-lived unparented resources whose lifetime is obvious.
 
+\section{Release Checklist}
+
+Use this checklist before calling \api{release}:
+
+\begin{enumerate}
+\item Did you create the object without a parent, and does the wrapper own it?
+\item Is the object absent from any parent widget, layout, menu, toolbar, model, or stack that still expects to use it?
+\item Is the lifetime short and local enough that \api{ensure} can release it reliably?
+\item For paint devices, has the active \api{QPainter} been released before the device is saved or read?
+\item For large native resources, is early cleanup useful enough to make manual lifetime management clearer rather than noisier?
+\end{enumerate}
+
+Prefer parent ownership when the object belongs to the UI. Prefer automatic shutdown for ordinary top-level examples. Prefer explicit \api{release} for short-lived dialogs, temporary painters, large transient images, and other unparented native resources with a clear end point.
+
 \section{Tracked Shutdown}
 
 The first call to \api{Qt6.application} registers an \api{at_exit} hook. At shutdown, \api{Qt6.shutdown} releases tracked objects in reverse creation order and then destroys the shared application wrapper.
@@ -106,6 +172,12 @@ app.run
 \end{lstlisting}
 
 You can call \api{Qt6.shutdown} yourself if your program has a clear boundary where all Qt work is finished. Most GUI applications do not need to. The important part is that Qt objects are not left to Crystal's garbage collector to destroy at arbitrary times.
+
+\section{Shutdown Order For Contributors}
+
+Tracked shutdown releases wrapper-owned objects in reverse creation order. That detail is mainly for contributors and tests, not day-to-day application code. Reverse order helps with the common case where a later-created helper depends on an earlier-created application object or window.
+
+Do not design application logic around the exact shutdown order. If one object must die before another, express that relationship with Qt parent ownership, a local \api{ensure} block, or an explicit application-level teardown method.
 
 \section{Borrowed Handles And Wrapped Objects}
 
@@ -134,6 +206,14 @@ timer.start(5_000)
 \end{lstlisting}
 
 This is another reason to keep ordinary GUI objects parented to a durable owner. If the timer belongs to the main window, the timer's native lifetime and its Crystal callback lifetime both naturally end with that window.
+
+\section{GUI Thread Expectations}
+
+Qt Widgets are GUI-thread objects. Create widgets, show windows, mutate widget state, and destroy widget wrappers from the same thread that owns the application event loop. This is the safest rule even for operations that look small, such as changing a label or releasing a dialog.
+
+Use background work only for ordinary Crystal computation or blocking I/O that does not touch Qt objects directly. Move the result back to the GUI flow before updating widgets, models, images used by widgets, or actions. If the binding later grows explicit thread or queued-callback helpers, those helpers should become the boundary between worker code and GUI code.
+
+Timers, signal callbacks, paint callbacks, and event callbacks already run in the Qt event flow. Keep them brief, update application state, schedule repaint with \api{update}, and return control to the event loop.
 
 \section{Common Pitfalls}
 
