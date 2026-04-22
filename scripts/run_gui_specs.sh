@@ -1,5 +1,5 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
 use_xvfb=1
 if [ "${1:-}" = "--no-xvfb" ]; then
@@ -44,5 +44,25 @@ fi
 QT_QUICK_BACKEND="${QT_QUICK_BACKEND:-software}"
 export QT_QUICK_BACKEND
 
+QT_LOGGING_RULES="${QT_LOGGING_RULES:-qt.qpa.fonts=false}"
+export QT_LOGGING_RULES
+
 echo "GUI spec runner: os=$os_name platform=$QT_QPA_PLATFORM display=${DISPLAY:-none}"
+
+filter_qpa_warnings="${QT6CR_FILTER_QPA_WARNINGS:-}"
+if [ -z "$filter_qpa_warnings" ]; then
+  filter_qpa_warnings=0
+  if [ "$os_name" = "Darwin" ] && [ "$QT_QPA_PLATFORM" = "offscreen" ]; then
+    filter_qpa_warnings=1
+  fi
+fi
+
+if [ "$filter_qpa_warnings" = "1" ]; then
+  set +e
+  "$@" 2>&1 | awk '{ gsub(/This plugin does not support propagateSizeHints\(\)/, ""); if ($0 != "") print }'
+  status=${PIPESTATUS[0]}
+  set -e
+  exit "$status"
+fi
+
 exec "$@"
