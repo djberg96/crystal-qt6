@@ -4942,6 +4942,15 @@ describe Qt6 do
     pixmap.release
   end
 
+  it "does not clear label text when assigning a nil pixmap" do
+    app
+    label = Qt6::Label.new("Status")
+
+    label.pixmap = nil
+
+    label.text.should eq("Status")
+  end
+
   it "supports queued application invocations" do
     application = app
     label = Qt6::Label.new("Waiting")
