@@ -2,15 +2,6 @@
 
 Deferred ideas for the LaTeX guide. These are useful, but not required before continuing to later chapters.
 
-## Chapter 4: Application Shells
-
-- Add an action reference table covering text, shortcut, tooltip, status tip, enabled, visible, checkable, checked, and `data`.
-- Add menu and toolbar design guidance, including what usually belongs in File/Edit/View/Tools/Help and when a command should not be promoted to a toolbar.
-- Add `ToolBar#toggle_view_action` coverage and dock visibility patterns if fuller dock visibility APIs are exposed later.
-- Add a shell screenshot once screenshot capture is set up, using either the small shell example or `examples/editor_shell.cr`.
-- Add a more complete document-dirty pattern, including modified title state, save enabled state, and status messages. This may fit better near undo/document chapters.
-- Add platform-convention notes for macOS vs Linux command naming and placement, such as quit/menu behavior.
-
 ## Chapter 5: Dialogs
 
 - Revisit the full chapter layout after the first screenshot pass. Tune float placement, code/example ordering, figure sizes, page breaks, and whether related screenshots should be grouped into shared figure blocks.

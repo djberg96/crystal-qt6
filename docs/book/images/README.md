@@ -14,6 +14,14 @@ The script uses ImageMagick's `magick` command to flatten transparent widget gra
 
 - `widgets-layer-inspector-panel.png`
 
+Chapter 4 uses a live main-window grab. Refresh it with:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_application_shell_screenshots.cr
+```
+
+- `application-shell-main-window.png`
+
 Chapter 5 expects a first screenshot pass for:
 
 - `dialogs-main-window.png`
