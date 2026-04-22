@@ -202,6 +202,10 @@ Qt objects must be created and destroyed on the GUI thread. The bindings therefo
 
 You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but ordinary applications can rely on the built-in exit hook.
 
+## Contributors
+
+- Anton Maminov ([@mamantoha](https://github.com/mamantoha)) for contributions, review, and API suggestions that helped expand and refine the bindings.
+
 ## Project Layout
 
 - `src/qt6.cr`: public Crystal API
