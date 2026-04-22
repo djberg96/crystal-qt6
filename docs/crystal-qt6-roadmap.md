@@ -330,3 +330,5 @@ That would turn the library from "large editor subsystems are possible" into "co
 The first utility and shell-polish tranche is now in place, including path and settings types, desktop-integration helpers, richer `QIODevice`-style support, deeper text/table/editor helpers, stronger shell polish, and a broader clipboard/data-transfer/image-loading layer. The next repository-level work should therefore be driven less by raw binding count and more by maintained integration coverage and cross-platform confidence.
 
 The maintained editor slice now has both sides of that integration target: the example itself exercises shell, docks, canvas input, undo/redo, settings, clipboard payloads, and PNG export, while the focused GUI spec verifies those behaviors together as an ongoing regression path.
+
+Routine GUI-spec verification now runs through a shared `make gui-spec` target and `scripts/run_gui_specs.sh`, so local runs and CI choose the same headless Linux/macOS Qt platform strategy.

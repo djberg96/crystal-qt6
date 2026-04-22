@@ -4,14 +4,18 @@ CXX ?= c++
 AR ?= ar
 
 BUILD_SCRIPT := scripts/build_qt6cr.sh
+GUI_SPEC_SCRIPT := scripts/run_gui_specs.sh
 
-.PHONY: native spec docs-book example-hello example-counter example-shell example-slice example-showcase example-events example-render example-svg example-inspector example-modelview example-services example-dialogs clean
+.PHONY: native spec gui-spec docs-book example-hello example-counter example-shell example-slice example-showcase example-events example-render example-svg example-inspector example-modelview example-services example-dialogs clean
 
 native:
 	QT_PKG='$(QT_PKG)' PKG_CONFIG=$(PKG_CONFIG) CXX=$(CXX) AR=$(AR) CXXFLAGS='$(CXXFLAGS)' sh $(BUILD_SCRIPT)
 
 spec: native
 	crystal spec
+
+gui-spec: native
+	$(GUI_SPEC_SCRIPT) crystal spec
 
 docs-book:
 	$(MAKE) -C docs/book
