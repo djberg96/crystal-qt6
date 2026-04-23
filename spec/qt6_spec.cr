@@ -4742,6 +4742,41 @@ describe Qt6 do
     label.release
   end
 
+  it "queues application invocations from worker fibers" do
+    application = app
+    label = Qt6::Label.new("Waiting")
+    scheduled = Channel(Nil).new(1)
+    completion = Channel(String).new(1)
+
+    spawn same_thread: false do
+      application.invoke_later do
+        label.text = "Worker"
+        completion.send(label.text)
+      end
+
+      scheduled.send(nil)
+    end
+
+    scheduled.receive
+
+    result = nil
+    20.times do
+      application.process_events
+
+      select
+      when value = completion.receive
+        result = value
+        break
+      else
+        Fiber.yield
+      end
+    end
+
+    result.should eq("Worker")
+    label.text.should eq("Worker")
+    label.release
+  end
+
   it "updates label and button text" do
     app
     label = Qt6::Label.new("Ready")

@@ -2,11 +2,12 @@ QT_PKG ?= Qt6Widgets Qt6Svg Qt6SvgWidgets
 PKG_CONFIG ?= pkg-config
 CXX ?= c++
 AR ?= ar
+MT_WORKERS ?= 2
 
 BUILD_SCRIPT := scripts/build_qt6cr.sh
 GUI_SPEC_SCRIPT := scripts/run_gui_specs.sh
 
-.PHONY: native spec gui-spec docs-book example-hello example-counter example-shell example-slice example-showcase example-events example-render example-svg example-inspector example-modelview example-services example-dialogs clean
+.PHONY: native spec gui-spec gui-spec-mt docs-book example-hello example-counter example-shell example-slice example-showcase example-events example-render example-svg example-inspector example-modelview example-services example-dialogs clean
 
 native:
 	QT_PKG='$(QT_PKG)' PKG_CONFIG=$(PKG_CONFIG) CXX=$(CXX) AR=$(AR) CXXFLAGS='$(CXXFLAGS)' sh $(BUILD_SCRIPT)
@@ -16,6 +17,9 @@ spec: native
 
 gui-spec: native
 	$(GUI_SPEC_SCRIPT) crystal spec
+
+gui-spec-mt: native
+	CRYSTAL_WORKERS=$(MT_WORKERS) $(GUI_SPEC_SCRIPT) crystal spec -Dpreview_mt
 
 docs-book:
 	$(MAKE) -C docs/book

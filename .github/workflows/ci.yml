@@ -70,6 +70,9 @@ jobs:
       - name: Run GUI specs
         run: make gui-spec
 
+      - name: Run multithreaded GUI specs
+        run: make gui-spec-mt
+
       - name: Compile examples
         run: |
           crystal build examples/hello_world.cr -o /tmp/crystal-qt6-hello
