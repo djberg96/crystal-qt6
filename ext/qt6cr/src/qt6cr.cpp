@@ -7848,6 +7848,11 @@ void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   }
 }
 
+qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle) {
+  auto *dock = as_dock_widget(handle);
+  return dock == nullptr ? nullptr : static_cast<qt6cr_handle_t>(dock->toggleViewAction());
+}
+
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text) {
   return new QAction(QString::fromUtf8(text == nullptr ? "" : text), as_object(parent));
 }

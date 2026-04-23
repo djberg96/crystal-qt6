@@ -214,20 +214,13 @@ main.add_dock_widget(properties_dock, Qt6::DockArea::Right)
 
 Keep docks focused. A dock should have one clear purpose, and its title should make that purpose obvious.
 
-Dock visibility belongs in the View menu. When you need a simple dock toggle, use a checkable action and connect it to the dock's visible state:
+Dock visibility belongs in the View menu. Each dock exposes a built-in toggle action that stays synchronized when the user closes or shows the dock:
 
 \begin{lstlisting}[style=crystal]
-inspector_action = Qt6::Action.new("Inspector", main)
-inspector_action.checkable = true
-inspector_action.checked = properties_dock.visible?
-inspector_action.on_toggled do |visible|
-  properties_dock.visible = visible
-end
-
-view_menu << inspector_action
+view_menu << properties_dock.toggle_view_action
 \end{lstlisting}
 
-If a future wrapper exposes a dock-owned toggle action, prefer that for automatic synchronization with user-driven dock closing and showing. The explicit action pattern above is still useful for application-owned visibility rules.
+Use an explicit checkable \api{Action} only when application rules need to control visibility separately from the dock's normal show/hide behavior.
 
 \section{Checkable Actions And Mode Groups}
 
