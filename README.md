@@ -66,6 +66,12 @@ Run the GUI-oriented spec suite with the same platform defaults CI uses:
 make gui-spec
 ```
 
+Run the GUI specs with Crystal's preview multithreaded runtime and two workers:
+
+```sh
+make gui-spec-mt
+```
+
 Run the examples:
 
 ```sh
@@ -115,9 +121,9 @@ The guide source lives under `docs/book/` and includes screenshot placeholders f
 
 ## Continuous Integration
 
-GitHub Actions runs the native build, spec suite, and example compilation on both macOS and Linux via `.github/workflows/ci.yml`.
+GitHub Actions runs the native build, GUI spec suite, multithreaded GUI spec suite, and example compilation on both macOS and Linux via `.github/workflows/ci.yml`.
 
-The shared `make gui-spec` target runs `scripts/run_gui_specs.sh`, which uses `xvfb` with Qt's `xcb` platform plugin on headless Linux and `QT_QPA_PLATFORM=offscreen` on macOS. That keeps local GUI-spec runs and CI on the same platform-selection path. The runner also quiets known Qt platform/font chatter while preserving other output and the spec exit status.
+The shared `make gui-spec` target runs `scripts/run_gui_specs.sh`, which uses `xvfb` with Qt's `xcb` platform plugin on headless Linux and `QT_QPA_PLATFORM=offscreen` on macOS. That keeps local GUI-spec runs and CI on the same platform-selection path. The `make gui-spec-mt` target runs the same suite with `CRYSTAL_WORKERS=2` and `-Dpreview_mt` so queued GUI callbacks are checked under Crystal's preview multithreaded runtime. The runner also quiets known Qt platform/font chatter while preserving other output and the spec exit status.
 
 ## API Overview
 
@@ -199,6 +205,8 @@ That gives the project an executable contract for both the C++ shim and the Crys
 ## Lifecycle Notes
 
 Qt objects must be created and destroyed on the GUI thread. The bindings therefore avoid GC finalizers for Qt teardown and instead perform deterministic cleanup during process exit through `Qt6.shutdown`.
+
+Applications may still use Crystal fibers or worker threads for ordinary computation and blocking I/O, including when compiled with `-Dpreview_mt` and run with `CRYSTAL_WORKERS` greater than `1`. Keep that work away from Qt objects, then use `Application#invoke_later` to apply the result back on the Qt event loop.
 
 You can call `Qt6.shutdown` yourself if you want an explicit shutdown point, but ordinary applications can rely on the built-in exit hook.
 
