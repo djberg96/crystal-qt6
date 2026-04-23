@@ -1,12 +1,13 @@
 PDFLATEX ?= pdflatex
 TARGET := crystal-qt6-guide
 CHAPTERS := $(wildcard chapters/*.tex)
+IMAGES := $(wildcard images/*.png)
 
 .PHONY: all clean
 
 all: $(TARGET).pdf
 
-$(TARGET).pdf: $(TARGET).tex $(CHAPTERS)
+$(TARGET).pdf: $(TARGET).tex $(CHAPTERS) $(IMAGES)
 	$(PDFLATEX) -interaction=nonstopmode -halt-on-error $(TARGET).tex
 	$(PDFLATEX) -interaction=nonstopmode -halt-on-error $(TARGET).tex
 

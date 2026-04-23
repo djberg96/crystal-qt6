@@ -37,10 +37,23 @@ dialog.window_title = "Open Map"
 dialog.accept_mode = Qt6::FileDialogAcceptMode::Open
 dialog.file_mode = Qt6::FileDialogFileMode::ExistingFile
 
-if dialog.exec == Qt6::DialogCode::Accepted
-  status_bar.show_message(dialog.selected_file)
+begin
+  if dialog.exec == Qt6::DialogCode::Accepted
+    status_bar.show_message(dialog.selected_file)
+  end
+ensure
+  dialog.release
 end
 \end{lstlisting}
+
+The choice is mostly about how much control the workflow needs. Prefer a helper when the dialog has one job, the result is enough, and no caller needs to observe intermediate signals. Prefer an explicit instance when you need to preselect values, tune modes and options, connect callbacks, inspect multiple results, or keep ownership and release behavior visible in the surrounding code.
+
+\begin{itemize}
+\item Use convenience helpers for ordinary modal questions such as ``choose one file,'' ``pick a color,'' or ``enter one number.''
+\item Use explicit instances for customized file modes, progress cancellation, font/color signals, custom button boxes, and flows that need several selected values.
+\item Parent explicit dialogs to the window that launched them. For short-lived unparented dialogs, release them in an \api{ensure} block.
+\item In tests, explicit instances are usually easier to configure, show, drive with timers, and release predictably.
+\end{itemize}
 
 \section{Message Boxes}
 
@@ -68,6 +81,21 @@ end
 \end{lstlisting}
 
 \smallscreenshotplaceholder{docs/book/images/dialogs-message-question.png}{A question message box with Yes, No, and Cancel buttons.}
+
+\begin{lstlisting}[style=crystal]
+Qt6::MessageBox.information(
+  main,
+  title: "Export Complete",
+  text: "The preview image was written successfully."
+)
+
+Qt6::MessageBox.critical(
+  main,
+  title: "Export Failed",
+  text: "The preview image could not be written.",
+  informative_text: "Check that the destination folder is writable."
+)
+\end{lstlisting}
 
 \begin{figure}[htbp]
   \begin{lstlisting}[style=crystal]
@@ -119,7 +147,32 @@ paths = Qt6::FileDialog.get_open_file_names(
 status_bar.show_message("Selected #{paths.size} asset files", 1500)
 \end{lstlisting}
 
+\begin{lstlisting}[style=crystal]
+path = Qt6::FileDialog.get_save_file_name(
+  main,
+  "Export Preview",
+  File.join(Dir.current, "preview.png"),
+  "PNG Images (*.png);;All Files (*)"
+)
+
+export_preview(path) if path
+\end{lstlisting}
+
 Explicit instances expose \api{accept_mode}, \api{file_mode}, \api{directory}, \api{name_filter}, \api{select_file}, \api{selected_file}, and \api{selected_files}. Use them when a file workflow needs to be configured before the dialog is shown.
+
+\begin{lstlisting}[style=crystal]
+dialog = Qt6::FileDialog.new(main, Dir.current)
+dialog.window_title = "Choose Asset Folder"
+dialog.file_mode = Qt6::FileDialogFileMode::Directory
+
+begin
+  if dialog.exec == Qt6::DialogCode::Accepted
+    import_folder(dialog.selected_file)
+  end
+ensure
+  dialog.release
+end
+\end{lstlisting}
 
 \section{Color Dialogs}
 
@@ -146,6 +199,8 @@ end
 \smallscreenshotplaceholder{docs/book/images/dialogs-color-alpha.png}{A color dialog with alpha-channel editing enabled.}
 
 \api{ColorDialog#native_dialog=} can disable the platform-native picker. That is mainly useful for deterministic tests, where the widget-backed dialog behaves like an ordinary Qt dialog.
+
+Native color, font, and file dialogs are the right default for user-facing applications because they match platform expectations. The widget-backed versions are useful when screenshots, tests, or tutorial examples need a predictable Qt window instead of a system sheet or platform-owned picker. If a chapter screenshot needs to teach the binding API rather than the operating system's picker, prefer the widget-backed version and mention that real applications can leave native dialogs enabled.
 
 \section{Font Dialogs}
 
@@ -209,6 +264,28 @@ kind = Qt6::InputDialog.get_item(
 )
 \end{lstlisting}
 
+\begin{lstlisting}[style=crystal]
+scale = Qt6::InputDialog.get_double(
+  main,
+  title: "Export Scale",
+  label: "Scale factor",
+  value: 1.0,
+  minimum: 0.25,
+  maximum: 4.0
+)
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+tag = Qt6::InputDialog.get_item(
+  main,
+  title: "Layer Tag",
+  label: "Tag",
+  items: ["draft", "review", "final"],
+  current: 0,
+  editable: true
+)
+\end{lstlisting}
+
 \inputdialogscreenshots
 
 Use explicit \api{InputDialog} instances when you need to change the input mode, inspect range values, or configure combo-box editability directly.
@@ -259,6 +336,24 @@ timer.start(100)
 
 For real long-running work, make sure the GUI thread can continue processing events. A progress dialog that never repaints or never receives cancel input is usually a sign that too much work is blocking the event loop.
 
+\section{Splash Screens}
+
+\api{SplashScreen} is a lightweight startup surface. Use it only while the application is preparing its real main window; once the window can be shown, call \api{finish}.
+
+\begin{lstlisting}[style=crystal]
+pixmap = Qt6::QPixmap.new("assets/splash.png")
+splash = Qt6::SplashScreen.new(pixmap)
+splash.show
+splash.show_message("Loading project...")
+app.process_events
+
+main = build_main_window
+main.show
+splash.finish(main)
+\end{lstlisting}
+
+Splash screens should stay brief. If the user might need to cancel, inspect details, or wait for a longer task, prefer a \api{ProgressDialog} instead.
+
 \section{Custom Dialogs And Button Boxes}
 
 Some workflows need a custom dialog body with standard buttons. \api{Dialog} provides accepted and rejected callbacks. \api{DialogButtonBox} provides standard button layouts and accept/reject signals.
@@ -294,6 +389,18 @@ buttons.on_rejected { dialog.reject }
 
 Custom dialogs should still follow the same ownership rules as other widgets: parent child controls to the dialog, keep the body focused, and let the button box handle standard accept/reject controls.
 
+\section{Dialog Troubleshooting}
+
+Most dialog problems are event-loop, ownership, or platform issues. These checks usually find the problem quickly:
+
+\begin{itemize}
+\item If a dialog never appears, make sure a \api{Qt6.application} exists and the dialog is launched from the GUI thread.
+\item If a modal dialog appears behind another window, pass the launching window as the parent and avoid using an unparented top-level dialog for application-local questions.
+\item If screenshots differ across macOS, Linux, and Windows, check whether the dialog is native. Native dialogs are allowed to look and behave like the host platform.
+\item If a progress dialog shows but does not repaint, move long work into smaller chunks and let the event loop process between updates.
+\item If a scripted capture misses a native dialog on macOS, run the gallery in a foreground desktop session and recapture manually when needed.
+\end{itemize}
+
 \section{Screenshot Checklist}
 
 When replacing placeholders with real screenshots, capture the gallery in a consistent theme and window size. The first pass should include these files:
@@ -315,6 +422,8 @@ When replacing placeholders with real screenshots, capture the gallery in a cons
 \item \api{dialogs-progress-canceled.png}
 \item \api{dialogs-custom-settings.png}
 \end{itemize}
+
+The book Makefile tracks \api{docs/book/images/*.png}, so replacing a screenshot and rerunning \api{make docs-book} rebuilds the PDF. If you add a new image format or store generated screenshots elsewhere, update \api{docs/book/Makefile} so image changes remain visible to the build.
 
 \section{Current Coverage}
 
