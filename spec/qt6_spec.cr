@@ -2795,6 +2795,37 @@ describe Qt6 do
     main.release
   end
 
+  it "manages status-bar widgets and size grip state" do
+    application = app
+    main = Qt6::MainWindow.new
+    status_bar = main.status_bar
+    transient = Qt6::Label.new("Selection: 0")
+    permanent = Qt6::Label.new("Ready")
+
+    status_bar.add_widget(transient)
+    status_bar.add_permanent_widget(permanent)
+    status_bar.show_message("Working")
+
+    main.show
+    application.process_events
+
+    transient.visible?.should be_true
+    permanent.visible?.should be_true
+    status_bar.current_message.should eq("Working")
+    status_bar.size_grip_enabled?.should be_true
+
+    status_bar.size_grip_enabled = false
+    status_bar.size_grip_enabled?.should be_false
+
+    status_bar.remove_widget(transient)
+    application.process_events
+    transient.visible?.should be_false
+
+    permanent.text.should eq("Ready")
+
+    main.release
+  end
+
   it "retargets shared undo and redo actions with undo groups" do
     app
     group = Qt6::UndoGroup.new

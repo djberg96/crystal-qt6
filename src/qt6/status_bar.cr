@@ -34,5 +34,36 @@ module Qt6
       LibQt6.qt6cr_status_bar_clear_message(to_unsafe)
       self
     end
+
+    # Adds a temporary widget to the status bar and returns it.
+    def add_widget(widget : Widget, stretch : Int = 0) : Widget
+      LibQt6.qt6cr_status_bar_add_widget(to_unsafe, widget.to_unsafe, stretch.to_i32)
+      widget.adopt_by_parent!
+      widget
+    end
+
+    # Adds a permanent widget aligned to the right side of the status bar.
+    def add_permanent_widget(widget : Widget, stretch : Int = 0) : Widget
+      LibQt6.qt6cr_status_bar_add_permanent_widget(to_unsafe, widget.to_unsafe, stretch.to_i32)
+      widget.adopt_by_parent!
+      widget
+    end
+
+    # Removes a widget from the status bar and returns it.
+    def remove_widget(widget : Widget) : Widget
+      LibQt6.qt6cr_status_bar_remove_widget(to_unsafe, widget.to_unsafe)
+      widget
+    end
+
+    # Returns `true` when the status bar shows a resize grip.
+    def size_grip_enabled? : Bool
+      LibQt6.qt6cr_status_bar_is_size_grip_enabled(to_unsafe)
+    end
+
+    # Enables or disables the resize grip.
+    def size_grip_enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_status_bar_set_size_grip_enabled(to_unsafe, value)
+      value
+    end
   end
 end

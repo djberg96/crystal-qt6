@@ -1146,6 +1146,11 @@ module Qt6
     fun qt6cr_status_bar_show_message = qt6cr_status_bar_show_message(handle : Handle, message : UInt8*, timeout_ms : LibC::Int)
     fun qt6cr_status_bar_current_message = qt6cr_status_bar_current_message(handle : Handle) : UInt8*
     fun qt6cr_status_bar_clear_message = qt6cr_status_bar_clear_message(handle : Handle)
+    fun qt6cr_status_bar_add_widget = qt6cr_status_bar_add_widget(handle : Handle, widget : Handle, stretch : LibC::Int)
+    fun qt6cr_status_bar_add_permanent_widget = qt6cr_status_bar_add_permanent_widget(handle : Handle, widget : Handle, stretch : LibC::Int)
+    fun qt6cr_status_bar_remove_widget = qt6cr_status_bar_remove_widget(handle : Handle, widget : Handle)
+    fun qt6cr_status_bar_is_size_grip_enabled = qt6cr_status_bar_is_size_grip_enabled(handle : Handle) : Bool
+    fun qt6cr_status_bar_set_size_grip_enabled = qt6cr_status_bar_set_size_grip_enabled(handle : Handle, value : Bool)
 
     fun qt6cr_event_widget_create = qt6cr_event_widget_create(parent : Handle) : Handle
     fun qt6cr_event_widget_on_paint = qt6cr_event_widget_on_paint(handle : Handle, callback : (Handle, RectFValue ->), userdata : Handle)

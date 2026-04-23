@@ -8787,6 +8787,46 @@ void qt6cr_status_bar_clear_message(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_status_bar_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch) {
+  auto *status_bar = as_status_bar(handle);
+  auto *child = as_widget(widget);
+
+  if (status_bar != nullptr && child != nullptr) {
+    status_bar->addWidget(child, stretch);
+  }
+}
+
+void qt6cr_status_bar_add_permanent_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch) {
+  auto *status_bar = as_status_bar(handle);
+  auto *child = as_widget(widget);
+
+  if (status_bar != nullptr && child != nullptr) {
+    status_bar->addPermanentWidget(child, stretch);
+  }
+}
+
+void qt6cr_status_bar_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *status_bar = as_status_bar(handle);
+  auto *child = as_widget(widget);
+
+  if (status_bar != nullptr && child != nullptr) {
+    status_bar->removeWidget(child);
+  }
+}
+
+bool qt6cr_status_bar_is_size_grip_enabled(qt6cr_handle_t handle) {
+  auto *status_bar = as_status_bar(handle);
+  return status_bar != nullptr && status_bar->isSizeGripEnabled();
+}
+
+void qt6cr_status_bar_set_size_grip_enabled(qt6cr_handle_t handle, bool value) {
+  auto *status_bar = as_status_bar(handle);
+
+  if (status_bar != nullptr) {
+    status_bar->setSizeGripEnabled(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_event_widget_create(qt6cr_handle_t parent) {
   return new EventWidget(as_widget(parent));
 }
