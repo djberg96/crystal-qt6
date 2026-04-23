@@ -2,13 +2,6 @@
 
 Deferred ideas for the LaTeX guide. These are useful, but not required before continuing to later chapters.
 
-## Chapter 5: Dialogs
-
-- Revisit the full chapter layout after the first screenshot pass. Tune float placement, code/example ordering, figure sizes, page breaks, and whether related screenshots should be grouped into shared figure blocks.
-- Expand the dialog gallery application beyond the current first-pass screenshots. Candidates include information and critical message boxes, multi-file open dialogs, directory selection, double input dialogs, editable item input dialogs, splash screens, and richer custom dialogs.
-- Improve screenshot automation for native modal dialogs. The current capture workflow works, but native dialogs may need foreground launches or manual recapture on macOS.
-- Consider refreshing the dialog screenshots with a consistent light/dark theme decision, window scale, and crop style before publication.
-
 ## Chapter 6: Signals And Events
 
 - Add a compact note on `block_signals=` and `signals_blocked?` for bulk UI updates where intermediate value changes should not emit callbacks.
