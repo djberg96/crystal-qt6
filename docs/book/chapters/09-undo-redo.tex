@@ -95,6 +95,7 @@ API & Meaning \\
 \api{redo_text} & Returns the label for the next redo step. \\
 \api{count} & Returns the number of retained history entries. \\
 \api{index} & Returns the current position in the history. \\
+\api{clean_index} & Returns the saved-document history position, or \api{-1} when there is no clean marker. \\
 \api{undo_limit} & Limits retained commands; set it before pushing commands. \\
 \api{clear} & Removes all commands from the stack. \\
 \bottomrule
@@ -109,6 +110,26 @@ status_bar.show_message(
 stack.undo if stack.can_undo?
 stack.redo if stack.can_redo?
 \end{lstlisting}
+
+A stack index is a cursor between commands. If the user undoes a few commands and then pushes a new command, Qt discards the redo tail and appends the new command at the current index.
+
+\begin{figure}[htbp]
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}p{0.16\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.16\textwidth}@{}}
+  \toprule
+  State & Command 1 & Command 2 & Command 3 & Command 4 \\
+  \midrule
+  Before new push & Rename layer & Move point & Recolor shape & Resize shape \\
+  Markers & & clean + current index & redo tail & redo tail \\
+  \midrule
+  After pushing & Rename layer & Move point & Set opacity & discarded \\
+  Markers & & clean index & current index & removed redo tail \\
+  \bottomrule
+  \end{tabular}
+  \caption{Undo history after the user undoes to the clean index, then pushes a new command. The old redo branch is discarded.}
+\end{figure}
 
 \section{Clean State}
 
@@ -161,6 +182,24 @@ stack.end_macro
 The stack will show one entry, \api{Apply layer preset}. Undoing that entry runs the child commands backward; redoing it runs them forward.
 
 Always balance \api{begin_macro} with \api{end_macro}. If the operation can fail in the middle, gather the values first, then open the macro only when you are ready to push all of its commands.
+
+\begin{lstlisting}[style=crystal]
+def with_undo_macro(stack : Qt6::UndoStack, text : String, &block)
+  stack.begin_macro(text)
+  begin
+    yield
+  ensure
+    stack.end_macro
+  end
+end
+
+with_undo_macro(stack, "Apply layer preset") do
+  stack.push(set_color_command)
+  stack.push(set_opacity_command)
+end
+\end{lstlisting}
+
+The helper does not make the operation transactional; commands pushed before an exception are still part of the macro. Its job is narrower but important: keep the native stack balanced so later undo operations remain predictable.
 
 \section{Stack Signals}
 
@@ -224,6 +263,136 @@ push_change(
 \end{lstlisting}
 
 The command owns the edit. The button, checkbox, or menu action simply decides which command to push.
+
+\section{A Small Layer Example}
+
+The following mini-application keeps a list of layer names, exposes undo and redo through the Edit menu, marks the document clean after a save-like action, and groups a preset operation into one visible history entry.
+
+\begin{lstlisting}[style=crystal]
+require "qt6"
+
+def with_undo_macro(stack : Qt6::UndoStack, text : String, &block)
+  stack.begin_macro(text)
+  begin
+    yield
+  ensure
+    stack.end_macro
+  end
+end
+
+app = Qt6.application
+
+main = Qt6::MainWindow.new
+main.window_title = "Layer Undo"
+main.resize(420, 300)
+
+stack = Qt6::UndoStack.new(main)
+layers = ["Terrain", "Roads"]
+
+central = Qt6::Widget.new
+main.central_widget = central
+
+list = Qt6::ListWidget.new
+status = Qt6::Label.new
+add_button = Qt6::PushButton.new("Add layer")
+rename_button = Qt6::PushButton.new("Rename first")
+preset_button = Qt6::PushButton.new("Apply preset")
+
+refresh = -> do
+  list.clear
+  layers.each { |name| list << name }
+  status.text = stack.clean? ? "Saved" : "Unsaved changes"
+  main.window_title = stack.clean? ? "Layer Undo" : "Layer Undo *"
+end
+
+central.vbox do |column|
+  column << list
+  column << status
+  column << add_button
+  column << rename_button
+  column << preset_button
+end
+
+undo_action = stack.create_undo_action(main, "Undo")
+undo_action.shortcut = "Ctrl+Z"
+redo_action = stack.create_redo_action(main, "Redo")
+redo_action.shortcut = "Ctrl+Shift+Z"
+
+save_action = Qt6::Action.new("Mark Saved", main)
+save_action.shortcut = "Ctrl+S"
+save_action.on_triggered do
+  stack.set_clean
+  refresh.call
+end
+
+edit_menu = main.menu_bar.add_menu("Edit")
+edit_menu << undo_action
+edit_menu << redo_action
+edit_menu.add_separator
+edit_menu << save_action
+
+stack.on_clean_changed { |_clean| refresh.call }
+stack.on_index_changed { |_index| refresh.call }
+
+add_button.on_clicked do
+  name = "Layer #{layers.size + 1}"
+  stack.push(Qt6::UndoCommand.new(
+    "Add #{name}",
+    redo: -> { layers << name; refresh.call },
+    undo: -> { layers.delete(name); refresh.call }
+  ))
+end
+
+rename_button.on_clicked do
+  next if layers.empty?
+
+  old_name = layers.first
+  new_name = "#{old_name} copy"
+  stack.push(Qt6::UndoCommand.new(
+    "Rename layer",
+    redo: -> { layers[0] = new_name; refresh.call },
+    undo: -> { layers[0] = old_name; refresh.call }
+  ))
+end
+
+preset_button.on_clicked do
+  next if layers.empty?
+
+  old_name = layers.first
+  added_name = "Highlights"
+
+  with_undo_macro(stack, "Apply starter preset") do
+    stack.push(Qt6::UndoCommand.new(
+      "Rename base layer",
+      redo: -> { layers[0] = "Background"; refresh.call },
+      undo: -> { layers[0] = old_name; refresh.call }
+    ))
+    stack.push(Qt6::UndoCommand.new(
+      "Add highlights",
+      redo: -> { layers << added_name; refresh.call },
+      undo: -> { layers.delete(added_name); refresh.call }
+    ))
+  end
+end
+
+refresh.call
+stack.set_clean
+
+main.show
+app.run
+\end{lstlisting}
+
+\section{Command Compression}
+
+Some applications should combine many tiny edits into one undoable command: dragging an object, scrubbing a slider, or typing into a domain-specific property editor. Qt's native command model supports this through command IDs and merge behavior, but those APIs are not exposed by the binding yet.
+
+Until merge APIs are available, coalesce changes before pushing. For example, push one command when a drag finishes rather than on every mouse move, or push one command when a field commits rather than on every keystroke. Use macros when one completed gesture changes several properties at once.
+
+\section{Multiple Documents}
+
+Use one \api{UndoStack} per document. Clear or replace that stack when the document changes identity, and mark it clean only after the corresponding document is saved.
+
+The binding exposes \api{active?} and \api{active=} on individual stacks, but it does not yet expose a \api{QUndoGroup}-style wrapper that automatically retargets shared undo and redo actions. In a multi-document interface today, keep track of the current document stack yourself and either rebuild the menu actions when focus changes or connect custom actions that call \api{current_stack.undo} and \api{current_stack.redo}. If an undo group wrapper is added later, it should become the central place for shared Edit menu actions.
 
 \section{Practical Guidelines}
 
