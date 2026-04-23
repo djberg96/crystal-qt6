@@ -190,6 +190,7 @@ module Qt6
     fun qt6cr_widget_move = qt6cr_widget_move(handle : Handle, x : LibC::Int, y : LibC::Int)
     fun qt6cr_widget_adjust_size = qt6cr_widget_adjust_size(handle : Handle)
     fun qt6cr_widget_raise_to_front = qt6cr_widget_raise_to_front(handle : Handle)
+    fun qt6cr_widget_add_action = qt6cr_widget_add_action(handle : Handle, action : Handle)
     fun qt6cr_widget_set_fixed_width = qt6cr_widget_set_fixed_width(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_fixed_height = qt6cr_widget_set_fixed_height(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_fixed_size = qt6cr_widget_set_fixed_size(handle : Handle, width : LibC::Int, height : LibC::Int)
