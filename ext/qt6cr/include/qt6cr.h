@@ -1177,6 +1177,11 @@ qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent);
 void qt6cr_status_bar_show_message(qt6cr_handle_t handle, const char *message, int timeout_ms);
 char *qt6cr_status_bar_current_message(qt6cr_handle_t handle);
 void qt6cr_status_bar_clear_message(qt6cr_handle_t handle);
+void qt6cr_status_bar_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch);
+void qt6cr_status_bar_add_permanent_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch);
+void qt6cr_status_bar_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+bool qt6cr_status_bar_is_size_grip_enabled(qt6cr_handle_t handle);
+void qt6cr_status_bar_set_size_grip_enabled(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_event_widget_create(qt6cr_handle_t parent);
 void qt6cr_event_widget_on_paint(qt6cr_handle_t handle, qt6cr_paint_callback_t callback, void *userdata);
