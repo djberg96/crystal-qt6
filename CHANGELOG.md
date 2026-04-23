@@ -10,10 +10,6 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - Added multithreaded GUI-spec coverage for `Application#invoke_later` with `CRYSTAL_WORKERS=2` and Crystal's `preview_mt` runtime.
 
-### Fixed
-
-- Corrected `Qt6::VERSION` to report `0.7.0`.
-
 ## [0.7.0] - 2026-04-23
 
 ### Added
