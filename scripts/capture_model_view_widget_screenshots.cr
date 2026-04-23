@@ -198,3 +198,164 @@ header_table.horizontal_header.resize_section(1, 150)
 header_table.horizontal_header.stretch_last_section = true
 header_table.horizontal_header.set_section_hidden(3, true)
 save_widget(app, header_table, "model-view-table-headers.png")
+
+delegate_model = Qt6::StandardItemModel.new
+delegate_model.set_horizontal_header_label(0, "Layer")
+delegate_model.set_horizontal_header_label(1, "State")
+[
+  {"Terrain", "Visible"},
+  {"Roads", "Visible"},
+  {"Labels", "Draft"},
+].each_with_index do |entry, row|
+  name, state = entry
+  delegate_model.set_item(row, 0, Qt6::StandardItem.new(name))
+  delegate_model.set_item(row, 1, Qt6::StandardItem.new(state))
+end
+
+delegate_table = Qt6::TableView.new
+delegate_table.window_title = "Delegate Editor"
+delegate_table.resize(560, 230)
+delegate_table.model = delegate_model
+delegate_table.alternating_row_colors = true
+delegate_table.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+delegate_table.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+delegate_table.edit_triggers = Qt6::EditTrigger::DoubleClicked | Qt6::EditTrigger::EditKeyPressed
+delegate_table.horizontal_header.resize_section(0, 220)
+delegate_table.horizontal_header.stretch_last_section = true
+
+delegate = Qt6::StyledItemDelegate.new(delegate_table)
+delegate.on_create_editor do |parent, _index|
+  editor = Qt6::LineEdit.new(parent: parent)
+  editor.style_sheet = "QLineEdit { border: 2px solid rgb(72, 126, 176); padding: 3px 6px; background: white; }"
+  editor
+end
+delegate.on_set_editor_data do |editor, value, _index|
+  editor.as(Qt6::LineEdit).text = value.to_s
+end
+delegate.on_set_model_data do |editor, target_model, index|
+  target_model.set_data(index, editor.as(Qt6::LineEdit).text)
+end
+delegate_table.item_delegate = delegate
+
+edit_index = delegate_model.index(0, 0)
+delegate_table.current_index = edit_index
+delegate_table.open_persistent_editor(edit_index)
+save_widget(app, delegate_table, "model-view-delegate-editor.png")
+
+def reorder_list(title : String) : Qt6::ListWidget
+  list = Qt6::ListWidget.new
+  list.window_title = title
+  list.resize(420, 230)
+  list.alternating_row_colors = true
+  list.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+  list.drag_enabled = true
+  list.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+  list.default_drop_action = Qt6::DropAction::MoveAction
+  list.drop_indicator_shown = true
+
+  ["Terrain", "Roads", "Labels", "Logistics"].each do |name|
+    item = Qt6::ListWidgetItem.new(name)
+    item.flags = Qt6::ItemFlag::Enabled |
+      Qt6::ItemFlag::Selectable |
+      Qt6::ItemFlag::DragEnabled |
+      Qt6::ItemFlag::DropEnabled
+    list << item
+  end
+
+  list
+end
+
+reorder_before = reorder_list("Before Reorder")
+reorder_before.current_row = 3
+save_widget(app, reorder_before, "model-view-row-reorder-before.png")
+
+reorder_after = reorder_list("After Reorder")
+reorder_after.move_item(3, 1)
+reorder_after.current_row = 1
+save_widget(app, reorder_after, "model-view-row-reorder-after.png")
+
+workbench_model = Qt6::StandardItemModel.new
+workbench_model.set_horizontal_header_label(0, "Layer")
+workbench_model.set_horizontal_header_label(1, "State")
+workbench_model.set_horizontal_header_label(2, "Notes")
+
+[
+  {"Terrain", "Visible", "Controls the grid overlay", 10},
+  {"Units", "Visible", "Tracks moveable markers", 20},
+  {"Labels", "Draft", "Carries annotation text", 30},
+  {"Logistics", "Locked", "Reserved for supply routes", 40},
+].each_with_index do |entry, row|
+  name, state, notes, priority = entry
+  name_item = Qt6::StandardItem.new(name)
+  name_item.set_data(priority, Qt6::ItemDataRole::User)
+  workbench_model.set_item(row, 0, name_item)
+  workbench_model.set_item(row, 1, Qt6::StandardItem.new(state))
+  workbench_model.set_item(row, 2, Qt6::StandardItem.new(notes))
+end
+
+workbench_proxy = Qt6::SortFilterProxyModel.new
+workbench_proxy.source_model = workbench_model
+workbench_proxy.sort_role = Qt6::ItemDataRole::User
+workbench_proxy.filter_role = Qt6::ItemDataRole::Display
+workbench_proxy.filter_key_column = 0
+workbench_proxy.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
+workbench_proxy.filter_regular_expression = "Terrain|Units|Labels"
+workbench_proxy.dynamic_sort_filter = true
+workbench_proxy.sort
+
+workbench_window = Qt6::MainWindow.new
+workbench_window.window_title = "Model View Workbench"
+workbench_window.resize(900, 540)
+workbench_window.status_bar.show_message("Selection synced across views")
+
+workbench_delegate = Qt6::StyledItemDelegate.new(workbench_window)
+workbench_delegate.on_display_text do |text|
+  text.empty? ? "(empty)" : "#{text}  [proxy]"
+end
+
+workbench_list = Qt6::ListView.new
+workbench_list.model = workbench_proxy
+workbench_list.item_delegate = workbench_delegate
+workbench_list.alternating_row_colors = true
+
+workbench_tree = Qt6::TreeView.new
+workbench_tree.model = workbench_proxy
+workbench_tree.header_hidden = false
+workbench_tree.alternating_row_colors = true
+workbench_tree.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+
+workbench_selection = Qt6::ItemSelectionModel.new(workbench_proxy, workbench_window)
+workbench_list.selection_model = workbench_selection
+workbench_tree.selection_model = workbench_selection
+workbench_selection.current_index = workbench_proxy.index(0, 0)
+
+filter_input = Qt6::LineEdit.new("Terrain|Units|Labels")
+filter_label = Qt6::Label.new("QSortFilterProxyModel filter")
+selection_label = Qt6::Label.new("Proxy row 1 -> source row 1 | Terrain")
+notes_label = Qt6::Label.new("State Visible | Controls the grid overlay")
+delegate_label = Qt6::Label.new("Delegate editor")
+delegate_editor = Qt6::LineEdit.new("Terrain")
+
+list_panel = Qt6::Widget.new
+list_panel.vbox do |column|
+  column << Qt6::Label.new("List View")
+  column << filter_input
+  column << filter_label
+  column << workbench_list
+end
+
+detail_panel = Qt6::Widget.new
+detail_panel.vbox do |column|
+  column << Qt6::Label.new("Tree View")
+  column << workbench_tree
+  column << selection_label
+  column << notes_label
+  column << delegate_label
+  column << delegate_editor
+end
+
+workbench_splitter = Qt6::Splitter.new(Qt6::Orientation::Horizontal)
+workbench_splitter << list_panel
+workbench_splitter << detail_panel
+workbench_window.central_widget = workbench_splitter
+save_widget(app, workbench_window, "model-view-workbench.png")

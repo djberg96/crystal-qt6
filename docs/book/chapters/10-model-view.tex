@@ -433,6 +433,23 @@ view.item_delegate = delegate
 
 The delegate talks to the model through \api{ItemDataRole::Edit}. If editing does not seem to commit, check three places: the model returns \api{ItemFlag::Editable}, the delegate calls \api{set_data}, and the model's \api{model_set_data} returns \api{true}.
 
+Persistent editors are useful when a view should keep an editor widget visible instead of opening one only during an edit gesture. Open them sparingly; a whole table of live editors can become visually noisy and more expensive than ordinary delegate painting.
+
+\begin{lstlisting}[style=crystal]
+index = model.index(0, 0)
+view.open_persistent_editor(index)
+
+if view.persistent_editor_open?(index)
+  status_bar.show_message("Editor is open", 1200)
+end
+\end{lstlisting}
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/model-view-delegate-editor.png}{width=0.82\textwidth,height=0.28\textheight,keepaspectratio}%
+  \caption{A \api{TableView} cell with a persistent editor created through \api{StyledItemDelegate} hooks.}
+\end{figure}
+
 \section{Drag And Drop}
 
 Views decide how dragging feels. Models decide what data can be dragged or dropped.
@@ -447,6 +464,33 @@ view.drop_indicator_shown = true
 For custom models, override the MIME hooks: \api{model_mime_types}, \api{model_mime_data}, and \api{model_drop_mime_data}.
 
 Use \api{model_supported_drag_actions} and \api{model_supported_drop_actions} to advertise actions. Also return \api{ItemFlag::DragEnabled} and \api{ItemFlag::DropEnabled} for indexes that participate.
+
+\api{ListWidget#move_item} is a compact way to model internal row reordering for item widgets. Custom models use the same idea, but should wrap backing-store moves with \api{begin_move_rows} and \api{end_move_rows}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \textbf{Before}\par\smallskip
+    \screenshotimage{docs/book/images/model-view-row-reorder-before.png}{width=0.96\linewidth,height=0.24\textheight,keepaspectratio}%
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \textbf{After}\par\smallskip
+    \screenshotimage{docs/book/images/model-view-row-reorder-after.png}{width=0.96\linewidth,height=0.24\textheight,keepaspectratio}%
+  \end{minipage}
+  \caption{A row-reordering flow: the same item collection before and after moving \api{Logistics} above \api{Roads}.}
+\end{figure}
+
+\section{Putting The Pieces Together}
+
+\api{examples/model_view_workbench.cr} combines the chapter's main pieces in one small application: a custom model, a proxy filter, shared selection across views, delegate editor hooks, row insertion/removal, and source/proxy index mapping.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/model-view-workbench.png}{width=0.96\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{A model/view workbench that shows filtering, shared selection, delegate editing, and model notifications in one window.}
+\end{figure}
 
 \section{Practical Guidelines}
 

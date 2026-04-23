@@ -66,6 +66,10 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_model_view_widg
 - `model-view-table-view.png`
 - `model-view-tree-view-headers.png`
 - `model-view-table-headers.png`
+- `model-view-delegate-editor.png`
+- `model-view-row-reorder-before.png`
+- `model-view-row-reorder-after.png`
+- `model-view-workbench.png`
 
 Chapter 11 uses live widget grabs from the worked example. Refresh them with:
 
