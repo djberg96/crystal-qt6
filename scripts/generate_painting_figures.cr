@@ -380,7 +380,7 @@ render_image("model-view-architecture.png", 1400, 800) do |painter, rect|
   arrow(painter, Qt6::PointF.new(1000.0, 255.0), Qt6::PointF.new(1070.0, 255.0))
   arrow(painter, Qt6::PointF.new(1130.0, 358.0), Qt6::PointF.new(1005.0, 558.0))
   arrow(painter, Qt6::PointF.new(870.0, 520.0), Qt6::PointF.new(870.0, 338.0))
-  arrow(painter, Qt6::PointF.new(665.0, 596.0), Qt6::PointF.new(1070.0, 332.0))
+  arrow(painter, Qt6::PointF.new(665.0, 520.0), Qt6::PointF.new(1075.0, 358.0))
   arrow(painter, Qt6::PointF.new(530.0, 520.0), Qt6::PointF.new(530.0, 338.0))
 
   label(painter, 70, 724, "The model owns meaning; views, proxies, delegates, and selection shape the surface.", 21, true)
