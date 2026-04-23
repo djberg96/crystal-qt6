@@ -2713,6 +2713,68 @@ describe Qt6 do
     stack.release
   end
 
+  it "retargets shared undo and redo actions with undo groups" do
+    app
+    group = Qt6::UndoGroup.new
+    stack_a = Qt6::UndoStack.new
+    stack_b = Qt6::UndoStack.new
+    document_a = [] of String
+    document_b = [] of String
+    active_changes = [] of Qt6::UndoStack?
+    undo_texts = [] of String
+    redo_texts = [] of String
+
+    group.on_active_stack_changed { |stack| active_changes << stack }
+    group.on_undo_text_changed { |text| undo_texts << text }
+    group.on_redo_text_changed { |text| redo_texts << text }
+
+    group << stack_a
+    group.add_stack(stack_b)
+    group.stacks.size.should eq(2)
+
+    undo_action = group.create_undo_action(prefix: "Undo")
+    redo_action = group.create_redo_action(prefix: "Redo")
+
+    stack_a.push(Qt6::UndoCommand.new("Add roads", redo: -> { document_a << "roads" }, undo: -> { document_a.pop }))
+    stack_b.push(Qt6::UndoCommand.new("Add rivers", redo: -> { document_b << "rivers" }, undo: -> { document_b.pop }))
+
+    group.active_stack = stack_a
+    group.active_stack.try(&.same?(stack_a)).should be_true
+    group.undo_text.should eq("Add roads")
+    undo_action.enabled?.should be_true
+    undo_action.trigger
+    document_a.should eq([] of String)
+    group.can_redo?.should be_true
+    group.redo_text.should eq("Add roads")
+
+    group.active_stack = stack_b
+    group.active_stack.try(&.same?(stack_b)).should be_true
+    group.undo_text.should eq("Add rivers")
+    undo_action.enabled?.should be_true
+    undo_action.trigger
+    document_b.should eq([] of String)
+    redo_action.enabled?.should be_true
+    redo_action.trigger
+    document_b.should eq(["rivers"])
+
+    group.undo
+    document_b.should eq([] of String)
+    group.redo
+    document_b.should eq(["rivers"])
+
+    active_changes.any? { |stack| stack.try(&.same?(stack_a)) || false }.should be_true
+    active_changes.any? { |stack| stack.try(&.same?(stack_b)) || false }.should be_true
+    undo_texts.includes?("Add roads").should be_true
+    redo_texts.includes?("Add roads").should be_true
+
+    group.remove_stack(stack_a)
+    group.stacks.should eq([stack_b])
+
+    stack_a.release
+    stack_b.release
+    group.release
+  end
+
   it "keeps parent-owned QObject wrappers alive until Qt destroys them" do
     app
     content_destroyed = 0

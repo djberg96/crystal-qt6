@@ -392,7 +392,24 @@ Until merge APIs are available, coalesce changes before pushing. For example, pu
 
 Use one \api{UndoStack} per document. Clear or replace that stack when the document changes identity, and mark it clean only after the corresponding document is saved.
 
-The binding exposes \api{active?} and \api{active=} on individual stacks, but it does not yet expose a \api{QUndoGroup}-style wrapper that automatically retargets shared undo and redo actions. In a multi-document interface today, keep track of the current document stack yourself and either rebuild the menu actions when focus changes or connect custom actions that call \api{current_stack.undo} and \api{current_stack.redo}. If an undo group wrapper is added later, it should become the central place for shared Edit menu actions.
+\api{UndoGroup} coordinates a set of document stacks and creates shared undo and redo actions that follow whichever stack is active. This is the usual shape for tabbed editors, multiple document interfaces, or workbenches where the Edit menu should stay in one place while focus moves between documents.
+
+\begin{lstlisting}[style=crystal]
+undo_group = Qt6::UndoGroup.new(main)
+undo_group << terrain_document.undo_stack
+undo_group << roads_document.undo_stack
+
+undo_action = undo_group.create_undo_action(main, "Undo")
+redo_action = undo_group.create_redo_action(main, "Redo")
+edit_menu << undo_action
+edit_menu << redo_action
+
+tabs.on_current_changed do |index|
+  undo_group.active_stack = documents[index].undo_stack
+end
+\end{lstlisting}
+
+The group does not replace document ownership. Each document still owns its own \api{UndoStack}; the group only decides which stack receives the shared undo and redo commands.
 
 \section{Practical Guidelines}
 
