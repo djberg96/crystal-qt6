@@ -12837,6 +12837,11 @@ qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent) {
   return new QScrollArea(as_widget(parent));
 }
 
+qt6cr_handle_t qt6cr_scroll_area_widget(qt6cr_handle_t handle) {
+  auto *scroll_area = as_scroll_area(handle);
+  return scroll_area == nullptr ? nullptr : static_cast<qt6cr_handle_t>(scroll_area->widget());
+}
+
 void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   auto *scroll_area = as_scroll_area(handle);
   auto *content = as_widget(widget);
@@ -12844,6 +12849,11 @@ void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   if (scroll_area != nullptr && content != nullptr) {
     scroll_area->setWidget(content);
   }
+}
+
+qt6cr_handle_t qt6cr_scroll_area_take_widget(qt6cr_handle_t handle) {
+  auto *scroll_area = as_scroll_area(handle);
+  return scroll_area == nullptr ? nullptr : static_cast<qt6cr_handle_t>(scroll_area->takeWidget());
 }
 
 void qt6cr_scroll_area_set_widget_resizable(qt6cr_handle_t handle, bool value) {
@@ -12873,6 +12883,23 @@ int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle) {
 
 void qt6cr_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy) {
   qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(handle, policy);
+}
+
+void qt6cr_scroll_area_ensure_visible(qt6cr_handle_t handle, int x, int y, int xmargin, int ymargin) {
+  auto *scroll_area = as_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->ensureVisible(x, y, xmargin, ymargin);
+  }
+}
+
+void qt6cr_scroll_area_ensure_widget_visible(qt6cr_handle_t handle, qt6cr_handle_t widget, int xmargin, int ymargin) {
+  auto *scroll_area = as_scroll_area(handle);
+  auto *content = as_widget(widget);
+
+  if (scroll_area != nullptr && content != nullptr) {
+    scroll_area->ensureWidgetVisible(content, xmargin, ymargin);
+  }
 }
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation) {

@@ -1783,13 +1783,17 @@ module Qt6
     fun qt6cr_stacked_layout_on_current_index_changed = qt6cr_stacked_layout_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_scroll_area_create = qt6cr_scroll_area_create(parent : Handle) : Handle
+    fun qt6cr_scroll_area_widget = qt6cr_scroll_area_widget(handle : Handle) : Handle
     fun qt6cr_scroll_area_set_widget = qt6cr_scroll_area_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_scroll_area_take_widget = qt6cr_scroll_area_take_widget(handle : Handle) : Handle
     fun qt6cr_scroll_area_set_widget_resizable = qt6cr_scroll_area_set_widget_resizable(handle : Handle, value : Bool)
     fun qt6cr_scroll_area_widget_resizable = qt6cr_scroll_area_widget_resizable(handle : Handle) : Bool
     fun qt6cr_scroll_area_vertical_scroll_bar_policy = qt6cr_scroll_area_vertical_scroll_bar_policy(handle : Handle) : LibC::Int
     fun qt6cr_scroll_area_set_vertical_scroll_bar_policy = qt6cr_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_scroll_area_horizontal_scroll_bar_policy = qt6cr_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int
     fun qt6cr_scroll_area_set_horizontal_scroll_bar_policy = qt6cr_scroll_area_set_horizontal_scroll_bar_policy(handle : Handle, policy : LibC::Int)
+    fun qt6cr_scroll_area_ensure_visible = qt6cr_scroll_area_ensure_visible(handle : Handle, x : LibC::Int, y : LibC::Int, xmargin : LibC::Int, ymargin : LibC::Int)
+    fun qt6cr_scroll_area_ensure_widget_visible = qt6cr_scroll_area_ensure_widget_visible(handle : Handle, widget : Handle, xmargin : LibC::Int, ymargin : LibC::Int)
     fun qt6cr_abstract_scroll_area_vertical_scroll_bar_policy = qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(handle : Handle) : LibC::Int
     fun qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy = qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy = qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int
