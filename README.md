@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.6.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, undo/redo stacks, standard dialog galleries, font dialogs, deeper raster/SVG/PDF rendering and export, richer `QPainterPath` editing, raw `QImage` byte-buffer workflows, image and pixmap transforms, richer `EventWidget` input hooks, clipboard access, `QMimeData`, richer text/document editing, broader model/view and table support, validators and completers, application-service utilities, common desktop controls, maintained integration examples, and the lifecycle fixes needed to run that surface more reliably across macOS and Linux.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.7.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, undo/redo stacks and shared undo groups, widget-owned actions and shortcuts, standard dialog galleries, font dialogs, deeper raster/SVG/PDF rendering and export, configured image writing, richer `QPainterPath` editing, raw `QImage` byte-buffer workflows, image and pixmap transforms, richer `EventWidget` input hooks, clipboard access, `QMimeData`, richer text/document editing, broader model/view and table support, validators and completers, application-service utilities, common desktop controls, maintained integration examples, and the lifecycle fixes needed to run that surface more reliably across macOS and Linux.
 
 ## Requirements
 

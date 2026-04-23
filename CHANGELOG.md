@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-23
+
 ### Added
 
 - Added `Application#invoke_later` for scheduling Crystal callbacks on the Qt event loop.
