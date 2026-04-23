@@ -72,6 +72,82 @@ def save_widget_region(app : Qt6::Application, widget : Qt6::Widget, file_name :
   puts output
 end
 
+def callout(painter : Qt6::QPainter, number : Int32, x : Number, y : Number, title : String, body : String, color : Qt6::Color)
+  rect = Qt6::RectF.new(x.to_f64, y.to_f64, 300.0, 108.0)
+  painter.pen = Qt6::QPen.new(color, 3.0)
+  painter.brush = Qt6::Color.new(255, 255, 255)
+  painter.draw_rect(rect)
+  painter.pen = Qt6::QPen.new(color, 2.0)
+  painter.brush = color
+  painter.draw_ellipse(Qt6::PointF.new(rect.x + 28.0, rect.y + 32.0), 18.0, 18.0)
+  painter.pen = Qt6::Color.new(255, 255, 255)
+  painter.font = Qt6::QFont.new(point_size: 18, bold: true)
+  painter.draw_text(Qt6::PointF.new(rect.x + 22.0, rect.y + 40.0), number.to_s)
+  painter.pen = Qt6::Color.new(32, 42, 52)
+  painter.font = Qt6::QFont.new(point_size: 17, bold: true)
+  painter.draw_text(Qt6::PointF.new(rect.x + 58.0, rect.y + 32.0), title)
+  painter.font = Qt6::QFont.new(point_size: 14)
+  body.split('\n').each_with_index do |line, index|
+    painter.draw_text(Qt6::PointF.new(rect.x + 18.0, rect.y + 64.0 + index * 20.0), line)
+  end
+end
+
+def outline_region(painter : Qt6::QPainter, number : Int32, rect : Qt6::RectF, color : Qt6::Color)
+  painter.pen = Qt6::QPen.new(color, 5.0)
+  painter.brush = Qt6::Color.new(0, 0, 0, 0)
+  painter.draw_rect(rect)
+  painter.brush = color
+  painter.pen = Qt6::QPen.new(Qt6::Color.new(255, 255, 255), 2.0)
+  painter.draw_ellipse(Qt6::PointF.new(rect.x + 24.0, rect.y + 28.0), 18.0, 18.0)
+  painter.font = Qt6::QFont.new(point_size: 18, bold: true)
+  painter.pen = Qt6::Color.new(255, 255, 255)
+  painter.draw_text(Qt6::PointF.new(rect.x + 18.0, rect.y + 36.0), number.to_s)
+end
+
+def save_architecture_map(file_name : String, shell_file_name : String)
+  source = Qt6::QImage.from_file(File.join(OUTPUT_DIR, shell_file_name))
+  image = Qt6::QImage.new(1600, 920)
+  image.fill(Qt6::Color.new(248, 250, 250))
+
+  Qt6::QPainter.paint(image) do |painter|
+    painter.antialiasing = true
+    painter.smooth_pixmap_transform = true
+
+    target = Qt6::RectF.new(40.0, 48.0, 1180.0, 720.0)
+    painter.draw_image(target, source)
+
+    painter.font = Qt6::QFont.new(point_size: 26, bold: true)
+    painter.pen = Qt6::Color.new(32, 42, 52)
+    painter.draw_text(Qt6::PointF.new(40.0, 34.0), "editor_vertical_slice.cr: screenshot to source map")
+
+    blue = Qt6::Color.new(72, 126, 176)
+    green = Qt6::Color.new(62, 130, 109)
+    orange = Qt6::Color.new(204, 86, 62)
+    violet = Qt6::Color.new(92, 88, 176)
+    slate = Qt6::Color.new(80, 94, 108)
+
+    outline_region(painter, 1, Qt6::RectF.new(58.0, 116.0, 250.0, 570.0), blue)
+    outline_region(painter, 2, Qt6::RectF.new(320.0, 118.0, 596.0, 570.0), green)
+    outline_region(painter, 3, Qt6::RectF.new(920.0, 116.0, 278.0, 570.0), orange)
+    outline_region(painter, 4, Qt6::RectF.new(42.0, 50.0, 1174.0, 62.0), violet)
+    outline_region(painter, 5, Qt6::RectF.new(42.0, 688.0, 1174.0, 78.0), slate)
+
+    callout(painter, 1, 1260, 72, "Layer model + dock", "lines 334-396\nmodel, proxy, selection", blue)
+    callout(painter, 2, 1260, 202, "Canvas + events", "lines 157-331\npaint, pan, zoom", green)
+    callout(painter, 3, 1260, 332, "Inspector dock", "lines 398-587\ncontrols sync to state", orange)
+    callout(painter, 4, 1260, 462, "Actions and menus", "lines 447-628\nsave, undo, export", violet)
+    callout(painter, 5, 1260, 592, "State and export", "lines 3-224\nsnapshot, settings, grab", slate)
+
+    painter.font = Qt6::QFont.new(point_size: 17)
+    painter.pen = Qt6::Color.new(66, 76, 86)
+    painter.draw_text(Qt6::PointF.new(48.0, 832.0), "Use the numbered regions to jump from the running UI back to the source: document state, model/view wiring, painter callbacks, inspector controls, and application commands.")
+  end
+
+  output = File.join(OUTPUT_DIR, file_name)
+  abort "Could not write #{output}" unless image.save(output)
+  puts output
+end
+
 app = Qt6.application(["capture-worked-example-screenshots"])
 app.name = "Worked Example Screenshots"
 app.organization_name = "crystal-qt6"
@@ -309,6 +385,7 @@ save_widget(app, main, "putting-together-editor-shell.png")
 save_widget(app, canvas, "putting-together-canvas.png")
 save_widget_region(app, layers_panel, "putting-together-layers-dock.png", 374, 760)
 save_widget_region(app, inspector, "putting-together-inspector-dock.png", 542, 700)
+save_architecture_map("putting-together-architecture-map.png", "putting-together-editor-shell.png")
 
 main.close
 process_paints(app)
