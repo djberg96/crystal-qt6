@@ -2516,6 +2516,15 @@ void qt6cr_widget_raise_to_front(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_widget_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *widget = as_widget(handle);
+  auto *widget_action = as_action(action);
+
+  if (widget != nullptr && widget_action != nullptr) {
+    widget->addAction(widget_action);
+  }
+}
+
 void qt6cr_widget_set_fixed_width(qt6cr_handle_t handle, int value) {
   auto *widget = as_widget(handle);
 

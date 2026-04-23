@@ -171,6 +171,12 @@ module Qt6
       self
     end
 
+    # Adds an action to the widget so its shortcuts can be triggered.
+    def add_action(action : Action) : Action
+      LibQt6.qt6cr_widget_add_action(@to_unsafe, action.to_unsafe)
+      action
+    end
+
     # Locks the widget width and returns the assigned value.
     def fixed_width=(value : Int) : Int32
       int_value = value.to_i32
