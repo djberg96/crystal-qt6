@@ -58,6 +58,39 @@ module Qt6
       value
     end
 
+    # Returns `true` when the toolbar may detach into a floating window.
+    def floatable? : Bool
+      LibQt6.qt6cr_tool_bar_is_floatable(to_unsafe)
+    end
+
+    # Enables or disables toolbar floating.
+    def floatable=(value : Bool) : Bool
+      LibQt6.qt6cr_tool_bar_set_floatable(to_unsafe, value)
+      value
+    end
+
+    # Returns the icon size used for toolbar actions and buttons.
+    def icon_size : Size
+      Size.from_native(LibQt6.qt6cr_tool_bar_icon_size(to_unsafe))
+    end
+
+    # Sets the icon size used for toolbar actions and buttons.
+    def icon_size=(value : Size) : Size
+      LibQt6.qt6cr_tool_bar_set_icon_size(to_unsafe, LibQt6::SizeValue.new(width: value.width, height: value.height))
+      value
+    end
+
+    # Returns the style used when toolbar actions are shown as buttons.
+    def tool_button_style : ToolButtonStyle
+      ToolButtonStyle.from_value(LibQt6.qt6cr_tool_bar_tool_button_style(to_unsafe))
+    end
+
+    # Sets the style used when toolbar actions are shown as buttons.
+    def tool_button_style=(value : ToolButtonStyle) : ToolButtonStyle
+      LibQt6.qt6cr_tool_bar_set_tool_button_style(to_unsafe, value.value)
+      value
+    end
+
     # Returns the built-in visibility toggle action for this toolbar.
     def toggle_view_action : Action
       Action.wrap(LibQt6.qt6cr_tool_bar_toggle_view_action(to_unsafe))

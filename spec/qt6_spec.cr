@@ -2145,6 +2145,9 @@ describe Qt6 do
 
     window.add_tool_bar(toolbar)
     toolbar.movable = false
+    toolbar.floatable = false
+    toolbar.icon_size = Qt6::Size.new(20, 18)
+    toolbar.tool_button_style = Qt6::ToolButtonStyle::TextBesideIcon
     toolbar.add_widget(search)
     toolbar.add_separator
     toolbar_action = toolbar.add_action("Refresh")
@@ -2168,6 +2171,9 @@ describe Qt6 do
     file_menu.add_action(Qt6::Action.new("Manual", window)).text.should eq("Manual")
     file_menu.clear
     toolbar.movable?.should be_false
+    toolbar.floatable?.should be_false
+    toolbar.icon_size.should eq(Qt6::Size.new(20, 18))
+    toolbar.tool_button_style.should eq(Qt6::ToolButtonStyle::TextBesideIcon)
     toolbar.title.should eq("Inspector Tools")
     toggle_view_action.checkable?.should be_true
     toggle_view_action.text.should eq("Inspector Tools")

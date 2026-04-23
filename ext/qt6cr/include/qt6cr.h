@@ -1171,6 +1171,12 @@ void qt6cr_tool_bar_add_separator(qt6cr_handle_t handle);
 void qt6cr_tool_bar_clear(qt6cr_handle_t handle);
 void qt6cr_tool_bar_set_movable(qt6cr_handle_t handle, bool value);
 bool qt6cr_tool_bar_is_movable(qt6cr_handle_t handle);
+void qt6cr_tool_bar_set_floatable(qt6cr_handle_t handle, bool value);
+bool qt6cr_tool_bar_is_floatable(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_tool_bar_icon_size(qt6cr_handle_t handle);
+void qt6cr_tool_bar_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size);
+int qt6cr_tool_bar_tool_button_style(qt6cr_handle_t handle);
+void qt6cr_tool_bar_set_tool_button_style(qt6cr_handle_t handle, int style);
 qt6cr_handle_t qt6cr_tool_bar_toggle_view_action(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent);

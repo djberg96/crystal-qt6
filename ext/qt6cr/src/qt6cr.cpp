@@ -8757,6 +8757,45 @@ bool qt6cr_tool_bar_is_movable(qt6cr_handle_t handle) {
   return tool_bar != nullptr && tool_bar->isMovable();
 }
 
+void qt6cr_tool_bar_set_floatable(qt6cr_handle_t handle, bool value) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->setFloatable(value);
+  }
+}
+
+bool qt6cr_tool_bar_is_floatable(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar != nullptr && tool_bar->isFloatable();
+}
+
+qt6cr_size_t qt6cr_tool_bar_icon_size(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(tool_bar->iconSize());
+}
+
+void qt6cr_tool_bar_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->setIconSize(QSize(size.width, size.height));
+  }
+}
+
+int qt6cr_tool_bar_tool_button_style(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar == nullptr ? static_cast<int>(Qt::ToolButtonIconOnly) : static_cast<int>(tool_bar->toolButtonStyle());
+}
+
+void qt6cr_tool_bar_set_tool_button_style(qt6cr_handle_t handle, int style) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(style));
+  }
+}
+
 qt6cr_handle_t qt6cr_tool_bar_toggle_view_action(qt6cr_handle_t handle) {
   auto *tool_bar = as_tool_bar(handle);
   return tool_bar == nullptr ? nullptr : static_cast<qt6cr_handle_t>(tool_bar->toggleViewAction());
