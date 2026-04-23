@@ -468,9 +468,13 @@ render_image("model-view-proxy-selection.png", 1400, 800) do |painter, rect|
     Qt6::PointF.new(773.0, 660.0),
   ])
   arrow(painter, Qt6::PointF.new(1060.0, 540.0), Qt6::PointF.new(773.0, 615.0))
-  arrow(painter, Qt6::PointF.new(450.0, 640.0), Qt6::PointF.new(220.0, 380.0))
+  routed_arrow(painter, [
+    Qt6::PointF.new(450.0, 640.0),
+    Qt6::PointF.new(180.0, 640.0),
+    Qt6::PointF.new(180.0, 380.0),
+  ])
 
-  label(painter, 356, 200, "map_from_source", 20, true)
-  label(painter, 116, 534, "map_to_source before edit", 20, true)
+  label(painter, 320, 200, "map_from_source", 20, true)
+  label(painter, 210, 500, "map_to_source before edit", 20, true)
   label(painter, 820, 690, "shared selection tracks the proxy model", 20, true)
 end
