@@ -2754,17 +2754,30 @@ describe Qt6 do
     application = app
     main = Qt6::MainWindow.new
     dock = Qt6::DockWidget.new("Layers", main)
-    dock.widget = Qt6::Label.new("Layer list")
+    label = Qt6::Label.new("Layer list")
+    dock.widget = label
     main.add_dock_widget(dock, Qt6::DockArea::Left)
     toggle_action = dock.toggle_view_action
 
     main.show
     application.process_events
 
+    dock.title.should eq("Layers")
     toggle_action.text.should eq("Layers")
     toggle_action.checkable?.should be_true
+    dock.widget.should_not be_nil
+    dock.widget.not_nil!.window_title.should eq(label.window_title)
     dock.visible?.should be_true
     toggle_action.checked?.should be_true
+    dock.floating?.should be_false
+
+    dock.floating = true
+    application.process_events
+    dock.floating?.should be_true
+
+    dock.floating = false
+    application.process_events
+    dock.floating?.should be_false
 
     toggle_action.trigger
     application.process_events
