@@ -1072,6 +1072,28 @@ module Qt6
     fun qt6cr_undo_stack_on_undo_text_changed = qt6cr_undo_stack_on_undo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
     fun qt6cr_undo_stack_on_redo_text_changed = qt6cr_undo_stack_on_redo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
 
+    fun qt6cr_undo_group_create = qt6cr_undo_group_create(parent : Handle) : Handle
+    fun qt6cr_undo_group_add_stack = qt6cr_undo_group_add_stack(handle : Handle, stack : Handle)
+    fun qt6cr_undo_group_remove_stack = qt6cr_undo_group_remove_stack(handle : Handle, stack : Handle)
+    fun qt6cr_undo_group_active_stack = qt6cr_undo_group_active_stack(handle : Handle) : Handle
+    fun qt6cr_undo_group_set_active_stack = qt6cr_undo_group_set_active_stack(handle : Handle, stack : Handle)
+    fun qt6cr_undo_group_undo = qt6cr_undo_group_undo(handle : Handle)
+    fun qt6cr_undo_group_redo = qt6cr_undo_group_redo(handle : Handle)
+    fun qt6cr_undo_group_can_undo = qt6cr_undo_group_can_undo(handle : Handle) : Bool
+    fun qt6cr_undo_group_can_redo = qt6cr_undo_group_can_redo(handle : Handle) : Bool
+    fun qt6cr_undo_group_is_clean = qt6cr_undo_group_is_clean(handle : Handle) : Bool
+    fun qt6cr_undo_group_undo_text = qt6cr_undo_group_undo_text(handle : Handle) : UInt8*
+    fun qt6cr_undo_group_redo_text = qt6cr_undo_group_redo_text(handle : Handle) : UInt8*
+    fun qt6cr_undo_group_create_undo_action = qt6cr_undo_group_create_undo_action(handle : Handle, parent : Handle, prefix : UInt8*) : Handle
+    fun qt6cr_undo_group_create_redo_action = qt6cr_undo_group_create_redo_action(handle : Handle, parent : Handle, prefix : UInt8*) : Handle
+    fun qt6cr_undo_group_on_active_stack_changed = qt6cr_undo_group_on_active_stack_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_undo_group_on_can_undo_changed = qt6cr_undo_group_on_can_undo_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_undo_group_on_can_redo_changed = qt6cr_undo_group_on_can_redo_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_undo_group_on_clean_changed = qt6cr_undo_group_on_clean_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_undo_group_on_index_changed = qt6cr_undo_group_on_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_undo_group_on_undo_text_changed = qt6cr_undo_group_on_undo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+    fun qt6cr_undo_group_on_redo_text_changed = qt6cr_undo_group_on_redo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+
     fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
     fun qt6cr_menu_bar_clear = qt6cr_menu_bar_clear(handle : Handle)
 

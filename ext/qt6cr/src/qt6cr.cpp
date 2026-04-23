@@ -137,6 +137,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QUndoCommand>
+#include <QUndoGroup>
 #include <QUndoStack>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -1592,6 +1593,10 @@ CrystalUndoCommand *as_undo_command(qt6cr_handle_t handle) {
 
 QUndoStack *as_undo_stack(qt6cr_handle_t handle) {
   return static_cast<QUndoStack *>(handle);
+}
+
+QUndoGroup *as_undo_group(qt6cr_handle_t handle) {
+  return static_cast<QUndoGroup *>(handle);
 }
 
 qt6cr_pointf_t to_pointf(const QPointF &point) {
@@ -8285,6 +8290,178 @@ void qt6cr_undo_stack_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_c
   }
 
   QObject::connect(stack, &QUndoStack::redoTextChanged, stack, [callback, userdata](const QString &value) {
+    const auto bytes = value.toUtf8();
+    callback(userdata, bytes.constData());
+  });
+}
+
+qt6cr_handle_t qt6cr_undo_group_create(qt6cr_handle_t parent) {
+  return new QUndoGroup(as_object(parent));
+}
+
+void qt6cr_undo_group_add_stack(qt6cr_handle_t handle, qt6cr_handle_t stack_handle) {
+  auto *group = as_undo_group(handle);
+  auto *stack = as_undo_stack(stack_handle);
+
+  if (group != nullptr && stack != nullptr) {
+    group->addStack(stack);
+  }
+}
+
+void qt6cr_undo_group_remove_stack(qt6cr_handle_t handle, qt6cr_handle_t stack_handle) {
+  auto *group = as_undo_group(handle);
+  auto *stack = as_undo_stack(stack_handle);
+
+  if (group != nullptr && stack != nullptr) {
+    group->removeStack(stack);
+  }
+}
+
+qt6cr_handle_t qt6cr_undo_group_active_stack(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+  return group == nullptr ? nullptr : group->activeStack();
+}
+
+void qt6cr_undo_group_set_active_stack(qt6cr_handle_t handle, qt6cr_handle_t stack_handle) {
+  auto *group = as_undo_group(handle);
+
+  if (group != nullptr) {
+    group->setActiveStack(as_undo_stack(stack_handle));
+  }
+}
+
+void qt6cr_undo_group_undo(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+
+  if (group != nullptr) {
+    group->undo();
+  }
+}
+
+void qt6cr_undo_group_redo(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+
+  if (group != nullptr) {
+    group->redo();
+  }
+}
+
+bool qt6cr_undo_group_can_undo(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+  return group != nullptr && group->canUndo();
+}
+
+bool qt6cr_undo_group_can_redo(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+  return group != nullptr && group->canRedo();
+}
+
+bool qt6cr_undo_group_is_clean(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+  return group != nullptr && group->isClean();
+}
+
+char *qt6cr_undo_group_undo_text(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+  return group == nullptr ? duplicate_string("") : duplicate_string(group->undoText());
+}
+
+char *qt6cr_undo_group_redo_text(qt6cr_handle_t handle) {
+  auto *group = as_undo_group(handle);
+  return group == nullptr ? duplicate_string("") : duplicate_string(group->redoText());
+}
+
+qt6cr_handle_t qt6cr_undo_group_create_undo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix) {
+  auto *group = as_undo_group(handle);
+  return group == nullptr ? nullptr : group->createUndoAction(as_object(parent), QString::fromUtf8(prefix == nullptr ? "" : prefix));
+}
+
+qt6cr_handle_t qt6cr_undo_group_create_redo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix) {
+  auto *group = as_undo_group(handle);
+  return group == nullptr ? nullptr : group->createRedoAction(as_object(parent), QString::fromUtf8(prefix == nullptr ? "" : prefix));
+}
+
+void qt6cr_undo_group_on_active_stack_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::activeStackChanged, group, [callback, userdata](QUndoStack *stack) {
+    callback(userdata, stack);
+  });
+}
+
+void qt6cr_undo_group_on_can_undo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::canUndoChanged, group, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_group_on_can_redo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::canRedoChanged, group, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_group_on_clean_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::cleanChanged, group, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_group_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::indexChanged, group, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_undo_group_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::undoTextChanged, group, [callback, userdata](const QString &value) {
+    const auto bytes = value.toUtf8();
+    callback(userdata, bytes.constData());
+  });
+}
+
+void qt6cr_undo_group_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *group = as_undo_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QUndoGroup::redoTextChanged, group, [callback, userdata](const QString &value) {
     const auto bytes = value.toUtf8();
     callback(userdata, bytes.constData());
   });

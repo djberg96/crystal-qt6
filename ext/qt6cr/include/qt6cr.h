@@ -1103,6 +1103,28 @@ void qt6cr_undo_stack_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback
 void qt6cr_undo_stack_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 void qt6cr_undo_stack_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_undo_group_create(qt6cr_handle_t parent);
+void qt6cr_undo_group_add_stack(qt6cr_handle_t handle, qt6cr_handle_t stack);
+void qt6cr_undo_group_remove_stack(qt6cr_handle_t handle, qt6cr_handle_t stack);
+qt6cr_handle_t qt6cr_undo_group_active_stack(qt6cr_handle_t handle);
+void qt6cr_undo_group_set_active_stack(qt6cr_handle_t handle, qt6cr_handle_t stack);
+void qt6cr_undo_group_undo(qt6cr_handle_t handle);
+void qt6cr_undo_group_redo(qt6cr_handle_t handle);
+bool qt6cr_undo_group_can_undo(qt6cr_handle_t handle);
+bool qt6cr_undo_group_can_redo(qt6cr_handle_t handle);
+bool qt6cr_undo_group_is_clean(qt6cr_handle_t handle);
+char *qt6cr_undo_group_undo_text(qt6cr_handle_t handle);
+char *qt6cr_undo_group_redo_text(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_undo_group_create_undo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix);
+qt6cr_handle_t qt6cr_undo_group_create_redo_action(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *prefix);
+void qt6cr_undo_group_on_active_stack_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_undo_group_on_can_undo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_undo_group_on_can_redo_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_undo_group_on_clean_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_undo_group_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_undo_group_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+void qt6cr_undo_group_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title);
 void qt6cr_menu_bar_clear(qt6cr_handle_t handle);
 
