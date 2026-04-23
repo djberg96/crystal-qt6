@@ -11,14 +11,22 @@ app.style_sheet = <<-CSS
     background: rgb(255, 255, 255);
     alternate-background-color: rgb(245, 248, 250);
     border: 1px solid rgb(190, 198, 206);
+    color: rgb(31, 41, 55);
     selection-background-color: rgb(72, 126, 176);
     selection-color: white;
+  }
+  QListWidget::item, QTreeWidget::item, QTableView::item {
+    color: rgb(31, 41, 55);
+  }
+  QListWidget::item:selected, QTreeWidget::item:selected, QTableView::item:selected {
+    color: white;
   }
   QHeaderView::section {
     background: rgb(236, 241, 245);
     border: 0;
     border-right: 1px solid rgb(190, 198, 206);
     border-bottom: 1px solid rgb(190, 198, 206);
+    color: rgb(31, 41, 55);
     padding: 6px 8px;
     font-weight: bold;
   }
@@ -58,8 +66,8 @@ list.selection_mode = Qt6::ItemSelectionMode::SingleSelection
 ].each do |name, key, state|
   item = Qt6::ListWidgetItem.new(name)
   item.flags = Qt6::ItemFlag::Enabled |
-    Qt6::ItemFlag::Selectable |
-    Qt6::ItemFlag::UserCheckable
+               Qt6::ItemFlag::Selectable |
+               Qt6::ItemFlag::UserCheckable
   item.check_state = state
   item.set_data(key, Qt6::ItemDataRole::User)
   list << item
@@ -256,9 +264,9 @@ def reorder_list(title : String) : Qt6::ListWidget
   ["Terrain", "Roads", "Labels", "Logistics"].each do |name|
     item = Qt6::ListWidgetItem.new(name)
     item.flags = Qt6::ItemFlag::Enabled |
-      Qt6::ItemFlag::Selectable |
-      Qt6::ItemFlag::DragEnabled |
-      Qt6::ItemFlag::DropEnabled
+                 Qt6::ItemFlag::Selectable |
+                 Qt6::ItemFlag::DragEnabled |
+                 Qt6::ItemFlag::DropEnabled
     list << item
   end
 
