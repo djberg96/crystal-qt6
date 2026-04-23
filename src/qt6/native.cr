@@ -1140,6 +1140,12 @@ module Qt6
     fun qt6cr_tool_bar_clear = qt6cr_tool_bar_clear(handle : Handle)
     fun qt6cr_tool_bar_set_movable = qt6cr_tool_bar_set_movable(handle : Handle, value : Bool)
     fun qt6cr_tool_bar_is_movable = qt6cr_tool_bar_is_movable(handle : Handle) : Bool
+    fun qt6cr_tool_bar_set_floatable = qt6cr_tool_bar_set_floatable(handle : Handle, value : Bool)
+    fun qt6cr_tool_bar_is_floatable = qt6cr_tool_bar_is_floatable(handle : Handle) : Bool
+    fun qt6cr_tool_bar_icon_size = qt6cr_tool_bar_icon_size(handle : Handle) : SizeValue
+    fun qt6cr_tool_bar_set_icon_size = qt6cr_tool_bar_set_icon_size(handle : Handle, size : SizeValue)
+    fun qt6cr_tool_bar_tool_button_style = qt6cr_tool_bar_tool_button_style(handle : Handle) : LibC::Int
+    fun qt6cr_tool_bar_set_tool_button_style = qt6cr_tool_bar_set_tool_button_style(handle : Handle, style : LibC::Int)
     fun qt6cr_tool_bar_toggle_view_action = qt6cr_tool_bar_toggle_view_action(handle : Handle) : Handle
 
     fun qt6cr_status_bar_create = qt6cr_status_bar_create(parent : Handle) : Handle
