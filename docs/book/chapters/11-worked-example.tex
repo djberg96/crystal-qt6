@@ -23,6 +23,12 @@ The goal is not to build every feature at once. The goal is to make one thin pat
   \caption{The vertical slice combines a central canvas, model/view layer dock, inspector dock, toolbar, menus, and status bar.}
 \end{figure}
 
+\begin{figure}[tbp]
+  \centering
+  \screenshotimage{docs/book/images/putting-together-architecture-map.png}{width=0.95\textwidth,height=0.46\textheight,keepaspectratio}%
+  \caption{Source map for \api{examples/editor_vertical_slice.cr}; numbered regions connect the running UI to the relevant code.}
+\end{figure}
+
 \section{Start With Application State}
 
 Keep document-ish state separate from the widgets. In the example, \api{EditorVerticalSliceState} stores the current layer, zoom, pan, grid spacing, marker size, accent color, and drag state.
@@ -313,6 +319,8 @@ export_png = -> do
 end
 \end{lstlisting}
 
+The complete example keeps a reusable \api{FileDialog} instance, preselects the last export path from \api{QSettings}, appends \api{.png} when needed, checks the return value from \api{canvas.grab.save}, and stores the successful path for the next export. That makes the export command a complete user workflow rather than just a screenshot helper.
+
 The broader showcase example adds image loading through \api{QImageReader}. It also demonstrates clipboard MIME payloads, settings persistence, text editing, and drag/drop.
 
 \section{Promote Commands To Actions}
@@ -380,6 +388,29 @@ The vertical slice wires a small \api{UndoStack} around the changes that feel li
 
 The rule from Chapter 9 still applies: capture old and new state, push a command, and let \api{redo} perform the forward edit. Later features, such as moving scene objects or dropping external image assets, should follow the same command shape.
 
+\section{Second-Pass Features}
+
+After the first vertical slice is stable, the next natural pass is to make the editor feel more like a document tool. Keep these features small and command-shaped:
+
+\begin{itemize}
+\item Editable layer rows: make the layer model return \api{ItemFlag::Editable}, commit through \api{model_set_data}, and push a \api{Rename layer} command that updates state, the model, and the canvas together.
+\item Drag/drop layer ordering: enable internal moves on the layer view, move the backing model rows with \api{begin_move_rows} and \api{end_move_rows}, and record a \api{Move layer} undo command.
+\item Object movement commands: during mouse drag, update only transient preview state; when the release event arrives, push one \api{Move marker} command from the starting scene position to the final scene position.
+\item External drops: accept image or text MIME payloads on the canvas, decode or store them at the document boundary, then push an import command rather than mutating the document directly from the drop callback.
+\end{itemize}
+
+\section{From Example To App}
+
+Before turning this vertical slice into a longer-lived application, walk through the seams that prototypes usually skip:
+
+\begin{itemize}
+\item Document state: decide which fields belong to the saved document, which are view preferences, and which are transient UI state.
+\item Dirty tracking: use \api{UndoStack#set_clean} only after a successful save, update the window title and Save action from \api{clean?}, and reset the stack when a different document is loaded.
+\item Command enablement: disable export, copy, delete, move, or property actions when there is no valid selection or no document.
+\item Save and export paths: keep project-save paths separate from PNG export paths, remember successful paths in \api{QSettings}, and check every \api{save} return value.
+\item Teardown and release checks: let parented widgets be owned by Qt, release explicit resources that are not parented, and make sure painter targets are finished before reading or saving them.
+\end{itemize}
+
 \section{A Reasonable Build Order}
 
 \begin{enumerate}
@@ -402,3 +433,7 @@ The rule from Chapter 9 still applies: capture old and new state, push a command
 \api{examples/desktop_editor_showcase.cr} is broader. It demonstrates application metadata, settings, model/view panels, image loading, clipboard MIME data, text editing, drag/drop, custom preview rendering, and PNG export.
 
 For release documentation, prefer screenshots from maintained examples over mockups. The example programs are small enough to keep fresh as the binding evolves, and concrete screenshots make later chapters easier for readers to trust.
+
+\section{Reader Exercise}
+
+Add one new layer property, such as route thickness or label density. Put the value in \api{EditorVerticalSliceState}, include it in \api{EditorVerticalSliceSnapshot}, add an inspector control, repaint the canvas from the new value, and make the change undoable. Then export a PNG and confirm that the captured canvas reflects the property after redo, undo, and redo again.

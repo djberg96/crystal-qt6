@@ -80,6 +80,7 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_worked_example_
 The script uses ImageMagick's `magick` command to flatten transparent widget grabs for PDF output.
 
 - `putting-together-editor-shell.png`
+- `putting-together-architecture-map.png`
 - `putting-together-canvas.png`
 - `putting-together-layers-dock.png`
 - `putting-together-inspector-dock.png`
