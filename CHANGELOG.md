@@ -13,6 +13,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `Slider#on_pressed` and `Slider#on_released` for handle press/release callbacks.
 - Added opt-in `Slider#click_to_position` track-click behavior.
 - Added `UndoGroup` for coordinating shared undo/redo actions across multiple document stacks.
+- Added `DockWidget#toggle_view_action` for dock-owned View menu visibility toggles.
 
 ### Changed
 

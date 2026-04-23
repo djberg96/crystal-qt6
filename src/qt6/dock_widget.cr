@@ -12,5 +12,10 @@ module Qt6
       widget.adopt_by_parent!
       widget
     end
+
+    # Returns the built-in visibility toggle action for this dock.
+    def toggle_view_action : Action
+      Action.wrap(LibQt6.qt6cr_dock_widget_toggle_view_action(to_unsafe))
+    end
   end
 end

@@ -1036,6 +1036,7 @@ char *qt6cr_input_dialog_get_item(qt6cr_handle_t parent, const char *title, cons
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title);
 void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_action_set_text(qt6cr_handle_t handle, const char *text);

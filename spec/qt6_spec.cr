@@ -2713,6 +2713,38 @@ describe Qt6 do
     stack.release
   end
 
+  it "provides dock-owned toggle view actions" do
+    application = app
+    main = Qt6::MainWindow.new
+    dock = Qt6::DockWidget.new("Layers", main)
+    dock.widget = Qt6::Label.new("Layer list")
+    main.add_dock_widget(dock, Qt6::DockArea::Left)
+    toggle_action = dock.toggle_view_action
+
+    main.show
+    application.process_events
+
+    toggle_action.text.should eq("Layers")
+    toggle_action.checkable?.should be_true
+    dock.visible?.should be_true
+    toggle_action.checked?.should be_true
+
+    toggle_action.trigger
+    application.process_events
+
+    dock.visible?.should be_false
+    toggle_action.checked?.should be_false
+
+    dock.visible = true
+    application.process_events
+
+    dock.visible?.should be_true
+    toggle_action.checked?.should be_true
+
+    toggle_action.release
+    main.release
+  end
+
   it "retargets shared undo and redo actions with undo groups" do
     app
     group = Qt6::UndoGroup.new
