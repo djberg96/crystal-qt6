@@ -10645,18 +10645,6 @@ void qt6cr_table_widget_resize_rows_to_contents(qt6cr_handle_t handle) {
   }
 }
 
-void qt6cr_table_widget_on_item_double_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
-  auto *table = as_table_widget(handle);
-
-  if (table == nullptr || callback == nullptr) {
-    return;
-  }
-
-  QObject::connect(table, &QTableWidget::itemDoubleClicked, table, [callback, userdata](QTableWidgetItem *item) {
-    callback(userdata, item);
-  });
-}
-
 namespace {
 class Qt6crSlider : public QSlider {
 public:
