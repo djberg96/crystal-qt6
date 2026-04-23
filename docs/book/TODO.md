@@ -5,14 +5,9 @@ Deferred ideas for the LaTeX guide. These are useful, but not required before co
 ## Chapter 5: Dialogs
 
 - Revisit the full chapter layout after the first screenshot pass. Tune float placement, code/example ordering, figure sizes, page breaks, and whether related screenshots should be grouped into shared figure blocks.
-- Add a short note that `make docs-book` does not currently track image timestamp changes; after replacing screenshots, run `pdflatex` directly or teach the Makefile about image dependencies.
-- Expand the dialog gallery and chapter coverage beyond the first pass. Candidates include information and critical message boxes, multi-file open dialogs, directory selection, double input dialogs, editable item input dialogs, splash screens, and richer custom dialogs.
-- Add small "created with" code snippets for screenshots that do not already have an adjacent example, while avoiding duplicate snippets where the main example already creates the figure.
-- Decide whether native dialogs and widget-backed dialogs should both be shown for color/font/file workflows, especially where native dialogs look very different across macOS, Linux, and Windows.
+- Expand the dialog gallery application beyond the current first-pass screenshots. Candidates include information and critical message boxes, multi-file open dialogs, directory selection, double input dialogs, editable item input dialogs, splash screens, and richer custom dialogs.
 - Improve screenshot automation for native modal dialogs. The current capture workflow works, but native dialogs may need foreground launches or manual recapture on macOS.
 - Consider refreshing the dialog screenshots with a consistent light/dark theme decision, window scale, and crop style before publication.
-- Add guidance about when to prefer convenience helpers versus explicit dialog instances, including testability, customization, signals, and ownership/release behavior.
-- Add a troubleshooting sidebar for dialogs that do not appear, appear behind the main window, or behave differently when launched from scripts.
 
 ## Chapter 6: Signals And Events
 
