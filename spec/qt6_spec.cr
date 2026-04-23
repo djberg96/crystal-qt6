@@ -2951,6 +2951,25 @@ describe Qt6 do
     quit_loop.running?.should be_false
   end
 
+  it "quits the application through the top-level window close path" do
+    application = app
+    window = Qt6::MainWindow.new
+
+    window.show
+    application.process_events
+    window.visible?.should be_true
+
+    application.invoke_later do
+      application.quit
+    end
+
+    application.run.should eq(0)
+    application.process_events
+    window.visible?.should be_false
+
+    window.release
+  end
+
   it "supports list and tree widgets for editor panels" do
     application = app
     list_widget = Qt6::ListWidget.new

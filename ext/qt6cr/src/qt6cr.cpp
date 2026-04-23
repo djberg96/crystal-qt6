@@ -1943,7 +1943,16 @@ void qt6cr_application_quit(qt6cr_handle_t handle) {
   auto *state = as_application_state(handle);
 
   if (state != nullptr && state->application != nullptr) {
-    state->application->quit();
+    auto *application = state->application;
+    QMetaObject::invokeMethod(application, [application]() {
+      if (!application->topLevelWidgets().isEmpty()) {
+        application->closeAllWindows();
+      }
+
+      if (application->topLevelWidgets().isEmpty()) {
+        application->quit();
+      }
+    }, Qt::QueuedConnection);
   }
 }
 
