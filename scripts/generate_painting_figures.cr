@@ -99,6 +99,20 @@ def arrow(painter : Qt6::QPainter, from_point : Qt6::PointF, to_point : Qt6::Poi
   painter.draw_line(to_point, right)
 end
 
+def routed_arrow(painter : Qt6::QPainter, points : Array(Qt6::PointF), color : Qt6::Color = Qt6::Color.new(120, 132, 144))
+  return if points.size < 2
+
+  pen = Qt6::QPen.new(color, 5.0)
+  pen.cap_style = Qt6::PenCapStyle::RoundCap
+  painter.pen = pen
+
+  (points.size - 2).times do |index|
+    painter.draw_line(points[index], points[index + 1])
+  end
+
+  arrow(painter, points[-2], points[-1], color)
+end
+
 def draw_export_badge(painter : Qt6::QPainter, x : Float64, y : Float64, title : String, accent : Qt6::Color)
   painter.save
   painter.translate(x, y)
@@ -436,7 +450,7 @@ render_image("model-view-proxy-selection.png", 1400, 800) do |painter, rect|
   proxy_rect = Qt6::RectF.new(470.0, 220.0, 270.0, 155.0)
   list_rect = Qt6::RectF.new(930.0, 150.0, 270.0, 145.0)
   tree_rect = Qt6::RectF.new(930.0, 395.0, 270.0, 145.0)
-  selection_rect = Qt6::RectF.new(470.0, 570.0, 270.0, 145.0)
+  selection_rect = Qt6::RectF.new(450.0, 570.0, 320.0, 145.0)
 
   draw_node(painter, source_rect, "Source model", "true data order\nrows 0, 1, 2", Qt6::Color.new(92, 154, 110), 24, 18)
   draw_node(painter, proxy_rect, "Proxy model", "visible order\nfiltered rows", Qt6::Color.new(204, 132, 62), 24, 18)
@@ -447,9 +461,14 @@ render_image("model-view-proxy-selection.png", 1400, 800) do |painter, rect|
   arrow(painter, Qt6::PointF.new(350.0, 298.0), Qt6::PointF.new(465.0, 298.0))
   arrow(painter, Qt6::PointF.new(740.0, 270.0), Qt6::PointF.new(925.0, 220.0))
   arrow(painter, Qt6::PointF.new(740.0, 330.0), Qt6::PointF.new(925.0, 468.0))
-  arrow(painter, Qt6::PointF.new(1060.0, 295.0), Qt6::PointF.new(743.0, 625.0))
-  arrow(painter, Qt6::PointF.new(1060.0, 540.0), Qt6::PointF.new(743.0, 660.0))
-  arrow(painter, Qt6::PointF.new(470.0, 640.0), Qt6::PointF.new(220.0, 380.0))
+  routed_arrow(painter, [
+    Qt6::PointF.new(1200.0, 245.0),
+    Qt6::PointF.new(1270.0, 245.0),
+    Qt6::PointF.new(1270.0, 660.0),
+    Qt6::PointF.new(773.0, 660.0),
+  ])
+  arrow(painter, Qt6::PointF.new(1060.0, 540.0), Qt6::PointF.new(773.0, 615.0))
+  arrow(painter, Qt6::PointF.new(450.0, 640.0), Qt6::PointF.new(220.0, 380.0))
 
   label(painter, 356, 200, "map_from_source", 20, true)
   label(painter, 116, 534, "map_to_source before edit", 20, true)
