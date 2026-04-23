@@ -356,6 +356,27 @@ module Qt6
     fun qt6cr_qimage_reader_read = qt6cr_qimage_reader_read(handle : Handle) : Handle
     fun qt6cr_qimage_reader_read_into = qt6cr_qimage_reader_read_into(handle : Handle, image : Handle) : Bool
 
+    fun qt6cr_qimage_writer_create = qt6cr_qimage_writer_create(file_name : UInt8*, format : UInt8*) : Handle
+    fun qt6cr_qimage_writer_create_from_device = qt6cr_qimage_writer_create_from_device(device : Handle, format : UInt8*) : Handle
+    fun qt6cr_qimage_writer_destroy = qt6cr_qimage_writer_destroy(handle : Handle)
+    fun qt6cr_qimage_writer_file_name = qt6cr_qimage_writer_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qimage_writer_set_file_name = qt6cr_qimage_writer_set_file_name(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qimage_writer_format = qt6cr_qimage_writer_format(handle : Handle) : UInt8*
+    fun qt6cr_qimage_writer_set_format = qt6cr_qimage_writer_set_format(handle : Handle, format : UInt8*)
+    fun qt6cr_qimage_writer_can_write = qt6cr_qimage_writer_can_write(handle : Handle) : Bool
+    fun qt6cr_qimage_writer_write = qt6cr_qimage_writer_write(handle : Handle, image : Handle) : Bool
+    fun qt6cr_qimage_writer_quality = qt6cr_qimage_writer_quality(handle : Handle) : LibC::Int
+    fun qt6cr_qimage_writer_set_quality = qt6cr_qimage_writer_set_quality(handle : Handle, value : LibC::Int)
+    fun qt6cr_qimage_writer_compression = qt6cr_qimage_writer_compression(handle : Handle) : LibC::Int
+    fun qt6cr_qimage_writer_set_compression = qt6cr_qimage_writer_set_compression(handle : Handle, value : LibC::Int)
+    fun qt6cr_qimage_writer_optimized_write = qt6cr_qimage_writer_optimized_write(handle : Handle) : Bool
+    fun qt6cr_qimage_writer_set_optimized_write = qt6cr_qimage_writer_set_optimized_write(handle : Handle, value : Bool)
+    fun qt6cr_qimage_writer_progressive_scan_write = qt6cr_qimage_writer_progressive_scan_write(handle : Handle) : Bool
+    fun qt6cr_qimage_writer_set_progressive_scan_write = qt6cr_qimage_writer_set_progressive_scan_write(handle : Handle, value : Bool)
+    fun qt6cr_qimage_writer_error_string = qt6cr_qimage_writer_error_string(handle : Handle) : UInt8*
+    fun qt6cr_qimage_writer_supported_image_formats = qt6cr_qimage_writer_supported_image_formats : StringArrayValue
+    fun qt6cr_qimage_writer_supported_mime_types = qt6cr_qimage_writer_supported_mime_types : StringArrayValue
+
     fun qt6cr_qpixmap_create = qt6cr_qpixmap_create(width : LibC::Int, height : LibC::Int) : Handle
     fun qt6cr_qpixmap_create_from_file = qt6cr_qpixmap_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qpixmap_destroy = qt6cr_qpixmap_destroy(handle : Handle)

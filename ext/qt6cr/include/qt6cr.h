@@ -386,6 +386,27 @@ char *qt6cr_qimage_reader_error_string(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_qimage_reader_read(qt6cr_handle_t handle);
 bool qt6cr_qimage_reader_read_into(qt6cr_handle_t handle, qt6cr_handle_t image);
 
+qt6cr_handle_t qt6cr_qimage_writer_create(const char *file_name, const char *format);
+qt6cr_handle_t qt6cr_qimage_writer_create_from_device(qt6cr_handle_t device, const char *format);
+void qt6cr_qimage_writer_destroy(qt6cr_handle_t handle);
+char *qt6cr_qimage_writer_file_name(qt6cr_handle_t handle);
+void qt6cr_qimage_writer_set_file_name(qt6cr_handle_t handle, const char *file_name);
+char *qt6cr_qimage_writer_format(qt6cr_handle_t handle);
+void qt6cr_qimage_writer_set_format(qt6cr_handle_t handle, const char *format);
+bool qt6cr_qimage_writer_can_write(qt6cr_handle_t handle);
+bool qt6cr_qimage_writer_write(qt6cr_handle_t handle, qt6cr_handle_t image);
+int qt6cr_qimage_writer_quality(qt6cr_handle_t handle);
+void qt6cr_qimage_writer_set_quality(qt6cr_handle_t handle, int value);
+int qt6cr_qimage_writer_compression(qt6cr_handle_t handle);
+void qt6cr_qimage_writer_set_compression(qt6cr_handle_t handle, int value);
+bool qt6cr_qimage_writer_optimized_write(qt6cr_handle_t handle);
+void qt6cr_qimage_writer_set_optimized_write(qt6cr_handle_t handle, bool value);
+bool qt6cr_qimage_writer_progressive_scan_write(qt6cr_handle_t handle);
+void qt6cr_qimage_writer_set_progressive_scan_write(qt6cr_handle_t handle, bool value);
+char *qt6cr_qimage_writer_error_string(qt6cr_handle_t handle);
+qt6cr_string_array_t qt6cr_qimage_writer_supported_image_formats(void);
+qt6cr_string_array_t qt6cr_qimage_writer_supported_mime_types(void);
+
 qt6cr_handle_t qt6cr_qpixmap_create(int width, int height);
 qt6cr_handle_t qt6cr_qpixmap_create_from_file(const char *path);
 void qt6cr_qpixmap_destroy(qt6cr_handle_t handle);

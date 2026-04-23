@@ -259,7 +259,30 @@ reader = Qt6::QImageReader.new(buffer, "png")
 image = reader.read if reader.can_read?
 \end{lstlisting}
 
-As with decoding, exact writable formats depend on the Qt plugins in the deployment. The current binding exposes direct \api{save} and \api{save_to_data} operations, so choose the path extension or explicit format, then check the boolean result. If a later binding release adds a \api{QImageWriter} wrapper, that is where writer-specific quality, compression, progressive encoding, and metadata options would belong.
+As with decoding, exact writable formats depend on the Qt plugins in the deployment. For simple exports, \api{save} and \api{save_to_data} are enough: choose the path extension or explicit format, then check the boolean result. Use \api{QImageWriter} when the export needs writer-specific options such as quality, compression, optimized output, or progressive encoding.
+
+\begin{lstlisting}[style=crystal]
+writer = Qt6::QImageWriter.new("preview.jpg", "jpg")
+writer.quality = 92
+writer.optimized_write = true
+
+unless writer.can_write? && writer.write(image)
+  status_bar.show_message(writer.error_string, 2200)
+end
+\end{lstlisting}
+
+\api{QImageWriter} also works with an open \api{IODevice}, which is useful when encoded images should stay in memory:
+
+\begin{lstlisting}[style=crystal]
+bytes = Qt6::QByteArray.new
+buffer = Qt6::QBuffer.new(bytes)
+buffer.open(Qt6::IODeviceOpenMode::WriteOnly)
+
+writer = Qt6::QImageWriter.new(buffer, "png")
+writer.compression = 1
+writer.write(image)
+buffer.close
+\end{lstlisting}
 
 \begin{figure}[htbp]
   \centering

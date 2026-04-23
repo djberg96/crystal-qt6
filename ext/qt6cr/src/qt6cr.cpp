@@ -71,6 +71,7 @@
 #include <QMouseEvent>
 #include <QImage>
 #include <QImageReader>
+#include <QImageWriter>
 #include <QObject>
 #include <QPaintEvent>
 #include <QPainter>
@@ -1137,6 +1138,10 @@ QImage *as_qimage(qt6cr_handle_t handle) {
 
 QImageReader *as_qimage_reader(qt6cr_handle_t handle) {
   return static_cast<QImageReader *>(handle);
+}
+
+QImageWriter *as_qimage_writer(qt6cr_handle_t handle) {
+  return static_cast<QImageWriter *>(handle);
 }
 
 QIcon *as_qicon(qt6cr_handle_t handle) {
@@ -3552,6 +3557,137 @@ bool qt6cr_qimage_reader_read_into(qt6cr_handle_t handle, qt6cr_handle_t image) 
   auto *reader = as_qimage_reader(handle);
   auto *target = as_qimage(image);
   return reader != nullptr && target != nullptr && reader->read(target);
+}
+
+qt6cr_handle_t qt6cr_qimage_writer_create(const char *file_name, const char *format) {
+  return new QImageWriter(
+      QString::fromUtf8(file_name == nullptr ? "" : file_name),
+      QByteArray(format == nullptr ? "" : format));
+}
+
+qt6cr_handle_t qt6cr_qimage_writer_create_from_device(qt6cr_handle_t device, const char *format) {
+  auto *target = as_qio_device(device);
+  return target == nullptr ? static_cast<qt6cr_handle_t>(new QImageWriter()) : static_cast<qt6cr_handle_t>(new QImageWriter(target, QByteArray(format == nullptr ? "" : format)));
+}
+
+void qt6cr_qimage_writer_destroy(qt6cr_handle_t handle) {
+  delete as_qimage_writer(handle);
+}
+
+char *qt6cr_qimage_writer_file_name(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer == nullptr ? duplicate_string("") : duplicate_string(writer->fileName());
+}
+
+void qt6cr_qimage_writer_set_file_name(qt6cr_handle_t handle, const char *file_name) {
+  auto *writer = as_qimage_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setFileName(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+char *qt6cr_qimage_writer_format(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer == nullptr ? duplicate_string("") : duplicate_string(QString::fromLatin1(writer->format()));
+}
+
+void qt6cr_qimage_writer_set_format(qt6cr_handle_t handle, const char *format) {
+  auto *writer = as_qimage_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setFormat(QByteArray(format == nullptr ? "" : format));
+  }
+}
+
+bool qt6cr_qimage_writer_can_write(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer != nullptr && writer->canWrite();
+}
+
+bool qt6cr_qimage_writer_write(qt6cr_handle_t handle, qt6cr_handle_t image) {
+  auto *writer = as_qimage_writer(handle);
+  auto *source = as_qimage(image);
+  return writer != nullptr && source != nullptr && writer->write(*source);
+}
+
+int qt6cr_qimage_writer_quality(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer == nullptr ? -1 : writer->quality();
+}
+
+void qt6cr_qimage_writer_set_quality(qt6cr_handle_t handle, int value) {
+  auto *writer = as_qimage_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setQuality(value);
+  }
+}
+
+int qt6cr_qimage_writer_compression(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer == nullptr ? -1 : writer->compression();
+}
+
+void qt6cr_qimage_writer_set_compression(qt6cr_handle_t handle, int value) {
+  auto *writer = as_qimage_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setCompression(value);
+  }
+}
+
+bool qt6cr_qimage_writer_optimized_write(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer != nullptr && writer->optimizedWrite();
+}
+
+void qt6cr_qimage_writer_set_optimized_write(qt6cr_handle_t handle, bool value) {
+  auto *writer = as_qimage_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setOptimizedWrite(value);
+  }
+}
+
+bool qt6cr_qimage_writer_progressive_scan_write(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer != nullptr && writer->progressiveScanWrite();
+}
+
+void qt6cr_qimage_writer_set_progressive_scan_write(qt6cr_handle_t handle, bool value) {
+  auto *writer = as_qimage_writer(handle);
+
+  if (writer != nullptr) {
+    writer->setProgressiveScanWrite(value);
+  }
+}
+
+char *qt6cr_qimage_writer_error_string(qt6cr_handle_t handle) {
+  auto *writer = as_qimage_writer(handle);
+  return writer == nullptr ? duplicate_string("") : duplicate_string(writer->errorString());
+}
+
+qt6cr_string_array_t qt6cr_qimage_writer_supported_image_formats(void) {
+  QStringList values;
+  const auto formats = QImageWriter::supportedImageFormats();
+
+  for (const auto &format : formats) {
+    values << QString::fromLatin1(format);
+  }
+
+  return to_string_array_value(values);
+}
+
+qt6cr_string_array_t qt6cr_qimage_writer_supported_mime_types(void) {
+  QStringList values;
+  const auto mime_types = QImageWriter::supportedMimeTypes();
+
+  for (const auto &mime_type : mime_types) {
+    values << QString::fromLatin1(mime_type);
+  }
+
+  return to_string_array_value(values);
 }
 
 qt6cr_handle_t qt6cr_qpixmap_create(int width, int height) {
