@@ -36,6 +36,28 @@ end
 
 Signal handlers run on the GUI thread as part of normal event delivery. Keep them short: update state, schedule repaint work with \api{update}, show feedback, or dispatch work elsewhere. A callback that blocks for a long time will also block repainting and input.
 
+\section{Blocking Noisy Updates}
+
+Some UI updates are mechanical. For example, loading a saved document might set a slider, a spin box, a combo box, and several check boxes all at once. If every intermediate assignment emits callbacks, the application may repaint several times or briefly compute from half-loaded state.
+
+Use \api{block_signals=} when a wrapper inherits from \api{QObject} and you need a quiet bulk update. Restore the previous state afterward so nested code does not accidentally re-enable signals that another caller intentionally blocked.
+
+\begin{lstlisting}[style=crystal]
+was_blocked = opacity_slider.signals_blocked?
+opacity_slider.block_signals = true
+
+begin
+  opacity_slider.set_range(0, 100)
+  opacity_slider.value = layer.opacity
+ensure
+  opacity_slider.block_signals = was_blocked
+end
+
+canvas.update
+\end{lstlisting}
+
+Blocking signals should be temporary. Use it for setup, reset, and bulk synchronization; do not use it to hide important user actions from the rest of the application.
+
 \section{Actions, Widgets, And State}
 
 Signals work best when they update a small piece of shared state and let the UI redraw from that state. This keeps menu items, toolbar buttons, and widgets from drifting apart.
@@ -90,6 +112,45 @@ end
 \end{lstlisting}
 
 That is useful in specs and small modal workflows, but it should not become the main structure of an application. In normal UI code, prefer timers, signals, and callbacks over manual event pumping.
+
+\section{A Small Combined Flow}
+
+Actions, timers, and event callbacks often work together. This example starts and stops a pulsing custom canvas from a checkable action. The action owns the user's command, the timer advances model state, and the paint callback renders the latest state.
+
+\begin{lstlisting}[style=crystal]
+pulse_action = Qt6::Action.new("Pulse", main)
+pulse_action.checkable = true
+
+canvas = Qt6::EventWidget.new
+timer = Qt6::QTimer.new(main)
+timer.interval = 80
+
+frame = 0
+
+pulse_action.on_toggled do |enabled|
+  enabled ? timer.start : timer.stop
+  canvas.update
+end
+
+timer.on_timeout do
+  frame = (frame + 1) % 24
+  canvas.update
+end
+
+canvas.on_mouse_press do |event|
+  pulse_action.checked = !pulse_action.checked
+end
+
+canvas.on_paint_with_painter do |event, painter|
+  painter.fill_rect(event.rect, Qt6::Color.new(245, 248, 252))
+
+  radius = 12.0 + frame.to_f64
+  painter.brush = Qt6::Color.new(52, 112, 176, 180)
+  painter.draw_ellipse(Qt6::RectF.new(80.0 - radius, 60.0 - radius, radius * 2.0, radius * 2.0))
+end
+\end{lstlisting}
+
+The pattern scales well: commands change durable state, timers advance time-based state, event callbacks copy input into state, and paint callbacks draw the current state.
 
 \section{Custom Event Widgets}
 
@@ -163,6 +224,28 @@ end
 \api{mouse_tracking} enables move events even when no mouse button is pressed. \api{focus_policy} allows the canvas to receive keyboard focus; calling \api{set_focus} on mouse press makes keyboard shortcuts feel natural after the user clicks the canvas.
 
 The \api{QPainter} passed to \api{on_paint_with_painter} is only valid for that callback. Do not store it. Store drawing state instead, and let the next paint event create the pixels.
+
+\section{Event Object Lifetime}
+
+Event callback payloads fall into two broad groups. Value objects such as \api{MouseEvent}, \api{ResizeEvent}, \api{WheelEvent}, and \api{KeyEvent} copy the event data into Crystal-friendly structs. Live wrappers such as \api{DropEvent} and \api{QEvent} refer to a Qt event while Qt is delivering it.
+
+For live wrappers, read what you need during the callback and store copied values instead of storing the event object itself.
+
+\begin{lstlisting}[style=crystal]
+last_drop_text = ""
+last_drop_position = Qt6::PointF.new(0.0, 0.0)
+
+drop_surface.on_drop do |event|
+  if payload = event.mime_data
+    last_drop_text = payload.text if payload.has_text?
+  end
+
+  last_drop_position = event.position
+  event.accept_proposed_action
+end
+\end{lstlisting}
+
+This rule keeps later code independent from Qt's event lifetime. It also makes tests simpler because the application state is ordinary Crystal data.
 
 \section{Event Filters}
 
@@ -260,4 +343,15 @@ Prefer high-level signals for ordinary widgets and commands. Use \api{EventWidge
 
 For custom painting, change state outside the paint callback and call \api{update}. Draw only inside the paint callback. For timers, parent or retain the timer so it stays alive, stop repeated timers when the work is finished, and keep timeout handlers brief.
 
-For live event wrappers such as \api{DropEvent} and \api{QEvent}, read what you need during the callback. Do not store the event object for later. Store copied values such as text, positions, sizes, key codes, or your own domain state instead.
+Create widgets, mutate widget state, show dialogs, and release Qt objects on the GUI thread. If background work becomes necessary, keep the expensive calculation away from Qt objects and schedule the UI update back onto the event loop with \api{Application#invoke_later}.
+
+\begin{lstlisting}[style=crystal]
+preview_summary = build_preview_summary_without_touching_widgets
+
+app.invoke_later do
+  preview_label.text = preview_summary
+  canvas.update
+end
+\end{lstlisting}
+
+The important split is simple: background code may prepare ordinary Crystal data, while GUI callbacks apply that data to Qt widgets.
