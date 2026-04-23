@@ -93,6 +93,18 @@ table.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
 table.resize_columns_to_contents
 \end{lstlisting}
 
+Item widgets also expose convenience callbacks for direct interaction. A double-click handler is often enough to open a details dialog, start editing, or jump to the selected record.
+
+\begin{lstlisting}[style=crystal]
+table.on_item_double_clicked do |item|
+  Qt6::MessageBox.information(
+    table,
+    "Layer",
+    "Open details for #{item.text}"
+  )
+end
+\end{lstlisting}
+
 If you later need the same rows in multiple views, or if the data already belongs to a document model, switch to a model-backed view instead of copying values into item widgets.
 
 \begin{figure}[htbp]
