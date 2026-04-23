@@ -21,6 +21,37 @@ Type & Role \\
 \bottomrule
 \end{longtable}
 
+\section{Choosing A Paint Target}
+
+The painter API is shared, but the target still matters. Choose the target based on what you need after drawing, not just what you want to draw.
+
+\begin{longtable}{@{}p{0.24\textwidth}p{0.34\textwidth}p{0.34\textwidth}@{}}
+\toprule
+Target & Use It For & Notes \\
+\midrule
+\api{QImage} & Offscreen raster rendering, pixel inspection, thumbnails, encoded image files, and tests. & It is the most convenient target when you need raw bytes, per-pixel access, or a predictable image file such as PNG. \\
+\api{QPixmap} & Display-oriented snapshots, widget grabs, cached UI artwork, and fast drawing back into widgets. & Treat it as a screen-facing image. Convert to \api{QImage} if you need to inspect or transform pixels directly. \\
+\api{QSvgGenerator} & Scalable vector export for drawings, diagrams, icons, and documents that should remain editable or resolution independent. & Painter commands become SVG output. Release the generator before reading the file, and test effects such as opacity and composition in the target SVG viewer. \\
+\api{QPdfWriter} & Printable or shareable fixed-page output such as reports, labels, forms, and diagrams. & Set the page size before painting, and release the writer before opening the PDF. Use points or a page layout when physical size matters. \\
+\bottomrule
+\end{longtable}
+
+\section{Coordinates And High-DPI Output}
+
+Painter coordinates are local to the paint target. A widget paint callback receives widget-local logical coordinates. An image uses its pixel dimensions. An SVG generator uses its view box, and a PDF writer uses the page units configured on the writer. The same drawing routine can be reused across targets when it draws in a known logical rectangle and each caller prepares the target to match that rectangle.
+
+\begin{lstlisting}[style=crystal]
+def draw_badge(painter : Qt6::QPainter, bounds : Qt6::RectF)
+  painter.save
+  painter.translate(bounds.x, bounds.y)
+  painter.draw_rect(Qt6::RectF.new(0.0, 0.0, bounds.width, bounds.height))
+  painter.draw_text(Qt6::PointF.new(16.0, bounds.height / 2.0), "Badge")
+  painter.restore
+end
+\end{lstlisting}
+
+For high-DPI screens, avoid assuming that a widget's logical size and a grabbed pixmap's pixel size are always identical. Keep widget painting in widget coordinates, choose explicit export dimensions for \api{QImage}, \api{QSvgGenerator}, and \api{QPdfWriter}, and convert between widget captures and image pixels deliberately. If future binding APIs expose more device-pixel-ratio controls, this is the place to apply them; the drawing code itself should still stay expressed in logical coordinates.
+
 \section{Where Painting Happens}
 
 For a custom widget, paint in the \api{EventWidget} paint callback. The callback receives the dirty rectangle and a live painter that is valid only during that callback.
@@ -298,7 +329,7 @@ painter.composition_mode = Qt6::PainterCompositionMode::SourceOver
 
 \section{SVG And PDF Export}
 
-\api{QSvgGenerator} and \api{QPdfWriter} are painter targets. The same drawing function can often render to an image preview, an SVG file, and a PDF file.
+\api{QSvgGenerator} and \api{QPdfWriter} are painter targets. The same drawing function can often render to an image preview, an SVG file, and a PDF file. This complete example writes all three targets from one drawing routine.
 
 \begin{figure}[htbp]
   \centering
@@ -307,30 +338,51 @@ painter.composition_mode = Qt6::PainterCompositionMode::SourceOver
 \end{figure}
 
 \begin{lstlisting}[style=crystal]
+require "qt6"
+
+Qt6.application
+
+WIDTH = 160
+HEIGHT = 96
+
 def draw_badge(painter : Qt6::QPainter)
   painter.antialiasing = true
   painter.pen = Qt6::QPen.new(Qt6::Color.new(48, 70, 92), 2.0)
   painter.brush = Qt6::Color.new(236, 244, 252)
   painter.draw_rect(Qt6::RectF.new(12.0, 12.0, 136.0, 72.0))
+  painter.font = Qt6::QFont.new(point_size: 13, bold: true)
   painter.draw_text(Qt6::PointF.new(28.0, 56.0), "crystal-qt6")
 end
 
-png = Qt6::QImage.new(160, 96)
+png = Qt6::QImage.new(WIDTH, HEIGHT)
 png.fill(Qt6::Color.new(255, 255, 255))
 Qt6::QPainter.paint(png) { |painter| draw_badge(painter) }
-png.save("badge.png")
+unless png.save("badge.png")
+  raise "Could not save badge.png"
+end
 
-svg = Qt6::QSvgGenerator.new("badge.svg", 160, 96, title: "Badge")
+svg = Qt6::QSvgGenerator.new("badge.svg", WIDTH, HEIGHT, title: "Badge")
 Qt6::QPainter.paint(svg) { |painter| draw_badge(painter) }
 svg.release
 
 pdf = Qt6::QPdfWriter.new("badge.pdf", title: "Badge", creator: "crystal-qt6")
-pdf.page_size_points = Qt6::Size.new(160, 96)
+pdf.page_size_points = Qt6::Size.new(WIDTH, HEIGHT)
 Qt6::QPainter.paint(pdf) { |painter| draw_badge(painter) }
 pdf.release
 \end{lstlisting}
 
 For SVG and PDF, release the generator or writer before reading the output file. The painter block ends the drawing session, and releasing the target lets Qt flush the file metadata and final bytes.
+
+\section{Common Mistakes}
+
+The most common painting bugs come from mixing up lifetimes, state, and event flow:
+
+\begin{itemize}
+\item Do not store the painter passed to \api{on_paint_with_painter}. It is valid only during that paint callback.
+\item Pair temporary \api{save} calls with \api{restore}. A forgotten restore can leak transforms, clipping, opacity, or composition modes into later drawing.
+\item Save or read an output target only after the painter is finished. With SVG and PDF, also release the generator or writer so Qt can flush the file.
+\item Do not paint directly from mouse, keyboard, timer, or action callbacks. Update your application state and call \api{update}; let the paint callback redraw from that state.
+\end{itemize}
 
 \section{Practical Guidelines}
 
