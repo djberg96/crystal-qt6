@@ -180,6 +180,52 @@ if reader.read(destination)
 end
 \end{lstlisting}
 
+Exact format support depends on the Qt image plugins available in the user's installation. File extensions and filters are useful hints, but \api{QImageReader#can_read?} is the source of truth for a particular file or device. When loading fails, show \api{error_string} so the user sees the platform's real decoder error.
+
+\section{A Small Import/Export Flow}
+
+The following flow is close to what a small editor or preview panel needs: probe the selected file, decode with orientation handling, keep the working copy as a \api{QImage}, convert to \api{QPixmap} only for display, and check the save result when exporting.
+
+\begin{lstlisting}[style=crystal]
+input_path = "assets/source-photo.jpg"
+output_path = "preview-export.png"
+
+reader = Qt6::QImageReader.new(input_path)
+reader.auto_transform = true
+
+if reader.can_read?
+  original = reader.read
+
+  unless original.null?
+    working = original.scaled(
+      320,
+      220,
+      Qt6::AspectRatioMode::Keep,
+      Qt6::TransformationMode::Smooth
+    )
+
+    preview.pixmap = working.to_pixmap
+
+    unless working.save(output_path)
+      status_bar.show_message("Could not save #{output_path}", 2200)
+    end
+  end
+else
+  status_bar.show_message(reader.error_string, 2200)
+end
+
+reader.release
+\end{lstlisting}
+
+For a widget screenshot export, the same pattern happens at the UI boundary: grab a \api{QPixmap}, save it, and check the return value.
+
+\begin{lstlisting}[style=crystal]
+pixmap = preview.grab
+unless pixmap.save("preview-widget.png")
+  status_bar.show_message("Could not export widget preview", 2200)
+end
+\end{lstlisting}
+
 \section{Encoding And In-Memory IO}
 
 \api{save} writes to a file path. \api{save_to_data} returns encoded bytes for a named format such as \api{PNG}.
@@ -212,6 +258,8 @@ buffer.seek(0)
 reader = Qt6::QImageReader.new(buffer, "png")
 image = reader.read if reader.can_read?
 \end{lstlisting}
+
+As with decoding, exact writable formats depend on the Qt plugins in the deployment. The current binding exposes direct \api{save} and \api{save_to_data} operations, so choose the path extension or explicit format, then check the boolean result. If a later binding release adds a \api{QImageWriter} wrapper, that is where writer-specific quality, compression, progressive encoding, and metadata options would belong.
 
 \begin{figure}[htbp]
   \centering
@@ -286,6 +334,17 @@ if data = clipboard.mime_data
 end
 \end{lstlisting}
 
+\section{Common Mistakes}
+
+The common image bugs are usually simple mismatches between the data representation and the job at hand:
+
+\begin{itemize}
+\item Check \api{null?}, \api{can_read?}, and save return values. A failed decode can still give you an object, but not useful pixels.
+\item Be precise about raw byte order. For \api{ImageFormat::ARGB32} on little-endian systems, the bytes are commonly blue, green, red, alpha.
+\item Do not use \api{AspectRatioMode::Ignore} for thumbnails unless stretching is truly intended. Use \api{Keep} for previews that should preserve the source shape.
+\item Keep the working image as a \api{QImage} while you still need pixel access, raw bytes, format conversion, or encoded data. Convert to \api{QPixmap} at the widget boundary.
+\end{itemize}
+
 \section{Practical Guidelines}
 
 Keep import code defensive. Check \api{null?}, \api{can_read?}, or return values from \api{load} and \api{save}; surface \api{QImageReader#error_string} when loading fails.
@@ -295,5 +354,7 @@ Use \api{QImage} as the working format for generated images, pixel tests, and en
 Use \api{TransformationMode::Smooth} for user-facing thumbnails and previews. Use \api{Fast} when speed matters more than filtering quality.
 
 Prefer \api{QImageReader} before decoding large user-selected assets. It lets the UI show useful metadata and reject unsupported files gracefully.
+
+Treat image format support as deployment-specific. Test with the plugins your application ships, and check \api{QImageReader#can_read?} or save return values for the exact file at hand.
 
 Use \api{QBuffer} for in-memory round trips and \api{MimeData} for clipboard or drag/drop flows that need more than one representation.
