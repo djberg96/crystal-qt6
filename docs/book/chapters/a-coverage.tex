@@ -1,4 +1,4 @@
-\chapter{Coverage Appendix}
+\chapter{Coverage and Reference Appendix}
 
 This appendix summarizes the current \api{crystal-qt6} API shape at a high level. Treat the README and specs as the executable source of truth when release boundaries move.
 
@@ -18,6 +18,218 @@ Model/View & Item widgets, abstract list/tree models, standard item models, prox
 \bottomrule
 \end{longtable}
 
-\section{Near-Term Documentation Gaps}
+\section{Enum Reference}
 
-The guide should gain real screenshots, a fuller API index, a migration checklist for PySide users, and one complete long-form tutorial built from a maintained example.
+The following tables collect enum values that appear often in examples and callbacks. They are a reader-facing snapshot of the Crystal wrappers, not a substitute for checking the source when adding new bindings.
+
+Flags enums can be combined with Crystal's bitwise OR operator. For example, an item can be made selectable and enabled with \api{Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Enabled}.
+
+\subsection{Event Types}
+
+\api{EventType} values mirror Qt's event type numbers. Most applications handle these indirectly through higher-level callbacks, but the numeric values are useful when inspecting generic events, logs, or test helpers.
+
+{\small
+\begin{longtable}{@{}p{0.38\textwidth}p{0.10\textwidth}p{0.44\textwidth}@{}}
+\toprule
+Name & Value & Typical use \\
+\midrule
+\api{None} & 0 & No event or an unspecified event. \\
+\api{Timer} & 1 & Timer delivery. \\
+\api{MouseButtonPress} & 2 & Mouse or pointer button press. \\
+\api{MouseButtonRelease} & 3 & Mouse or pointer button release. \\
+\api{MouseButtonDblClick} & 4 & Mouse double-click. \\
+\api{MouseMove} & 5 & Mouse or pointer movement. \\
+\api{KeyPress} & 6 & Keyboard press. \\
+\api{KeyRelease} & 7 & Keyboard release. \\
+\api{FocusIn} & 8 & Widget receives keyboard focus. \\
+\api{FocusOut} & 9 & Widget loses keyboard focus. \\
+\api{Enter} & 10 & Pointer enters a widget. \\
+\api{Leave} & 11 & Pointer leaves a widget. \\
+\api{Paint} & 12 & Widget repaint request. \\
+\api{Move} & 13 & Widget position changes. \\
+\api{Resize} & 14 & Widget size changes. \\
+\api{Create} & 15 & Native widget creation. \\
+\api{Destroy} & 16 & Native widget destruction. \\
+\api{Show} & 17 & Widget becomes visible. \\
+\api{Hide} & 18 & Widget becomes hidden. \\
+\api{Close} & 19 & Window close request. \\
+\api{Quit} & 20 & Application quit request. \\
+\api{ParentChange} & 21 & Object or widget parent changes. \\
+\api{ThreadChange} & 22 & Object affinity moves to another thread. \\
+\api{FocusAboutToChange} & 23 & Focus is about to move. \\
+\api{WindowActivate} & 24 & Window becomes active. \\
+\api{WindowDeactivate} & 25 & Window becomes inactive. \\
+\api{ShowToParent} & 26 & Child widget is shown to its parent. \\
+\api{HideToParent} & 27 & Child widget is hidden from its parent. \\
+\api{Wheel} & 31 & Mouse wheel or trackpad scroll. \\
+\api{WindowTitleChange} & 33 & Window title changes. \\
+\api{WindowIconChange} & 34 & Window icon changes. \\
+\api{ApplicationWindowIconChange} & 35 & Application window icon changes. \\
+\api{ApplicationFontChange} & 36 & Application font changes. \\
+\api{ApplicationLayoutDirectionChange} & 37 & Application layout direction changes. \\
+\api{ApplicationPaletteChange} & 38 & Application palette changes. \\
+\api{PaletteChange} & 39 & Widget palette changes. \\
+\api{Clipboard} & 40 & Clipboard contents change. \\
+\api{Speech} & 42 & Platform speech event. \\
+\api{MetaCall} & 43 & Queued signal, slot, or meta-call delivery. \\
+\api{SockAct} & 50 & Socket notifier activity. \\
+\api{ShortcutOverride} & 51 & Shortcut override opportunity before key handling. \\
+\api{DeferredDelete} & 52 & Deferred object deletion. \\
+\api{DragEnter} & 60 & Drag operation enters a widget. \\
+\api{DragMove} & 61 & Drag operation moves over a widget. \\
+\api{DragLeave} & 62 & Drag operation leaves a widget. \\
+\api{Drop} & 63 & Drop operation completes. \\
+\bottomrule
+\end{longtable}
+}
+
+\subsection{Common UI Enums}
+
+{\small
+\begin{longtable}{@{}p{0.34\textwidth}p{0.42\textwidth}p{0.12\textwidth}@{}}
+\toprule
+Enum & Name & Value \\
+\midrule
+\api{DialogCode} & \api{Rejected} & 0 \\
+\api{DialogCode} & \api{Accepted} & 1 \\
+\api{Orientation} & \api{Horizontal} & 1 \\
+\api{Orientation} & \api{Vertical} & 2 \\
+\api{SortOrder} & \api{Ascending} & 0 \\
+\api{SortOrder} & \api{Descending} & 1 \\
+\api{CheckState} & \api{Unchecked} & 0 \\
+\api{CheckState} & \api{PartiallyChecked} & 1 \\
+\api{CheckState} & \api{Checked} & 2 \\
+\api{FileDialogAcceptMode} & \api{Open} & 0 \\
+\api{FileDialogAcceptMode} & \api{Save} & 1 \\
+\api{FileDialogFileMode} & \api{AnyFile} & 0 \\
+\api{FileDialogFileMode} & \api{ExistingFile} & 1 \\
+\api{FileDialogFileMode} & \api{Directory} & 2 \\
+\api{FileDialogFileMode} & \api{ExistingFiles} & 3 \\
+\bottomrule
+\end{longtable}
+}
+
+\subsection{Model/View Enums and Flags}
+
+{\small
+\begin{longtable}{@{}p{0.34\textwidth}p{0.42\textwidth}p{0.12\textwidth}@{}}
+\toprule
+Enum & Name & Value \\
+\midrule
+\api{ItemDataRole} & \api{Display} & 0 \\
+\api{ItemDataRole} & \api{Decoration} & 1 \\
+\api{ItemDataRole} & \api{Edit} & 2 \\
+\api{ItemDataRole} & \api{ToolTip} & 3 \\
+\api{ItemDataRole} & \api{StatusTip} & 4 \\
+\api{ItemDataRole} & \api{WhatsThis} & 5 \\
+\api{ItemDataRole} & \api{Font} & 6 \\
+\api{ItemDataRole} & \api{TextAlignment} & 7 \\
+\api{ItemDataRole} & \api{Background} & 8 \\
+\api{ItemDataRole} & \api{Foreground} & 9 \\
+\api{ItemDataRole} & \api{CheckState} & 10 \\
+\api{ItemDataRole} & \api{AccessibleText} & 11 \\
+\api{ItemDataRole} & \api{AccessibleDescription} & 12 \\
+\api{ItemDataRole} & \api{SizeHint} & 13 \\
+\api{ItemDataRole} & \api{InitialSortOrder} & 14 \\
+\api{ItemDataRole} & \api{User} & 256 \\
+\api{ItemFlag} & \api{None} & 0 \\
+\api{ItemFlag} & \api{Selectable} & 1 \\
+\api{ItemFlag} & \api{Editable} & 2 \\
+\api{ItemFlag} & \api{DragEnabled} & 4 \\
+\api{ItemFlag} & \api{DropEnabled} & 8 \\
+\api{ItemFlag} & \api{UserCheckable} & 16 \\
+\api{ItemFlag} & \api{Enabled} & 32 \\
+\api{ItemFlag} & \api{AutoTristate} & 64 \\
+\api{ItemFlag} & \api{NeverHasChildren} & 128 \\
+\api{ItemFlag} & \api{UserTristate} & 256 \\
+\api{ItemSelectionMode} & \api{NoSelection} & 0 \\
+\api{ItemSelectionMode} & \api{SingleSelection} & 1 \\
+\api{ItemSelectionMode} & \api{MultiSelection} & 2 \\
+\api{ItemSelectionMode} & \api{ExtendedSelection} & 3 \\
+\api{ItemSelectionMode} & \api{ContiguousSelection} & 4 \\
+\api{ItemSelectionBehavior} & \api{SelectItems} & 0 \\
+\api{ItemSelectionBehavior} & \api{SelectRows} & 1 \\
+\api{ItemSelectionBehavior} & \api{SelectColumns} & 2 \\
+\api{SelectionFlag} & \api{NoUpdate} & 0 \\
+\api{SelectionFlag} & \api{Clear} & 1 \\
+\api{SelectionFlag} & \api{Select} & 2 \\
+\api{SelectionFlag} & \api{Deselect} & 4 \\
+\api{SelectionFlag} & \api{Toggle} & 8 \\
+\api{SelectionFlag} & \api{Current} & 16 \\
+\api{SelectionFlag} & \api{Rows} & 32 \\
+\api{SelectionFlag} & \api{Columns} & 64 \\
+\api{SelectionFlag} & \api{SelectCurrent} & 18 \\
+\api{SelectionFlag} & \api{ToggleCurrent} & 24 \\
+\api{SelectionFlag} & \api{ClearAndSelect} & 3 \\
+\api{DropAction} & \api{IgnoreAction} & 0 \\
+\api{DropAction} & \api{CopyAction} & 1 \\
+\api{DropAction} & \api{MoveAction} & 2 \\
+\api{DropAction} & \api{LinkAction} & 4 \\
+\api{EditTrigger} & \api{NoEditTriggers} & 0 \\
+\api{EditTrigger} & \api{CurrentChanged} & 1 \\
+\api{EditTrigger} & \api{DoubleClicked} & 2 \\
+\api{EditTrigger} & \api{SelectedClicked} & 4 \\
+\api{EditTrigger} & \api{EditKeyPressed} & 8 \\
+\api{EditTrigger} & \api{AnyKeyPressed} & 16 \\
+\api{EditTrigger} & \api{AllEditTriggers} & 31 \\
+\bottomrule
+\end{longtable}
+}
+
+\subsection{Rendering and Image Enums}
+
+{\small
+\begin{longtable}{@{}p{0.34\textwidth}p{0.42\textwidth}p{0.12\textwidth}@{}}
+\toprule
+Enum & Name & Value \\
+\midrule
+\api{AspectRatioMode} & \api{Ignore} & 0 \\
+\api{AspectRatioMode} & \api{Keep} & 1 \\
+\api{AspectRatioMode} & \api{KeepByExpanding} & 2 \\
+\api{TransformationMode} & \api{Fast} & 0 \\
+\api{TransformationMode} & \api{Smooth} & 1 \\
+\api{PenStyle} & \api{NoPen} & 0 \\
+\api{PenStyle} & \api{SolidLine} & 1 \\
+\api{PenStyle} & \api{DashLine} & 2 \\
+\api{PenStyle} & \api{DotLine} & 3 \\
+\api{PenStyle} & \api{DashDotLine} & 4 \\
+\api{PenStyle} & \api{DashDotDotLine} & 5 \\
+\api{PenStyle} & \api{CustomDashLine} & 6 \\
+\api{PenCapStyle} & \api{FlatCap} & 0 \\
+\api{PenCapStyle} & \api{SquareCap} & 16 \\
+\api{PenCapStyle} & \api{RoundCap} & 32 \\
+\api{PenJoinStyle} & \api{MiterJoin} & 0 \\
+\api{PenJoinStyle} & \api{BevelJoin} & 64 \\
+\api{PenJoinStyle} & \api{RoundJoin} & 128 \\
+\api{PenJoinStyle} & \api{SvgMiterJoin} & 256 \\
+\api{PainterCompositionMode} & \api{SourceOver} & 0 \\
+\api{PainterCompositionMode} & \api{DestinationOver} & 1 \\
+\api{PainterCompositionMode} & \api{Clear} & 2 \\
+\api{PainterCompositionMode} & \api{Source} & 3 \\
+\api{PainterCompositionMode} & \api{Destination} & 4 \\
+\api{PainterCompositionMode} & \api{SourceIn} & 5 \\
+\api{PainterCompositionMode} & \api{DestinationIn} & 6 \\
+\api{PainterCompositionMode} & \api{SourceOut} & 7 \\
+\api{PainterCompositionMode} & \api{DestinationOut} & 8 \\
+\api{PainterCompositionMode} & \api{SourceAtop} & 9 \\
+\api{PainterCompositionMode} & \api{DestinationAtop} & 10 \\
+\api{PainterCompositionMode} & \api{Xor} & 11 \\
+\api{PainterCompositionMode} & \api{Plus} & 12 \\
+\api{PainterCompositionMode} & \api{Multiply} & 13 \\
+\api{PainterCompositionMode} & \api{Screen} & 14 \\
+\api{PainterCompositionMode} & \api{Overlay} & 15 \\
+\api{PainterCompositionMode} & \api{Darken} & 16 \\
+\api{PainterCompositionMode} & \api{Lighten} & 17 \\
+\api{PainterCompositionMode} & \api{ColorDodge} & 18 \\
+\api{PainterCompositionMode} & \api{ColorBurn} & 19 \\
+\api{PainterCompositionMode} & \api{HardLight} & 20 \\
+\api{PainterCompositionMode} & \api{SoftLight} & 21 \\
+\api{PainterCompositionMode} & \api{Difference} & 22 \\
+\api{PainterCompositionMode} & \api{Exclusion} & 23 \\
+\bottomrule
+\end{longtable}
+}
+
+\section{Keeping This Appendix Current}
+
+When a new wrapper enum becomes visible in examples, callbacks, or public setters, add it here if a reader would otherwise need to jump into the source to understand a small code sample. Internal or rarely used enums can stay in the API source until they become part of the guide's narrative.
