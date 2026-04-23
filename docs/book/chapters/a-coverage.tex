@@ -86,25 +86,16 @@ Name & Value & Typical use \\
 \subsection{Common UI Enums}
 
 {\small
-\begin{longtable}{@{}p{0.34\textwidth}p{0.42\textwidth}p{0.12\textwidth}@{}}
+\begin{longtable}{@{}p{0.34\textwidth}p{0.56\textwidth}@{}}
 \toprule
-Enum & Name & Value \\
+Enum & Values \\
 \midrule
-\api{DialogCode} & \api{Rejected} & 0 \\
-\api{DialogCode} & \api{Accepted} & 1 \\
-\api{Orientation} & \api{Horizontal} & 1 \\
-\api{Orientation} & \api{Vertical} & 2 \\
-\api{SortOrder} & \api{Ascending} & 0 \\
-\api{SortOrder} & \api{Descending} & 1 \\
-\api{CheckState} & \api{Unchecked} & 0 \\
-\api{CheckState} & \api{PartiallyChecked} & 1 \\
-\api{CheckState} & \api{Checked} & 2 \\
-\api{FileDialogAcceptMode} & \api{Open} & 0 \\
-\api{FileDialogAcceptMode} & \api{Save} & 1 \\
-\api{FileDialogFileMode} & \api{AnyFile} & 0 \\
-\api{FileDialogFileMode} & \api{ExistingFile} & 1 \\
-\api{FileDialogFileMode} & \api{Directory} & 2 \\
-\api{FileDialogFileMode} & \api{ExistingFiles} & 3 \\
+\api{DialogCode} & \begin{tabular}[t]{@{}l@{}}\api{Rejected = 0}\\\api{Accepted = 1}\end{tabular} \\
+\api{Orientation} & \begin{tabular}[t]{@{}l@{}}\api{Horizontal = 1}\\\api{Vertical = 2}\end{tabular} \\
+\api{SortOrder} & \begin{tabular}[t]{@{}l@{}}\api{Ascending = 0}\\\api{Descending = 1}\end{tabular} \\
+\api{CheckState} & \begin{tabular}[t]{@{}l@{}}\api{Unchecked = 0}\\\api{PartiallyChecked = 1}\\\api{Checked = 2}\end{tabular} \\
+\api{FileDialogAcceptMode} & \begin{tabular}[t]{@{}l@{}}\api{Open = 0}\\\api{Save = 1}\end{tabular} \\
+\api{FileDialogFileMode} & \begin{tabular}[t]{@{}l@{}}\api{AnyFile = 0}\\\api{ExistingFile = 1}\\\api{Directory = 2}\\\api{ExistingFiles = 3}\end{tabular} \\
 \bottomrule
 \end{longtable}
 }
@@ -112,66 +103,17 @@ Enum & Name & Value \\
 \subsection{Model/View Enums and Flags}
 
 {\small
-\begin{longtable}{@{}p{0.34\textwidth}p{0.42\textwidth}p{0.12\textwidth}@{}}
+\begin{longtable}{@{}p{0.34\textwidth}p{0.56\textwidth}@{}}
 \toprule
-Enum & Name & Value \\
+Enum & Values \\
 \midrule
-\api{ItemDataRole} & \api{Display} & 0 \\
-\api{ItemDataRole} & \api{Decoration} & 1 \\
-\api{ItemDataRole} & \api{Edit} & 2 \\
-\api{ItemDataRole} & \api{ToolTip} & 3 \\
-\api{ItemDataRole} & \api{StatusTip} & 4 \\
-\api{ItemDataRole} & \api{WhatsThis} & 5 \\
-\api{ItemDataRole} & \api{Font} & 6 \\
-\api{ItemDataRole} & \api{TextAlignment} & 7 \\
-\api{ItemDataRole} & \api{Background} & 8 \\
-\api{ItemDataRole} & \api{Foreground} & 9 \\
-\api{ItemDataRole} & \api{CheckState} & 10 \\
-\api{ItemDataRole} & \api{AccessibleText} & 11 \\
-\api{ItemDataRole} & \api{AccessibleDescription} & 12 \\
-\api{ItemDataRole} & \api{SizeHint} & 13 \\
-\api{ItemDataRole} & \api{InitialSortOrder} & 14 \\
-\api{ItemDataRole} & \api{User} & 256 \\
-\api{ItemFlag} & \api{None} & 0 \\
-\api{ItemFlag} & \api{Selectable} & 1 \\
-\api{ItemFlag} & \api{Editable} & 2 \\
-\api{ItemFlag} & \api{DragEnabled} & 4 \\
-\api{ItemFlag} & \api{DropEnabled} & 8 \\
-\api{ItemFlag} & \api{UserCheckable} & 16 \\
-\api{ItemFlag} & \api{Enabled} & 32 \\
-\api{ItemFlag} & \api{AutoTristate} & 64 \\
-\api{ItemFlag} & \api{NeverHasChildren} & 128 \\
-\api{ItemFlag} & \api{UserTristate} & 256 \\
-\api{ItemSelectionMode} & \api{NoSelection} & 0 \\
-\api{ItemSelectionMode} & \api{SingleSelection} & 1 \\
-\api{ItemSelectionMode} & \api{MultiSelection} & 2 \\
-\api{ItemSelectionMode} & \api{ExtendedSelection} & 3 \\
-\api{ItemSelectionMode} & \api{ContiguousSelection} & 4 \\
-\api{ItemSelectionBehavior} & \api{SelectItems} & 0 \\
-\api{ItemSelectionBehavior} & \api{SelectRows} & 1 \\
-\api{ItemSelectionBehavior} & \api{SelectColumns} & 2 \\
-\api{SelectionFlag} & \api{NoUpdate} & 0 \\
-\api{SelectionFlag} & \api{Clear} & 1 \\
-\api{SelectionFlag} & \api{Select} & 2 \\
-\api{SelectionFlag} & \api{Deselect} & 4 \\
-\api{SelectionFlag} & \api{Toggle} & 8 \\
-\api{SelectionFlag} & \api{Current} & 16 \\
-\api{SelectionFlag} & \api{Rows} & 32 \\
-\api{SelectionFlag} & \api{Columns} & 64 \\
-\api{SelectionFlag} & \api{SelectCurrent} & 18 \\
-\api{SelectionFlag} & \api{ToggleCurrent} & 24 \\
-\api{SelectionFlag} & \api{ClearAndSelect} & 3 \\
-\api{DropAction} & \api{IgnoreAction} & 0 \\
-\api{DropAction} & \api{CopyAction} & 1 \\
-\api{DropAction} & \api{MoveAction} & 2 \\
-\api{DropAction} & \api{LinkAction} & 4 \\
-\api{EditTrigger} & \api{NoEditTriggers} & 0 \\
-\api{EditTrigger} & \api{CurrentChanged} & 1 \\
-\api{EditTrigger} & \api{DoubleClicked} & 2 \\
-\api{EditTrigger} & \api{SelectedClicked} & 4 \\
-\api{EditTrigger} & \api{EditKeyPressed} & 8 \\
-\api{EditTrigger} & \api{AnyKeyPressed} & 16 \\
-\api{EditTrigger} & \api{AllEditTriggers} & 31 \\
+\api{ItemDataRole} & \begin{tabular}[t]{@{}l@{}}\api{Display = 0}\\\api{Decoration = 1}\\\api{Edit = 2}\\\api{ToolTip = 3}\\\api{StatusTip = 4}\\\api{WhatsThis = 5}\\\api{Font = 6}\\\api{TextAlignment = 7}\\\api{Background = 8}\\\api{Foreground = 9}\\\api{CheckState = 10}\\\api{AccessibleText = 11}\\\api{AccessibleDescription = 12}\\\api{SizeHint = 13}\\\api{InitialSortOrder = 14}\\\api{User = 256}\end{tabular} \\
+\api{ItemFlag} & \begin{tabular}[t]{@{}l@{}}\api{None = 0}\\\api{Selectable = 1}\\\api{Editable = 2}\\\api{DragEnabled = 4}\\\api{DropEnabled = 8}\\\api{UserCheckable = 16}\\\api{Enabled = 32}\\\api{AutoTristate = 64}\\\api{NeverHasChildren = 128}\\\api{UserTristate = 256}\end{tabular} \\
+\api{ItemSelectionMode} & \begin{tabular}[t]{@{}l@{}}\api{NoSelection = 0}\\\api{SingleSelection = 1}\\\api{MultiSelection = 2}\\\api{ExtendedSelection = 3}\\\api{ContiguousSelection = 4}\end{tabular} \\
+\api{ItemSelectionBehavior} & \begin{tabular}[t]{@{}l@{}}\api{SelectItems = 0}\\\api{SelectRows = 1}\\\api{SelectColumns = 2}\end{tabular} \\
+\api{SelectionFlag} & \begin{tabular}[t]{@{}l@{}}\api{NoUpdate = 0}\\\api{Clear = 1}\\\api{Select = 2}\\\api{Deselect = 4}\\\api{Toggle = 8}\\\api{Current = 16}\\\api{Rows = 32}\\\api{Columns = 64}\\\api{SelectCurrent = 18}\\\api{ToggleCurrent = 24}\\\api{ClearAndSelect = 3}\end{tabular} \\
+\api{DropAction} & \begin{tabular}[t]{@{}l@{}}\api{IgnoreAction = 0}\\\api{CopyAction = 1}\\\api{MoveAction = 2}\\\api{LinkAction = 4}\end{tabular} \\
+\api{EditTrigger} & \begin{tabular}[t]{@{}l@{}}\api{NoEditTriggers = 0}\\\api{CurrentChanged = 1}\\\api{DoubleClicked = 2}\\\api{SelectedClicked = 4}\\\api{EditKeyPressed = 8}\\\api{AnyKeyPressed = 16}\\\api{AllEditTriggers = 31}\end{tabular} \\
 \bottomrule
 \end{longtable}
 }
@@ -179,53 +121,16 @@ Enum & Name & Value \\
 \subsection{Rendering and Image Enums}
 
 {\small
-\begin{longtable}{@{}p{0.34\textwidth}p{0.42\textwidth}p{0.12\textwidth}@{}}
+\begin{longtable}{@{}p{0.34\textwidth}p{0.56\textwidth}@{}}
 \toprule
-Enum & Name & Value \\
+Enum & Values \\
 \midrule
-\api{AspectRatioMode} & \api{Ignore} & 0 \\
-\api{AspectRatioMode} & \api{Keep} & 1 \\
-\api{AspectRatioMode} & \api{KeepByExpanding} & 2 \\
-\api{TransformationMode} & \api{Fast} & 0 \\
-\api{TransformationMode} & \api{Smooth} & 1 \\
-\api{PenStyle} & \api{NoPen} & 0 \\
-\api{PenStyle} & \api{SolidLine} & 1 \\
-\api{PenStyle} & \api{DashLine} & 2 \\
-\api{PenStyle} & \api{DotLine} & 3 \\
-\api{PenStyle} & \api{DashDotLine} & 4 \\
-\api{PenStyle} & \api{DashDotDotLine} & 5 \\
-\api{PenStyle} & \api{CustomDashLine} & 6 \\
-\api{PenCapStyle} & \api{FlatCap} & 0 \\
-\api{PenCapStyle} & \api{SquareCap} & 16 \\
-\api{PenCapStyle} & \api{RoundCap} & 32 \\
-\api{PenJoinStyle} & \api{MiterJoin} & 0 \\
-\api{PenJoinStyle} & \api{BevelJoin} & 64 \\
-\api{PenJoinStyle} & \api{RoundJoin} & 128 \\
-\api{PenJoinStyle} & \api{SvgMiterJoin} & 256 \\
-\api{PainterCompositionMode} & \api{SourceOver} & 0 \\
-\api{PainterCompositionMode} & \api{DestinationOver} & 1 \\
-\api{PainterCompositionMode} & \api{Clear} & 2 \\
-\api{PainterCompositionMode} & \api{Source} & 3 \\
-\api{PainterCompositionMode} & \api{Destination} & 4 \\
-\api{PainterCompositionMode} & \api{SourceIn} & 5 \\
-\api{PainterCompositionMode} & \api{DestinationIn} & 6 \\
-\api{PainterCompositionMode} & \api{SourceOut} & 7 \\
-\api{PainterCompositionMode} & \api{DestinationOut} & 8 \\
-\api{PainterCompositionMode} & \api{SourceAtop} & 9 \\
-\api{PainterCompositionMode} & \api{DestinationAtop} & 10 \\
-\api{PainterCompositionMode} & \api{Xor} & 11 \\
-\api{PainterCompositionMode} & \api{Plus} & 12 \\
-\api{PainterCompositionMode} & \api{Multiply} & 13 \\
-\api{PainterCompositionMode} & \api{Screen} & 14 \\
-\api{PainterCompositionMode} & \api{Overlay} & 15 \\
-\api{PainterCompositionMode} & \api{Darken} & 16 \\
-\api{PainterCompositionMode} & \api{Lighten} & 17 \\
-\api{PainterCompositionMode} & \api{ColorDodge} & 18 \\
-\api{PainterCompositionMode} & \api{ColorBurn} & 19 \\
-\api{PainterCompositionMode} & \api{HardLight} & 20 \\
-\api{PainterCompositionMode} & \api{SoftLight} & 21 \\
-\api{PainterCompositionMode} & \api{Difference} & 22 \\
-\api{PainterCompositionMode} & \api{Exclusion} & 23 \\
+\api{AspectRatioMode} & \begin{tabular}[t]{@{}l@{}}\api{Ignore = 0}\\\api{Keep = 1}\\\api{KeepByExpanding = 2}\end{tabular} \\
+\api{TransformationMode} & \begin{tabular}[t]{@{}l@{}}\api{Fast = 0}\\\api{Smooth = 1}\end{tabular} \\
+\api{PenStyle} & \begin{tabular}[t]{@{}l@{}}\api{NoPen = 0}\\\api{SolidLine = 1}\\\api{DashLine = 2}\\\api{DotLine = 3}\\\api{DashDotLine = 4}\\\api{DashDotDotLine = 5}\\\api{CustomDashLine = 6}\end{tabular} \\
+\api{PenCapStyle} & \begin{tabular}[t]{@{}l@{}}\api{FlatCap = 0}\\\api{SquareCap = 16}\\\api{RoundCap = 32}\end{tabular} \\
+\api{PenJoinStyle} & \begin{tabular}[t]{@{}l@{}}\api{MiterJoin = 0}\\\api{BevelJoin = 64}\\\api{RoundJoin = 128}\\\api{SvgMiterJoin = 256}\end{tabular} \\
+\api{PainterCompositionMode} & \begin{tabular}[t]{@{}l@{}}\api{SourceOver = 0}\\\api{DestinationOver = 1}\\\api{Clear = 2}\\\api{Source = 3}\\\api{Destination = 4}\\\api{SourceIn = 5}\\\api{DestinationIn = 6}\\\api{SourceOut = 7}\\\api{DestinationOut = 8}\\\api{SourceAtop = 9}\\\api{DestinationAtop = 10}\\\api{Xor = 11}\\\api{Plus = 12}\\\api{Multiply = 13}\\\api{Screen = 14}\\\api{Overlay = 15}\\\api{Darken = 16}\\\api{Lighten = 17}\\\api{ColorDodge = 18}\\\api{ColorBurn = 19}\\\api{HardLight = 20}\\\api{SoftLight = 21}\\\api{Difference = 22}\\\api{Exclusion = 23}\end{tabular} \\
 \bottomrule
 \end{longtable}
 }
