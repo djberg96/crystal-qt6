@@ -1026,7 +1026,10 @@ module Qt6
     fun qt6cr_input_dialog_get_item = qt6cr_input_dialog_get_item(parent : Handle, title : UInt8*, label : UInt8*, items : UInt8**, count : LibC::Int, current : LibC::Int, editable : Bool) : UInt8*
 
     fun qt6cr_dock_widget_create = qt6cr_dock_widget_create(parent : Handle, title : UInt8*) : Handle
+    fun qt6cr_dock_widget_widget = qt6cr_dock_widget_widget(handle : Handle) : Handle
     fun qt6cr_dock_widget_set_widget = qt6cr_dock_widget_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_dock_widget_is_floating = qt6cr_dock_widget_is_floating(handle : Handle) : Bool
+    fun qt6cr_dock_widget_set_floating = qt6cr_dock_widget_set_floating(handle : Handle, value : Bool)
     fun qt6cr_dock_widget_toggle_view_action = qt6cr_dock_widget_toggle_view_action(handle : Handle) : Handle
 
     fun qt6cr_action_create = qt6cr_action_create(parent : Handle, text : UInt8*) : Handle

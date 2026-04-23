@@ -1057,7 +1057,10 @@ bool qt6cr_input_dialog_combo_box_editable(qt6cr_handle_t handle);
 char *qt6cr_input_dialog_get_item(qt6cr_handle_t parent, const char *title, const char *label, const char *const *items, int count, int current, bool editable);
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title);
+qt6cr_handle_t qt6cr_dock_widget_widget(qt6cr_handle_t handle);
 void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+bool qt6cr_dock_widget_is_floating(qt6cr_handle_t handle);
+void qt6cr_dock_widget_set_floating(qt6cr_handle_t handle, bool value);
 qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text);

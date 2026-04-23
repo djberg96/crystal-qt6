@@ -7984,12 +7984,30 @@ qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title
   return new QDockWidget(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
 
+qt6cr_handle_t qt6cr_dock_widget_widget(qt6cr_handle_t handle) {
+  auto *dock = as_dock_widget(handle);
+  return dock == nullptr ? nullptr : static_cast<qt6cr_handle_t>(dock->widget());
+}
+
 void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   auto *dock = as_dock_widget(handle);
   auto *child = as_widget(widget);
 
   if (dock != nullptr && child != nullptr) {
     dock->setWidget(child);
+  }
+}
+
+bool qt6cr_dock_widget_is_floating(qt6cr_handle_t handle) {
+  auto *dock = as_dock_widget(handle);
+  return dock != nullptr && dock->isFloating();
+}
+
+void qt6cr_dock_widget_set_floating(qt6cr_handle_t handle, bool value) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock != nullptr) {
+    dock->setFloating(value);
   }
 }
 
