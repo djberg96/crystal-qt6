@@ -2238,7 +2238,9 @@ describe Qt6 do
     progress_bar.set_range(0, 12)
     progress_bar.value = 7
     progress_bar.text_visible = false
+    progress_bar.inverted_appearance = true
     progress_bar.format = "%v/%m"
+    progress_bar.alignment = Qt6::AlignmentFlag::Center
     progress_bar.orientation = Qt6::Orientation::Vertical
 
     scroll_bar.set_range(5, 20)
@@ -2290,8 +2292,11 @@ describe Qt6 do
     progress_bar.maximum.should eq(12)
     progress_bar.value.should eq(7)
     progress_bar.text_visible?.should be_false
+    progress_bar.inverted_appearance?.should be_true
     progress_bar.format.should eq("%v/%m")
+    progress_bar.alignment.should eq(Qt6::AlignmentFlag::Center)
     progress_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    progress_bar.reset.value.should eq(-1)
 
     scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
     scroll_bar.minimum.should eq(5)

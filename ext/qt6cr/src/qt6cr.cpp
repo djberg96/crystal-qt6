@@ -11631,6 +11631,14 @@ void qt6cr_progress_bar_set_value(qt6cr_handle_t handle, int value) {
   }
 }
 
+void qt6cr_progress_bar_reset(qt6cr_handle_t handle) {
+  auto *progress_bar = as_progress_bar(handle);
+
+  if (progress_bar != nullptr) {
+    progress_bar->reset();
+  }
+}
+
 bool qt6cr_progress_bar_text_visible(qt6cr_handle_t handle) {
   auto *progress_bar = as_progress_bar(handle);
   return progress_bar != nullptr && progress_bar->isTextVisible();
@@ -11644,6 +11652,19 @@ void qt6cr_progress_bar_set_text_visible(qt6cr_handle_t handle, bool value) {
   }
 }
 
+bool qt6cr_progress_bar_inverted_appearance(qt6cr_handle_t handle) {
+  auto *progress_bar = as_progress_bar(handle);
+  return progress_bar != nullptr && progress_bar->invertedAppearance();
+}
+
+void qt6cr_progress_bar_set_inverted_appearance(qt6cr_handle_t handle, bool value) {
+  auto *progress_bar = as_progress_bar(handle);
+
+  if (progress_bar != nullptr) {
+    progress_bar->setInvertedAppearance(value);
+  }
+}
+
 char *qt6cr_progress_bar_format(qt6cr_handle_t handle) {
   auto *progress_bar = as_progress_bar(handle);
   return progress_bar == nullptr ? duplicate_string("") : duplicate_string(progress_bar->format());
@@ -11654,6 +11675,19 @@ void qt6cr_progress_bar_set_format(qt6cr_handle_t handle, const char *value) {
 
   if (progress_bar != nullptr) {
     progress_bar->setFormat(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+int qt6cr_progress_bar_alignment(qt6cr_handle_t handle) {
+  auto *progress_bar = as_progress_bar(handle);
+  return progress_bar == nullptr ? static_cast<int>(Qt::AlignLeft) : static_cast<int>(progress_bar->alignment());
+}
+
+void qt6cr_progress_bar_set_alignment(qt6cr_handle_t handle, int value) {
+  auto *progress_bar = as_progress_bar(handle);
+
+  if (progress_bar != nullptr) {
+    progress_bar->setAlignment(static_cast<Qt::Alignment>(value));
   }
 }
 

@@ -1360,10 +1360,15 @@ void qt6cr_progress_bar_set_maximum(qt6cr_handle_t handle, int value);
 void qt6cr_progress_bar_set_range(qt6cr_handle_t handle, int minimum, int maximum);
 int qt6cr_progress_bar_value(qt6cr_handle_t handle);
 void qt6cr_progress_bar_set_value(qt6cr_handle_t handle, int value);
+void qt6cr_progress_bar_reset(qt6cr_handle_t handle);
 bool qt6cr_progress_bar_text_visible(qt6cr_handle_t handle);
 void qt6cr_progress_bar_set_text_visible(qt6cr_handle_t handle, bool value);
+bool qt6cr_progress_bar_inverted_appearance(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_inverted_appearance(qt6cr_handle_t handle, bool value);
 char *qt6cr_progress_bar_format(qt6cr_handle_t handle);
 void qt6cr_progress_bar_set_format(qt6cr_handle_t handle, const char *value);
+int qt6cr_progress_bar_alignment(qt6cr_handle_t handle);
+void qt6cr_progress_bar_set_alignment(qt6cr_handle_t handle, int value);
 int qt6cr_progress_bar_orientation(qt6cr_handle_t handle);
 void qt6cr_progress_bar_set_orientation(qt6cr_handle_t handle, int value);
 
