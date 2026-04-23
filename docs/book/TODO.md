@@ -2,13 +2,6 @@
 
 Deferred ideas for the LaTeX guide. These are useful, but not required before continuing to later chapters.
 
-## Chapter 8: Images And Pixmaps
-
-- Add a compact "common mistakes" note: wrong raw byte order, forgetting to check `null?`, stretching thumbnails with `AspectRatioMode::Ignore`, and converting to `QPixmap` too early when pixel access is still needed.
-- Add a fuller image import/export mini-example, possibly based on `examples/desktop_editor_showcase.cr`.
-- Add a short format-support note that exact readable formats depend on Qt plugins and platform installation, so `QImageReader#can_read?` is the source of truth.
-- Add writer quality, compression, and metadata coverage if later APIs expose image writer options.
-
 ## Chapter 9: Undo And Redo
 
 - Add a small stack-history figure showing commands, the current index, the clean index, and where redo history is discarded after a new command is pushed.
