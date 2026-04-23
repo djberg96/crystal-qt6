@@ -57,6 +57,27 @@ scale.value = 1.0
 
 The \api{crystal-qt6} library also includes radio buttons, sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
 
+Sliders are useful when the value should feel continuous. Besides \api{on_value_changed}, the binding also exposes handle press/release callbacks and an opt-in track-click mode that jumps directly to the clicked position.
+
+\begin{lstlisting}[style=crystal]
+zoom = Qt6::Slider.new(Qt6::Orientation::Horizontal)
+zoom.set_range(25, 400)
+zoom.value = 100
+zoom.click_to_position = true
+
+zoom.on_pressed do
+  status.text = "Adjusting zoom"
+end
+
+zoom.on_value_changed do |value|
+  preview_scale = value / 100.0
+end
+
+zoom.on_released do
+  status.text = "Zoom #{zoom.value}%"
+end
+\end{lstlisting}
+
 \section{Common Control Choices}
 
 Most forms become easier to design when you choose the narrowest control that fits the value being edited.
@@ -159,6 +180,29 @@ buttons.hbox do |row|
   row << Qt6::PushButton.new("Add")
   row << Qt6::PushButton.new("Remove")
   row << Qt6::PushButton.new("Apply")
+end
+\end{lstlisting}
+
+Use \api{add_stretch} when one part of the row or column should absorb the extra space instead of forcing widgets apart evenly:
+
+\begin{lstlisting}[style=crystal]
+buttons = Qt6::Widget.new
+buttons.hbox do |row|
+  row << Qt6::PushButton.new("Add")
+  row << Qt6::PushButton.new("Remove")
+  row.add_stretch
+  row << Qt6::PushButton.new("Apply")
+end
+\end{lstlisting}
+
+The same idea works in a vertical stack when a status row or tool strip should stay pinned to one edge:
+
+\begin{lstlisting}[style=crystal]
+panel = Qt6::Widget.new
+panel.vbox do |column|
+  column << layer_list
+  column.add_stretch
+  column << status_bar
 end
 \end{lstlisting}
 

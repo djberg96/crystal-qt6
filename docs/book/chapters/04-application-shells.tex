@@ -222,6 +222,24 @@ view_menu << properties_dock.toggle_view_action
 
 Use an explicit checkable \api{Action} only when application rules need to control visibility separately from the dock's normal show/hide behavior.
 
+\section{Widget-Local Shortcuts}
+
+Most actions live in menus and toolbars, but some shortcuts belong to the focused work surface instead of the shell chrome. \api{Widget#add_action} attaches an action directly to a widget so the shortcut can trigger while that widget has focus.
+
+\begin{lstlisting}[style=crystal]
+delete_selection = Qt6::Action.new("Delete Selection", main)
+delete_selection.shortcut = "Delete"
+delete_selection.on_triggered do
+  status.show_message("Delete requested", 1200)
+end
+
+canvas = Qt6::EventWidget.new
+canvas.focus_policy = Qt6::FocusPolicy::StrongFocus
+canvas.add_action(delete_selection)
+\end{lstlisting}
+
+This is useful for editor canvases, lists, trees, tables, and text surfaces where the meaning of a shortcut depends on which widget currently owns focus.
+
 \section{Checkable Actions And Mode Groups}
 
 Actions can be checkable. Related checkable actions can be placed in an \api{ActionGroup}. When the group is exclusive, only one action can be checked at a time.
