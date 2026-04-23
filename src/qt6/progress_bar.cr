@@ -50,6 +50,11 @@ module Qt6
       int_value
     end
 
+    def reset : self
+      LibQt6.qt6cr_progress_bar_reset(to_unsafe)
+      self
+    end
+
     def text_visible? : Bool
       LibQt6.qt6cr_progress_bar_text_visible(to_unsafe)
     end
@@ -59,12 +64,30 @@ module Qt6
       value
     end
 
+    def inverted_appearance? : Bool
+      LibQt6.qt6cr_progress_bar_inverted_appearance(to_unsafe)
+    end
+
+    def inverted_appearance=(value : Bool) : Bool
+      LibQt6.qt6cr_progress_bar_set_inverted_appearance(to_unsafe, value)
+      value
+    end
+
     def format : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_progress_bar_format(to_unsafe))
     end
 
     def format=(value : String) : String
       LibQt6.qt6cr_progress_bar_set_format(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    def alignment : AlignmentFlag
+      AlignmentFlag.from_value(LibQt6.qt6cr_progress_bar_alignment(to_unsafe))
+    end
+
+    def alignment=(value : AlignmentFlag) : AlignmentFlag
+      LibQt6.qt6cr_progress_bar_set_alignment(to_unsafe, value.value)
       value
     end
 
