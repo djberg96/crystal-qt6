@@ -37,6 +37,12 @@ module Qt6
       self
     end
 
+    # Shows the widget maximized and returns `self` for chaining.
+    def show_maximized : self
+      LibQt6.qt6cr_widget_show_maximized(@to_unsafe)
+      self
+    end
+
     # Hides the widget and returns `self` for chaining.
     def hide : self
       LibQt6.qt6cr_widget_hide(@to_unsafe)
