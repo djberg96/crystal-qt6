@@ -1366,6 +1366,43 @@ describe Qt6 do
     device_reader.size.should eq(Qt6::Size.new(12, 10))
     device_reader.read.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
 
+    writable_formats = Qt6::QImageWriter.supported_image_formats.map(&.downcase)
+    writable_mime_types = Qt6::QImageWriter.supported_mime_types
+    writable_formats.includes?("png").should be_true
+    writable_mime_types.includes?("image/png").should be_true
+
+    writer_path = File.join(Dir.tempdir, "crystal-qt6-image-writer-#{Process.pid}.png")
+    writer = Qt6::QImageWriter.new(writer_path, "png")
+    writer.file_name.should eq(writer_path)
+    writer.format.should eq("png")
+    writer.quality = 90
+    writer.quality.should eq(90)
+    writer.compression = 1
+    writer.compression.should eq(1)
+    writer.optimized_write = true
+    writer.optimized_write?.should be_true
+    writer.progressive_scan_write = true
+    writer.progressive_scan_write?.should be_true
+    writer.can_write?.should be_true
+    writer.write(source).should be_true
+
+    writer_loaded_image = Qt6::QImageReader.new(writer_path).read
+    writer_loaded_image.size.should eq(Qt6::Size.new(12, 10))
+    writer_loaded_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    writer_buffer_bytes = Qt6::QByteArray.new
+    writer_buffer = Qt6::QBuffer.new(writer_buffer_bytes)
+    writer_buffer.open(Qt6::IODeviceOpenMode::WriteOnly).should be_true
+    device_writer = Qt6::QImageWriter.new(writer_buffer, "png")
+    device_writer.format.should eq("png")
+    device_writer.can_write?.should be_true
+    device_writer.write(source).should be_true
+    writer_buffer.close
+    writer_buffer_bytes.bytes.size.should be > 0
+
+    device_writer_image = Qt6::QImage.from_data(writer_buffer_bytes.bytes, "PNG")
+    device_writer_image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
+
     clipboard = application.clipboard
     clipboard.clear
     clipboard.text = "clipboard sample"
