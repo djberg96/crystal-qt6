@@ -2337,6 +2337,14 @@ void qt6cr_widget_show(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_widget_show_maximized(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->showMaximized();
+  }
+}
+
 void qt6cr_widget_hide(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 

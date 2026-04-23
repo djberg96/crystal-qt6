@@ -193,6 +193,7 @@ void qt6cr_mime_data_set_data(qt6cr_handle_t handle, const char *format, const u
 qt6cr_handle_t qt6cr_widget_create(qt6cr_handle_t parent);
 void qt6cr_widget_destroy(qt6cr_handle_t handle);
 void qt6cr_widget_show(qt6cr_handle_t handle);
+void qt6cr_widget_show_maximized(qt6cr_handle_t handle);
 void qt6cr_widget_hide(qt6cr_handle_t handle);
 void qt6cr_widget_set_visible(qt6cr_handle_t handle, bool value);
 void qt6cr_widget_close(qt6cr_handle_t handle);
