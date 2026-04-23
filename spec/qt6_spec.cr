@@ -3858,6 +3858,53 @@ describe Qt6 do
     plain_text_edit.release
   end
 
+  it "exposes scroll-area content access and visibility helpers" do
+    application = app
+    main = Qt6::MainWindow.new
+    main.resize(320, 240)
+
+    scroll_area = Qt6::ScrollArea.new
+    scroll_area.widget_resizable = false
+    scroll_area.set_fixed_size(220, 140)
+
+    content = Qt6::Widget.new
+    content.set_fixed_size(900, 900)
+
+    anchor = Qt6::Label.new("Anchor", content)
+    anchor.move(720, 760)
+    anchor.set_fixed_size(80, 24)
+
+    scroll_area.widget = content
+    main.central_widget = scroll_area
+
+    main.show
+    application.process_events
+
+    scroll_area.widget.should_not be_nil
+    scroll_area.widget.not_nil!.size.should eq(Qt6::Size.new(900, 900))
+    scroll_area.vertical_scroll_bar.value.should eq(0)
+    scroll_area.horizontal_scroll_bar.value.should eq(0)
+
+    scroll_area.ensure_visible(780, 820, 10, 10)
+    application.process_events
+    scroll_area.vertical_scroll_bar.value.should be > 0
+    scroll_area.horizontal_scroll_bar.value.should be > 0
+
+    scroll_area.vertical_scroll_bar.value = 0
+    scroll_area.horizontal_scroll_bar.value = 0
+    scroll_area.ensure_widget_visible(anchor, 10, 10)
+    application.process_events
+    scroll_area.vertical_scroll_bar.value.should be > 0
+    scroll_area.horizontal_scroll_bar.value.should be > 0
+
+    taken = scroll_area.take_widget
+    taken.should_not be_nil
+    scroll_area.widget.should be_nil
+    taken.not_nil!.size.should eq(Qt6::Size.new(900, 900))
+
+    main.release
+  end
+
   it "hosts a verified editor slice with undo, settings, clipboard, canvas interaction, and PNG export" do
     application = app
     state = EditorVerticalSliceSpecState.new

@@ -1819,13 +1819,17 @@ void qt6cr_stacked_layout_set_current_index(qt6cr_handle_t handle, int index);
 void qt6cr_stacked_layout_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_scroll_area_widget(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_scroll_area_take_widget(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_widget_resizable(qt6cr_handle_t handle, bool value);
 bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle);
 int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
 int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy);
+void qt6cr_scroll_area_ensure_visible(qt6cr_handle_t handle, int x, int y, int xmargin, int ymargin);
+void qt6cr_scroll_area_ensure_widget_visible(qt6cr_handle_t handle, qt6cr_handle_t widget, int xmargin, int ymargin);
 
 int qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
