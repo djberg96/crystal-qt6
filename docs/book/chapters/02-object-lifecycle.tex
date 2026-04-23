@@ -211,7 +211,7 @@ This is another reason to keep ordinary GUI objects parented to a durable owner.
 
 Qt Widgets are GUI-thread objects. Create widgets, show windows, mutate widget state, and destroy widget wrappers from the same thread that owns the application event loop. This is the safest rule even for operations that look small, such as changing a label or releasing a dialog.
 
-Use background work only for ordinary Crystal computation or blocking I/O that does not touch Qt objects directly. Move the result back to the GUI flow before updating widgets, models, images used by widgets, or actions. If the binding later grows explicit thread or queued-callback helpers, those helpers should become the boundary between worker code and GUI code.
+Use background work only for ordinary Crystal computation or blocking I/O that does not touch Qt objects directly. Move the result back to the GUI flow before updating widgets, models, images used by widgets, or actions. \api{Application\#invoke_later} is the boundary between worker code and GUI code.
 
 Timers, signal callbacks, paint callbacks, and event callbacks already run in the Qt event flow. Keep them brief, update application state, schedule repaint with \api{update}, and return control to the event loop.
 
