@@ -396,34 +396,8 @@ Most dialog problems are event-loop, ownership, or platform issues. These checks
 \begin{itemize}
 \item If a dialog never appears, make sure a \api{Qt6.application} exists and the dialog is launched from the GUI thread.
 \item If a modal dialog appears behind another window, pass the launching window as the parent and avoid using an unparented top-level dialog for application-local questions.
-\item If screenshots differ across macOS, Linux, and Windows, check whether the dialog is native. Native dialogs are allowed to look and behave like the host platform.
 \item If a progress dialog shows but does not repaint, move long work into smaller chunks and let the event loop process between updates.
-\item If a scripted capture misses a native dialog on macOS, run the gallery in a foreground desktop session and recapture manually when needed.
 \end{itemize}
-
-\section{Screenshot Checklist}
-
-When replacing placeholders with real screenshots, capture the gallery in a consistent theme and window size. The first pass should include these files:
-
-\begin{itemize}
-\item \api{dialogs-main-window.png}
-\item \api{dialogs-message-question.png}
-\item \api{dialogs-message-warning.png}
-\item \api{dialogs-file-open.png}
-\item \api{dialogs-file-save.png}
-\item \api{dialogs-color-dialog.png}
-\item \api{dialogs-color-alpha.png}
-\item \api{dialogs-font-dialog.png}
-\item \api{dialogs-font-monospaced.png}
-\item \api{dialogs-input-text.png}
-\item \api{dialogs-input-int.png}
-\item \api{dialogs-input-choice.png}
-\item \api{dialogs-progress-dialog.png}
-\item \api{dialogs-progress-canceled.png}
-\item \api{dialogs-custom-settings.png}
-\end{itemize}
-
-The book Makefile tracks \api{docs/book/images/*.png}, so replacing a screenshot and rerunning \api{make docs-book} rebuilds the PDF. If you add a new image format or store generated screenshots elsewhere, update \api{docs/book/Makefile} so image changes remain visible to the build.
 
 \section{Current Coverage}
 

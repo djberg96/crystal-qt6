@@ -36,4 +36,6 @@ Recommended first screenshot set:
 
 Use `make example-dialogs` to launch the dialog gallery that these screenshots should document.
 
+When replacing placeholders with real screenshots, capture the gallery in a consistent theme and window size. The book Makefile tracks `docs/book/images/*.png`, so replacing a screenshot and rerunning `make docs-book` rebuilds the PDF. If you add a new image format or store generated screenshots elsewhere, update `docs/book/Makefile` so image changes remain visible to the build.
+
 Deferred chapter ideas are tracked in `TODO.md`.
