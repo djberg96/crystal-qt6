@@ -1121,6 +1121,24 @@ module Qt6
     fun qt6cr_undo_group_on_undo_text_changed = qt6cr_undo_group_on_undo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
     fun qt6cr_undo_group_on_redo_text_changed = qt6cr_undo_group_on_redo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
 
+    fun qt6cr_system_tray_icon_create = qt6cr_system_tray_icon_create(parent : Handle) : Handle
+    fun qt6cr_system_tray_icon_is_system_tray_available = qt6cr_system_tray_icon_is_system_tray_available : Bool
+    fun qt6cr_system_tray_icon_supports_messages = qt6cr_system_tray_icon_supports_messages : Bool
+    fun qt6cr_system_tray_icon_icon = qt6cr_system_tray_icon_icon(handle : Handle) : Handle
+    fun qt6cr_system_tray_icon_set_icon = qt6cr_system_tray_icon_set_icon(handle : Handle, icon : Handle)
+    fun qt6cr_system_tray_icon_tool_tip = qt6cr_system_tray_icon_tool_tip(handle : Handle) : UInt8*
+    fun qt6cr_system_tray_icon_set_tool_tip = qt6cr_system_tray_icon_set_tool_tip(handle : Handle, tool_tip : UInt8*)
+    fun qt6cr_system_tray_icon_is_visible = qt6cr_system_tray_icon_is_visible(handle : Handle) : Bool
+    fun qt6cr_system_tray_icon_set_visible = qt6cr_system_tray_icon_set_visible(handle : Handle, value : Bool)
+    fun qt6cr_system_tray_icon_show = qt6cr_system_tray_icon_show(handle : Handle)
+    fun qt6cr_system_tray_icon_hide = qt6cr_system_tray_icon_hide(handle : Handle)
+    fun qt6cr_system_tray_icon_context_menu = qt6cr_system_tray_icon_context_menu(handle : Handle) : Handle
+    fun qt6cr_system_tray_icon_set_context_menu = qt6cr_system_tray_icon_set_context_menu(handle : Handle, menu : Handle)
+    fun qt6cr_system_tray_icon_show_message = qt6cr_system_tray_icon_show_message(handle : Handle, title : UInt8*, message : UInt8*, icon : LibC::Int, timeout_ms : LibC::Int)
+    fun qt6cr_system_tray_icon_on_activated = qt6cr_system_tray_icon_on_activated(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_system_tray_icon_on_message_clicked = qt6cr_system_tray_icon_on_message_clicked(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_menu_create = qt6cr_menu_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
     fun qt6cr_menu_bar_clear = qt6cr_menu_bar_clear(handle : Handle)
 
