@@ -1067,6 +1067,8 @@ qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_action_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_action_text(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_action_icon(qt6cr_handle_t handle);
+void qt6cr_action_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 void qt6cr_action_set_shortcut(qt6cr_handle_t handle, const char *shortcut);
 char *qt6cr_action_shortcut(qt6cr_handle_t handle);
 void qt6cr_action_set_checkable(qt6cr_handle_t handle, bool value);

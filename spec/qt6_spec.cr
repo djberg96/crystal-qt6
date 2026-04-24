@@ -2127,6 +2127,7 @@ describe Qt6 do
     search = Qt6::LineEdit.new(parent: window)
 
     quick_open.shortcut = "Ctrl+Shift+O"
+    quick_open.icon = Qt6::QIcon.new
     quick_open.checkable = true
     quick_open.status_tip = "Open a project quickly"
     quick_open.tool_tip = "Quick Open"
@@ -2161,6 +2162,7 @@ describe Qt6 do
     application.process_events
 
     quick_open.shortcut.to_s.should eq("Ctrl+Shift+O")
+    quick_open.icon.null?.should be_true
     quick_open.status_tip.should eq("Open a project quickly")
     quick_open.tool_tip.should eq("Quick Open")
     quick_open.visible?.should be_true
