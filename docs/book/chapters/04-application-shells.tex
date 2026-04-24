@@ -218,17 +218,17 @@ Use tray messages for small confirmations or background-task updates. For anythi
 
 \begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
 \toprule
-Tray API & Purpose \\
+SystemTrayIcon API & Purpose \\
 \midrule
-\api{SystemTrayIcon.system_tray_available?} & Reports whether the current desktop session exposes tray support. \\
-\api{supports_messages?} & Reports whether balloon or banner messages are available. \\
-\api{icon} / \api{icon=} & Gets or sets the tray icon image. Use a recognizable icon because tray surfaces are small. \\
-\api{tool_tip} / \api{tool_tip=} & Sets the hover text shown by many desktops. \\
-\api{context_menu} / \api{context_menu=} & Attaches a standalone \api{Menu} for tray commands. \\
-\api{show} / \api{hide} / \api{visible?} / \api{visible=} & Controls whether the icon is present. \\
-\api{on_activated} & Handles user interaction with the tray icon. \\
-\api{on_message_clicked} & Handles clicks on a tray message when the platform reports them. \\
-\api{show_message} & Displays a short platform notification when supported. \\
+\texttt{.system\_tray\_available?} & Reports whether the current desktop session exposes tray support. \\
+\texttt{.supports\_messages?} & Reports whether tray notifications are available on the current desktop. \\
+\texttt{\#icon} / \texttt{\#icon=} & Gets or sets the tray icon image. Use a recognizable icon because tray surfaces are small. \\
+\texttt{\#tool\_tip} / \texttt{\#tool\_tip=} & Sets the hover text shown by many desktops. \\
+\texttt{\#context\_menu} / \texttt{\#context\_menu=} & Attaches a standalone \api{Menu} for tray commands. \\
+\texttt{\#show} / \texttt{\#hide} / \mbox{\texttt{\#visible?} / \texttt{\#visible=}} & Controls whether the icon is present. \\
+\texttt{\#on\_activated} & Handles user interaction with the tray icon. \\
+\texttt{\#on\_message\_clicked} & Handles clicks on a tray message when the platform reports them. \\
+\texttt{\#show\_message} & Displays a short platform notification when supported. \\
 \bottomrule
 \end{longtable}
 
