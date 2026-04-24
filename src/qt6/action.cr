@@ -40,6 +40,15 @@ module Qt6
       value
     end
 
+    def icon : QIcon
+      QIcon.wrap(LibQt6.qt6cr_action_icon(to_unsafe), true)
+    end
+
+    def icon=(value : QIcon) : QIcon
+      LibQt6.qt6cr_action_set_icon(to_unsafe, value.to_unsafe)
+      value
+    end
+
     def shortcut : KeySequence
       KeySequence.new(Qt6.copy_and_release_string(LibQt6.qt6cr_action_shortcut(to_unsafe)))
     end
