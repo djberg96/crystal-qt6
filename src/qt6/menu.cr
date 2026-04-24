@@ -1,12 +1,17 @@
 module Qt6
   # Wraps `QMenu`.
   class Menu < Widget
+    # Creates a standalone menu with an optional title and parent.
+    def initialize(title : String = "", parent : Widget? = nil)
+      super(LibQt6.qt6cr_menu_create(parent.try(&.to_unsafe) || Pointer(Void).null, title.to_unsafe), parent.nil?)
+    end
+
     # Wraps an existing native menu handle.
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
       new(handle, owned)
     end
 
-    def initialize(handle : LibQt6::Handle, owned : Bool)
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
 

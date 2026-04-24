@@ -2127,6 +2127,7 @@ describe Qt6 do
     search = Qt6::LineEdit.new(parent: window)
 
     quick_open.shortcut = "Ctrl+Shift+O"
+    quick_open.icon = Qt6::QIcon.new
     quick_open.checkable = true
     quick_open.status_tip = "Open a project quickly"
     quick_open.tool_tip = "Quick Open"
@@ -2161,6 +2162,7 @@ describe Qt6 do
     application.process_events
 
     quick_open.shortcut.to_s.should eq("Ctrl+Shift+O")
+    quick_open.icon.null?.should be_true
     quick_open.status_tip.should eq("Open a project quickly")
     quick_open.tool_tip.should eq("Quick Open")
     quick_open.visible?.should be_true
@@ -2181,6 +2183,49 @@ describe Qt6 do
 
     menu_action.release
     toggle_view_action.release
+    window.release
+  end
+
+  it "supports system tray wrappers and standalone menus" do
+    app
+    window = Qt6::MainWindow.new
+    menu = Qt6::Menu.new("Tray Menu", window)
+    tray = Qt6::SystemTrayIcon.new(window)
+    activated = [] of Qt6::SystemTrayActivationReason
+    message_clicked = false
+
+    menu.add_action("Open")
+    tray.icon = Qt6::QIcon.new
+    tray.tool_tip = "Tray test"
+    tray.context_menu = menu
+    tray.on_activated do |reason|
+      activated << reason
+    end
+    tray.on_message_clicked do
+      message_clicked = true
+    end
+
+    Qt6::SystemTrayIcon.system_tray_available?.should be_a(Bool)
+    Qt6::SystemTrayIcon.supports_messages?.should be_a(Bool)
+    tray.tool_tip.should eq("Tray test")
+    tray.context_menu.not_nil!.title.should eq("Tray Menu")
+    tray.icon.null?.should be_true
+    activated.should be_empty
+    message_clicked.should be_false
+
+    if Qt6::SystemTrayIcon.system_tray_available?
+      tray.show
+      tray.visible?.should be_true
+      tray.visible = false
+      tray.visible?.should be_false
+
+      if tray.supports_messages?
+        tray.show_message("Spec", "Tray message", icon: Qt6::SystemTrayMessageIcon::Information, timeout: 1)
+      end
+    else
+      tray.visible?.should be_false
+    end
+
     window.release
   end
 

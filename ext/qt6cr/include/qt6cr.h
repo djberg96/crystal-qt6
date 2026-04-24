@@ -1067,6 +1067,8 @@ qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_action_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_action_text(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_action_icon(qt6cr_handle_t handle);
+void qt6cr_action_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 void qt6cr_action_set_shortcut(qt6cr_handle_t handle, const char *shortcut);
 char *qt6cr_action_shortcut(qt6cr_handle_t handle);
 void qt6cr_action_set_checkable(qt6cr_handle_t handle, bool value);
@@ -1152,6 +1154,24 @@ void qt6cr_undo_group_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback
 void qt6cr_undo_group_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 void qt6cr_undo_group_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_system_tray_icon_create(qt6cr_handle_t parent);
+bool qt6cr_system_tray_icon_is_system_tray_available(void);
+bool qt6cr_system_tray_icon_supports_messages(void);
+qt6cr_handle_t qt6cr_system_tray_icon_icon(qt6cr_handle_t handle);
+void qt6cr_system_tray_icon_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+char *qt6cr_system_tray_icon_tool_tip(qt6cr_handle_t handle);
+void qt6cr_system_tray_icon_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip);
+bool qt6cr_system_tray_icon_is_visible(qt6cr_handle_t handle);
+void qt6cr_system_tray_icon_set_visible(qt6cr_handle_t handle, bool value);
+void qt6cr_system_tray_icon_show(qt6cr_handle_t handle);
+void qt6cr_system_tray_icon_hide(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_system_tray_icon_context_menu(qt6cr_handle_t handle);
+void qt6cr_system_tray_icon_set_context_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
+void qt6cr_system_tray_icon_show_message(qt6cr_handle_t handle, const char *title, const char *message, int icon, int timeout_ms);
+void qt6cr_system_tray_icon_on_activated(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_system_tray_icon_on_message_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_menu_create(qt6cr_handle_t parent, const char *title);
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title);
 void qt6cr_menu_bar_clear(qt6cr_handle_t handle);
 
