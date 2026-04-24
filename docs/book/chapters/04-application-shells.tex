@@ -163,6 +163,77 @@ end
 
 A timeout of \api{0} keeps the message until it is replaced or cleared. Nonzero timeouts are useful for short command confirmations.
 
+\section{System Tray}
+
+Some desktop tools keep working after the main window is hidden. A sync utility, download helper, screen-capture tool, or background monitor may want a tray icon for quick access, a context menu, and lightweight notifications. In \api{crystal-qt6}, that role is handled by \api{Qt6::SystemTrayIcon}.
+
+Treat the tray as an optional shell surface, not a replacement for the main window. Some environments do not expose a traditional system tray, and some users disable it. Check availability first and keep the main workflow usable without it.
+
+\begin{lstlisting}[style=crystal]
+if Qt6::SystemTrayIcon.system_tray_available?
+  tray_menu = Qt6::Menu.new("Tray", main)
+
+  show_action = Qt6::Action.new("Show Window", main)
+  show_action.on_triggered do
+    main.show
+    main.raise_to_front
+    main.status_bar.show_message("Window restored", 1500)
+  end
+
+  tray_menu << show_action
+  tray_menu.add_separator
+  tray_menu << quit_action
+
+  tray = Qt6::SystemTrayIcon.new(main)
+  tray.icon = Qt6::QIcon.from_theme("applications-system")
+  tray.tool_tip = "Map Tool"
+  tray.context_menu = tray_menu
+
+  tray.on_activated do |reason|
+    if reason == Qt6::SystemTrayActivationReason::Trigger
+      main.visible? ? main.hide : main.show
+    end
+  end
+
+  tray.show
+end
+\end{lstlisting}
+
+The standalone \api{Menu.new("Tray", main)} constructor is useful here because tray menus are not attached to the window's menu bar. Parent the tray icon and its actions to a long-lived object such as the main window so they stay alive for the entire application session.
+
+Once a tray icon exists, tray notifications are also available, but they are platform-dependent. Always gate them with \api{supports_messages?}:
+
+\begin{lstlisting}[style=crystal]
+if tray.supports_messages?
+  tray.show_message(
+    "Export Finished",
+    "terrain.png was written successfully",
+    icon: Qt6::SystemTrayMessageIcon::Information,
+    timeout: 3000
+  )
+end
+\end{lstlisting}
+
+Use tray messages for small confirmations or background-task updates. For anything that needs explanation, action choices, or guaranteed visibility, prefer the main window or a dialog.
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Tray API & Purpose \\
+\midrule
+\api{SystemTrayIcon.system_tray_available?} & Reports whether the current desktop session exposes tray support. \\
+\api{supports_messages?} & Reports whether balloon or banner messages are available. \\
+\api{icon} / \api{icon=} & Gets or sets the tray icon image. Use a recognizable icon because tray surfaces are small. \\
+\api{tool_tip} / \api{tool_tip=} & Sets the hover text shown by many desktops. \\
+\api{context_menu} / \api{context_menu=} & Attaches a standalone \api{Menu} for tray commands. \\
+\api{show} / \api{hide} / \api{visible?} / \api{visible=} & Controls whether the icon is present. \\
+\api{on_activated} & Handles user interaction with the tray icon. \\
+\api{on_message_clicked} & Handles clicks on a tray message when the platform reports them. \\
+\api{show_message} & Displays a short platform notification when supported. \\
+\bottomrule
+\end{longtable}
+
+Do not hide essential commands only in the tray. A good tray integration duplicates a few high-value commands such as show window, pause background work, recent status, or quit. The full command set should still exist in the main shell.
+
 \section{Document State}
 
 Most shell applications eventually need a dirty flag: whether the current document has unsaved changes. Keep that state near the actions it affects, then update the title, Save action, and status bar together.
