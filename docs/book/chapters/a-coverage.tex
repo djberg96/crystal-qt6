@@ -7,7 +7,7 @@ This appendix summarizes the current \api{crystal-qt6} API shape at a high level
 Area & Representative APIs \\
 \midrule
 Application & \api{Application}, \api{Qt6.application}, metadata, style sheets, clipboard, local event loops \\
-Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget} \\
+Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget}, \api{SystemTrayIcon} \\
 Dialogs & \api{Dialog}, \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox} \\
 Widgets & Labels, buttons, line edits, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, splitters, scroll areas, group boxes, progress bars, date/time controls, calendar widgets, text editors \\
 Events & \api{EventWidget}, paint, resize, mouse, wheel, key, focus, enter/leave, drag/drop callbacks, synthetic event helpers \\
@@ -79,6 +79,28 @@ Name & Value & Typical use \\
 \api{DragMove} & 61 & Drag operation moves over a widget. \\
 \api{DragLeave} & 62 & Drag operation leaves a widget. \\
 \api{Drop} & 63 & Drop operation completes. \\
+\bottomrule
+\end{longtable}
+}
+
+\subsection{System Tray Enums}
+
+The tray wrapper uses two small enums: one for how the user activated the tray icon, and one for the icon style shown in a tray message.
+
+{\small
+\begin{longtable}{@{}p{0.38\textwidth}p{0.10\textwidth}p{0.44\textwidth}@{}}
+\toprule
+Name & Value & Typical use \\
+\midrule
+\api{SystemTrayActivationReason::Unknown} & 0 & The platform did not report a more specific activation reason. \\
+\api{SystemTrayActivationReason::Context} & 1 & The user requested the context menu, often by secondary click. \\
+\api{SystemTrayActivationReason::DoubleClick} & 2 & The tray icon was double-clicked. \\
+\api{SystemTrayActivationReason::Trigger} & 3 & The primary tray activation, often a single click. \\
+\api{SystemTrayActivationReason::MiddleClick} & 4 & The tray icon was activated with the middle mouse button. \\
+\api{SystemTrayMessageIcon::NoIcon} & 0 & Show a message without a status icon. \\
+\api{SystemTrayMessageIcon::Information} & 1 & Use an informational status icon. \\
+\api{SystemTrayMessageIcon::Warning} & 2 & Use a warning status icon. \\
+\api{SystemTrayMessageIcon::Critical} & 3 & Use a critical or error status icon. \\
 \bottomrule
 \end{longtable}
 }
