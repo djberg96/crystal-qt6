@@ -1036,6 +1036,8 @@ module Qt6
     fun qt6cr_action_create = qt6cr_action_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_action_set_text = qt6cr_action_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_action_text = qt6cr_action_text(handle : Handle) : UInt8*
+    fun qt6cr_action_icon = qt6cr_action_icon(handle : Handle) : Handle
+    fun qt6cr_action_set_icon = qt6cr_action_set_icon(handle : Handle, icon : Handle)
     fun qt6cr_action_set_shortcut = qt6cr_action_set_shortcut(handle : Handle, shortcut : UInt8*)
     fun qt6cr_action_shortcut = qt6cr_action_shortcut(handle : Handle) : UInt8*
     fun qt6cr_action_set_checkable = qt6cr_action_set_checkable(handle : Handle, value : Bool)

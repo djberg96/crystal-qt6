@@ -8055,6 +8055,20 @@ char *qt6cr_action_text(qt6cr_handle_t handle) {
   return action == nullptr ? duplicate_string("") : duplicate_string(action->text());
 }
 
+qt6cr_handle_t qt6cr_action_icon(qt6cr_handle_t handle) {
+  auto *action = as_action(handle);
+  return action == nullptr ? nullptr : static_cast<qt6cr_handle_t>(new QIcon(action->icon()));
+}
+
+void qt6cr_action_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *action = as_action(handle);
+  auto *action_icon = as_qicon(icon);
+
+  if (action != nullptr) {
+    action->setIcon(action_icon == nullptr ? QIcon() : *action_icon);
+  }
+}
+
 void qt6cr_action_set_shortcut(qt6cr_handle_t handle, const char *shortcut) {
   auto *action = as_action(handle);
 
