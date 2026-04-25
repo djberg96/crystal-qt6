@@ -2186,6 +2186,49 @@ describe Qt6 do
     window.release
   end
 
+  it "supports widget actions with default widgets in menus" do
+    app
+    window = Qt6::MainWindow.new
+    menu = Qt6::Menu.new("Controls", window)
+    panel = Qt6::Widget.new(menu)
+    slider = Qt6::Slider.new(Qt6::Orientation::Vertical, panel)
+    action = Qt6::WidgetAction.new(menu)
+
+    slider.set_range(0, 100)
+    slider.value = 42
+    panel.vbox do |column|
+      column << slider
+    end
+
+    action.default_widget.should be_nil
+    action.default_widget = panel
+    menu.add_action(action).should eq(action)
+
+    action.default_widget.not_nil!.to_unsafe.should eq(panel.to_unsafe)
+    slider.orientation.should eq(Qt6::Orientation::Vertical)
+    slider.value.should eq(42)
+
+    window.release
+  end
+
+  it "supports push button menus" do
+    app
+    window = Qt6::MainWindow.new
+    button = Qt6::PushButton.new("Volume", window)
+    menu = Qt6::Menu.new("Volume Menu", button)
+
+    button.menu.should be_nil
+    button.menu = menu
+
+    button.menu.not_nil!.to_unsafe.should eq(menu.to_unsafe)
+    button.menu.not_nil!.title.should eq("Volume Menu")
+
+    button.menu = nil
+    button.menu.should be_nil
+
+    window.release
+  end
+
   it "supports system tray wrappers and standalone menus" do
     app
     window = Qt6::MainWindow.new
