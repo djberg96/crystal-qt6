@@ -1060,6 +1060,10 @@ module Qt6
     fun qt6cr_action_on_toggled = qt6cr_action_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
     fun qt6cr_action_trigger = qt6cr_action_trigger(handle : Handle)
 
+    fun qt6cr_widget_action_create = qt6cr_widget_action_create(parent : Handle) : Handle
+    fun qt6cr_widget_action_default_widget = qt6cr_widget_action_default_widget(handle : Handle) : Handle
+    fun qt6cr_widget_action_set_default_widget = qt6cr_widget_action_set_default_widget(handle : Handle, widget : Handle)
+
     fun qt6cr_action_group_create = qt6cr_action_group_create(parent : Handle) : Handle
     fun qt6cr_action_group_add_action = qt6cr_action_group_add_action(handle : Handle, action : Handle)
     fun qt6cr_action_group_set_exclusive = qt6cr_action_group_set_exclusive(handle : Handle, value : Bool)
@@ -1252,6 +1256,8 @@ module Qt6
     fun qt6cr_push_button_text = qt6cr_push_button_text(handle : Handle) : UInt8*
     fun qt6cr_push_button_on_clicked = qt6cr_push_button_on_clicked(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_push_button_click = qt6cr_push_button_click(handle : Handle)
+    fun qt6cr_push_button_menu = qt6cr_push_button_menu(handle : Handle) : Handle
+    fun qt6cr_push_button_set_menu = qt6cr_push_button_set_menu(handle : Handle, menu : Handle)
 
     fun qt6cr_line_edit_create = qt6cr_line_edit_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_line_edit_set_text = qt6cr_line_edit_set_text(handle : Handle, text : UInt8*)

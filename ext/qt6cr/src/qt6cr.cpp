@@ -145,6 +145,7 @@
 #include <QVBoxLayout>
 #include <QWheelEvent>
 #include <QWidget>
+#include <QWidgetAction>
 #include <QSplitter>
 #include <QVariant>
 #include <QMetaType>
@@ -1267,6 +1268,10 @@ QDockWidget *as_dock_widget(qt6cr_handle_t handle) {
 
 QAction *as_action(qt6cr_handle_t handle) {
   return static_cast<QAction *>(handle);
+}
+
+QWidgetAction *as_widget_action(qt6cr_handle_t handle) {
+  return static_cast<QWidgetAction *>(handle);
 }
 
 QActionGroup *as_action_group(qt6cr_handle_t handle) {
@@ -8218,6 +8223,25 @@ void qt6cr_action_trigger(qt6cr_handle_t handle) {
   }
 }
 
+qt6cr_handle_t qt6cr_widget_action_create(qt6cr_handle_t parent) {
+  return new QWidgetAction(as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_widget_action_default_widget(qt6cr_handle_t handle) {
+  auto *action = as_widget_action(handle);
+  auto *widget = action == nullptr ? nullptr : action->defaultWidget();
+  return widget == nullptr ? nullptr : static_cast<qt6cr_handle_t>(widget);
+}
+
+void qt6cr_widget_action_set_default_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *action = as_widget_action(handle);
+  auto *default_widget = as_widget(widget);
+
+  if (action != nullptr) {
+    action->setDefaultWidget(default_widget);
+  }
+}
+
 qt6cr_handle_t qt6cr_action_group_create(qt6cr_handle_t parent) {
   return new QActionGroup(as_object(parent));
 }
@@ -9584,6 +9608,21 @@ void qt6cr_push_button_click(qt6cr_handle_t handle) {
 
   if (button != nullptr) {
     button->click();
+  }
+}
+
+qt6cr_handle_t qt6cr_push_button_menu(qt6cr_handle_t handle) {
+  auto *button = as_push_button(handle);
+  auto *menu = button == nullptr ? nullptr : button->menu();
+  return menu == nullptr ? nullptr : static_cast<qt6cr_handle_t>(menu);
+}
+
+void qt6cr_push_button_set_menu(qt6cr_handle_t handle, qt6cr_handle_t menu) {
+  auto *button = as_push_button(handle);
+  auto *button_menu = as_menu(menu);
+
+  if (button != nullptr) {
+    button->setMenu(button_menu);
   }
 }
 

@@ -1091,6 +1091,10 @@ void qt6cr_action_on_triggered(qt6cr_handle_t handle, qt6cr_void_callback_t call
 void qt6cr_action_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 void qt6cr_action_trigger(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_widget_action_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_widget_action_default_widget(qt6cr_handle_t handle);
+void qt6cr_widget_action_set_default_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+
 qt6cr_handle_t qt6cr_action_group_create(qt6cr_handle_t parent);
 void qt6cr_action_group_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
 void qt6cr_action_group_set_exclusive(qt6cr_handle_t handle, bool value);
@@ -1283,6 +1287,8 @@ void qt6cr_push_button_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_push_button_text(qt6cr_handle_t handle);
 void qt6cr_push_button_on_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_push_button_click(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_push_button_menu(qt6cr_handle_t handle);
+void qt6cr_push_button_set_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
 
 qt6cr_handle_t qt6cr_line_edit_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_line_edit_set_text(qt6cr_handle_t handle, const char *text);
