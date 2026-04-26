@@ -4620,6 +4620,20 @@ void qt6cr_standard_item_set_text(qt6cr_handle_t handle, const char *text) {
   }
 }
 
+qt6cr_handle_t qt6cr_standard_item_icon(qt6cr_handle_t handle) {
+  auto *item = as_standard_item(handle);
+  return item == nullptr ? nullptr : static_cast<qt6cr_handle_t>(new QIcon(item->icon()));
+}
+
+void qt6cr_standard_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *item = as_standard_item(handle);
+  auto *item_icon = as_qicon(icon);
+
+  if (item != nullptr) {
+    item->setIcon(item_icon == nullptr ? QIcon() : *item_icon);
+  }
+}
+
 qt6cr_variant_value_t qt6cr_standard_item_data(qt6cr_handle_t handle, int role) {
   auto *item = as_standard_item(handle);
   return item == nullptr ? to_variant_value(QVariant()) : to_variant_value(item->data(role));
