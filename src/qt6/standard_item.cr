@@ -26,6 +26,17 @@ module Qt6
       value
     end
 
+    # Returns the item icon.
+    def icon : QIcon
+      QIcon.wrap(LibQt6.qt6cr_standard_item_icon(to_unsafe), true)
+    end
+
+    # Sets the item icon.
+    def icon=(value : QIcon) : QIcon
+      LibQt6.qt6cr_standard_item_set_icon(to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns role-backed data for the item.
     def data(role : ItemDataRole = ItemDataRole::Display) : ModelData
       Qt6.model_data_from_native(LibQt6.qt6cr_standard_item_data(to_unsafe, role.value))
