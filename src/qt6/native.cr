@@ -498,6 +498,8 @@ module Qt6
     fun qt6cr_standard_item_destroy = qt6cr_standard_item_destroy(handle : Handle)
     fun qt6cr_standard_item_text = qt6cr_standard_item_text(handle : Handle) : UInt8*
     fun qt6cr_standard_item_set_text = qt6cr_standard_item_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_standard_item_icon = qt6cr_standard_item_icon(handle : Handle) : Handle
+    fun qt6cr_standard_item_set_icon = qt6cr_standard_item_set_icon(handle : Handle, icon : Handle)
     fun qt6cr_standard_item_data = qt6cr_standard_item_data(handle : Handle, role : LibC::Int) : VariantValue
     fun qt6cr_standard_item_set_data = qt6cr_standard_item_set_data(handle : Handle, value : VariantValue, role : LibC::Int) : Bool
     fun qt6cr_standard_item_append_row = qt6cr_standard_item_append_row(handle : Handle, item : Handle)

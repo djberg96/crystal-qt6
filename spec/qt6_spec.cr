@@ -3249,6 +3249,21 @@ describe Qt6 do
     tree_widget.release
   end
 
+  it "supports standard item icons" do
+    app
+    icon = Qt6::QIcon.from_theme("document-open")
+    item = Qt6::StandardItem.new("Layer")
+
+    icon.should be_a(Qt6::QIcon)
+    item.icon.null?.should be_true
+
+    item.icon = icon
+    item.icon.should be_a(Qt6::QIcon)
+
+    item.release
+    icon.release
+  end
+
   it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do
     application = app
     list_view = Qt6::ListView.new
