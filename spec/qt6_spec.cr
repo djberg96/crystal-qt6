@@ -2253,11 +2253,18 @@ describe Qt6 do
     window = Qt6::MainWindow.new
     menu = Qt6::Menu.new("Tray Menu", window)
     tray = Qt6::SystemTrayIcon.new(window)
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-tray-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(16, 16)
     activated = [] of Qt6::SystemTrayActivationReason
     message_clicked = false
 
+    icon_image.fill(Qt6::Color.new(0, 0, 0, 0))
+    icon_image.set_pixel_color(8, 8, Qt6::Color.new(32, 96, 180, 255))
+    icon_image.save(icon_path).should be_true
+
     menu.add_action("Open")
-    tray.icon = Qt6::QIcon.new
+    tray.icon.null?.should be_true
+    tray.icon = Qt6::QIcon.from_file(icon_path)
     tray.tool_tip = "Tray test"
     tray.context_menu = menu
     tray.on_activated do |reason|
@@ -2271,7 +2278,7 @@ describe Qt6 do
     Qt6::SystemTrayIcon.supports_messages?.should be_a(Bool)
     tray.tool_tip.should eq("Tray test")
     tray.context_menu.not_nil!.title.should eq("Tray Menu")
-    tray.icon.null?.should be_true
+    tray.icon.null?.should be_false
     activated.should be_empty
     message_clicked.should be_false
 
