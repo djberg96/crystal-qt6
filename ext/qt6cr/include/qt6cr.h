@@ -136,6 +136,7 @@ int qt6cr_event_type(qt6cr_handle_t handle);
 void qt6cr_event_accept(qt6cr_handle_t handle);
 void qt6cr_event_ignore(qt6cr_handle_t handle);
 bool qt6cr_event_is_accepted(qt6cr_handle_t handle);
+qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv);
 void qt6cr_application_destroy(qt6cr_handle_t handle);
@@ -1189,6 +1190,7 @@ void qt6cr_menu_set_title(qt6cr_handle_t handle, const char *title);
 char *qt6cr_menu_title(qt6cr_handle_t handle);
 void qt6cr_menu_clear(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_menu_menu_action(qt6cr_handle_t handle);
+void qt6cr_menu_exec_at(qt6cr_handle_t handle, qt6cr_handle_t widget, qt6cr_pointf_t position);
 
 qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title);
 qt6cr_handle_t qt6cr_tool_bar_add_text_action(qt6cr_handle_t handle, const char *text);

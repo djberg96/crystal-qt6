@@ -106,6 +106,7 @@ module Qt6
     fun qt6cr_event_accept = qt6cr_event_accept(handle : Handle)
     fun qt6cr_event_ignore = qt6cr_event_ignore(handle : Handle)
     fun qt6cr_event_is_accepted = qt6cr_event_is_accepted(handle : Handle) : Bool
+    fun qt6cr_event_mouse_event = qt6cr_event_mouse_event(handle : Handle) : MouseEventValue
 
     fun qt6cr_application_create = qt6cr_application_create(argc : LibC::Int, argv : UInt8**) : Handle
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)
@@ -1158,6 +1159,7 @@ module Qt6
     fun qt6cr_menu_title = qt6cr_menu_title(handle : Handle) : UInt8*
     fun qt6cr_menu_clear = qt6cr_menu_clear(handle : Handle)
     fun qt6cr_menu_menu_action = qt6cr_menu_menu_action(handle : Handle) : Handle
+    fun qt6cr_menu_exec_at = qt6cr_menu_exec_at(handle : Handle, widget : Handle, position : PointFValue)
 
     fun qt6cr_tool_bar_create = qt6cr_tool_bar_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_tool_bar_add_text_action = qt6cr_tool_bar_add_text_action(handle : Handle, text : UInt8*) : Handle

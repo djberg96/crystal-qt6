@@ -60,6 +60,12 @@ module Qt6
       Action.wrap(LibQt6.qt6cr_menu_menu_action(to_unsafe))
     end
 
+    # Opens the menu at a position local to the given widget.
+    def exec_at(widget : Widget, position : PointF) : self
+      LibQt6.qt6cr_menu_exec_at(to_unsafe, widget.to_unsafe, position.to_native)
+      self
+    end
+
     # Appends an action to the menu and returns `self`.
     def <<(action : Action) : self
       add_action(action)

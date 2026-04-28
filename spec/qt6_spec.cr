@@ -2229,6 +2229,25 @@ describe Qt6 do
     window.release
   end
 
+  it "can execute menus at widget-local positions" do
+    application = app
+    window = Qt6::MainWindow.new
+    menu = Qt6::Menu.new("Context Menu", window)
+    menu.add_action("Play Now")
+
+    window.resize(120, 80)
+    window.show
+    application.process_events
+
+    Qt6::QTimer.single_shot(0) do
+      menu.hide
+    end
+
+    menu.exec_at(window, Qt6::PointF.new(12.0, 18.0)).should eq(menu)
+
+    window.release
+  end
+
   it "supports system tray wrappers and standalone menus" do
     app
     window = Qt6::MainWindow.new
@@ -4600,6 +4619,34 @@ describe Qt6 do
     spin_box.focus_policy.should eq(Qt6::FocusPolicy::StrongFocus)
 
     host.release
+  end
+
+  it "exposes mouse event details from event filters" do
+    application = app
+    widget = Qt6::EventWidget.new
+    mouse_events = [] of Qt6::MouseEvent
+
+    filter = Qt6::EventFilter.new(widget)
+    filter.on_event do |_watched, event|
+      if event.type == Qt6::EventType::MouseButtonPress
+        mouse_events << event.mouse_event
+      end
+
+      false
+    end
+    widget.install_event_filter(filter)
+
+    widget.show
+    application.process_events
+    widget.simulate_mouse_press(Qt6::PointF.new(30.0, 40.0), button: 2, buttons: 2)
+    application.process_events
+
+    mouse_events.size.should eq(1)
+    mouse_events.first.position.should eq(Qt6::PointF.new(30.0, 40.0))
+    mouse_events.first.button.should eq(2)
+    mouse_events.first.buttons.should eq(2)
+
+    widget.release
   end
 
   it "exposes geometry types and custom widget event hooks" do

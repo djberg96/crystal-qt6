@@ -34,5 +34,10 @@ module Qt6
     def accepted? : Bool
       LibQt6.qt6cr_event_is_accepted(to_unsafe)
     end
+
+    # Returns mouse-event details when this event is a mouse event.
+    def mouse_event : MouseEvent
+      MouseEvent.from_native(LibQt6.qt6cr_event_mouse_event(to_unsafe))
+    end
   end
 end
