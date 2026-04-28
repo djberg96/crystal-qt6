@@ -1887,6 +1887,22 @@ bool qt6cr_event_is_accepted(qt6cr_handle_t handle) {
   return event != nullptr && event->isAccepted();
 }
 
+qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle) {
+  auto *event = static_cast<QMouseEvent *>(handle);
+  qt6cr_mouse_event_t result{{0.0, 0.0}, 0, 0, 0};
+
+  if (event == nullptr) {
+    return result;
+  }
+
+  auto position = event->position();
+  result.position = {position.x(), position.y()};
+  result.button = static_cast<int>(event->button());
+  result.buttons = static_cast<int>(event->buttons());
+  result.modifiers = static_cast<int>(event->modifiers());
+  return result;
+}
+
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv) {
   auto *state = new ApplicationState{};
   state->application = qobject_cast<QApplication *>(QCoreApplication::instance());
@@ -8897,6 +8913,18 @@ void qt6cr_menu_clear(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_menu_menu_action(qt6cr_handle_t handle) {
   auto *menu = as_menu(handle);
   return menu == nullptr ? nullptr : static_cast<qt6cr_handle_t>(menu->menuAction());
+}
+
+void qt6cr_menu_exec_at(qt6cr_handle_t handle, qt6cr_handle_t widget, qt6cr_pointf_t position) {
+  auto *menu = as_menu(handle);
+  auto *parent_widget = as_widget(widget);
+
+  if (menu == nullptr || parent_widget == nullptr) {
+    return;
+  }
+
+  QPoint global_position = parent_widget->mapToGlobal(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)));
+  menu->exec(global_position);
 }
 
 qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title) {
