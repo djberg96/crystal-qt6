@@ -37,6 +37,28 @@ module Qt6
       value
     end
 
+    # Returns whether sections can be reordered by the user.
+    def sections_movable? : Bool
+      LibQt6.qt6cr_header_view_sections_movable(to_unsafe)
+    end
+
+    # Enables or disables interactive section reordering.
+    def sections_movable=(value : Bool) : Bool
+      LibQt6.qt6cr_header_view_set_sections_movable(to_unsafe, value)
+      value
+    end
+
+    # Returns whether sections react to click interaction.
+    def sections_clickable? : Bool
+      LibQt6.qt6cr_header_view_sections_clickable(to_unsafe)
+    end
+
+    # Enables or disables clickable header sections.
+    def sections_clickable=(value : Bool) : Bool
+      LibQt6.qt6cr_header_view_set_sections_clickable(to_unsafe, value)
+      value
+    end
+
     # Returns whether the given section is hidden.
     def section_hidden?(index : Int) : Bool
       LibQt6.qt6cr_header_view_section_hidden(to_unsafe, index.to_i32)

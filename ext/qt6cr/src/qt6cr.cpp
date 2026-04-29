@@ -5733,6 +5733,32 @@ void qt6cr_header_view_set_stretch_last_section(qt6cr_handle_t handle, bool valu
   }
 }
 
+bool qt6cr_header_view_sections_movable(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header != nullptr && header->sectionsMovable();
+}
+
+void qt6cr_header_view_set_sections_movable(qt6cr_handle_t handle, bool value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr) {
+    header->setSectionsMovable(value);
+  }
+}
+
+bool qt6cr_header_view_sections_clickable(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header != nullptr && header->sectionsClickable();
+}
+
+void qt6cr_header_view_set_sections_clickable(qt6cr_handle_t handle, bool value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr) {
+    header->setSectionsClickable(value);
+  }
+}
+
 bool qt6cr_header_view_section_hidden(qt6cr_handle_t handle, int index) {
   auto *header = as_header_view(handle);
   return header != nullptr && index >= 0 && header->isSectionHidden(index);

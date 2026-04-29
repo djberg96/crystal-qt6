@@ -27,10 +27,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `DockWidget#title_bar_widget` helpers for custom dock headers.
 - Added `Completer#wrap_around` and `#max_visible_items` helpers for richer line-edit completion behavior.
 - Added `LcdNumber#small_decimal_point` and `#overflow?` helpers for compact numeric-display polish.
+- Added `HeaderView#sections_movable` and `#sections_clickable` helpers for richer table header interaction.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `Completer`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `DockWidget`, `Frame`, `SplashScreen`, `LcdNumber`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `Completer`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `DockWidget`, `Frame`, `SplashScreen`, `LcdNumber`, `HeaderView`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

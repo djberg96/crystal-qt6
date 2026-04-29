@@ -3660,6 +3660,8 @@ describe Qt6 do
     horizontal_header = table_view.horizontal_header
     horizontal_header.default_section_size = 96
     horizontal_header.stretch_last_section = true
+    horizontal_header.sections_movable = true
+    horizontal_header.sections_clickable = true
     horizontal_header.set_section_resize_mode(0, Qt6::HeaderResizeMode::Fixed)
     horizontal_header.resize_section(0, 120)
     vertical_header = table_view.vertical_header
@@ -3721,6 +3723,8 @@ describe Qt6 do
     horizontal_header.count.should eq(2)
     horizontal_header.default_section_size.should eq(96)
     horizontal_header.stretch_last_section?.should be_true
+    horizontal_header.sections_movable?.should be_true
+    horizontal_header.sections_clickable?.should be_true
     horizontal_header.section_size(0).should be > 0
     horizontal_header.section_resize_mode(0).should eq(Qt6::HeaderResizeMode::Fixed)
     vertical_header.count.should eq(2)

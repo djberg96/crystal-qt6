@@ -631,6 +631,10 @@ module Qt6
     fun qt6cr_header_view_set_default_section_size = qt6cr_header_view_set_default_section_size(handle : Handle, value : LibC::Int)
     fun qt6cr_header_view_stretch_last_section = qt6cr_header_view_stretch_last_section(handle : Handle) : Bool
     fun qt6cr_header_view_set_stretch_last_section = qt6cr_header_view_set_stretch_last_section(handle : Handle, value : Bool)
+    fun qt6cr_header_view_sections_movable = qt6cr_header_view_sections_movable(handle : Handle) : Bool
+    fun qt6cr_header_view_set_sections_movable = qt6cr_header_view_set_sections_movable(handle : Handle, value : Bool)
+    fun qt6cr_header_view_sections_clickable = qt6cr_header_view_sections_clickable(handle : Handle) : Bool
+    fun qt6cr_header_view_set_sections_clickable = qt6cr_header_view_set_sections_clickable(handle : Handle, value : Bool)
     fun qt6cr_header_view_section_hidden = qt6cr_header_view_section_hidden(handle : Handle, index : LibC::Int) : Bool
     fun qt6cr_header_view_set_section_hidden = qt6cr_header_view_set_section_hidden(handle : Handle, index : LibC::Int, value : Bool)
     fun qt6cr_header_view_section_resize_mode = qt6cr_header_view_section_resize_mode(handle : Handle, index : LibC::Int) : LibC::Int
