@@ -792,6 +792,13 @@ module Qt6
     fun qt6cr_qlinear_gradient_start = qt6cr_qlinear_gradient_start(handle : Handle) : PointFValue
     fun qt6cr_qlinear_gradient_final_stop = qt6cr_qlinear_gradient_final_stop(handle : Handle) : PointFValue
 
+    fun qt6cr_qconical_gradient_create = qt6cr_qconical_gradient_create(center_x : Float64, center_y : Float64, angle : Float64) : Handle
+    fun qt6cr_qconical_gradient_destroy = qt6cr_qconical_gradient_destroy(handle : Handle)
+    fun qt6cr_qconical_gradient_set_color_at = qt6cr_qconical_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
+    fun qt6cr_qconical_gradient_center = qt6cr_qconical_gradient_center(handle : Handle) : PointFValue
+    fun qt6cr_qconical_gradient_angle = qt6cr_qconical_gradient_angle(handle : Handle) : Float64
+    fun qt6cr_qconical_gradient_set_angle = qt6cr_qconical_gradient_set_angle(handle : Handle, angle : Float64)
+
     fun qt6cr_qradial_gradient_create = qt6cr_qradial_gradient_create(center_x : Float64, center_y : Float64, radius : Float64) : Handle
     fun qt6cr_qradial_gradient_destroy = qt6cr_qradial_gradient_destroy(handle : Handle)
     fun qt6cr_qradial_gradient_set_color_at = qt6cr_qradial_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
@@ -802,6 +809,7 @@ module Qt6
     fun qt6cr_qbrush_create_from_pixmap = qt6cr_qbrush_create_from_pixmap(pixmap : Handle) : Handle
     fun qt6cr_qbrush_create_from_image = qt6cr_qbrush_create_from_image(image : Handle) : Handle
     fun qt6cr_qbrush_create_from_linear_gradient = qt6cr_qbrush_create_from_linear_gradient(gradient : Handle) : Handle
+    fun qt6cr_qbrush_create_from_conical_gradient = qt6cr_qbrush_create_from_conical_gradient(gradient : Handle) : Handle
     fun qt6cr_qbrush_create_from_radial_gradient = qt6cr_qbrush_create_from_radial_gradient(gradient : Handle) : Handle
     fun qt6cr_qbrush_destroy = qt6cr_qbrush_destroy(handle : Handle)
     fun qt6cr_qbrush_color = qt6cr_qbrush_color(handle : Handle) : ColorValue

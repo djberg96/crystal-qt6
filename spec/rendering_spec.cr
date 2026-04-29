@@ -348,6 +348,8 @@ describe Qt6 do
 
     gradient_canvas = Qt6::QImage.new(12, 12)
     gradient_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+    conical_canvas = Qt6::QImage.new(12, 12)
+    conical_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
 
     linear = Qt6::QLinearGradient.new(0.0, 0.0, 10.0, 0.0)
     linear.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
@@ -361,6 +363,15 @@ describe Qt6 do
     radial.center.should eq(Qt6::PointF.new(6.0, 8.0))
     radial.radius.should eq(4.0)
 
+    conical = Qt6::QConicalGradient.new(Qt6::PointF.new(6.0, 6.0), 0.0)
+    conical.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
+    conical.set_color_at(0.5, Qt6::Color.new(0, 0, 255))
+    conical.set_color_at(1.0, Qt6::Color.new(255, 0, 0))
+    conical.center.should eq(Qt6::PointF.new(6.0, 6.0))
+    conical.angle.should eq(0.0)
+    conical.angle = 90.0
+    conical.angle.should eq(90.0)
+
     Qt6::QPainter.paint(gradient_canvas) do |painter|
       painter.antialiasing = false
       painter.pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1).tap { |pen| pen.style = Qt6::PenStyle::NoPen }
@@ -370,11 +381,24 @@ describe Qt6 do
       painter.draw_rect(Qt6::RectF.new(2.0, 4.0, 8.0, 8.0))
     end
 
+    Qt6::QPainter.paint(conical_canvas) do |painter|
+      painter.antialiasing = false
+      painter.pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1).tap { |pen| pen.style = Qt6::PenStyle::NoPen }
+      painter.brush = Qt6::QBrush.new(conical)
+      painter.draw_ellipse(Qt6::RectF.new(0.0, 0.0, 12.0, 12.0))
+    end
+
     left = gradient_canvas.pixel_color(1, 1)
     middle = gradient_canvas.pixel_color(5, 1)
     right = gradient_canvas.pixel_color(8, 1)
     radial_center = gradient_canvas.pixel_color(6, 8)
     radial_edge = gradient_canvas.pixel_color(2, 8)
+    conical_samples = [
+      conical_canvas.pixel_color(6, 1),
+      conical_canvas.pixel_color(10, 6),
+      conical_canvas.pixel_color(6, 10),
+      conical_canvas.pixel_color(1, 6),
+    ]
 
     left.red.should be > left.blue
     middle.red.should be > 0
@@ -383,6 +407,10 @@ describe Qt6 do
     radial_center.red.should be > radial_edge.red
     radial_center.green.should be > radial_edge.green
     radial_center.blue.should be > radial_edge.blue
+    conical_samples.all? { |sample| sample.alpha > 0 }.should be_true
+    conical_samples.map { |sample| {sample.red, sample.green, sample.blue, sample.alpha} }.uniq.size.should be > 1
+    conical_samples.any? { |sample| sample.red > 0 }.should be_true
+    conical_samples.any? { |sample| sample.blue > 0 }.should be_true
 
     dash_canvas = Qt6::QImage.new(12, 12)
     dash_canvas.fill(Qt6::Color.new(0, 0, 0, 0))

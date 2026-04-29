@@ -18,6 +18,7 @@
 #include <QColorDialog>
 #include <QComboBox>
 #include <QCompleter>
+#include <QConicalGradient>
 #include <QCoreApplication>
 #include <QCalendarWidget>
 #include <QCommandLinkButton>
@@ -1235,6 +1236,10 @@ QPen *as_qpen(qt6cr_handle_t handle) {
 
 QLinearGradient *as_qlinear_gradient(qt6cr_handle_t handle) {
   return static_cast<QLinearGradient *>(handle);
+}
+
+QConicalGradient *as_qconical_gradient(qt6cr_handle_t handle) {
+  return static_cast<QConicalGradient *>(handle);
 }
 
 QRadialGradient *as_qradial_gradient(qt6cr_handle_t handle) {
@@ -6675,6 +6680,40 @@ qt6cr_pointf_t qt6cr_qlinear_gradient_final_stop(qt6cr_handle_t handle) {
   return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->finalStop());
 }
 
+qt6cr_handle_t qt6cr_qconical_gradient_create(double center_x, double center_y, double angle) {
+  return new QConicalGradient(center_x, center_y, angle);
+}
+
+void qt6cr_qconical_gradient_destroy(qt6cr_handle_t handle) {
+  delete as_qconical_gradient(handle);
+}
+
+void qt6cr_qconical_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color) {
+  auto *gradient = as_qconical_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setColorAt(position, from_color(color));
+  }
+}
+
+qt6cr_pointf_t qt6cr_qconical_gradient_center(qt6cr_handle_t handle) {
+  auto *gradient = as_qconical_gradient(handle);
+  return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->center());
+}
+
+double qt6cr_qconical_gradient_angle(qt6cr_handle_t handle) {
+  auto *gradient = as_qconical_gradient(handle);
+  return gradient == nullptr ? 0.0 : gradient->angle();
+}
+
+void qt6cr_qconical_gradient_set_angle(qt6cr_handle_t handle, double angle) {
+  auto *gradient = as_qconical_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setAngle(angle);
+  }
+}
+
 qt6cr_handle_t qt6cr_qradial_gradient_create(double center_x, double center_y, double radius) {
   return new QRadialGradient(center_x, center_y, radius);
 }
@@ -6717,6 +6756,11 @@ qt6cr_handle_t qt6cr_qbrush_create_from_image(qt6cr_handle_t image) {
 
 qt6cr_handle_t qt6cr_qbrush_create_from_linear_gradient(qt6cr_handle_t gradient) {
   auto *source = as_qlinear_gradient(gradient);
+  return source == nullptr ? nullptr : new QBrush(*source);
+}
+
+qt6cr_handle_t qt6cr_qbrush_create_from_conical_gradient(qt6cr_handle_t gradient) {
+  auto *source = as_qconical_gradient(gradient);
   return source == nullptr ? nullptr : new QBrush(*source);
 }
 
