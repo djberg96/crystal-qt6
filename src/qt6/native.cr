@@ -1329,6 +1329,10 @@ module Qt6
     fun qt6cr_completer_set_case_sensitivity = qt6cr_completer_set_case_sensitivity(handle : Handle, value : LibC::Int)
     fun qt6cr_completer_completion_mode = qt6cr_completer_completion_mode(handle : Handle) : LibC::Int
     fun qt6cr_completer_set_completion_mode = qt6cr_completer_set_completion_mode(handle : Handle, value : LibC::Int)
+    fun qt6cr_completer_wrap_around = qt6cr_completer_wrap_around(handle : Handle) : Bool
+    fun qt6cr_completer_set_wrap_around = qt6cr_completer_set_wrap_around(handle : Handle, value : Bool)
+    fun qt6cr_completer_max_visible_items = qt6cr_completer_max_visible_items(handle : Handle) : LibC::Int
+    fun qt6cr_completer_set_max_visible_items = qt6cr_completer_set_max_visible_items(handle : Handle, value : LibC::Int)
 
     fun qt6cr_check_box_create = qt6cr_check_box_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_check_box_set_text = qt6cr_check_box_set_text(handle : Handle, text : UInt8*)

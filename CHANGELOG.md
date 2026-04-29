@@ -25,10 +25,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `Frame#line_width`, `#mid_line_width`, and `#frame_width` helpers for separator and panel polish.
 - Added aligned `SplashScreen#show_message` support for launch-status polish.
 - Added `DockWidget#title_bar_widget` helpers for custom dock headers.
+- Added `Completer#wrap_around` and `#max_visible_items` helpers for richer line-edit completion behavior.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `DockWidget`, `Frame`, `SplashScreen`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `Completer`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `DockWidget`, `Frame`, `SplashScreen`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

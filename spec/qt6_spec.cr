@@ -5011,6 +5011,8 @@ describe Qt6 do
 
     completer.case_sensitivity = Qt6::CaseSensitivity::Insensitive
     completer.completion_mode = Qt6::CompleterCompletionMode::PopupCompletion
+    completer.wrap_around = true
+    completer.max_visible_items = 9
     completer.completion_prefix = "uni"
 
     line_edit.echo_mode = Qt6::EchoMode::Password
@@ -5040,6 +5042,8 @@ describe Qt6 do
     regex_validator.pattern.should eq("^[A-Z][a-z]+$")
     completer.case_sensitivity.should eq(Qt6::CaseSensitivity::Insensitive)
     completer.completion_mode.should eq(Qt6::CompleterCompletionMode::PopupCompletion)
+    completer.wrap_around?.should be_true
+    completer.max_visible_items.should eq(9)
     completer.completion_prefix.should eq("uni")
     completer.current_completion.should eq("Units")
 

@@ -1364,6 +1364,10 @@ int qt6cr_completer_case_sensitivity(qt6cr_handle_t handle);
 void qt6cr_completer_set_case_sensitivity(qt6cr_handle_t handle, int value);
 int qt6cr_completer_completion_mode(qt6cr_handle_t handle);
 void qt6cr_completer_set_completion_mode(qt6cr_handle_t handle, int value);
+bool qt6cr_completer_wrap_around(qt6cr_handle_t handle);
+void qt6cr_completer_set_wrap_around(qt6cr_handle_t handle, bool value);
+int qt6cr_completer_max_visible_items(qt6cr_handle_t handle);
+void qt6cr_completer_set_max_visible_items(qt6cr_handle_t handle, int value);
 
 qt6cr_handle_t qt6cr_check_box_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_check_box_set_text(qt6cr_handle_t handle, const char *text);

@@ -50,5 +50,23 @@ module Qt6
       LibQt6.qt6cr_completer_set_completion_mode(to_unsafe, value.value)
       value
     end
+
+    def wrap_around? : Bool
+      LibQt6.qt6cr_completer_wrap_around(to_unsafe)
+    end
+
+    def wrap_around=(value : Bool) : Bool
+      LibQt6.qt6cr_completer_set_wrap_around(to_unsafe, value)
+      value
+    end
+
+    def max_visible_items : Int32
+      LibQt6.qt6cr_completer_max_visible_items(to_unsafe)
+    end
+
+    def max_visible_items=(value : Int) : Int32
+      LibQt6.qt6cr_completer_set_max_visible_items(to_unsafe, value)
+      value.to_i32
+    end
   end
 end

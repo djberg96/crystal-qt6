@@ -10092,6 +10092,32 @@ void qt6cr_completer_set_completion_mode(qt6cr_handle_t handle, int value) {
   }
 }
 
+bool qt6cr_completer_wrap_around(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer != nullptr && completer->wrapAround();
+}
+
+void qt6cr_completer_set_wrap_around(qt6cr_handle_t handle, bool value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setWrapAround(value);
+  }
+}
+
+int qt6cr_completer_max_visible_items(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? 7 : completer->maxVisibleItems();
+}
+
+void qt6cr_completer_set_max_visible_items(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setMaxVisibleItems(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_check_box_create(qt6cr_handle_t parent, const char *text) {
   return new QCheckBox(QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent));
 }
