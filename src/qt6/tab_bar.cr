@@ -28,6 +28,15 @@ module Qt6
       LibQt6.qt6cr_tab_bar_add_tab(to_unsafe, label.to_unsafe)
     end
 
+    def insert_tab(index : Int, label : String) : Int32
+      LibQt6.qt6cr_tab_bar_insert_tab(to_unsafe, index.to_i32, label.to_unsafe)
+    end
+
+    def remove_tab(index : Int) : self
+      LibQt6.qt6cr_tab_bar_remove_tab(to_unsafe, index.to_i32)
+      self
+    end
+
     def count : Int32
       LibQt6.qt6cr_tab_bar_count(to_unsafe)
     end
@@ -51,12 +60,39 @@ module Qt6
       value
     end
 
+    def tab_enabled?(index : Int) : Bool
+      LibQt6.qt6cr_tab_bar_tab_enabled(to_unsafe, index.to_i32)
+    end
+
+    def set_tab_enabled(index : Int, value : Bool) : Bool
+      LibQt6.qt6cr_tab_bar_set_tab_enabled(to_unsafe, index.to_i32, value)
+      value
+    end
+
     def draw_base? : Bool
       LibQt6.qt6cr_tab_bar_draw_base(to_unsafe)
     end
 
     def draw_base=(value : Bool) : Bool
       LibQt6.qt6cr_tab_bar_set_draw_base(to_unsafe, value)
+      value
+    end
+
+    def movable? : Bool
+      LibQt6.qt6cr_tab_bar_movable(to_unsafe)
+    end
+
+    def movable=(value : Bool) : Bool
+      LibQt6.qt6cr_tab_bar_set_movable(to_unsafe, value)
+      value
+    end
+
+    def tabs_closable? : Bool
+      LibQt6.qt6cr_tab_bar_tabs_closable(to_unsafe)
+    end
+
+    def tabs_closable=(value : Bool) : Bool
+      LibQt6.qt6cr_tab_bar_set_tabs_closable(to_unsafe, value)
       value
     end
 

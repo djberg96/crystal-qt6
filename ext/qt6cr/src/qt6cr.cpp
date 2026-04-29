@@ -13211,6 +13211,19 @@ int qt6cr_tab_bar_add_tab(qt6cr_handle_t handle, const char *label) {
   return tab_bar == nullptr ? -1 : tab_bar->addTab(QString::fromUtf8(label == nullptr ? "" : label));
 }
 
+int qt6cr_tab_bar_insert_tab(qt6cr_handle_t handle, int index, const char *label) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? -1 : tab_bar->insertTab(index, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+void qt6cr_tab_bar_remove_tab(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->removeTab(index);
+  }
+}
+
 int qt6cr_tab_bar_count(qt6cr_handle_t handle) {
   auto *tab_bar = as_tab_bar(handle);
   return tab_bar == nullptr ? 0 : tab_bar->count();
@@ -13242,6 +13255,19 @@ void qt6cr_tab_bar_set_tab_text(qt6cr_handle_t handle, int index, const char *va
   }
 }
 
+bool qt6cr_tab_bar_tab_enabled(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr || tab_bar->isTabEnabled(index);
+}
+
+void qt6cr_tab_bar_set_tab_enabled(qt6cr_handle_t handle, int index, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->setTabEnabled(index, value);
+  }
+}
+
 bool qt6cr_tab_bar_draw_base(qt6cr_handle_t handle) {
   auto *tab_bar = as_tab_bar(handle);
   return tab_bar == nullptr || tab_bar->drawBase();
@@ -13252,6 +13278,32 @@ void qt6cr_tab_bar_set_draw_base(qt6cr_handle_t handle, bool value) {
 
   if (tab_bar != nullptr) {
     tab_bar->setDrawBase(value);
+  }
+}
+
+bool qt6cr_tab_bar_movable(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->isMovable();
+}
+
+void qt6cr_tab_bar_set_movable(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setMovable(value);
+  }
+}
+
+bool qt6cr_tab_bar_tabs_closable(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->tabsClosable();
+}
+
+void qt6cr_tab_bar_set_tabs_closable(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setTabsClosable(value);
   }
 }
 

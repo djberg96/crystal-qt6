@@ -2442,8 +2442,13 @@ describe Qt6 do
 
     tab_bar.add_tab("Layers")
     tab_bar.add_tab("Export")
-    tab_bar.set_tab_text(1, "Preview")
+    tab_bar.insert_tab(1, "Search").should eq(1)
+    tab_bar.set_tab_text(2, "Preview")
+    tab_bar.set_tab_enabled(1, false).should be_false
     tab_bar.draw_base = false
+    tab_bar.movable = true
+    tab_bar.tabs_closable = true
+    tab_bar.remove_tab(0)
     tab_bar.current_index = 1
 
     stacked_layout << first_page
@@ -2505,7 +2510,11 @@ describe Qt6 do
     tab_bar.count.should eq(2)
     tab_bar.current_index.should eq(1)
     tab_bar.tab_text(1).should eq("Preview")
+    tab_bar.tab_text(0).should eq("Search")
+    tab_bar.tab_enabled?(0).should be_false
     tab_bar.draw_base?.should be_false
+    tab_bar.movable?.should be_true
+    tab_bar.tabs_closable?.should be_true
     tab_indices.last.should eq(1)
 
     stacked_layout.count.should eq(2)

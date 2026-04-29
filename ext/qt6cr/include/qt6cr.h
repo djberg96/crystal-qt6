@@ -1859,13 +1859,21 @@ void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_
 
 qt6cr_handle_t qt6cr_tab_bar_create(qt6cr_handle_t parent);
 int qt6cr_tab_bar_add_tab(qt6cr_handle_t handle, const char *label);
+int qt6cr_tab_bar_insert_tab(qt6cr_handle_t handle, int index, const char *label);
+void qt6cr_tab_bar_remove_tab(qt6cr_handle_t handle, int index);
 int qt6cr_tab_bar_count(qt6cr_handle_t handle);
 int qt6cr_tab_bar_current_index(qt6cr_handle_t handle);
 void qt6cr_tab_bar_set_current_index(qt6cr_handle_t handle, int index);
 char *qt6cr_tab_bar_tab_text(qt6cr_handle_t handle, int index);
 void qt6cr_tab_bar_set_tab_text(qt6cr_handle_t handle, int index, const char *value);
+bool qt6cr_tab_bar_tab_enabled(qt6cr_handle_t handle, int index);
+void qt6cr_tab_bar_set_tab_enabled(qt6cr_handle_t handle, int index, bool value);
 bool qt6cr_tab_bar_draw_base(qt6cr_handle_t handle);
 void qt6cr_tab_bar_set_draw_base(qt6cr_handle_t handle, bool value);
+bool qt6cr_tab_bar_movable(qt6cr_handle_t handle);
+void qt6cr_tab_bar_set_movable(qt6cr_handle_t handle, bool value);
+bool qt6cr_tab_bar_tabs_closable(qt6cr_handle_t handle);
+void qt6cr_tab_bar_set_tabs_closable(qt6cr_handle_t handle, bool value);
 void qt6cr_tab_bar_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_stacked_widget_create(qt6cr_handle_t parent);

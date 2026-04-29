@@ -17,10 +17,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `PushButton#default`, `#auto_default`, and `#flat` helpers for dialog- and shell-style button presentation.
 - Added `ButtonGroup#checked_button`, `#id`, `#set_id`, and `#remove` helpers for grouped tool and mode buttons.
 - Added `GroupBox#alignment` and `#flat` helpers for inspector-style panel presentation.
+- Added `TabBar#insert_tab`, `#remove_tab`, enabled-state helpers, and movable/closable presentation controls for lightweight shell and editor tab strips.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, `StackedWidget`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `TabBar`, `Splitter`, `StackedWidget`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

@@ -1839,13 +1839,21 @@ module Qt6
 
     fun qt6cr_tab_bar_create = qt6cr_tab_bar_create(parent : Handle) : Handle
     fun qt6cr_tab_bar_add_tab = qt6cr_tab_bar_add_tab(handle : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tab_bar_insert_tab = qt6cr_tab_bar_insert_tab(handle : Handle, index : LibC::Int, label : UInt8*) : LibC::Int
+    fun qt6cr_tab_bar_remove_tab = qt6cr_tab_bar_remove_tab(handle : Handle, index : LibC::Int)
     fun qt6cr_tab_bar_count = qt6cr_tab_bar_count(handle : Handle) : LibC::Int
     fun qt6cr_tab_bar_current_index = qt6cr_tab_bar_current_index(handle : Handle) : LibC::Int
     fun qt6cr_tab_bar_set_current_index = qt6cr_tab_bar_set_current_index(handle : Handle, index : LibC::Int)
     fun qt6cr_tab_bar_tab_text = qt6cr_tab_bar_tab_text(handle : Handle, index : LibC::Int) : UInt8*
     fun qt6cr_tab_bar_set_tab_text = qt6cr_tab_bar_set_tab_text(handle : Handle, index : LibC::Int, value : UInt8*)
+    fun qt6cr_tab_bar_tab_enabled = qt6cr_tab_bar_tab_enabled(handle : Handle, index : LibC::Int) : Bool
+    fun qt6cr_tab_bar_set_tab_enabled = qt6cr_tab_bar_set_tab_enabled(handle : Handle, index : LibC::Int, value : Bool)
     fun qt6cr_tab_bar_draw_base = qt6cr_tab_bar_draw_base(handle : Handle) : Bool
     fun qt6cr_tab_bar_set_draw_base = qt6cr_tab_bar_set_draw_base(handle : Handle, value : Bool)
+    fun qt6cr_tab_bar_movable = qt6cr_tab_bar_movable(handle : Handle) : Bool
+    fun qt6cr_tab_bar_set_movable = qt6cr_tab_bar_set_movable(handle : Handle, value : Bool)
+    fun qt6cr_tab_bar_tabs_closable = qt6cr_tab_bar_tabs_closable(handle : Handle) : Bool
+    fun qt6cr_tab_bar_set_tabs_closable = qt6cr_tab_bar_set_tabs_closable(handle : Handle, value : Bool)
     fun qt6cr_tab_bar_on_current_index_changed = qt6cr_tab_bar_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_stacked_widget_create = qt6cr_stacked_widget_create(parent : Handle) : Handle
