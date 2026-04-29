@@ -88,6 +88,16 @@ typedef struct {
 } qt6cr_int_array_t;
 
 typedef struct {
+	double position;
+	qt6cr_color_t color;
+} qt6cr_gradient_stop_t;
+
+typedef struct {
+	qt6cr_gradient_stop_t *data;
+	int size;
+} qt6cr_gradient_stop_array_t;
+
+typedef struct {
 	int type;
 	bool bool_value;
 	int int_value;
@@ -820,6 +830,7 @@ void qt6cr_qpen_set_dash_pattern(qt6cr_handle_t handle, const double *values, in
 qt6cr_handle_t qt6cr_qlinear_gradient_create(double x1, double y1, double x2, double y2);
 void qt6cr_qlinear_gradient_destroy(qt6cr_handle_t handle);
 void qt6cr_qlinear_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color);
+qt6cr_gradient_stop_array_t qt6cr_qlinear_gradient_stops(qt6cr_handle_t handle);
 qt6cr_pointf_t qt6cr_qlinear_gradient_start(qt6cr_handle_t handle);
 qt6cr_pointf_t qt6cr_qlinear_gradient_final_stop(qt6cr_handle_t handle);
 int qt6cr_qlinear_gradient_spread(qt6cr_handle_t handle);
@@ -830,6 +841,7 @@ void qt6cr_qlinear_gradient_set_coordinate_mode(qt6cr_handle_t handle, int mode)
 qt6cr_handle_t qt6cr_qconical_gradient_create(double center_x, double center_y, double angle);
 void qt6cr_qconical_gradient_destroy(qt6cr_handle_t handle);
 void qt6cr_qconical_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color);
+qt6cr_gradient_stop_array_t qt6cr_qconical_gradient_stops(qt6cr_handle_t handle);
 qt6cr_pointf_t qt6cr_qconical_gradient_center(qt6cr_handle_t handle);
 double qt6cr_qconical_gradient_angle(qt6cr_handle_t handle);
 void qt6cr_qconical_gradient_set_angle(qt6cr_handle_t handle, double angle);
@@ -842,6 +854,7 @@ qt6cr_handle_t qt6cr_qradial_gradient_create(double center_x, double center_y, d
 qt6cr_handle_t qt6cr_qradial_gradient_create_with_focal_point(double center_x, double center_y, double radius, double focal_x, double focal_y);
 void qt6cr_qradial_gradient_destroy(qt6cr_handle_t handle);
 void qt6cr_qradial_gradient_set_color_at(qt6cr_handle_t handle, double position, qt6cr_color_t color);
+qt6cr_gradient_stop_array_t qt6cr_qradial_gradient_stops(qt6cr_handle_t handle);
 qt6cr_pointf_t qt6cr_qradial_gradient_center(qt6cr_handle_t handle);
 qt6cr_pointf_t qt6cr_qradial_gradient_focal_point(qt6cr_handle_t handle);
 void qt6cr_qradial_gradient_set_focal_point(qt6cr_handle_t handle, qt6cr_pointf_t focal_point);
@@ -2071,6 +2084,7 @@ void qt6cr_layout_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_string_free(char *value);
 void qt6cr_string_array_free(qt6cr_string_array_t value);
 void qt6cr_int_array_free(qt6cr_int_array_t value);
+void qt6cr_gradient_stop_array_free(qt6cr_gradient_stop_array_t value);
 
 #ifdef __cplusplus
 }

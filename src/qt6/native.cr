@@ -97,6 +97,16 @@ module Qt6
       size : LibC::Int
     end
 
+    struct GradientStopValue
+      position : Float64
+      color : ColorValue
+    end
+
+    struct GradientStopArrayValue
+      data : GradientStopValue*
+      size : LibC::Int
+    end
+
     struct VariantValue
       type : LibC::Int
       bool_value : Bool
@@ -796,6 +806,7 @@ module Qt6
     fun qt6cr_qlinear_gradient_create = qt6cr_qlinear_gradient_create(x1 : Float64, y1 : Float64, x2 : Float64, y2 : Float64) : Handle
     fun qt6cr_qlinear_gradient_destroy = qt6cr_qlinear_gradient_destroy(handle : Handle)
     fun qt6cr_qlinear_gradient_set_color_at = qt6cr_qlinear_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
+    fun qt6cr_qlinear_gradient_stops = qt6cr_qlinear_gradient_stops(handle : Handle) : GradientStopArrayValue
     fun qt6cr_qlinear_gradient_start = qt6cr_qlinear_gradient_start(handle : Handle) : PointFValue
     fun qt6cr_qlinear_gradient_final_stop = qt6cr_qlinear_gradient_final_stop(handle : Handle) : PointFValue
     fun qt6cr_qlinear_gradient_spread = qt6cr_qlinear_gradient_spread(handle : Handle) : LibC::Int
@@ -806,6 +817,7 @@ module Qt6
     fun qt6cr_qconical_gradient_create = qt6cr_qconical_gradient_create(center_x : Float64, center_y : Float64, angle : Float64) : Handle
     fun qt6cr_qconical_gradient_destroy = qt6cr_qconical_gradient_destroy(handle : Handle)
     fun qt6cr_qconical_gradient_set_color_at = qt6cr_qconical_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
+    fun qt6cr_qconical_gradient_stops = qt6cr_qconical_gradient_stops(handle : Handle) : GradientStopArrayValue
     fun qt6cr_qconical_gradient_center = qt6cr_qconical_gradient_center(handle : Handle) : PointFValue
     fun qt6cr_qconical_gradient_angle = qt6cr_qconical_gradient_angle(handle : Handle) : Float64
     fun qt6cr_qconical_gradient_set_angle = qt6cr_qconical_gradient_set_angle(handle : Handle, angle : Float64)
@@ -818,6 +830,7 @@ module Qt6
     fun qt6cr_qradial_gradient_create_with_focal_point = qt6cr_qradial_gradient_create_with_focal_point(center_x : Float64, center_y : Float64, radius : Float64, focal_x : Float64, focal_y : Float64) : Handle
     fun qt6cr_qradial_gradient_destroy = qt6cr_qradial_gradient_destroy(handle : Handle)
     fun qt6cr_qradial_gradient_set_color_at = qt6cr_qradial_gradient_set_color_at(handle : Handle, position : Float64, color : ColorValue)
+    fun qt6cr_qradial_gradient_stops = qt6cr_qradial_gradient_stops(handle : Handle) : GradientStopArrayValue
     fun qt6cr_qradial_gradient_center = qt6cr_qradial_gradient_center(handle : Handle) : PointFValue
     fun qt6cr_qradial_gradient_focal_point = qt6cr_qradial_gradient_focal_point(handle : Handle) : PointFValue
     fun qt6cr_qradial_gradient_set_focal_point = qt6cr_qradial_gradient_set_focal_point(handle : Handle, focal_point : PointFValue)
@@ -2057,5 +2070,6 @@ module Qt6
     fun qt6cr_string_free = qt6cr_string_free(value : UInt8*)
     fun qt6cr_string_array_free = qt6cr_string_array_free(value : StringArrayValue)
     fun qt6cr_int_array_free = qt6cr_int_array_free(value : IntArrayValue)
+    fun qt6cr_gradient_stop_array_free = qt6cr_gradient_stop_array_free(value : GradientStopArrayValue)
   end
 end

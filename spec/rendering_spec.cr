@@ -354,6 +354,10 @@ describe Qt6 do
     linear = Qt6::QLinearGradient.new(0.0, 0.0, 10.0, 0.0)
     linear.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
     linear.set_color_at(1.0, Qt6::Color.new(0, 0, 255))
+    linear.stops.should eq([
+      Qt6::GradientStop.new(0.0, Qt6::Color.new(255, 0, 0, 255)),
+      Qt6::GradientStop.new(1.0, Qt6::Color.new(0, 0, 255, 255)),
+    ])
     linear.start.should eq(Qt6::PointF.new(0.0, 0.0))
     linear.final_stop.should eq(Qt6::PointF.new(10.0, 0.0))
     linear.spread.should eq(Qt6::GradientSpread::PadSpread)
@@ -368,6 +372,10 @@ describe Qt6 do
     radial = Qt6::QRadialGradient.new(Qt6::PointF.new(6.0, 8.0), 4.0)
     radial.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
     radial.set_color_at(1.0, Qt6::Color.new(0, 0, 0))
+    radial.stops.should eq([
+      Qt6::GradientStop.new(0.0, Qt6::Color.new(255, 255, 255, 255)),
+      Qt6::GradientStop.new(1.0, Qt6::Color.new(0, 0, 0, 255)),
+    ])
     radial.center.should eq(Qt6::PointF.new(6.0, 8.0))
     radial.focal_point.should eq(Qt6::PointF.new(6.0, 8.0))
     radial.radius.should eq(4.0)
@@ -390,6 +398,11 @@ describe Qt6 do
     conical.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
     conical.set_color_at(0.5, Qt6::Color.new(0, 0, 255))
     conical.set_color_at(1.0, Qt6::Color.new(255, 0, 0))
+    conical.stops.should eq([
+      Qt6::GradientStop.new(0.0, Qt6::Color.new(255, 0, 0, 255)),
+      Qt6::GradientStop.new(0.5, Qt6::Color.new(0, 0, 255, 255)),
+      Qt6::GradientStop.new(1.0, Qt6::Color.new(255, 0, 0, 255)),
+    ])
     conical.center.should eq(Qt6::PointF.new(6.0, 6.0))
     conical.angle.should eq(0.0)
     conical.angle = 90.0

@@ -83,6 +83,7 @@ require "./qt6/painter_composition_mode"
 require "./qt6/q_pen"
 require "./qt6/gradient_spread"
 require "./qt6/gradient_coordinate_mode"
+require "./qt6/gradient_stop"
 require "./qt6/q_linear_gradient"
 require "./qt6/q_conical_gradient"
 require "./qt6/q_radial_gradient"
@@ -328,6 +329,24 @@ module Qt6
 
     LibQt6.qt6cr_int_array_free(value)
     ints
+  end
+
+  def self.copy_and_release_gradient_stops(value : LibQt6::GradientStopArrayValue) : Array(GradientStop)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_gradient_stop_array_free(value)
+      return [] of GradientStop
+    end
+
+    stops = Array(GradientStop).new(size)
+    size.times do |index|
+      stops << GradientStop.from_native(pointer[index])
+    end
+
+    LibQt6.qt6cr_gradient_stop_array_free(value)
+    stops
   end
 
   def self.malloc_string(value : String) : UInt8*

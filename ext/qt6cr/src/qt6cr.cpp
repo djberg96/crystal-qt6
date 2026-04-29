@@ -1650,6 +1650,10 @@ qt6cr_pointf_t to_pointf(const QPoint &point) {
   return qt6cr_pointf_t{static_cast<double>(point.x()), static_cast<double>(point.y())};
 }
 
+qt6cr_gradient_stop_t to_gradient_stop(const QGradientStop &stop) {
+  return qt6cr_gradient_stop_t{stop.first, to_color(stop.second)};
+}
+
 qt6cr_size_t to_size(const QSize &size) {
   return qt6cr_size_t{size.width(), size.height()};
 }
@@ -6670,6 +6674,24 @@ void qt6cr_qlinear_gradient_set_color_at(qt6cr_handle_t handle, double position,
   }
 }
 
+qt6cr_gradient_stop_array_t qt6cr_qlinear_gradient_stops(qt6cr_handle_t handle) {
+  auto *gradient = as_qlinear_gradient(handle);
+
+  if (gradient == nullptr) {
+    return qt6cr_gradient_stop_array_t{nullptr, 0};
+  }
+
+  const auto stops = gradient->stops();
+  const int size = stops.size();
+  auto *data = size > 0 ? new qt6cr_gradient_stop_t[size] : nullptr;
+
+  for (int index = 0; index < size; ++index) {
+    data[index] = to_gradient_stop(stops[index]);
+  }
+
+  return qt6cr_gradient_stop_array_t{data, size};
+}
+
 qt6cr_pointf_t qt6cr_qlinear_gradient_start(qt6cr_handle_t handle) {
   auto *gradient = as_qlinear_gradient(handle);
   return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->start());
@@ -6720,6 +6742,24 @@ void qt6cr_qconical_gradient_set_color_at(qt6cr_handle_t handle, double position
   if (gradient != nullptr) {
     gradient->setColorAt(position, from_color(color));
   }
+}
+
+qt6cr_gradient_stop_array_t qt6cr_qconical_gradient_stops(qt6cr_handle_t handle) {
+  auto *gradient = as_qconical_gradient(handle);
+
+  if (gradient == nullptr) {
+    return qt6cr_gradient_stop_array_t{nullptr, 0};
+  }
+
+  const auto stops = gradient->stops();
+  const int size = stops.size();
+  auto *data = size > 0 ? new qt6cr_gradient_stop_t[size] : nullptr;
+
+  for (int index = 0; index < size; ++index) {
+    data[index] = to_gradient_stop(stops[index]);
+  }
+
+  return qt6cr_gradient_stop_array_t{data, size};
 }
 
 qt6cr_pointf_t qt6cr_qconical_gradient_center(qt6cr_handle_t handle) {
@@ -6784,6 +6824,24 @@ void qt6cr_qradial_gradient_set_color_at(qt6cr_handle_t handle, double position,
   if (gradient != nullptr) {
     gradient->setColorAt(position, from_color(color));
   }
+}
+
+qt6cr_gradient_stop_array_t qt6cr_qradial_gradient_stops(qt6cr_handle_t handle) {
+  auto *gradient = as_qradial_gradient(handle);
+
+  if (gradient == nullptr) {
+    return qt6cr_gradient_stop_array_t{nullptr, 0};
+  }
+
+  const auto stops = gradient->stops();
+  const int size = stops.size();
+  auto *data = size > 0 ? new qt6cr_gradient_stop_t[size] : nullptr;
+
+  for (int index = 0; index < size; ++index) {
+    data[index] = to_gradient_stop(stops[index]);
+  }
+
+  return qt6cr_gradient_stop_array_t{data, size};
 }
 
 qt6cr_pointf_t qt6cr_qradial_gradient_center(qt6cr_handle_t handle) {
@@ -14480,6 +14538,14 @@ void qt6cr_string_array_free(qt6cr_string_array_t value) {
 }
 
 void qt6cr_int_array_free(qt6cr_int_array_t value) {
+  if (value.data == nullptr || value.size <= 0) {
+    return;
+  }
+
+  delete[] value.data;
+}
+
+void qt6cr_gradient_stop_array_free(qt6cr_gradient_stop_array_t value) {
   if (value.data == nullptr || value.size <= 0) {
     return;
   }

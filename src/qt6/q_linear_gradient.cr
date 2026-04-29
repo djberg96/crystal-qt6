@@ -22,6 +22,10 @@ module Qt6
       self
     end
 
+    def stops : Array(GradientStop)
+      Qt6.copy_and_release_gradient_stops(LibQt6.qt6cr_qlinear_gradient_stops(to_unsafe))
+    end
+
     def start : PointF
       PointF.from_native(LibQt6.qt6cr_qlinear_gradient_start(to_unsafe))
     end
