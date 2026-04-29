@@ -12993,6 +12993,11 @@ int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const
   return tab_widget->addTab(page, QString::fromUtf8(label == nullptr ? "" : label));
 }
 
+qt6cr_handle_t qt6cr_tab_widget_widget(qt6cr_handle_t handle, int index) {
+  auto *tab_widget = as_tab_widget(handle);
+  return tab_widget == nullptr ? nullptr : tab_widget->widget(index);
+}
+
 int qt6cr_tab_widget_count(qt6cr_handle_t handle) {
   auto *tab_widget = as_tab_widget(handle);
   return tab_widget == nullptr ? 0 : tab_widget->count();
@@ -13008,6 +13013,55 @@ void qt6cr_tab_widget_set_current_index(qt6cr_handle_t handle, int index) {
 
   if (tab_widget != nullptr) {
     tab_widget->setCurrentIndex(index);
+  }
+}
+
+qt6cr_handle_t qt6cr_tab_widget_current_widget(qt6cr_handle_t handle) {
+  auto *tab_widget = as_tab_widget(handle);
+  return tab_widget == nullptr ? nullptr : tab_widget->currentWidget();
+}
+
+void qt6cr_tab_widget_set_current_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *tab_widget = as_tab_widget(handle);
+  auto *page = as_widget(widget);
+
+  if (tab_widget != nullptr && page != nullptr) {
+    tab_widget->setCurrentWidget(page);
+  }
+}
+
+int qt6cr_tab_widget_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *tab_widget = as_tab_widget(handle);
+  auto *page = as_widget(widget);
+  return tab_widget == nullptr || page == nullptr ? -1 : tab_widget->indexOf(page);
+}
+
+char *qt6cr_tab_widget_tab_text(qt6cr_handle_t handle, int index) {
+  auto *tab_widget = as_tab_widget(handle);
+  return tab_widget == nullptr ? duplicate_string("") : duplicate_string(tab_widget->tabText(index));
+}
+
+void qt6cr_tab_widget_set_tab_text(qt6cr_handle_t handle, int index, const char *label) {
+  auto *tab_widget = as_tab_widget(handle);
+
+  if (tab_widget != nullptr) {
+    tab_widget->setTabText(index, QString::fromUtf8(label == nullptr ? "" : label));
+  }
+}
+
+void qt6cr_tab_widget_remove_tab(qt6cr_handle_t handle, int index) {
+  auto *tab_widget = as_tab_widget(handle);
+
+  if (tab_widget != nullptr) {
+    tab_widget->removeTab(index);
+  }
+}
+
+void qt6cr_tab_widget_clear(qt6cr_handle_t handle) {
+  auto *tab_widget = as_tab_widget(handle);
+
+  if (tab_widget != nullptr) {
+    tab_widget->clear();
   }
 }
 

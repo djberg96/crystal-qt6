@@ -1972,6 +1972,9 @@ describe Qt6 do
     scroll_area = Qt6::ScrollArea.new
     tab_widget = Qt6::TabWidget.new
     inspector = Qt6::Widget.new
+    layers_page = Qt6::Label.new("Layers")
+    export_page = Qt6::Label.new("Export")
+    preview_page = Qt6::Label.new("Preview")
     options_group = Qt6::GroupBox.new("Options")
     auto_mode = Qt6::RadioButton.new("Auto")
     manual_mode = Qt6::RadioButton.new("Manual")
@@ -2019,8 +2022,9 @@ describe Qt6 do
 
     scroll_area.widget_resizable = true
     scroll_area.widget = inspector
-    tab_widget.add_tab(Qt6::Label.new("Layers"), "Layers")
-    tab_widget.add_tab(Qt6::Label.new("Export"), "Export")
+    tab_widget.add_tab(layers_page, "Layers")
+    tab_widget.add_tab(export_page, "Export")
+    tab_widget.add_tab(preview_page, "Preview")
     splitter << scroll_area
     splitter << tab_widget
     window.central_widget = splitter
@@ -2038,7 +2042,13 @@ describe Qt6 do
     manual_mode.checked = true
     options_group.checked = false
     options_group.checked = true
-    tab_widget.current_index = 1
+    tab_widget.widget(0).not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
+    tab_widget.current_widget.not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
+    tab_widget.index_of(export_page).should eq(1)
+    tab_widget.tab_text(2).should eq("Preview")
+    tab_widget.set_tab_text(2, "Inspect")
+    tab_widget.current_widget = preview_page
+    tab_widget.remove_tab(1)
     splitter.orientation = Qt6::Orientation::Vertical
     application.process_events
     Qt6::LibQt6.qt6cr_slider_emit_pressed(slider.to_unsafe)
@@ -2050,6 +2060,10 @@ describe Qt6 do
     splitter.orientation.should eq(Qt6::Orientation::Vertical)
     tab_widget.count.should eq(2)
     tab_widget.current_index.should eq(1)
+    tab_widget.current_widget.not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
+    tab_widget.widget(1).not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
+    tab_widget.index_of(export_page).should eq(-1)
+    tab_widget.tab_text(1).should eq("Inspect")
     options_group.title.should eq("Options")
     options_group.checkable?.should be_true
     options_group.checked?.should be_true
@@ -2075,6 +2089,8 @@ describe Qt6 do
     double_values.last.should eq(1.75)
     group_states.last.should be_true
     tab_indices.last.should eq(1)
+    tab_widget.clear
+    tab_widget.count.should eq(0)
     window.release
   end
 

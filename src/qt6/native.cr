@@ -1803,9 +1803,17 @@ module Qt6
 
     fun qt6cr_tab_widget_create = qt6cr_tab_widget_create(parent : Handle) : Handle
     fun qt6cr_tab_widget_add_tab = qt6cr_tab_widget_add_tab(handle : Handle, widget : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tab_widget_widget = qt6cr_tab_widget_widget(handle : Handle, index : LibC::Int) : Handle
     fun qt6cr_tab_widget_count = qt6cr_tab_widget_count(handle : Handle) : LibC::Int
     fun qt6cr_tab_widget_current_index = qt6cr_tab_widget_current_index(handle : Handle) : LibC::Int
     fun qt6cr_tab_widget_set_current_index = qt6cr_tab_widget_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_tab_widget_current_widget = qt6cr_tab_widget_current_widget(handle : Handle) : Handle
+    fun qt6cr_tab_widget_set_current_widget = qt6cr_tab_widget_set_current_widget(handle : Handle, widget : Handle)
+    fun qt6cr_tab_widget_index_of = qt6cr_tab_widget_index_of(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_tab_widget_tab_text = qt6cr_tab_widget_tab_text(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_tab_widget_set_tab_text = qt6cr_tab_widget_set_tab_text(handle : Handle, index : LibC::Int, label : UInt8*)
+    fun qt6cr_tab_widget_remove_tab = qt6cr_tab_widget_remove_tab(handle : Handle, index : LibC::Int)
+    fun qt6cr_tab_widget_clear = qt6cr_tab_widget_clear(handle : Handle)
     fun qt6cr_tab_widget_on_current_index_changed = qt6cr_tab_widget_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_tab_bar_create = qt6cr_tab_bar_create(parent : Handle) : Handle
