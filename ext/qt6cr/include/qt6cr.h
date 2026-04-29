@@ -1028,12 +1028,17 @@ void qt6cr_qpainter_set_clip_path(qt6cr_handle_t handle, qt6cr_handle_t path);
 void qt6cr_qpainter_set_clip_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_draw_line(qt6cr_handle_t handle, qt6cr_pointf_t from_point, qt6cr_pointf_t to_point);
 void qt6cr_qpainter_draw_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+void qt6cr_qpainter_draw_rounded_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, double x_radius, double y_radius);
 void qt6cr_qpainter_fill_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_color_t color);
 void qt6cr_qpainter_fill_rect_brush(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_handle_t brush);
 void qt6cr_qpainter_draw_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_draw_ellipse_center(qt6cr_handle_t handle, qt6cr_pointf_t center, double rx, double ry);
 void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path);
 void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
+void qt6cr_qpainter_draw_polyline(qt6cr_handle_t handle, qt6cr_handle_t polygon);
+void qt6cr_qpainter_draw_arc(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle);
+void qt6cr_qpainter_draw_pie(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle);
+void qt6cr_qpainter_draw_chord(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle);
 void qt6cr_qpainter_draw_image(qt6cr_handle_t handle, qt6cr_pointf_t position, qt6cr_handle_t image);
 void qt6cr_qpainter_draw_image_xy(qt6cr_handle_t handle, double x, double y, qt6cr_handle_t image);
 void qt6cr_qpainter_draw_image_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_handle_t image);
@@ -1044,6 +1049,7 @@ void qt6cr_qpainter_draw_pixmap_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, 
 void qt6cr_qpainter_draw_pixmap_rect_source(qt6cr_handle_t handle, qt6cr_rectf_t target, qt6cr_handle_t pixmap, qt6cr_rectf_t source);
 void qt6cr_qpainter_draw_point(qt6cr_handle_t handle, qt6cr_pointf_t point);
 void qt6cr_qpainter_draw_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text);
+void qt6cr_qpainter_draw_text_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, int alignment, const char *text);
 
 qt6cr_handle_t qt6cr_input_dialog_create(qt6cr_handle_t parent);
 void qt6cr_input_dialog_set_input_mode(qt6cr_handle_t handle, int input_mode);

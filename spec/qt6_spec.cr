@@ -917,6 +917,61 @@ describe Qt6 do
     dash_canvas.pixel_color(7, 6).should eq(Qt6::Color.new(0, 0, 0, 0))
   end
 
+  it "supports rounded primitives, polylines, arcs, and rect-based text" do
+    app
+
+    canvas = Qt6::QImage.new(40, 40)
+    canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    outline_pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1)
+    fill_pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1)
+    fill_pen.style = Qt6::PenStyle::NoPen
+    polyline_pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 255), 1)
+    polyline_pen.cap_style = Qt6::PenCapStyle::FlatCap
+
+    polyline = Qt6::QPolygonF.new
+    polyline << Qt6::PointF.new(2.0, 20.0)
+    polyline << Qt6::PointF.new(10.0, 12.0)
+    polyline << Qt6::PointF.new(18.0, 20.0)
+
+    Qt6::QPainter.paint(canvas) do |painter|
+      painter.antialiasing = false
+
+      painter.pen = fill_pen
+      painter.brush = Qt6::Color.new(240, 80, 80)
+      painter.draw_rounded_rect(Qt6::RectF.new(2.0, 2.0, 12.0, 12.0), 3.0, 3.0)
+
+      painter.pen = polyline_pen
+      painter.brush = Qt6::QBrush.new(Qt6::Color.new(0, 0, 0, 0))
+      painter.draw_polyline(polyline)
+
+      painter.pen = outline_pen
+      painter.draw_arc(Qt6::RectF.new(20.0, 2.0, 12.0, 12.0), 0, 90 * 16)
+
+      painter.pen = fill_pen
+      painter.brush = Qt6::Color.new(80, 220, 80)
+      painter.draw_pie(Qt6::RectF.new(20.0, 16.0, 12.0, 12.0), 0, 90 * 16)
+
+      painter.brush = Qt6::Color.new(80, 80, 240)
+      painter.draw_chord(Qt6::RectF.new(20.0, 28.0, 12.0, 10.0), 0, 180 * 16)
+
+      painter.pen = Qt6::Color.new(255, 255, 255)
+      painter.draw_text(
+        Qt6::RectF.new(0.0, 28.0, 18.0, 10.0),
+        Qt6::AlignmentFlag::Center,
+        "A"
+      )
+    end
+
+    canvas.pixel_color(8, 8).should eq(Qt6::Color.new(240, 80, 80, 255))
+    canvas.pixel_color(2, 2).should eq(Qt6::Color.new(0, 0, 0, 0))
+    canvas.pixel_color(10, 12).should eq(Qt6::Color.new(0, 0, 255, 255))
+    canvas.pixel_color(32, 8).should eq(Qt6::Color.new(0, 0, 0, 255))
+    canvas.pixel_color(31, 20).should eq(Qt6::Color.new(80, 220, 80, 255))
+    canvas.pixel_color(26, 31).should eq(Qt6::Color.new(80, 80, 240, 255))
+    canvas.pixel_color(9, 33).alpha.should be > 0
+  end
+
   it "supports byte arrays, buffers, data-backed images, and mm-based pdf sizing" do
     app
 

@@ -7780,6 +7780,14 @@ void qt6cr_qpainter_draw_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
   }
 }
 
+void qt6cr_qpainter_draw_rounded_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, double x_radius, double y_radius) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawRoundedRect(from_rectf(rect), x_radius, y_radius);
+  }
+}
+
 void qt6cr_qpainter_fill_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_color_t color) {
   auto *painter = as_qpainter(handle);
 
@@ -7828,6 +7836,39 @@ void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) 
 
   if (painter != nullptr && shape != nullptr) {
     painter->drawPolygon(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_polyline(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpolygonf(polygon);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawPolyline(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_arc(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawArc(from_rectf(rect), start_angle, span_angle);
+  }
+}
+
+void qt6cr_qpainter_draw_pie(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawPie(from_rectf(rect), start_angle, span_angle);
+  }
+}
+
+void qt6cr_qpainter_draw_chord(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawChord(from_rectf(rect), start_angle, span_angle);
   }
 }
 
@@ -7916,6 +7957,14 @@ void qt6cr_qpainter_draw_text(qt6cr_handle_t handle, qt6cr_pointf_t position, co
 
   if (painter != nullptr) {
     painter->drawText(from_pointf(position), QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_qpainter_draw_text_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, int alignment, const char *text) {
+  auto *painter = as_qpainter(handle);
+
+  if (painter != nullptr) {
+    painter->drawText(from_rectf(rect), alignment, QString::fromUtf8(text == nullptr ? "" : text));
   }
 }
 

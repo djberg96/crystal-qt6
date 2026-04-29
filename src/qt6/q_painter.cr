@@ -227,6 +227,12 @@ module Qt6
       self
     end
 
+    # Draws the outline and fill for a rounded rectangle.
+    def draw_rounded_rect(rect : RectF, x_radius : Number, y_radius : Number) : self
+      LibQt6.qt6cr_qpainter_draw_rounded_rect(to_unsafe, rect.to_native, x_radius.to_f64, y_radius.to_f64)
+      self
+    end
+
     # Fills a rectangle with a solid color.
     def fill_rect(rect : RectF, color : Color) : self
       LibQt6.qt6cr_qpainter_fill_rect(to_unsafe, rect.to_native, color.to_native)
@@ -260,6 +266,33 @@ module Qt6
     # Draws a polygon.
     def draw_polygon(polygon : QPolygonF) : self
       LibQt6.qt6cr_qpainter_draw_polygon(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Draws a connected series of line segments without closing the shape.
+    def draw_polyline(polygon : QPolygonF) : self
+      LibQt6.qt6cr_qpainter_draw_polyline(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Draws an arc inside the given rectangle.
+    # Angles use Qt's sixteenth-of-a-degree unit.
+    def draw_arc(rect : RectF, start_angle : Int, span_angle : Int) : self
+      LibQt6.qt6cr_qpainter_draw_arc(to_unsafe, rect.to_native, start_angle.to_i32, span_angle.to_i32)
+      self
+    end
+
+    # Draws a pie segment inside the given rectangle.
+    # Angles use Qt's sixteenth-of-a-degree unit.
+    def draw_pie(rect : RectF, start_angle : Int, span_angle : Int) : self
+      LibQt6.qt6cr_qpainter_draw_pie(to_unsafe, rect.to_native, start_angle.to_i32, span_angle.to_i32)
+      self
+    end
+
+    # Draws a chord inside the given rectangle.
+    # Angles use Qt's sixteenth-of-a-degree unit.
+    def draw_chord(rect : RectF, start_angle : Int, span_angle : Int) : self
+      LibQt6.qt6cr_qpainter_draw_chord(to_unsafe, rect.to_native, start_angle.to_i32, span_angle.to_i32)
       self
     end
 
@@ -320,6 +353,12 @@ module Qt6
     # Draws UTF-8 text anchored at the given position.
     def draw_text(position : PointF, text : String) : self
       LibQt6.qt6cr_qpainter_draw_text(to_unsafe, position.to_native, text.to_unsafe)
+      self
+    end
+
+    # Draws text inside the given rectangle using the requested alignment.
+    def draw_text(rect : RectF, alignment : AlignmentFlag, text : String) : self
+      LibQt6.qt6cr_qpainter_draw_text_rect(to_unsafe, rect.to_native, alignment.value, text.to_unsafe)
       self
     end
 
