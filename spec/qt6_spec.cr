@@ -2444,6 +2444,7 @@ describe Qt6 do
     lcd.digit_count = 6
     lcd.mode = Qt6::LcdNumberMode::Hex
     lcd.segment_style = Qt6::LcdNumberSegmentStyle::Flat
+    lcd.small_decimal_point = true
     lcd.display(255)
 
     command_link.description = "Save the current map as an image"
@@ -2510,7 +2511,10 @@ describe Qt6 do
     lcd.digit_count.should eq(6)
     lcd.mode.should eq(Qt6::LcdNumberMode::Hex)
     lcd.segment_style.should eq(Qt6::LcdNumberSegmentStyle::Flat)
+    lcd.small_decimal_point?.should be_true
     lcd.int_value.should eq(255)
+    lcd.overflow?(16_777_216).should be_true
+    lcd.overflow?(255).should be_false
 
     command_link.text.should eq("Export")
     command_link.description.should eq("Save the current map as an image")

@@ -41,12 +41,29 @@ module Qt6
       value
     end
 
+    def small_decimal_point? : Bool
+      LibQt6.qt6cr_lcd_number_small_decimal_point(to_unsafe)
+    end
+
+    def small_decimal_point=(value : Bool) : Bool
+      LibQt6.qt6cr_lcd_number_set_small_decimal_point(to_unsafe, value)
+      value
+    end
+
     def value : Float64
       LibQt6.qt6cr_lcd_number_value(to_unsafe)
     end
 
     def int_value : Int32
       LibQt6.qt6cr_lcd_number_int_value(to_unsafe)
+    end
+
+    def overflow?(value : Int) : Bool
+      LibQt6.qt6cr_lcd_number_check_overflow_int(to_unsafe, value.to_i32)
+    end
+
+    def overflow?(value : Float) : Bool
+      LibQt6.qt6cr_lcd_number_check_overflow_double(to_unsafe, value.to_f64)
     end
 
     def display(value : Int) : Int32

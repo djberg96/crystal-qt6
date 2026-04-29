@@ -1724,8 +1724,12 @@ module Qt6
     fun qt6cr_lcd_number_set_mode = qt6cr_lcd_number_set_mode(handle : Handle, value : LibC::Int)
     fun qt6cr_lcd_number_segment_style = qt6cr_lcd_number_segment_style(handle : Handle) : LibC::Int
     fun qt6cr_lcd_number_set_segment_style = qt6cr_lcd_number_set_segment_style(handle : Handle, value : LibC::Int)
+    fun qt6cr_lcd_number_small_decimal_point = qt6cr_lcd_number_small_decimal_point(handle : Handle) : Bool
+    fun qt6cr_lcd_number_set_small_decimal_point = qt6cr_lcd_number_set_small_decimal_point(handle : Handle, value : Bool)
     fun qt6cr_lcd_number_value = qt6cr_lcd_number_value(handle : Handle) : Float64
     fun qt6cr_lcd_number_int_value = qt6cr_lcd_number_int_value(handle : Handle) : LibC::Int
+    fun qt6cr_lcd_number_check_overflow_int = qt6cr_lcd_number_check_overflow_int(handle : Handle, value : LibC::Int) : Bool
+    fun qt6cr_lcd_number_check_overflow_double = qt6cr_lcd_number_check_overflow_double(handle : Handle, value : Float64) : Bool
     fun qt6cr_lcd_number_display_int = qt6cr_lcd_number_display_int(handle : Handle, value : LibC::Int)
     fun qt6cr_lcd_number_display_double = qt6cr_lcd_number_display_double(handle : Handle, value : Float64)
     fun qt6cr_lcd_number_display_string = qt6cr_lcd_number_display_string(handle : Handle, value : UInt8*)

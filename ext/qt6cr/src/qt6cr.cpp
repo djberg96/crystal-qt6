@@ -12473,6 +12473,19 @@ void qt6cr_lcd_number_set_segment_style(qt6cr_handle_t handle, int value) {
   }
 }
 
+bool qt6cr_lcd_number_small_decimal_point(qt6cr_handle_t handle) {
+  auto *lcd = as_lcd_number(handle);
+  return lcd != nullptr && lcd->smallDecimalPoint();
+}
+
+void qt6cr_lcd_number_set_small_decimal_point(qt6cr_handle_t handle, bool value) {
+  auto *lcd = as_lcd_number(handle);
+
+  if (lcd != nullptr) {
+    lcd->setSmallDecimalPoint(value);
+  }
+}
+
 double qt6cr_lcd_number_value(qt6cr_handle_t handle) {
   auto *lcd = as_lcd_number(handle);
   return lcd == nullptr ? 0.0 : lcd->value();
@@ -12481,6 +12494,16 @@ double qt6cr_lcd_number_value(qt6cr_handle_t handle) {
 int qt6cr_lcd_number_int_value(qt6cr_handle_t handle) {
   auto *lcd = as_lcd_number(handle);
   return lcd == nullptr ? 0 : lcd->intValue();
+}
+
+bool qt6cr_lcd_number_check_overflow_int(qt6cr_handle_t handle, int value) {
+  auto *lcd = as_lcd_number(handle);
+  return lcd != nullptr && lcd->checkOverflow(value);
+}
+
+bool qt6cr_lcd_number_check_overflow_double(qt6cr_handle_t handle, double value) {
+  auto *lcd = as_lcd_number(handle);
+  return lcd != nullptr && lcd->checkOverflow(value);
 }
 
 void qt6cr_lcd_number_display_int(qt6cr_handle_t handle, int value) {
