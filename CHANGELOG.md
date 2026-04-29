@@ -16,10 +16,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `ToolButton#menu`, `#default_action`, and `#auto_raise` helpers for toolbar- and palette-style command buttons.
 - Added `PushButton#default`, `#auto_default`, and `#flat` helpers for dialog- and shell-style button presentation.
 - Added `ButtonGroup#checked_button`, `#id`, `#set_id`, and `#remove` helpers for grouped tool and mode buttons.
+- Added `GroupBox#alignment` and `#flat` helpers for inspector-style panel presentation.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, `StackedWidget`, `ButtonGroup`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, `StackedWidget`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

@@ -11907,6 +11907,19 @@ char *qt6cr_group_box_title(qt6cr_handle_t handle) {
   return group_box == nullptr ? duplicate_string("") : duplicate_string(group_box->title());
 }
 
+int qt6cr_group_box_alignment(qt6cr_handle_t handle) {
+  auto *group_box = as_group_box(handle);
+  return group_box == nullptr ? 0 : static_cast<int>(group_box->alignment());
+}
+
+void qt6cr_group_box_set_alignment(qt6cr_handle_t handle, int value) {
+  auto *group_box = as_group_box(handle);
+
+  if (group_box != nullptr) {
+    group_box->setAlignment(static_cast<Qt::Alignment>(value));
+  }
+}
+
 void qt6cr_group_box_set_checkable(qt6cr_handle_t handle, bool value) {
   auto *group_box = as_group_box(handle);
 
@@ -11931,6 +11944,19 @@ void qt6cr_group_box_set_checked(qt6cr_handle_t handle, bool value) {
 bool qt6cr_group_box_is_checked(qt6cr_handle_t handle) {
   auto *group_box = as_group_box(handle);
   return group_box != nullptr && group_box->isChecked();
+}
+
+bool qt6cr_group_box_is_flat(qt6cr_handle_t handle) {
+  auto *group_box = as_group_box(handle);
+  return group_box != nullptr && group_box->isFlat();
+}
+
+void qt6cr_group_box_set_flat(qt6cr_handle_t handle, bool value) {
+  auto *group_box = as_group_box(handle);
+
+  if (group_box != nullptr) {
+    group_box->setFlat(value);
+  }
 }
 
 void qt6cr_group_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {

@@ -2008,6 +2008,8 @@ describe Qt6 do
     end
 
     options_group.checkable = true
+    options_group.alignment = Qt6::AlignmentFlag::HCenter
+    options_group.flat = true
     options_group.vbox do |column|
       column << auto_mode
       column << manual_mode
@@ -2077,8 +2079,10 @@ describe Qt6 do
     tab_widget.index_of(export_page).should eq(-1)
     tab_widget.tab_text(1).should eq("Inspect")
     options_group.title.should eq("Options")
+    options_group.alignment.should eq(Qt6::AlignmentFlag::HCenter)
     options_group.checkable?.should be_true
     options_group.checked?.should be_true
+    options_group.flat?.should be_true
     auto_mode.checked?.should be_false
     manual_mode.checked?.should be_true
     slider.orientation.should eq(Qt6::Orientation::Horizontal)

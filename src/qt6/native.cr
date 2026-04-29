@@ -1633,10 +1633,14 @@ module Qt6
     fun qt6cr_group_box_create = qt6cr_group_box_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_group_box_set_title = qt6cr_group_box_set_title(handle : Handle, title : UInt8*)
     fun qt6cr_group_box_title = qt6cr_group_box_title(handle : Handle) : UInt8*
+    fun qt6cr_group_box_alignment = qt6cr_group_box_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_group_box_set_alignment = qt6cr_group_box_set_alignment(handle : Handle, value : LibC::Int)
     fun qt6cr_group_box_set_checkable = qt6cr_group_box_set_checkable(handle : Handle, value : Bool)
     fun qt6cr_group_box_is_checkable = qt6cr_group_box_is_checkable(handle : Handle) : Bool
     fun qt6cr_group_box_set_checked = qt6cr_group_box_set_checked(handle : Handle, value : Bool)
     fun qt6cr_group_box_is_checked = qt6cr_group_box_is_checked(handle : Handle) : Bool
+    fun qt6cr_group_box_is_flat = qt6cr_group_box_is_flat(handle : Handle) : Bool
+    fun qt6cr_group_box_set_flat = qt6cr_group_box_set_flat(handle : Handle, value : Bool)
     fun qt6cr_group_box_on_toggled = qt6cr_group_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
     fun qt6cr_frame_create = qt6cr_frame_create(parent : Handle) : Handle

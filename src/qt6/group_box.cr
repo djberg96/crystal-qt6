@@ -26,6 +26,17 @@ module Qt6
       value
     end
 
+    # Returns the group-box title alignment flags.
+    def alignment : AlignmentFlag
+      AlignmentFlag.from_value(LibQt6.qt6cr_group_box_alignment(to_unsafe))
+    end
+
+    # Sets the group-box title alignment and returns it.
+    def alignment=(value : AlignmentFlag) : AlignmentFlag
+      LibQt6.qt6cr_group_box_set_alignment(to_unsafe, value.value)
+      value
+    end
+
     # Returns `true` when the group box shows a checkbox in its title.
     def checkable? : Bool
       LibQt6.qt6cr_group_box_is_checkable(to_unsafe)
@@ -45,6 +56,17 @@ module Qt6
     # Sets the group-box checked state.
     def checked=(value : Bool) : Bool
       LibQt6.qt6cr_group_box_set_checked(to_unsafe, value)
+      value
+    end
+
+    # Returns `true` when the group box hides the frame side lines.
+    def flat? : Bool
+      LibQt6.qt6cr_group_box_is_flat(to_unsafe)
+    end
+
+    # Enables or disables flat frame styling.
+    def flat=(value : Bool) : Bool
+      LibQt6.qt6cr_group_box_set_flat(to_unsafe, value)
       value
     end
 

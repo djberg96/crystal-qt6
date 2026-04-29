@@ -1681,10 +1681,14 @@ void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_
 qt6cr_handle_t qt6cr_group_box_create(qt6cr_handle_t parent, const char *title);
 void qt6cr_group_box_set_title(qt6cr_handle_t handle, const char *title);
 char *qt6cr_group_box_title(qt6cr_handle_t handle);
+int qt6cr_group_box_alignment(qt6cr_handle_t handle);
+void qt6cr_group_box_set_alignment(qt6cr_handle_t handle, int value);
 void qt6cr_group_box_set_checkable(qt6cr_handle_t handle, bool value);
 bool qt6cr_group_box_is_checkable(qt6cr_handle_t handle);
 void qt6cr_group_box_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_group_box_is_checked(qt6cr_handle_t handle);
+bool qt6cr_group_box_is_flat(qt6cr_handle_t handle);
+void qt6cr_group_box_set_flat(qt6cr_handle_t handle, bool value);
 void qt6cr_group_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_frame_create(qt6cr_handle_t parent);
