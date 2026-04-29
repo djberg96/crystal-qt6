@@ -19,10 +19,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `GroupBox#alignment` and `#flat` helpers for inspector-style panel presentation.
 - Added `TabBar#insert_tab`, `#remove_tab`, enabled-state helpers, and movable/closable presentation controls for lightweight shell and editor tab strips.
 - Added `DialogButtonBox#standard_buttons`, `#center_buttons`, and `#orientation` helpers for dialog-shell layout polish.
+- Added `CheckBox#tristate` and `#check_state` helpers for partially checked option flows.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `TabBar`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `TabWidget`, `TabBar`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

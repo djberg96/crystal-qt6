@@ -1861,6 +1861,8 @@ describe Qt6 do
 
     dialog.accept
     check_box.checked = true
+    check_box.tristate = true
+    check_box.check_state = Qt6::CheckState::PartiallyChecked
     combo_box.editable = true
     combo_box.item_text(1).should eq("Roads")
     combo_box.find_text("Roads").should eq(1)
@@ -1874,7 +1876,8 @@ describe Qt6 do
     main.status_bar.current_message.should eq("Ready")
     line_edit.text = "Terrain"
     line_edit.text.should eq("Terrain")
-    check_box.checked?.should be_true
+    check_box.tristate?.should be_true
+    check_box.check_state.should eq(Qt6::CheckState::PartiallyChecked)
     combo_box.count.should eq(2)
     combo_box.editable?.should be_true
     combo_box.current_text.should eq("Terrain")

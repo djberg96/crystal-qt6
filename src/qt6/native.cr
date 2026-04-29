@@ -1333,6 +1333,10 @@ module Qt6
     fun qt6cr_check_box_text = qt6cr_check_box_text(handle : Handle) : UInt8*
     fun qt6cr_check_box_set_checked = qt6cr_check_box_set_checked(handle : Handle, value : Bool)
     fun qt6cr_check_box_is_checked = qt6cr_check_box_is_checked(handle : Handle) : Bool
+    fun qt6cr_check_box_is_tristate = qt6cr_check_box_is_tristate(handle : Handle) : Bool
+    fun qt6cr_check_box_set_tristate = qt6cr_check_box_set_tristate(handle : Handle, value : Bool)
+    fun qt6cr_check_box_check_state = qt6cr_check_box_check_state(handle : Handle) : LibC::Int
+    fun qt6cr_check_box_set_check_state = qt6cr_check_box_set_check_state(handle : Handle, value : LibC::Int)
     fun qt6cr_check_box_on_toggled = qt6cr_check_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
     fun qt6cr_radio_button_create = qt6cr_radio_button_create(parent : Handle, text : UInt8*) : Handle

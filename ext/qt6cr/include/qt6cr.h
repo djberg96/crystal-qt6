@@ -1368,6 +1368,10 @@ void qt6cr_check_box_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_check_box_text(qt6cr_handle_t handle);
 void qt6cr_check_box_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_check_box_is_checked(qt6cr_handle_t handle);
+bool qt6cr_check_box_is_tristate(qt6cr_handle_t handle);
+void qt6cr_check_box_set_tristate(qt6cr_handle_t handle, bool value);
+int qt6cr_check_box_check_state(qt6cr_handle_t handle);
+void qt6cr_check_box_set_check_state(qt6cr_handle_t handle, int value);
 void qt6cr_check_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_radio_button_create(qt6cr_handle_t parent, const char *text);

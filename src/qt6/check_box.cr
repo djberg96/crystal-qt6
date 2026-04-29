@@ -37,6 +37,28 @@ module Qt6
       value
     end
 
+    # Returns `true` when the checkbox supports a partially checked state.
+    def tristate? : Bool
+      LibQt6.qt6cr_check_box_is_tristate(to_unsafe)
+    end
+
+    # Enables or disables tri-state behavior.
+    def tristate=(value : Bool) : Bool
+      LibQt6.qt6cr_check_box_set_tristate(to_unsafe, value)
+      value
+    end
+
+    # Returns the full Qt check state.
+    def check_state : CheckState
+      CheckState.from_value(LibQt6.qt6cr_check_box_check_state(to_unsafe))
+    end
+
+    # Sets the full Qt check state and returns it.
+    def check_state=(value : CheckState) : CheckState
+      LibQt6.qt6cr_check_box_set_check_state(to_unsafe, value.value)
+      value
+    end
+
     # Registers a block to run when the checked state changes.
     def on_toggled(&block : Bool ->) : self
       @toggled.connect { |value| block.call(value) }

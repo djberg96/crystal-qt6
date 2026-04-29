@@ -10108,6 +10108,32 @@ bool qt6cr_check_box_is_checked(qt6cr_handle_t handle) {
   return check_box != nullptr && check_box->isChecked();
 }
 
+bool qt6cr_check_box_is_tristate(qt6cr_handle_t handle) {
+  auto *check_box = as_check_box(handle);
+  return check_box != nullptr && check_box->isTristate();
+}
+
+void qt6cr_check_box_set_tristate(qt6cr_handle_t handle, bool value) {
+  auto *check_box = as_check_box(handle);
+
+  if (check_box != nullptr) {
+    check_box->setTristate(value);
+  }
+}
+
+int qt6cr_check_box_check_state(qt6cr_handle_t handle) {
+  auto *check_box = as_check_box(handle);
+  return check_box == nullptr ? static_cast<int>(Qt::Unchecked) : static_cast<int>(check_box->checkState());
+}
+
+void qt6cr_check_box_set_check_state(qt6cr_handle_t handle, int value) {
+  auto *check_box = as_check_box(handle);
+
+  if (check_box != nullptr) {
+    check_box->setCheckState(static_cast<Qt::CheckState>(value));
+  }
+}
+
 void qt6cr_check_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
   auto *check_box = as_check_box(handle);
 
