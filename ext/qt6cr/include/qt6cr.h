@@ -1374,6 +1374,12 @@ void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t 
 qt6cr_handle_t qt6cr_tool_button_create(qt6cr_handle_t parent);
 int qt6cr_tool_button_style(qt6cr_handle_t handle);
 void qt6cr_tool_button_set_style(qt6cr_handle_t handle, int style);
+qt6cr_handle_t qt6cr_tool_button_menu(qt6cr_handle_t handle);
+void qt6cr_tool_button_set_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
+qt6cr_handle_t qt6cr_tool_button_default_action(qt6cr_handle_t handle);
+void qt6cr_tool_button_set_default_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+bool qt6cr_tool_button_auto_raise(qt6cr_handle_t handle);
+void qt6cr_tool_button_set_auto_raise(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_combo_box_create(qt6cr_handle_t parent);
 void qt6cr_combo_box_add_item(qt6cr_handle_t handle, const char *text);

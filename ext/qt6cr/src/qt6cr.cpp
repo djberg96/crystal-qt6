@@ -10140,6 +10140,49 @@ void qt6cr_tool_button_set_style(qt6cr_handle_t handle, int style) {
   }
 }
 
+qt6cr_handle_t qt6cr_tool_button_menu(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  auto *menu = tool_button == nullptr ? nullptr : tool_button->menu();
+  return menu == nullptr ? nullptr : static_cast<qt6cr_handle_t>(menu);
+}
+
+void qt6cr_tool_button_set_menu(qt6cr_handle_t handle, qt6cr_handle_t menu) {
+  auto *tool_button = as_tool_button(handle);
+  auto *button_menu = as_menu(menu);
+
+  if (tool_button != nullptr) {
+    tool_button->setMenu(button_menu);
+  }
+}
+
+qt6cr_handle_t qt6cr_tool_button_default_action(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  auto *action = tool_button == nullptr ? nullptr : tool_button->defaultAction();
+  return action == nullptr ? nullptr : static_cast<qt6cr_handle_t>(action);
+}
+
+void qt6cr_tool_button_set_default_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *tool_button = as_tool_button(handle);
+  auto *button_action = as_action(action);
+
+  if (tool_button != nullptr) {
+    tool_button->setDefaultAction(button_action);
+  }
+}
+
+bool qt6cr_tool_button_auto_raise(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  return tool_button != nullptr && tool_button->autoRaise();
+}
+
+void qt6cr_tool_button_set_auto_raise(qt6cr_handle_t handle, bool value) {
+  auto *tool_button = as_tool_button(handle);
+
+  if (tool_button != nullptr) {
+    tool_button->setAutoRaise(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_combo_box_create(qt6cr_handle_t parent) {
   return new QComboBox(as_widget(parent));
 }

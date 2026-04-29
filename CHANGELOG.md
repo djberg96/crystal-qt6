@@ -9,6 +9,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Added
 
 - Added multithreaded GUI-spec coverage for `Application#invoke_later` with `CRYSTAL_WORKERS=2` and Crystal's `preview_mt` runtime.
+- Added `ToolButton#menu`, `#default_action`, and `#auto_raise` helpers for toolbar- and palette-style command buttons.
+
+### Changed
+
+- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, and `StackedWidget` APIs for editor-style shells and panels.
 
 ## [0.7.0] - 2026-04-23
 

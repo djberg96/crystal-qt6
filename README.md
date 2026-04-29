@@ -14,7 +14,7 @@ This repository currently provides:
 
 ## Status
 
-This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.7.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, undo/redo stacks and shared undo groups, widget-owned actions and shortcuts, standard dialog galleries, font dialogs, deeper raster/SVG/PDF rendering and export, configured image writing, richer `QPainterPath` editing, raw `QImage` byte-buffer workflows, image and pixmap transforms, richer `EventWidget` input hooks, clipboard access, `QMimeData`, richer text/document editing, broader model/view and table support, validators and completers, application-service utilities, common desktop controls, maintained integration examples, and the lifecycle fixes needed to run that surface more reliably across macOS and Linux.
+This is still a focused subset of Qt6 rather than a full binding, but it is no longer just an initial foundation. The `0.7.0` surface covers custom widgets, a reduced desktop application shell, application metadata and stylesheet polish, undo/redo stacks and shared undo groups, widget-owned actions and shortcuts, standard dialog galleries, font dialogs, deeper raster/SVG/PDF rendering and export, configured image writing, richer `QPainterPath` editing, raw `QImage` byte-buffer workflows, image and pixmap transforms, richer `EventWidget` input hooks, clipboard access, `QMimeData`, richer text/document editing, broader model/view and table support, validators and completers, application-service utilities, common desktop controls, deeper panel/container widgets, maintained integration examples, and the lifecycle fixes needed to run that surface more reliably across macOS and Linux.
 
 ## Requirements
 
@@ -173,13 +173,13 @@ app.run
 - `Qt6::UndoStack`, `Qt6::UndoCommand`, and `Qt6::UndoGroup` for application-level undo/redo history, clean-state tracking, macros, generated actions, and shared undo/redo routing across multiple document stacks
 - `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text and pixmap display, including alignment, word wrapping, and scaled contents
-- `Qt6::PushButton` for push buttons and click callbacks
+- `Qt6::PushButton` and `Qt6::ToolButton` for button-style commands, including menus, default actions, auto-raise styling, and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls, including slider press/release hooks and opt-in click-to-position behavior
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
 - `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::AbstractListModel`, `Qt6::AbstractTreeModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, mutable callback-backed list/tree models, row insert/remove/move notifications, proxy sorting/filtering with regex and recursive tree filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration
 - richer text and table polish through `QTextDocument#find`, `QTextCursor` null/replace helpers, editor-side plain-text/HTML insertion helpers, header section-size access, table sort/resize-to-contents helpers, and `TableWidget#on_item_double_clicked`
 - `Qt6::AbstractItemView` and `Qt6::AbstractScrollArea` for shared item-view and scroll-surface infrastructure across list/tree/table widgets, model views, text editors, and scroll areas, including viewport access, index hit-testing, visual-rectangle lookup, and overwrite-mode drop configuration
-- `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, and `Qt6::Orientation` for editor-style panel and container composition
+- `Qt6::TabWidget`, `Qt6::ScrollArea`, `Qt6::Splitter`, `Qt6::StackedWidget`, and `Qt6::Orientation` for editor-style panel and container composition, including page lookup, current-page selection, removal helpers, and splitter sizing/pane-polish controls
 - `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition, including box-layout stretch helpers
 
 ## Testing Strategy

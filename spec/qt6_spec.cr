@@ -2523,11 +2523,19 @@ describe Qt6 do
     place_button = Qt6::PushButton.new("Place")
     select_button = Qt6::PushButton.new("Select")
     tool_button = Qt6::ToolButton.new
+    tool_menu = Qt6::Menu.new("Brush Modes", dialog)
+    stroke_action = Qt6::Action.new("Stroke", dialog)
     tool_button.text = "Brush"
     tool_button.tool_button_style = Qt6::ToolButtonStyle::TextUnderIcon
     tool_button.icon = Qt6::QIcon.new
     tool_button.icon_size = Qt6::Size.new(24, 24)
     tool_button.set_fixed_size(72, 88)
+    tool_button.menu.should be_nil
+    tool_button.default_action.should be_nil
+    tool_button.auto_raise = true
+    tool_menu.add_action("Fill")
+    tool_button.menu = tool_menu
+    tool_button.default_action = stroke_action
     tool_button.enabled = false
     tool_button.enabled = true
 
@@ -2586,6 +2594,9 @@ describe Qt6 do
     layout.spacing.should eq(6)
     tool_button.tool_button_style.should eq(Qt6::ToolButtonStyle::TextUnderIcon)
     tool_button.icon_size.should eq(Qt6::Size.new(24, 24))
+    tool_button.menu.not_nil!.title.should eq("Brush Modes")
+    tool_button.default_action.not_nil!.to_unsafe.should eq(stroke_action.to_unsafe)
+    tool_button.auto_raise?.should be_true
     tool_button.enabled?.should be_true
     tool_button.size.should eq(Qt6::Size.new(72, 88))
     place_button.checkable?.should be_true

@@ -1339,6 +1339,12 @@ module Qt6
     fun qt6cr_tool_button_create = qt6cr_tool_button_create(parent : Handle) : Handle
     fun qt6cr_tool_button_style = qt6cr_tool_button_style(handle : Handle) : LibC::Int
     fun qt6cr_tool_button_set_style = qt6cr_tool_button_set_style(handle : Handle, style : LibC::Int)
+    fun qt6cr_tool_button_menu = qt6cr_tool_button_menu(handle : Handle) : Handle
+    fun qt6cr_tool_button_set_menu = qt6cr_tool_button_set_menu(handle : Handle, menu : Handle)
+    fun qt6cr_tool_button_default_action = qt6cr_tool_button_default_action(handle : Handle) : Handle
+    fun qt6cr_tool_button_set_default_action = qt6cr_tool_button_set_default_action(handle : Handle, action : Handle)
+    fun qt6cr_tool_button_auto_raise = qt6cr_tool_button_auto_raise(handle : Handle) : Bool
+    fun qt6cr_tool_button_set_auto_raise = qt6cr_tool_button_set_auto_raise(handle : Handle, value : Bool)
 
     fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle
     fun qt6cr_combo_box_add_item = qt6cr_combo_box_add_item(handle : Handle, text : UInt8*)
