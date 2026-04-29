@@ -1907,6 +1907,8 @@ void qt6cr_scroll_area_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 qt6cr_handle_t qt6cr_scroll_area_take_widget(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_widget_resizable(qt6cr_handle_t handle, bool value);
 bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle);
+int qt6cr_scroll_area_alignment(qt6cr_handle_t handle);
+void qt6cr_scroll_area_set_alignment(qt6cr_handle_t handle, int alignment);
 int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
 int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle);

@@ -36,6 +36,17 @@ module Qt6
       value
     end
 
+    # Returns the alignment used for the child widget inside the viewport.
+    def alignment : AlignmentFlag
+      AlignmentFlag.from_value(LibQt6.qt6cr_scroll_area_alignment(to_unsafe))
+    end
+
+    # Sets the child-widget alignment inside the viewport.
+    def alignment=(value : AlignmentFlag) : AlignmentFlag
+      LibQt6.qt6cr_scroll_area_set_alignment(to_unsafe, value.value)
+      value
+    end
+
     # Scrolls until the given content point is visible.
     def ensure_visible(x : Int, y : Int, xmargin : Int = 50, ymargin : Int = 50) : self
       LibQt6.qt6cr_scroll_area_ensure_visible(to_unsafe, x.to_i32, y.to_i32, xmargin.to_i32, ymargin.to_i32)

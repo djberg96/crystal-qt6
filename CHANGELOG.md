@@ -21,10 +21,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `DialogButtonBox#standard_buttons`, `#center_buttons`, and `#orientation` helpers for dialog-shell layout polish.
 - Added `CheckBox#tristate` and `#check_state` helpers for partially checked option flows.
 - Added `RadioButton#auto_exclusive` and `#click` helpers for editor-style option groups.
+- Added `ScrollArea#alignment` helpers for centered and preview-style content presentation.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `TabWidget`, `TabBar`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

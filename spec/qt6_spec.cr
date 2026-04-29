@@ -2026,6 +2026,7 @@ describe Qt6 do
     end
 
     scroll_area.widget_resizable = true
+    scroll_area.alignment = Qt6::AlignmentFlag::Center
     scroll_area.widget = inspector
     tab_widget.add_tab(layers_page, "Layers")
     tab_widget.add_tab(export_page, "Export")
@@ -2071,6 +2072,7 @@ describe Qt6 do
     application.process_events
 
     scroll_area.widget_resizable?.should be_true
+    scroll_area.alignment.should eq(Qt6::AlignmentFlag::Center)
     splitter.count.should eq(2)
     splitter.orientation.should eq(Qt6::Orientation::Vertical)
     splitter.opaque_resize?.should be_false

@@ -13550,6 +13550,19 @@ bool qt6cr_scroll_area_widget_resizable(qt6cr_handle_t handle) {
   return scroll_area != nullptr && scroll_area->widgetResizable();
 }
 
+int qt6cr_scroll_area_alignment(qt6cr_handle_t handle) {
+  auto *scroll_area = as_scroll_area(handle);
+  return scroll_area == nullptr ? static_cast<int>(Qt::Alignment()) : static_cast<int>(scroll_area->alignment());
+}
+
+void qt6cr_scroll_area_set_alignment(qt6cr_handle_t handle, int alignment) {
+  auto *scroll_area = as_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->setAlignment(Qt::Alignment(alignment));
+  }
+}
+
 int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle) {
   return qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(handle);
 }
