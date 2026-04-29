@@ -215,6 +215,12 @@ module Qt6
       self
     end
 
+    # Replaces the current clip with the given region.
+    def clip_region=(region : QRegion) : QRegion
+      LibQt6.qt6cr_qpainter_set_clip_region(to_unsafe, region.to_unsafe)
+      region
+    end
+
     # Draws a line between two points.
     def draw_line(from_point : PointF, to_point : PointF) : self
       LibQt6.qt6cr_qpainter_draw_line(to_unsafe, from_point.to_native, to_point.to_native)

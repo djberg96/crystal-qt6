@@ -82,6 +82,17 @@ module Qt6
       self
     end
 
+    # Returns the widget's current mask region.
+    def mask : QRegion
+      QRegion.wrap(LibQt6.qt6cr_widget_mask(@to_unsafe), true)
+    end
+
+    # Sets or clears the widget mask.
+    def mask=(value : QRegion?) : QRegion?
+      LibQt6.qt6cr_widget_set_mask(@to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value
+    end
+
     # Captures the widget's current contents into a pixmap.
     def grab : QPixmap
       QPixmap.new(LibQt6.qt6cr_widget_grab(@to_unsafe), true)

@@ -972,6 +972,52 @@ describe Qt6 do
     canvas.pixel_color(9, 33).alpha.should be > 0
   end
 
+  it "supports regions for clipping, combination, and widget masks" do
+    app
+
+    base = Qt6::QRegion.new(Qt6::Rect.new(0, 0, 8, 8))
+    ellipse = Qt6::QRegion.new(Qt6::Rect.new(4, 0, 8, 8), Qt6::RegionType::Ellipse)
+    combined = base.united(ellipse)
+    overlap = combined.intersected(Qt6::Rect.new(4, 0, 4, 8))
+    translated = overlap.translated(0, 8)
+    xor_region = base.xored(Qt6::QRegion.new(Qt6::Rect.new(4, 0, 8, 8)))
+    subtracted = combined.subtracted(base)
+
+    base.empty?.should be_false
+    base.null?.should be_false
+    base.bounding_rect.should eq(Qt6::Rect.new(0, 0, 8, 8))
+    base.contains?(Qt6::Rect.new(1, 1, 2, 2)).should be_true
+    base.intersects?(Qt6::Rect.new(7, 7, 4, 4)).should be_true
+    combined.intersects?(ellipse).should be_true
+    overlap.bounding_rect.should eq(Qt6::Rect.new(4, 0, 4, 8))
+    translated.bounding_rect.should eq(Qt6::Rect.new(4, 8, 4, 8))
+    xor_region.contains?(Qt6::Rect.new(0, 0, 2, 2)).should be_true
+    xor_region.contains?(Qt6::Rect.new(5, 0, 2, 2)).should be_false
+    subtracted.empty?.should be_false
+    combined.rect_count.should be > 0
+
+    canvas = Qt6::QImage.new(16, 16)
+    canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+    clip_region = Qt6::QRegion.new(Qt6::Rect.new(4, 4, 4, 4))
+
+    Qt6::QPainter.paint(canvas) do |painter|
+      painter.clip_region = clip_region
+      painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 16.0, 16.0), Qt6::Color.new(220, 40, 40))
+    end
+
+    canvas.pixel_color(5, 5).should eq(Qt6::Color.new(220, 40, 40, 255))
+    canvas.pixel_color(2, 2).should eq(Qt6::Color.new(0, 0, 0, 0))
+
+    window = Qt6::Widget.new
+    window.resize(16, 16)
+    window.mask = ellipse
+    window.mask.bounding_rect.should eq(Qt6::Rect.new(4, 0, 8, 8))
+    window.mask.empty?.should be_false
+    window.mask = nil
+    window.mask.empty?.should be_true
+    window.release
+  end
+
   it "supports byte arrays, buffers, data-backed images, and mm-based pdf sizing" do
     app
 

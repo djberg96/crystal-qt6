@@ -95,6 +95,7 @@
 #include <QKeySequence>
 #include <QRadioButton>
 #include <QRadialGradient>
+#include <QRegion>
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -174,6 +175,7 @@ struct ApplicationState {
 qt6cr_pointf_t to_pointf(const QPointF &point);
 qt6cr_pointf_t to_pointf(const QPoint &point);
 qt6cr_size_t to_size(const QSize &size);
+qt6cr_rect_t to_rect(const QRect &rect);
 qt6cr_rectf_t to_rectf(const QRectF &rect);
 qt6cr_mouse_event_t to_mouse_event(QMouseEvent *event);
 qt6cr_wheel_event_t to_wheel_event(QWheelEvent *event);
@@ -1271,6 +1273,10 @@ QPainterPathStroker *as_qpainter_path_stroker(qt6cr_handle_t handle) {
   return static_cast<QPainterPathStroker *>(handle);
 }
 
+QRegion *as_qregion(qt6cr_handle_t handle) {
+  return static_cast<QRegion *>(handle);
+}
+
 QPainter *as_qpainter(qt6cr_handle_t handle) {
   return static_cast<QPainter *>(handle);
 }
@@ -1643,6 +1649,10 @@ qt6cr_size_t to_size(const QSize &size) {
   return qt6cr_size_t{size.width(), size.height()};
 }
 
+qt6cr_rect_t to_rect(const QRect &rect) {
+  return qt6cr_rect_t{rect.x(), rect.y(), rect.width(), rect.height()};
+}
+
 qt6cr_sizef_t to_sizef(const QSizeF &size) {
   return qt6cr_sizef_t{size.width(), size.height()};
 }
@@ -1736,6 +1746,10 @@ QRectF from_rectf(qt6cr_rectf_t rect) {
 
 QRect from_rect(qt6cr_rectf_t rect) {
   return QRect(static_cast<int>(rect.x), static_cast<int>(rect.y), static_cast<int>(rect.width), static_cast<int>(rect.height));
+}
+
+QRect from_rect(qt6cr_rect_t rect) {
+  return QRect(rect.x, rect.y, rect.width, rect.height);
 }
 
 QColor from_color(qt6cr_color_t color) {
@@ -2462,6 +2476,24 @@ void qt6cr_widget_update(qt6cr_handle_t handle) {
 
   if (widget != nullptr) {
     widget->update();
+  }
+}
+
+qt6cr_handle_t qt6cr_widget_mask(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QRegion(widget->mask());
+}
+
+void qt6cr_widget_set_mask(qt6cr_handle_t handle, qt6cr_handle_t region) {
+  auto *widget = as_widget(handle);
+  auto *value = as_qregion(region);
+
+  if (widget != nullptr) {
+    if (value != nullptr) {
+      widget->setMask(*value);
+    } else {
+      widget->clearMask();
+    }
   }
 }
 
@@ -6724,6 +6756,101 @@ void qt6cr_qbrush_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform)
   }
 }
 
+qt6cr_handle_t qt6cr_qregion_create(void) {
+  return new QRegion();
+}
+
+qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type) {
+  return new QRegion(from_rect(rect), static_cast<QRegion::RegionType>(type));
+}
+
+void qt6cr_qregion_destroy(qt6cr_handle_t handle) {
+  delete as_qregion(handle);
+}
+
+bool qt6cr_qregion_is_empty(qt6cr_handle_t handle) {
+  auto *region = as_qregion(handle);
+  return region == nullptr || region->isEmpty();
+}
+
+bool qt6cr_qregion_is_null(qt6cr_handle_t handle) {
+  auto *region = as_qregion(handle);
+  return region == nullptr || region->isNull();
+}
+
+int qt6cr_qregion_rect_count(qt6cr_handle_t handle) {
+  auto *region = as_qregion(handle);
+  return region == nullptr ? 0 : region->rectCount();
+}
+
+qt6cr_rect_t qt6cr_qregion_bounding_rect(qt6cr_handle_t handle) {
+  auto *region = as_qregion(handle);
+  return region == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(region->boundingRect());
+}
+
+bool qt6cr_qregion_contains_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *region = as_qregion(handle);
+  return region != nullptr && region->contains(from_rect(rect));
+}
+
+bool qt6cr_qregion_intersects_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *region = as_qregion(handle);
+  return region != nullptr && region->intersects(from_rect(rect));
+}
+
+bool qt6cr_qregion_intersects(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+  return region != nullptr && value != nullptr && region->intersects(*value);
+}
+
+qt6cr_handle_t qt6cr_qregion_translated(qt6cr_handle_t handle, int dx, int dy) {
+  auto *region = as_qregion(handle);
+  return region == nullptr ? nullptr : new QRegion(region->translated(dx, dy));
+}
+
+void qt6cr_qregion_translate(qt6cr_handle_t handle, int dx, int dy) {
+  auto *region = as_qregion(handle);
+
+  if (region != nullptr) {
+    region->translate(dx, dy);
+  }
+}
+
+qt6cr_handle_t qt6cr_qregion_united(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+  return region == nullptr || value == nullptr ? nullptr : new QRegion(region->united(*value));
+}
+
+qt6cr_handle_t qt6cr_qregion_united_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *region = as_qregion(handle);
+  return region == nullptr ? nullptr : new QRegion(region->united(from_rect(rect)));
+}
+
+qt6cr_handle_t qt6cr_qregion_intersected(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+  return region == nullptr || value == nullptr ? nullptr : new QRegion(region->intersected(*value));
+}
+
+qt6cr_handle_t qt6cr_qregion_intersected_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *region = as_qregion(handle);
+  return region == nullptr ? nullptr : new QRegion(region->intersected(from_rect(rect)));
+}
+
+qt6cr_handle_t qt6cr_qregion_subtracted(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+  return region == nullptr || value == nullptr ? nullptr : new QRegion(region->subtracted(*value));
+}
+
+qt6cr_handle_t qt6cr_qregion_xored(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+  return region == nullptr || value == nullptr ? nullptr : new QRegion(region->xored(*value));
+}
+
 qt6cr_handle_t qt6cr_qfont_create(const char *family, int point_size, bool bold, bool italic) {
   auto font = QFont(QString::fromUtf8(family == nullptr ? "" : family), point_size);
   font.setBold(bold);
@@ -7761,6 +7888,15 @@ void qt6cr_qpainter_set_clip_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
 
   if (painter != nullptr) {
     painter->setClipRect(from_rectf(rect));
+  }
+}
+
+void qt6cr_qpainter_set_clip_region(qt6cr_handle_t handle, qt6cr_handle_t region) {
+  auto *painter = as_qpainter(handle);
+  auto *value = as_qregion(region);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->setClipRegion(*value);
   }
 }
 

@@ -33,6 +33,13 @@ module Qt6
       height : Float64
     end
 
+    struct RectValue
+      x : LibC::Int
+      y : LibC::Int
+      width : LibC::Int
+      height : LibC::Int
+    end
+
     struct PainterPathElementValue
       x : Float64
       y : Float64
@@ -180,6 +187,8 @@ module Qt6
     fun qt6cr_widget_size = qt6cr_widget_size(handle : Handle) : SizeValue
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
+    fun qt6cr_widget_mask = qt6cr_widget_mask(handle : Handle) : Handle
+    fun qt6cr_widget_set_mask = qt6cr_widget_set_mask(handle : Handle, region : Handle)
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
     fun qt6cr_widget_style_sheet = qt6cr_widget_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
@@ -800,6 +809,25 @@ module Qt6
     fun qt6cr_qbrush_transform = qt6cr_qbrush_transform(handle : Handle) : Handle
     fun qt6cr_qbrush_set_transform = qt6cr_qbrush_set_transform(handle : Handle, transform : Handle)
 
+    fun qt6cr_qregion_create = qt6cr_qregion_create : Handle
+    fun qt6cr_qregion_create_rect = qt6cr_qregion_create_rect(rect : RectValue, type : LibC::Int) : Handle
+    fun qt6cr_qregion_destroy = qt6cr_qregion_destroy(handle : Handle)
+    fun qt6cr_qregion_is_empty = qt6cr_qregion_is_empty(handle : Handle) : Bool
+    fun qt6cr_qregion_is_null = qt6cr_qregion_is_null(handle : Handle) : Bool
+    fun qt6cr_qregion_rect_count = qt6cr_qregion_rect_count(handle : Handle) : LibC::Int
+    fun qt6cr_qregion_bounding_rect = qt6cr_qregion_bounding_rect(handle : Handle) : RectValue
+    fun qt6cr_qregion_contains_rect = qt6cr_qregion_contains_rect(handle : Handle, rect : RectValue) : Bool
+    fun qt6cr_qregion_intersects_rect = qt6cr_qregion_intersects_rect(handle : Handle, rect : RectValue) : Bool
+    fun qt6cr_qregion_intersects = qt6cr_qregion_intersects(handle : Handle, other : Handle) : Bool
+    fun qt6cr_qregion_translated = qt6cr_qregion_translated(handle : Handle, dx : LibC::Int, dy : LibC::Int) : Handle
+    fun qt6cr_qregion_translate = qt6cr_qregion_translate(handle : Handle, dx : LibC::Int, dy : LibC::Int)
+    fun qt6cr_qregion_united = qt6cr_qregion_united(handle : Handle, other : Handle) : Handle
+    fun qt6cr_qregion_united_rect = qt6cr_qregion_united_rect(handle : Handle, rect : RectValue) : Handle
+    fun qt6cr_qregion_intersected = qt6cr_qregion_intersected(handle : Handle, other : Handle) : Handle
+    fun qt6cr_qregion_intersected_rect = qt6cr_qregion_intersected_rect(handle : Handle, rect : RectValue) : Handle
+    fun qt6cr_qregion_subtracted = qt6cr_qregion_subtracted(handle : Handle, other : Handle) : Handle
+    fun qt6cr_qregion_xored = qt6cr_qregion_xored(handle : Handle, other : Handle) : Handle
+
     fun qt6cr_qfont_create = qt6cr_qfont_create(family : UInt8*, point_size : LibC::Int, bold : Bool, italic : Bool) : Handle
     fun qt6cr_qfont_destroy = qt6cr_qfont_destroy(handle : Handle)
     fun qt6cr_qfont_family = qt6cr_qfont_family(handle : Handle) : UInt8*
@@ -995,6 +1023,7 @@ module Qt6
     fun qt6cr_qpainter_set_clipping = qt6cr_qpainter_set_clipping(handle : Handle, value : Bool)
     fun qt6cr_qpainter_set_clip_path = qt6cr_qpainter_set_clip_path(handle : Handle, path : Handle)
     fun qt6cr_qpainter_set_clip_rect = qt6cr_qpainter_set_clip_rect(handle : Handle, rect : RectFValue)
+    fun qt6cr_qpainter_set_clip_region = qt6cr_qpainter_set_clip_region(handle : Handle, region : Handle)
     fun qt6cr_qpainter_draw_line = qt6cr_qpainter_draw_line(handle : Handle, from_point : PointFValue, to_point : PointFValue)
     fun qt6cr_qpainter_draw_rect = qt6cr_qpainter_draw_rect(handle : Handle, rect : RectFValue)
     fun qt6cr_qpainter_draw_rounded_rect = qt6cr_qpainter_draw_rounded_rect(handle : Handle, rect : RectFValue, x_radius : Float64, y_radius : Float64)
