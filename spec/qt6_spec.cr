@@ -2255,8 +2255,17 @@ describe Qt6 do
     menu = Qt6::Menu.new("Volume Menu", button)
 
     button.menu.should be_nil
+    button.default?.should be_false
+    button.auto_default?.should be_false
+    button.flat?.should be_false
+    button.default = true
+    button.auto_default = true
+    button.flat = true
     button.menu = menu
 
+    button.default?.should be_true
+    button.auto_default?.should be_true
+    button.flat?.should be_true
     button.menu.not_nil!.to_unsafe.should eq(menu.to_unsafe)
     button.menu.not_nil!.title.should eq("Volume Menu")
 

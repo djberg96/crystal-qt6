@@ -1267,6 +1267,12 @@ module Qt6
     fun qt6cr_push_button_click = qt6cr_push_button_click(handle : Handle)
     fun qt6cr_push_button_menu = qt6cr_push_button_menu(handle : Handle) : Handle
     fun qt6cr_push_button_set_menu = qt6cr_push_button_set_menu(handle : Handle, menu : Handle)
+    fun qt6cr_push_button_is_default = qt6cr_push_button_is_default(handle : Handle) : Bool
+    fun qt6cr_push_button_set_default = qt6cr_push_button_set_default(handle : Handle, value : Bool)
+    fun qt6cr_push_button_auto_default = qt6cr_push_button_auto_default(handle : Handle) : Bool
+    fun qt6cr_push_button_set_auto_default = qt6cr_push_button_set_auto_default(handle : Handle, value : Bool)
+    fun qt6cr_push_button_is_flat = qt6cr_push_button_is_flat(handle : Handle) : Bool
+    fun qt6cr_push_button_set_flat = qt6cr_push_button_set_flat(handle : Handle, value : Bool)
 
     fun qt6cr_line_edit_create = qt6cr_line_edit_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_line_edit_set_text = qt6cr_line_edit_set_text(handle : Handle, text : UInt8*)

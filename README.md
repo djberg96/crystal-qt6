@@ -173,7 +173,7 @@ app.run
 - `Qt6::UndoStack`, `Qt6::UndoCommand`, and `Qt6::UndoGroup` for application-level undo/redo history, clean-state tracking, macros, generated actions, and shared undo/redo routing across multiple document stacks
 - `Qt6::EventWidget` for custom widget event hooks
 - `Qt6::Label` for text and pixmap display, including alignment, word wrapping, and scaled contents
-- `Qt6::PushButton` and `Qt6::ToolButton` for button-style commands, including menus, default actions, auto-raise styling, and click callbacks
+- `Qt6::PushButton` and `Qt6::ToolButton` for button-style commands, including menus, default-button/flat styling, default actions, auto-raise styling, and click callbacks
 - `Qt6::LineEdit`, `Qt6::CheckBox`, `Qt6::RadioButton`, `Qt6::ComboBox`, `Qt6::Slider`, `Qt6::SpinBox`, `Qt6::DoubleSpinBox`, and `Qt6::GroupBox` for common form controls, including slider press/release hooks and opt-in click-to-position behavior
 - `Qt6::ListWidget`, `Qt6::ListWidgetItem`, `Qt6::TreeWidget`, and `Qt6::TreeWidgetItem` for item-based list and tree panels, including item flags, check state, role data, reorder support, and list item change hooks
 - `Qt6::ModelIndex`, `Qt6::AbstractItemModel`, `Qt6::AbstractListModel`, `Qt6::AbstractTreeModel`, `Qt6::StandardItem`, `Qt6::StandardItemModel`, `Qt6::SortFilterProxyModel`, `Qt6::StyledItemDelegate`, `Qt6::ListView`, and `Qt6::TreeView` for a broader model/view layer with roles, mutable callback-backed list/tree models, row insert/remove/move notifications, proxy sorting/filtering with regex and recursive tree filtering, delegate-based display formatting, drag/drop MIME payloads, and view-side drag/drop configuration

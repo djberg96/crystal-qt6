@@ -1298,6 +1298,12 @@ void qt6cr_push_button_on_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t c
 void qt6cr_push_button_click(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_push_button_menu(qt6cr_handle_t handle);
 void qt6cr_push_button_set_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
+bool qt6cr_push_button_is_default(qt6cr_handle_t handle);
+void qt6cr_push_button_set_default(qt6cr_handle_t handle, bool value);
+bool qt6cr_push_button_auto_default(qt6cr_handle_t handle);
+void qt6cr_push_button_set_auto_default(qt6cr_handle_t handle, bool value);
+bool qt6cr_push_button_is_flat(qt6cr_handle_t handle);
+void qt6cr_push_button_set_flat(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_line_edit_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_line_edit_set_text(qt6cr_handle_t handle, const char *text);

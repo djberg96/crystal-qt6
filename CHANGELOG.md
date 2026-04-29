@@ -9,11 +9,20 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Added
 
 - Added multithreaded GUI-spec coverage for `Application#invoke_later` with `CRYSTAL_WORKERS=2` and Crystal's `preview_mt` runtime.
+- Added `SystemTrayIcon` bindings with activation and message-click callbacks, tray availability/message support queries, tooltips, icons, context menus, and tray-message helpers.
+- Added `Action#icon`, `StandardItem#icon`, and `WidgetAction#default_widget` support for richer shell and model/view presentation.
+- Added broader shell/widget helpers across `ToolBar`, `StatusBar`, `DockWidget`, `ScrollArea`, and `ProgressBar`, including toolbar item/polish APIs, status-bar widget management and size-grip state, dock floating/widget access, scroll-area child visibility helpers, and progress-bar formatting/alignment/orientation controls.
+- Added `Widget#show_maximized`, `QEvent#mouse_event`, and widget-local menu execution helpers.
 - Added `ToolButton#menu`, `#default_action`, and `#auto_raise` helpers for toolbar- and palette-style command buttons.
+- Added `PushButton#default`, `#auto_default`, and `#flat` helpers for dialog- and shell-style button presentation.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, and `StackedWidget` APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, `StackedWidget`, and button-widget APIs for editor-style shells and panels.
+
+### Fixed
+
+- Updated application quit handling to wait for open widgets to close before process exit.
 
 ## [0.7.0] - 2026-04-23
 
