@@ -15,6 +15,11 @@ module Qt6
       super(LibQt6.qt6cr_qregion_create_rect(rect.to_native, type.value))
     end
 
+    # Creates a region from a bitmap mask.
+    def initialize(bitmap : QBitmap)
+      super(LibQt6.qt6cr_qregion_create_bitmap(bitmap.to_unsafe))
+    end
+
     # Creates a rectangular or elliptical region from coordinates.
     def initialize(x : Int, y : Int, width : Int, height : Int, type : RegionType = RegionType::Rectangle)
       initialize(Rect.new(x.to_i32, y.to_i32, width.to_i32, height.to_i32), type)

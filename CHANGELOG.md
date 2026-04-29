@@ -15,6 +15,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added shared gradient spread and coordinate-mode controls across linear, conical, and radial gradient wrappers.
 - Added `QRadialGradient` focal-point construction and accessors for offset radial highlights.
 - Added shared gradient stop inspection across linear, conical, and radial gradient wrappers.
+- Added `QBitmap` bindings with image, pixmap, data, transform, and file round-trip support, plus bitmap-backed `QRegion` construction for mask workflows.
 
 ## [0.8.0] - 2026-04-29
 

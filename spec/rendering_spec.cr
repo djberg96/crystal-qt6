@@ -627,6 +627,59 @@ describe Qt6 do
     window.release
   end
 
+  it "supports monochrome bitmaps for masks, transforms, and file round-trips" do
+    app
+
+    source = Qt6::QImage.new(8, 8)
+    source.fill(Qt6::Color.new(255, 255, 255))
+    Qt6::QPainter.paint(source) do |painter|
+      painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 4.0, 8.0), Qt6::Color.new(0, 0, 0))
+    end
+
+    bitmap = Qt6::QBitmap.from_image(source)
+    bitmap.null?.should be_false
+    bitmap.size.should eq(Qt6::Size.new(8, 8))
+    bitmap.to_image.pixel_color(1, 1).should eq(Qt6::Color.new(0, 0, 0, 255))
+    bitmap.to_image.pixel_color(6, 1).should eq(Qt6::Color.new(255, 255, 255, 255))
+
+    bitmap_region = Qt6::QRegion.new(bitmap)
+    bitmap_region.bounding_rect.should eq(Qt6::Rect.new(0, 0, 4, 8))
+
+    pixmap_bitmap = Qt6::QBitmap.from_pixmap(Qt6::QPixmap.from_image(source))
+    Qt6::QRegion.new(pixmap_bitmap).bounding_rect.should eq(Qt6::Rect.new(0, 0, 4, 8))
+
+    raw_bitmap = Qt6::QBitmap.from_data(
+      Qt6::Size.new(8, 8),
+      Bytes[
+        0b00001111_u8,
+        0b00001111_u8,
+        0b00001111_u8,
+        0b00001111_u8,
+        0b00001111_u8,
+        0b00001111_u8,
+        0b00001111_u8,
+        0b00001111_u8,
+      ]
+    )
+    raw_bitmap.to_image.pixel_color(1, 1).should eq(Qt6::Color.new(0, 0, 0, 255))
+    raw_bitmap.to_image.pixel_color(6, 1).should eq(Qt6::Color.new(255, 255, 255, 255))
+    Qt6::QRegion.new(raw_bitmap).bounding_rect.should eq(Qt6::Rect.new(0, 0, 4, 8))
+
+    transformed = raw_bitmap.transformed(Qt6::QTransform.new.scale(2.0, 1.0))
+    transformed.size.should eq(Qt6::Size.new(16, 8))
+
+    bitmap_path = File.join(Dir.tempdir, "crystal-qt6-bitmap-#{Process.pid}.png")
+    bitmap.save(bitmap_path).should be_true
+    loaded_bitmap = Qt6::QBitmap.from_file(bitmap_path)
+    loaded_bitmap.null?.should be_false
+    loaded_bitmap.size.should eq(Qt6::Size.new(8, 8))
+
+    raw_bitmap.clear
+    cleared_region = Qt6::QRegion.new(raw_bitmap)
+    cleared_region.empty?.should be_true
+    cleared_region.bounding_rect.should eq(Qt6::Rect.new(0, 0, 0, 0))
+  end
+
   it "supports byte arrays, buffers, data-backed images, and mm-based pdf sizing" do
     app
 

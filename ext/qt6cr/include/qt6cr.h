@@ -454,6 +454,15 @@ bool qt6cr_qpixmap_load_from_data(qt6cr_handle_t handle, const unsigned char *da
 bool qt6cr_qpixmap_save(qt6cr_handle_t handle, const char *path);
 qt6cr_byte_array_t qt6cr_qpixmap_save_to_data(qt6cr_handle_t handle, const char *format);
 
+qt6cr_handle_t qt6cr_qbitmap_create(int width, int height);
+qt6cr_handle_t qt6cr_qbitmap_create_from_file(const char *path);
+void qt6cr_qbitmap_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qbitmap_from_image(qt6cr_handle_t image);
+qt6cr_handle_t qt6cr_qbitmap_from_data(int width, int height, const unsigned char *data, int size, int format);
+qt6cr_handle_t qt6cr_qbitmap_from_pixmap(qt6cr_handle_t pixmap);
+void qt6cr_qbitmap_clear(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qbitmap_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform);
+
 qt6cr_handle_t qt6cr_qicon_create(void);
 qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path);
 qt6cr_handle_t qt6cr_qicon_create_from_theme(const char *name);
@@ -878,6 +887,7 @@ void qt6cr_qbrush_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform)
 
 qt6cr_handle_t qt6cr_qregion_create(void);
 qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type);
+qt6cr_handle_t qt6cr_qregion_create_bitmap(qt6cr_handle_t bitmap);
 void qt6cr_qregion_destroy(qt6cr_handle_t handle);
 bool qt6cr_qregion_is_empty(qt6cr_handle_t handle);
 bool qt6cr_qregion_is_null(qt6cr_handle_t handle);

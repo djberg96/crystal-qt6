@@ -431,6 +431,15 @@ module Qt6
     fun qt6cr_qpixmap_save = qt6cr_qpixmap_save(handle : Handle, path : UInt8*) : Bool
     fun qt6cr_qpixmap_save_to_data = qt6cr_qpixmap_save_to_data(handle : Handle, format : UInt8*) : ByteArrayValue
 
+    fun qt6cr_qbitmap_create = qt6cr_qbitmap_create(width : LibC::Int, height : LibC::Int) : Handle
+    fun qt6cr_qbitmap_create_from_file = qt6cr_qbitmap_create_from_file(path : UInt8*) : Handle
+    fun qt6cr_qbitmap_destroy = qt6cr_qbitmap_destroy(handle : Handle)
+    fun qt6cr_qbitmap_from_image = qt6cr_qbitmap_from_image(image : Handle) : Handle
+    fun qt6cr_qbitmap_from_data = qt6cr_qbitmap_from_data(width : LibC::Int, height : LibC::Int, data : UInt8*, size : LibC::Int, format : LibC::Int) : Handle
+    fun qt6cr_qbitmap_from_pixmap = qt6cr_qbitmap_from_pixmap(pixmap : Handle) : Handle
+    fun qt6cr_qbitmap_clear = qt6cr_qbitmap_clear(handle : Handle)
+    fun qt6cr_qbitmap_transformed = qt6cr_qbitmap_transformed(handle : Handle, transform : Handle) : Handle
+
     fun qt6cr_qicon_create = qt6cr_qicon_create : Handle
     fun qt6cr_qicon_create_from_file = qt6cr_qicon_create_from_file(path : UInt8*) : Handle
     fun qt6cr_qicon_create_from_theme = qt6cr_qicon_create_from_theme(name : UInt8*) : Handle
@@ -854,6 +863,7 @@ module Qt6
 
     fun qt6cr_qregion_create = qt6cr_qregion_create : Handle
     fun qt6cr_qregion_create_rect = qt6cr_qregion_create_rect(rect : RectValue, type : LibC::Int) : Handle
+    fun qt6cr_qregion_create_bitmap = qt6cr_qregion_create_bitmap(bitmap : Handle) : Handle
     fun qt6cr_qregion_destroy = qt6cr_qregion_destroy(handle : Handle)
     fun qt6cr_qregion_is_empty = qt6cr_qregion_is_empty(handle : Handle) : Bool
     fun qt6cr_qregion_is_null = qt6cr_qregion_is_null(handle : Handle) : Bool

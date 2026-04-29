@@ -11,6 +11,7 @@
 #include <QAbstractItemModel>
 #include <QAbstractListModel>
 #include <QBuffer>
+#include <QBitmap>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QClipboard>
@@ -1192,6 +1193,10 @@ QItemSelectionModel *as_item_selection_model(qt6cr_handle_t handle) {
 
 QPixmap *as_qpixmap(qt6cr_handle_t handle) {
   return static_cast<QPixmap *>(handle);
+}
+
+QBitmap *as_qbitmap(qt6cr_handle_t handle) {
+  return static_cast<QBitmap *>(handle);
 }
 
 QSortFilterProxyModel *as_sort_filter_proxy_model(qt6cr_handle_t handle) {
@@ -3909,6 +3914,60 @@ qt6cr_byte_array_t qt6cr_qpixmap_save_to_data(qt6cr_handle_t handle, const char 
   }
 
   return to_byte_array_value(output);
+}
+
+qt6cr_handle_t qt6cr_qbitmap_create(int width, int height) {
+  return new QBitmap(width, height);
+}
+
+qt6cr_handle_t qt6cr_qbitmap_create_from_file(const char *path) {
+  return new QBitmap(QString::fromUtf8(path == nullptr ? "" : path));
+}
+
+void qt6cr_qbitmap_destroy(qt6cr_handle_t handle) {
+  delete as_qbitmap(handle);
+}
+
+qt6cr_handle_t qt6cr_qbitmap_from_image(qt6cr_handle_t image) {
+  auto *source = as_qimage(image);
+  return source == nullptr ? nullptr : new QBitmap(QBitmap::fromImage(*source));
+}
+
+qt6cr_handle_t qt6cr_qbitmap_from_data(int width, int height, const unsigned char *data, int size, int format) {
+  if (data == nullptr || width <= 0 || height <= 0 || size <= 0) {
+    return nullptr;
+  }
+
+  const auto required = ((width + 7) / 8) * height;
+  if (size < required) {
+    return nullptr;
+  }
+
+  return new QBitmap(QBitmap::fromData(QSize(width, height), data, static_cast<QImage::Format>(format)));
+}
+
+qt6cr_handle_t qt6cr_qbitmap_from_pixmap(qt6cr_handle_t pixmap) {
+  auto *source = as_qpixmap(pixmap);
+  return source == nullptr ? nullptr : new QBitmap(QBitmap::fromPixmap(*source));
+}
+
+void qt6cr_qbitmap_clear(qt6cr_handle_t handle) {
+  auto *bitmap = as_qbitmap(handle);
+
+  if (bitmap != nullptr) {
+    bitmap->clear();
+  }
+}
+
+qt6cr_handle_t qt6cr_qbitmap_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform) {
+  auto *bitmap = as_qbitmap(handle);
+  auto *matrix = as_qtransform(transform);
+
+  if (bitmap == nullptr || matrix == nullptr) {
+    return new QBitmap();
+  }
+
+  return new QBitmap(bitmap->transformed(*matrix));
 }
 
 qt6cr_handle_t qt6cr_qicon_create(void) {
@@ -6959,6 +7018,11 @@ qt6cr_handle_t qt6cr_qregion_create(void) {
 
 qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type) {
   return new QRegion(from_rect(rect), static_cast<QRegion::RegionType>(type));
+}
+
+qt6cr_handle_t qt6cr_qregion_create_bitmap(qt6cr_handle_t bitmap) {
+  auto *source = as_qbitmap(bitmap);
+  return source == nullptr ? nullptr : new QRegion(*source);
 }
 
 void qt6cr_qregion_destroy(qt6cr_handle_t handle) {
