@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-04-29
+
 ### Added
 
 - Added multithreaded GUI-spec coverage for `Application#invoke_later` with `CRYSTAL_WORKERS=2` and Crystal's `preview_mt` runtime.
