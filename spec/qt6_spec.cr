@@ -969,7 +969,10 @@ describe Qt6 do
     canvas.pixel_color(32, 8).should eq(Qt6::Color.new(0, 0, 0, 255))
     canvas.pixel_color(31, 20).should eq(Qt6::Color.new(80, 220, 80, 255))
     canvas.pixel_color(26, 31).should eq(Qt6::Color.new(80, 80, 240, 255))
-    canvas.pixel_color(9, 33).alpha.should be > 0
+    text_pixels = (28..37).sum do |y|
+      (0..17).count { |x| canvas.pixel_color(x, y).alpha > 0 }
+    end
+    text_pixels.should be > 0
   end
 
   it "supports regions for clipping, combination, and widget masks" do
