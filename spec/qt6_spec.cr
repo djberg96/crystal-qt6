@@ -2046,7 +2046,9 @@ describe Qt6 do
     double_spin_box.set_range(0.5, 4.0)
     double_spin_box.single_step = 0.25
     double_spin_box.value = 1.75
-    manual_mode.checked = true
+    auto_mode.auto_exclusive?.should be_true
+    manual_mode.auto_exclusive = false
+    manual_mode.click
     options_group.checked = false
     options_group.checked = true
     splitter.widget(0).not_nil!.to_unsafe.should eq(scroll_area.to_unsafe)
@@ -2087,6 +2089,7 @@ describe Qt6 do
     options_group.checked?.should be_true
     options_group.flat?.should be_true
     auto_mode.checked?.should be_false
+    manual_mode.auto_exclusive?.should be_false
     manual_mode.checked?.should be_true
     slider.orientation.should eq(Qt6::Orientation::Horizontal)
     slider.minimum.should eq(0)

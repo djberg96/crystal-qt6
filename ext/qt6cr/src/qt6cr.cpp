@@ -10176,6 +10176,27 @@ bool qt6cr_radio_button_is_checked(qt6cr_handle_t handle) {
   return radio_button != nullptr && radio_button->isChecked();
 }
 
+bool qt6cr_radio_button_auto_exclusive(qt6cr_handle_t handle) {
+  auto *radio_button = as_radio_button(handle);
+  return radio_button != nullptr && radio_button->autoExclusive();
+}
+
+void qt6cr_radio_button_set_auto_exclusive(qt6cr_handle_t handle, bool value) {
+  auto *radio_button = as_radio_button(handle);
+
+  if (radio_button != nullptr) {
+    radio_button->setAutoExclusive(value);
+  }
+}
+
+void qt6cr_radio_button_click(qt6cr_handle_t handle) {
+  auto *radio_button = as_radio_button(handle);
+
+  if (radio_button != nullptr) {
+    radio_button->click();
+  }
+}
+
 void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
   auto *radio_button = as_radio_button(handle);
 

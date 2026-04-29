@@ -1379,6 +1379,9 @@ void qt6cr_radio_button_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_radio_button_text(qt6cr_handle_t handle);
 void qt6cr_radio_button_set_checked(qt6cr_handle_t handle, bool value);
 bool qt6cr_radio_button_is_checked(qt6cr_handle_t handle);
+bool qt6cr_radio_button_auto_exclusive(qt6cr_handle_t handle);
+void qt6cr_radio_button_set_auto_exclusive(qt6cr_handle_t handle, bool value);
+void qt6cr_radio_button_click(qt6cr_handle_t handle);
 void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_tool_button_create(qt6cr_handle_t parent);

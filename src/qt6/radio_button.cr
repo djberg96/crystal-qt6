@@ -37,6 +37,23 @@ module Qt6
       value
     end
 
+    # Returns `true` when sibling radio buttons are automatically exclusive.
+    def auto_exclusive? : Bool
+      LibQt6.qt6cr_radio_button_auto_exclusive(to_unsafe)
+    end
+
+    # Enables or disables automatic exclusivity with sibling radio buttons.
+    def auto_exclusive=(value : Bool) : Bool
+      LibQt6.qt6cr_radio_button_set_auto_exclusive(to_unsafe, value)
+      value
+    end
+
+    # Programmatically clicks the radio button.
+    def click : self
+      LibQt6.qt6cr_radio_button_click(to_unsafe)
+      self
+    end
+
     # Registers a block to run when the checked state changes.
     def on_toggled(&block : Bool ->) : self
       @toggled.connect { |value| block.call(value) }
