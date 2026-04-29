@@ -30,6 +30,24 @@ module Qt6
       PointF.from_native(LibQt6.qt6cr_qlinear_gradient_final_stop(to_unsafe))
     end
 
+    def spread : GradientSpread
+      GradientSpread.from_value(LibQt6.qt6cr_qlinear_gradient_spread(to_unsafe))
+    end
+
+    def spread=(value : GradientSpread) : GradientSpread
+      LibQt6.qt6cr_qlinear_gradient_set_spread(to_unsafe, value.value)
+      value
+    end
+
+    def coordinate_mode : GradientCoordinateMode
+      GradientCoordinateMode.from_value(LibQt6.qt6cr_qlinear_gradient_coordinate_mode(to_unsafe))
+    end
+
+    def coordinate_mode=(value : GradientCoordinateMode) : GradientCoordinateMode
+      LibQt6.qt6cr_qlinear_gradient_set_coordinate_mode(to_unsafe, value.value)
+      value
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qlinear_gradient_destroy(to_unsafe)
     end

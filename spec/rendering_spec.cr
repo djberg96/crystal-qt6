@@ -356,12 +356,27 @@ describe Qt6 do
     linear.set_color_at(1.0, Qt6::Color.new(0, 0, 255))
     linear.start.should eq(Qt6::PointF.new(0.0, 0.0))
     linear.final_stop.should eq(Qt6::PointF.new(10.0, 0.0))
+    linear.spread.should eq(Qt6::GradientSpread::PadSpread)
+    linear.coordinate_mode.should eq(Qt6::GradientCoordinateMode::LogicalMode)
+
+    configured_linear = Qt6::QLinearGradient.new(0.0, 0.0, 10.0, 0.0)
+    configured_linear.spread = Qt6::GradientSpread::RepeatSpread
+    configured_linear.coordinate_mode = Qt6::GradientCoordinateMode::ObjectBoundingMode
+    configured_linear.spread.should eq(Qt6::GradientSpread::RepeatSpread)
+    configured_linear.coordinate_mode.should eq(Qt6::GradientCoordinateMode::ObjectBoundingMode)
 
     radial = Qt6::QRadialGradient.new(Qt6::PointF.new(6.0, 8.0), 4.0)
     radial.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
     radial.set_color_at(1.0, Qt6::Color.new(0, 0, 0))
     radial.center.should eq(Qt6::PointF.new(6.0, 8.0))
     radial.radius.should eq(4.0)
+    radial.spread.should eq(Qt6::GradientSpread::PadSpread)
+    radial.coordinate_mode.should eq(Qt6::GradientCoordinateMode::LogicalMode)
+    configured_radial = Qt6::QRadialGradient.new(Qt6::PointF.new(6.0, 8.0), 4.0)
+    configured_radial.spread = Qt6::GradientSpread::ReflectSpread
+    configured_radial.coordinate_mode = Qt6::GradientCoordinateMode::StretchToDeviceMode
+    configured_radial.spread.should eq(Qt6::GradientSpread::ReflectSpread)
+    configured_radial.coordinate_mode.should eq(Qt6::GradientCoordinateMode::StretchToDeviceMode)
 
     conical = Qt6::QConicalGradient.new(Qt6::PointF.new(6.0, 6.0), 0.0)
     conical.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
@@ -371,6 +386,13 @@ describe Qt6 do
     conical.angle.should eq(0.0)
     conical.angle = 90.0
     conical.angle.should eq(90.0)
+    conical.spread.should eq(Qt6::GradientSpread::PadSpread)
+    conical.coordinate_mode.should eq(Qt6::GradientCoordinateMode::LogicalMode)
+    configured_conical = Qt6::QConicalGradient.new(Qt6::PointF.new(6.0, 6.0), 90.0)
+    configured_conical.spread = Qt6::GradientSpread::ReflectSpread
+    configured_conical.coordinate_mode = Qt6::GradientCoordinateMode::ObjectMode
+    configured_conical.spread.should eq(Qt6::GradientSpread::ReflectSpread)
+    configured_conical.coordinate_mode.should eq(Qt6::GradientCoordinateMode::ObjectMode)
 
     Qt6::QPainter.paint(gradient_canvas) do |painter|
       painter.antialiasing = false
@@ -411,6 +433,30 @@ describe Qt6 do
     conical_samples.map { |sample| {sample.red, sample.green, sample.blue, sample.alpha} }.uniq.size.should be > 1
     conical_samples.any? { |sample| sample.red > 0 }.should be_true
     conical_samples.any? { |sample| sample.blue > 0 }.should be_true
+
+    repeated_canvas = Qt6::QImage.new(12, 4)
+    repeated_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+    repeating = Qt6::QLinearGradient.new(0.0, 0.0, 0.5, 0.0)
+    repeating.coordinate_mode = Qt6::GradientCoordinateMode::ObjectBoundingMode
+    repeating.spread = Qt6::GradientSpread::RepeatSpread
+    repeating.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
+    repeating.set_color_at(1.0, Qt6::Color.new(0, 0, 255))
+
+    Qt6::QPainter.paint(repeated_canvas) do |painter|
+      painter.antialiasing = false
+      painter.pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1).tap { |pen| pen.style = Qt6::PenStyle::NoPen }
+      painter.brush = Qt6::QBrush.new(repeating)
+      painter.draw_rect(Qt6::RectF.new(0.0, 0.0, 12.0, 4.0))
+    end
+
+    repeat_left = repeated_canvas.pixel_color(1, 1)
+    repeat_middle = repeated_canvas.pixel_color(4, 1)
+    repeat_second_cycle = repeated_canvas.pixel_color(7, 1)
+    repeat_right = repeated_canvas.pixel_color(10, 1)
+    repeat_left.red.should be > repeat_left.blue
+    repeat_middle.blue.should be > repeat_middle.red
+    repeat_second_cycle.red.should be > repeat_second_cycle.blue
+    repeat_right.blue.should be > repeat_right.red
 
     dash_canvas = Qt6::QImage.new(12, 12)
     dash_canvas.fill(Qt6::Color.new(0, 0, 0, 0))

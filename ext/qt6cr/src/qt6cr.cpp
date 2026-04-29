@@ -6680,6 +6680,32 @@ qt6cr_pointf_t qt6cr_qlinear_gradient_final_stop(qt6cr_handle_t handle) {
   return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->finalStop());
 }
 
+int qt6cr_qlinear_gradient_spread(qt6cr_handle_t handle) {
+  auto *gradient = as_qlinear_gradient(handle);
+  return gradient == nullptr ? 0 : static_cast<int>(gradient->spread());
+}
+
+void qt6cr_qlinear_gradient_set_spread(qt6cr_handle_t handle, int spread) {
+  auto *gradient = as_qlinear_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setSpread(static_cast<QGradient::Spread>(spread));
+  }
+}
+
+int qt6cr_qlinear_gradient_coordinate_mode(qt6cr_handle_t handle) {
+  auto *gradient = as_qlinear_gradient(handle);
+  return gradient == nullptr ? 0 : static_cast<int>(gradient->coordinateMode());
+}
+
+void qt6cr_qlinear_gradient_set_coordinate_mode(qt6cr_handle_t handle, int mode) {
+  auto *gradient = as_qlinear_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setCoordinateMode(static_cast<QGradient::CoordinateMode>(mode));
+  }
+}
+
 qt6cr_handle_t qt6cr_qconical_gradient_create(double center_x, double center_y, double angle) {
   return new QConicalGradient(center_x, center_y, angle);
 }
@@ -6714,6 +6740,32 @@ void qt6cr_qconical_gradient_set_angle(qt6cr_handle_t handle, double angle) {
   }
 }
 
+int qt6cr_qconical_gradient_spread(qt6cr_handle_t handle) {
+  auto *gradient = as_qconical_gradient(handle);
+  return gradient == nullptr ? 0 : static_cast<int>(gradient->spread());
+}
+
+void qt6cr_qconical_gradient_set_spread(qt6cr_handle_t handle, int spread) {
+  auto *gradient = as_qconical_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setSpread(static_cast<QGradient::Spread>(spread));
+  }
+}
+
+int qt6cr_qconical_gradient_coordinate_mode(qt6cr_handle_t handle) {
+  auto *gradient = as_qconical_gradient(handle);
+  return gradient == nullptr ? 0 : static_cast<int>(gradient->coordinateMode());
+}
+
+void qt6cr_qconical_gradient_set_coordinate_mode(qt6cr_handle_t handle, int mode) {
+  auto *gradient = as_qconical_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setCoordinateMode(static_cast<QGradient::CoordinateMode>(mode));
+  }
+}
+
 qt6cr_handle_t qt6cr_qradial_gradient_create(double center_x, double center_y, double radius) {
   return new QRadialGradient(center_x, center_y, radius);
 }
@@ -6738,6 +6790,32 @@ qt6cr_pointf_t qt6cr_qradial_gradient_center(qt6cr_handle_t handle) {
 double qt6cr_qradial_gradient_radius(qt6cr_handle_t handle) {
   auto *gradient = as_qradial_gradient(handle);
   return gradient == nullptr ? 0.0 : gradient->radius();
+}
+
+int qt6cr_qradial_gradient_spread(qt6cr_handle_t handle) {
+  auto *gradient = as_qradial_gradient(handle);
+  return gradient == nullptr ? 0 : static_cast<int>(gradient->spread());
+}
+
+void qt6cr_qradial_gradient_set_spread(qt6cr_handle_t handle, int spread) {
+  auto *gradient = as_qradial_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setSpread(static_cast<QGradient::Spread>(spread));
+  }
+}
+
+int qt6cr_qradial_gradient_coordinate_mode(qt6cr_handle_t handle) {
+  auto *gradient = as_qradial_gradient(handle);
+  return gradient == nullptr ? 0 : static_cast<int>(gradient->coordinateMode());
+}
+
+void qt6cr_qradial_gradient_set_coordinate_mode(qt6cr_handle_t handle, int mode) {
+  auto *gradient = as_qradial_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setCoordinateMode(static_cast<QGradient::CoordinateMode>(mode));
+  }
 }
 
 qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color) {
