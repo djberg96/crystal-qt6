@@ -13174,6 +13174,11 @@ int qt6cr_stacked_widget_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget
   return stacked_widget->addWidget(page);
 }
 
+qt6cr_handle_t qt6cr_stacked_widget_widget(qt6cr_handle_t handle, int index) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  return stacked_widget == nullptr ? nullptr : stacked_widget->widget(index);
+}
+
 int qt6cr_stacked_widget_count(qt6cr_handle_t handle) {
   auto *stacked_widget = as_stacked_widget(handle);
   return stacked_widget == nullptr ? 0 : stacked_widget->count();
@@ -13189,6 +13194,35 @@ void qt6cr_stacked_widget_set_current_index(qt6cr_handle_t handle, int index) {
 
   if (stacked_widget != nullptr) {
     stacked_widget->setCurrentIndex(index);
+  }
+}
+
+qt6cr_handle_t qt6cr_stacked_widget_current_widget(qt6cr_handle_t handle) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  return stacked_widget == nullptr ? nullptr : stacked_widget->currentWidget();
+}
+
+void qt6cr_stacked_widget_set_current_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  auto *page = as_widget(widget);
+
+  if (stacked_widget != nullptr && page != nullptr) {
+    stacked_widget->setCurrentWidget(page);
+  }
+}
+
+int qt6cr_stacked_widget_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  auto *page = as_widget(widget);
+  return stacked_widget == nullptr || page == nullptr ? -1 : stacked_widget->indexOf(page);
+}
+
+void qt6cr_stacked_widget_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  auto *page = as_widget(widget);
+
+  if (stacked_widget != nullptr && page != nullptr) {
+    stacked_widget->removeWidget(page);
   }
 }
 

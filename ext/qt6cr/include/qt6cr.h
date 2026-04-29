@@ -1854,9 +1854,14 @@ void qt6cr_tab_bar_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_cal
 
 qt6cr_handle_t qt6cr_stacked_widget_create(qt6cr_handle_t parent);
 int qt6cr_stacked_widget_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_stacked_widget_widget(qt6cr_handle_t handle, int index);
 int qt6cr_stacked_widget_count(qt6cr_handle_t handle);
 int qt6cr_stacked_widget_current_index(qt6cr_handle_t handle);
 void qt6cr_stacked_widget_set_current_index(qt6cr_handle_t handle, int index);
+qt6cr_handle_t qt6cr_stacked_widget_current_widget(qt6cr_handle_t handle);
+void qt6cr_stacked_widget_set_current_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+int qt6cr_stacked_widget_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_stacked_widget_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
 qt6cr_handle_t qt6cr_stacked_layout_create(qt6cr_handle_t parent);
 int qt6cr_stacked_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

@@ -21,6 +21,12 @@ module Qt6
       widget
     end
 
+    # Returns the page widget at the given index, if present.
+    def widget(index : Int) : Widget?
+      handle = LibQt6.qt6cr_stacked_widget_widget(to_unsafe, index.to_i32)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
     # Appends a page widget and returns `self`.
     def <<(widget : Widget) : self
       add_widget(widget)
@@ -42,6 +48,35 @@ module Qt6
       int_value = value.to_i32
       LibQt6.qt6cr_stacked_widget_set_current_index(to_unsafe, int_value)
       int_value
+    end
+
+    # Returns the currently selected page widget, if present.
+    def current_widget : Widget?
+      handle = LibQt6.qt6cr_stacked_widget_current_widget(to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Changes the selected page widget and returns it.
+    def current_widget=(widget : Widget) : Widget
+      LibQt6.qt6cr_stacked_widget_set_current_widget(to_unsafe, widget.to_unsafe)
+      widget
+    end
+
+    # Returns the index of the given page widget, or `-1` when absent.
+    def index_of(widget : Widget) : Int32
+      LibQt6.qt6cr_stacked_widget_index_of(to_unsafe, widget.to_unsafe)
+    end
+
+    # Removes the given page widget from the stack.
+    def remove_widget(widget : Widget) : self
+      LibQt6.qt6cr_stacked_widget_remove_widget(to_unsafe, widget.to_unsafe)
+      self
+    end
+
+    # Qt-style alias for selecting the current page widget.
+    def set_current_widget(widget : Widget) : self
+      self.current_widget = widget
+      self
     end
   end
 end

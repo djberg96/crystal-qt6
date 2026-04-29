@@ -2647,7 +2647,10 @@ describe Qt6 do
     info_page = Qt6::Label.new("Info")
     stack.add_widget(info_page)
     stack.add_widget(browser)
-    stack.current_index = 1
+    stack.widget(0).not_nil!.to_unsafe.should eq(info_page.to_unsafe)
+    stack.current_widget.not_nil!.to_unsafe.should eq(info_page.to_unsafe)
+    stack.index_of(browser).should eq(1)
+    stack.current_widget = browser
     application.process_events
 
     font_combo.horizontal_size_policy.should eq(Qt6::SizePolicy::Ignored)
@@ -2662,6 +2665,10 @@ describe Qt6 do
     clicked_links.should be_empty
     stack.count.should eq(2)
     stack.current_index.should eq(1)
+    stack.current_widget.not_nil!.to_unsafe.should eq(browser.to_unsafe)
+    stack.remove_widget(info_page)
+    stack.count.should eq(1)
+    stack.index_of(info_page).should eq(-1)
 
     host.release
   end

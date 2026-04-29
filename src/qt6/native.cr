@@ -1834,9 +1834,14 @@ module Qt6
 
     fun qt6cr_stacked_widget_create = qt6cr_stacked_widget_create(parent : Handle) : Handle
     fun qt6cr_stacked_widget_add_widget = qt6cr_stacked_widget_add_widget(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_stacked_widget_widget = qt6cr_stacked_widget_widget(handle : Handle, index : LibC::Int) : Handle
     fun qt6cr_stacked_widget_count = qt6cr_stacked_widget_count(handle : Handle) : LibC::Int
     fun qt6cr_stacked_widget_current_index = qt6cr_stacked_widget_current_index(handle : Handle) : LibC::Int
     fun qt6cr_stacked_widget_set_current_index = qt6cr_stacked_widget_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_stacked_widget_current_widget = qt6cr_stacked_widget_current_widget(handle : Handle) : Handle
+    fun qt6cr_stacked_widget_set_current_widget = qt6cr_stacked_widget_set_current_widget(handle : Handle, widget : Handle)
+    fun qt6cr_stacked_widget_index_of = qt6cr_stacked_widget_index_of(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_stacked_widget_remove_widget = qt6cr_stacked_widget_remove_widget(handle : Handle, widget : Handle)
 
     fun qt6cr_stacked_layout_create = qt6cr_stacked_layout_create(parent : Handle) : Handle
     fun qt6cr_stacked_layout_add_widget = qt6cr_stacked_layout_add_widget(handle : Handle, widget : Handle) : LibC::Int
