@@ -1753,7 +1753,7 @@ describe Qt6 do
 
     splash.pixmap.null?.should be_false
     splash.show
-    splash.show_message("Booting", Qt6::Color.new(12, 34, 56))
+    splash.show_message("Booting", Qt6::AlignmentFlag::Center, Qt6::Color.new(12, 34, 56))
     application.process_events
     splash.message.should eq("Booting")
     splash.pixmap = replacement_pixmap

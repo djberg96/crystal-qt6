@@ -23,8 +23,8 @@ module Qt6
     end
 
     # Shows a status message on the splash screen.
-    def show_message(message : String, color : Color = Color.new(0, 0, 0)) : String
-      LibQt6.qt6cr_splash_screen_show_message(to_unsafe, message.to_unsafe, color.to_native)
+    def show_message(message : String, alignment : AlignmentFlag = AlignmentFlag::Left, color : Color = Color.new(0, 0, 0)) : String
+      LibQt6.qt6cr_splash_screen_show_message(to_unsafe, message.to_unsafe, alignment.value, color.to_native)
       message
     end
 

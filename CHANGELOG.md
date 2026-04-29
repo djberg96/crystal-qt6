@@ -23,10 +23,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `RadioButton#auto_exclusive` and `#click` helpers for editor-style option groups.
 - Added `ScrollArea#alignment` helpers for centered and preview-style content presentation.
 - Added `Frame#line_width`, `#mid_line_width`, and `#frame_width` helpers for separator and panel polish.
+- Added aligned `SplashScreen#show_message` support for launch-status polish.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `Frame`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `CheckBox`, `RadioButton`, `TabWidget`, `TabBar`, `ScrollArea`, `Splitter`, `StackedWidget`, `DialogButtonBox`, `Frame`, `SplashScreen`, `ButtonGroup`, `GroupBox`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

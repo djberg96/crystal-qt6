@@ -3915,11 +3915,11 @@ char *qt6cr_splash_screen_message(qt6cr_handle_t handle) {
   return splash == nullptr ? duplicate_string("") : duplicate_string(splash->message());
 }
 
-void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, qt6cr_color_t color) {
+void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, int alignment, qt6cr_color_t color) {
   auto *splash = as_splash_screen(handle);
 
   if (splash != nullptr) {
-    splash->showMessage(QString::fromUtf8(message == nullptr ? "" : message), Qt::AlignLeft, from_color(color));
+    splash->showMessage(QString::fromUtf8(message == nullptr ? "" : message), Qt::Alignment(alignment), from_color(color));
   }
 }
 

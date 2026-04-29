@@ -415,7 +415,7 @@ module Qt6
     fun qt6cr_splash_screen_pixmap = qt6cr_splash_screen_pixmap(handle : Handle) : Handle
     fun qt6cr_splash_screen_set_pixmap = qt6cr_splash_screen_set_pixmap(handle : Handle, pixmap : Handle)
     fun qt6cr_splash_screen_message = qt6cr_splash_screen_message(handle : Handle) : UInt8*
-    fun qt6cr_splash_screen_show_message = qt6cr_splash_screen_show_message(handle : Handle, message : UInt8*, color : ColorValue)
+    fun qt6cr_splash_screen_show_message = qt6cr_splash_screen_show_message(handle : Handle, message : UInt8*, alignment : LibC::Int, color : ColorValue)
     fun qt6cr_splash_screen_clear_message = qt6cr_splash_screen_clear_message(handle : Handle)
     fun qt6cr_splash_screen_finish = qt6cr_splash_screen_finish(handle : Handle, widget : Handle)
 

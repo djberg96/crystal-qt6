@@ -445,7 +445,7 @@ qt6cr_handle_t qt6cr_splash_screen_create(qt6cr_handle_t pixmap);
 qt6cr_handle_t qt6cr_splash_screen_pixmap(qt6cr_handle_t handle);
 void qt6cr_splash_screen_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap);
 char *qt6cr_splash_screen_message(qt6cr_handle_t handle);
-void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, qt6cr_color_t color);
+void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, int alignment, qt6cr_color_t color);
 void qt6cr_splash_screen_clear_message(qt6cr_handle_t handle);
 void qt6cr_splash_screen_finish(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
