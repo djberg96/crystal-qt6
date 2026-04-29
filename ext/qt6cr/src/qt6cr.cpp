@@ -13642,6 +13642,45 @@ qt6cr_handle_t qt6cr_dialog_button_box_button(qt6cr_handle_t handle, int button)
   return button_box == nullptr ? nullptr : button_box->button(static_cast<QDialogButtonBox::StandardButton>(button));
 }
 
+int qt6cr_dialog_button_box_standard_buttons(qt6cr_handle_t handle) {
+  auto *button_box = as_dialog_button_box(handle);
+  return button_box == nullptr ? 0 : static_cast<int>(button_box->standardButtons());
+}
+
+void qt6cr_dialog_button_box_set_standard_buttons(qt6cr_handle_t handle, int buttons) {
+  auto *button_box = as_dialog_button_box(handle);
+
+  if (button_box != nullptr) {
+    button_box->setStandardButtons(static_cast<QDialogButtonBox::StandardButtons>(buttons));
+  }
+}
+
+bool qt6cr_dialog_button_box_center_buttons(qt6cr_handle_t handle) {
+  auto *button_box = as_dialog_button_box(handle);
+  return button_box != nullptr && button_box->centerButtons();
+}
+
+void qt6cr_dialog_button_box_set_center_buttons(qt6cr_handle_t handle, bool value) {
+  auto *button_box = as_dialog_button_box(handle);
+
+  if (button_box != nullptr) {
+    button_box->setCenterButtons(value);
+  }
+}
+
+int qt6cr_dialog_button_box_orientation(qt6cr_handle_t handle) {
+  auto *button_box = as_dialog_button_box(handle);
+  return button_box == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(button_box->orientation());
+}
+
+void qt6cr_dialog_button_box_set_orientation(qt6cr_handle_t handle, int value) {
+  auto *button_box = as_dialog_button_box(handle);
+
+  if (button_box != nullptr) {
+    button_box->setOrientation(static_cast<Qt::Orientation>(value));
+  }
+}
+
 void qt6cr_dialog_button_box_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *button_box = as_dialog_button_box(handle);
 

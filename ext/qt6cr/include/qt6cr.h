@@ -1931,6 +1931,12 @@ void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size)
 
 qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent, int buttons);
 qt6cr_handle_t qt6cr_dialog_button_box_button(qt6cr_handle_t handle, int button);
+int qt6cr_dialog_button_box_standard_buttons(qt6cr_handle_t handle);
+void qt6cr_dialog_button_box_set_standard_buttons(qt6cr_handle_t handle, int buttons);
+bool qt6cr_dialog_button_box_center_buttons(qt6cr_handle_t handle);
+void qt6cr_dialog_button_box_set_center_buttons(qt6cr_handle_t handle, bool value);
+int qt6cr_dialog_button_box_orientation(qt6cr_handle_t handle);
+void qt6cr_dialog_button_box_set_orientation(qt6cr_handle_t handle, int value);
 void qt6cr_dialog_button_box_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_dialog_button_box_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 

@@ -28,6 +28,39 @@ module Qt6
       handle.null? ? nil : PushButton.wrap(handle)
     end
 
+    # Returns the currently configured standard buttons.
+    def standard_buttons : DialogButtonBoxStandardButton
+      DialogButtonBoxStandardButton.from_value(LibQt6.qt6cr_dialog_button_box_standard_buttons(to_unsafe))
+    end
+
+    # Replaces the standard buttons in the button box.
+    def standard_buttons=(value : DialogButtonBoxStandardButton) : DialogButtonBoxStandardButton
+      LibQt6.qt6cr_dialog_button_box_set_standard_buttons(to_unsafe, value.value)
+      value
+    end
+
+    # Returns `true` when buttons are centered instead of trailing-aligned.
+    def center_buttons? : Bool
+      LibQt6.qt6cr_dialog_button_box_center_buttons(to_unsafe)
+    end
+
+    # Enables or disables centered button layout.
+    def center_buttons=(value : Bool) : Bool
+      LibQt6.qt6cr_dialog_button_box_set_center_buttons(to_unsafe, value)
+      value
+    end
+
+    # Returns the button-box layout orientation.
+    def orientation : Orientation
+      Orientation.from_value(LibQt6.qt6cr_dialog_button_box_orientation(to_unsafe))
+    end
+
+    # Sets the button-box layout orientation.
+    def orientation=(value : Orientation) : Orientation
+      LibQt6.qt6cr_dialog_button_box_set_orientation(to_unsafe, value.value)
+      value
+    end
+
     # Registers a block to run when the button box is accepted.
     def on_accepted(&block : ->) : self
       @accepted.connect { block.call }

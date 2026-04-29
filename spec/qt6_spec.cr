@@ -2604,6 +2604,9 @@ describe Qt6 do
       Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel,
       dialog
     )
+    button_box.center_buttons = true
+    button_box.orientation = Qt6::Orientation::Vertical
+    button_box.standard_buttons = Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel | Qt6::DialogButtonBoxStandardButton::Help
     accepted = 0
     rejected = 0
     button_box.on_accepted { accepted += 1 }
@@ -2611,6 +2614,7 @@ describe Qt6 do
 
     ok_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Ok).not_nil!
     cancel_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Cancel).not_nil!
+    help_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Help).not_nil!
     ok_button.text = "Export"
     ok_button.click
     cancel_button.click
@@ -2638,7 +2642,15 @@ describe Qt6 do
     scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
     scroll_area.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
     scroll_area.widget_resizable?.should be_true
+    button_box.center_buttons?.should be_true
+    button_box.orientation.should eq(Qt6::Orientation::Vertical)
+    button_box.standard_buttons.should eq(
+      Qt6::DialogButtonBoxStandardButton::Ok |
+      Qt6::DialogButtonBoxStandardButton::Cancel |
+      Qt6::DialogButtonBoxStandardButton::Help
+    )
     ok_button.text.should eq("Export")
+    help_button.text.should_not be_empty
     accepted.should eq(1)
     rejected.should eq(1)
     mode_group.remove(place_button)

@@ -165,7 +165,7 @@ app.run
 - `Qt6::QImage`, `Qt6::QImageReader`, `Qt6::QImageWriter`, `Qt6::QPixmap`, `Qt6::QSvgGenerator`, `Qt6::QSvgRenderer`, `Qt6::QSvgWidget`, `Qt6::QPdfWriter`, `Qt6::QPainter`, `Qt6::QPainterPath`, `Qt6::QTransform`, `Qt6::QPen`, `Qt6::QBrush`, `Qt6::QFont`, `Qt6::QFontMetrics`, `Qt6::QFontMetricsF`, and `Qt6::ImageFormat` for raster, SVG, and PDF rendering, including file-backed raster loading, probed image-reader metadata, configured image writing, file-backed and in-memory SVG loading, `QSvgWidget#renderer`, image/pixmap scaling and transforms, pixel inversion, and richer painter-path inspection
 - `Qt6::Widget` for generic widgets and top-level windows, including widget-owned action registration for shortcut handling
 - `Qt6::MainWindow`, `Qt6::Dialog`, and `Qt6::DockWidget` for desktop application shells
-- `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, `Qt6::FontDialog`, `Qt6::InputDialog`, `Qt6::ProgressDialog`, and `Qt6::SplashScreen` for standard dialogs and shell polish widgets
+- `Qt6::MessageBox`, `Qt6::FileDialog`, `Qt6::ColorDialog`, `Qt6::FontDialog`, `Qt6::InputDialog`, `Qt6::ProgressDialog`, `Qt6::DialogButtonBox`, and `Qt6::SplashScreen` for standard dialogs and shell polish widgets, including dialog-button lookup plus centered/vertical button-box layout control
 - convenience helpers such as `MessageBox.information`, `MessageBox.question`, `ColorDialog.get_color`, and `InputDialog.get_text` / `get_int` / `get_double` / `get_item`
 - `Qt6::InputDialogInputMode` plus message-box and file-dialog enums for dialog configuration
 - `Qt6::MenuBar`, `Qt6::Menu`, `Qt6::ToolBar`, `Qt6::StatusBar`, `Qt6::Action`, and `Qt6::ActionGroup` for shell composition
