@@ -2588,6 +2588,8 @@ describe Qt6 do
     separator = Qt6::Frame.new
     separator.frame_shape = Qt6::FrameShape::HLine
     separator.frame_shadow = Qt6::FrameShadow::Sunken
+    separator.line_width = 2
+    separator.mid_line_width = 1
 
     host = Qt6::Widget.new
     layout = host.vbox do |column|
@@ -2646,6 +2648,9 @@ describe Qt6 do
     toggled_states.last.should be_true
     separator.frame_shape.should eq(Qt6::FrameShape::HLine)
     separator.frame_shadow.should eq(Qt6::FrameShadow::Sunken)
+    separator.line_width.should eq(2)
+    separator.mid_line_width.should eq(1)
+    separator.frame_width.should be >= 1
     scroll_area.frame_shape.should eq(Qt6::FrameShape::NoFrame)
     scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
     scroll_area.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)

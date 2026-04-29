@@ -1655,6 +1655,11 @@ module Qt6
     fun qt6cr_frame_set_shape = qt6cr_frame_set_shape(handle : Handle, shape : LibC::Int)
     fun qt6cr_frame_shadow = qt6cr_frame_shadow(handle : Handle) : LibC::Int
     fun qt6cr_frame_set_shadow = qt6cr_frame_set_shadow(handle : Handle, shadow : LibC::Int)
+    fun qt6cr_frame_line_width = qt6cr_frame_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_frame_set_line_width = qt6cr_frame_set_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_frame_mid_line_width = qt6cr_frame_mid_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_frame_set_mid_line_width = qt6cr_frame_set_mid_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_frame_frame_width = qt6cr_frame_frame_width(handle : Handle) : LibC::Int
 
     fun qt6cr_progress_bar_create = qt6cr_progress_bar_create(parent : Handle) : Handle
     fun qt6cr_progress_bar_minimum = qt6cr_progress_bar_minimum(handle : Handle) : LibC::Int

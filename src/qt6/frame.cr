@@ -31,5 +31,32 @@ module Qt6
       LibQt6.qt6cr_frame_set_shadow(to_unsafe, value.value)
       value
     end
+
+    # Returns the outer line width used by the frame.
+    def line_width : Int32
+      LibQt6.qt6cr_frame_line_width(to_unsafe)
+    end
+
+    # Sets the outer line width and returns it.
+    def line_width=(value : Int) : Int32
+      LibQt6.qt6cr_frame_set_line_width(to_unsafe, value)
+      value.to_i32
+    end
+
+    # Returns the mid-line width used by boxed and panel styles.
+    def mid_line_width : Int32
+      LibQt6.qt6cr_frame_mid_line_width(to_unsafe)
+    end
+
+    # Sets the mid-line width and returns it.
+    def mid_line_width=(value : Int) : Int32
+      LibQt6.qt6cr_frame_set_mid_line_width(to_unsafe, value)
+      value.to_i32
+    end
+
+    # Returns the effective frame width computed by Qt.
+    def frame_width : Int32
+      LibQt6.qt6cr_frame_frame_width(to_unsafe)
+    end
   end
 end

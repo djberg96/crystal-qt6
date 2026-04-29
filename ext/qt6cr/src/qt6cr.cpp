@@ -12048,6 +12048,37 @@ void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow) {
   }
 }
 
+int qt6cr_frame_line_width(qt6cr_handle_t handle) {
+  auto *frame = as_frame(handle);
+  return frame == nullptr ? 0 : frame->lineWidth();
+}
+
+void qt6cr_frame_set_line_width(qt6cr_handle_t handle, int value) {
+  auto *frame = as_frame(handle);
+
+  if (frame != nullptr) {
+    frame->setLineWidth(value);
+  }
+}
+
+int qt6cr_frame_mid_line_width(qt6cr_handle_t handle) {
+  auto *frame = as_frame(handle);
+  return frame == nullptr ? 0 : frame->midLineWidth();
+}
+
+void qt6cr_frame_set_mid_line_width(qt6cr_handle_t handle, int value) {
+  auto *frame = as_frame(handle);
+
+  if (frame != nullptr) {
+    frame->setMidLineWidth(value);
+  }
+}
+
+int qt6cr_frame_frame_width(qt6cr_handle_t handle) {
+  auto *frame = as_frame(handle);
+  return frame == nullptr ? 0 : frame->frameWidth();
+}
+
 qt6cr_handle_t qt6cr_progress_bar_create(qt6cr_handle_t parent) {
   return new QProgressBar(as_widget(parent));
 }
