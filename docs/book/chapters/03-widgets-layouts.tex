@@ -55,7 +55,37 @@ scale.set_range(0.25, 4.0)
 scale.value = 1.0
 \end{lstlisting}
 
-The \api{crystal-qt6} library also includes radio buttons, sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
+Qt forms often need a little desktop-style polish beyond the basic value editors. Editable combo boxes can accept freeform values while still offering known choices. Buttons can opt into dialog-default styling or flatter inspector-style presentation. Check boxes can expose the full Qt check-state enum when a partially checked state carries meaning.
+
+\begin{lstlisting}[style=crystal]
+kind.editable = true
+kind.insert_item(1, "Overlay")
+kind.current_text = "Terrain"
+
+apply = Qt6::PushButton.new("Apply")
+apply.default = true
+apply.auto_default = false
+apply.flat = false
+
+visibility = Qt6::CheckBox.new("Visible")
+visibility.tristate = true
+visibility.check_state = Qt6::CheckState::PartiallyChecked
+
+mode = Qt6::RadioButton.new("Preview Mode")
+mode.auto_exclusive = false
+\end{lstlisting}
+
+When a text field should complete from a known set, attach a \api{Completer}. This is especially useful for search fields, tags, layer names, and command palettes.
+
+\begin{lstlisting}[style=crystal]
+search = Qt6::LineEdit.new
+completer = Qt6::Completer.new(["Terrain", "Roads", "Rivers", "Routes"])
+completer.wrap_around = true
+completer.max_visible_items = 6
+search.completer = completer
+\end{lstlisting}
+
+The \api{crystal-qt6} library also includes sliders, group boxes, progress bars, text editors, item widgets, date/time controls, tab widgets, scroll areas, splitters, and other common desktop controls. Later chapters use those in larger shell and editor examples.
 
 Sliders are useful when the value should feel continuous. Besides \api{on_value_changed}, the binding also exposes handle press/release callbacks and an opt-in track-click mode that jumps directly to the clicked position.
 
@@ -238,6 +268,8 @@ Container widgets give a layout more structure than rows and columns alone. A \a
 appearance = Qt6::GroupBox.new("Appearance")
 appearance.checkable = true
 appearance.checked = true
+appearance.alignment = Qt6::AlignmentFlag::Center
+appearance.flat = true
 appearance.form do |form|
   form.add_row("Opacity", opacity)
   form.add_row("Scale", scale)
@@ -250,7 +282,8 @@ end
 tabs = Qt6::TabWidget.new
 tabs.add_tab(general_page, "General")
 tabs.add_tab(editor_page, "Editor")
-tabs.current_index = 0
+tabs.set_tab_text(1, "Editing")
+tabs.current_widget = general_page
 \end{lstlisting}
 
 Use \api{ScrollArea} when a panel can legitimately grow beyond the available window height. The common form pattern is to place one content widget inside the scroll area and let the area resize it with the viewport.
@@ -259,6 +292,7 @@ Use \api{ScrollArea} when a panel can legitimately grow beyond the available win
 scroll = Qt6::ScrollArea.new
 scroll.widget = settings_panel
 scroll.widget_resizable = true
+scroll.alignment = Qt6::AlignmentFlag::Top
 \end{lstlisting}
 
 \api{Splitter} gives the user direct control over neighboring regions, such as a layer list and a property inspector.
@@ -267,6 +301,8 @@ scroll.widget_resizable = true
 splitter = Qt6::Splitter.new(Qt6::Orientation::Horizontal)
 splitter << layer_list
 splitter << properties_panel
+splitter.children_collapsible = false
+splitter.set_sizes([280, 520])
 \end{lstlisting}
 
 \api{StackedWidget} is for mode switching when only one page should be visible and some other control chooses the active page.
@@ -276,6 +312,7 @@ stack = Qt6::StackedWidget.new
 stack << simple_page
 stack << advanced_page
 mode_combo.on_current_index_changed { |index| stack.current_index = index }
+stack.current_widget = simple_page
 \end{lstlisting}
 
 \section{Composing A Panel}
@@ -354,7 +391,7 @@ Use style sheets to support the interface rather than replace layout. Sizing, hi
 
 \section{Window Polish}
 
-Top-level widgets and windows expose title, icon, size, visibility, and capture helpers.
+Top-level widgets and windows expose title, icon, size, visibility, and capture helpers. Small display widgets can also add focused presentation polish. For example, \api{LcdNumber} now exposes decimal-point and overflow helpers that are useful for compact counters or telemetry panes.
 
 \begin{lstlisting}[style=crystal]
 main = Qt6::MainWindow.new
@@ -375,6 +412,13 @@ app = Qt6.application
 app.name = "Map Tool"
 app.organization_name = "Example Studio"
 app.window_icon = icon
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+fps = Qt6::LcdNumber.new
+fps.digit_count = 5
+fps.small_decimal_point = true
+fps.display(59.9)
 \end{lstlisting}
 
 For quick exports and documentation screenshots, \api{Widget#grab} captures a widget into a \api{QPixmap}.

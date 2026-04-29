@@ -129,7 +129,9 @@ model = Qt6::StandardItemModel.new(main)
 model.set_horizontal_header_label(0, "Layer")
 model.set_horizontal_header_label(1, "State")
 
-model.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+terrain = Qt6::StandardItem.new("Terrain")
+terrain.icon = Qt6::QIcon.from_theme("folder")
+model.set_item(0, 0, terrain)
 model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
 model.set_item(1, 0, Qt6::StandardItem.new("Roads"))
 model.set_item(1, 1, Qt6::StandardItem.new("Locked"))
@@ -396,9 +398,13 @@ table.word_wrap = false
 
 header = table.horizontal_header
 header.stretch_last_section = true
+header.sections_clickable = true
+header.sections_movable = true
 header.resize_section(0, 180)
 header.set_section_hidden(3, true)
 \end{lstlisting}
+
+Movable and clickable sections are small features, but they make data-heavy tables feel more like real desktop tools. Use them when users benefit from interactive column reordering or click-driven sort affordances.
 
 \begin{figure}[htbp]
   \centering

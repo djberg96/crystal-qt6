@@ -7,14 +7,14 @@ This appendix summarizes the current \api{crystal-qt6} API shape at a high level
 Area & Representative APIs \\
 \midrule
 Application & \api{Application}, \api{Qt6.application}, metadata, style sheets, clipboard, local event loops \\
-Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget}, \api{SystemTrayIcon} \\
-Dialogs & \api{Dialog}, \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox} \\
-Widgets & Labels, buttons, line edits, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, splitters, scroll areas, group boxes, progress bars, date/time controls, calendar widgets, text editors \\
+Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget}, \api{SystemTrayIcon}, action icons, dock toggle/title-bar helpers, tray activation and notification flows \\
+Dialogs & \api{Dialog}, \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox}, aligned splash messages, and button-box layout helpers \\
+Widgets & Labels, buttons, line edits, completers, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, splitters, stacked widgets, scroll areas, group boxes, progress bars, frames, LCD numbers, date/time controls, calendar widgets, text editors \\
 Events & \api{EventWidget}, paint, resize, mouse, wheel, key, focus, enter/leave, drag/drop callbacks, synthetic event helpers \\
 Rendering & \api{QPainter}, \api{QPainterPath}, \api{QTransform}, \api{QPen}, \api{QBrush}, \api{QFont}, font metrics, SVG, PDF \\
 Images & \api{QImage}, \api{QPixmap}, \api{QImageReader}, \api{QImageWriter}, raw buffers, pixel operations, conversion, transforms, scaling, clipboard images \\
 Undo & \api{UndoStack}, \api{UndoCommand}, clean state, macros, undo/redo actions, stack signals \\
-Model/View & Item widgets, abstract list/tree models, standard item models, proxy sorting/filtering, selection models, delegates, list/tree/table views \\
+Model/View & Item widgets, abstract list/tree models, standard item models, standard-item icons, proxy sorting/filtering, selection models, delegates, list/tree/table views, richer header interaction \\
 \bottomrule
 \end{longtable}
 

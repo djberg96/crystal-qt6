@@ -344,7 +344,11 @@ For real long-running work, make sure the GUI thread can continue processing eve
 pixmap = Qt6::QPixmap.new("assets/splash.png")
 splash = Qt6::SplashScreen.new(pixmap)
 splash.show
-splash.show_message("Loading project...")
+splash.show_message(
+  "Loading project...",
+  Qt6::AlignmentFlag::Center,
+  Qt6::Color.new(32, 64, 96)
+)
 app.process_events
 
 main = build_main_window
@@ -352,7 +356,7 @@ main.show
 splash.finish(main)
 \end{lstlisting}
 
-Splash screens should stay brief. If the user might need to cancel, inspect details, or wait for a longer task, prefer a \api{ProgressDialog} instead.
+Splash screens should stay brief. If the user might need to cancel, inspect details, or wait for a longer task, prefer a \api{ProgressDialog} instead. The older \api{show_message("Loading...", color)} form still works when explicit alignment is unnecessary.
 
 \section{Custom Dialogs And Button Boxes}
 
@@ -371,6 +375,8 @@ buttons = Qt6::DialogButtonBox.new(
   Qt6::DialogButtonBoxStandardButton::Cancel,
   dialog
 )
+buttons.center_buttons = true
+buttons.orientation = Qt6::Orientation::Horizontal
 
 dialog.vbox do |column|
   form_host = Qt6::Widget.new(dialog)
@@ -386,6 +392,8 @@ end
 buttons.on_accepted { dialog.accept }
 buttons.on_rejected { dialog.reject }
 \end{lstlisting}
+
+The button box can also be reconfigured after construction through \api{standard_buttons=}. That is useful when a dialog switches between an ordinary Ok/Cancel footer and a more wizard-like Apply/Close footer without rebuilding the surrounding layout.
 
 Custom dialogs should still follow the same ownership rules as other widgets: parent child controls to the dialog, keep the body focused, and let the button box handle standard accept/reject controls.
 

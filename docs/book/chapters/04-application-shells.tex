@@ -29,6 +29,7 @@ Qt applications usually model user commands as actions. An action can have text,
 
 \begin{lstlisting}[style=crystal]
 open_action = Qt6::Action.new("Open", main)
+open_action.icon = Qt6::QIcon.from_theme("document-open")
 open_action.shortcut = "Ctrl+O"
 open_action.tool_tip = "Open a project"
 open_action.status_tip = "Open a project file"
@@ -37,7 +38,7 @@ open_action.on_triggered do
 end
 \end{lstlisting}
 
-This pattern scales better than wiring every menu item and toolbar button separately. Menus and toolbars become views of the same command model.
+This pattern scales better than wiring every menu item and toolbar button separately. Menus and toolbars become views of the same command model. Once an action carries text, tooltip text, checked state, and an icon, the shell can present it consistently in several places without duplicating command logic.
 
 \section{Action Reference}
 
@@ -292,6 +293,22 @@ view_menu << properties_dock.toggle_view_action
 \end{lstlisting}
 
 Use an explicit checkable \api{Action} only when application rules need to control visibility separately from the dock's normal show/hide behavior.
+
+Some docks also benefit from a custom title bar. A search dock might add inline filter controls, or a palette dock might expose compact mode buttons directly in the header.
+
+\begin{lstlisting}[style=crystal]
+title_bar = Qt6::Widget.new
+pin = Qt6::ToolButton.new
+pin.text = "Pin"
+
+title_bar.hbox do |row|
+  row << Qt6::Label.new("Layers")
+  row.add_stretch
+  row << pin
+end
+
+layers_dock.title_bar_widget = title_bar
+\end{lstlisting}
 
 \section{Widget-Local Shortcuts}
 
