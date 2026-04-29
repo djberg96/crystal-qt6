@@ -1,0 +1,1510 @@
+require "./spec_helper"
+
+describe Qt6 do
+  it "supports list and tree widgets for editor panels" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    tree_widget = Qt6::TreeWidget.new
+    row_changes = [] of Int32
+    tree_changes = 0
+
+    list_widget.on_current_row_changed do |row|
+      row_changes << row
+    end
+
+    terrain_item = list_widget.add_item("Terrain")
+    unit_item = Qt6::ListWidgetItem.new("Units")
+    list_widget.add_item(unit_item)
+    list_widget.current_row = 1
+
+    tree_widget.on_current_item_changed do
+      tree_changes += 1
+    end
+
+    tree_widget.column_count = 2
+    tree_widget.header_label = "Layer"
+    tree_widget.set_header_label(1, "State")
+    root_item = tree_widget.add_top_level_item("Terrain")
+    root_item.set_text(1, "Visible")
+    child_item = Qt6::TreeWidgetItem.new("Contours")
+    child_item.set_text(1, "Locked")
+    root_item.add_child(child_item)
+    overlay_item = Qt6::TreeWidgetItem.new("Units")
+    overlay_item.set_text(1, "Hidden")
+    tree_widget.add_top_level_item(overlay_item)
+    tree_widget.current_item = child_item
+    tree_widget.expand_all
+    application.process_events
+
+    list_widget.count.should eq(2)
+    terrain_item.text.should eq("Terrain")
+    list_widget.item(1).not_nil!.text.should eq("Units")
+    list_widget.item_text(0).should eq("Terrain")
+    list_widget.current_row.should eq(1)
+    list_widget.current_item.not_nil!.text.should eq("Units")
+    list_widget.current_text.should eq("Units")
+    row_changes.last.should eq(1)
+
+    tree_widget.column_count.should eq(2)
+    tree_widget.header_label.should eq("Layer")
+    tree_widget.header_label(1).should eq("State")
+    tree_widget.top_level_item_count.should eq(2)
+    tree_widget.top_level_item(0).not_nil!.text.should eq("Terrain")
+    root_item.child_count.should eq(1)
+    root_item.child(0).not_nil!.text.should eq("Contours")
+    root_item.child(0).not_nil!.text(1).should eq("Locked")
+    tree_widget.current_item.not_nil!.text.should eq("Contours")
+    tree_widget.current_item_text(1).should eq("Locked")
+    tree_changes.should be >= 1
+
+    list_widget.clear
+    tree_widget.collapse_all
+    tree_widget.clear
+
+    list_widget.count.should eq(0)
+    tree_widget.top_level_item_count.should eq(0)
+    list_widget.release
+    tree_widget.release
+  end
+
+  it "supports advanced list widget item hooks and reorder state" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    list_widget.resize(240, 180)
+    list_widget.show
+
+    changed_texts = [] of String
+    double_clicked_texts = [] of String
+    rows_moved = 0
+
+    list_widget.on_item_changed do |item|
+      changed_texts << item.text
+    end
+
+    list_widget.on_item_double_clicked do |item|
+      double_clicked_texts << item.text
+    end
+
+    list_widget.on_rows_moved do
+      rows_moved += 1
+    end
+
+    list_widget.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+    list_widget.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
+    list_widget.default_drop_action = Qt6::DropAction::MoveAction
+
+    terrain_item = Qt6::ListWidgetItem.new(Qt6::QIcon.new, "Terrain")
+    terrain_item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable | Qt6::ItemFlag::UserCheckable | Qt6::ItemFlag::DragEnabled | Qt6::ItemFlag::DropEnabled
+    terrain_item.check_state = Qt6::CheckState::Checked
+    terrain_item.set_data("ground", Qt6::ItemDataRole::User)
+    terrain_item.foreground = Qt6::Color.new(32, 96, 192)
+    list_widget.add_item(terrain_item)
+    list_widget.add_item("Units")
+    list_widget.add_item("Roads")
+    application.process_events
+
+    terrain_item.text = "Terrain Layer"
+    application.process_events
+
+    list_widget.move_item(0, 2).should be_true
+    application.process_events
+    Qt6::LibQt6.qt6cr_list_widget_emit_item_double_clicked(list_widget.to_unsafe, 2)
+    application.process_events
+
+    list_widget.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::InternalMove)
+    list_widget.selection_mode.should eq(Qt6::ItemSelectionMode::ExtendedSelection)
+    list_widget.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    terrain_item.flags.includes?(Qt6::ItemFlag::Editable).should be_true
+    terrain_item.flags.includes?(Qt6::ItemFlag::UserCheckable).should be_true
+    terrain_item.check_state.should eq(Qt6::CheckState::Checked)
+    terrain_item.data(Qt6::ItemDataRole::User).should eq("ground")
+    terrain_item.foreground.should eq(Qt6::Color.new(32, 96, 192, 255))
+    changed_texts.includes?("Terrain Layer").should be_true
+    list_widget.item_text(2).should eq("Terrain Layer")
+    double_clicked_texts.should eq(["Terrain Layer"])
+    rows_moved.should be >= 1
+
+    list_widget.release
+  end
+
+  it "supports item-view editor polish for widgets and model views" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    tree_widget = Qt6::TreeWidget.new
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    list_model = Qt6::StandardItemModel.new(list_view)
+    tree_model = Qt6::StandardItemModel.new(tree_view)
+
+    list_widget.spacing = 2
+
+    tree_widget.header_hidden = true
+    category_item = Qt6::TreeWidgetItem.new("Guides")
+    category_item.flags = category_item.flags & ~Qt6::ItemFlag::Selectable
+    category_font = category_item.font
+    category_font.bold = true
+    category_item.font = category_font
+    category_item.foreground = Qt6::Color.new(90, 90, 90)
+    category_item << Qt6::TreeWidgetItem.new("  Layers")
+    tree_widget << category_item
+    tree_widget.expand_all
+
+    list_model << Qt6::StandardItem.new("Terrain")
+    list_model << Qt6::StandardItem.new("Units")
+
+    root_item = Qt6::StandardItem.new("Terrain")
+    root_item.set_child(0, 0, Qt6::StandardItem.new("Contours"))
+    tree_model << root_item
+
+    list_view.model = list_model
+    list_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    list_view.alternating_row_colors = true
+
+    tree_view.model = tree_model
+    tree_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    tree_view.alternating_row_colors = true
+    tree_view.header_hidden = true
+    tree_view.root_is_decorated = false
+    tree_view.uniform_row_heights = true
+    tree_view.indentation = 14
+    tree_view.expand_all
+    application.process_events
+
+    list_widget.spacing.should eq(2)
+    tree_widget.header_hidden?.should be_true
+    category_item.flags.includes?(Qt6::ItemFlag::Selectable).should be_false
+    category_item.font.bold?.should be_true
+    category_item.foreground.should eq(Qt6::Color.new(90, 90, 90, 255))
+    category_item.child_count.should eq(1)
+
+    list_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    list_view.alternating_row_colors?.should be_true
+    tree_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    tree_view.alternating_row_colors?.should be_true
+    tree_view.header_hidden?.should be_true
+    tree_view.root_is_decorated?.should be_false
+    tree_view.uniform_row_heights?.should be_true
+    tree_view.indentation.should eq(14)
+
+    list_view.release
+    tree_view.release
+    list_widget.release
+    tree_widget.release
+  end
+
+  it "supports standard item icons" do
+    app
+    icon = Qt6::QIcon.from_theme("document-open")
+    item = Qt6::StandardItem.new("Layer")
+
+    icon.should be_a(Qt6::QIcon)
+    item.icon.null?.should be_true
+
+    item.icon = icon
+    item.icon.should be_a(Qt6::QIcon)
+
+    item.release
+    icon.release
+  end
+
+  it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do
+    application = app
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    list_model = Qt6::StandardItemModel.new(list_view)
+    tree_model = Qt6::StandardItemModel.new(tree_view)
+    proxy_model = Qt6::SortFilterProxyModel.new(list_view)
+    delegate = Qt6::StyledItemDelegate.new(list_view)
+    list_changes = 0
+    tree_changes = 0
+
+    list_view.on_current_index_changed do
+      list_changes += 1
+    end
+
+    tree_view.on_current_index_changed do
+      tree_changes += 1
+    end
+
+    terrain_list_item = Qt6::StandardItem.new("Terrain")
+    terrain_list_item.set_data("Terrain tools", Qt6::ItemDataRole::ToolTip)
+    terrain_list_item.set_data(20, Qt6::ItemDataRole::User)
+    units_list_item = Qt6::StandardItem.new("Units")
+    units_list_item.set_data(Qt6::Color.new(0, 64, 192), Qt6::ItemDataRole::Foreground)
+    units_list_item.set_data(10, Qt6::ItemDataRole::User)
+    list_model << terrain_list_item
+    list_model << units_list_item
+
+    tree_model.set_horizontal_header_label(0, "Layer")
+    tree_model.set_horizontal_header_label(1, "State")
+    terrain_item = Qt6::StandardItem.new("Terrain")
+    terrain_state = Qt6::StandardItem.new("Visible")
+    tree_model.set_item(0, 0, terrain_item)
+    tree_model.set_item(0, 1, terrain_state)
+    contour_item = Qt6::StandardItem.new("Contours")
+    contour_state = Qt6::StandardItem.new("Locked")
+    terrain_item.set_child(0, 0, contour_item)
+    terrain_item.set_child(0, 1, contour_state)
+
+    terrain_state_index = tree_model.index(0, 1)
+    tree_model.set_data(terrain_state_index, "Shown", Qt6::ItemDataRole::Edit).should be_true
+
+    delegate.on_display_text do |text|
+      ">> #{text.upcase}"
+    end
+
+    proxy_model.source_model = list_model
+    proxy_model.sort_role = Qt6::ItemDataRole::User
+    proxy_model.filter_role = Qt6::ItemDataRole::Display
+    proxy_model.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
+    proxy_model.dynamic_sort_filter = true
+    proxy_model.sort
+    proxy_model.sort_column.should eq(0)
+    proxy_model.sort_order.should eq(Qt6::SortOrder::Ascending)
+
+    list_view.model = proxy_model
+    list_view.item_delegate = delegate
+    tree_view.model = tree_model
+    tree_view.expand_all
+
+    list_index = proxy_model.index(0)
+    tree_index = tree_model.index_from_item(contour_item)
+    list_view.current_index = list_index
+    tree_view.current_index = tree_index
+    application.process_events
+
+    current_list_index = list_view.current_index
+    current_tree_index = tree_view.current_index
+    source_list_index = proxy_model.map_to_source(current_list_index)
+
+    list_model.row_count.should eq(2)
+    list_model.column_count.should eq(1)
+    list_model.item(0).not_nil!.text.should eq("Terrain")
+    terrain_list_item.data(Qt6::ItemDataRole::ToolTip).should eq("Terrain tools")
+    units_list_item.data(Qt6::ItemDataRole::Foreground).should eq(Qt6::Color.new(0, 64, 192, 255))
+    list_model.data(source_list_index, Qt6::ItemDataRole::User).should eq(10)
+    proxy_model.data(current_list_index).should eq("Units")
+    delegate.display_text(proxy_model.data(current_list_index)).should eq(">> UNITS")
+    current_list_index.valid?.should be_true
+    current_list_index.row.should eq(0)
+    current_list_index.column.should eq(0)
+    source_list_index.row.should eq(1)
+    list_changes.should be >= 1
+
+    proxy_model.filter_regular_expression = "uni.*"
+    proxy_model.filter_pattern.should eq("uni.*")
+    proxy_model.invalidate
+    application.process_events
+    proxy_model.row_count.should eq(1)
+    proxy_model.clear_filter
+    proxy_model.invalidate
+    proxy_model.sort(0, Qt6::SortOrder::Descending)
+    application.process_events
+    proxy_model.row_count.should eq(2)
+    proxy_model.sort_column.should eq(0)
+    proxy_model.sort_order.should eq(Qt6::SortOrder::Descending)
+    sorted_proxy_index = proxy_model.index(0)
+    proxy_model.data(sorted_proxy_index).should eq("Terrain")
+
+    tree_proxy = Qt6::SortFilterProxyModel.new(tree_view)
+    tree_proxy.source_model = tree_model
+    tree_proxy.filter_case_sensitivity = Qt6::CaseSensitivity::Insensitive
+    tree_proxy.recursive_filtering_enabled = true
+    tree_proxy.filter_regular_expression = "contour"
+    tree_proxy.invalidate
+    application.process_events
+
+    terrain_proxy_index = tree_proxy.index(0, 0)
+    contour_proxy_index = tree_proxy.index(0, 0, terrain_proxy_index)
+    contour_source_index = tree_proxy.map_to_source(contour_proxy_index)
+    contour_proxy_roundtrip = tree_proxy.map_from_source(tree_model.index_from_item(contour_item))
+
+    tree_model.row_count.should eq(1)
+    tree_model.column_count.should eq(2)
+    tree_model.horizontal_header_label.should eq("Layer")
+    tree_model.horizontal_header_label(1).should eq("State")
+    tree_model.data(terrain_state_index).should eq("Shown")
+    terrain_item.row_count.should eq(1)
+    terrain_item.child(0).not_nil!.text.should eq("Contours")
+    terrain_item.child(0, 1).not_nil!.text.should eq("Locked")
+    current_tree_index.valid?.should be_true
+    current_tree_index.row.should eq(0)
+    current_tree_index.column.should eq(0)
+    tree_model.item_from_index(current_tree_index).not_nil!.text.should eq("Contours")
+    tree_changes.should be >= 1
+    tree_proxy.recursive_filtering_enabled?.should be_true
+    tree_proxy.filter_pattern.should eq("contour")
+    tree_proxy.row_count.should eq(1)
+    tree_proxy.row_count(terrain_proxy_index).should eq(1)
+    tree_proxy.data(terrain_proxy_index).should eq("Terrain")
+    tree_proxy.data(contour_proxy_index).should eq("Contours")
+    tree_model.data(contour_source_index).should eq("Contours")
+    contour_proxy_roundtrip.valid?.should be_true
+    contour_proxy_roundtrip.row.should eq(0)
+
+    contour_proxy_roundtrip.release
+    contour_source_index.release
+    contour_proxy_index.release
+    terrain_proxy_index.release
+    sorted_proxy_index.release
+    tree_proxy.release
+    current_list_index.release
+    current_tree_index.release
+    source_list_index.release
+    terrain_state_index.release
+    list_index.release
+    tree_index.release
+    list_view.release
+    tree_view.release
+  end
+
+  it "supports model drag sources and model-view drops" do
+    application = app
+    model = DraggableLayerListModel.new(["Terrain", "Units", "Roads"])
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+
+    list_view.model = model
+    tree_view.model = model
+
+    list_view.drag_enabled = true
+    list_view.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+    list_view.default_drop_action = Qt6::DropAction::MoveAction
+    list_view.drop_indicator_shown = true
+    list_view.accept_drops = true
+
+    tree_view.drag_enabled = true
+    tree_view.drag_drop_mode = Qt6::ItemViewDragDropMode::DragDrop
+    tree_view.default_drop_action = Qt6::DropAction::MoveAction
+    tree_view.drop_indicator_shown = true
+    tree_view.accept_drops = true
+
+    dragged_index = model.index(1)
+    payload = model.mime_data([dragged_index]).not_nil!
+
+    payload.text.should eq("Units")
+    payload.has_format?(DraggableLayerListModel::MIME_TYPE).should be_true
+    String.new(payload.data(DraggableLayerListModel::MIME_TYPE)).should eq("Units")
+    model.mime_types.should eq([DraggableLayerListModel::MIME_TYPE, "text/plain"])
+    model.supported_drag_actions.includes?(Qt6::DropAction::MoveAction).should be_true
+    model.supported_drop_actions.includes?(Qt6::DropAction::MoveAction).should be_true
+
+    model.drop_mime_data(payload, Qt6::DropAction::MoveAction, 0).should be_true
+    application.process_events
+
+    model.layers.should eq(["Units", "Terrain", "Roads"])
+    list_view.drag_enabled?.should be_true
+    list_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::InternalMove)
+    list_view.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    list_view.drop_indicator_shown?.should be_true
+    list_view.accept_drops?.should be_true
+    tree_view.drag_enabled?.should be_true
+    tree_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragDrop)
+    tree_view.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    tree_view.drop_indicator_shown?.should be_true
+    tree_view.accept_drops?.should be_true
+    model.data(model.index(0)).should eq("Units")
+
+    payload.release
+    dragged_index.release
+    list_view.release
+    tree_view.release
+  end
+
+  it "supports table views and table widgets" do
+    application = app
+    table_view = Qt6::TableView.new
+    table_widget = Qt6::TableWidget.new
+    model = Qt6::StandardItemModel.new(table_view)
+    current_index_changes = 0
+    current_cell_changes = 0
+    changed_item_texts = [] of String
+    double_clicked_item_texts = [] of String
+
+    table_view.on_current_index_changed do
+      current_index_changes += 1
+    end
+
+    table_widget.on_current_cell_changed do
+      current_cell_changes += 1
+    end
+
+    table_widget.on_item_changed do |item|
+      changed_item_texts << item.text
+    end
+
+    table_widget.on_item_double_clicked do |item|
+      double_clicked_item_texts << item.text
+    end
+
+    model.set_horizontal_header_label(0, "Layer")
+    model.set_horizontal_header_label(1, "State")
+    model.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+    model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+    model.set_item(1, 0, Qt6::StandardItem.new("Units"))
+    model.set_item(1, 1, Qt6::StandardItem.new("Hidden"))
+
+    table_view.model = model
+    table_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    table_view.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+    table_view.alternating_row_colors = true
+    table_view.show_grid = false
+    table_view.word_wrap = false
+    table_view.sorting_enabled = true
+    table_view.drag_enabled = true
+    table_view.drag_drop_mode = Qt6::ItemViewDragDropMode::DragOnly
+    table_view.default_drop_action = Qt6::DropAction::CopyAction
+    table_view.drop_indicator_shown = true
+
+    horizontal_header = table_view.horizontal_header
+    horizontal_header.default_section_size = 96
+    horizontal_header.stretch_last_section = true
+    horizontal_header.sections_movable = true
+    horizontal_header.sections_clickable = true
+    horizontal_header.set_section_resize_mode(0, Qt6::HeaderResizeMode::Fixed)
+    horizontal_header.resize_section(0, 120)
+    vertical_header = table_view.vertical_header
+    vertical_header.set_section_hidden(1, true)
+
+    selected_index = model.index(1, 1)
+    table_view.current_index = selected_index
+    table_view.set_span(0, 0, 1, 2)
+    table_view.sort_by_column(0, Qt6::SortOrder::Descending)
+    table_view.resize_columns_to_contents
+    table_view.resize_rows_to_contents
+
+    table_widget.row_count = 2
+    table_widget.column_count = 2
+    table_widget.set_horizontal_header_label(0, "Layer")
+    table_widget.set_horizontal_header_label(1, "Visible")
+    table_widget.set_vertical_header_label(0, "Base")
+    table_widget.set_vertical_header_label(1, "Overlay")
+    table_widget.selection_mode = Qt6::ItemSelectionMode::SingleSelection
+    table_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+    table_widget.alternating_row_colors = true
+    table_widget.show_grid = false
+
+    terrain_item = Qt6::TableWidgetItem.new("Terrain")
+    terrain_item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable
+    terrain_item.set_data("terrain", Qt6::ItemDataRole::User)
+    visible_item = Qt6::TableWidgetItem.new("Shown")
+    visible_item.check_state = Qt6::CheckState::Checked
+    visible_item.foreground = Qt6::Color.new(24, 120, 48)
+
+    table_widget.set_item(0, 0, terrain_item)
+    table_widget.set_item(0, 1, visible_item)
+    terrain_item.text = "Terrain Layer"
+    table_widget.set_span(1, 0, 1, 2)
+    table_widget.set_current_cell(0, 1)
+    table_widget.sort_by_column(0, Qt6::SortOrder::Descending)
+    table_widget.resize_columns_to_contents
+    table_widget.resize_rows_to_contents
+    application.process_events
+    Qt6::LibQt6.qt6cr_table_widget_emit_item_double_clicked(table_widget.to_unsafe, 0, 0)
+    application.process_events
+
+    current_index = table_view.current_index
+
+    table_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    table_view.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
+    table_view.alternating_row_colors?.should be_true
+    table_view.show_grid?.should be_false
+    table_view.word_wrap?.should be_false
+    table_view.sorting_enabled?.should be_true
+    table_view.drag_enabled?.should be_true
+    table_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragOnly)
+    table_view.default_drop_action.should eq(Qt6::DropAction::CopyAction)
+    table_view.drop_indicator_shown?.should be_true
+    current_index.valid?.should be_true
+    current_index.row.should eq(1)
+    current_index.column.should eq(1)
+    current_index_changes.should be >= 1
+    horizontal_header.count.should eq(2)
+    horizontal_header.default_section_size.should eq(96)
+    horizontal_header.stretch_last_section?.should be_true
+    horizontal_header.sections_movable?.should be_true
+    horizontal_header.sections_clickable?.should be_true
+    horizontal_header.section_size(0).should be > 0
+    horizontal_header.section_resize_mode(0).should eq(Qt6::HeaderResizeMode::Fixed)
+    vertical_header.count.should eq(2)
+    vertical_header.section_hidden?(1).should be_true
+    table_view.row_span(0, 0).should eq(1)
+    table_view.column_span(0, 0).should eq(2)
+    first_sorted_index = model.index(0, 0)
+    model.data(first_sorted_index).should eq("Units")
+
+    table_widget.row_count.should eq(2)
+    table_widget.column_count.should eq(2)
+    table_widget.horizontal_header_label.should eq("Layer")
+    table_widget.horizontal_header_label(1).should eq("Visible")
+    table_widget.vertical_header_label.should eq("Base")
+    table_widget.vertical_header_label(1).should eq("Overlay")
+    table_widget.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
+    table_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
+    table_widget.alternating_row_colors?.should be_true
+    table_widget.show_grid?.should be_false
+    table_widget.current_row.should eq(0)
+    table_widget.current_column.should eq(1)
+    table_widget.current_item.not_nil!.text.should eq("Shown")
+    table_widget.item(0, 0).not_nil!.text.should eq("Terrain Layer")
+    table_widget.item(0, 0).not_nil!.data(Qt6::ItemDataRole::User).should eq("terrain")
+    table_widget.item(0, 1).not_nil!.check_state.should eq(Qt6::CheckState::Checked)
+    table_widget.item(0, 1).not_nil!.foreground.should eq(Qt6::Color.new(24, 120, 48, 255))
+    current_cell_changes.should be >= 1
+    changed_item_texts.includes?("Terrain Layer").should be_true
+    double_clicked_item_texts.should eq(["Terrain Layer"])
+    table_widget.horizontal_header.count.should eq(2)
+    table_widget.horizontal_header.section_size(0).should be > 0
+    table_widget.vertical_header.count.should eq(2)
+    table_widget.row_span(1, 0).should eq(1)
+    table_widget.column_span(1, 0).should eq(2)
+
+    first_sorted_index.release
+    current_index.release
+    selected_index.release
+    table_view.release
+    table_widget.release
+  end
+
+  it "supports item view viewport access and hit testing" do
+    application = app
+    host = Qt6::Widget.new
+    table = Qt6::TableView.new(host)
+    model = Qt6::StandardItemModel.new(table)
+
+    model.set_item(0, 0, Qt6::StandardItem.new("One"))
+    model.set_item(1, 0, Qt6::StandardItem.new("Two"))
+
+    table.model = model
+    table.drag_enabled = true
+    table.accept_drops = true
+    table.drag_drop_mode = Qt6::ItemViewDragDropMode::DragDrop
+    table.drag_drop_overwrite_mode = false
+    table.default_drop_action = Qt6::DropAction::MoveAction
+    table.drop_indicator_shown = true
+
+    host.vbox do |column|
+      column << table
+    end
+    host.resize(240, 160)
+    host.show
+    application.process_events
+
+    viewport = table.viewport
+    index = table.index_at(Qt6::PointF.new(10.0, 10.0))
+    rect = table.visual_rect(index)
+
+    viewport.should be_a(Qt6::Widget)
+    index.valid?.should be_true
+    rect.width.should be > 0.0
+    rect.height.should be > 0.0
+    table.drag_enabled?.should be_true
+    table.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragDrop)
+    table.drag_drop_overwrite_mode?.should be_false
+    table.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    table.drop_indicator_shown?.should be_true
+
+    index.release
+    host.release
+  end
+
+  it "supports custom delegate editor creation and commit hooks" do
+    app
+    host = Qt6::Widget.new
+    model = Qt6::StandardItemModel.new(host)
+    item = Qt6::StandardItem.new("terrain")
+    model << item
+    index = model.index(0)
+    delegate = Qt6::StyledItemDelegate.new(host)
+    created_editors = [] of Qt6::LineEdit
+    populated_values = [] of Qt6::ModelData
+    committed_values = [] of String
+
+    delegate.on_create_editor do |parent, editor_index|
+      editor_index.row.should eq(0)
+      editor = Qt6::LineEdit.new(parent: parent)
+      created_editors << editor
+      editor
+    end
+
+    delegate.on_set_editor_data do |editor, value, editor_index|
+      editor_index.column.should eq(0)
+      line_edit = editor.as(Qt6::LineEdit)
+      populated_values << value
+      line_edit.text = "#{value}-editor"
+    end
+
+    delegate.on_set_model_data do |editor, target_model, editor_index|
+      line_edit = editor.as(Qt6::LineEdit)
+      committed_values << line_edit.text
+      target_model.set_data(editor_index, line_edit.text.upcase)
+    end
+
+    editor = delegate.create_editor(host, index)
+    editor.should be_a(Qt6::LineEdit)
+    line_edit = editor.as(Qt6::LineEdit)
+    delegate.set_editor_data(line_edit, index)
+    line_edit.text.should eq("terrain-editor")
+    line_edit.text = "contours"
+    delegate.set_model_data(line_edit, model, index)
+
+    created_editors.size.should eq(1)
+    populated_values.should eq(["terrain"])
+    committed_values.should eq(["contours"])
+    model.data(index).should eq("CONTOURS")
+
+    index.release
+    host.release
+  end
+
+  it "supports edit triggers and persistent editors in item views" do
+    application = app
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    table_view = Qt6::TableView.new
+    table_widget = Qt6::TableWidget.new
+
+    list_model = Qt6::StandardItemModel.new(list_view)
+    list_model << Qt6::StandardItem.new("Terrain")
+
+    tree_model = Qt6::StandardItemModel.new(tree_view)
+    branch = Qt6::StandardItem.new("Units")
+    branch.append_row(Qt6::StandardItem.new("Infantry"))
+    tree_model.append_row(branch)
+
+    table_model = Qt6::StandardItemModel.new(table_view)
+    table_model.set_item(0, 0, Qt6::StandardItem.new("Layer"))
+
+    delegate = Qt6::StyledItemDelegate.new(list_view)
+    delegate.on_create_editor do |parent, _index|
+      Qt6::LineEdit.new(parent: parent)
+    end
+
+    list_view.model = list_model
+    tree_view.model = tree_model
+    table_view.model = table_model
+
+    list_view.item_delegate = delegate
+    tree_view.item_delegate = delegate
+    table_view.item_delegate = delegate
+
+    list_index = list_model.index(0)
+    tree_index = tree_model.index(0, 0)
+    table_index = table_model.index(0, 0)
+
+    list_view.edit_triggers = Qt6::EditTrigger::DoubleClicked | Qt6::EditTrigger::EditKeyPressed
+    tree_view.edit_triggers = Qt6::EditTrigger::CurrentChanged | Qt6::EditTrigger::SelectedClicked
+    table_view.edit_triggers = Qt6::EditTrigger::AllEditTriggers
+
+    list_view.open_persistent_editor(list_index)
+    tree_view.open_persistent_editor(tree_index)
+    table_view.open_persistent_editor(table_index)
+
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+    table_widget.edit_triggers = Qt6::EditTrigger::AnyKeyPressed | Qt6::EditTrigger::EditKeyPressed
+    table_item = Qt6::TableWidgetItem.new("Visible")
+    table_widget.set_item(0, 0, table_item)
+    table_widget.open_persistent_editor(table_item)
+
+    application.process_events
+
+    list_view.edit_triggers.should eq(Qt6::EditTrigger::DoubleClicked | Qt6::EditTrigger::EditKeyPressed)
+    tree_view.edit_triggers.should eq(Qt6::EditTrigger::CurrentChanged | Qt6::EditTrigger::SelectedClicked)
+    table_view.edit_triggers.should eq(Qt6::EditTrigger::AllEditTriggers)
+    table_widget.edit_triggers.should eq(Qt6::EditTrigger::AnyKeyPressed | Qt6::EditTrigger::EditKeyPressed)
+
+    list_view.persistent_editor_open?(list_index).should be_true
+    tree_view.persistent_editor_open?(tree_index).should be_true
+    table_view.persistent_editor_open?(table_index).should be_true
+    table_widget.persistent_editor_open?(table_item).should be_true
+
+    list_view.close_persistent_editor(list_index)
+    tree_view.close_persistent_editor(tree_index)
+    table_view.close_persistent_editor(table_index)
+    table_widget.close_persistent_editor(table_item)
+
+    application.process_events
+
+    list_view.persistent_editor_open?(list_index).should be_false
+    tree_view.persistent_editor_open?(tree_index).should be_false
+    table_view.persistent_editor_open?(table_index).should be_false
+    table_widget.persistent_editor_open?(table_item).should be_false
+
+    list_index.release
+    tree_index.release
+    table_index.release
+    list_view.release
+    tree_view.release
+    table_view.release
+    table_widget.release
+  end
+
+  it "supports proxy headers and shared selection models across views" do
+    application = app
+    list_view = Qt6::ListView.new
+    tree_view = Qt6::TreeView.new
+    source_model = Qt6::StandardItemModel.new(list_view)
+    proxy_model = Qt6::SortFilterProxyModel.new(list_view)
+    source_model << Qt6::StandardItem.new("Terrain")
+    source_model << Qt6::StandardItem.new("Units")
+    source_model.set_header_data(0, "Panel", Qt6::Orientation::Horizontal).should be_true
+    proxy_model.source_model = source_model
+    list_view.model = proxy_model
+    tree_view.model = proxy_model
+
+    shared_selection = Qt6::ItemSelectionModel.new(proxy_model, list_view)
+    selection_changes = 0
+    list_changes = 0
+    tree_changes = 0
+
+    shared_selection.on_current_index_changed do
+      selection_changes += 1
+    end
+
+    list_view.on_current_index_changed do
+      list_changes += 1
+    end
+
+    tree_view.on_current_index_changed do
+      tree_changes += 1
+    end
+
+    list_view.selection_model = shared_selection
+    tree_view.selection_model = shared_selection
+
+    units_index = proxy_model.index(1)
+    list_view.current_index = units_index
+    application.process_events
+
+    proxy_model.header_data.should eq("Panel")
+    list_view.selection_model.not_nil!.current_index.row.should eq(1)
+    tree_view.selection_model.not_nil!.current_index.row.should eq(1)
+    tree_view.current_index.row.should eq(1)
+    selection_changes.should be >= 1
+    list_changes.should be >= 1
+    tree_changes.should be >= 1
+
+    units_index.release
+    list_view.release
+    tree_view.release
+  end
+
+  it "supports selection-model commands and model-index convenience helpers" do
+    application = app
+    list_view = Qt6::ListView.new
+    model = Qt6::StandardItemModel.new(list_view)
+    model << Qt6::StandardItem.new("Terrain")
+    model << Qt6::StandardItem.new("Units")
+    list_view.model = model
+
+    selection_model = Qt6::ItemSelectionModel.new(model, list_view)
+    list_view.selection_model = selection_model
+
+    terrain_index = model.index(0)
+    units_index = model.index(1)
+    parent_index = units_index.parent(model)
+
+    units_index.data(model).should eq("Units")
+    units_index.set_data(model, "Counter").should be_true
+    units_index.data(model).should eq("Counter")
+    units_index.flags(model).should eq(model.flags(units_index))
+    parent_index.valid?.should be_false
+
+    selection_model.current_index.valid?.should be_false
+
+    selection_model.current_index = terrain_index
+    application.process_events
+    selection_model.current_index.row.should eq(0)
+
+    selection_model.select(units_index, Qt6::SelectionFlag::ClearAndSelect)
+    application.process_events
+
+    selection_model.current_index.row.should eq(0)
+    selection_model.has_selection?.should be_true
+    selection_model.selected?(units_index).should be_true
+    selection_model.selected?(terrain_index).should be_false
+
+    selection_model.set_current_index(units_index, Qt6::SelectionFlag::Current)
+    application.process_events
+    selection_model.current_index.row.should eq(1)
+
+    selection_model.clear_selection
+    application.process_events
+    selection_model.has_selection?.should be_false
+
+    selection_model.clear
+    application.process_events
+    selection_model.current_index.valid?.should be_false
+
+    terrain_index.release
+    units_index.release
+    parent_index.release
+    list_view.release
+  end
+
+  it "shares abstract item-view coverage across item-based widgets" do
+    application = app
+    list_widget = Qt6::ListWidget.new
+    tree_widget = Qt6::TreeWidget.new
+    table_widget = Qt6::TableWidget.new
+
+    list_widget << "Terrain"
+    list_widget << "Units"
+    tree_widget.column_count = 1
+    tree_root = Qt6::TreeWidgetItem.new("Layers")
+    tree_widget << tree_root
+    table_widget.row_count = 1
+    table_widget.column_count = 1
+    table_widget.set_item(0, 0, Qt6::TableWidgetItem.new("Visible"))
+
+    list_widget.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
+    list_widget.drag_enabled = true
+    list_widget.drag_drop_mode = Qt6::ItemViewDragDropMode::InternalMove
+    list_widget.default_drop_action = Qt6::DropAction::MoveAction
+    list_widget.drop_indicator_shown = true
+    list_widget.edit_triggers = Qt6::EditTrigger::SelectedClicked
+
+    tree_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+    tree_widget.alternating_row_colors = true
+    tree_widget.drag_enabled = true
+    tree_widget.drop_indicator_shown = true
+
+    table_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
+    table_widget.alternating_row_colors = true
+
+    list_widget.current_row = 1
+    tree_widget.current_item = tree_root
+    table_widget.set_current_cell(0, 0)
+    application.process_events
+
+    list_index = list_widget.current_index
+    tree_index = tree_widget.current_index
+    table_index = table_widget.current_index
+
+    list_widget.selection_mode.should eq(Qt6::ItemSelectionMode::ExtendedSelection)
+    list_widget.drag_enabled?.should be_true
+    list_widget.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::InternalMove)
+    list_widget.default_drop_action.should eq(Qt6::DropAction::MoveAction)
+    list_widget.drop_indicator_shown?.should be_true
+    list_widget.edit_triggers.should eq(Qt6::EditTrigger::SelectedClicked)
+    list_widget.selection_model.should_not be_nil
+    list_index.row.should eq(1)
+
+    tree_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
+    tree_widget.alternating_row_colors?.should be_true
+    tree_widget.drag_enabled?.should be_true
+    tree_widget.drop_indicator_shown?.should be_true
+    tree_widget.selection_model.should_not be_nil
+    tree_index.valid?.should be_true
+    tree_index.row.should eq(0)
+
+    table_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
+    table_widget.alternating_row_colors?.should be_true
+    table_widget.selection_model.should_not be_nil
+    table_index.row.should eq(0)
+    table_index.column.should eq(0)
+
+    list_index.release
+    tree_index.release
+    table_index.release
+    list_widget.release
+    tree_widget.release
+    table_widget.release
+  end
+
+  it "shares abstract scroll-area policies and scroll bars across descendants" do
+    app
+    scroll_area = Qt6::ScrollArea.new
+    text_edit = Qt6::TextEdit.new("alpha\nbeta\ngamma")
+    plain_text_edit = Qt6::PlainTextEdit.new("delta\nepsilon\nzeta")
+
+    scroll_area.widget = Qt6::Label.new("Scrollable")
+    scroll_area.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOff
+    text_edit.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+    plain_text_edit.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+
+    scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
+    text_edit.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
+    plain_text_edit.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
+
+    scroll_area.vertical_scroll_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    scroll_area.horizontal_scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
+    text_edit.vertical_scroll_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    plain_text_edit.horizontal_scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
+
+    scroll_area.release
+    text_edit.release
+    plain_text_edit.release
+  end
+
+  it "exposes scroll-area content access and visibility helpers" do
+    application = app
+    main = Qt6::MainWindow.new
+    main.resize(320, 240)
+
+    scroll_area = Qt6::ScrollArea.new
+    scroll_area.widget_resizable = false
+    scroll_area.set_fixed_size(220, 140)
+
+    content = Qt6::Widget.new
+    content.set_fixed_size(900, 900)
+
+    anchor = Qt6::Label.new("Anchor", content)
+    anchor.move(720, 760)
+    anchor.set_fixed_size(80, 24)
+
+    scroll_area.widget = content
+    main.central_widget = scroll_area
+
+    main.show
+    application.process_events
+
+    scroll_area.widget.should_not be_nil
+    scroll_area.widget.not_nil!.size.should eq(Qt6::Size.new(900, 900))
+    scroll_area.vertical_scroll_bar.value.should eq(0)
+    scroll_area.horizontal_scroll_bar.value.should eq(0)
+
+    scroll_area.ensure_visible(780, 820, 10, 10)
+    application.process_events
+    scroll_area.vertical_scroll_bar.value.should be > 0
+    scroll_area.horizontal_scroll_bar.value.should be > 0
+
+    scroll_area.vertical_scroll_bar.value = 0
+    scroll_area.horizontal_scroll_bar.value = 0
+    scroll_area.ensure_widget_visible(anchor, 10, 10)
+    application.process_events
+    scroll_area.vertical_scroll_bar.value.should be > 0
+    scroll_area.horizontal_scroll_bar.value.should be > 0
+
+    taken = scroll_area.take_widget
+    taken.should_not be_nil
+    scroll_area.widget.should be_nil
+    taken.not_nil!.size.should eq(Qt6::Size.new(900, 900))
+
+    main.release
+  end
+
+  it "hosts a verified editor slice with undo, settings, clipboard, canvas interaction, and PNG export" do
+    application = app
+    state = EditorVerticalSliceSpecState.new
+    main = Qt6::MainWindow.new
+    main.window_title = "Vertical Slice Spec"
+    main.resize(960, 680)
+    status_bar = main.status_bar
+    canvas = Qt6::EventWidget.new
+    canvas.resize(720, 480)
+    export_path = File.join(Dir.tempdir, "crystal-qt6-vertical-slice-#{Process.pid}.png")
+    settings_path = File.join(Dir.tempdir, "crystal-qt6-vertical-slice-settings-#{Process.pid}.ini")
+    File.delete?(export_path)
+    File.delete?(settings_path)
+
+    settings = Qt6::QSettings.new(settings_path)
+    undo_stack = Qt6::UndoStack.new(main)
+    save_action = Qt6::Action.new("Mark Saved", main)
+    save_action.shortcut = "Ctrl+S"
+    undo_action = undo_stack.create_undo_action(main, "Undo")
+    redo_action = undo_stack.create_redo_action(main, "Redo")
+
+    persist_state = -> do
+      settings.set_value("ui/active_layer", state.active_layer)
+      settings.set_value("view/zoom", state.zoom)
+      settings.set_value("view/pan_x", state.pan_x)
+      settings.set_value("view/pan_y", state.pan_y)
+      settings.set_value("view/grid_spacing", state.grid_spacing)
+      settings.set_value("view/marker_size", state.marker_size)
+      settings.set_value("view/show_grid", state.show_grid)
+      settings.sync
+    end
+
+    update_dirty_state = -> do
+      dirty = !undo_stack.clean?
+      main.window_title = dirty ? "Vertical Slice Spec *" : "Vertical Slice Spec"
+      save_action.enabled = dirty
+    end
+
+    undo_stack.on_clean_changed { |_clean| update_dirty_state.call }
+    undo_stack.on_index_changed { |_index| update_dirty_state.call }
+
+    save_action.on_triggered do
+      undo_stack.set_clean
+      persist_state.call
+      update_dirty_state.call
+      status_bar.show_message("State marked saved", 1200)
+    end
+
+    grid_pen = Qt6::QPen.new(Qt6::Color.new(198, 206, 214), 1.0)
+    frame_pen = Qt6::QPen.new(Qt6::Color.new(72, 80, 90), 2.0)
+    route_pen = Qt6::QPen.new(state.accent, 3.0)
+    hud_font = Qt6::QFont.new(point_size: 11, bold: true)
+
+    scene_to_view = ->(point : Qt6::PointF) do
+      Qt6::PointF.new(state.pan_x + point.x * state.zoom, state.pan_y + point.y * state.zoom)
+    end
+
+    copy_snapshot_action = Qt6::Action.new("Copy Snapshot", main)
+    copy_snapshot_action.shortcut = "Ctrl+Shift+X"
+    copy_snapshot_action.on_triggered do
+      summary = "Layer #{state.active_layer}, zoom #{state.zoom.round(2)}x, grid #{state.grid_spacing}, marker #{state.marker_size}"
+      payload = Qt6::MimeData.new
+      payload.text = summary
+      payload.html = "<strong>#{state.active_layer}</strong>"
+      payload.image = canvas.grab.to_image
+      payload.set_data("application/x-crystal-qt6-editor-state", summary)
+      Qt6.clipboard.mime_data = payload
+      status_bar.show_message("Copied snapshot", 1200)
+    end
+
+    canvas.on_mouse_press do |event|
+      state.dragging = true
+      state.last_pointer = event.position
+    end
+
+    canvas.on_mouse_move do |event|
+      next unless state.dragging
+
+      state.pan_x += event.position.x - state.last_pointer.x
+      state.pan_y += event.position.y - state.last_pointer.y
+      state.last_pointer = event.position
+      canvas.update
+    end
+
+    canvas.on_mouse_release do |_event|
+      state.dragging = false
+      persist_state.call
+    end
+
+    canvas.on_wheel do |event|
+      state.zoom = (state.zoom * (event.angle_delta.y >= 0 ? 1.1 : 0.9)).clamp(0.5, 3.0)
+      persist_state.call
+      canvas.update
+    end
+
+    canvas.on_paint_with_painter do |event, painter|
+      painter.fill_rect(event.rect, Qt6::Color.new(245, 243, 238))
+
+      scene_rect = Qt6::RectF.new(0.0, 0.0, 520.0, 320.0)
+      painter.pen = frame_pen
+      painter.brush = Qt6::Color.new(255, 255, 255)
+      painter.draw_rect(Qt6::RectF.new(state.pan_x, state.pan_y, scene_rect.width * state.zoom, scene_rect.height * state.zoom))
+
+      if state.show_grid
+        painter.pen = grid_pen
+        x = 0
+        while x <= scene_rect.width
+          painter.draw_line(scene_to_view.call(Qt6::PointF.new(x.to_f, 0.0)), scene_to_view.call(Qt6::PointF.new(x.to_f, scene_rect.height)))
+          x += state.grid_spacing
+        end
+
+        y = 0
+        while y <= scene_rect.height
+          painter.draw_line(scene_to_view.call(Qt6::PointF.new(0.0, y.to_f)), scene_to_view.call(Qt6::PointF.new(scene_rect.width, y.to_f)))
+          y += state.grid_spacing
+        end
+      end
+
+      route_pen.color = state.accent
+      painter.pen = route_pen
+      painter.brush = state.accent
+      points = case state.active_layer
+               when "Units"
+                 [
+                   Qt6::PointF.new(96.0, 88.0),
+                   Qt6::PointF.new(180.0, 156.0),
+                   Qt6::PointF.new(276.0, 132.0),
+                 ]
+               else
+                 [
+                   Qt6::PointF.new(112.0, 92.0),
+                   Qt6::PointF.new(210.0, 142.0),
+                   Qt6::PointF.new(308.0, 118.0),
+                 ]
+               end.map { |point| scene_to_view.call(point) }
+
+      points.each_cons(2) do |segment|
+        painter.draw_line(segment[0], segment[1])
+      end
+
+      points.each_with_index do |point, index|
+        size = state.marker_size.to_f * state.zoom
+        painter.draw_ellipse(Qt6::RectF.new(point.x - size / 2.0, point.y - size / 2.0, size, size))
+        painter.draw_text(Qt6::PointF.new(point.x + size / 2.0 + 6.0, point.y + 4.0), "#{index + 1}")
+      end
+
+      painter.font = hud_font
+      painter.pen = Qt6::Color.new(50, 56, 62)
+      painter.draw_text(Qt6::PointF.new(18.0, 24.0), "Layer #{state.active_layer} | zoom #{state.zoom.round(2)}x")
+    end
+
+    main.central_widget = canvas
+
+    layer_model = Qt6::StandardItemModel.new(main)
+    terrain_item = Qt6::StandardItem.new("Terrain")
+    terrain_item.set_data(10, Qt6::ItemDataRole::User)
+    units_item = Qt6::StandardItem.new("Units")
+    units_item.set_data(20, Qt6::ItemDataRole::User)
+    layer_model.set_item(0, 0, terrain_item)
+    layer_model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+    layer_model.set_item(1, 0, units_item)
+    layer_model.set_item(1, 1, Qt6::StandardItem.new("Visible"))
+    layer_model.set_horizontal_header_label(0, "Layer")
+    layer_model.set_horizontal_header_label(1, "State")
+
+    proxy_model = Qt6::SortFilterProxyModel.new(main)
+    proxy_model.source_model = layer_model
+    proxy_model.sort_role = Qt6::ItemDataRole::User
+    proxy_model.sort
+
+    tree_view = Qt6::TreeView.new
+    tree_view.model = proxy_model
+    selection_model = Qt6::ItemSelectionModel.new(proxy_model, tree_view)
+    tree_view.selection_model = selection_model
+
+    syncing_selection = false
+    select_layer = ->(layer_name : String) do
+      syncing_selection = true
+      begin
+        proxy_model.row_count.times do |row|
+          index = proxy_model.index(row, 0)
+          if proxy_model.data(index).to_s == layer_name
+            tree_view.current_index = index
+            index.release
+            break
+          end
+          index.release
+        end
+      ensure
+        syncing_selection = false
+      end
+    end
+
+    apply_snapshot = ->(snapshot : EditorVerticalSliceSpecSnapshot, message : String?) do
+      restore_editor_slice_spec(state, snapshot)
+      select_layer.call(state.active_layer)
+      persist_state.call
+      status_bar.show_message(message, 1200) if message
+      canvas.update
+    end
+
+    push_change = ->(label : String, before : EditorVerticalSliceSpecSnapshot, after : EditorVerticalSliceSpecSnapshot, message : String?) do
+      undo_stack.push(Qt6::UndoCommand.new(
+        label,
+        redo: -> { apply_snapshot.call(after, message) },
+        undo: -> { apply_snapshot.call(before, "Undid #{label.downcase}") }
+      ))
+      update_dirty_state.call
+    end
+
+    tree_view.on_current_index_changed do
+      next if syncing_selection
+
+      current = tree_view.current_index
+      if current.valid?
+        name_index = proxy_model.index(current.row, 0)
+        layer_name = proxy_model.data(name_index).to_s
+        unless layer_name == state.active_layer
+          before = snapshot_editor_slice_spec(state)
+          state.apply_layer(layer_name)
+          after = snapshot_editor_slice_spec(state)
+          restore_editor_slice_spec(state, before)
+          push_change.call("Switch to #{layer_name}", before, after, "Active #{layer_name}")
+        end
+        name_index.release
+      end
+      current.release
+      canvas.update
+    end
+
+    layers_dock = Qt6::DockWidget.new("Layers", main)
+    layers_dock.widget = Qt6::Widget.new.tap do |panel|
+      panel.vbox do |column|
+        column << Qt6::Label.new("Manager")
+        column << tree_view
+      end
+    end
+    main.add_dock_widget(layers_dock, Qt6::DockArea::Left)
+
+    inspector_dock = Qt6::DockWidget.new("Inspector", main)
+    inspector_dock.widget = Qt6::Widget.new.tap do |panel|
+      panel.form do |form|
+        form.add_row("Layer", Qt6::Label.new("Driven by the manager dock"))
+        form.add_row(Qt6::PushButton.new("Reset View").tap do |button|
+          button.on_clicked do
+            before = snapshot_editor_slice_spec(state)
+            state.zoom = 1.0
+            state.pan_x = 24.0
+            state.pan_y = 28.0
+            after = snapshot_editor_slice_spec(state)
+            restore_editor_slice_spec(state, before)
+            push_change.call("Reset view", before, after, "View reset")
+          end
+        end)
+      end
+    end
+    main.add_dock_widget(inspector_dock, Qt6::DockArea::Right)
+
+    file_menu = main.menu_bar.add_menu("File")
+    export_action = Qt6::Action.new("Export PNG", main)
+    export_action.shortcut = "Ctrl+E"
+    export_action.on_triggered do
+      canvas.grab.save(export_path).should be_true
+      status_bar.show_message("Exported PNG", 1200)
+    end
+    file_menu << export_action
+    file_menu << save_action
+
+    edit_menu = main.menu_bar.add_menu("Edit")
+    edit_menu << undo_action
+    edit_menu << redo_action
+    edit_menu << copy_snapshot_action
+
+    toolbar = Qt6::ToolBar.new("Editor", main)
+    toolbar << export_action
+    toolbar << save_action
+    toolbar << undo_action
+    toolbar << redo_action
+    toolbar << copy_snapshot_action
+    main.add_tool_bar(toolbar)
+
+    terrain_index = proxy_model.index(0, 0)
+    tree_view.current_index = terrain_index
+    terrain_index.release
+    undo_stack.set_clean
+    update_dirty_state.call
+    persist_state.call
+
+    units_index = proxy_model.index(1, 0)
+    tree_view.current_index = units_index
+    units_index.release
+
+    main.show
+    application.process_events
+
+    state.active_layer.should eq("Units")
+    state.grid_spacing.should eq(44)
+    state.marker_size.should eq(22)
+    settings.value("ui/active_layer").should eq("Units")
+    settings.value("view/grid_spacing").should eq(44)
+    undo_stack.clean?.should be_false
+    undo_action.enabled?.should be_true
+    save_action.enabled?.should be_true
+    main.window_title.should eq("Vertical Slice Spec *")
+
+    undo_action.trigger
+    application.process_events
+    state.active_layer.should eq("Terrain")
+    undo_stack.clean?.should be_true
+    redo_action.enabled?.should be_true
+    main.window_title.should eq("Vertical Slice Spec")
+
+    redo_action.trigger
+    application.process_events
+    state.active_layer.should eq("Units")
+    undo_stack.clean?.should be_false
+
+    save_action.trigger
+    application.process_events
+    undo_stack.clean?.should be_true
+    save_action.enabled?.should be_false
+
+    copy_snapshot_action.trigger
+    application.process_events
+    clipboard_payload = Qt6.clipboard.mime_data.not_nil!
+    clipboard_payload.has_text?.should be_true
+    clipboard_payload.text.should contain("Layer Units")
+    clipboard_payload.has_image?.should be_true
+    String.new(clipboard_payload.data("application/x-crystal-qt6-editor-state")).should contain("marker 22")
+
+    zoom_before = state.zoom
+    pan_x_before = state.pan_x
+    pan_y_before = state.pan_y
+
+    canvas.simulate_wheel(Qt6::PointF.new(180.0, 180.0))
+    canvas.simulate_mouse_press(Qt6::PointF.new(140.0, 140.0))
+    canvas.simulate_mouse_move(Qt6::PointF.new(196.0, 188.0), buttons: 1)
+    canvas.simulate_mouse_release(Qt6::PointF.new(196.0, 188.0))
+    5.times { application.process_events }
+
+    export_action.trigger
+    application.process_events
+
+    png_header = File.open(export_path) do |file|
+      bytes = Bytes.new(8)
+      file.read_fully(bytes)
+      bytes
+    end
+
+    state.active_layer.should eq("Units")
+    proxy_model.header_data.should eq("Layer")
+    tree_view.selection_model.not_nil!.current_index.row.should eq(1)
+    state.zoom.should be > zoom_before
+    state.pan_x.should be > pan_x_before
+    state.pan_y.should be > pan_y_before
+    settings.value("view/zoom").should eq(state.zoom)
+    settings.value("view/pan_x").should eq(state.pan_x)
+    settings.value("view/pan_y").should eq(state.pan_y)
+    File.exists?(export_path).should be_true
+    png_header.should eq(Bytes[0x89_u8, 0x50_u8, 0x4E_u8, 0x47_u8, 0x0D_u8, 0x0A_u8, 0x1A_u8, 0x0A_u8])
+
+    Qt6.clipboard.clear
+    File.delete?(export_path)
+    File.delete?(settings_path)
+    main.release
+  end
+
+  it "supports callback-backed abstract list models with edits and row notifications" do
+    application = app
+    model = EditableLayerListModel.new(["Terrain", "Units"])
+    proxy = Qt6::SortFilterProxyModel.new
+    proxy.source_model = model
+    list_view = Qt6::ListView.new
+    list_view.model = proxy
+
+    delegate = Qt6::StyledItemDelegate.new(list_view)
+    delegate.on_create_editor do |parent, _index|
+      Qt6::LineEdit.new(parent: parent)
+    end
+    delegate.on_set_editor_data do |editor, value, _index|
+      editor.as(Qt6::LineEdit).text = value.to_s
+    end
+    delegate.on_set_model_data do |editor, target_model, index|
+      target_model.set_data(index, editor.as(Qt6::LineEdit).text).should be_true
+    end
+    list_view.item_delegate = delegate
+
+    source_index = model.index(0)
+    proxy_index = proxy.index(1)
+    editor = delegate.create_editor(list_view, proxy_index)
+    editor.should be_a(Qt6::LineEdit)
+    line_edit = editor.as(Qt6::LineEdit)
+    delegate.set_editor_data(line_edit, proxy_index)
+    line_edit.text.should eq("Units")
+    line_edit.text = "Counter"
+    delegate.set_model_data(line_edit, proxy, proxy_index)
+    application.process_events
+
+    model.layers.should eq(["Terrain", "Counter"])
+    proxy.data(proxy_index).should eq("Counter")
+    proxy.header_data.should eq("Layer")
+    model.flags(source_index).should eq(Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable)
+
+    model.append_layer("Labels")
+    application.process_events
+    proxy.row_count.should eq(3)
+
+    removed = model.remove_layer(0)
+    application.process_events
+    removed.should eq("Terrain")
+    proxy.row_count.should eq(2)
+
+    refreshed_index = proxy.index(0)
+    proxy.data(refreshed_index).should eq("Counter")
+
+    model.replace_layers(["Roads"])
+    application.process_events
+    proxy.row_count.should eq(1)
+
+    reset_index = proxy.index(0)
+    proxy.data(reset_index).should eq("Roads")
+
+    source_index.release
+    proxy_index.release
+    refreshed_index.release
+    reset_index.release
+    list_view.release
+    proxy.release
+    model.release
+  end
+
+  it "supports callback-backed tree models in tree views" do
+    application = app
+    model = LayerTreeModel.new
+    tree_view = Qt6::TreeView.new
+    tree_view.model = model
+    tree_view.expand_all
+
+    terrain_index = model.index(0)
+    contours_index = model.index(0, 0, terrain_index)
+    units_index = model.index(1)
+    parent_index = model.parent_index(contours_index)
+
+    tree_changes = 0
+    tree_view.on_current_index_changed do
+      tree_changes += 1
+    end
+
+    tree_view.current_index = contours_index
+    application.process_events
+    model.set_data(contours_index, "Contours Overlay").should be_true
+    application.process_events
+
+    model.row_count.should eq(2)
+    model.row_count(terrain_index).should eq(2)
+    model.row_count(units_index).should eq(1)
+    model.column_count(terrain_index).should eq(1)
+    model.header_data.should eq("Layer")
+    model.data(contours_index).should eq("Contours Overlay")
+    parent_index.valid?.should be_true
+    parent_index.row.should eq(0)
+    parent_index.internal_id.should eq(1_u64)
+    model.data(parent_index).should eq("Terrain")
+    tree_view.current_index.internal_id.should eq(2_u64)
+    tree_changes.should be >= 1
+
+    parent_index.release
+    units_index.release
+    contours_index.release
+    terrain_index.release
+    tree_view.release
+    model.release
+  end
+
+  it "supports mutable callback-backed tree models with row inserts, removals, and moves" do
+    application = app
+    model = MutableLayerTreeModel.new
+    tree_view = Qt6::TreeView.new
+    tree_view.model = model
+    tree_view.expand_all
+
+    terrain_index = model.index(0)
+    terrain_index.internal_id.should eq(1_u64)
+
+    model.append_child("Roads", terrain_index)
+    application.process_events
+
+    refreshed_terrain_index = model.index(0)
+    roads_index = model.index(2, 0, refreshed_terrain_index)
+    tree_view.current_index = roads_index
+    application.process_events
+
+    model.row_count(refreshed_terrain_index).should eq(3)
+    model.data(roads_index).should eq("Roads")
+    tree_view.current_index.internal_id.should eq(5_u64)
+
+    model.move_child(2, 0, refreshed_terrain_index).should be_true
+    application.process_events
+
+    moved_first_index = model.index(0, 0, refreshed_terrain_index)
+    model.data(moved_first_index).should eq("Roads")
+
+    removed_label = model.remove_child(1, refreshed_terrain_index)
+    application.process_events
+
+    removed_label.should eq("Contours")
+    model.row_count(refreshed_terrain_index).should eq(2)
+    remaining_first_index = model.index(0, 0, refreshed_terrain_index)
+    remaining_second_index = model.index(1, 0, refreshed_terrain_index)
+    model.data(remaining_first_index).should eq("Roads")
+    model.data(remaining_second_index).should eq("Labels")
+
+    remaining_second_index.release
+    remaining_first_index.release
+    moved_first_index.release
+    roads_index.release
+    refreshed_terrain_index.release
+    terrain_index.release
+    tree_view.release
+    model.release
+  end
+
+end
