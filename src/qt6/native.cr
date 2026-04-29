@@ -1037,6 +1037,8 @@ module Qt6
     fun qt6cr_dock_widget_create = qt6cr_dock_widget_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_dock_widget_widget = qt6cr_dock_widget_widget(handle : Handle) : Handle
     fun qt6cr_dock_widget_set_widget = qt6cr_dock_widget_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_dock_widget_title_bar_widget = qt6cr_dock_widget_title_bar_widget(handle : Handle) : Handle
+    fun qt6cr_dock_widget_set_title_bar_widget = qt6cr_dock_widget_set_title_bar_widget(handle : Handle, widget : Handle)
     fun qt6cr_dock_widget_is_floating = qt6cr_dock_widget_is_floating(handle : Handle) : Bool
     fun qt6cr_dock_widget_set_floating = qt6cr_dock_widget_set_floating(handle : Handle, value : Bool)
     fun qt6cr_dock_widget_toggle_view_action = qt6cr_dock_widget_toggle_view_action(handle : Handle) : Handle

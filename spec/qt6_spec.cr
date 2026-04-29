@@ -2988,7 +2988,10 @@ describe Qt6 do
     main = Qt6::MainWindow.new
     dock = Qt6::DockWidget.new("Layers", main)
     label = Qt6::Label.new("Layer list")
+    title_bar = Qt6::Label.new("Dock Header")
     dock.widget = label
+    dock.title_bar_widget.should be_nil
+    dock.title_bar_widget = title_bar
     main.add_dock_widget(dock, Qt6::DockArea::Left)
     toggle_action = dock.toggle_view_action
 
@@ -3000,6 +3003,7 @@ describe Qt6 do
     toggle_action.checkable?.should be_true
     dock.widget.should_not be_nil
     dock.widget.not_nil!.window_title.should eq(label.window_title)
+    dock.title_bar_widget.not_nil!.to_unsafe.should eq(title_bar.to_unsafe)
     dock.visible?.should be_true
     toggle_action.checked?.should be_true
     dock.floating?.should be_false
@@ -3023,6 +3027,8 @@ describe Qt6 do
 
     dock.visible?.should be_true
     toggle_action.checked?.should be_true
+    dock.title_bar_widget = nil
+    dock.title_bar_widget.should be_nil
 
     toggle_action.release
     main.release

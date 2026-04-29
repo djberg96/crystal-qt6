@@ -29,6 +29,19 @@ module Qt6
       widget
     end
 
+    # Returns the custom title-bar widget, if present.
+    def title_bar_widget : Widget?
+      handle = LibQt6.qt6cr_dock_widget_title_bar_widget(to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Sets or clears the custom title-bar widget and returns it.
+    def title_bar_widget=(widget : Widget?) : Widget?
+      LibQt6.qt6cr_dock_widget_set_title_bar_widget(to_unsafe, widget.try(&.to_unsafe) || Pointer(Void).null)
+      widget.try(&.adopt_by_parent!)
+      widget
+    end
+
     # Returns `true` when the dock is detached into its own floating window.
     def floating? : Bool
       LibQt6.qt6cr_dock_widget_is_floating(to_unsafe)

@@ -8072,6 +8072,20 @@ void qt6cr_dock_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   }
 }
 
+qt6cr_handle_t qt6cr_dock_widget_title_bar_widget(qt6cr_handle_t handle) {
+  auto *dock = as_dock_widget(handle);
+  return dock == nullptr ? nullptr : static_cast<qt6cr_handle_t>(dock->titleBarWidget());
+}
+
+void qt6cr_dock_widget_set_title_bar_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *dock = as_dock_widget(handle);
+  auto *title_bar = as_widget(widget);
+
+  if (dock != nullptr) {
+    dock->setTitleBarWidget(title_bar);
+  }
+}
+
 bool qt6cr_dock_widget_is_floating(qt6cr_handle_t handle) {
   auto *dock = as_dock_widget(handle);
   return dock != nullptr && dock->isFloating();
