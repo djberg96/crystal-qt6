@@ -1839,6 +1839,7 @@ describe Qt6 do
       indices << index
     end
     combo_box << "Units" << "Terrain"
+    combo_box.insert_item(1, "Roads")
 
     inspector.vbox do |column|
       column << line_edit
@@ -1860,7 +1861,12 @@ describe Qt6 do
 
     dialog.accept
     check_box.checked = true
-    combo_box.current_index = 1
+    combo_box.editable = true
+    combo_box.item_text(1).should eq("Roads")
+    combo_box.find_text("Roads").should eq(1)
+    combo_box.remove_item(0)
+    combo_box.current_text = "Terrain"
+    combo_box.current_index = combo_box.find_text("Terrain")
     open_action.trigger
     application.process_events
 
@@ -1870,6 +1876,7 @@ describe Qt6 do
     line_edit.text.should eq("Terrain")
     check_box.checked?.should be_true
     combo_box.count.should eq(2)
+    combo_box.editable?.should be_true
     combo_box.current_text.should eq("Terrain")
     toggled.last.should be_true
     indices.last.should eq(1)
@@ -1877,6 +1884,8 @@ describe Qt6 do
     dialog.result.should eq(Qt6::DialogCode::Accepted)
     accepted.should eq(1)
     rejected.should eq(0)
+    combo_box.clear
+    combo_box.count.should eq(0)
     main.release
   end
 

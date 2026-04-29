@@ -1337,10 +1337,18 @@ module Qt6
 
     fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle
     fun qt6cr_combo_box_add_item = qt6cr_combo_box_add_item(handle : Handle, text : UInt8*)
+    fun qt6cr_combo_box_insert_item = qt6cr_combo_box_insert_item(handle : Handle, index : LibC::Int, text : UInt8*)
+    fun qt6cr_combo_box_remove_item = qt6cr_combo_box_remove_item(handle : Handle, index : LibC::Int)
     fun qt6cr_combo_box_count = qt6cr_combo_box_count(handle : Handle) : LibC::Int
     fun qt6cr_combo_box_current_index = qt6cr_combo_box_current_index(handle : Handle) : LibC::Int
     fun qt6cr_combo_box_set_current_index = qt6cr_combo_box_set_current_index(handle : Handle, index : LibC::Int)
     fun qt6cr_combo_box_current_text = qt6cr_combo_box_current_text(handle : Handle) : UInt8*
+    fun qt6cr_combo_box_set_current_text = qt6cr_combo_box_set_current_text(handle : Handle, text : UInt8*)
+    fun qt6cr_combo_box_item_text = qt6cr_combo_box_item_text(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_combo_box_find_text = qt6cr_combo_box_find_text(handle : Handle, text : UInt8*) : LibC::Int
+    fun qt6cr_combo_box_clear = qt6cr_combo_box_clear(handle : Handle)
+    fun qt6cr_combo_box_set_editable = qt6cr_combo_box_set_editable(handle : Handle, editable : Bool)
+    fun qt6cr_combo_box_editable = qt6cr_combo_box_editable(handle : Handle) : Bool
     fun qt6cr_combo_box_on_current_index_changed = qt6cr_combo_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_font_combo_box_create = qt6cr_font_combo_box_create(parent : Handle) : Handle
     fun qt6cr_font_combo_box_current_font = qt6cr_font_combo_box_current_font(handle : Handle) : Handle

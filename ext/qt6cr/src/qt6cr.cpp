@@ -10135,6 +10135,22 @@ void qt6cr_combo_box_add_item(qt6cr_handle_t handle, const char *text) {
   }
 }
 
+void qt6cr_combo_box_insert_item(qt6cr_handle_t handle, int index, const char *text) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->insertItem(index, QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_combo_box_remove_item(qt6cr_handle_t handle, int index) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->removeItem(index);
+  }
+}
+
 int qt6cr_combo_box_count(qt6cr_handle_t handle) {
   auto *combo_box = as_combo_box(handle);
   return combo_box == nullptr ? 0 : combo_box->count();
@@ -10156,6 +10172,45 @@ void qt6cr_combo_box_set_current_index(qt6cr_handle_t handle, int index) {
 char *qt6cr_combo_box_current_text(qt6cr_handle_t handle) {
   auto *combo_box = as_combo_box(handle);
   return combo_box == nullptr ? duplicate_string("") : duplicate_string(combo_box->currentText());
+}
+
+void qt6cr_combo_box_set_current_text(qt6cr_handle_t handle, const char *text) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setCurrentText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_combo_box_item_text(qt6cr_handle_t handle, int index) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? duplicate_string("") : duplicate_string(combo_box->itemText(index));
+}
+
+int qt6cr_combo_box_find_text(qt6cr_handle_t handle, const char *text) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? -1 : combo_box->findText(QString::fromUtf8(text == nullptr ? "" : text));
+}
+
+void qt6cr_combo_box_clear(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->clear();
+  }
+}
+
+void qt6cr_combo_box_set_editable(qt6cr_handle_t handle, bool editable) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setEditable(editable);
+  }
+}
+
+bool qt6cr_combo_box_editable(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? false : combo_box->isEditable();
 }
 
 void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
