@@ -15,10 +15,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `Widget#show_maximized`, `QEvent#mouse_event`, and widget-local menu execution helpers.
 - Added `ToolButton#menu`, `#default_action`, and `#auto_raise` helpers for toolbar- and palette-style command buttons.
 - Added `PushButton#default`, `#auto_default`, and `#flat` helpers for dialog- and shell-style button presentation.
+- Added `ButtonGroup#checked_button`, `#id`, `#set_id`, and `#remove` helpers for grouped tool and mode buttons.
 
 ### Changed
 
-- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, `StackedWidget`, and button-widget APIs for editor-style shells and panels.
+- Expanded common widget audit coverage with deeper `ComboBox`, `TabWidget`, `Splitter`, `StackedWidget`, `ButtonGroup`, and button-widget APIs for editor-style shells and panels.
 
 ### Fixed
 

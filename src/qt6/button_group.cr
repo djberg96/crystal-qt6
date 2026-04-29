@@ -33,5 +33,28 @@ module Qt6
     def checked_id : Int32
       LibQt6.qt6cr_button_group_checked_id(to_unsafe)
     end
+
+    # Returns the currently checked button, if one exists.
+    def checked_button : AbstractButton?
+      handle = LibQt6.qt6cr_button_group_checked_button(to_unsafe)
+      handle.null? ? nil : AbstractButton.wrap(handle)
+    end
+
+    # Returns the current group id for the given button, or `-1` when absent.
+    def id(button : AbstractButton) : Int32
+      LibQt6.qt6cr_button_group_id(to_unsafe, button.to_unsafe)
+    end
+
+    # Reassigns the given button's group id and returns it.
+    def set_id(button : AbstractButton, id : Int32) : Int32
+      LibQt6.qt6cr_button_group_set_id(to_unsafe, button.to_unsafe, id)
+      id
+    end
+
+    # Removes a button from the group and returns it.
+    def remove(button : AbstractButton) : AbstractButton
+      LibQt6.qt6cr_button_group_remove_button(to_unsafe, button.to_unsafe)
+      button
+    end
   end
 end

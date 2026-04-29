@@ -13624,6 +13624,35 @@ int qt6cr_button_group_checked_id(qt6cr_handle_t handle) {
   return button_group == nullptr ? -1 : button_group->checkedId();
 }
 
+qt6cr_handle_t qt6cr_button_group_checked_button(qt6cr_handle_t handle) {
+  auto *button_group = as_button_group(handle);
+  return button_group == nullptr ? nullptr : button_group->checkedButton();
+}
+
+int qt6cr_button_group_id(qt6cr_handle_t handle, qt6cr_handle_t button) {
+  auto *button_group = as_button_group(handle);
+  auto *abstract_button = as_abstract_button(button);
+  return button_group == nullptr || abstract_button == nullptr ? -1 : button_group->id(abstract_button);
+}
+
+void qt6cr_button_group_set_id(qt6cr_handle_t handle, qt6cr_handle_t button, int id) {
+  auto *button_group = as_button_group(handle);
+  auto *abstract_button = as_abstract_button(button);
+
+  if (button_group != nullptr && abstract_button != nullptr) {
+    button_group->setId(abstract_button, id);
+  }
+}
+
+void qt6cr_button_group_remove_button(qt6cr_handle_t handle, qt6cr_handle_t button) {
+  auto *button_group = as_button_group(handle);
+  auto *abstract_button = as_abstract_button(button);
+
+  if (button_group != nullptr && abstract_button != nullptr) {
+    button_group->removeButton(abstract_button);
+  }
+}
+
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent) {
   return new QTimer(as_object(parent));
 }

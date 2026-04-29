@@ -1907,6 +1907,10 @@ module Qt6
     fun qt6cr_button_group_add_button = qt6cr_button_group_add_button(handle : Handle, button : Handle, id : LibC::Int)
     fun qt6cr_button_group_button = qt6cr_button_group_button(handle : Handle, id : LibC::Int) : Handle
     fun qt6cr_button_group_checked_id = qt6cr_button_group_checked_id(handle : Handle) : LibC::Int
+    fun qt6cr_button_group_checked_button = qt6cr_button_group_checked_button(handle : Handle) : Handle
+    fun qt6cr_button_group_id = qt6cr_button_group_id(handle : Handle, button : Handle) : LibC::Int
+    fun qt6cr_button_group_set_id = qt6cr_button_group_set_id(handle : Handle, button : Handle, id : LibC::Int)
+    fun qt6cr_button_group_remove_button = qt6cr_button_group_remove_button(handle : Handle, button : Handle)
 
     fun qt6cr_timer_create = qt6cr_timer_create(parent : Handle) : Handle
     fun qt6cr_timer_set_interval = qt6cr_timer_set_interval(handle : Handle, interval : LibC::Int)

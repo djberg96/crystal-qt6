@@ -1928,6 +1928,10 @@ void qt6cr_button_group_set_exclusive(qt6cr_handle_t handle, bool value);
 void qt6cr_button_group_add_button(qt6cr_handle_t handle, qt6cr_handle_t button, int id);
 qt6cr_handle_t qt6cr_button_group_button(qt6cr_handle_t handle, int id);
 int qt6cr_button_group_checked_id(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_button_group_checked_button(qt6cr_handle_t handle);
+int qt6cr_button_group_id(qt6cr_handle_t handle, qt6cr_handle_t button);
+void qt6cr_button_group_set_id(qt6cr_handle_t handle, qt6cr_handle_t button, int id);
+void qt6cr_button_group_remove_button(qt6cr_handle_t handle, qt6cr_handle_t button);
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent);
 void qt6cr_timer_set_interval(qt6cr_handle_t handle, int interval);

@@ -2559,6 +2559,10 @@ describe Qt6 do
     mode_group.add(select_button, 1)
     place_button.checked = true
     select_button.checked = true
+    mode_group.id(select_button).should eq(1)
+    mode_group.checked_button.not_nil!.to_unsafe.should eq(select_button.to_unsafe)
+    mode_group.set_id(select_button, 5).should eq(5)
+    mode_group.button(5).not_nil!.to_unsafe.should eq(select_button.to_unsafe)
 
     separator = Qt6::Frame.new
     separator.frame_shape = Qt6::FrameShape::HLine
@@ -2611,9 +2615,9 @@ describe Qt6 do
     place_button.checkable?.should be_true
     place_button.checked?.should be_false
     select_button.checked?.should be_true
-    mode_group.checked_id.should eq(1)
-    mode_group.button(1).not_nil!.text.should eq("Select")
-    mode_group.button(1).not_nil!.checked?.should be_true
+    mode_group.checked_id.should eq(5)
+    mode_group.button(5).not_nil!.text.should eq("Select")
+    mode_group.button(5).not_nil!.checked?.should be_true
     toggled_states.last.should be_true
     separator.frame_shape.should eq(Qt6::FrameShape::HLine)
     separator.frame_shadow.should eq(Qt6::FrameShadow::Sunken)
@@ -2624,6 +2628,8 @@ describe Qt6 do
     ok_button.text.should eq("Export")
     accepted.should eq(1)
     rejected.should eq(1)
+    mode_group.remove(place_button)
+    mode_group.id(place_button).should eq(-1)
 
     dialog.release
   end
