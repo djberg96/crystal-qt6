@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
+- Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
+
 ## [0.8.0] - 2026-04-29
 
 ### Added
