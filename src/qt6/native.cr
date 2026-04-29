@@ -16,6 +16,13 @@ module Qt6
       y : Float64
     end
 
+    struct LineFValue
+      x1 : Float64
+      y1 : Float64
+      x2 : Float64
+      y2 : Float64
+    end
+
     struct SizeValue
       width : LibC::Int
       height : LibC::Int

@@ -397,6 +397,9 @@ describe Qt6 do
 
     rect = Qt6::Rect.new(1, 2, 30, 40)
     rect_f = rect.to_rect_f
+    line_f = Qt6::LineF.new(1.0, 5.0, 5.0, 2.0)
+    native_line_f = line_f.to_native
+    translated_line_f = line_f.translated(2.0, -1.0)
     size = Qt6::Size.new(14, 9)
     size_f = size.to_size_f
     page_size = Qt6::PageSize.new(size_f)
@@ -423,6 +426,22 @@ describe Qt6 do
 
     rect_f.should eq(Qt6::RectF.new(1.0, 2.0, 30.0, 40.0))
     rect_f.to_rect.should eq(rect)
+    line_f.p1.should eq(Qt6::PointF.new(1.0, 5.0))
+    line_f.p2.should eq(Qt6::PointF.new(5.0, 2.0))
+    line_f.x1.should eq(1.0)
+    line_f.y1.should eq(5.0)
+    line_f.x2.should eq(5.0)
+    line_f.y2.should eq(2.0)
+    line_f.dx.should eq(4.0)
+    line_f.dy.should eq(-3.0)
+    line_f.center.should eq(Qt6::PointF.new(3.0, 3.5))
+    line_f.length.should eq(5.0)
+    line_f.angle.round(2).should eq(36.87)
+    line_f.point_at(0.25).should eq(Qt6::PointF.new(2.0, 4.25))
+    line_f.null?.should be_false
+    Qt6::LineF.from_native(native_line_f).should eq(line_f)
+    translated_line_f.should eq(Qt6::LineF.new(3.0, 4.0, 7.0, 1.0))
+    Qt6::LineF.new(0.0, 0.0, 0.0, 0.0).null?.should be_true
     size_f.should eq(Qt6::SizeF.new(14.0, 9.0))
     size_f.to_size.should eq(size)
     page_size.size.should eq(size_f)
