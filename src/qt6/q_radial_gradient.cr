@@ -13,6 +13,20 @@ module Qt6
       initialize(center.x, center.y, radius)
     end
 
+    def initialize(center_x : Number, center_y : Number, radius : Number, focal_x : Number, focal_y : Number)
+      super(LibQt6.qt6cr_qradial_gradient_create_with_focal_point(
+        center_x.to_f64,
+        center_y.to_f64,
+        radius.to_f64,
+        focal_x.to_f64,
+        focal_y.to_f64
+      ))
+    end
+
+    def initialize(center : PointF, radius : Number, focal_point : PointF)
+      initialize(center.x, center.y, radius, focal_point.x, focal_point.y)
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -24,6 +38,15 @@ module Qt6
 
     def center : PointF
       PointF.from_native(LibQt6.qt6cr_qradial_gradient_center(to_unsafe))
+    end
+
+    def focal_point : PointF
+      PointF.from_native(LibQt6.qt6cr_qradial_gradient_focal_point(to_unsafe))
+    end
+
+    def focal_point=(value : PointF) : PointF
+      LibQt6.qt6cr_qradial_gradient_set_focal_point(to_unsafe, value.to_native)
+      value
     end
 
     def radius : Float64

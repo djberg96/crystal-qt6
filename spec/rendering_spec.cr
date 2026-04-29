@@ -369,6 +369,7 @@ describe Qt6 do
     radial.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
     radial.set_color_at(1.0, Qt6::Color.new(0, 0, 0))
     radial.center.should eq(Qt6::PointF.new(6.0, 8.0))
+    radial.focal_point.should eq(Qt6::PointF.new(6.0, 8.0))
     radial.radius.should eq(4.0)
     radial.spread.should eq(Qt6::GradientSpread::PadSpread)
     radial.coordinate_mode.should eq(Qt6::GradientCoordinateMode::LogicalMode)
@@ -377,6 +378,13 @@ describe Qt6 do
     configured_radial.coordinate_mode = Qt6::GradientCoordinateMode::StretchToDeviceMode
     configured_radial.spread.should eq(Qt6::GradientSpread::ReflectSpread)
     configured_radial.coordinate_mode.should eq(Qt6::GradientCoordinateMode::StretchToDeviceMode)
+
+    offset_radial = Qt6::QRadialGradient.new(Qt6::PointF.new(6.0, 8.0), 4.0, Qt6::PointF.new(8.0, 8.0))
+    offset_radial.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
+    offset_radial.set_color_at(1.0, Qt6::Color.new(0, 0, 0))
+    offset_radial.focal_point.should eq(Qt6::PointF.new(8.0, 8.0))
+    offset_radial.focal_point = Qt6::PointF.new(7.0, 8.0)
+    offset_radial.focal_point.should eq(Qt6::PointF.new(7.0, 8.0))
 
     conical = Qt6::QConicalGradient.new(Qt6::PointF.new(6.0, 6.0), 0.0)
     conical.set_color_at(0.0, Qt6::Color.new(255, 0, 0))
@@ -410,11 +418,23 @@ describe Qt6 do
       painter.draw_ellipse(Qt6::RectF.new(0.0, 0.0, 12.0, 12.0))
     end
 
+    offset_radial_canvas = Qt6::QImage.new(14, 14)
+    offset_radial_canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+    Qt6::QPainter.paint(offset_radial_canvas) do |painter|
+      painter.antialiasing = false
+      painter.pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1).tap { |pen| pen.style = Qt6::PenStyle::NoPen }
+      painter.brush = Qt6::QBrush.new(offset_radial)
+      painter.draw_rect(Qt6::RectF.new(1.0, 1.0, 12.0, 12.0))
+    end
+
     left = gradient_canvas.pixel_color(1, 1)
     middle = gradient_canvas.pixel_color(5, 1)
     right = gradient_canvas.pixel_color(8, 1)
     radial_center = gradient_canvas.pixel_color(6, 8)
     radial_edge = gradient_canvas.pixel_color(2, 8)
+    offset_radial_left = offset_radial_canvas.pixel_color(6, 8)
+    offset_radial_center = offset_radial_canvas.pixel_color(7, 8)
+    offset_radial_right = offset_radial_canvas.pixel_color(8, 8)
     conical_samples = [
       conical_canvas.pixel_color(6, 1),
       conical_canvas.pixel_color(10, 6),
@@ -429,6 +449,12 @@ describe Qt6 do
     radial_center.red.should be > radial_edge.red
     radial_center.green.should be > radial_edge.green
     radial_center.blue.should be > radial_edge.blue
+    offset_radial_left.red.should be > offset_radial_center.red
+    offset_radial_center.red.should be > offset_radial_right.red
+    offset_radial_left.green.should be > offset_radial_center.green
+    offset_radial_center.green.should be > offset_radial_right.green
+    offset_radial_left.blue.should be > offset_radial_center.blue
+    offset_radial_center.blue.should be > offset_radial_right.blue
     conical_samples.all? { |sample| sample.alpha > 0 }.should be_true
     conical_samples.map { |sample| {sample.red, sample.green, sample.blue, sample.alpha} }.uniq.size.should be > 1
     conical_samples.any? { |sample| sample.red > 0 }.should be_true

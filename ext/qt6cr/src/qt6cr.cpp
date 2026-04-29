@@ -6770,6 +6770,10 @@ qt6cr_handle_t qt6cr_qradial_gradient_create(double center_x, double center_y, d
   return new QRadialGradient(center_x, center_y, radius);
 }
 
+qt6cr_handle_t qt6cr_qradial_gradient_create_with_focal_point(double center_x, double center_y, double radius, double focal_x, double focal_y) {
+  return new QRadialGradient(center_x, center_y, radius, focal_x, focal_y);
+}
+
 void qt6cr_qradial_gradient_destroy(qt6cr_handle_t handle) {
   delete as_qradial_gradient(handle);
 }
@@ -6785,6 +6789,19 @@ void qt6cr_qradial_gradient_set_color_at(qt6cr_handle_t handle, double position,
 qt6cr_pointf_t qt6cr_qradial_gradient_center(qt6cr_handle_t handle) {
   auto *gradient = as_qradial_gradient(handle);
   return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->center());
+}
+
+qt6cr_pointf_t qt6cr_qradial_gradient_focal_point(qt6cr_handle_t handle) {
+  auto *gradient = as_qradial_gradient(handle);
+  return gradient == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gradient->focalPoint());
+}
+
+void qt6cr_qradial_gradient_set_focal_point(qt6cr_handle_t handle, qt6cr_pointf_t focal_point) {
+  auto *gradient = as_qradial_gradient(handle);
+
+  if (gradient != nullptr) {
+    gradient->setFocalPoint(from_pointf(focal_point));
+  }
 }
 
 double qt6cr_qradial_gradient_radius(qt6cr_handle_t handle) {
