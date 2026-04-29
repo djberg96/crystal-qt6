@@ -34,6 +34,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Fixed
 
 - Updated application quit handling to wait for open widgets to close before process exit.
+- Restored backward-compatible `SplashScreen#show_message(message, color)` calls after adding aligned splash-message support.
 
 ## [0.7.0] - 2026-04-23
 
