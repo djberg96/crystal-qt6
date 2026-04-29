@@ -78,6 +78,11 @@ module Qt6
       size : LibC::Int
     end
 
+    struct IntArrayValue
+      data : Int32*
+      size : LibC::Int
+    end
+
     struct VariantValue
       type : LibC::Int
       bool_value : Bool
@@ -1861,9 +1866,18 @@ module Qt6
 
     fun qt6cr_splitter_create = qt6cr_splitter_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_splitter_add_widget = qt6cr_splitter_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_splitter_widget = qt6cr_splitter_widget(handle : Handle, index : LibC::Int) : Handle
     fun qt6cr_splitter_count = qt6cr_splitter_count(handle : Handle) : LibC::Int
     fun qt6cr_splitter_orientation = qt6cr_splitter_orientation(handle : Handle) : LibC::Int
     fun qt6cr_splitter_set_orientation = qt6cr_splitter_set_orientation(handle : Handle, orientation : LibC::Int)
+    fun qt6cr_splitter_opaque_resize = qt6cr_splitter_opaque_resize(handle : Handle) : Bool
+    fun qt6cr_splitter_set_opaque_resize = qt6cr_splitter_set_opaque_resize(handle : Handle, value : Bool)
+    fun qt6cr_splitter_children_collapsible = qt6cr_splitter_children_collapsible(handle : Handle) : Bool
+    fun qt6cr_splitter_set_children_collapsible = qt6cr_splitter_set_children_collapsible(handle : Handle, value : Bool)
+    fun qt6cr_splitter_handle_width = qt6cr_splitter_handle_width(handle : Handle) : LibC::Int
+    fun qt6cr_splitter_set_handle_width = qt6cr_splitter_set_handle_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_splitter_sizes = qt6cr_splitter_sizes(handle : Handle) : IntArrayValue
+    fun qt6cr_splitter_set_sizes = qt6cr_splitter_set_sizes(handle : Handle, sizes : Int32*, size : LibC::Int)
 
     fun qt6cr_dialog_button_box_create = qt6cr_dialog_button_box_create(parent : Handle, buttons : LibC::Int) : Handle
     fun qt6cr_dialog_button_box_button = qt6cr_dialog_button_box_button(handle : Handle, button : LibC::Int) : Handle
@@ -1910,5 +1924,6 @@ module Qt6
 
     fun qt6cr_string_free = qt6cr_string_free(value : UInt8*)
     fun qt6cr_string_array_free = qt6cr_string_array_free(value : StringArrayValue)
+    fun qt6cr_int_array_free = qt6cr_int_array_free(value : IntArrayValue)
   end
 end

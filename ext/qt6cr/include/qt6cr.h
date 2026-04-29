@@ -76,6 +76,11 @@ typedef struct {
 } qt6cr_string_array_t;
 
 typedef struct {
+	int *data;
+	int size;
+} qt6cr_int_array_t;
+
+typedef struct {
 	int type;
 	bool bool_value;
 	int int_value;
@@ -1882,9 +1887,18 @@ qt6cr_handle_t qt6cr_abstract_scroll_area_horizontal_scroll_bar(qt6cr_handle_t h
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_splitter_widget(qt6cr_handle_t handle, int index);
 int qt6cr_splitter_count(qt6cr_handle_t handle);
 int qt6cr_splitter_orientation(qt6cr_handle_t handle);
 void qt6cr_splitter_set_orientation(qt6cr_handle_t handle, int orientation);
+bool qt6cr_splitter_opaque_resize(qt6cr_handle_t handle);
+void qt6cr_splitter_set_opaque_resize(qt6cr_handle_t handle, bool value);
+bool qt6cr_splitter_children_collapsible(qt6cr_handle_t handle);
+void qt6cr_splitter_set_children_collapsible(qt6cr_handle_t handle, bool value);
+int qt6cr_splitter_handle_width(qt6cr_handle_t handle);
+void qt6cr_splitter_set_handle_width(qt6cr_handle_t handle, int value);
+qt6cr_int_array_t qt6cr_splitter_sizes(qt6cr_handle_t handle);
+void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size);
 
 qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent, int buttons);
 qt6cr_handle_t qt6cr_dialog_button_box_button(qt6cr_handle_t handle, int button);
@@ -1931,6 +1945,7 @@ void qt6cr_layout_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
 void qt6cr_string_free(char *value);
 void qt6cr_string_array_free(qt6cr_string_array_t value);
+void qt6cr_int_array_free(qt6cr_int_array_t value);
 
 #ifdef __cplusplus
 }

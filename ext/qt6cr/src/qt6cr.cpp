@@ -184,6 +184,7 @@ QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QWidget *as_widget(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
+qt6cr_int_array_t to_int_array_value(const QList<int> &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1074,6 +1075,22 @@ qt6cr_string_array_t to_string_array_value(const QStringList &values) {
   }
 
   return qt6cr_string_array_t{copy, size};
+}
+
+qt6cr_int_array_t to_int_array_value(const QList<int> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_int_array_t{nullptr, 0};
+  }
+
+  auto *copy = new int[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_int_array_t{copy, size};
 }
 
 QMimeData *clone_mime_data(const QMimeData *source) {
@@ -13338,6 +13355,11 @@ void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   }
 }
 
+qt6cr_handle_t qt6cr_splitter_widget(qt6cr_handle_t handle, int index) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? nullptr : splitter->widget(index);
+}
+
 int qt6cr_splitter_count(qt6cr_handle_t handle) {
   auto *splitter = as_splitter(handle);
   return splitter == nullptr ? 0 : splitter->count();
@@ -13354,6 +13376,67 @@ void qt6cr_splitter_set_orientation(qt6cr_handle_t handle, int orientation) {
   if (splitter != nullptr) {
     splitter->setOrientation(static_cast<Qt::Orientation>(orientation));
   }
+}
+
+bool qt6cr_splitter_opaque_resize(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter != nullptr && splitter->opaqueResize();
+}
+
+void qt6cr_splitter_set_opaque_resize(qt6cr_handle_t handle, bool value) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->setOpaqueResize(value);
+  }
+}
+
+bool qt6cr_splitter_children_collapsible(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter != nullptr && splitter->childrenCollapsible();
+}
+
+void qt6cr_splitter_set_children_collapsible(qt6cr_handle_t handle, bool value) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->setChildrenCollapsible(value);
+  }
+}
+
+int qt6cr_splitter_handle_width(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? 0 : splitter->handleWidth();
+}
+
+void qt6cr_splitter_set_handle_width(qt6cr_handle_t handle, int value) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->setHandleWidth(value);
+  }
+}
+
+qt6cr_int_array_t qt6cr_splitter_sizes(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? qt6cr_int_array_t{nullptr, 0} : to_int_array_value(splitter->sizes());
+}
+
+void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter == nullptr || sizes == nullptr || size <= 0) {
+    return;
+  }
+
+  QList<int> values;
+  values.reserve(size);
+
+  for (int index = 0; index < size; ++index) {
+    values.append(sizes[index]);
+  }
+
+  splitter->setSizes(values);
 }
 
 qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent, int buttons) {
@@ -13625,6 +13708,14 @@ void qt6cr_string_array_free(qt6cr_string_array_t value) {
 
   for (int index = 0; index < value.size; ++index) {
     delete[] value.data[index];
+  }
+
+  delete[] value.data;
+}
+
+void qt6cr_int_array_free(qt6cr_int_array_t value) {
+  if (value.data == nullptr || value.size <= 0) {
+    return;
   }
 
   delete[] value.data;

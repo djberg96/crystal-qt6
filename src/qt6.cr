@@ -306,6 +306,24 @@ module Qt6
     strings
   end
 
+  def self.copy_and_release_ints(value : LibQt6::IntArrayValue) : Array(Int32)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_int_array_free(value)
+      return [] of Int32
+    end
+
+    ints = Array(Int32).new(size)
+    size.times do |index|
+      ints << pointer[index]
+    end
+
+    LibQt6.qt6cr_int_array_free(value)
+    ints
+  end
+
   def self.malloc_string(value : String) : UInt8*
     bytesize = value.bytesize
     pointer = LibC.malloc(bytesize + 1).as(UInt8*)

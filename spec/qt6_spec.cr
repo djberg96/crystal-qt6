@@ -2028,6 +2028,8 @@ describe Qt6 do
     splitter << scroll_area
     splitter << tab_widget
     window.central_widget = splitter
+    window.resize(420, 260)
+    window.show
 
     slider.set_range(0, 100)
     slider.click_to_position?.should be_false
@@ -2042,6 +2044,12 @@ describe Qt6 do
     manual_mode.checked = true
     options_group.checked = false
     options_group.checked = true
+    splitter.widget(0).not_nil!.to_unsafe.should eq(scroll_area.to_unsafe)
+    splitter.widget(1).not_nil!.to_unsafe.should eq(tab_widget.to_unsafe)
+    splitter.opaque_resize = false
+    splitter.children_collapsible = false
+    splitter.handle_width = 9
+    splitter.set_sizes([120, 240]).should eq([120, 240])
     tab_widget.widget(0).not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
     tab_widget.current_widget.not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
     tab_widget.index_of(export_page).should eq(1)
@@ -2058,6 +2066,10 @@ describe Qt6 do
     scroll_area.widget_resizable?.should be_true
     splitter.count.should eq(2)
     splitter.orientation.should eq(Qt6::Orientation::Vertical)
+    splitter.opaque_resize?.should be_false
+    splitter.children_collapsible?.should be_false
+    splitter.handle_width.should eq(9)
+    splitter.sizes.size.should eq(2)
     tab_widget.count.should eq(2)
     tab_widget.current_index.should eq(1)
     tab_widget.current_widget.not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
