@@ -242,11 +242,19 @@ describe Qt6 do
   end
 
   it "supports core widget sizing and tooltip controls" do
-    app
+    application = app
+    previous_tool_tip_font = Qt6::ToolTip.font
+    previous_tool_tip_palette = Qt6::ToolTip.palette
     label = Qt6::Label.new("Widget Controls")
     line_edit = Qt6::LineEdit.new
 
     label.tool_tip = "Shared widget affordances"
+    tool_tip_font = Qt6::QFont.new(point_size: 12, bold: true)
+    tool_tip_palette = Qt6::QPalette.new
+    tool_tip_palette.set_color(Qt6::ColorRole::ToolTipBase, Qt6::Color.new(28, 34, 42))
+    tool_tip_palette.set_color(Qt6::ColorRole::ToolTipText, Qt6::Color.new(232, 238, 244))
+    Qt6::ToolTip.font = tool_tip_font
+    Qt6::ToolTip.palette = tool_tip_palette
     label.word_wrap = true
     label.minimum_width = 120
     label.minimum_height = 32
@@ -263,6 +271,19 @@ describe Qt6 do
     label.move(14, 18)
     label.adjust_size
     line_edit.placeholder_text = "Enter a layer name"
+    label.show
+    application.process_events
+    Qt6::ToolTip.show_text(label, Qt6::PointF.new(8.0, 10.0), "Explicit shared tooltip")
+    application.process_events
+
+    Qt6::ToolTip.font.point_size.should eq(12)
+    Qt6::ToolTip.font.bold?.should be_true
+    Qt6::ToolTip.palette.color(Qt6::ColorRole::ToolTipBase).should eq(Qt6::Color.new(28, 34, 42, 255))
+    Qt6::ToolTip.palette.color(Qt6::ColorRole::ToolTipText).should eq(Qt6::Color.new(232, 238, 244, 255))
+    Qt6::ToolTip.text.should eq("Explicit shared tooltip")
+    Qt6::ToolTip.visible?.should be_a(Bool)
+    Qt6::ToolTip.hide_text
+    application.process_events
 
     label.tool_tip.should eq("Shared widget affordances")
     label.word_wrap?.should be_true
@@ -292,6 +313,8 @@ describe Qt6 do
     label.set_attribute(Qt6::WidgetAttribute::TransparentForMouseEvents, false)
     label.transparent_for_mouse_events?.should be_false
 
+    Qt6::ToolTip.font = previous_tool_tip_font
+    Qt6::ToolTip.palette = previous_tool_tip_palette
     line_edit.release
     label.release
   end

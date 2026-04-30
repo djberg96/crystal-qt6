@@ -154,6 +154,7 @@
 #include <QWheelEvent>
 #include <QWidget>
 #include <QWidgetAction>
+#include <QToolTip>
 #include <QSplitter>
 #include <QVariant>
 #include <QMetaType>
@@ -2619,6 +2620,51 @@ void qt6cr_widget_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip) {
   if (widget != nullptr) {
     widget->setToolTip(QString::fromUtf8(tool_tip == nullptr ? "" : tool_tip));
   }
+}
+
+qt6cr_handle_t qt6cr_tool_tip_font(void) {
+  return new QFont(QToolTip::font());
+}
+
+void qt6cr_tool_tip_set_font(qt6cr_handle_t font) {
+  auto *value = as_qfont(font);
+
+  if (value != nullptr) {
+    QToolTip::setFont(*value);
+  }
+}
+
+void qt6cr_tool_tip_hide_text(void) {
+  QToolTip::hideText();
+}
+
+bool qt6cr_tool_tip_is_visible(void) {
+  return QToolTip::isVisible();
+}
+
+qt6cr_handle_t qt6cr_tool_tip_palette(void) {
+  return new QPalette(QToolTip::palette());
+}
+
+void qt6cr_tool_tip_set_palette(qt6cr_handle_t palette) {
+  auto *value = as_qpalette(palette);
+
+  if (value != nullptr) {
+    QToolTip::setPalette(*value);
+  }
+}
+
+void qt6cr_tool_tip_show_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int msec_display_time) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    const QPoint global_position = widget->mapToGlobal(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)));
+    QToolTip::showText(global_position, QString::fromUtf8(text == nullptr ? "" : text), widget, QRect(), msec_display_time);
+  }
+}
+
+char *qt6cr_tool_tip_text(void) {
+  return duplicate_string(QToolTip::text());
 }
 
 qt6cr_handle_t qt6cr_widget_window_icon(qt6cr_handle_t handle) {
