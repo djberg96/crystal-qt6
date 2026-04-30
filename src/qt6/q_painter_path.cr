@@ -77,6 +77,12 @@ module Qt6
     end
 
     # Adds a polygon to the path.
+    def add_polygon(polygon : QPolygon) : self
+      LibQt6.qt6cr_qpainter_path_add_polygon_i(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Adds a polygon to the path.
     def add_polygon(polygon : QPolygonF) : self
       LibQt6.qt6cr_qpainter_path_add_polygon(to_unsafe, polygon.to_unsafe)
       self

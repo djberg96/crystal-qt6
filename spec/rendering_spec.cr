@@ -677,16 +677,42 @@ describe Qt6 do
     region = Qt6::QRegion.new(polygon)
     odd_even_region = Qt6::QRegion.new(complex_polygon, Qt6::FillRule::OddEven)
     winding_region = Qt6::QRegion.new(complex_polygon, Qt6::FillRule::Winding)
+    polygon_path = Qt6::QPainterPath.new
+    polygon_path.add_polygon(polygon)
+
+    canvas = Qt6::QImage.new(12, 12)
+    canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+    outline = Qt6::QPolygon.new([
+      Qt6::Point.new(0, 10),
+      Qt6::Point.new(3, 7),
+      Qt6::Point.new(6, 10),
+    ])
+
+    Qt6::QPainter.paint(canvas) do |painter|
+      no_pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1)
+      no_pen.style = Qt6::PenStyle::NoPen
+      painter.pen = no_pen
+      painter.brush = Qt6::Color.new(180, 40, 40)
+      painter.draw_polygon(polygon)
+
+      painter.pen = Qt6::Color.new(40, 180, 220)
+      painter.brush = Qt6::Color.new(0, 0, 0, 0)
+      painter.draw_polyline(outline)
+    end
 
     polygon.size.should eq(5)
     polygon[2].should eq(Qt6::Point.new(8, 8))
     polygon.bounding_rect.should eq(Qt6::Rect.new(0, 0, 9, 9))
     polygon.to_a.last.should eq(Qt6::Point.new(0, 0))
+    polygon_path.contains(Qt6::PointF.new(2.0, 2.0)).should be_true
+    polygon_path.contains(Qt6::PointF.new(9.0, 2.0)).should be_false
 
     region.bounding_rect.should eq(Qt6::Rect.new(0, 0, 8, 8))
     region.contains?(Qt6::Rect.new(2, 2, 2, 2)).should be_true
     odd_even_region.contains?(Qt6::Rect.new(3, 3, 1, 1)).should be_false
     winding_region.contains?(Qt6::Rect.new(3, 3, 1, 1)).should be_true
+    canvas.pixel_color(2, 2).should eq(Qt6::Color.new(180, 40, 40, 255))
+    canvas.pixel_color(3, 7).should eq(Qt6::Color.new(40, 180, 220, 255))
 
     window = Qt6::Widget.new
     window.resize(16, 16)

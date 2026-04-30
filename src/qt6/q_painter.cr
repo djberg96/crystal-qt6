@@ -270,8 +270,20 @@ module Qt6
     end
 
     # Draws a polygon.
+    def draw_polygon(polygon : QPolygon) : self
+      LibQt6.qt6cr_qpainter_draw_polygon_i(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Draws a polygon.
     def draw_polygon(polygon : QPolygonF) : self
       LibQt6.qt6cr_qpainter_draw_polygon(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Draws a connected series of line segments without closing the shape.
+    def draw_polyline(polygon : QPolygon) : self
+      LibQt6.qt6cr_qpainter_draw_polyline_i(to_unsafe, polygon.to_unsafe)
       self
     end
 

@@ -19,6 +19,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added mutable `QRegion` set-operation helpers and `Widget#update` overloads for rect- and region-scoped repaint scheduling.
 - Added `QPalette`, `ColorGroup`, and `ColorRole` bindings with application- and widget-level palette access for theme-aware colors.
 - Added `Point`, `FillRule`, `QPolygon`, and polygon-backed `QRegion` construction for integer-coordinate masks and custom clip shapes.
+- Added direct `QPolygon` support in `QPainterPath#add_polygon`, `QPainter#draw_polygon`, and `QPainter#draw_polyline`.
 
 ## [0.8.0] - 2026-04-29
 

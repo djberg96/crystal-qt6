@@ -8021,6 +8021,15 @@ void qt6cr_qpainter_path_add_polygon(qt6cr_handle_t handle, qt6cr_handle_t polyg
   }
 }
 
+void qt6cr_qpainter_path_add_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *path = as_qpainter_path(handle);
+  auto *shape = as_qpolygon(polygon);
+
+  if (path != nullptr && shape != nullptr) {
+    path->addPolygon(QPolygonF(*shape));
+  }
+}
+
 void qt6cr_qpainter_path_add_path(qt6cr_handle_t handle, qt6cr_handle_t other) {
   auto *path = as_qpainter_path(handle);
   auto *source = as_qpainter_path(other);
@@ -8431,6 +8440,24 @@ void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) 
 
   if (painter != nullptr && shape != nullptr) {
     painter->drawPolygon(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpolygon(polygon);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawPolygon(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_polyline_i(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpolygon(polygon);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawPolyline(*shape);
   }
 }
 

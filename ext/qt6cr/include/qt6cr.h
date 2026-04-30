@@ -1082,6 +1082,7 @@ void qt6cr_qpainter_path_quad_to(qt6cr_handle_t handle, qt6cr_pointf_t control_p
 void qt6cr_qpainter_path_cubic_to(qt6cr_handle_t handle, qt6cr_pointf_t control_point1, qt6cr_pointf_t control_point2, qt6cr_pointf_t end_point);
 void qt6cr_qpainter_path_add_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_path_add_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+void qt6cr_qpainter_path_add_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_path_add_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_path_add_path(qt6cr_handle_t handle, qt6cr_handle_t other);
 void qt6cr_qpainter_path_connect_path(qt6cr_handle_t handle, qt6cr_handle_t other);
@@ -1142,7 +1143,9 @@ void qt6cr_qpainter_fill_rect_brush(qt6cr_handle_t handle, qt6cr_rectf_t rect, q
 void qt6cr_qpainter_draw_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_draw_ellipse_center(qt6cr_handle_t handle, qt6cr_pointf_t center, double rx, double ry);
 void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path);
+void qt6cr_qpainter_draw_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
+void qt6cr_qpainter_draw_polyline_i(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_polyline(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_arc(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle);
 void qt6cr_qpainter_draw_pie(qt6cr_handle_t handle, qt6cr_rectf_t rect, int start_angle, int span_angle);
