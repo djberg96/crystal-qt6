@@ -1119,6 +1119,8 @@ module Qt6
     fun qt6cr_qpainter_draw_ellipse = qt6cr_qpainter_draw_ellipse(handle : Handle, rect : RectFValue)
     fun qt6cr_qpainter_draw_ellipse_center = qt6cr_qpainter_draw_ellipse_center(handle : Handle, center : PointFValue, rx : Float64, ry : Float64)
     fun qt6cr_qpainter_draw_path = qt6cr_qpainter_draw_path(handle : Handle, path : Handle)
+    fun qt6cr_qpainter_draw_convex_polygon_i = qt6cr_qpainter_draw_convex_polygon_i(handle : Handle, polygon : Handle)
+    fun qt6cr_qpainter_draw_convex_polygon = qt6cr_qpainter_draw_convex_polygon(handle : Handle, polygon : Handle)
     fun qt6cr_qpainter_draw_polygon_i = qt6cr_qpainter_draw_polygon_i(handle : Handle, polygon : Handle)
     fun qt6cr_qpainter_draw_polygon = qt6cr_qpainter_draw_polygon(handle : Handle, polygon : Handle)
     fun qt6cr_qpainter_draw_polyline_i = qt6cr_qpainter_draw_polyline_i(handle : Handle, polygon : Handle)

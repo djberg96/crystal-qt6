@@ -687,6 +687,12 @@ describe Qt6 do
       Qt6::Point.new(3, 7),
       Qt6::Point.new(6, 10),
     ])
+    convex_float = Qt6::QPolygonF.new([
+      Qt6::PointF.new(8.0, 0.0),
+      Qt6::PointF.new(11.0, 0.0),
+      Qt6::PointF.new(11.0, 3.0),
+      Qt6::PointF.new(8.0, 3.0),
+    ])
 
     Qt6::QPainter.paint(canvas) do |painter|
       no_pen = Qt6::QPen.new(Qt6::Color.new(0, 0, 0), 1)
@@ -694,10 +700,19 @@ describe Qt6 do
       painter.pen = no_pen
       painter.brush = Qt6::Color.new(180, 40, 40)
       painter.draw_polygon(polygon)
+      painter.brush = Qt6::Color.new(40, 220, 90)
+      painter.draw_convex_polygon(convex_float)
 
       painter.pen = Qt6::Color.new(40, 180, 220)
       painter.brush = Qt6::Color.new(0, 0, 0, 0)
       painter.draw_polyline(outline)
+      painter.brush = Qt6::Color.new(240, 180, 40)
+      painter.draw_convex_polygon(Qt6::QPolygon.new([
+        Qt6::Point.new(8, 8),
+        Qt6::Point.new(11, 8),
+        Qt6::Point.new(11, 11),
+        Qt6::Point.new(8, 11),
+      ]))
     end
 
     polygon.size.should eq(5)
@@ -712,7 +727,9 @@ describe Qt6 do
     odd_even_region.contains?(Qt6::Rect.new(3, 3, 1, 1)).should be_false
     winding_region.contains?(Qt6::Rect.new(3, 3, 1, 1)).should be_true
     canvas.pixel_color(2, 2).should eq(Qt6::Color.new(180, 40, 40, 255))
+    canvas.pixel_color(9, 1).should eq(Qt6::Color.new(40, 220, 90, 255))
     canvas.pixel_color(3, 7).should eq(Qt6::Color.new(40, 180, 220, 255))
+    canvas.pixel_color(9, 9).should eq(Qt6::Color.new(240, 180, 40, 255))
 
     window = Qt6::Widget.new
     window.resize(16, 16)

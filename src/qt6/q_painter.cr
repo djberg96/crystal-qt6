@@ -270,6 +270,18 @@ module Qt6
     end
 
     # Draws a polygon.
+    def draw_convex_polygon(polygon : QPolygon) : self
+      LibQt6.qt6cr_qpainter_draw_convex_polygon_i(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Draws a polygon.
+    def draw_convex_polygon(polygon : QPolygonF) : self
+      LibQt6.qt6cr_qpainter_draw_convex_polygon(to_unsafe, polygon.to_unsafe)
+      self
+    end
+
+    # Draws a polygon.
     def draw_polygon(polygon : QPolygon) : self
       LibQt6.qt6cr_qpainter_draw_polygon_i(to_unsafe, polygon.to_unsafe)
       self

@@ -20,6 +20,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QPalette`, `ColorGroup`, and `ColorRole` bindings with application- and widget-level palette access for theme-aware colors.
 - Added `Point`, `FillRule`, `QPolygon`, and polygon-backed `QRegion` construction for integer-coordinate masks and custom clip shapes.
 - Added direct `QPolygon` support in `QPainterPath#add_polygon`, `QPainter#draw_polygon`, and `QPainter#draw_polyline`.
+- Added `QPainter#draw_convex_polygon` support for both `QPolygon` and `QPolygonF`.
 
 ## [0.8.0] - 2026-04-29
 

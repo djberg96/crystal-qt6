@@ -8443,12 +8443,30 @@ void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) 
   }
 }
 
+void qt6cr_qpainter_draw_convex_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpolygonf(polygon);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawConvexPolygon(*shape);
+  }
+}
+
 void qt6cr_qpainter_draw_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
   auto *painter = as_qpainter(handle);
   auto *shape = as_qpolygon(polygon);
 
   if (painter != nullptr && shape != nullptr) {
     painter->drawPolygon(*shape);
+  }
+}
+
+void qt6cr_qpainter_draw_convex_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *painter = as_qpainter(handle);
+  auto *shape = as_qpolygon(polygon);
+
+  if (painter != nullptr && shape != nullptr) {
+    painter->drawConvexPolygon(*shape);
   }
 }
 

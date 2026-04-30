@@ -1143,6 +1143,8 @@ void qt6cr_qpainter_fill_rect_brush(qt6cr_handle_t handle, qt6cr_rectf_t rect, q
 void qt6cr_qpainter_draw_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 void qt6cr_qpainter_draw_ellipse_center(qt6cr_handle_t handle, qt6cr_pointf_t center, double rx, double ry);
 void qt6cr_qpainter_draw_path(qt6cr_handle_t handle, qt6cr_handle_t path);
+void qt6cr_qpainter_draw_convex_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon);
+void qt6cr_qpainter_draw_convex_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_polygon_i(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
 void qt6cr_qpainter_draw_polyline_i(qt6cr_handle_t handle, qt6cr_handle_t polygon);
