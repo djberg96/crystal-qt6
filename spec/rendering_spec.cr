@@ -38,6 +38,7 @@ describe Qt6 do
     curve_path[3].type.should eq(Qt6::PainterPathElementType::CurveToData)
     curve_path[4].type.should eq(Qt6::PainterPathElementType::CurveToData)
     curve_path.control_point_rect.height.should be > curve_path.bounding_rect.height
+    curve_path.fill_rule.should eq(Qt6::FillRule::OddEven)
 
     path.contains(Qt6::PointF.new(2.0, 2.0)).should be_true
     path.contains(Qt6::RectF.new(1.0, 1.0, 2.0, 2.0)).should be_true
@@ -55,6 +56,28 @@ describe Qt6 do
     path.contains(Qt6::PointF.new(12.0, 2.0)).should be_true
     path.connect_path(curve_path)
     path.current_position.should eq(curve_path.current_position)
+
+    winding_points = [
+      Qt6::Point.new(0, 0),
+      Qt6::Point.new(8, 0),
+      Qt6::Point.new(8, 8),
+      Qt6::Point.new(0, 8),
+      Qt6::Point.new(0, 0),
+      Qt6::Point.new(2, 2),
+      Qt6::Point.new(6, 2),
+      Qt6::Point.new(6, 6),
+      Qt6::Point.new(2, 6),
+      Qt6::Point.new(2, 2),
+    ]
+    winding_path = Qt6::QPainterPath.new
+    winding_path.fill_rule = Qt6::FillRule::Winding
+    winding_path.add_polygon(Qt6::QPolygon.new(winding_points))
+    odd_even_path = Qt6::QPainterPath.new
+    odd_even_path.fill_rule = Qt6::FillRule::OddEven
+    odd_even_path.add_polygon(Qt6::QPolygon.new(winding_points))
+
+    winding_path.contains(Qt6::PointF.new(3.0, 3.0)).should be_true
+    odd_even_path.contains(Qt6::PointF.new(3.0, 3.0)).should be_false
 
     disposable_path = Qt6::QPainterPath.new
     disposable_path.add_ellipse(Qt6::RectF.new(0.0, 0.0, 6.0, 6.0))

@@ -1100,6 +1100,8 @@ int qt6cr_qpainter_path_element_count(qt6cr_handle_t handle);
 qt6cr_painter_path_element_t qt6cr_qpainter_path_element_at(qt6cr_handle_t handle, int index);
 qt6cr_rectf_t qt6cr_qpainter_path_bounding_rect(qt6cr_handle_t handle);
 qt6cr_rectf_t qt6cr_qpainter_path_control_point_rect(qt6cr_handle_t handle);
+int qt6cr_qpainter_path_fill_rule(qt6cr_handle_t handle);
+void qt6cr_qpainter_path_set_fill_rule(qt6cr_handle_t handle, int fill_rule);
 qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform);
 qt6cr_handle_t qt6cr_qpainter_path_translated(qt6cr_handle_t handle, double dx, double dy);
 qt6cr_handle_t qt6cr_qpainter_path_simplified(qt6cr_handle_t handle);

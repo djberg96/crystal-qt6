@@ -1076,6 +1076,8 @@ module Qt6
     fun qt6cr_qpainter_path_element_at = qt6cr_qpainter_path_element_at(handle : Handle, index : LibC::Int) : PainterPathElementValue
     fun qt6cr_qpainter_path_bounding_rect = qt6cr_qpainter_path_bounding_rect(handle : Handle) : RectFValue
     fun qt6cr_qpainter_path_control_point_rect = qt6cr_qpainter_path_control_point_rect(handle : Handle) : RectFValue
+    fun qt6cr_qpainter_path_fill_rule = qt6cr_qpainter_path_fill_rule(handle : Handle) : LibC::Int
+    fun qt6cr_qpainter_path_set_fill_rule = qt6cr_qpainter_path_set_fill_rule(handle : Handle, fill_rule : LibC::Int)
     fun qt6cr_qpainter_path_transformed = qt6cr_qpainter_path_transformed(handle : Handle, transform : Handle) : Handle
     fun qt6cr_qpainter_path_translated = qt6cr_qpainter_path_translated(handle : Handle, dx : Float64, dy : Float64) : Handle
     fun qt6cr_qpainter_path_simplified = qt6cr_qpainter_path_simplified(handle : Handle) : Handle

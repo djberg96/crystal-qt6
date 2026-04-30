@@ -8137,6 +8137,19 @@ qt6cr_rectf_t qt6cr_qpainter_path_control_point_rect(qt6cr_handle_t handle) {
   return path == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(path->controlPointRect());
 }
 
+int qt6cr_qpainter_path_fill_rule(qt6cr_handle_t handle) {
+  auto *path = as_qpainter_path(handle);
+  return path == nullptr ? 0 : static_cast<int>(path->fillRule());
+}
+
+void qt6cr_qpainter_path_set_fill_rule(qt6cr_handle_t handle, int fill_rule) {
+  auto *path = as_qpainter_path(handle);
+
+  if (path != nullptr) {
+    path->setFillRule(static_cast<Qt::FillRule>(fill_rule));
+  }
+}
+
 qt6cr_handle_t qt6cr_qpainter_path_transformed(qt6cr_handle_t handle, qt6cr_handle_t transform) {
   auto *path = as_qpainter_path(handle);
   auto *matrix = as_qtransform(transform);

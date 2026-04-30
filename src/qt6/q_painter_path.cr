@@ -136,6 +136,17 @@ module Qt6
       RectF.from_native(LibQt6.qt6cr_qpainter_path_control_point_rect(to_unsafe))
     end
 
+    # Returns the fill rule used when determining interior regions.
+    def fill_rule : FillRule
+      FillRule.from_value(LibQt6.qt6cr_qpainter_path_fill_rule(to_unsafe))
+    end
+
+    # Sets the fill rule used when determining interior regions.
+    def fill_rule=(value : FillRule) : FillRule
+      LibQt6.qt6cr_qpainter_path_set_fill_rule(to_unsafe, value.value)
+      value
+    end
+
     # Returns a transformed copy of the path.
     def transformed(transform : QTransform) : QPainterPath
       QPainterPath.wrap(LibQt6.qt6cr_qpainter_path_transformed(to_unsafe, transform.to_unsafe), true)

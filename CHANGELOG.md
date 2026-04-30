@@ -22,6 +22,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added direct `QPolygon` support in `QPainterPath#add_polygon`, `QPainter#draw_polygon`, and `QPainter#draw_polyline`.
 - Added `QPainter#draw_convex_polygon` support for both `QPolygon` and `QPolygonF`.
 - Added `BrushStyle` plus deeper `QBrush` style, texture, texture-image, and opacity helpers.
+- Added `QPainterPath#fill_rule` support for odd-even and winding interior control.
 
 ## [0.8.0] - 2026-04-29
 
