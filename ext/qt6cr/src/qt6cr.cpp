@@ -41,6 +41,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFocusFrame>
 #include <QFontComboBox>
 #include <QFontDialog>
 #include <QFrame>
@@ -1450,6 +1451,10 @@ QGroupBox *as_group_box(qt6cr_handle_t handle) {
 
 QFrame *as_frame(qt6cr_handle_t handle) {
   return static_cast<QFrame *>(handle);
+}
+
+QFocusFrame *as_focus_frame(qt6cr_handle_t handle) {
+  return static_cast<QFocusFrame *>(handle);
 }
 
 QProgressBar *as_progress_bar(qt6cr_handle_t handle) {
@@ -12905,6 +12910,23 @@ void qt6cr_frame_set_mid_line_width(qt6cr_handle_t handle, int value) {
 int qt6cr_frame_frame_width(qt6cr_handle_t handle) {
   auto *frame = as_frame(handle);
   return frame == nullptr ? 0 : frame->frameWidth();
+}
+
+qt6cr_handle_t qt6cr_focus_frame_create(qt6cr_handle_t parent) {
+  return new QFocusFrame(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_focus_frame_widget(qt6cr_handle_t handle) {
+  auto *focus_frame = as_focus_frame(handle);
+  return focus_frame == nullptr ? nullptr : focus_frame->widget();
+}
+
+void qt6cr_focus_frame_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *focus_frame = as_focus_frame(handle);
+
+  if (focus_frame != nullptr) {
+    focus_frame->setWidget(as_widget(widget));
+  }
 }
 
 qt6cr_handle_t qt6cr_progress_bar_create(qt6cr_handle_t parent) {

@@ -258,6 +258,7 @@ describe Qt6 do
     scroll_area.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
     scroll_area.widget_resizable = true
     scroll_area.widget = host
+    focus_frame = Qt6::FocusFrame.new(dialog)
     tool_box = Qt6::ToolBox.new(dialog)
     tool_box_events = [] of Int32
     layers_page = Qt6::Label.new("Layers")
@@ -316,6 +317,11 @@ describe Qt6 do
     scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
     scroll_area.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
     scroll_area.widget_resizable?.should be_true
+    focus_frame.widget.should be_nil
+    focus_frame.widget = select_button
+    focus_frame.widget.not_nil!.to_unsafe.should eq(select_button.to_unsafe)
+    focus_frame.widget = nil
+    focus_frame.widget.should be_nil
     tool_box.count.should eq(3)
     tool_box.item_text(0).should eq("Layers")
     tool_box.item_text(1).should eq("Imported")

@@ -1847,6 +1847,9 @@ void qt6cr_frame_set_line_width(qt6cr_handle_t handle, int value);
 int qt6cr_frame_mid_line_width(qt6cr_handle_t handle);
 void qt6cr_frame_set_mid_line_width(qt6cr_handle_t handle, int value);
 int qt6cr_frame_frame_width(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_focus_frame_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_focus_frame_widget(qt6cr_handle_t handle);
+void qt6cr_focus_frame_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 
 qt6cr_handle_t qt6cr_date_time_edit_create(qt6cr_handle_t parent);
 char *qt6cr_date_time_edit_display_format(qt6cr_handle_t handle);
