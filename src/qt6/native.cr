@@ -222,6 +222,14 @@ module Qt6
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
     fun qt6cr_widget_tool_tip = qt6cr_widget_tool_tip(handle : Handle) : UInt8*
     fun qt6cr_widget_set_tool_tip = qt6cr_widget_set_tool_tip(handle : Handle, tool_tip : UInt8*)
+    fun qt6cr_tool_tip_font = qt6cr_tool_tip_font : Handle
+    fun qt6cr_tool_tip_set_font = qt6cr_tool_tip_set_font(font : Handle)
+    fun qt6cr_tool_tip_hide_text = qt6cr_tool_tip_hide_text
+    fun qt6cr_tool_tip_is_visible = qt6cr_tool_tip_is_visible : Bool
+    fun qt6cr_tool_tip_palette = qt6cr_tool_tip_palette : Handle
+    fun qt6cr_tool_tip_set_palette = qt6cr_tool_tip_set_palette(palette : Handle)
+    fun qt6cr_tool_tip_show_text = qt6cr_tool_tip_show_text(widget : Handle, position : PointFValue, text : UInt8*, msec_display_time : LibC::Int)
+    fun qt6cr_tool_tip_text = qt6cr_tool_tip_text : UInt8*
     fun qt6cr_widget_window_icon = qt6cr_widget_window_icon(handle : Handle) : Handle
     fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
     fun qt6cr_widget_is_enabled = qt6cr_widget_is_enabled(handle : Handle) : Bool
