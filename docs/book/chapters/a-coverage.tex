@@ -18,6 +18,66 @@ Model/View & Item widgets, abstract list/tree models, standard item models, stan
 \bottomrule
 \end{longtable}
 
+\section{Widget Reference}
+
+The following table collects the major visible widget wrappers in one place. It is intentionally brief: use it as a map of the UI surface, then jump to the earlier chapters or the source when a widget becomes central to your application.
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Widget & Summary \\
+\midrule
+\api{Widget} & Generic \api{QWidget} wrapper for visibility, focus, sizing, palette, masking, repaint, and styling. It is the base for most visible controls. \\
+\api{MainWindow} & Top-level application shell with central widget, menu bar, toolbars, status bar, and dock areas. Use it for desktop-style applications. \\
+\api{Dialog} & Modal or modeless secondary window for settings, confirmation flows, and custom data-entry forms. \\
+\api{MessageBox} & Standard confirmation, warning, error, and information dialog with button-result helpers. \\
+\api{FileDialog} & Native-feeling file and directory picker for open, save, and import/export workflows. \\
+\api{ColorDialog} & Color picker for accents, fills, layer colors, and alpha-aware visual settings. \\
+\api{FontDialog} & Font picker for label styling, editor fonts, and typography choices. \\
+\api{InputDialog} & Compact dialog for one-off text, integer, floating-point, or choice input. \\
+\api{ProgressDialog} & Cancelable progress window for longer-running interactive tasks. \\
+\api{SplashScreen} & Temporary startup window for branding and early status messages while the application loads. \\
+\api{DialogButtonBox} & Standard dialog command row that keeps OK, Cancel, Help, and similar buttons aligned with Qt conventions. \\
+\api{Label} & Read-only text or pixmap display for captions, status values, previews, and lightweight visual output. \\
+\api{PushButton} & General command button for direct actions such as Apply, Save, Add, or Export. \\
+\api{ToolButton} & Compact command button suited to toolbars, palettes, and menu-backed command launchers. \\
+\api{CommandLinkButton} & Larger action button with descriptive secondary text, often used in launchers or task-oriented dialogs. \\
+\api{CheckBox} & Independent boolean or tri-state option control. \\
+\api{RadioButton} & Single-choice option inside a visible group of mutually related modes or settings. \\
+\api{LineEdit} & Single-line text editor for names, paths, searches, and short freeform values. \\
+\api{ComboBox} & Compact choice control that can also become editable for typed values with suggested options. \\
+\api{FontComboBox} & Specialized combo box for selecting installed fonts. \\
+\api{TextEdit} & Rich text editor with document and cursor access for formatted editing surfaces. \\
+\api{PlainTextEdit} & Multiline plain-text editor for notes, logs, source snippets, and larger raw text blocks. \\
+\api{TextBrowser} & Read-only rich-text viewer with HTML support and link handling. \\
+\api{Slider} & Linear continuous-ish value control for zoom, volume, thresholds, and live-preview adjustments. \\
+\api{Dial} & Rotary numeric control for compact dashboards, knobs, and instrument-like settings. \\
+\api{ScrollBar} & Explicit scrolling control that can be used standalone or as part of a larger view shell. \\
+\api{SpinBox} & Integer editor with bounded range and step controls. \\
+\api{DoubleSpinBox} & Floating-point editor with range, precision, prefix/suffix, and step controls. \\
+\api{DateTimeEdit} & Combined date/time editor for timestamp-style values. \\
+\api{DateEdit} & Date-only editor for calendar values and schedule metadata. \\
+\api{TimeEdit} & Time-only editor for clocks, durations, and schedule entry. \\
+\api{CalendarWidget} & Graphical month calendar for date selection and schedule-oriented UIs. \\
+\api{ProgressBar} & Read-only bounded value display for completion, loading, and background task progress. \\
+\api{LcdNumber} & Segmented numeric display for dashboard counters and instrument-style readouts. \\
+\api{Frame} & Decorative or structural frame used for separators, boxed panels, and low-level shell polish. \\
+\api{FocusFrame} & Focus highlight widget that tracks another widget and lets Qt draw the platform-style focus indicator. \\
+\api{GroupBox} & Titled panel container, optionally checkable, for visually grouping related settings. \\
+\api{ToolBox} & Stacked-page inspector widget that shows one labeled section at a time. \\
+\api{TabWidget} & Multi-page container with a built-in tab strip and a current-page API. \\
+\api{TabBar} & Lightweight tab strip when page management lives elsewhere. \\
+\api{StackedWidget} & Page stack without visible tabs; useful when another control chooses the active page. \\
+\api{ScrollArea} & Single-child scrolling container for large forms, previews, and inspector panes. \\
+\api{Splitter} & Resizable multi-pane container for editor shells and side-by-side work areas. \\
+\api{DockWidget} & Repositionable side panel for layers, inspectors, logs, search results, and tool palettes. \\
+\api{ListWidget} & Small list surface that owns its items directly. Use it for sidebars and simple collections. \\
+\api{TreeWidget} & Hierarchical item widget for expandable owned data such as grouped layers or outline trees. \\
+\api{TableWidget} & Grid widget that stores its own cell items for small editable tables. \\
+\api{EventWidget} & Custom widget surface with direct paint, input, focus, and drag/drop callbacks. \\
+\api{SizeGrip} & Explicit resize-corner widget for dialogs and utility windows. \\
+\bottomrule
+\end{longtable}
+
 \section{Enum Reference}
 
 The following tables collect enum values that appear often in examples and callbacks. They are a reader-facing snapshot of the Crystal wrappers, not a substitute for checking the source when adding new bindings.
