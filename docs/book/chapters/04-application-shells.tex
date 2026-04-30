@@ -156,13 +156,14 @@ The status bar is for quiet, transient feedback. Use it for command results, val
 \begin{lstlisting}[style=crystal]
 status = main.status_bar
 status.show_message("Ready")
+status.size_grip_enabled = true
 
 save_action.on_triggered do
   status.show_message("Saved project", 2000)
 end
 \end{lstlisting}
 
-A timeout of \api{0} keeps the message until it is replaced or cleared. Nonzero timeouts are useful for short command confirmations.
+A timeout of \api{0} keeps the message until it is replaced or cleared. Nonzero timeouts are useful for short command confirmations. The built-in status-bar size grip is usually the right resize affordance for ordinary main windows, but a custom utility shell can also place an explicit \api{FocusFrame} around its primary search field or command line when keyboard focus should stay visually obvious.
 
 \section{System Tray}
 

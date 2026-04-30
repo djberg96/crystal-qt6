@@ -108,6 +108,25 @@ zoom.on_released do
 end
 \end{lstlisting}
 
+\section{Panel Polish Widgets}
+
+Desktop editors often need a few small shell widgets in addition to the primary value editors. \api{ToolBox} is a compact stacked-page container that works well for inspectors and sidebars. \api{FocusFrame} lets Qt draw a native-looking focus highlight around another widget. \api{SizeGrip} provides an explicit resize corner for custom dialogs or utility windows that do not already expose one through a status bar.
+
+\begin{lstlisting}[style=crystal]
+toolbox = Qt6::ToolBox.new
+toolbox.add_item(Qt6::Label.new("Layer list"), "Layers")
+toolbox.add_item(Qt6::Label.new("Brush settings"), "Brushes")
+toolbox.current_index = 1
+
+search = Qt6::LineEdit.new("terrain")
+focus_frame = Qt6::FocusFrame.new
+focus_frame.widget = search
+
+corner_grip = Qt6::SizeGrip.new(window)
+\end{lstlisting}
+
+Use \api{ToolBox} when a tab bar would feel too heavy and only one inspector page should be visible at a time. Use \api{FocusFrame} sparingly, usually when the focused editor should stand out inside a busy shell. Use \api{SizeGrip} when the platform or window style does not already provide an obvious resize affordance.
+
 \section{Common Control Choices}
 
 Most forms become easier to design when you choose the narrowest control that fits the value being edited.

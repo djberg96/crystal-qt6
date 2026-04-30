@@ -11,7 +11,11 @@ Type & Role \\
 \api{QPainter} & Draws lines, shapes, paths, text, images, and pixmaps onto a target. \\
 \api{QPen} & Controls strokes: color, width, line style, caps, joins, and dash patterns. \\
 \api{QBrush} & Controls fills: solid colors, gradients, image textures, and pixmap textures. \\
+\api{QPalette} & Provides theme-aware colors so custom painting can match the active application or widget palette. \\
 \api{QPainterPath} & Stores vector outlines built from lines, curves, rectangles, ellipses, and polygons. \\
+\api{QRegion} & Represents clip regions, masks, and integer-coordinate filled areas. \\
+\api{QPolygon} and \api{QPolygonF} & Store integer or floating-point point lists for outlines and filled polygons. \\
+\api{QBitmap} & Monochrome bitmap type used for masks, simple textures, and region construction. \\
 \api{QTransform} & Maps coordinates with translation, scaling, and rotation. \\
 \api{QFont} and metrics & Style and measure text before drawing it. \\
 \api{QImage} & Raster target with pixel access and encoding helpers. \\
@@ -139,6 +143,30 @@ end
   \caption{Painter state in action: a saved transform, restored clipping, opacity, and composition mode.}
 \end{figure}
 
+\section{Primitive Drawing}
+
+Besides basic rectangles and ellipses, the binding now covers a broader slice of Qt's immediate drawing primitives.
+
+\begin{lstlisting}[style=crystal]
+outline = Qt6::QPolygonF.new
+outline << Qt6::PointF.new(20.0, 80.0)
+outline << Qt6::PointF.new(70.0, 24.0)
+outline << Qt6::PointF.new(128.0, 92.0)
+
+painter.draw_rounded_rect(Qt6::RectF.new(12.0, 12.0, 96.0, 44.0), 8.0, 8.0)
+painter.draw_polyline(outline)
+painter.draw_arc(Qt6::RectF.new(140.0, 16.0, 48.0, 48.0), 0, 16 * 180)
+painter.draw_pie(Qt6::RectF.new(200.0, 16.0, 48.0, 48.0), 0, 16 * 120)
+painter.draw_chord(Qt6::RectF.new(260.0, 16.0, 48.0, 48.0), 0, 16 * 150)
+painter.draw_text(
+  Qt6::RectF.new(12.0, 96.0, 120.0, 28.0),
+  Qt6::AlignmentFlag::Center,
+  "Aligned"
+)
+\end{lstlisting}
+
+Arc, pie, and chord angles use Qt's native unit: sixteenths of a degree. A half circle is therefore \api{16 * 180}, not just \api{180}.
+
 \section{Paths}
 
 \api{QPainterPath} is the main vector geometry type. A path can contain multiple subpaths, straight segments, Bezier curves, rectangles, ellipses, and polygons.
@@ -158,6 +186,7 @@ badge.add_ellipse(Qt6::RectF.new(188.0, 28.0, 64.0, 48.0))
 scene = Qt6::QPainterPath.new
 scene.add_path(route)
 scene.add_path(badge)
+scene.fill_rule = Qt6::FillRule::Winding
 \end{lstlisting}
 
 Paths are useful for both drawing and geometry queries.
@@ -201,6 +230,44 @@ end
   \caption{A painter path with cubic control points, its bounding rectangle, and a stroked hit-test region.}
 \end{figure}
 
+\section{Regions, Polygons, And Masks}
+
+\api{QRegion} is the integer-coordinate companion to painter paths. It is useful for clip regions, widget masks, repaint scoping, and set-style geometry operations.
+
+\begin{lstlisting}[style=crystal]
+polygon = Qt6::QPolygon.new
+polygon << Qt6::Point.new(12, 12)
+polygon << Qt6::Point.new(88, 12)
+polygon << Qt6::Point.new(64, 72)
+polygon << Qt6::Point.new(12, 56)
+
+region = Qt6::QRegion.new(polygon, Qt6::FillRule::Winding)
+region = region.translated(12, 8)
+
+painter.save
+painter.clip_region = region
+painter.fill_rect(Qt6::RectF.new(0.0, 0.0, 140.0, 100.0), Qt6::Color.new(235, 242, 250))
+painter.restore
+\end{lstlisting}
+
+Regions can also come from a \api{QBitmap}, which is useful for classic mask workflows:
+
+\begin{lstlisting}[style=crystal]
+mask = Qt6::QBitmap.new(48, 48)
+mask.fill(Qt6::Color.new(0, 0, 0))
+chip = Qt6::Label.new("")
+
+Qt6::QPainter.paint(mask) do |painter|
+  painter.brush = Qt6::Color.new(255, 255, 255)
+  painter.pen = Qt6::QPen.new.tap { |pen| pen.style = Qt6::PenStyle::NoPen }
+  painter.draw_ellipse(Qt6::RectF.new(4.0, 4.0, 40.0, 40.0))
+end
+
+chip.mask = Qt6::QRegion.new(mask)
+\end{lstlisting}
+
+The same region surface is available on widgets through \api{Widget#mask} and the region overload of \api{Widget#update}.
+
 \section{Pens, Brushes, And Gradients}
 
 A \api{QPen} controls stroke drawing. Solid lines are the default, but the binding also exposes dash styles, caps, joins, and custom dash patterns.
@@ -226,10 +293,34 @@ A \api{QBrush} controls fills. It can be a solid color, a texture from an image 
 gradient = Qt6::QLinearGradient.new(0.0, 0.0, 0.0, 120.0)
 gradient.set_color_at(0.0, Qt6::Color.new(255, 255, 255))
 gradient.set_color_at(1.0, Qt6::Color.new(190, 220, 245))
+gradient.spread = Qt6::GradientSpread::Repeat
+gradient.coordinate_mode = Qt6::GradientCoordinateMode::ObjectBounding
 
 painter.brush = Qt6::QBrush.new(gradient)
 painter.pen = Qt6::QPen.new(Qt6::Color.new(90, 110, 130), 1.0)
 painter.draw_rect(Qt6::RectF.new(0.0, 0.0, 240.0, 120.0))
+\end{lstlisting}
+
+Conical and radial gradients use the same brush construction path, and the binding exposes radial focal-point control plus stop inspection for all three gradient types.
+
+\begin{lstlisting}[style=crystal]
+badge_gradient = Qt6::QConicalGradient.new(48.0, 48.0, 0.0)
+badge_gradient.set_color_at(0.0, Qt6::Color.new(255, 245, 180))
+badge_gradient.set_color_at(1.0, Qt6::Color.new(232, 164, 72))
+
+glow = Qt6::QRadialGradient.new(48.0, 48.0, 36.0, 40.0, 40.0)
+glow.set_color_at(0.0, Qt6::Color.new(255, 255, 255, 220))
+glow.set_color_at(1.0, Qt6::Color.new(255, 255, 255, 0))
+\end{lstlisting}
+
+\api{QBrush} also supports explicit styles and texture sources:
+
+\begin{lstlisting}[style=crystal]
+checker = Qt6::QBrush.new(Qt6::BrushStyle::DiagCrossPattern)
+checker.color = Qt6::Color.new(210, 220, 232)
+
+texture = Qt6::QImage.from_file("paper.png")
+paper = Qt6::QBrush.new(texture)
 \end{lstlisting}
 
 Use \api{PenStyle::NoPen} when you want a fill with no outline.
@@ -261,6 +352,24 @@ painter.draw_text(Qt6::PointF.new(120.0 - label_width / 2.0, baseline_y), label)
 \end{lstlisting}
 
 \api{QFontMetrics} returns integer measurements. \api{QFontMetricsF} returns floating-point measurements and is usually the better fit for painter coordinates.
+
+\section{Palette-Aware Painting}
+
+Hard-coded colors are sometimes right for exported artwork, but custom widgets usually feel more native when they draw from the current application or widget palette.
+
+\begin{lstlisting}[style=crystal]
+palette = canvas.palette
+background = palette.color(Qt6::ColorRole::Base)
+foreground = palette.color(Qt6::ColorRole::Text)
+accent = palette.color(Qt6::ColorRole::Highlight)
+
+painter.fill_rect(event.rect, background)
+painter.pen = foreground
+painter.draw_text(Qt6::PointF.new(16.0, 28.0), "Palette-aware canvas")
+painter.brush = accent
+\end{lstlisting}
+
+Use \api{Application#palette} when the drawing should follow the global application theme, and \api{Widget#palette} when a specific widget may override those colors locally.
 
 \section{Images And Pixmaps}
 
