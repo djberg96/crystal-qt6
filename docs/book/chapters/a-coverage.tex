@@ -78,6 +78,44 @@ Widget & Summary \\
 \bottomrule
 \end{longtable}
 
+\section{Painting and Rendering Reference}
+
+The painting surface is broader than the widget list because it spans value types, raster targets, vector geometry, theme-aware colors, and export helpers. This table is a quick orientation pass for the classes most likely to appear in custom widget painting, rendering examples, and export flows.
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Type & Summary \\
+\midrule
+\api{Color} & RGBA color value used throughout painting, palettes, brushes, pens, and pixel operations. \\
+\api{Point}, \api{PointF}, \api{LineF}, \api{Size}, \api{SizeF}, \api{Rect}, \api{RectF} & Common geometry value types for painter coordinates, image sizes, bounds, and layout-independent drawing math. \\
+\api{QPainter} & Central drawing object for lines, shapes, text, images, paths, clipping, transforms, opacity, and composition onto a target. \\
+\api{QPen} & Stroke description for outlines, including width, style, dash pattern, caps, joins, and color. \\
+\api{QBrush} & Fill description for solid colors, brush styles, gradients, image textures, and pixmap textures. \\
+\api{QPalette} & Theme-aware color source for application- or widget-level painting that should follow the active platform style. \\
+\api{QPainterPath} & Vector path container for lines, curves, rectangles, ellipses, polygons, containment checks, and fill-rule-controlled geometry. \\
+\api{QPainterPathStroker} & Utility that turns a stroked outline into a filled path, useful for hit testing and halos around thin geometry. \\
+\api{QTransform} & Affine transform helper for translation, scaling, rotation, and mapping painter or path coordinates. \\
+\api{QPolygon} & Integer-coordinate polygon for region construction, painter polygon drawing, and mask-style geometry. \\
+\api{QPolygonF} & Floating-point polygon for painter polylines, polygons, and precise vector geometry work. \\
+\api{QRegion} & Integer filled-area type for clip regions, widget masks, set operations, and region-scoped repaint scheduling. \\
+\api{QLinearGradient} & Linear gradient fill source with stops, spread, and coordinate-mode control. \\
+\api{QConicalGradient} & Angular gradient fill source for dials, badges, and radial color sweeps. \\
+\api{QRadialGradient} & Radial gradient fill source with center, radius, focal point, stop inspection, and spread control. \\
+\api{QImage} & General-purpose raster image with pixel read/write access, copy/scale/transform helpers, and a convenient offscreen paint target. \\
+\api{QPixmap} & Display-oriented raster image that is good for widget grabs, cached UI artwork, and painter draw sources. \\
+\api{QBitmap} & Monochrome pixmap variant used for masks, classic texture workflows, and region construction. \\
+\api{QImageReader} & Configurable image decoder for probing metadata and loading raster formats from files or devices. \\
+\api{QImageWriter} & Configurable image encoder for writing raster output with explicit format and quality control. \\
+\api{QSvgRenderer} & SVG loader and renderer for drawing complete documents or named elements into an existing painter. \\
+\api{QSvgWidget} & Widget-backed SVG display surface that is convenient for embedding vector art directly in the UI. \\
+\api{QSvgGenerator} & Painter target that writes SVG output while reusing the same drawing code used for raster or widget painting. \\
+\api{QPdfWriter} & Painter target for fixed-page PDF export, page sizing, and print-style document output. \\
+\api{QFont} & Typeface, size, weight, and style description for painter text output and widget typography. \\
+\api{QFontMetrics} & Integer text metrics for measuring width, ascent, descent, and layout spacing before drawing text. \\
+\api{QFontMetricsF} & Floating-point text metrics that fit painter-coordinate work more naturally than integer metrics. \\
+\bottomrule
+\end{longtable}
+
 \section{Enum Reference}
 
 The following tables collect enum values that appear often in examples and callbacks. They are a reader-facing snapshot of the Crystal wrappers, not a substitute for checking the source when adding new bindings.
