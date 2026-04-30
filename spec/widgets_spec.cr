@@ -258,6 +258,18 @@ describe Qt6 do
     scroll_area.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
     scroll_area.widget_resizable = true
     scroll_area.widget = host
+    tool_box = Qt6::ToolBox.new(dialog)
+    tool_box_events = [] of Int32
+    layers_page = Qt6::Label.new("Layers")
+    filters_page = Qt6::Label.new("Filters")
+    imported_page = Qt6::Label.new("Imported")
+    tool_box.on_current_index_changed do |value|
+      tool_box_events << value
+    end
+    tool_box.add_item(layers_page, "Layers")
+    tool_box.add_item(filters_page, Qt6::QIcon.new, "Filters")
+    tool_box.insert_item(1, imported_page, "Imported")
+    size_grip = Qt6::SizeGrip.new(dialog)
 
     button_box = Qt6::DialogButtonBox.new(
       Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel,
@@ -304,6 +316,33 @@ describe Qt6 do
     scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
     scroll_area.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
     scroll_area.widget_resizable?.should be_true
+    tool_box.count.should eq(3)
+    tool_box.item_text(0).should eq("Layers")
+    tool_box.item_text(1).should eq("Imported")
+    tool_box.set_item_text(1, "Assets").should eq("Assets")
+    tool_box.item_text(1).should eq("Assets")
+    tool_box.item_enabled?(0).should be_true
+    tool_box.set_item_enabled(0, false).should be_false
+    tool_box.item_enabled?(0).should be_false
+    tool_box.current_widget = layers_page
+    application.process_events
+    tool_box.current_index.should eq(0)
+    tool_box.current_index = 1
+    application.process_events
+    tool_box.current_widget.not_nil!.to_unsafe.should eq(imported_page.to_unsafe)
+    tool_box.widget(2).not_nil!.to_unsafe.should eq(filters_page.to_unsafe)
+    tool_box.index_of(filters_page).should eq(2)
+    tool_box_events.last.should eq(1)
+    tool_box.current_widget = filters_page
+    application.process_events
+    tool_box.current_index.should eq(2)
+    tool_box.remove_item(1)
+    tool_box.count.should eq(2)
+    dialog.resize(320, 240)
+    dialog.show
+    application.process_events
+    size_grip.size_hint.width.should be >= 0
+    size_grip.size_hint.height.should be >= 0
     button_box.center_buttons?.should be_true
     button_box.orientation.should eq(Qt6::Orientation::Vertical)
     button_box.standard_buttons.should eq(

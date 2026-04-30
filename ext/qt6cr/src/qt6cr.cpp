@@ -116,6 +116,7 @@
 #include <QStyledItemDelegate>
 #include <QSystemTrayIcon>
 #include <QTabBar>
+#include <QToolBox>
 #include <QTextCursor>
 #include <QTextBrowser>
 #include <QTextDocument>
@@ -133,6 +134,7 @@
 #include <QTableView>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QSizeGrip>
 #include <QTimer>
 #include <QTransform>
 #include <QToolBar>
@@ -1530,6 +1532,10 @@ QTextBrowser *as_text_browser(qt6cr_handle_t handle) {
   return static_cast<QTextBrowser *>(handle);
 }
 
+QToolBox *as_tool_box(qt6cr_handle_t handle) {
+  return static_cast<QToolBox *>(handle);
+}
+
 QTabWidget *as_tab_widget(qt6cr_handle_t handle) {
   return static_cast<QTabWidget *>(handle);
 }
@@ -1548,6 +1554,10 @@ QStackedLayout *as_stacked_layout(qt6cr_handle_t handle) {
 
 QScrollArea *as_scroll_area(qt6cr_handle_t handle) {
   return static_cast<QScrollArea *>(handle);
+}
+
+QSizeGrip *as_size_grip(qt6cr_handle_t handle) {
+  return static_cast<QSizeGrip *>(handle);
 }
 
 QSplitter *as_splitter(qt6cr_handle_t handle) {
@@ -14022,6 +14032,145 @@ void qt6cr_text_browser_on_anchor_clicked(qt6cr_handle_t handle, qt6cr_string_ca
   });
 }
 
+qt6cr_handle_t qt6cr_tool_box_create(qt6cr_handle_t parent) {
+  return new QToolBox(as_widget(parent));
+}
+
+int qt6cr_tool_box_add_item(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page = as_widget(widget);
+
+  if (tool_box == nullptr || page == nullptr) {
+    return -1;
+  }
+
+  return tool_box->addItem(page, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+int qt6cr_tool_box_add_item_with_icon(qt6cr_handle_t handle, qt6cr_handle_t widget, qt6cr_handle_t icon, const char *label) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page = as_widget(widget);
+  auto *page_icon = as_qicon(icon);
+
+  if (tool_box == nullptr || page == nullptr || page_icon == nullptr) {
+    return -1;
+  }
+
+  return tool_box->addItem(page, *page_icon, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+int qt6cr_tool_box_insert_item(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, const char *label) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page = as_widget(widget);
+
+  if (tool_box == nullptr || page == nullptr) {
+    return -1;
+  }
+
+  return tool_box->insertItem(index, page, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+int qt6cr_tool_box_insert_item_with_icon(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, qt6cr_handle_t icon, const char *label) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page = as_widget(widget);
+  auto *page_icon = as_qicon(icon);
+
+  if (tool_box == nullptr || page == nullptr || page_icon == nullptr) {
+    return -1;
+  }
+
+  return tool_box->insertItem(index, page, *page_icon, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+void qt6cr_tool_box_remove_item(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+
+  if (tool_box != nullptr && index >= 0) {
+    tool_box->removeItem(index);
+  }
+}
+
+void qt6cr_tool_box_set_item_enabled(qt6cr_handle_t handle, int index, bool value) {
+  auto *tool_box = as_tool_box(handle);
+
+  if (tool_box != nullptr && index >= 0) {
+    tool_box->setItemEnabled(index, value);
+  }
+}
+
+bool qt6cr_tool_box_item_enabled(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box != nullptr && index >= 0 && tool_box->isItemEnabled(index);
+}
+
+void qt6cr_tool_box_set_item_text(qt6cr_handle_t handle, int index, const char *value) {
+  auto *tool_box = as_tool_box(handle);
+
+  if (tool_box != nullptr && index >= 0) {
+    tool_box->setItemText(index, QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_tool_box_item_text(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? duplicate_string("") : duplicate_string(tool_box->itemText(index));
+}
+
+int qt6cr_tool_box_current_index(qt6cr_handle_t handle) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? -1 : tool_box->currentIndex();
+}
+
+void qt6cr_tool_box_set_current_index(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+
+  if (tool_box != nullptr) {
+    tool_box->setCurrentIndex(index);
+  }
+}
+
+qt6cr_handle_t qt6cr_tool_box_current_widget(qt6cr_handle_t handle) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? nullptr : tool_box->currentWidget();
+}
+
+void qt6cr_tool_box_set_current_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page = as_widget(widget);
+
+  if (tool_box != nullptr && page != nullptr) {
+    tool_box->setCurrentWidget(page);
+  }
+}
+
+qt6cr_handle_t qt6cr_tool_box_widget(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? nullptr : tool_box->widget(index);
+}
+
+int qt6cr_tool_box_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page = as_widget(widget);
+  return tool_box == nullptr || page == nullptr ? -1 : tool_box->indexOf(page);
+}
+
+int qt6cr_tool_box_count(qt6cr_handle_t handle) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? 0 : tool_box->count();
+}
+
+void qt6cr_tool_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tool_box = as_tool_box(handle);
+
+  if (tool_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_box, &QToolBox::currentChanged, tool_box, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
 qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent) {
   return new QTabWidget(as_widget(parent));
 }
@@ -14466,6 +14615,15 @@ void qt6cr_scroll_area_ensure_widget_visible(qt6cr_handle_t handle, qt6cr_handle
   if (scroll_area != nullptr && content != nullptr) {
     scroll_area->ensureWidgetVisible(content, xmargin, ymargin);
   }
+}
+
+qt6cr_handle_t qt6cr_size_grip_create(qt6cr_handle_t parent) {
+  return new QSizeGrip(as_widget(parent));
+}
+
+qt6cr_size_t qt6cr_size_grip_size_hint(qt6cr_handle_t handle) {
+  auto *size_grip = as_size_grip(handle);
+  return size_grip == nullptr ? qt6cr_size_t{0, 0} : to_size(size_grip->sizeHint());
 }
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation) {

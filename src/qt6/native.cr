@@ -1984,6 +1984,25 @@ module Qt6
     fun qt6cr_text_browser_set_vertical_scroll_value = qt6cr_text_browser_set_vertical_scroll_value(handle : Handle, value : LibC::Int)
     fun qt6cr_text_browser_on_anchor_clicked = qt6cr_text_browser_on_anchor_clicked(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
 
+    fun qt6cr_tool_box_create = qt6cr_tool_box_create(parent : Handle) : Handle
+    fun qt6cr_tool_box_add_item = qt6cr_tool_box_add_item(handle : Handle, widget : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tool_box_add_item_with_icon = qt6cr_tool_box_add_item_with_icon(handle : Handle, widget : Handle, icon : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tool_box_insert_item = qt6cr_tool_box_insert_item(handle : Handle, index : LibC::Int, widget : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tool_box_insert_item_with_icon = qt6cr_tool_box_insert_item_with_icon(handle : Handle, index : LibC::Int, widget : Handle, icon : Handle, label : UInt8*) : LibC::Int
+    fun qt6cr_tool_box_remove_item = qt6cr_tool_box_remove_item(handle : Handle, index : LibC::Int)
+    fun qt6cr_tool_box_set_item_enabled = qt6cr_tool_box_set_item_enabled(handle : Handle, index : LibC::Int, value : Bool)
+    fun qt6cr_tool_box_item_enabled = qt6cr_tool_box_item_enabled(handle : Handle, index : LibC::Int) : Bool
+    fun qt6cr_tool_box_set_item_text = qt6cr_tool_box_set_item_text(handle : Handle, index : LibC::Int, value : UInt8*)
+    fun qt6cr_tool_box_item_text = qt6cr_tool_box_item_text(handle : Handle, index : LibC::Int) : UInt8*
+    fun qt6cr_tool_box_current_index = qt6cr_tool_box_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_tool_box_set_current_index = qt6cr_tool_box_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_tool_box_current_widget = qt6cr_tool_box_current_widget(handle : Handle) : Handle
+    fun qt6cr_tool_box_set_current_widget = qt6cr_tool_box_set_current_widget(handle : Handle, widget : Handle)
+    fun qt6cr_tool_box_widget = qt6cr_tool_box_widget(handle : Handle, index : LibC::Int) : Handle
+    fun qt6cr_tool_box_index_of = qt6cr_tool_box_index_of(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_tool_box_count = qt6cr_tool_box_count(handle : Handle) : LibC::Int
+    fun qt6cr_tool_box_on_current_index_changed = qt6cr_tool_box_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
     fun qt6cr_tab_widget_create = qt6cr_tab_widget_create(parent : Handle) : Handle
     fun qt6cr_tab_widget_add_tab = qt6cr_tab_widget_add_tab(handle : Handle, widget : Handle, label : UInt8*) : LibC::Int
     fun qt6cr_tab_widget_widget = qt6cr_tab_widget_widget(handle : Handle, index : LibC::Int) : Handle
@@ -2050,6 +2069,8 @@ module Qt6
     fun qt6cr_scroll_area_set_horizontal_scroll_bar_policy = qt6cr_scroll_area_set_horizontal_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_scroll_area_ensure_visible = qt6cr_scroll_area_ensure_visible(handle : Handle, x : LibC::Int, y : LibC::Int, xmargin : LibC::Int, ymargin : LibC::Int)
     fun qt6cr_scroll_area_ensure_widget_visible = qt6cr_scroll_area_ensure_widget_visible(handle : Handle, widget : Handle, xmargin : LibC::Int, ymargin : LibC::Int)
+    fun qt6cr_size_grip_create = qt6cr_size_grip_create(parent : Handle) : Handle
+    fun qt6cr_size_grip_size_hint = qt6cr_size_grip_size_hint(handle : Handle) : SizeValue
     fun qt6cr_abstract_scroll_area_vertical_scroll_bar_policy = qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(handle : Handle) : LibC::Int
     fun qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy = qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy = qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int

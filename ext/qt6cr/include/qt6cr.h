@@ -2005,6 +2005,25 @@ int qt6cr_text_browser_vertical_scroll_value(qt6cr_handle_t handle);
 void qt6cr_text_browser_set_vertical_scroll_value(qt6cr_handle_t handle, int value);
 void qt6cr_text_browser_on_anchor_clicked(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 
+qt6cr_handle_t qt6cr_tool_box_create(qt6cr_handle_t parent);
+int qt6cr_tool_box_add_item(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label);
+int qt6cr_tool_box_add_item_with_icon(qt6cr_handle_t handle, qt6cr_handle_t widget, qt6cr_handle_t icon, const char *label);
+int qt6cr_tool_box_insert_item(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, const char *label);
+int qt6cr_tool_box_insert_item_with_icon(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, qt6cr_handle_t icon, const char *label);
+void qt6cr_tool_box_remove_item(qt6cr_handle_t handle, int index);
+void qt6cr_tool_box_set_item_enabled(qt6cr_handle_t handle, int index, bool value);
+bool qt6cr_tool_box_item_enabled(qt6cr_handle_t handle, int index);
+void qt6cr_tool_box_set_item_text(qt6cr_handle_t handle, int index, const char *value);
+char *qt6cr_tool_box_item_text(qt6cr_handle_t handle, int index);
+int qt6cr_tool_box_current_index(qt6cr_handle_t handle);
+void qt6cr_tool_box_set_current_index(qt6cr_handle_t handle, int index);
+qt6cr_handle_t qt6cr_tool_box_current_widget(qt6cr_handle_t handle);
+void qt6cr_tool_box_set_current_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_tool_box_widget(qt6cr_handle_t handle, int index);
+int qt6cr_tool_box_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget);
+int qt6cr_tool_box_count(qt6cr_handle_t handle);
+void qt6cr_tool_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_tab_widget_create(qt6cr_handle_t parent);
 int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const char *label);
 int qt6cr_tab_widget_count(qt6cr_handle_t handle);
@@ -2063,6 +2082,9 @@ int qt6cr_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy);
 void qt6cr_scroll_area_ensure_visible(qt6cr_handle_t handle, int x, int y, int xmargin, int ymargin);
 void qt6cr_scroll_area_ensure_widget_visible(qt6cr_handle_t handle, qt6cr_handle_t widget, int xmargin, int ymargin);
+
+qt6cr_handle_t qt6cr_size_grip_create(qt6cr_handle_t parent);
+qt6cr_size_t qt6cr_size_grip_size_hint(qt6cr_handle_t handle);
 
 int qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle);
 void qt6cr_abstract_scroll_area_set_vertical_scroll_bar_policy(qt6cr_handle_t handle, int policy);
