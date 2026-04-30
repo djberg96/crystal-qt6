@@ -9,6 +9,11 @@ extern "C" {
 
 typedef void *qt6cr_handle_t;
 typedef struct {
+	int x;
+	int y;
+} qt6cr_point_t;
+
+typedef struct {
 	double x;
 	double y;
 } qt6cr_pointf_t;
@@ -901,6 +906,7 @@ void qt6cr_qpalette_set_color_for_group(qt6cr_handle_t handle, int group, int ro
 qt6cr_handle_t qt6cr_qregion_create(void);
 qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type);
 qt6cr_handle_t qt6cr_qregion_create_bitmap(qt6cr_handle_t bitmap);
+qt6cr_handle_t qt6cr_qregion_create_polygon(qt6cr_handle_t polygon, int fill_rule);
 void qt6cr_qregion_destroy(qt6cr_handle_t handle);
 bool qt6cr_qregion_is_empty(qt6cr_handle_t handle);
 bool qt6cr_qregion_is_null(qt6cr_handle_t handle);
@@ -1052,6 +1058,13 @@ void qt6cr_qtransform_rotate(qt6cr_handle_t handle, double angle);
 qt6cr_pointf_t qt6cr_qtransform_map_point(qt6cr_handle_t handle, qt6cr_pointf_t point);
 qt6cr_rectf_t qt6cr_qtransform_map_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
 qt6cr_handle_t qt6cr_qtransform_map_path(qt6cr_handle_t handle, qt6cr_handle_t path);
+
+qt6cr_handle_t qt6cr_qpolygon_create(void);
+void qt6cr_qpolygon_destroy(qt6cr_handle_t handle);
+void qt6cr_qpolygon_append(qt6cr_handle_t handle, qt6cr_point_t point);
+int qt6cr_qpolygon_size(qt6cr_handle_t handle);
+qt6cr_point_t qt6cr_qpolygon_at(qt6cr_handle_t handle, int index);
+qt6cr_rect_t qt6cr_qpolygon_bounding_rect(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qpolygonf_create(void);
 void qt6cr_qpolygonf_destroy(qt6cr_handle_t handle);

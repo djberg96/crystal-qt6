@@ -649,6 +649,52 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports integer polygons and polygon-backed regions" do
+    app
+
+    polygon = Qt6::QPolygon.new([
+      Qt6::Point.new(0, 0),
+      Qt6::Point.new(8, 0),
+      Qt6::Point.new(8, 8),
+      Qt6::Point.new(0, 8),
+    ])
+    polygon << Qt6::Point.new(0, 0)
+
+    winding_points = [
+      Qt6::Point.new(0, 0),
+      Qt6::Point.new(8, 0),
+      Qt6::Point.new(8, 8),
+      Qt6::Point.new(0, 8),
+      Qt6::Point.new(0, 0),
+      Qt6::Point.new(2, 2),
+      Qt6::Point.new(6, 2),
+      Qt6::Point.new(6, 6),
+      Qt6::Point.new(2, 6),
+      Qt6::Point.new(2, 2),
+    ]
+    complex_polygon = Qt6::QPolygon.new(winding_points)
+
+    region = Qt6::QRegion.new(polygon)
+    odd_even_region = Qt6::QRegion.new(complex_polygon, Qt6::FillRule::OddEven)
+    winding_region = Qt6::QRegion.new(complex_polygon, Qt6::FillRule::Winding)
+
+    polygon.size.should eq(5)
+    polygon[2].should eq(Qt6::Point.new(8, 8))
+    polygon.bounding_rect.should eq(Qt6::Rect.new(0, 0, 9, 9))
+    polygon.to_a.last.should eq(Qt6::Point.new(0, 0))
+
+    region.bounding_rect.should eq(Qt6::Rect.new(0, 0, 8, 8))
+    region.contains?(Qt6::Rect.new(2, 2, 2, 2)).should be_true
+    odd_even_region.contains?(Qt6::Rect.new(3, 3, 1, 1)).should be_false
+    winding_region.contains?(Qt6::Rect.new(3, 3, 1, 1)).should be_true
+
+    window = Qt6::Widget.new
+    window.resize(16, 16)
+    window.mask = region
+    window.mask.bounding_rect.should eq(Qt6::Rect.new(0, 0, 8, 8))
+    window.release
+  end
+
   it "supports monochrome bitmaps for masks, transforms, and file round-trips" do
     app
 

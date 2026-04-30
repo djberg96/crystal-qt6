@@ -89,6 +89,7 @@
 #include <QPdfWriter>
 #include <QPixmap>
 #include <QProgressBar>
+#include <QPolygon>
 #include <QPolygonF>
 #include <QProgressDialog>
 #include <QPushButton>
@@ -177,6 +178,7 @@ struct ApplicationState {
 
 qt6cr_pointf_t to_pointf(const QPointF &point);
 qt6cr_pointf_t to_pointf(const QPoint &point);
+qt6cr_point_t to_point(const QPoint &point);
 qt6cr_size_t to_size(const QSize &size);
 qt6cr_rect_t to_rect(const QRect &rect);
 qt6cr_rectf_t to_rectf(const QRectF &rect);
@@ -1276,6 +1278,10 @@ QTransform *as_qtransform(qt6cr_handle_t handle) {
   return static_cast<QTransform *>(handle);
 }
 
+QPolygon *as_qpolygon(qt6cr_handle_t handle) {
+  return static_cast<QPolygon *>(handle);
+}
+
 QPolygonF *as_qpolygonf(qt6cr_handle_t handle) {
   return static_cast<QPolygonF *>(handle);
 }
@@ -1660,6 +1666,10 @@ qt6cr_pointf_t to_pointf(const QPoint &point) {
   return qt6cr_pointf_t{static_cast<double>(point.x()), static_cast<double>(point.y())};
 }
 
+qt6cr_point_t to_point(const QPoint &point) {
+  return qt6cr_point_t{point.x(), point.y()};
+}
+
 qt6cr_gradient_stop_t to_gradient_stop(const QGradientStop &stop) {
   return qt6cr_gradient_stop_t{stop.first, to_color(stop.second)};
 }
@@ -1757,6 +1767,10 @@ QVariant from_variant_value(const qt6cr_variant_value_t &value) {
 
 QPointF from_pointf(qt6cr_pointf_t point) {
   return QPointF(point.x, point.y);
+}
+
+QPoint from_point(qt6cr_point_t point) {
+  return QPoint(point.x, point.y);
 }
 
 QRectF from_rectf(qt6cr_rectf_t rect) {
@@ -7109,6 +7123,11 @@ qt6cr_handle_t qt6cr_qregion_create_bitmap(qt6cr_handle_t bitmap) {
   return source == nullptr ? nullptr : new QRegion(*source);
 }
 
+qt6cr_handle_t qt6cr_qregion_create_polygon(qt6cr_handle_t polygon, int fill_rule) {
+  auto *shape = as_qpolygon(polygon);
+  return shape == nullptr ? nullptr : new QRegion(*shape, static_cast<Qt::FillRule>(fill_rule));
+}
+
 void qt6cr_qregion_destroy(qt6cr_handle_t handle) {
   delete as_qregion(handle);
 }
@@ -7857,6 +7876,41 @@ qt6cr_handle_t qt6cr_qtransform_map_path(qt6cr_handle_t handle, qt6cr_handle_t p
   auto *transform = as_qtransform(handle);
   auto *source = as_qpainter_path(path);
   return (transform == nullptr || source == nullptr) ? nullptr : new QPainterPath(transform->map(*source));
+}
+
+qt6cr_handle_t qt6cr_qpolygon_create(void) {
+  return new QPolygon();
+}
+
+void qt6cr_qpolygon_destroy(qt6cr_handle_t handle) {
+  delete as_qpolygon(handle);
+}
+
+void qt6cr_qpolygon_append(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *polygon = as_qpolygon(handle);
+
+  if (polygon != nullptr) {
+    polygon->append(from_point(point));
+  }
+}
+
+int qt6cr_qpolygon_size(qt6cr_handle_t handle) {
+  auto *polygon = as_qpolygon(handle);
+  return polygon == nullptr ? 0 : polygon->size();
+}
+
+qt6cr_point_t qt6cr_qpolygon_at(qt6cr_handle_t handle, int index) {
+  auto *polygon = as_qpolygon(handle);
+  if (polygon == nullptr || index < 0 || index >= polygon->size()) {
+    return qt6cr_point_t{0, 0};
+  }
+
+  return to_point(polygon->at(index));
+}
+
+qt6cr_rect_t qt6cr_qpolygon_bounding_rect(qt6cr_handle_t handle) {
+  auto *polygon = as_qpolygon(handle);
+  return polygon == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(polygon->boundingRect());
 }
 
 qt6cr_handle_t qt6cr_qpolygonf_create(void) {

@@ -11,6 +11,11 @@ module Qt6
   lib LibQt6
     alias Handle = Void*
 
+    struct PointValue
+      x : LibC::Int
+      y : LibC::Int
+    end
+
     struct PointFValue
       x : Float64
       y : Float64
@@ -877,6 +882,7 @@ module Qt6
     fun qt6cr_qregion_create = qt6cr_qregion_create : Handle
     fun qt6cr_qregion_create_rect = qt6cr_qregion_create_rect(rect : RectValue, type : LibC::Int) : Handle
     fun qt6cr_qregion_create_bitmap = qt6cr_qregion_create_bitmap(bitmap : Handle) : Handle
+    fun qt6cr_qregion_create_polygon = qt6cr_qregion_create_polygon(polygon : Handle, fill_rule : LibC::Int) : Handle
     fun qt6cr_qregion_destroy = qt6cr_qregion_destroy(handle : Handle)
     fun qt6cr_qregion_is_empty = qt6cr_qregion_is_empty(handle : Handle) : Bool
     fun qt6cr_qregion_is_null = qt6cr_qregion_is_null(handle : Handle) : Bool
@@ -1028,6 +1034,13 @@ module Qt6
     fun qt6cr_qtransform_map_point = qt6cr_qtransform_map_point(handle : Handle, point : PointFValue) : PointFValue
     fun qt6cr_qtransform_map_rect = qt6cr_qtransform_map_rect(handle : Handle, rect : RectFValue) : RectFValue
     fun qt6cr_qtransform_map_path = qt6cr_qtransform_map_path(handle : Handle, path : Handle) : Handle
+
+    fun qt6cr_qpolygon_create = qt6cr_qpolygon_create : Handle
+    fun qt6cr_qpolygon_destroy = qt6cr_qpolygon_destroy(handle : Handle)
+    fun qt6cr_qpolygon_append = qt6cr_qpolygon_append(handle : Handle, point : PointValue)
+    fun qt6cr_qpolygon_size = qt6cr_qpolygon_size(handle : Handle) : LibC::Int
+    fun qt6cr_qpolygon_at = qt6cr_qpolygon_at(handle : Handle, index : LibC::Int) : PointValue
+    fun qt6cr_qpolygon_bounding_rect = qt6cr_qpolygon_bounding_rect(handle : Handle) : RectValue
 
     fun qt6cr_qpolygonf_create = qt6cr_qpolygonf_create : Handle
     fun qt6cr_qpolygonf_destroy = qt6cr_qpolygonf_destroy(handle : Handle)
