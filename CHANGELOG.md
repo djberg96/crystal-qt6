@@ -17,6 +17,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added shared gradient stop inspection across linear, conical, and radial gradient wrappers.
 - Added `QBitmap` bindings with image, pixmap, data, transform, and file round-trip support, plus bitmap-backed `QRegion` construction for mask workflows.
 - Added mutable `QRegion` set-operation helpers and `Widget#update` overloads for rect- and region-scoped repaint scheduling.
+- Added `QPalette`, `ColorGroup`, and `ColorRole` bindings with application- and widget-level palette access for theme-aware colors.
 
 ## [0.8.0] - 2026-04-29
 

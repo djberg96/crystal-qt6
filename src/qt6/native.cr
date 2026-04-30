@@ -154,6 +154,8 @@ module Qt6
     fun qt6cr_application_set_style_sheet = qt6cr_application_set_style_sheet(handle : Handle, style_sheet : UInt8*)
     fun qt6cr_application_window_icon = qt6cr_application_window_icon(handle : Handle) : Handle
     fun qt6cr_application_set_window_icon = qt6cr_application_set_window_icon(handle : Handle, icon : Handle)
+    fun qt6cr_application_palette = qt6cr_application_palette(handle : Handle) : Handle
+    fun qt6cr_application_set_palette = qt6cr_application_set_palette(handle : Handle, palette : Handle)
 
     fun qt6cr_event_loop_create = qt6cr_event_loop_create(parent : Handle) : Handle
     fun qt6cr_event_loop_exec = qt6cr_event_loop_exec(handle : Handle) : LibC::Int
@@ -208,6 +210,8 @@ module Qt6
     fun qt6cr_widget_update_region = qt6cr_widget_update_region(handle : Handle, region : Handle)
     fun qt6cr_widget_mask = qt6cr_widget_mask(handle : Handle) : Handle
     fun qt6cr_widget_set_mask = qt6cr_widget_set_mask(handle : Handle, region : Handle)
+    fun qt6cr_widget_palette = qt6cr_widget_palette(handle : Handle) : Handle
+    fun qt6cr_widget_set_palette = qt6cr_widget_set_palette(handle : Handle, palette : Handle)
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
     fun qt6cr_widget_style_sheet = qt6cr_widget_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
@@ -862,6 +866,13 @@ module Qt6
     fun qt6cr_qbrush_set_color = qt6cr_qbrush_set_color(handle : Handle, color : ColorValue)
     fun qt6cr_qbrush_transform = qt6cr_qbrush_transform(handle : Handle) : Handle
     fun qt6cr_qbrush_set_transform = qt6cr_qbrush_set_transform(handle : Handle, transform : Handle)
+
+    fun qt6cr_qpalette_create = qt6cr_qpalette_create : Handle
+    fun qt6cr_qpalette_destroy = qt6cr_qpalette_destroy(handle : Handle)
+    fun qt6cr_qpalette_color = qt6cr_qpalette_color(handle : Handle, role : LibC::Int) : ColorValue
+    fun qt6cr_qpalette_color_for_group = qt6cr_qpalette_color_for_group(handle : Handle, group : LibC::Int, role : LibC::Int) : ColorValue
+    fun qt6cr_qpalette_set_color = qt6cr_qpalette_set_color(handle : Handle, role : LibC::Int, color : ColorValue)
+    fun qt6cr_qpalette_set_color_for_group = qt6cr_qpalette_set_color_for_group(handle : Handle, group : LibC::Int, role : LibC::Int, color : ColorValue)
 
     fun qt6cr_qregion_create = qt6cr_qregion_create : Handle
     fun qt6cr_qregion_create_rect = qt6cr_qregion_create_rect(rect : RectValue, type : LibC::Int) : Handle

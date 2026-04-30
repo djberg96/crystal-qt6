@@ -177,6 +177,8 @@ char *qt6cr_application_style_sheet(qt6cr_handle_t handle);
 void qt6cr_application_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
 qt6cr_handle_t qt6cr_application_window_icon(qt6cr_handle_t handle);
 void qt6cr_application_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+qt6cr_handle_t qt6cr_application_palette(qt6cr_handle_t handle);
+void qt6cr_application_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette);
 
 qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent);
 int qt6cr_event_loop_exec(qt6cr_handle_t handle);
@@ -231,6 +233,8 @@ void qt6cr_widget_update_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
 void qt6cr_widget_update_region(qt6cr_handle_t handle, qt6cr_handle_t region);
 qt6cr_handle_t qt6cr_widget_mask(qt6cr_handle_t handle);
 void qt6cr_widget_set_mask(qt6cr_handle_t handle, qt6cr_handle_t region);
+qt6cr_handle_t qt6cr_widget_palette(qt6cr_handle_t handle);
+void qt6cr_widget_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette);
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
 char *qt6cr_widget_style_sheet(qt6cr_handle_t handle);
 void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
@@ -886,6 +890,13 @@ qt6cr_color_t qt6cr_qbrush_color(qt6cr_handle_t handle);
 void qt6cr_qbrush_set_color(qt6cr_handle_t handle, qt6cr_color_t color);
 qt6cr_handle_t qt6cr_qbrush_transform(qt6cr_handle_t handle);
 void qt6cr_qbrush_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform);
+
+qt6cr_handle_t qt6cr_qpalette_create(void);
+void qt6cr_qpalette_destroy(qt6cr_handle_t handle);
+qt6cr_color_t qt6cr_qpalette_color(qt6cr_handle_t handle, int role);
+qt6cr_color_t qt6cr_qpalette_color_for_group(qt6cr_handle_t handle, int group, int role);
+void qt6cr_qpalette_set_color(qt6cr_handle_t handle, int role, qt6cr_color_t color);
+void qt6cr_qpalette_set_color_for_group(qt6cr_handle_t handle, int group, int role, qt6cr_color_t color);
 
 qt6cr_handle_t qt6cr_qregion_create(void);
 qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type);

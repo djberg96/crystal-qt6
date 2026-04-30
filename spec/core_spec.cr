@@ -414,6 +414,36 @@ describe Qt6 do
     application.window_icon = previous_window_icon
   end
 
+  it "supports theme-aware palettes on applications and widgets" do
+    application = app
+    previous_palette = application.palette
+
+    palette = Qt6::QPalette.new
+    palette.set_color(Qt6::ColorRole::Window, Qt6::Color.new(24, 36, 48))
+    palette.set_color(Qt6::ColorRole::WindowText, Qt6::Color.new(210, 220, 230))
+    palette.set_color(Qt6::ColorRole::Highlight, Qt6::Color.new(60, 110, 180))
+    palette.set_color(Qt6::ColorGroup::Disabled, Qt6::ColorRole::Text, Qt6::Color.new(120, 130, 140))
+
+    palette.color(Qt6::ColorRole::Window).should eq(Qt6::Color.new(24, 36, 48, 255))
+    palette.color(Qt6::ColorRole::WindowText).should eq(Qt6::Color.new(210, 220, 230, 255))
+    palette.color(Qt6::ColorGroup::Disabled, Qt6::ColorRole::Text).should eq(Qt6::Color.new(120, 130, 140, 255))
+
+    application.palette = palette
+    application_palette = application.palette
+    application_palette.color(Qt6::ColorRole::Window).should eq(Qt6::Color.new(24, 36, 48, 255))
+    application_palette.color(Qt6::ColorRole::Highlight).should eq(Qt6::Color.new(60, 110, 180, 255))
+    application_palette.color(Qt6::ColorGroup::Disabled, Qt6::ColorRole::Text).should eq(Qt6::Color.new(120, 130, 140, 255))
+
+    window = Qt6::Widget.new
+    window.palette = palette
+    window_palette = window.palette
+    window_palette.color(Qt6::ColorRole::WindowText).should eq(Qt6::Color.new(210, 220, 230, 255))
+    window_palette.color(Qt6::ColorRole::Window).should eq(Qt6::Color.new(24, 36, 48, 255))
+
+    window.release
+    application.palette = previous_palette
+  end
+
   it "supports queued application invocations" do
     application = app
     label = Qt6::Label.new("Waiting")

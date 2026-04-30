@@ -79,6 +79,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
+#include <QPalette>
 #include <QDesktopServices>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
@@ -1255,6 +1256,10 @@ QBrush *as_qbrush(qt6cr_handle_t handle) {
   return static_cast<QBrush *>(handle);
 }
 
+QPalette *as_qpalette(qt6cr_handle_t handle) {
+  return static_cast<QPalette *>(handle);
+}
+
 QFont *as_qfont(qt6cr_handle_t handle) {
   return static_cast<QFont *>(handle);
 }
@@ -2098,6 +2103,20 @@ void qt6cr_application_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t ico
   }
 }
 
+qt6cr_handle_t qt6cr_application_palette(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? new QPalette() : new QPalette(state->application->palette());
+}
+
+void qt6cr_application_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
+  auto *state = as_application_state(handle);
+  auto *value = as_qpalette(palette);
+
+  if (state != nullptr && state->application != nullptr && value != nullptr) {
+    state->application->setPalette(*value);
+  }
+}
+
 qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent) {
   return new QEventLoop(as_object(parent));
 }
@@ -2513,6 +2532,20 @@ void qt6cr_widget_update_region(qt6cr_handle_t handle, qt6cr_handle_t region) {
 qt6cr_handle_t qt6cr_widget_mask(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? nullptr : new QRegion(widget->mask());
+}
+
+qt6cr_handle_t qt6cr_widget_palette(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? new QPalette() : new QPalette(widget->palette());
+}
+
+void qt6cr_widget_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
+  auto *widget = as_widget(handle);
+  auto *value = as_qpalette(palette);
+
+  if (widget != nullptr && value != nullptr) {
+    widget->setPalette(*value);
+  }
 }
 
 void qt6cr_widget_set_mask(qt6cr_handle_t handle, qt6cr_handle_t region) {
@@ -7026,6 +7059,40 @@ void qt6cr_qbrush_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform)
 
   if (brush != nullptr && matrix != nullptr) {
     brush->setTransform(*matrix);
+  }
+}
+
+qt6cr_handle_t qt6cr_qpalette_create(void) {
+  return new QPalette();
+}
+
+void qt6cr_qpalette_destroy(qt6cr_handle_t handle) {
+  delete as_qpalette(handle);
+}
+
+qt6cr_color_t qt6cr_qpalette_color(qt6cr_handle_t handle, int role) {
+  auto *palette = as_qpalette(handle);
+  return palette == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(palette->color(static_cast<QPalette::ColorRole>(role)));
+}
+
+qt6cr_color_t qt6cr_qpalette_color_for_group(qt6cr_handle_t handle, int group, int role) {
+  auto *palette = as_qpalette(handle);
+  return palette == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(palette->color(static_cast<QPalette::ColorGroup>(group), static_cast<QPalette::ColorRole>(role)));
+}
+
+void qt6cr_qpalette_set_color(qt6cr_handle_t handle, int role, qt6cr_color_t color) {
+  auto *palette = as_qpalette(handle);
+
+  if (palette != nullptr) {
+    palette->setColor(static_cast<QPalette::ColorRole>(role), from_color(color));
+  }
+}
+
+void qt6cr_qpalette_set_color_for_group(qt6cr_handle_t handle, int group, int role, qt6cr_color_t color) {
+  auto *palette = as_qpalette(handle);
+
+  if (palette != nullptr) {
+    palette->setColor(static_cast<QPalette::ColorGroup>(group), static_cast<QPalette::ColorRole>(role), from_color(color));
   }
 }
 

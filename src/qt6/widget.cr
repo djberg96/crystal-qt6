@@ -105,6 +105,17 @@ module Qt6
       value
     end
 
+    # Returns the widget palette.
+    def palette : QPalette
+      QPalette.wrap(LibQt6.qt6cr_widget_palette(@to_unsafe), true)
+    end
+
+    # Sets the widget palette.
+    def palette=(value : QPalette) : QPalette
+      LibQt6.qt6cr_widget_set_palette(@to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Captures the widget's current contents into a pixmap.
     def grab : QPixmap
       QPixmap.new(LibQt6.qt6cr_widget_grab(@to_unsafe), true)

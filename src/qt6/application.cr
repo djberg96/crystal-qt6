@@ -108,6 +108,17 @@ module Qt6
       value
     end
 
+    # Returns the application palette.
+    def palette : QPalette
+      QPalette.wrap(LibQt6.qt6cr_application_palette(@handle), true)
+    end
+
+    # Sets the application palette.
+    def palette=(value : QPalette) : QPalette
+      LibQt6.qt6cr_application_set_palette(@handle, value.to_unsafe)
+      value
+    end
+
     # Destroys the underlying Qt application if it is still active.
     def shutdown : Nil
       return if @destroyed
