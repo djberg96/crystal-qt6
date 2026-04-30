@@ -7020,6 +7020,10 @@ qt6cr_handle_t qt6cr_qbrush_create(qt6cr_color_t color) {
   return new QBrush(from_color(color));
 }
 
+qt6cr_handle_t qt6cr_qbrush_create_with_style(int style) {
+  return new QBrush(static_cast<Qt::BrushStyle>(style));
+}
+
 qt6cr_handle_t qt6cr_qbrush_create_from_pixmap(qt6cr_handle_t pixmap) {
   auto *source = as_qpixmap(pixmap);
   return source == nullptr ? nullptr : new QBrush(*source);
@@ -7049,6 +7053,19 @@ void qt6cr_qbrush_destroy(qt6cr_handle_t handle) {
   delete as_qbrush(handle);
 }
 
+int qt6cr_qbrush_style(qt6cr_handle_t handle) {
+  auto *brush = as_qbrush(handle);
+  return brush == nullptr ? 0 : static_cast<int>(brush->style());
+}
+
+void qt6cr_qbrush_set_style(qt6cr_handle_t handle, int style) {
+  auto *brush = as_qbrush(handle);
+
+  if (brush != nullptr) {
+    brush->setStyle(static_cast<Qt::BrushStyle>(style));
+  }
+}
+
 qt6cr_color_t qt6cr_qbrush_color(qt6cr_handle_t handle) {
   auto *brush = as_qbrush(handle);
   return brush == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(brush->color());
@@ -7059,6 +7076,34 @@ void qt6cr_qbrush_set_color(qt6cr_handle_t handle, qt6cr_color_t color) {
 
   if (brush != nullptr) {
     brush->setColor(from_color(color));
+  }
+}
+
+qt6cr_handle_t qt6cr_qbrush_texture(qt6cr_handle_t handle) {
+  auto *brush = as_qbrush(handle);
+  return brush == nullptr ? nullptr : new QPixmap(brush->texture());
+}
+
+void qt6cr_qbrush_set_texture(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
+  auto *brush = as_qbrush(handle);
+  auto *value = as_qpixmap(pixmap);
+
+  if (brush != nullptr && value != nullptr) {
+    brush->setTexture(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_qbrush_texture_image(qt6cr_handle_t handle) {
+  auto *brush = as_qbrush(handle);
+  return brush == nullptr ? nullptr : new QImage(brush->textureImage());
+}
+
+void qt6cr_qbrush_set_texture_image(qt6cr_handle_t handle, qt6cr_handle_t image) {
+  auto *brush = as_qbrush(handle);
+  auto *value = as_qimage(image);
+
+  if (brush != nullptr && value != nullptr) {
+    brush->setTextureImage(*value);
   }
 }
 
@@ -7074,6 +7119,11 @@ void qt6cr_qbrush_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform)
   if (brush != nullptr && matrix != nullptr) {
     brush->setTransform(*matrix);
   }
+}
+
+bool qt6cr_qbrush_is_opaque(qt6cr_handle_t handle) {
+  auto *brush = as_qbrush(handle);
+  return brush != nullptr && brush->isOpaque();
 }
 
 qt6cr_handle_t qt6cr_qpalette_create(void) {

@@ -343,6 +343,42 @@ describe Qt6 do
     deep_canvas.pixel_color(8, 8).should eq(Qt6::Color.new(0, 0, 0, 255))
   end
 
+  it "supports brush styles, textures, and opacity queries" do
+    app
+
+    brush = Qt6::QBrush.new(Qt6::BrushStyle::Dense4Pattern)
+    brush.style.should eq(Qt6::BrushStyle::Dense4Pattern)
+    brush.opaque?.should be_false
+
+    texture_image = Qt6::QImage.new(2, 2)
+    texture_image.fill(Qt6::Color.new(10, 20, 30))
+    texture_image.set_pixel_color(1, 1, Qt6::Color.new(200, 150, 100))
+    brush.texture_image = texture_image
+
+    brush.style.should eq(Qt6::BrushStyle::TexturePattern)
+    copied_texture_image = brush.texture_image
+    copied_texture_image.size.should eq(Qt6::Size.new(2, 2))
+    copied_texture_image.pixel_color(1, 1).should eq(Qt6::Color.new(200, 150, 100, 255))
+
+    texture_pixmap = brush.texture
+    texture_pixmap.size.should eq(Qt6::Size.new(2, 2))
+    texture_pixmap.to_image.pixel_color(1, 1).should eq(Qt6::Color.new(200, 150, 100, 255))
+
+    replacement = Qt6::QPixmap.new(2, 2)
+    replacement.fill(Qt6::Color.new(40, 90, 160))
+    brush.texture = replacement
+    brush.style.should eq(Qt6::BrushStyle::TexturePattern)
+    brush.texture.to_image.pixel_color(0, 0).should eq(Qt6::Color.new(40, 90, 160, 255))
+
+    brush.style = Qt6::BrushStyle::DiagCrossPattern
+    brush.style.should eq(Qt6::BrushStyle::DiagCrossPattern)
+
+    solid = Qt6::QBrush.new(Qt6::Color.new(1, 2, 3, 255))
+    translucent = Qt6::QBrush.new(Qt6::Color.new(1, 2, 3, 100))
+    solid.opaque?.should be_true
+    translucent.opaque?.should be_false
+  end
+
   it "supports gradients and advanced pen styling" do
     app
 

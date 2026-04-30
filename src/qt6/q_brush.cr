@@ -5,6 +5,11 @@ module Qt6
       new(handle, owned)
     end
 
+    # Creates a brush with the given style.
+    def initialize(style : BrushStyle)
+      super(LibQt6.qt6cr_qbrush_create_with_style(style.value))
+    end
+
     # Creates a solid-color brush.
     def initialize(color : Color = Color.new(0, 0, 0))
       super(LibQt6.qt6cr_qbrush_create(color.to_native))
@@ -39,6 +44,17 @@ module Qt6
       super(handle, owned)
     end
 
+    # Returns the brush style.
+    def style : BrushStyle
+      BrushStyle.from_value(LibQt6.qt6cr_qbrush_style(to_unsafe))
+    end
+
+    # Sets the brush style.
+    def style=(value : BrushStyle) : BrushStyle
+      LibQt6.qt6cr_qbrush_set_style(to_unsafe, value.value)
+      value
+    end
+
     # Returns the brush color.
     def color : Color
       Color.from_native(LibQt6.qt6cr_qbrush_color(to_unsafe))
@@ -47,6 +63,28 @@ module Qt6
     # Sets the brush color.
     def color=(value : Color) : Color
       LibQt6.qt6cr_qbrush_set_color(to_unsafe, value.to_native)
+      value
+    end
+
+    # Returns the brush texture as a pixmap.
+    def texture : QPixmap
+      QPixmap.wrap(LibQt6.qt6cr_qbrush_texture(to_unsafe), true)
+    end
+
+    # Sets the brush texture from a pixmap.
+    def texture=(value : QPixmap) : QPixmap
+      LibQt6.qt6cr_qbrush_set_texture(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the brush texture as an image.
+    def texture_image : QImage
+      QImage.new(LibQt6.qt6cr_qbrush_texture_image(to_unsafe), true)
+    end
+
+    # Sets the brush texture from an image.
+    def texture_image=(value : QImage) : QImage
+      LibQt6.qt6cr_qbrush_set_texture_image(to_unsafe, value.to_unsafe)
       value
     end
 
@@ -59,6 +97,11 @@ module Qt6
     def transform=(value : QTransform) : QTransform
       LibQt6.qt6cr_qbrush_set_transform(to_unsafe, value.to_unsafe)
       value
+    end
+
+    # Returns `true` when the brush paints fully opaque pixels.
+    def opaque? : Bool
+      LibQt6.qt6cr_qbrush_is_opaque(to_unsafe)
     end
 
     protected def destroy_native : Nil
