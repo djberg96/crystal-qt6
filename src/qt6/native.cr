@@ -204,6 +204,8 @@ module Qt6
     fun qt6cr_widget_size = qt6cr_widget_size(handle : Handle) : SizeValue
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
+    fun qt6cr_widget_update_rect = qt6cr_widget_update_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_widget_update_region = qt6cr_widget_update_region(handle : Handle, region : Handle)
     fun qt6cr_widget_mask = qt6cr_widget_mask(handle : Handle) : Handle
     fun qt6cr_widget_set_mask = qt6cr_widget_set_mask(handle : Handle, region : Handle)
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
@@ -880,6 +882,13 @@ module Qt6
     fun qt6cr_qregion_intersected_rect = qt6cr_qregion_intersected_rect(handle : Handle, rect : RectValue) : Handle
     fun qt6cr_qregion_subtracted = qt6cr_qregion_subtracted(handle : Handle, other : Handle) : Handle
     fun qt6cr_qregion_xored = qt6cr_qregion_xored(handle : Handle, other : Handle) : Handle
+    fun qt6cr_qregion_clear = qt6cr_qregion_clear(handle : Handle)
+    fun qt6cr_qregion_unite = qt6cr_qregion_unite(handle : Handle, other : Handle)
+    fun qt6cr_qregion_unite_rect = qt6cr_qregion_unite_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_qregion_intersect = qt6cr_qregion_intersect(handle : Handle, other : Handle)
+    fun qt6cr_qregion_intersect_rect = qt6cr_qregion_intersect_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_qregion_subtract = qt6cr_qregion_subtract(handle : Handle, other : Handle)
+    fun qt6cr_qregion_xor = qt6cr_qregion_xor(handle : Handle, other : Handle)
 
     fun qt6cr_qfont_create = qt6cr_qfont_create(family : UInt8*, point_size : LibC::Int, bold : Bool, italic : Bool) : Handle
     fun qt6cr_qfont_destroy = qt6cr_qfont_destroy(handle : Handle)

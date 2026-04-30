@@ -105,6 +105,48 @@ module Qt6
       QRegion.wrap(LibQt6.qt6cr_qregion_xored(to_unsafe, other.to_unsafe), true)
     end
 
+    # Clears the region in place.
+    def clear : self
+      LibQt6.qt6cr_qregion_clear(to_unsafe)
+      self
+    end
+
+    # Unites the region with another region in place.
+    def unite(other : QRegion) : self
+      LibQt6.qt6cr_qregion_unite(to_unsafe, other.to_unsafe)
+      self
+    end
+
+    # Unites the region with a rectangle in place.
+    def unite(rect : Rect) : self
+      LibQt6.qt6cr_qregion_unite_rect(to_unsafe, rect.to_native)
+      self
+    end
+
+    # Intersects the region with another region in place.
+    def intersect(other : QRegion) : self
+      LibQt6.qt6cr_qregion_intersect(to_unsafe, other.to_unsafe)
+      self
+    end
+
+    # Intersects the region with a rectangle in place.
+    def intersect(rect : Rect) : self
+      LibQt6.qt6cr_qregion_intersect_rect(to_unsafe, rect.to_native)
+      self
+    end
+
+    # Subtracts another region from this region in place.
+    def subtract(other : QRegion) : self
+      LibQt6.qt6cr_qregion_subtract(to_unsafe, other.to_unsafe)
+      self
+    end
+
+    # Applies an exclusive-or with another region in place.
+    def exclusive_or(other : QRegion) : self
+      LibQt6.qt6cr_qregion_xor(to_unsafe, other.to_unsafe)
+      self
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qregion_destroy(to_unsafe)
     end

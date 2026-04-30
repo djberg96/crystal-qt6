@@ -2493,6 +2493,23 @@ void qt6cr_widget_update(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_widget_update_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->update(from_rect(rect));
+  }
+}
+
+void qt6cr_widget_update_region(qt6cr_handle_t handle, qt6cr_handle_t region) {
+  auto *widget = as_widget(handle);
+  auto *value = as_qregion(region);
+
+  if (widget != nullptr && value != nullptr) {
+    widget->update(*value);
+  }
+}
+
 qt6cr_handle_t qt6cr_widget_mask(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? nullptr : new QRegion(widget->mask());
@@ -7110,6 +7127,66 @@ qt6cr_handle_t qt6cr_qregion_xored(qt6cr_handle_t handle, qt6cr_handle_t other) 
   auto *region = as_qregion(handle);
   auto *value = as_qregion(other);
   return region == nullptr || value == nullptr ? nullptr : new QRegion(region->xored(*value));
+}
+
+void qt6cr_qregion_clear(qt6cr_handle_t handle) {
+  auto *region = as_qregion(handle);
+
+  if (region != nullptr) {
+    *region = QRegion();
+  }
+}
+
+void qt6cr_qregion_unite(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+
+  if (region != nullptr && value != nullptr) {
+    *region |= *value;
+  }
+}
+
+void qt6cr_qregion_unite_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *region = as_qregion(handle);
+
+  if (region != nullptr) {
+    *region |= QRegion(from_rect(rect));
+  }
+}
+
+void qt6cr_qregion_intersect(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+
+  if (region != nullptr && value != nullptr) {
+    *region &= *value;
+  }
+}
+
+void qt6cr_qregion_intersect_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *region = as_qregion(handle);
+
+  if (region != nullptr) {
+    *region &= QRegion(from_rect(rect));
+  }
+}
+
+void qt6cr_qregion_subtract(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+
+  if (region != nullptr && value != nullptr) {
+    *region -= *value;
+  }
+}
+
+void qt6cr_qregion_xor(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *region = as_qregion(handle);
+  auto *value = as_qregion(other);
+
+  if (region != nullptr && value != nullptr) {
+    *region ^= *value;
+  }
 }
 
 qt6cr_handle_t qt6cr_qfont_create(const char *family, int point_size, bool bold, bool italic) {

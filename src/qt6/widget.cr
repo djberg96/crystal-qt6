@@ -82,6 +82,18 @@ module Qt6
       self
     end
 
+    # Schedules the given rectangle for repaint and returns `self`.
+    def update(rect : Rect) : self
+      LibQt6.qt6cr_widget_update_rect(@to_unsafe, rect.to_native)
+      self
+    end
+
+    # Schedules the given region for repaint and returns `self`.
+    def update(region : QRegion) : self
+      LibQt6.qt6cr_widget_update_region(@to_unsafe, region.to_unsafe)
+      self
+    end
+
     # Returns the widget's current mask region.
     def mask : QRegion
       QRegion.wrap(LibQt6.qt6cr_widget_mask(@to_unsafe), true)

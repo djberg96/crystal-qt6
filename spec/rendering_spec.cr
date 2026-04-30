@@ -605,6 +605,18 @@ describe Qt6 do
     subtracted.empty?.should be_false
     combined.rect_count.should be > 0
 
+    mutable = Qt6::QRegion.new(Qt6::Rect.new(0, 0, 4, 4))
+    mutable.unite(Qt6::Rect.new(4, 0, 4, 4))
+    mutable.bounding_rect.should eq(Qt6::Rect.new(0, 0, 8, 4))
+    mutable.intersect(Qt6::Rect.new(2, 0, 4, 4))
+    mutable.bounding_rect.should eq(Qt6::Rect.new(2, 0, 4, 4))
+    mutable.subtract(Qt6::QRegion.new(Qt6::Rect.new(4, 0, 2, 4)))
+    mutable.contains?(Qt6::Rect.new(4, 0, 1, 1)).should be_false
+    mutable.exclusive_or(Qt6::QRegion.new(Qt6::Rect.new(0, 0, 2, 4)))
+    mutable.contains?(Qt6::Rect.new(0, 0, 2, 2)).should be_true
+    mutable.clear
+    mutable.empty?.should be_true
+
     canvas = Qt6::QImage.new(16, 16)
     canvas.fill(Qt6::Color.new(0, 0, 0, 0))
     clip_region = Qt6::QRegion.new(Qt6::Rect.new(4, 4, 4, 4))
@@ -625,6 +637,16 @@ describe Qt6 do
     window.mask = nil
     window.mask.empty?.should be_true
     window.release
+
+    widget = Qt6::Widget.new
+    widget.resize(24, 24)
+    widget.show
+    app.process_events
+
+    update_region = Qt6::QRegion.new(Qt6::Rect.new(6, 8, 5, 4))
+    widget.update(update_region).should eq(widget)
+    widget.update(Qt6::Rect.new(2, 3, 4, 5)).should eq(widget)
+    widget.release
   end
 
   it "supports monochrome bitmaps for masks, transforms, and file round-trips" do

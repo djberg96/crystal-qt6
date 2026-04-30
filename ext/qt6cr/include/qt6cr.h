@@ -227,6 +227,8 @@ bool qt6cr_widget_is_visible(qt6cr_handle_t handle);
 qt6cr_size_t qt6cr_widget_size(qt6cr_handle_t handle);
 qt6cr_rectf_t qt6cr_widget_rect(qt6cr_handle_t handle);
 void qt6cr_widget_update(qt6cr_handle_t handle);
+void qt6cr_widget_update_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
+void qt6cr_widget_update_region(qt6cr_handle_t handle, qt6cr_handle_t region);
 qt6cr_handle_t qt6cr_widget_mask(qt6cr_handle_t handle);
 void qt6cr_widget_set_mask(qt6cr_handle_t handle, qt6cr_handle_t region);
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
@@ -904,6 +906,13 @@ qt6cr_handle_t qt6cr_qregion_intersected(qt6cr_handle_t handle, qt6cr_handle_t o
 qt6cr_handle_t qt6cr_qregion_intersected_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
 qt6cr_handle_t qt6cr_qregion_subtracted(qt6cr_handle_t handle, qt6cr_handle_t other);
 qt6cr_handle_t qt6cr_qregion_xored(qt6cr_handle_t handle, qt6cr_handle_t other);
+void qt6cr_qregion_clear(qt6cr_handle_t handle);
+void qt6cr_qregion_unite(qt6cr_handle_t handle, qt6cr_handle_t other);
+void qt6cr_qregion_unite_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
+void qt6cr_qregion_intersect(qt6cr_handle_t handle, qt6cr_handle_t other);
+void qt6cr_qregion_intersect_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
+void qt6cr_qregion_subtract(qt6cr_handle_t handle, qt6cr_handle_t other);
+void qt6cr_qregion_xor(qt6cr_handle_t handle, qt6cr_handle_t other);
 
 qt6cr_handle_t qt6cr_qfont_create(const char *family, int point_size, bool bold, bool italic);
 void qt6cr_qfont_destroy(qt6cr_handle_t handle);
