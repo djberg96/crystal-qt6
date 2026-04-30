@@ -372,7 +372,10 @@ This is not the only way to compose a panel, but it scales well. The form stays 
 
 \begin{figure}[H]
   \centering
-  \screenshotimage{docs/book/images/widgets-layer-inspector-panel.png}{width=0.58\textwidth,height=0.42\textheight,keepaspectratio}%
+  {\setlength{\fboxsep}{10pt}%
+   \colorbox{black!10}{%
+     \screenshotimage{docs/book/images/widgets-layer-inspector-panel.png}{width=0.58\textwidth,height=0.42\textheight,keepaspectratio}%
+   }}%
   \caption{A small layer inspector built from form rows, grouped controls, and a command row.}
 \end{figure}
 
