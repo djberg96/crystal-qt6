@@ -380,14 +380,15 @@ describe Qt6 do
     key_sequence_edit.key_sequence = "Ctrl+Alt+L"
     application.process_events
 
+    host.show
+    application.process_events
+
     rubber_band = Qt6::RubberBand.new(Qt6::RubberBandShape::Rectangle, host)
     rubber_band.set_geometry(Qt6::Rect.new(10, 12, 64, 48))
     rubber_band.show
 
     error_message = Qt6::ErrorMessage.new(host)
     error_message.show_message("Network timeout", "network")
-
-    host.show
     application.process_events
 
     key_sequence_edit.key_sequence.to_s.should_not be_empty
