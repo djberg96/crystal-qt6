@@ -156,6 +156,7 @@
 #include <QWheelEvent>
 #include <QWidget>
 #include <QWidgetAction>
+#include <QWizard>
 #include <QToolTip>
 #include <QSplitter>
 #include <QVariant>
@@ -453,6 +454,12 @@ class CrystalSlider final : public QSlider {
 
     QSlider::mousePressEvent(event);
   }
+};
+
+class CrystalWizardPage final : public QWizardPage {
+ public:
+  using QWizardPage::QWizardPage;
+  using QWizardPage::registerField;
 };
 
 class ModelListView final : public QListView {
@@ -1414,6 +1421,18 @@ QFontComboBox *as_font_combo_box(qt6cr_handle_t handle) {
 
 QKeySequenceEdit *as_key_sequence_edit(qt6cr_handle_t handle) {
   return static_cast<QKeySequenceEdit *>(handle);
+}
+
+QWizard *as_wizard(qt6cr_handle_t handle) {
+  return static_cast<QWizard *>(handle);
+}
+
+QWizardPage *as_wizard_page(qt6cr_handle_t handle) {
+  return static_cast<QWizardPage *>(handle);
+}
+
+CrystalWizardPage *as_crystal_wizard_page(qt6cr_handle_t handle) {
+  return static_cast<CrystalWizardPage *>(handle);
 }
 
 QListWidgetItem *as_list_widget_item(qt6cr_handle_t handle) {
@@ -3505,6 +3524,310 @@ void qt6cr_progress_dialog_on_canceled(qt6cr_handle_t handle, qt6cr_void_callbac
   }
 
   QObject::connect(dialog, &QProgressDialog::canceled, dialog, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+qt6cr_handle_t qt6cr_wizard_create(qt6cr_handle_t parent) {
+  return new QWizard(as_widget(parent));
+}
+
+int qt6cr_wizard_add_page(qt6cr_handle_t handle, qt6cr_handle_t page) {
+  auto *wizard = as_wizard(handle);
+  auto *wizard_page = as_wizard_page(page);
+  return wizard == nullptr || wizard_page == nullptr ? -1 : wizard->addPage(wizard_page);
+}
+
+void qt6cr_wizard_set_page(qt6cr_handle_t handle, int id, qt6cr_handle_t page) {
+  auto *wizard = as_wizard(handle);
+  auto *wizard_page = as_wizard_page(page);
+
+  if (wizard != nullptr && wizard_page != nullptr) {
+    wizard->setPage(id, wizard_page);
+  }
+}
+
+void qt6cr_wizard_remove_page(qt6cr_handle_t handle, int id) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->removePage(id);
+  }
+}
+
+qt6cr_handle_t qt6cr_wizard_page(qt6cr_handle_t handle, int id) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? nullptr : wizard->page(id);
+}
+
+bool qt6cr_wizard_has_visited_page(qt6cr_handle_t handle, int id) {
+  auto *wizard = as_wizard(handle);
+  return wizard != nullptr && wizard->hasVisitedPage(id);
+}
+
+qt6cr_int_array_t qt6cr_wizard_visited_ids(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? qt6cr_int_array_t{nullptr, 0} : to_int_array_value(wizard->visitedIds());
+}
+
+qt6cr_int_array_t qt6cr_wizard_page_ids(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? qt6cr_int_array_t{nullptr, 0} : to_int_array_value(wizard->pageIds());
+}
+
+void qt6cr_wizard_set_start_id(qt6cr_handle_t handle, int id) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setStartId(id);
+  }
+}
+
+int qt6cr_wizard_start_id(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? -1 : wizard->startId();
+}
+
+qt6cr_handle_t qt6cr_wizard_current_page(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? nullptr : wizard->currentPage();
+}
+
+int qt6cr_wizard_current_id(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? -1 : wizard->currentId();
+}
+
+void qt6cr_wizard_set_current_id(qt6cr_handle_t handle, int id) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setCurrentId(id);
+  }
+}
+
+void qt6cr_wizard_back(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->back();
+  }
+}
+
+void qt6cr_wizard_next(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->next();
+  }
+}
+
+void qt6cr_wizard_restart(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->restart();
+  }
+}
+
+void qt6cr_wizard_set_wizard_style(qt6cr_handle_t handle, int style) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setWizardStyle(static_cast<QWizard::WizardStyle>(style));
+  }
+}
+
+int qt6cr_wizard_wizard_style(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? static_cast<int>(QWizard::ClassicStyle) : static_cast<int>(wizard->wizardStyle());
+}
+
+void qt6cr_wizard_set_option(qt6cr_handle_t handle, int option, bool on) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setOption(static_cast<QWizard::WizardOption>(option), on);
+  }
+}
+
+bool qt6cr_wizard_test_option(qt6cr_handle_t handle, int option) {
+  auto *wizard = as_wizard(handle);
+  return wizard != nullptr && wizard->testOption(static_cast<QWizard::WizardOption>(option));
+}
+
+void qt6cr_wizard_set_options(qt6cr_handle_t handle, int options) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setOptions(QWizard::WizardOptions(static_cast<QWizard::WizardOption>(options)));
+  }
+}
+
+int qt6cr_wizard_options(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? 0 : static_cast<int>(wizard->options());
+}
+
+void qt6cr_wizard_set_button_text(qt6cr_handle_t handle, int which, const char *text) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setButtonText(static_cast<QWizard::WizardButton>(which), QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_wizard_button_text(qt6cr_handle_t handle, int which) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? duplicate_string("") : duplicate_string(wizard->buttonText(static_cast<QWizard::WizardButton>(which)));
+}
+
+qt6cr_handle_t qt6cr_wizard_button(qt6cr_handle_t handle, int which) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? nullptr : wizard->button(static_cast<QWizard::WizardButton>(which));
+}
+
+void qt6cr_wizard_set_pixmap(qt6cr_handle_t handle, int which, qt6cr_handle_t pixmap) {
+  auto *wizard = as_wizard(handle);
+  auto *value = as_qpixmap(pixmap);
+
+  if (wizard != nullptr && value != nullptr) {
+    wizard->setPixmap(static_cast<QWizard::WizardPixmap>(which), *value);
+  }
+}
+
+qt6cr_handle_t qt6cr_wizard_pixmap(qt6cr_handle_t handle, int which) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? new QPixmap() : new QPixmap(wizard->pixmap(static_cast<QWizard::WizardPixmap>(which)));
+}
+
+void qt6cr_wizard_on_current_id_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(wizard, &QWizard::currentIdChanged, wizard, [callback, userdata](int id) {
+    callback(userdata, id);
+  });
+}
+
+qt6cr_handle_t qt6cr_wizard_page_create(qt6cr_handle_t parent) {
+  return new CrystalWizardPage(as_widget(parent));
+}
+
+void qt6cr_wizard_page_set_title(qt6cr_handle_t handle, const char *title) {
+  auto *page = as_wizard_page(handle);
+
+  if (page != nullptr) {
+    page->setTitle(QString::fromUtf8(title == nullptr ? "" : title));
+  }
+}
+
+char *qt6cr_wizard_page_title(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page == nullptr ? duplicate_string("") : duplicate_string(page->title());
+}
+
+void qt6cr_wizard_page_set_sub_title(qt6cr_handle_t handle, const char *sub_title) {
+  auto *page = as_wizard_page(handle);
+
+  if (page != nullptr) {
+    page->setSubTitle(QString::fromUtf8(sub_title == nullptr ? "" : sub_title));
+  }
+}
+
+char *qt6cr_wizard_page_sub_title(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page == nullptr ? duplicate_string("") : duplicate_string(page->subTitle());
+}
+
+void qt6cr_wizard_page_set_pixmap(qt6cr_handle_t handle, int which, qt6cr_handle_t pixmap) {
+  auto *page = as_wizard_page(handle);
+  auto *value = as_qpixmap(pixmap);
+
+  if (page != nullptr && value != nullptr) {
+    page->setPixmap(static_cast<QWizard::WizardPixmap>(which), *value);
+  }
+}
+
+qt6cr_handle_t qt6cr_wizard_page_pixmap(qt6cr_handle_t handle, int which) {
+  auto *page = as_wizard_page(handle);
+  return page == nullptr ? new QPixmap() : new QPixmap(page->pixmap(static_cast<QWizard::WizardPixmap>(which)));
+}
+
+void qt6cr_wizard_page_set_final_page(qt6cr_handle_t handle, bool final_page) {
+  auto *page = as_wizard_page(handle);
+
+  if (page != nullptr) {
+    page->setFinalPage(final_page);
+  }
+}
+
+bool qt6cr_wizard_page_is_final_page(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page != nullptr && page->isFinalPage();
+}
+
+void qt6cr_wizard_page_set_commit_page(qt6cr_handle_t handle, bool commit_page) {
+  auto *page = as_wizard_page(handle);
+
+  if (page != nullptr) {
+    page->setCommitPage(commit_page);
+  }
+}
+
+bool qt6cr_wizard_page_is_commit_page(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page != nullptr && page->isCommitPage();
+}
+
+void qt6cr_wizard_page_set_button_text(qt6cr_handle_t handle, int which, const char *text) {
+  auto *page = as_wizard_page(handle);
+
+  if (page != nullptr) {
+    page->setButtonText(static_cast<QWizard::WizardButton>(which), QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_wizard_page_button_text(qt6cr_handle_t handle, int which) {
+  auto *page = as_wizard_page(handle);
+  return page == nullptr ? duplicate_string("") : duplicate_string(page->buttonText(static_cast<QWizard::WizardButton>(which)));
+}
+
+bool qt6cr_wizard_page_validate_page(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page != nullptr && page->validatePage();
+}
+
+bool qt6cr_wizard_page_is_complete(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page != nullptr && page->isComplete();
+}
+
+int qt6cr_wizard_page_next_id(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  return page == nullptr ? -1 : page->nextId();
+}
+
+void qt6cr_wizard_page_register_field(qt6cr_handle_t handle, const char *name, qt6cr_handle_t widget) {
+  auto *page = as_crystal_wizard_page(handle);
+  auto *field_widget = as_widget(widget);
+
+  if (page != nullptr && field_widget != nullptr) {
+    page->registerField(QString::fromUtf8(name == nullptr ? "" : name), field_widget);
+  }
+}
+
+void qt6cr_wizard_page_on_complete_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *page = as_wizard_page(handle);
+
+  if (page == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(page, &QWizardPage::completeChanged, page, [callback, userdata]() {
     callback(userdata);
   });
 }

@@ -413,6 +413,102 @@ describe Qt6 do
     host.release
   end
 
+  it "supports wizard flows and wizard pages" do
+    application = app
+    wizard = Qt6::Wizard.new
+    wizard.resize(360, 220)
+
+    intro_page = Qt6::WizardPage.new
+    intro_page.title = "Welcome"
+    intro_page.sub_title = "Choose your deployment settings."
+    intro_page.set_button_text(Qt6::WizardButton::NextButton, "Continue")
+
+    required_name = Qt6::LineEdit.new("", intro_page)
+    complete_changes = 0
+    intro_page.on_complete_changed do
+      complete_changes += 1
+    end
+    intro_page.register_field("project_name*", required_name)
+
+    summary_page = Qt6::WizardPage.new
+    summary_page.title = "Summary"
+    summary_page.sub_title = "Review the generated configuration."
+    summary_page.final_page = true
+    summary_page.commit_page = true
+
+    accent = Qt6::QPixmap.new(8, 8)
+    accent.fill(Qt6::Color.new(32, 96, 160))
+    intro_page.set_pixmap(Qt6::WizardPixmap::LogoPixmap, accent)
+    summary_page.set_pixmap(Qt6::WizardPixmap::BannerPixmap, accent)
+    wizard.set_pixmap(Qt6::WizardPixmap::WatermarkPixmap, accent)
+
+    current_ids = [] of Int32
+    wizard.on_current_id_changed do |value|
+      current_ids << value
+    end
+
+    wizard.wizard_style = Qt6::WizardStyle::ModernStyle
+    wizard.set_option(Qt6::WizardOption::HaveHelpButton, true)
+    wizard.set_option(Qt6::WizardOption::IndependentPages, true)
+    wizard.options = Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::IndependentPages
+    wizard.set_button_text(Qt6::WizardButton::CancelButton, "Abort")
+
+    intro_id = 10
+    wizard.set_page(intro_id, intro_page)
+    summary_id = wizard.add_page(summary_page)
+    wizard.start_id = intro_id
+
+    wizard.show
+    application.process_events
+
+    wizard.page_ids.should eq([intro_id, summary_id])
+    wizard.start_id.should eq(intro_id)
+    wizard.current_id.should eq(intro_id)
+    wizard.current_page.not_nil!.title.should eq("Welcome")
+    wizard.page(intro_id).not_nil!.sub_title.should contain("deployment")
+    wizard.wizard_style.should eq(Qt6::WizardStyle::ModernStyle)
+    wizard.option?(Qt6::WizardOption::HaveHelpButton).should be_true
+    wizard.option?(Qt6::WizardOption::IndependentPages).should be_true
+    wizard.options.should eq(Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::IndependentPages)
+    wizard.button_text(Qt6::WizardButton::CancelButton).should eq("Abort")
+    wizard.button(Qt6::WizardButton::CancelButton).not_nil!.text.should eq("Abort")
+    wizard.pixmap(Qt6::WizardPixmap::WatermarkPixmap).size.should eq(Qt6::Size.new(8, 8))
+    intro_page.pixmap(Qt6::WizardPixmap::LogoPixmap).size.should eq(Qt6::Size.new(8, 8))
+    summary_page.pixmap(Qt6::WizardPixmap::BannerPixmap).size.should eq(Qt6::Size.new(8, 8))
+    intro_page.button_text(Qt6::WizardButton::NextButton).should eq("Continue")
+    intro_page.complete?.should be_false
+
+    required_name.text = "Map Generator"
+    application.process_events
+
+    intro_page.complete?.should be_true
+    complete_changes.should be > 0
+    intro_page.validate_page.should be_true
+
+    wizard.button(Qt6::WizardButton::NextButton).not_nil!.click
+    application.process_events
+
+    wizard.current_id.should eq(summary_id)
+    wizard.current_page.not_nil!.title.should eq("Summary")
+    summary_page.final_page?.should be_true
+    summary_page.commit_page?.should be_true
+    summary_page.next_id.should eq(-1)
+    current_ids.last.should eq(summary_id)
+    wizard.has_visited_page?(intro_id).should be_true
+    wizard.visited_ids.should contain(intro_id)
+    wizard.visited_ids.should contain(summary_id)
+
+    wizard.back
+    application.process_events
+    wizard.current_id.should eq(intro_id)
+
+    wizard.remove_page(summary_id)
+    wizard.page(summary_id).should be_nil
+    wizard.page_ids.should eq([intro_id])
+
+    wizard.release
+  end
+
   it "supports WargameMapTool-style font, stack, and browser widgets" do
     application = app
     host = Qt6::Widget.new
