@@ -41,6 +41,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QErrorMessage>
 #include <QFocusFrame>
 #include <QFontComboBox>
 #include <QFontDialog>
@@ -57,6 +58,7 @@
 #include <QItemSelectionModel>
 #include <QIODevice>
 #include <QKeyEvent>
+#include <QKeySequenceEdit>
 #include <QLabel>
 #include <QLinearGradient>
 #include <QListView>
@@ -1410,6 +1412,10 @@ QFontComboBox *as_font_combo_box(qt6cr_handle_t handle) {
   return static_cast<QFontComboBox *>(handle);
 }
 
+QKeySequenceEdit *as_key_sequence_edit(qt6cr_handle_t handle) {
+  return static_cast<QKeySequenceEdit *>(handle);
+}
+
 QListWidgetItem *as_list_widget_item(qt6cr_handle_t handle) {
   return static_cast<QListWidgetItem *>(handle);
 }
@@ -1456,6 +1462,10 @@ QFrame *as_frame(qt6cr_handle_t handle) {
 
 QFocusFrame *as_focus_frame(qt6cr_handle_t handle) {
   return static_cast<QFocusFrame *>(handle);
+}
+
+QRubberBand *as_rubber_band(qt6cr_handle_t handle) {
+  return static_cast<QRubberBand *>(handle);
 }
 
 QProgressBar *as_progress_bar(qt6cr_handle_t handle) {
@@ -1516,6 +1526,10 @@ QLCDNumber *as_lcd_number(qt6cr_handle_t handle) {
 
 QCommandLinkButton *as_command_link_button(qt6cr_handle_t handle) {
   return static_cast<QCommandLinkButton *>(handle);
+}
+
+QErrorMessage *as_error_message(qt6cr_handle_t handle) {
+  return static_cast<QErrorMessage *>(handle);
 }
 
 QTextDocument *as_text_document(qt6cr_handle_t handle) {
@@ -11280,6 +11294,85 @@ void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_h
   });
 }
 
+qt6cr_handle_t qt6cr_key_sequence_edit_create(qt6cr_handle_t parent) {
+  return new QKeySequenceEdit(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_key_sequence_edit_create_with_sequence(const char *sequence, qt6cr_handle_t parent) {
+  return new QKeySequenceEdit(QKeySequence(QString::fromUtf8(sequence == nullptr ? "" : sequence)), as_widget(parent));
+}
+
+char *qt6cr_key_sequence_edit_key_sequence(qt6cr_handle_t handle) {
+  auto *editor = as_key_sequence_edit(handle);
+  return editor == nullptr ? duplicate_string("") : duplicate_string(editor->keySequence().toString());
+}
+
+void qt6cr_key_sequence_edit_set_key_sequence(qt6cr_handle_t handle, const char *sequence) {
+  auto *editor = as_key_sequence_edit(handle);
+
+  if (editor != nullptr) {
+    editor->setKeySequence(QKeySequence(QString::fromUtf8(sequence == nullptr ? "" : sequence)));
+  }
+}
+
+bool qt6cr_key_sequence_edit_clear_button_enabled(qt6cr_handle_t handle) {
+  auto *editor = as_key_sequence_edit(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  return editor != nullptr && editor->isClearButtonEnabled();
+#else
+  (void)editor;
+  return false;
+#endif
+}
+
+void qt6cr_key_sequence_edit_set_clear_button_enabled(qt6cr_handle_t handle, bool value) {
+  auto *editor = as_key_sequence_edit(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  if (editor != nullptr) {
+    editor->setClearButtonEnabled(value);
+  }
+#else
+  (void)editor;
+  (void)value;
+#endif
+}
+
+void qt6cr_key_sequence_edit_clear(qt6cr_handle_t handle) {
+  auto *editor = as_key_sequence_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clear();
+  }
+}
+
+void qt6cr_key_sequence_edit_on_key_sequence_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *editor = as_key_sequence_edit(handle);
+
+  if (editor == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(editor, &QKeySequenceEdit::keySequenceChanged, editor, [callback, userdata](const QKeySequence &sequence) {
+    char *value = duplicate_string(sequence.toString());
+    callback(userdata, value);
+    delete[] value;
+  });
+}
+
+void qt6cr_key_sequence_edit_on_editing_finished(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *editor = as_key_sequence_edit(handle);
+
+  if (editor == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(editor, &QKeySequenceEdit::editingFinished, editor, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
 qt6cr_handle_t qt6cr_list_widget_item_create(const char *text) {
   return new QListWidgetItem(QString::fromUtf8(text == nullptr ? "" : text));
 }
@@ -12975,6 +13068,23 @@ void qt6cr_focus_frame_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   }
 }
 
+qt6cr_handle_t qt6cr_rubber_band_create(int shape, qt6cr_handle_t parent) {
+  return new QRubberBand(static_cast<QRubberBand::Shape>(shape), as_widget(parent));
+}
+
+int qt6cr_rubber_band_shape(qt6cr_handle_t handle) {
+  auto *rubber_band = as_rubber_band(handle);
+  return rubber_band == nullptr ? 0 : static_cast<int>(rubber_band->shape());
+}
+
+void qt6cr_rubber_band_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *rubber_band = as_rubber_band(handle);
+
+  if (rubber_band != nullptr) {
+    rubber_band->setGeometry(from_rect(rect));
+  }
+}
+
 qt6cr_handle_t qt6cr_progress_bar_create(qt6cr_handle_t parent) {
   return new QProgressBar(as_widget(parent));
 }
@@ -13403,6 +13513,29 @@ void qt6cr_command_link_button_set_description(qt6cr_handle_t handle, const char
 
   if (button != nullptr) {
     button->setDescription(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+qt6cr_handle_t qt6cr_error_message_create(qt6cr_handle_t parent) {
+  return new QErrorMessage(as_widget(parent));
+}
+
+void qt6cr_error_message_show_message(qt6cr_handle_t handle, const char *message) {
+  auto *dialog = as_error_message(handle);
+
+  if (dialog != nullptr) {
+    dialog->showMessage(QString::fromUtf8(message == nullptr ? "" : message));
+  }
+}
+
+void qt6cr_error_message_show_typed_message(qt6cr_handle_t handle, const char *message, const char *type) {
+  auto *dialog = as_error_message(handle);
+
+  if (dialog != nullptr) {
+    dialog->showMessage(
+      QString::fromUtf8(message == nullptr ? "" : message),
+      QString::fromUtf8(type == nullptr ? "" : type)
+    );
   }
 }
 

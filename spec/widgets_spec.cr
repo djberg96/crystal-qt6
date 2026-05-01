@@ -366,6 +366,52 @@ describe Qt6 do
     dialog.release
   end
 
+  it "supports shortcut, rubber-band, and error helper widgets" do
+    application = app
+    host = Qt6::Widget.new
+    host.resize(240, 180)
+
+    sequence_changes = [] of String
+    key_sequence_edit = Qt6::KeySequenceEdit.new(Qt6::KeySequence.new("Ctrl+Shift+P"), host)
+    key_sequence_edit.on_key_sequence_changed do |value|
+      sequence_changes << value.to_s
+    end
+    key_sequence_edit.clear_button_enabled = true
+    key_sequence_edit.key_sequence = "Ctrl+Alt+L"
+    application.process_events
+
+    rubber_band = Qt6::RubberBand.new(Qt6::RubberBandShape::Rectangle, host)
+    rubber_band.set_geometry(Qt6::Rect.new(10, 12, 64, 48))
+    rubber_band.show
+
+    error_message = Qt6::ErrorMessage.new(host)
+    error_message.show_message("Network timeout", "network")
+
+    host.show
+    application.process_events
+
+    key_sequence_edit.key_sequence.to_s.should_not be_empty
+    sequence_changes.last.should eq(key_sequence_edit.key_sequence.to_s)
+    key_sequence_edit.clear
+    application.process_events
+    key_sequence_edit.key_sequence.to_s.should eq("")
+    sequence_changes.last.should eq("")
+
+    rubber_band.shape.should eq(Qt6::RubberBandShape::Rectangle)
+    rubber_band.visible?.should be_true
+    rubber_band.size.should eq(Qt6::Size.new(64, 48))
+    rubber_band.hide
+    application.process_events
+    rubber_band.visible?.should be_false
+
+    error_message.visible?.should be_true
+    error_message.hide
+    application.process_events
+    error_message.visible?.should be_false
+
+    host.release
+  end
+
   it "supports WargameMapTool-style font, stack, and browser widgets" do
     application = app
     host = Qt6::Widget.new

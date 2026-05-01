@@ -1532,6 +1532,15 @@ module Qt6
     fun qt6cr_font_combo_box_current_font = qt6cr_font_combo_box_current_font(handle : Handle) : Handle
     fun qt6cr_font_combo_box_set_current_font = qt6cr_font_combo_box_set_current_font(handle : Handle, font : Handle)
     fun qt6cr_font_combo_box_on_current_font_changed = qt6cr_font_combo_box_on_current_font_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_key_sequence_edit_create = qt6cr_key_sequence_edit_create(parent : Handle) : Handle
+    fun qt6cr_key_sequence_edit_create_with_sequence = qt6cr_key_sequence_edit_create_with_sequence(sequence : UInt8*, parent : Handle) : Handle
+    fun qt6cr_key_sequence_edit_key_sequence = qt6cr_key_sequence_edit_key_sequence(handle : Handle) : UInt8*
+    fun qt6cr_key_sequence_edit_set_key_sequence = qt6cr_key_sequence_edit_set_key_sequence(handle : Handle, sequence : UInt8*)
+    fun qt6cr_key_sequence_edit_clear_button_enabled = qt6cr_key_sequence_edit_clear_button_enabled(handle : Handle) : Bool
+    fun qt6cr_key_sequence_edit_set_clear_button_enabled = qt6cr_key_sequence_edit_set_clear_button_enabled(handle : Handle, value : Bool)
+    fun qt6cr_key_sequence_edit_clear = qt6cr_key_sequence_edit_clear(handle : Handle)
+    fun qt6cr_key_sequence_edit_on_key_sequence_changed = qt6cr_key_sequence_edit_on_key_sequence_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+    fun qt6cr_key_sequence_edit_on_editing_finished = qt6cr_key_sequence_edit_on_editing_finished(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_list_widget_item_create = qt6cr_list_widget_item_create(text : UInt8*) : Handle
     fun qt6cr_list_widget_item_create_with_icon = qt6cr_list_widget_item_create_with_icon(icon : Handle, text : UInt8*) : Handle
@@ -1817,6 +1826,9 @@ module Qt6
     fun qt6cr_focus_frame_create = qt6cr_focus_frame_create(parent : Handle) : Handle
     fun qt6cr_focus_frame_widget = qt6cr_focus_frame_widget(handle : Handle) : Handle
     fun qt6cr_focus_frame_set_widget = qt6cr_focus_frame_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_rubber_band_create = qt6cr_rubber_band_create(shape : LibC::Int, parent : Handle) : Handle
+    fun qt6cr_rubber_band_shape = qt6cr_rubber_band_shape(handle : Handle) : LibC::Int
+    fun qt6cr_rubber_band_set_geometry = qt6cr_rubber_band_set_geometry(handle : Handle, rect : RectValue)
 
     fun qt6cr_progress_bar_create = qt6cr_progress_bar_create(parent : Handle) : Handle
     fun qt6cr_progress_bar_minimum = qt6cr_progress_bar_minimum(handle : Handle) : LibC::Int
@@ -1888,6 +1900,9 @@ module Qt6
     fun qt6cr_command_link_button_create = qt6cr_command_link_button_create(parent : Handle, text : UInt8*, description : UInt8*) : Handle
     fun qt6cr_command_link_button_description = qt6cr_command_link_button_description(handle : Handle) : UInt8*
     fun qt6cr_command_link_button_set_description = qt6cr_command_link_button_set_description(handle : Handle, value : UInt8*)
+    fun qt6cr_error_message_create = qt6cr_error_message_create(parent : Handle) : Handle
+    fun qt6cr_error_message_show_message = qt6cr_error_message_show_message(handle : Handle, message : UInt8*)
+    fun qt6cr_error_message_show_typed_message = qt6cr_error_message_show_typed_message(handle : Handle, message : UInt8*, type : UInt8*)
 
     fun qt6cr_text_document_create = qt6cr_text_document_create(parent : Handle) : Handle
     fun qt6cr_text_document_plain_text = qt6cr_text_document_plain_text(handle : Handle) : UInt8*

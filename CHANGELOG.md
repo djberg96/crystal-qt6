@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - Added `QFocusFrame` bindings with tracked-widget get/set helpers for shell polish and focus highlighting.
 - Added `QToolBox` bindings with page insertion, selection, and current-index callback support, plus a `QSizeGrip` wrapper with `size_hint`.
+- Added `QKeySequenceEdit`, `QRubberBand`, and `QErrorMessage` bindings for shortcut capture, marquee selection overlays, and queued error-dialog workflows.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

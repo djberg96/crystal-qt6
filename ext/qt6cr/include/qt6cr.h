@@ -1553,6 +1553,15 @@ qt6cr_handle_t qt6cr_font_combo_box_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_font_combo_box_current_font(qt6cr_handle_t handle);
 void qt6cr_font_combo_box_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font);
 void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+qt6cr_handle_t qt6cr_key_sequence_edit_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_key_sequence_edit_create_with_sequence(const char *sequence, qt6cr_handle_t parent);
+char *qt6cr_key_sequence_edit_key_sequence(qt6cr_handle_t handle);
+void qt6cr_key_sequence_edit_set_key_sequence(qt6cr_handle_t handle, const char *sequence);
+bool qt6cr_key_sequence_edit_clear_button_enabled(qt6cr_handle_t handle);
+void qt6cr_key_sequence_edit_set_clear_button_enabled(qt6cr_handle_t handle, bool value);
+void qt6cr_key_sequence_edit_clear(qt6cr_handle_t handle);
+void qt6cr_key_sequence_edit_on_key_sequence_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+void qt6cr_key_sequence_edit_on_editing_finished(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_progress_bar_create(qt6cr_handle_t parent);
 int qt6cr_progress_bar_minimum(qt6cr_handle_t handle);
@@ -1858,6 +1867,9 @@ int qt6cr_frame_frame_width(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_focus_frame_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_focus_frame_widget(qt6cr_handle_t handle);
 void qt6cr_focus_frame_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_rubber_band_create(int shape, qt6cr_handle_t parent);
+int qt6cr_rubber_band_shape(qt6cr_handle_t handle);
+void qt6cr_rubber_band_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect);
 
 qt6cr_handle_t qt6cr_date_time_edit_create(qt6cr_handle_t parent);
 char *qt6cr_date_time_edit_display_format(qt6cr_handle_t handle);
@@ -1909,6 +1921,9 @@ void qt6cr_lcd_number_display_string(qt6cr_handle_t handle, const char *value);
 qt6cr_handle_t qt6cr_command_link_button_create(qt6cr_handle_t parent, const char *text, const char *description);
 char *qt6cr_command_link_button_description(qt6cr_handle_t handle);
 void qt6cr_command_link_button_set_description(qt6cr_handle_t handle, const char *value);
+qt6cr_handle_t qt6cr_error_message_create(qt6cr_handle_t parent);
+void qt6cr_error_message_show_message(qt6cr_handle_t handle, const char *message);
+void qt6cr_error_message_show_typed_message(qt6cr_handle_t handle, const char *message, const char *type);
 
 qt6cr_handle_t qt6cr_text_document_create(qt6cr_handle_t parent);
 char *qt6cr_text_document_plain_text(qt6cr_handle_t handle);
