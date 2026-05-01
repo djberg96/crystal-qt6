@@ -602,6 +602,35 @@ module Qt6
     fun qt6cr_item_selection_model_is_selected = qt6cr_item_selection_model_is_selected(handle : Handle, index : Handle) : Bool
     fun qt6cr_item_selection_model_on_current_index_changed = qt6cr_item_selection_model_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
+    fun qt6cr_data_widget_mapper_create = qt6cr_data_widget_mapper_create(parent : Handle) : Handle
+    fun qt6cr_data_widget_mapper_set_model = qt6cr_data_widget_mapper_set_model(handle : Handle, model : Handle)
+    fun qt6cr_data_widget_mapper_model = qt6cr_data_widget_mapper_model(handle : Handle) : Handle
+    fun qt6cr_data_widget_mapper_set_item_delegate = qt6cr_data_widget_mapper_set_item_delegate(handle : Handle, delegate : Handle)
+    fun qt6cr_data_widget_mapper_item_delegate = qt6cr_data_widget_mapper_item_delegate(handle : Handle) : Handle
+    fun qt6cr_data_widget_mapper_set_root_index = qt6cr_data_widget_mapper_set_root_index(handle : Handle, index : Handle)
+    fun qt6cr_data_widget_mapper_root_index = qt6cr_data_widget_mapper_root_index(handle : Handle) : Handle
+    fun qt6cr_data_widget_mapper_set_orientation = qt6cr_data_widget_mapper_set_orientation(handle : Handle, orientation : LibC::Int)
+    fun qt6cr_data_widget_mapper_orientation = qt6cr_data_widget_mapper_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_data_widget_mapper_set_submit_policy = qt6cr_data_widget_mapper_set_submit_policy(handle : Handle, policy : LibC::Int)
+    fun qt6cr_data_widget_mapper_submit_policy = qt6cr_data_widget_mapper_submit_policy(handle : Handle) : LibC::Int
+    fun qt6cr_data_widget_mapper_add_mapping = qt6cr_data_widget_mapper_add_mapping(handle : Handle, widget : Handle, section : LibC::Int)
+    fun qt6cr_data_widget_mapper_add_mapping_property = qt6cr_data_widget_mapper_add_mapping_property(handle : Handle, widget : Handle, section : LibC::Int, property_name : UInt8*)
+    fun qt6cr_data_widget_mapper_remove_mapping = qt6cr_data_widget_mapper_remove_mapping(handle : Handle, widget : Handle)
+    fun qt6cr_data_widget_mapper_mapped_section = qt6cr_data_widget_mapper_mapped_section(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_data_widget_mapper_mapped_property_name = qt6cr_data_widget_mapper_mapped_property_name(handle : Handle, widget : Handle) : UInt8*
+    fun qt6cr_data_widget_mapper_mapped_widget_at = qt6cr_data_widget_mapper_mapped_widget_at(handle : Handle, section : LibC::Int) : Handle
+    fun qt6cr_data_widget_mapper_clear_mapping = qt6cr_data_widget_mapper_clear_mapping(handle : Handle)
+    fun qt6cr_data_widget_mapper_current_index = qt6cr_data_widget_mapper_current_index(handle : Handle) : LibC::Int
+    fun qt6cr_data_widget_mapper_revert = qt6cr_data_widget_mapper_revert(handle : Handle)
+    fun qt6cr_data_widget_mapper_submit = qt6cr_data_widget_mapper_submit(handle : Handle) : Bool
+    fun qt6cr_data_widget_mapper_to_first = qt6cr_data_widget_mapper_to_first(handle : Handle)
+    fun qt6cr_data_widget_mapper_to_last = qt6cr_data_widget_mapper_to_last(handle : Handle)
+    fun qt6cr_data_widget_mapper_to_next = qt6cr_data_widget_mapper_to_next(handle : Handle)
+    fun qt6cr_data_widget_mapper_to_previous = qt6cr_data_widget_mapper_to_previous(handle : Handle)
+    fun qt6cr_data_widget_mapper_set_current_index = qt6cr_data_widget_mapper_set_current_index(handle : Handle, index : LibC::Int)
+    fun qt6cr_data_widget_mapper_set_current_model_index = qt6cr_data_widget_mapper_set_current_model_index(handle : Handle, index : Handle)
+    fun qt6cr_data_widget_mapper_on_current_index_changed = qt6cr_data_widget_mapper_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+
     fun qt6cr_standard_item_create = qt6cr_standard_item_create(text : UInt8*) : Handle
     fun qt6cr_standard_item_destroy = qt6cr_standard_item_destroy(handle : Handle)
     fun qt6cr_standard_item_text = qt6cr_standard_item_text(handle : Handle) : UInt8*

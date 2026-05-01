@@ -24,6 +24,7 @@
 #include <QCalendarWidget>
 #include <QCommandLinkButton>
 #include <QCursor>
+#include <QDataWidgetMapper>
 #include <QDate>
 #include <QDateEdit>
 #include <QDateTime>
@@ -1205,6 +1206,10 @@ CrystalAbstractListModel *as_abstract_list_model(qt6cr_handle_t handle) {
 
 QItemSelectionModel *as_item_selection_model(qt6cr_handle_t handle) {
   return static_cast<QItemSelectionModel *>(handle);
+}
+
+QDataWidgetMapper *as_data_widget_mapper(qt6cr_handle_t handle) {
+  return static_cast<QDataWidgetMapper *>(handle);
 }
 
 QPixmap *as_qpixmap(qt6cr_handle_t handle) {
@@ -5191,6 +5196,207 @@ void qt6cr_item_selection_model_on_current_index_changed(qt6cr_handle_t handle, 
 
   QObject::connect(selection_model, &QItemSelectionModel::currentChanged, selection_model, [callback, userdata](const QModelIndex &, const QModelIndex &) {
     callback(userdata);
+  });
+}
+
+qt6cr_handle_t qt6cr_data_widget_mapper_create(qt6cr_handle_t parent) {
+  return new QDataWidgetMapper(as_object(parent));
+}
+
+void qt6cr_data_widget_mapper_set_model(qt6cr_handle_t handle, qt6cr_handle_t model) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->setModel(as_abstract_item_model(model));
+  }
+}
+
+qt6cr_handle_t qt6cr_data_widget_mapper_model(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? nullptr : mapper->model();
+}
+
+void qt6cr_data_widget_mapper_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->setItemDelegate(as_styled_item_delegate(delegate));
+  }
+}
+
+qt6cr_handle_t qt6cr_data_widget_mapper_item_delegate(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? nullptr : mapper->itemDelegate();
+}
+
+void qt6cr_data_widget_mapper_set_root_index(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *model_index = as_model_index(index);
+
+  if (mapper != nullptr && model_index != nullptr) {
+    mapper->setRootIndex(*model_index);
+  }
+}
+
+qt6cr_handle_t qt6cr_data_widget_mapper_root_index(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? new QModelIndex() : new QModelIndex(mapper->rootIndex());
+}
+
+void qt6cr_data_widget_mapper_set_orientation(qt6cr_handle_t handle, int orientation) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->setOrientation(static_cast<Qt::Orientation>(orientation));
+  }
+}
+
+int qt6cr_data_widget_mapper_orientation(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(mapper->orientation());
+}
+
+void qt6cr_data_widget_mapper_set_submit_policy(qt6cr_handle_t handle, int policy) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->setSubmitPolicy(static_cast<QDataWidgetMapper::SubmitPolicy>(policy));
+  }
+}
+
+int qt6cr_data_widget_mapper_submit_policy(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? static_cast<int>(QDataWidgetMapper::AutoSubmit) : static_cast<int>(mapper->submitPolicy());
+}
+
+void qt6cr_data_widget_mapper_add_mapping(qt6cr_handle_t handle, qt6cr_handle_t widget, int section) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *mapped_widget = as_widget(widget);
+
+  if (mapper != nullptr && mapped_widget != nullptr) {
+    mapper->addMapping(mapped_widget, section);
+  }
+}
+
+void qt6cr_data_widget_mapper_add_mapping_property(qt6cr_handle_t handle, qt6cr_handle_t widget, int section, const char *property_name) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *mapped_widget = as_widget(widget);
+
+  if (mapper != nullptr && mapped_widget != nullptr) {
+    mapper->addMapping(mapped_widget, section, QByteArray(property_name == nullptr ? "" : property_name));
+  }
+}
+
+void qt6cr_data_widget_mapper_remove_mapping(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *mapped_widget = as_widget(widget);
+
+  if (mapper != nullptr && mapped_widget != nullptr) {
+    mapper->removeMapping(mapped_widget);
+  }
+}
+
+int qt6cr_data_widget_mapper_mapped_section(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *mapped_widget = as_widget(widget);
+  return mapper == nullptr || mapped_widget == nullptr ? -1 : mapper->mappedSection(mapped_widget);
+}
+
+char *qt6cr_data_widget_mapper_mapped_property_name(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *mapped_widget = as_widget(widget);
+  return mapper == nullptr || mapped_widget == nullptr ? duplicate_string("") : duplicate_string(QString::fromUtf8(mapper->mappedPropertyName(mapped_widget)));
+}
+
+qt6cr_handle_t qt6cr_data_widget_mapper_mapped_widget_at(qt6cr_handle_t handle, int section) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? nullptr : mapper->mappedWidgetAt(section);
+}
+
+void qt6cr_data_widget_mapper_clear_mapping(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->clearMapping();
+  }
+}
+
+int qt6cr_data_widget_mapper_current_index(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper == nullptr ? -1 : mapper->currentIndex();
+}
+
+void qt6cr_data_widget_mapper_revert(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->revert();
+  }
+}
+
+bool qt6cr_data_widget_mapper_submit(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+  return mapper != nullptr && mapper->submit();
+}
+
+void qt6cr_data_widget_mapper_to_first(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->toFirst();
+  }
+}
+
+void qt6cr_data_widget_mapper_to_last(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->toLast();
+  }
+}
+
+void qt6cr_data_widget_mapper_to_next(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->toNext();
+  }
+}
+
+void qt6cr_data_widget_mapper_to_previous(qt6cr_handle_t handle) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->toPrevious();
+  }
+}
+
+void qt6cr_data_widget_mapper_set_current_index(qt6cr_handle_t handle, int index) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper != nullptr) {
+    mapper->setCurrentIndex(index);
+  }
+}
+
+void qt6cr_data_widget_mapper_set_current_model_index(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *mapper = as_data_widget_mapper(handle);
+  auto *model_index = as_model_index(index);
+
+  if (mapper != nullptr && model_index != nullptr) {
+    mapper->setCurrentModelIndex(*model_index);
+  }
+}
+
+void qt6cr_data_widget_mapper_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *mapper = as_data_widget_mapper(handle);
+
+  if (mapper == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(mapper, &QDataWidgetMapper::currentIndexChanged, mapper, [callback, userdata](int index) {
+    callback(userdata, index);
   });
 }
 
