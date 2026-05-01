@@ -12,13 +12,18 @@ module Qt6
     @set_model_data_userdata : LibQt6::Handle = Pointer(Void).null
     @editor_wrappers = {} of LibQt6::Handle => Widget
 
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     def initialize(parent : QObject? = nil)
       super(LibQt6.qt6cr_styled_item_delegate_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
-      userdata = Box.box(self)
-      @display_text_userdata = userdata
-      @create_editor_userdata = userdata
-      @set_editor_data_userdata = userdata
-      @set_model_data_userdata = userdata
+      initialize_delegate_userdata
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      initialize_delegate_userdata
     end
 
     # Registers a block to format display text before Qt paints it.
@@ -106,6 +111,14 @@ module Qt6
 
     protected def resolve_editor(handle : LibQt6::Handle) : Widget
       @editor_wrappers[handle]? || Widget.wrap(handle)
+    end
+
+    private def initialize_delegate_userdata : Nil
+      userdata = Box.box(self)
+      @display_text_userdata = userdata
+      @create_editor_userdata = userdata
+      @set_editor_data_userdata = userdata
+      @set_model_data_userdata = userdata
     end
 
     private DISPLAY_TEXT_TRAMPOLINE = ->(userdata : Void*, text : UInt8*) do

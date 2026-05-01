@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QToolBox` bindings with page insertion, selection, and current-index callback support, plus a `QSizeGrip` wrapper with `size_hint`.
 - Added `QKeySequenceEdit`, `QRubberBand`, and `QErrorMessage` bindings for shortcut capture, marquee selection overlays, and queued error-dialog workflows.
 - Added `QWizard` and `QWizardPage` bindings for page-based setup flows, including style and option controls, button and pixmap customization, visited-page tracking, and mandatory-field completion wiring.
+- Added `QDataWidgetMapper` bindings with model/delegate/root-index plumbing, manual or auto submit policies, widget/property mappings, and row navigation for form-style model editing.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.
@@ -27,6 +28,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QPainter#draw_convex_polygon` support for both `QPolygon` and `QPolygonF`.
 - Added `BrushStyle` plus deeper `QBrush` style, texture, texture-image, and opacity helpers.
 - Added `QPainterPath#fill_rule` support for odd-even and winding interior control.
+
+### Fixed
+
+- Added handle-based wrapping support to `StyledItemDelegate`, so delegate getters can safely round-trip existing Qt delegate instances.
 
 ## [0.8.0] - 2026-04-29
 

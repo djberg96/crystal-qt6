@@ -358,6 +358,104 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports data widget mappers for form-style model editing" do
+    application = app
+    model = Qt6::StandardItemModel.new
+    group_item = Qt6::StandardItem.new("Layers")
+    name_item = Qt6::StandardItem.new("Terrain")
+    visible_item = Qt6::StandardItem.new
+    visible_item.set_data(true, Qt6::ItemDataRole::Edit)
+    units_name_item = Qt6::StandardItem.new("Units")
+    units_visible_item = Qt6::StandardItem.new
+    units_visible_item.set_data(false, Qt6::ItemDataRole::Edit)
+    group_item.set_child(0, 0, name_item)
+    group_item.set_child(0, 1, visible_item)
+    group_item.set_child(1, 0, units_name_item)
+    group_item.set_child(1, 1, units_visible_item)
+    model << group_item
+
+    root_index = model.index_from_item(group_item)
+    second_row_index = model.index(1, 0, root_index)
+
+    host = Qt6::Widget.new
+    name_edit = Qt6::LineEdit.new("", host)
+    visible_check = Qt6::CheckBox.new("Visible", host)
+    delegate = Qt6::StyledItemDelegate.new(host)
+    mapper = Qt6::DataWidgetMapper.new(host)
+    mapper_changes = [] of Int32
+
+    mapper.on_current_index_changed do |value|
+      mapper_changes << value
+    end
+
+    mapper.model = model
+    mapper.item_delegate = delegate
+    mapper.root_index = root_index
+    mapper.orientation = Qt6::Orientation::Horizontal
+    mapper.submit_policy = Qt6::DataWidgetMapperSubmitPolicy::ManualSubmit
+    mapper.add_mapping(name_edit, 0)
+    mapper.add_mapping(visible_check, 1, "checked")
+    mapper.to_first
+    application.process_events
+
+    mapper.model.not_nil!.to_unsafe.should eq(model.to_unsafe)
+    mapper.item_delegate.not_nil!.to_unsafe.should eq(delegate.to_unsafe)
+    mapper.root_index.valid?.should be_true
+    mapper.root_index.row.should eq(root_index.row)
+    mapper.orientation.should eq(Qt6::Orientation::Horizontal)
+    mapper.submit_policy.should eq(Qt6::DataWidgetMapperSubmitPolicy::ManualSubmit)
+    mapper.current_index.should eq(0)
+    mapper.mapped_section(name_edit).should eq(0)
+    mapper.mapped_section(visible_check).should eq(1)
+    mapper.mapped_property_name(name_edit).should eq("text")
+    mapper.mapped_property_name(visible_check).should eq("checked")
+    mapper.mapped_widget_at(0).not_nil!.to_unsafe.should eq(name_edit.to_unsafe)
+    mapper.mapped_widget_at(1).not_nil!.to_unsafe.should eq(visible_check.to_unsafe)
+    name_edit.text.should eq("Terrain")
+    visible_check.checked?.should be_true
+
+    name_edit.text = "Terrain Layer"
+    visible_check.checked = false
+    mapper.submit.should be_true
+    application.process_events
+
+    model.data(model.index(0, 0, root_index), Qt6::ItemDataRole::Edit).should eq("Terrain Layer")
+    model.data(model.index(0, 1, root_index), Qt6::ItemDataRole::Edit).should eq(false)
+
+    name_edit.text = "Temp"
+    visible_check.checked = true
+    mapper.revert
+    application.process_events
+    name_edit.text.should eq("Terrain Layer")
+    visible_check.checked?.should be_false
+
+    mapper.to_last
+    application.process_events
+    mapper.current_index.should eq(1)
+    name_edit.text.should eq("Units")
+    visible_check.checked?.should be_false
+    mapper_changes.last.should eq(1)
+
+    mapper.to_previous
+    application.process_events
+    mapper.current_index.should eq(0)
+
+    mapper.set_current_model_index(second_row_index)
+    application.process_events
+    mapper.current_index.should eq(1)
+    name_edit.text.should eq("Units")
+
+    mapper.remove_mapping(visible_check)
+    mapper.mapped_section(visible_check).should eq(-1)
+    mapper.clear_mapping
+    mapper.mapped_section(name_edit).should eq(-1)
+
+    second_row_index.release
+    root_index.release
+    host.release
+    model.release
+  end
+
   it "supports model drag sources and model-view drops" do
     application = app
     model = DraggableLayerListModel.new(["Terrain", "Units", "Roads"])
