@@ -509,6 +509,99 @@ describe Qt6 do
     wizard.release
   end
 
+  it "supports MDI areas and subwindows" do
+    application = app
+    host = Qt6::Widget.new
+    host.resize(520, 360)
+
+    mdi_area = Qt6::MdiArea.new(host)
+    mdi_area.resize(480, 300)
+    mdi_area.background = Qt6::QBrush.new(Qt6::Color.new(232, 238, 244))
+    mdi_area.activation_order = Qt6::MdiWindowOrder::ActivationHistoryOrder
+    mdi_area.set_option(Qt6::MdiAreaOption::DontMaximizeSubWindowOnActivation, true)
+    mdi_area.view_mode = Qt6::MdiViewMode::TabbedView
+    mdi_area.document_mode = true
+    mdi_area.tabs_closable = true
+    mdi_area.tabs_movable = true
+
+    first_editor = Qt6::TextEdit.new(parent: host)
+    first_editor.plain_text = "Alpha"
+    second_editor = Qt6::TextEdit.new(parent: host)
+    second_editor.plain_text = "Bravo"
+    detached_label = Qt6::Label.new("Detached", host)
+
+    first_sub_window = mdi_area.add_sub_window(first_editor)
+    second_sub_window = mdi_area.add_sub_window(second_editor)
+    first_sub_window.window_title = "Alpha.map"
+    second_sub_window.window_title = "Bravo.map"
+    first_sub_window.keyboard_single_step = 6
+    first_sub_window.keyboard_page_step = 32
+    first_sub_window.set_option(Qt6::MdiSubWindowOption::RubberBandMove, true)
+    second_sub_window.set_option(Qt6::MdiSubWindowOption::RubberBandResize, true)
+
+    activated_titles = [] of String
+    second_activation_count = 0
+    mdi_area.on_sub_window_activated do |sub_window|
+      activated_titles << (sub_window.try(&.window_title) || "")
+    end
+    second_sub_window.on_about_to_activate do
+      second_activation_count += 1
+    end
+
+    detached_sub_window = Qt6::MdiSubWindow.new(host)
+    detached_sub_window.widget = detached_label
+    detached_sub_window.window_title = "Detached"
+
+    host.show
+    first_sub_window.show
+    second_sub_window.show
+    detached_sub_window.show
+    application.process_events
+
+    mdi_area.set_active_sub_window(first_sub_window)
+    application.process_events
+    mdi_area.set_active_sub_window(second_sub_window)
+    application.process_events
+    mdi_area.activate_previous_sub_window
+    application.process_events
+    mdi_area.activate_next_sub_window
+    application.process_events
+    mdi_area.tile_sub_windows
+    mdi_area.cascade_sub_windows
+
+    mdi_area.background.color.should eq(Qt6::Color.new(232, 238, 244))
+    mdi_area.activation_order.should eq(Qt6::MdiWindowOrder::ActivationHistoryOrder)
+    mdi_area.option?(Qt6::MdiAreaOption::DontMaximizeSubWindowOnActivation).should be_true
+    mdi_area.view_mode.should eq(Qt6::MdiViewMode::TabbedView)
+    mdi_area.document_mode?.should be_true
+    mdi_area.tabs_closable?.should be_true
+    mdi_area.tabs_movable?.should be_true
+    mdi_area.current_sub_window.not_nil!.window_title.should eq("Bravo.map")
+    mdi_area.active_sub_window.not_nil!.window_title.should eq("Bravo.map")
+    activated_titles.should contain("Alpha.map")
+    activated_titles.should contain("Bravo.map")
+    second_activation_count.should be > 0
+
+    first_sub_window.widget.not_nil!.to_unsafe.should eq(first_editor.to_unsafe)
+    first_sub_window.mdi_area.not_nil!.to_unsafe.should eq(mdi_area.to_unsafe)
+    first_sub_window.keyboard_single_step.should eq(6)
+    first_sub_window.keyboard_page_step.should eq(32)
+    first_sub_window.option?(Qt6::MdiSubWindowOption::RubberBandMove).should be_true
+    second_sub_window.option?(Qt6::MdiSubWindowOption::RubberBandResize).should be_true
+    detached_sub_window.widget.not_nil!.to_unsafe.should eq(detached_label.to_unsafe)
+    detached_sub_window.widget = nil
+    detached_sub_window.widget.should be_nil
+    detached_sub_window.widget = detached_label
+    detached_sub_window.widget.not_nil!.to_unsafe.should eq(detached_label.to_unsafe)
+    detached_sub_window.mdi_area.should be_nil
+    detached_sub_window.shaded?.should be_false
+    detached_sub_window.show_shaded
+
+    mdi_area.remove_sub_window(first_editor).to_unsafe.should eq(first_editor.to_unsafe)
+
+    host.release
+  end
+
   it "supports WargameMapTool-style font, stack, and browser widgets" do
     application = app
     host = Qt6::Widget.new
