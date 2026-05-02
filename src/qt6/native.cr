@@ -430,6 +430,10 @@ module Qt6
     fun qt6cr_wizard_set_pixmap = qt6cr_wizard_set_pixmap(handle : Handle, which : LibC::Int, pixmap : Handle)
     fun qt6cr_wizard_pixmap = qt6cr_wizard_pixmap(handle : Handle, which : LibC::Int) : Handle
     fun qt6cr_wizard_on_current_id_changed = qt6cr_wizard_on_current_id_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_wizard_on_custom_button_clicked = qt6cr_wizard_on_custom_button_clicked(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_wizard_on_help_requested = qt6cr_wizard_on_help_requested(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_wizard_on_page_added = qt6cr_wizard_on_page_added(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_wizard_on_page_removed = qt6cr_wizard_on_page_removed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_wizard_page_create = qt6cr_wizard_page_create(parent : Handle) : Handle
     fun qt6cr_wizard_page_set_title = qt6cr_wizard_page_set_title(handle : Handle, title : UInt8*)

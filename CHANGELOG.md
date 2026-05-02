@@ -13,6 +13,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QKeySequenceEdit`, `QRubberBand`, and `QErrorMessage` bindings for shortcut capture, marquee selection overlays, and queued error-dialog workflows.
 - Added `QWizard` and `QWizardPage` bindings for page-based setup flows, including style and option controls, button and pixmap customization, visited-page tracking, and mandatory-field completion wiring.
 - Expanded `QWizard` and `QWizardPage` with wizard field access/setters, page-to-wizard lookup, and direct current-page validation helpers for richer multi-page workflows.
+- Expanded `QWizard` signal coverage with custom-button, help-requested, and page add/remove callbacks for richer interactive wizard flows.
 - Added `QDataWidgetMapper` bindings with model/delegate/root-index plumbing, manual or auto submit policies, widget/property mappings, and row navigation for form-style model editing.
 - Added `QMdiArea` and `QMdiSubWindow` wrappers with document-area options, tabbed-view controls, activation callbacks, and subwindow helpers for desktop multi-document shells.
 - Added `QColumnView`, `QFileIconProvider`, and `QFileSystemModel` wrappers for Finder-style model browsing, stock file icons, and live directory-tree models with filtering, name filters, and root-path callbacks.

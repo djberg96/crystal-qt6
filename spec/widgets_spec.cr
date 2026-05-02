@@ -443,15 +443,33 @@ describe Qt6 do
     wizard.set_pixmap(Qt6::WizardPixmap::WatermarkPixmap, accent)
 
     current_ids = [] of Int32
+    custom_buttons = [] of Int32
+    added_pages = [] of Int32
+    removed_pages = [] of Int32
+    help_requests = 0
     wizard.on_current_id_changed do |value|
       current_ids << value
+    end
+    wizard.on_custom_button_clicked do |value|
+      custom_buttons << value
+    end
+    wizard.on_page_added do |value|
+      added_pages << value
+    end
+    wizard.on_page_removed do |value|
+      removed_pages << value
+    end
+    wizard.on_help_requested do
+      help_requests += 1
     end
 
     wizard.wizard_style = Qt6::WizardStyle::ModernStyle
     wizard.set_option(Qt6::WizardOption::HaveHelpButton, true)
+    wizard.set_option(Qt6::WizardOption::HaveCustomButton1, true)
     wizard.set_option(Qt6::WizardOption::IndependentPages, true)
-    wizard.options = Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::IndependentPages
+    wizard.options = Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::HaveCustomButton1 | Qt6::WizardOption::IndependentPages
     wizard.set_button_text(Qt6::WizardButton::CancelButton, "Abort")
+    wizard.set_button_text(Qt6::WizardButton::CustomButton1, "Preview")
 
     intro_id = 10
     wizard.set_page(intro_id, intro_page)
@@ -462,16 +480,21 @@ describe Qt6 do
     application.process_events
 
     wizard.page_ids.should eq([intro_id, summary_id])
+    added_pages.should contain(intro_id)
+    added_pages.should contain(summary_id)
     wizard.start_id.should eq(intro_id)
     wizard.current_id.should eq(intro_id)
     wizard.current_page.not_nil!.title.should eq("Welcome")
     wizard.page(intro_id).not_nil!.sub_title.should contain("deployment")
     wizard.wizard_style.should eq(Qt6::WizardStyle::ModernStyle)
     wizard.option?(Qt6::WizardOption::HaveHelpButton).should be_true
+    wizard.option?(Qt6::WizardOption::HaveCustomButton1).should be_true
     wizard.option?(Qt6::WizardOption::IndependentPages).should be_true
-    wizard.options.should eq(Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::IndependentPages)
+    wizard.options.should eq(Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::HaveCustomButton1 | Qt6::WizardOption::IndependentPages)
     wizard.button_text(Qt6::WizardButton::CancelButton).should eq("Abort")
     wizard.button(Qt6::WizardButton::CancelButton).not_nil!.text.should eq("Abort")
+    wizard.button_text(Qt6::WizardButton::CustomButton1).should eq("Preview")
+    wizard.button(Qt6::WizardButton::CustomButton1).not_nil!.text.should eq("Preview")
     wizard.pixmap(Qt6::WizardPixmap::WatermarkPixmap).size.should eq(Qt6::Size.new(8, 8))
     intro_page.pixmap(Qt6::WizardPixmap::LogoPixmap).size.should eq(Qt6::Size.new(8, 8))
     summary_page.pixmap(Qt6::WizardPixmap::BannerPixmap).size.should eq(Qt6::Size.new(8, 8))
@@ -496,6 +519,14 @@ describe Qt6 do
 
     wizard.field("project_name").should eq("Cartographer")
     required_name.text.should eq("Cartographer")
+    help_requests_before = help_requests
+    custom_button_count_before = custom_buttons.size
+    wizard.button(Qt6::WizardButton::HelpButton).not_nil!.click
+    wizard.button(Qt6::WizardButton::CustomButton1).not_nil!.click
+    application.process_events
+    help_requests.should be > help_requests_before
+    custom_buttons.size.should be > custom_button_count_before
+    custom_buttons.last.should eq(Qt6::WizardButton::CustomButton1.value)
 
     wizard.button(Qt6::WizardButton::NextButton).not_nil!.click
     application.process_events
@@ -514,9 +545,12 @@ describe Qt6 do
     application.process_events
     wizard.current_id.should eq(intro_id)
 
+    removed_page_count_before = removed_pages.size
     wizard.remove_page(summary_id)
     wizard.page(summary_id).should be_nil
     wizard.page_ids.should eq([intro_id])
+    removed_pages.size.should be > removed_page_count_before
+    removed_pages.last.should eq(summary_id)
 
     wizard.release
   end

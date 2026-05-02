@@ -453,6 +453,10 @@ qt6cr_handle_t qt6cr_wizard_button(qt6cr_handle_t handle, int which);
 void qt6cr_wizard_set_pixmap(qt6cr_handle_t handle, int which, qt6cr_handle_t pixmap);
 qt6cr_handle_t qt6cr_wizard_pixmap(qt6cr_handle_t handle, int which);
 void qt6cr_wizard_on_current_id_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_wizard_on_custom_button_clicked(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_wizard_on_help_requested(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_wizard_on_page_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_wizard_on_page_removed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_wizard_page_create(qt6cr_handle_t parent);
 void qt6cr_wizard_page_set_title(qt6cr_handle_t handle, const char *title);

@@ -2,9 +2,17 @@ module Qt6
   # Wraps `QWizard`.
   class Wizard < Dialog
     @current_id_changed : Signal(Int32) = Signal(Int32).new
+    @custom_button_clicked : Signal(Int32) = Signal(Int32).new
+    @help_requested : Signal() = Signal().new
+    @page_added : Signal(Int32) = Signal(Int32).new
+    @page_removed : Signal(Int32) = Signal(Int32).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
     getter current_id_changed : Signal(Int32)
+    getter custom_button_clicked : Signal(Int32)
+    getter help_requested : Signal()
+    getter page_added : Signal(Int32)
+    getter page_removed : Signal(Int32)
 
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
       new(handle, owned)
@@ -194,18 +202,82 @@ module Qt6
       self
     end
 
+    # Registers a block to run when a custom wizard button is clicked.
+    def on_custom_button_clicked(&block : Int32 ->) : self
+      @custom_button_clicked.connect { |value| block.call(value) }
+      self
+    end
+
+    # Registers a block to run when the Help button is requested.
+    def on_help_requested(&block : ->) : self
+      @help_requested.connect { block.call }
+      self
+    end
+
+    # Registers a block to run when a page is added to the wizard.
+    def on_page_added(&block : Int32 ->) : self
+      @page_added.connect { |value| block.call(value) }
+      self
+    end
+
+    # Registers a block to run when a page is removed from the wizard.
+    def on_page_removed(&block : Int32 ->) : self
+      @page_removed.connect { |value| block.call(value) }
+      self
+    end
+
     protected def emit_current_id_changed(value : Int32) : Nil
       @current_id_changed.emit(value)
     end
 
+    protected def emit_custom_button_clicked(value : Int32) : Nil
+      @custom_button_clicked.emit(value)
+    end
+
+    protected def emit_help_requested : Nil
+      @help_requested.emit
+    end
+
+    protected def emit_page_added(value : Int32) : Nil
+      @page_added.emit(value)
+    end
+
+    protected def emit_page_removed(value : Int32) : Nil
+      @page_removed.emit(value)
+    end
+
     private def register_callbacks : Nil
       @current_id_changed = Signal(Int32).new
+      @custom_button_clicked = Signal(Int32).new
+      @help_requested = Signal().new
+      @page_added = Signal(Int32).new
+      @page_removed = Signal(Int32).new
       @callback_userdata = Box.box(self)
       LibQt6.qt6cr_wizard_on_current_id_changed(to_unsafe, CURRENT_ID_CHANGED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_wizard_on_custom_button_clicked(to_unsafe, CUSTOM_BUTTON_CLICKED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_wizard_on_help_requested(to_unsafe, HELP_REQUESTED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_wizard_on_page_added(to_unsafe, PAGE_ADDED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_wizard_on_page_removed(to_unsafe, PAGE_REMOVED_TRAMPOLINE, @callback_userdata)
     end
 
     private CURRENT_ID_CHANGED_TRAMPOLINE = ->(userdata : Void*, value : Int32) do
       Box(Wizard).unbox(userdata).emit_current_id_changed(value)
+    end
+
+    private CUSTOM_BUTTON_CLICKED_TRAMPOLINE = ->(userdata : Void*, value : Int32) do
+      Box(Wizard).unbox(userdata).emit_custom_button_clicked(value)
+    end
+
+    private HELP_REQUESTED_TRAMPOLINE = ->(userdata : Void*) do
+      Box(Wizard).unbox(userdata).emit_help_requested
+    end
+
+    private PAGE_ADDED_TRAMPOLINE = ->(userdata : Void*, value : Int32) do
+      Box(Wizard).unbox(userdata).emit_page_added(value)
+    end
+
+    private PAGE_REMOVED_TRAMPOLINE = ->(userdata : Void*, value : Int32) do
+      Box(Wizard).unbox(userdata).emit_page_removed(value)
     end
   end
 end

@@ -4101,6 +4101,54 @@ void qt6cr_wizard_on_current_id_changed(qt6cr_handle_t handle, qt6cr_int_callbac
   });
 }
 
+void qt6cr_wizard_on_custom_button_clicked(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(wizard, &QWizard::customButtonClicked, wizard, [callback, userdata](int which) {
+    callback(userdata, which);
+  });
+}
+
+void qt6cr_wizard_on_help_requested(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(wizard, &QWizard::helpRequested, wizard, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_wizard_on_page_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(wizard, &QWizard::pageAdded, wizard, [callback, userdata](int id) {
+    callback(userdata, id);
+  });
+}
+
+void qt6cr_wizard_on_page_removed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(wizard, &QWizard::pageRemoved, wizard, [callback, userdata](int id) {
+    callback(userdata, id);
+  });
+}
+
 qt6cr_handle_t qt6cr_wizard_page_create(qt6cr_handle_t parent) {
   return new CrystalWizardPage(as_widget(parent));
 }
