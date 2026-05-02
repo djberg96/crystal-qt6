@@ -22,6 +22,7 @@
 #include <QConicalGradient>
 #include <QCoreApplication>
 #include <QCalendarWidget>
+#include <QColumnView>
 #include <QCommandLinkButton>
 #include <QCursor>
 #include <QDataWidgetMapper>
@@ -41,6 +42,8 @@
 #include <QEventLoop>
 #include <QFile>
 #include <QFileDialog>
+#include <QtWidgets/qfileiconprovider.h>
+#include <QFileSystemModel>
 #include <QFileInfo>
 #include <QErrorMessage>
 #include <QFocusFrame>
@@ -530,6 +533,49 @@ class ModelTreeView final : public QTreeView {
     }
 
     QTreeView::setSelectionModel(selection_model);
+    reconnect_current_changed();
+  }
+
+  void reconnect_current_changed() {
+    auto *selection_model = selectionModel();
+
+    if (selection_model == nullptr || current_index_changed_callback == nullptr) {
+      return;
+    }
+
+    current_changed_connection = QObject::connect(selection_model, &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &, const QModelIndex &) {
+      if (current_index_changed_callback != nullptr) {
+        current_index_changed_callback(current_index_changed_userdata);
+      }
+    });
+  }
+
+ private:
+  QMetaObject::Connection current_changed_connection;
+};
+
+class ModelColumnView final : public QColumnView {
+ public:
+  explicit ModelColumnView(QWidget *parent = nullptr) : QColumnView(parent) {}
+
+  qt6cr_void_callback_t current_index_changed_callback = nullptr;
+  void *current_index_changed_userdata = nullptr;
+
+  void setModel(QAbstractItemModel *model) override {
+    if (current_changed_connection) {
+      QObject::disconnect(current_changed_connection);
+    }
+
+    QColumnView::setModel(model);
+    reconnect_current_changed();
+  }
+
+  void setSelectionModel(QItemSelectionModel *selection_model) override {
+    if (current_changed_connection) {
+      QObject::disconnect(current_changed_connection);
+    }
+
+    QColumnView::setSelectionModel(selection_model);
     reconnect_current_changed();
   }
 
@@ -1566,6 +1612,14 @@ QErrorMessage *as_error_message(qt6cr_handle_t handle) {
   return static_cast<QErrorMessage *>(handle);
 }
 
+QFileIconProvider *as_file_icon_provider(qt6cr_handle_t handle) {
+  return static_cast<QFileIconProvider *>(handle);
+}
+
+QFileSystemModel *as_file_system_model(qt6cr_handle_t handle) {
+  return static_cast<QFileSystemModel *>(handle);
+}
+
 QTextDocument *as_text_document(qt6cr_handle_t handle) {
   return static_cast<QTextDocument *>(handle);
 }
@@ -1588,6 +1642,10 @@ QTextBrowser *as_text_browser(qt6cr_handle_t handle) {
 
 QToolBox *as_tool_box(qt6cr_handle_t handle) {
   return static_cast<QToolBox *>(handle);
+}
+
+ModelColumnView *as_column_view(qt6cr_handle_t handle) {
+  return static_cast<ModelColumnView *>(handle);
 }
 
 QTabWidget *as_tab_widget(qt6cr_handle_t handle) {
@@ -6041,6 +6099,242 @@ void qt6cr_sort_filter_proxy_model_clear_filter(qt6cr_handle_t handle) {
   }
 }
 
+qt6cr_handle_t qt6cr_file_icon_provider_create(void) {
+  return new QFileIconProvider();
+}
+
+void qt6cr_file_icon_provider_destroy(qt6cr_handle_t handle) {
+  delete as_file_icon_provider(handle);
+}
+
+qt6cr_handle_t qt6cr_file_icon_provider_icon_for_type(qt6cr_handle_t handle, int type) {
+  auto *provider = as_file_icon_provider(handle);
+  return provider == nullptr ? nullptr : new QIcon(provider->icon(static_cast<QAbstractFileIconProvider::IconType>(type)));
+}
+
+qt6cr_handle_t qt6cr_file_icon_provider_icon_for_file_info(qt6cr_handle_t handle, qt6cr_handle_t file_info) {
+  auto *provider = as_file_icon_provider(handle);
+  auto *info = as_qfile_info(file_info);
+  return provider == nullptr || info == nullptr ? nullptr : new QIcon(provider->icon(*info));
+}
+
+qt6cr_handle_t qt6cr_file_system_model_create(qt6cr_handle_t parent) {
+  return new QFileSystemModel(as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_file_system_model_index_for_path(qt6cr_handle_t handle, const char *path, int column) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr ? new QModelIndex() : new QModelIndex(model->index(QString::fromUtf8(path == nullptr ? "" : path), column));
+}
+
+void qt6cr_file_system_model_sort(qt6cr_handle_t handle, int column, int order) {
+  auto *model = as_file_system_model(handle);
+
+  if (model != nullptr) {
+    model->sort(column, static_cast<Qt::SortOrder>(order));
+  }
+}
+
+qt6cr_handle_t qt6cr_file_system_model_set_root_path(qt6cr_handle_t handle, const char *path) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr ? new QModelIndex() : new QModelIndex(model->setRootPath(QString::fromUtf8(path == nullptr ? "" : path)));
+}
+
+char *qt6cr_file_system_model_root_path(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr ? duplicate_string("") : duplicate_string(model->rootPath());
+}
+
+qt6cr_handle_t qt6cr_file_system_model_root_directory(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr ? nullptr : new QDir(model->rootDirectory());
+}
+
+void qt6cr_file_system_model_set_icon_provider(qt6cr_handle_t handle, qt6cr_handle_t provider) {
+  auto *model = as_file_system_model(handle);
+  auto *icon_provider = as_file_icon_provider(provider);
+
+  if (model != nullptr) {
+    model->setIconProvider(icon_provider);
+  }
+}
+
+qt6cr_handle_t qt6cr_file_system_model_icon_provider(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  auto *provider = model == nullptr ? nullptr : dynamic_cast<QFileIconProvider *>(model->iconProvider());
+  return provider;
+}
+
+void qt6cr_file_system_model_set_filter(qt6cr_handle_t handle, int filters) {
+  auto *model = as_file_system_model(handle);
+
+  if (model != nullptr) {
+    model->setFilter(static_cast<QDir::Filters>(filters));
+  }
+}
+
+int qt6cr_file_system_model_filter(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr ? static_cast<int>(QDir::NoFilter) : static_cast<int>(model->filter());
+}
+
+void qt6cr_file_system_model_set_resolve_symlinks(qt6cr_handle_t handle, bool value) {
+  auto *model = as_file_system_model(handle);
+
+  if (model != nullptr) {
+    model->setResolveSymlinks(value);
+  }
+}
+
+bool qt6cr_file_system_model_resolve_symlinks(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model != nullptr && model->resolveSymlinks();
+}
+
+void qt6cr_file_system_model_set_read_only(qt6cr_handle_t handle, bool value) {
+  auto *model = as_file_system_model(handle);
+
+  if (model != nullptr) {
+    model->setReadOnly(value);
+  }
+}
+
+bool qt6cr_file_system_model_is_read_only(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr || model->isReadOnly();
+}
+
+void qt6cr_file_system_model_set_name_filter_disables(qt6cr_handle_t handle, bool value) {
+  auto *model = as_file_system_model(handle);
+
+  if (model != nullptr) {
+    model->setNameFilterDisables(value);
+  }
+}
+
+bool qt6cr_file_system_model_name_filter_disables(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model != nullptr && model->nameFilterDisables();
+}
+
+void qt6cr_file_system_model_set_name_filters(qt6cr_handle_t handle, const char *const *filters, int count) {
+  auto *model = as_file_system_model(handle);
+
+  if (model == nullptr) {
+    return;
+  }
+
+  QStringList names;
+  for (int index = 0; index < count; ++index) {
+    const char *value = filters == nullptr ? nullptr : filters[index];
+    names << QString::fromUtf8(value == nullptr ? "" : value);
+  }
+
+  model->setNameFilters(names);
+}
+
+qt6cr_string_array_t qt6cr_file_system_model_name_filters(qt6cr_handle_t handle) {
+  auto *model = as_file_system_model(handle);
+  return model == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(model->nameFilters());
+}
+
+void qt6cr_file_system_model_set_option(qt6cr_handle_t handle, int option, bool value) {
+  auto *model = as_file_system_model(handle);
+
+  if (model != nullptr) {
+    model->setOption(static_cast<QFileSystemModel::Option>(option), value);
+  }
+}
+
+bool qt6cr_file_system_model_test_option(qt6cr_handle_t handle, int option) {
+  auto *model = as_file_system_model(handle);
+  return model != nullptr && model->testOption(static_cast<QFileSystemModel::Option>(option));
+}
+
+char *qt6cr_file_system_model_file_path(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? duplicate_string("") : duplicate_string(model->filePath(*model_index));
+}
+
+char *qt6cr_file_system_model_file_name(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? duplicate_string("") : duplicate_string(model->fileName(*model_index));
+}
+
+bool qt6cr_file_system_model_is_dir(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model != nullptr && model_index != nullptr && model->isDir(*model_index);
+}
+
+int64_t qt6cr_file_system_model_size(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? 0 : model->size(*model_index);
+}
+
+char *qt6cr_file_system_model_type(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? duplicate_string("") : duplicate_string(model->type(*model_index));
+}
+
+qt6cr_handle_t qt6cr_file_system_model_file_info(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? nullptr : new QFileInfo(model->fileInfo(*model_index));
+}
+
+qt6cr_handle_t qt6cr_file_system_model_mkdir(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *name) {
+  auto *model = as_file_system_model(handle);
+  auto *parent_index = as_model_index(parent);
+
+  if (model == nullptr) {
+    return new QModelIndex();
+  }
+
+  const auto created = model->mkdir(parent_index == nullptr ? QModelIndex() : *parent_index, QString::fromUtf8(name == nullptr ? "" : name));
+  return new QModelIndex(created);
+}
+
+bool qt6cr_file_system_model_rmdir(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model != nullptr && model_index != nullptr && model->rmdir(*model_index);
+}
+
+bool qt6cr_file_system_model_remove(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model != nullptr && model_index != nullptr && model->remove(*model_index);
+}
+
+void qt6cr_file_system_model_on_root_path_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *model = as_file_system_model(handle);
+
+  if (model == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(model, &QFileSystemModel::rootPathChanged, model, [callback, userdata](const QString &path) {
+    callback(userdata, path.toUtf8().constData());
+  });
+}
+
+void qt6cr_file_system_model_on_directory_loaded(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *model = as_file_system_model(handle);
+
+  if (model == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(model, &QFileSystemModel::directoryLoaded, model, [callback, userdata](const QString &path) {
+    callback(userdata, path.toUtf8().constData());
+  });
+}
+
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent) {
   return new CrystalStyledItemDelegate(as_object(parent));
 }
@@ -6745,6 +7039,103 @@ void qt6cr_tree_view_collapse_all(qt6cr_handle_t handle) {
 
 void qt6cr_tree_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *view = as_tree_view(handle);
+
+  if (view == nullptr) {
+    return;
+  }
+
+  view->current_index_changed_callback = callback;
+  view->current_index_changed_userdata = userdata;
+  view->reconnect_current_changed();
+}
+
+qt6cr_handle_t qt6cr_column_view_create(qt6cr_handle_t parent) {
+  return new ModelColumnView(as_widget(parent));
+}
+
+void qt6cr_column_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model) {
+  auto *view = as_column_view(handle);
+
+  if (view != nullptr) {
+    view->setModel(as_abstract_item_model(model));
+  }
+}
+
+qt6cr_handle_t qt6cr_column_view_root_index(qt6cr_handle_t handle) {
+  auto *view = as_column_view(handle);
+  return view == nullptr ? new QModelIndex() : new QModelIndex(view->rootIndex());
+}
+
+void qt6cr_column_view_set_root_index(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_column_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr) {
+    view->setRootIndex(model_index == nullptr ? QModelIndex() : *model_index);
+  }
+}
+
+bool qt6cr_column_view_resize_grips_visible(qt6cr_handle_t handle) {
+  auto *view = as_column_view(handle);
+  return view != nullptr && view->resizeGripsVisible();
+}
+
+void qt6cr_column_view_set_resize_grips_visible(qt6cr_handle_t handle, bool value) {
+  auto *view = as_column_view(handle);
+
+  if (view != nullptr) {
+    view->setResizeGripsVisible(value);
+  }
+}
+
+bool qt6cr_column_view_preview_column_visible(qt6cr_handle_t handle) {
+  auto *view = as_column_view(handle);
+  return view != nullptr && view->isPreviewColumnVisible();
+}
+
+void qt6cr_column_view_set_preview_column_visible(qt6cr_handle_t handle, bool value) {
+  auto *view = as_column_view(handle);
+
+  if (view != nullptr) {
+    view->setPreviewColumnVisible(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_column_view_preview_widget(qt6cr_handle_t handle) {
+  auto *view = as_column_view(handle);
+  return view == nullptr ? nullptr : view->previewWidget();
+}
+
+void qt6cr_column_view_set_preview_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *view = as_column_view(handle);
+
+  if (view != nullptr) {
+    view->setPreviewWidget(as_widget(widget));
+  }
+}
+
+qt6cr_int_array_t qt6cr_column_view_column_widths(qt6cr_handle_t handle) {
+  auto *view = as_column_view(handle);
+  return view == nullptr ? qt6cr_int_array_t{nullptr, 0} : to_int_array_value(view->columnWidths());
+}
+
+void qt6cr_column_view_set_column_widths(qt6cr_handle_t handle, const int *widths, int count) {
+  auto *view = as_column_view(handle);
+
+  if (view == nullptr) {
+    return;
+  }
+
+  QList<int> list;
+  for (int index = 0; index < count; ++index) {
+    list << (widths == nullptr ? 0 : widths[index]);
+  }
+
+  view->setColumnWidths(list);
+}
+
+void qt6cr_column_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *view = as_column_view(handle);
 
   if (view == nullptr) {
     return;

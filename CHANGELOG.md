@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QWizard` and `QWizardPage` bindings for page-based setup flows, including style and option controls, button and pixmap customization, visited-page tracking, and mandatory-field completion wiring.
 - Added `QDataWidgetMapper` bindings with model/delegate/root-index plumbing, manual or auto submit policies, widget/property mappings, and row navigation for form-style model editing.
 - Added `QMdiArea` and `QMdiSubWindow` wrappers with document-area options, tabbed-view controls, activation callbacks, and subwindow helpers for desktop multi-document shells.
+- Added `QColumnView`, `QFileIconProvider`, and `QFileSystemModel` wrappers for Finder-style model browsing, stock file icons, and live directory-tree models with filtering, name filters, and root-path callbacks.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

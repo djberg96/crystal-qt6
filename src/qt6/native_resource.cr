@@ -30,6 +30,11 @@ module Qt6
       Qt6.untrack_object(self)
     end
 
+    # Stops releasing this resource directly because native ownership moved elsewhere.
+    def adopt_by_owner! : Nil
+      @owned = false
+    end
+
     protected abstract def destroy_native : Nil
   end
 end

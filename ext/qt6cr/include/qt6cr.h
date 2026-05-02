@@ -749,6 +749,43 @@ bool qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(qt6cr_handle_t ha
 void qt6cr_sort_filter_proxy_model_invalidate(qt6cr_handle_t handle);
 void qt6cr_sort_filter_proxy_model_clear_filter(qt6cr_handle_t handle);
 
+qt6cr_handle_t qt6cr_file_icon_provider_create(void);
+void qt6cr_file_icon_provider_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_file_icon_provider_icon_for_type(qt6cr_handle_t handle, int type);
+qt6cr_handle_t qt6cr_file_icon_provider_icon_for_file_info(qt6cr_handle_t handle, qt6cr_handle_t file_info);
+
+qt6cr_handle_t qt6cr_file_system_model_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_file_system_model_index_for_path(qt6cr_handle_t handle, const char *path, int column);
+void qt6cr_file_system_model_sort(qt6cr_handle_t handle, int column, int order);
+qt6cr_handle_t qt6cr_file_system_model_set_root_path(qt6cr_handle_t handle, const char *path);
+char *qt6cr_file_system_model_root_path(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_file_system_model_root_directory(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_icon_provider(qt6cr_handle_t handle, qt6cr_handle_t provider);
+qt6cr_handle_t qt6cr_file_system_model_icon_provider(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_filter(qt6cr_handle_t handle, int filters);
+int qt6cr_file_system_model_filter(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_resolve_symlinks(qt6cr_handle_t handle, bool value);
+bool qt6cr_file_system_model_resolve_symlinks(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_read_only(qt6cr_handle_t handle, bool value);
+bool qt6cr_file_system_model_is_read_only(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_name_filter_disables(qt6cr_handle_t handle, bool value);
+bool qt6cr_file_system_model_name_filter_disables(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_name_filters(qt6cr_handle_t handle, const char *const *filters, int count);
+qt6cr_string_array_t qt6cr_file_system_model_name_filters(qt6cr_handle_t handle);
+void qt6cr_file_system_model_set_option(qt6cr_handle_t handle, int option, bool value);
+bool qt6cr_file_system_model_test_option(qt6cr_handle_t handle, int option);
+char *qt6cr_file_system_model_file_path(qt6cr_handle_t handle, qt6cr_handle_t index);
+char *qt6cr_file_system_model_file_name(qt6cr_handle_t handle, qt6cr_handle_t index);
+bool qt6cr_file_system_model_is_dir(qt6cr_handle_t handle, qt6cr_handle_t index);
+int64_t qt6cr_file_system_model_size(qt6cr_handle_t handle, qt6cr_handle_t index);
+char *qt6cr_file_system_model_type(qt6cr_handle_t handle, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_file_system_model_file_info(qt6cr_handle_t handle, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_file_system_model_mkdir(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *name);
+bool qt6cr_file_system_model_rmdir(qt6cr_handle_t handle, qt6cr_handle_t index);
+bool qt6cr_file_system_model_remove(qt6cr_handle_t handle, qt6cr_handle_t index);
+void qt6cr_file_system_model_on_root_path_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+void qt6cr_file_system_model_on_directory_loaded(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent);
 void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);
 void qt6cr_styled_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata);
@@ -820,6 +857,20 @@ bool qt6cr_tree_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_hand
 void qt6cr_tree_view_expand_all(qt6cr_handle_t handle);
 void qt6cr_tree_view_collapse_all(qt6cr_handle_t handle);
 void qt6cr_tree_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_column_view_create(qt6cr_handle_t parent);
+void qt6cr_column_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
+qt6cr_handle_t qt6cr_column_view_root_index(qt6cr_handle_t handle);
+void qt6cr_column_view_set_root_index(qt6cr_handle_t handle, qt6cr_handle_t index);
+bool qt6cr_column_view_resize_grips_visible(qt6cr_handle_t handle);
+void qt6cr_column_view_set_resize_grips_visible(qt6cr_handle_t handle, bool value);
+bool qt6cr_column_view_preview_column_visible(qt6cr_handle_t handle);
+void qt6cr_column_view_set_preview_column_visible(qt6cr_handle_t handle, bool value);
+qt6cr_handle_t qt6cr_column_view_preview_widget(qt6cr_handle_t handle);
+void qt6cr_column_view_set_preview_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_int_array_t qt6cr_column_view_column_widths(qt6cr_handle_t handle);
+void qt6cr_column_view_set_column_widths(qt6cr_handle_t handle, const int *widths, int count);
+void qt6cr_column_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 int qt6cr_header_view_count(qt6cr_handle_t handle);
 int qt6cr_header_view_default_section_size(qt6cr_handle_t handle);

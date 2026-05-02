@@ -1605,4 +1605,143 @@ describe Qt6 do
     model.release
   end
 
+  it "supports column views, file icon providers, and file system models" do
+    application = app
+    root_path = File.join(Dir.tempdir, "crystal-qt6-filesystem-model-#{Process.pid}")
+    maps_path = File.join(root_path, "maps")
+    terrain_path = File.join(root_path, "terrain.map")
+    units_path = File.join(maps_path, "units.map")
+    notes_path = File.join(root_path, "notes.txt")
+
+    Dir.mkdir_p(maps_path)
+    File.write(terrain_path, "terrain")
+    File.write(units_path, "units")
+    File.write(notes_path, "notes")
+
+    model = Qt6::FileSystemModel.new
+    provider = Qt6::FileIconProvider.new
+    column_view = Qt6::ColumnView.new
+    preview = Qt6::Label.new("Preview", column_view)
+
+    root_paths = [] of String
+    loaded_paths = [] of String
+    current_index_changes = 0
+
+    model.on_root_path_changed do |path|
+      root_paths << path
+    end
+
+    model.on_directory_loaded do |path|
+      loaded_paths << path
+    end
+
+    column_view.on_current_index_changed do
+      current_index_changes += 1
+    end
+
+    model.filter = Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::NoDotAndDotDot
+    model.read_only = false
+    model.resolve_symlinks = false
+    model.name_filter_disables = false
+    model.name_filters = ["*.map", "*.txt"]
+    model.set_option(Qt6::FileSystemModelOption::DontUseCustomDirectoryIcons, true)
+
+    root_index = model.set_root_path(root_path)
+    50.times do
+      application.process_events
+      break if loaded_paths.includes?(root_path)
+    end
+
+    50.times do
+      application.process_events
+      break if model.row_count(root_index) >= 2
+    end
+
+    maps_index = model.index(maps_path)
+    terrain_index = model.index(terrain_path)
+    notes_index = model.index(notes_path)
+
+    50.times do
+      application.process_events
+      break if maps_index.valid? && terrain_index.valid? && notes_index.valid? && model.row_count(maps_index) >= 1
+    end
+
+    column_view.model = model
+    column_view.root_index = root_index
+    column_view.resize_grips_visible = true
+    column_view.preview_column_visible = true
+    column_view.preview_widget = preview
+    column_view.column_widths = [140, 220]
+    column_view.show
+    application.process_events
+
+    column_view.current_index = maps_index
+    application.process_events
+
+    terrain_info = model.file_info(terrain_index)
+    folder_icon = provider.icon(Qt6::FileIconType::Folder)
+    file_icon = provider.icon(terrain_info)
+
+    model.root_path.should eq(root_path)
+    root_paths.should contain(root_path)
+    loaded_paths.should contain(root_path)
+    model.root_directory.absolute_path.should eq(root_path)
+    model.filter.should eq(Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::NoDotAndDotDot)
+    model.read_only?.should be_false
+    model.resolve_symlinks?.should be_false
+    model.name_filter_disables?.should be_false
+    model.name_filters.should eq(["*.map", "*.txt"])
+    model.option?(Qt6::FileSystemModelOption::DontUseCustomDirectoryIcons).should be_true
+    root_index.valid?.should be_true
+    maps_index.valid?.should be_true
+    terrain_index.valid?.should be_true
+    notes_index.valid?.should be_true
+    model.file_path(terrain_index).should eq(terrain_path)
+    model.file_name(terrain_index).should eq("terrain.map")
+    model.dir?(maps_index).should be_true
+    model.dir?(terrain_index).should be_false
+    model.size(terrain_index).should eq(7)
+    model.type(terrain_index).should_not be_empty
+    terrain_info.file_name.should eq("terrain.map")
+    folder_icon.null?.should be_false
+    file_icon.null?.should be_false
+
+    column_view.root_index.valid?.should be_true
+    column_view.root_index.row.should eq(root_index.row)
+    column_view.resize_grips_visible?.should be_true
+    column_view.preview_column_visible?.should be_true
+    column_view.preview_widget.not_nil!.to_unsafe.should eq(preview.to_unsafe)
+    column_view.column_widths.should eq([140, 220])
+    column_view.current_index.valid?.should be_true
+    column_view.current_index.row.should eq(maps_index.row)
+    current_index_changes.should be >= 1
+
+    generated_index = model.mkdir(root_index, "generated")
+    20.times { application.process_events }
+    generated_index.valid?.should be_true
+    model.file_name(generated_index).should eq("generated")
+    model.rmdir(generated_index).should be_true
+    application.process_events
+    model.remove(notes_index).should be_true
+    application.process_events
+    File.exists?(notes_path).should be_false
+
+    notes_index.release
+    generated_index.release
+    terrain_info.release
+    terrain_index.release
+    file_icon.release
+    folder_icon.release
+    maps_index.release
+    root_index.release
+    column_view.release
+    model.release
+    provider.release
+
+    File.delete(units_path) if File.exists?(units_path)
+    File.delete(terrain_path) if File.exists?(terrain_path)
+    Dir.delete(maps_path) if Dir.exists?(maps_path)
+    Dir.delete(root_path) if Dir.exists?(root_path)
+  end
+
 end

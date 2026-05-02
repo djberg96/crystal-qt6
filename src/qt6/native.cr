@@ -725,6 +725,43 @@ module Qt6
     fun qt6cr_sort_filter_proxy_model_invalidate = qt6cr_sort_filter_proxy_model_invalidate(handle : Handle)
     fun qt6cr_sort_filter_proxy_model_clear_filter = qt6cr_sort_filter_proxy_model_clear_filter(handle : Handle)
 
+    fun qt6cr_file_icon_provider_create = qt6cr_file_icon_provider_create : Handle
+    fun qt6cr_file_icon_provider_destroy = qt6cr_file_icon_provider_destroy(handle : Handle)
+    fun qt6cr_file_icon_provider_icon_for_type = qt6cr_file_icon_provider_icon_for_type(handle : Handle, type : LibC::Int) : Handle
+    fun qt6cr_file_icon_provider_icon_for_file_info = qt6cr_file_icon_provider_icon_for_file_info(handle : Handle, file_info : Handle) : Handle
+
+    fun qt6cr_file_system_model_create = qt6cr_file_system_model_create(parent : Handle) : Handle
+    fun qt6cr_file_system_model_index_for_path = qt6cr_file_system_model_index_for_path(handle : Handle, path : UInt8*, column : LibC::Int) : Handle
+    fun qt6cr_file_system_model_sort = qt6cr_file_system_model_sort(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_file_system_model_set_root_path = qt6cr_file_system_model_set_root_path(handle : Handle, path : UInt8*) : Handle
+    fun qt6cr_file_system_model_root_path = qt6cr_file_system_model_root_path(handle : Handle) : UInt8*
+    fun qt6cr_file_system_model_root_directory = qt6cr_file_system_model_root_directory(handle : Handle) : Handle
+    fun qt6cr_file_system_model_set_icon_provider = qt6cr_file_system_model_set_icon_provider(handle : Handle, provider : Handle)
+    fun qt6cr_file_system_model_icon_provider = qt6cr_file_system_model_icon_provider(handle : Handle) : Handle
+    fun qt6cr_file_system_model_set_filter = qt6cr_file_system_model_set_filter(handle : Handle, filters : LibC::Int)
+    fun qt6cr_file_system_model_filter = qt6cr_file_system_model_filter(handle : Handle) : LibC::Int
+    fun qt6cr_file_system_model_set_resolve_symlinks = qt6cr_file_system_model_set_resolve_symlinks(handle : Handle, value : Bool)
+    fun qt6cr_file_system_model_resolve_symlinks = qt6cr_file_system_model_resolve_symlinks(handle : Handle) : Bool
+    fun qt6cr_file_system_model_set_read_only = qt6cr_file_system_model_set_read_only(handle : Handle, value : Bool)
+    fun qt6cr_file_system_model_is_read_only = qt6cr_file_system_model_is_read_only(handle : Handle) : Bool
+    fun qt6cr_file_system_model_set_name_filter_disables = qt6cr_file_system_model_set_name_filter_disables(handle : Handle, value : Bool)
+    fun qt6cr_file_system_model_name_filter_disables = qt6cr_file_system_model_name_filter_disables(handle : Handle) : Bool
+    fun qt6cr_file_system_model_set_name_filters = qt6cr_file_system_model_set_name_filters(handle : Handle, filters : UInt8**, count : LibC::Int)
+    fun qt6cr_file_system_model_name_filters = qt6cr_file_system_model_name_filters(handle : Handle) : StringArrayValue
+    fun qt6cr_file_system_model_set_option = qt6cr_file_system_model_set_option(handle : Handle, option : LibC::Int, value : Bool)
+    fun qt6cr_file_system_model_test_option = qt6cr_file_system_model_test_option(handle : Handle, option : LibC::Int) : Bool
+    fun qt6cr_file_system_model_file_path = qt6cr_file_system_model_file_path(handle : Handle, index : Handle) : UInt8*
+    fun qt6cr_file_system_model_file_name = qt6cr_file_system_model_file_name(handle : Handle, index : Handle) : UInt8*
+    fun qt6cr_file_system_model_is_dir = qt6cr_file_system_model_is_dir(handle : Handle, index : Handle) : Bool
+    fun qt6cr_file_system_model_size = qt6cr_file_system_model_size(handle : Handle, index : Handle) : Int64
+    fun qt6cr_file_system_model_type = qt6cr_file_system_model_type(handle : Handle, index : Handle) : UInt8*
+    fun qt6cr_file_system_model_file_info = qt6cr_file_system_model_file_info(handle : Handle, index : Handle) : Handle
+    fun qt6cr_file_system_model_mkdir = qt6cr_file_system_model_mkdir(handle : Handle, parent : Handle, name : UInt8*) : Handle
+    fun qt6cr_file_system_model_rmdir = qt6cr_file_system_model_rmdir(handle : Handle, index : Handle) : Bool
+    fun qt6cr_file_system_model_remove = qt6cr_file_system_model_remove(handle : Handle, index : Handle) : Bool
+    fun qt6cr_file_system_model_on_root_path_changed = qt6cr_file_system_model_on_root_path_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+    fun qt6cr_file_system_model_on_directory_loaded = qt6cr_file_system_model_on_directory_loaded(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+
     fun qt6cr_styled_item_delegate_create = qt6cr_styled_item_delegate_create(parent : Handle) : Handle
     fun qt6cr_styled_item_delegate_on_display_text = qt6cr_styled_item_delegate_on_display_text(handle : Handle, callback : (Handle, UInt8* -> UInt8*), userdata : Handle)
     fun qt6cr_styled_item_delegate_on_create_editor = qt6cr_styled_item_delegate_on_create_editor(handle : Handle, callback : (Handle, Handle, Handle -> Handle), userdata : Handle)
@@ -796,6 +833,20 @@ module Qt6
     fun qt6cr_tree_view_expand_all = qt6cr_tree_view_expand_all(handle : Handle)
     fun qt6cr_tree_view_collapse_all = qt6cr_tree_view_collapse_all(handle : Handle)
     fun qt6cr_tree_view_on_current_index_changed = qt6cr_tree_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_column_view_create = qt6cr_column_view_create(parent : Handle) : Handle
+    fun qt6cr_column_view_set_model = qt6cr_column_view_set_model(handle : Handle, model : Handle)
+    fun qt6cr_column_view_root_index = qt6cr_column_view_root_index(handle : Handle) : Handle
+    fun qt6cr_column_view_set_root_index = qt6cr_column_view_set_root_index(handle : Handle, index : Handle)
+    fun qt6cr_column_view_resize_grips_visible = qt6cr_column_view_resize_grips_visible(handle : Handle) : Bool
+    fun qt6cr_column_view_set_resize_grips_visible = qt6cr_column_view_set_resize_grips_visible(handle : Handle, value : Bool)
+    fun qt6cr_column_view_preview_column_visible = qt6cr_column_view_preview_column_visible(handle : Handle) : Bool
+    fun qt6cr_column_view_set_preview_column_visible = qt6cr_column_view_set_preview_column_visible(handle : Handle, value : Bool)
+    fun qt6cr_column_view_preview_widget = qt6cr_column_view_preview_widget(handle : Handle) : Handle
+    fun qt6cr_column_view_set_preview_widget = qt6cr_column_view_set_preview_widget(handle : Handle, widget : Handle)
+    fun qt6cr_column_view_column_widths = qt6cr_column_view_column_widths(handle : Handle) : IntArrayValue
+    fun qt6cr_column_view_set_column_widths = qt6cr_column_view_set_column_widths(handle : Handle, widths : Int32*, count : LibC::Int)
+    fun qt6cr_column_view_on_current_index_changed = qt6cr_column_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_header_view_count = qt6cr_header_view_count(handle : Handle) : LibC::Int
     fun qt6cr_header_view_default_section_size = qt6cr_header_view_default_section_size(handle : Handle) : LibC::Int
