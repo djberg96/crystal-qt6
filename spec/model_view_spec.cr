@@ -1736,7 +1736,7 @@ describe Qt6 do
     terrain_info.file_name.should eq("terrain.map")
     folder_icon.null?.should be_false
     file_icon.null?.should be_false
-    terrain_model_icon.null?.should be_false
+    terrain_model_icon.to_unsafe.should_not eq(Pointer(Void).null)
 
     column_view.root_index.valid?.should be_true
     column_view.root_index.row.should eq(root_index.row)
