@@ -35,6 +35,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QPainter#draw_convex_polygon` support for both `QPolygon` and `QPolygonF`.
 - Added `BrushStyle` plus deeper `QBrush` style, texture, texture-image, and opacity helpers.
 - Added `QPainterPath#fill_rule` support for odd-even and winding interior control.
+- Added minimal `GraphicsItem` and `AbstractGraphicsShapeItem` wrappers with visibility, enablement, opacity, parent-item lookup, pen/brush access, obscured checks, and opaque-area access.
 - Added `QGraphicsEffect` plus blur, colorize, drop-shadow, and opacity effect wrappers with widget attachment helpers and enabled-state callbacks.
 - Added `QShortcut` bindings with key-sequence, context, auto-repeat, enablement, parent-widget access, and activation callbacks.
 - Added `QBoxLayout` bindings with direction control plus shared widget, spacing, and stretch helpers under `VBoxLayout` and `HBoxLayout`.

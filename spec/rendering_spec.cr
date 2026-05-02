@@ -402,6 +402,38 @@ describe Qt6 do
     translucent.opaque?.should be_false
   end
 
+  it "supports abstract graphics shape items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    child = Qt6::AbstractGraphicsShapeItem.new(parent)
+    pen = Qt6::QPen.new(Qt6::Color.new(12, 34, 56), 2.5)
+    brush = Qt6::QBrush.new(Qt6::Color.new(78, 90, 102, 180))
+
+    child.pen = pen
+    child.brush = brush
+    child.visible = false
+    child.visible?.should be_false
+    child.show
+    child.enabled = false
+    child.enabled?.should be_false
+    child.enabled = true
+    child.opacity = 0.6
+
+    child.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    child.pen.color.should eq(Qt6::Color.new(12, 34, 56, 255))
+    child.pen.width.should eq(2.5)
+    child.brush.color.should eq(Qt6::Color.new(78, 90, 102, 180))
+    child.visible?.should be_true
+    child.enabled?.should be_true
+    child.opacity.should eq(0.6)
+    child.obscured_by?(parent).should be_false
+    child.opaque_area.empty?.should be_true
+    child.opaque_area.element_count.should eq(0)
+
+    parent.release
+  end
+
   it "supports gradients and advanced pen styling" do
     app
 

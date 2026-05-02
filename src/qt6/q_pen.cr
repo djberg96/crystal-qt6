@@ -1,6 +1,10 @@
 module Qt6
   # Wraps `QPen` for stroke styling.
   class QPen < NativeResource
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates a pen with the given color and stroke width.
     def initialize(color : Color = Color.new(0, 0, 0), width : Number = 1.0)
       super(LibQt6.qt6cr_qpen_create(color.to_native, width.to_f64))

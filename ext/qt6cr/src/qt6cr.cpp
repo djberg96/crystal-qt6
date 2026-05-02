@@ -58,6 +58,7 @@
 #include <QGraphicsColorizeEffect>
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsEffect>
+#include <QGraphicsItem>
 #include <QGraphicsOpacityEffect>
 #include <QFormLayout>
 #include <QGridLayout>
@@ -211,6 +212,7 @@ QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
+QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
 QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle);
 QGraphicsDropShadowEffect *as_graphics_drop_shadow_effect(qt6cr_handle_t handle);
@@ -403,6 +405,18 @@ class EventWidget final : public QWidget {
   static qt6cr_rectf_t to_rectf(const QRect &rect) {
     return qt6cr_rectf_t{static_cast<double>(rect.x()), static_cast<double>(rect.y()), static_cast<double>(rect.width()), static_cast<double>(rect.height())};
   }
+};
+
+class CrystalAbstractGraphicsShapeItem final : public QAbstractGraphicsShapeItem {
+ public:
+  explicit CrystalAbstractGraphicsShapeItem(QGraphicsItem *parent = nullptr)
+      : QAbstractGraphicsShapeItem(parent) {}
+
+  QRectF boundingRect() const override {
+    return QRectF(0.0, 0.0, 16.0, 16.0);
+  }
+
+  void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override {}
 };
 
 class CrystalUndoCommand final : public QUndoCommand {
@@ -1246,6 +1260,10 @@ QWidget *as_widget(qt6cr_handle_t handle) {
 
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
   return static_cast<QGraphicsEffect *>(handle);
+}
+
+QGraphicsItem *as_graphics_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsItem *>(handle);
 }
 
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle) {
@@ -9799,6 +9817,97 @@ qt6cr_handle_t qt6cr_qpainter_path_create(void) {
 
 void qt6cr_qpainter_path_destroy(qt6cr_handle_t handle) {
   delete as_qpainter_path(handle);
+}
+
+void qt6cr_graphics_item_destroy(qt6cr_handle_t handle) {
+  delete as_graphics_item(handle);
+}
+
+bool qt6cr_graphics_item_is_visible(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->isVisible();
+}
+
+void qt6cr_graphics_item_set_visible(qt6cr_handle_t handle, bool value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setVisible(value);
+  }
+}
+
+bool qt6cr_graphics_item_is_enabled(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->isEnabled();
+}
+
+void qt6cr_graphics_item_set_enabled(qt6cr_handle_t handle, bool value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setEnabled(value);
+  }
+}
+
+double qt6cr_graphics_item_opacity(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? 0.0 : item->opacity();
+}
+
+void qt6cr_graphics_item_set_opacity(qt6cr_handle_t handle, double value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setOpacity(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_item_parent_item(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? nullptr : item->parentItem();
+}
+
+qt6cr_handle_t qt6cr_abstract_graphics_shape_item_create(qt6cr_handle_t parent) {
+  return new CrystalAbstractGraphicsShapeItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_abstract_graphics_shape_item_pen(qt6cr_handle_t handle) {
+  auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
+  return item == nullptr ? nullptr : new QPen(item->pen());
+}
+
+void qt6cr_abstract_graphics_shape_item_set_pen(qt6cr_handle_t handle, qt6cr_handle_t pen) {
+  auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
+  auto *value = as_qpen(pen);
+
+  if (item != nullptr && value != nullptr) {
+    item->setPen(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_abstract_graphics_shape_item_brush(qt6cr_handle_t handle) {
+  auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
+  return item == nullptr ? nullptr : new QBrush(item->brush());
+}
+
+void qt6cr_abstract_graphics_shape_item_set_brush(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
+  auto *value = as_qbrush(brush);
+
+  if (item != nullptr && value != nullptr) {
+    item->setBrush(*value);
+  }
+}
+
+bool qt6cr_abstract_graphics_shape_item_is_obscured_by(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
+  auto *value = as_graphics_item(other);
+  return item != nullptr && value != nullptr && item->isObscuredBy(value);
+}
+
+qt6cr_handle_t qt6cr_abstract_graphics_shape_item_opaque_area(qt6cr_handle_t handle) {
+  auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
+  return item == nullptr ? nullptr : new QPainterPath(item->opaqueArea());
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

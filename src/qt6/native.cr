@@ -1326,6 +1326,23 @@ module Qt6
     fun qt6cr_qpainter_path_intersects_rect = qt6cr_qpainter_path_intersects_rect(handle : Handle, rect : RectFValue) : Bool
     fun qt6cr_qpainter_path_is_empty = qt6cr_qpainter_path_is_empty(handle : Handle) : Bool
 
+    fun qt6cr_graphics_item_destroy = qt6cr_graphics_item_destroy(handle : Handle)
+    fun qt6cr_graphics_item_is_visible = qt6cr_graphics_item_is_visible(handle : Handle) : Bool
+    fun qt6cr_graphics_item_set_visible = qt6cr_graphics_item_set_visible(handle : Handle, value : Bool)
+    fun qt6cr_graphics_item_is_enabled = qt6cr_graphics_item_is_enabled(handle : Handle) : Bool
+    fun qt6cr_graphics_item_set_enabled = qt6cr_graphics_item_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_graphics_item_opacity = qt6cr_graphics_item_opacity(handle : Handle) : Float64
+    fun qt6cr_graphics_item_set_opacity = qt6cr_graphics_item_set_opacity(handle : Handle, value : Float64)
+    fun qt6cr_graphics_item_parent_item = qt6cr_graphics_item_parent_item(handle : Handle) : Handle
+
+    fun qt6cr_abstract_graphics_shape_item_create = qt6cr_abstract_graphics_shape_item_create(parent : Handle) : Handle
+    fun qt6cr_abstract_graphics_shape_item_pen = qt6cr_abstract_graphics_shape_item_pen(handle : Handle) : Handle
+    fun qt6cr_abstract_graphics_shape_item_set_pen = qt6cr_abstract_graphics_shape_item_set_pen(handle : Handle, pen : Handle)
+    fun qt6cr_abstract_graphics_shape_item_brush = qt6cr_abstract_graphics_shape_item_brush(handle : Handle) : Handle
+    fun qt6cr_abstract_graphics_shape_item_set_brush = qt6cr_abstract_graphics_shape_item_set_brush(handle : Handle, brush : Handle)
+    fun qt6cr_abstract_graphics_shape_item_is_obscured_by = qt6cr_abstract_graphics_shape_item_is_obscured_by(handle : Handle, other : Handle) : Bool
+    fun qt6cr_abstract_graphics_shape_item_opaque_area = qt6cr_abstract_graphics_shape_item_opaque_area(handle : Handle) : Handle
+
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
     fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)
     fun qt6cr_qpainter_path_stroker_width = qt6cr_qpainter_path_stroker_width(handle : Handle) : Float64
