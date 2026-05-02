@@ -247,6 +247,7 @@ module Qt6
     fun qt6cr_shortcut_context = qt6cr_shortcut_context(handle : Handle) : LibC::Int
     fun qt6cr_shortcut_set_context = qt6cr_shortcut_set_context(handle : Handle, value : LibC::Int)
     fun qt6cr_shortcut_parent_widget = qt6cr_shortcut_parent_widget(handle : Handle) : Handle
+    fun qt6cr_shortcut_activate = qt6cr_shortcut_activate(handle : Handle)
     fun qt6cr_shortcut_on_activated = qt6cr_shortcut_on_activated(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_shortcut_on_activated_ambiguously = qt6cr_shortcut_on_activated_ambiguously(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_mdi_area_create = qt6cr_mdi_area_create(parent : Handle) : Handle

@@ -271,6 +271,7 @@ void qt6cr_shortcut_set_auto_repeat(qt6cr_handle_t handle, bool value);
 int qt6cr_shortcut_context(qt6cr_handle_t handle);
 void qt6cr_shortcut_set_context(qt6cr_handle_t handle, int value);
 qt6cr_handle_t qt6cr_shortcut_parent_widget(qt6cr_handle_t handle);
+void qt6cr_shortcut_activate(qt6cr_handle_t handle);
 void qt6cr_shortcut_on_activated(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_shortcut_on_activated_ambiguously(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 qt6cr_handle_t qt6cr_mdi_area_create(qt6cr_handle_t parent);

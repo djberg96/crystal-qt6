@@ -434,8 +434,7 @@ describe Qt6 do
     host.set_focus
     application.process_events
 
-    host.simulate_key_press(80)
-    host.simulate_key_release(80)
+    shortcut.activate
     application.process_events
 
     shortcut.parent_widget.not_nil!.to_unsafe.should eq(host.to_unsafe)

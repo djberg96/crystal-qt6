@@ -2959,6 +2959,14 @@ qt6cr_handle_t qt6cr_shortcut_parent_widget(qt6cr_handle_t handle) {
   return shortcut == nullptr ? nullptr : qobject_cast<QWidget *>(shortcut->parent());
 }
 
+void qt6cr_shortcut_activate(qt6cr_handle_t handle) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut != nullptr) {
+    QMetaObject::invokeMethod(shortcut, "activated", Qt::DirectConnection);
+  }
+}
+
 void qt6cr_shortcut_on_activated(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *shortcut = static_cast<QShortcut *>(handle);
 

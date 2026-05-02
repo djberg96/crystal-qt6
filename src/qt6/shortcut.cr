@@ -85,6 +85,12 @@ module Qt6
       handle.null? ? nil : Widget.wrap(handle)
     end
 
+    # Triggers the shortcut's activated signal and returns `self`.
+    def activate : self
+      LibQt6.qt6cr_shortcut_activate(to_unsafe)
+      self
+    end
+
     # Registers a block for shortcut activation.
     def on_activated(&block : ->) : self
       @activated.connect { block.call }
