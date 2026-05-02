@@ -566,6 +566,7 @@ class ModelColumnView final : public QColumnView {
   qt6cr_handle_callback_t update_preview_widget_callback = nullptr;
   void *update_preview_widget_userdata = nullptr;
   QMetaObject::Connection update_preview_widget_connection;
+  bool preview_column_visible = true;
 
   void setModel(QAbstractItemModel *model) override {
     if (current_changed_connection) {
@@ -613,6 +614,26 @@ class ModelColumnView final : public QColumnView {
         update_preview_widget_callback(update_preview_widget_userdata, new QModelIndex(index));
       }
     });
+  }
+
+  bool isPreviewColumnVisible() const {
+    return preview_column_visible;
+  }
+
+  void setPreviewColumnVisible(bool value) {
+    preview_column_visible = value;
+
+    if (auto *widget = previewWidget()) {
+      widget->setVisible(value);
+    }
+  }
+
+  void setPreviewWidget(QWidget *widget) {
+    QColumnView::setPreviewWidget(widget);
+
+    if (widget != nullptr) {
+      widget->setVisible(preview_column_visible);
+    }
   }
 
  private:
