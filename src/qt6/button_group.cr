@@ -1,9 +1,17 @@
 module Qt6
   # Wraps `QButtonGroup` for grouped mode buttons.
   class ButtonGroup < QObject
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates a button group, optionally parented to another object.
     def initialize(parent : QObject? = nil)
       super(LibQt6.qt6cr_button_group_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
     end
 
     # Returns `true` when only one button in the group can stay checked.

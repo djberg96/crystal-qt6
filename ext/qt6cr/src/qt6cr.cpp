@@ -12161,6 +12161,89 @@ void qt6cr_abstract_button_set_checked(qt6cr_handle_t handle, bool value) {
   }
 }
 
+char *qt6cr_abstract_button_shortcut(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button == nullptr ? duplicate_string("") : duplicate_string(button->shortcut().toString());
+}
+
+void qt6cr_abstract_button_set_shortcut(qt6cr_handle_t handle, const char *shortcut) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->setShortcut(QKeySequence(QString::fromUtf8(shortcut == nullptr ? "" : shortcut)));
+  }
+}
+
+bool qt6cr_abstract_button_is_down(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button != nullptr && button->isDown();
+}
+
+void qt6cr_abstract_button_set_down(qt6cr_handle_t handle, bool value) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->setDown(value);
+  }
+}
+
+bool qt6cr_abstract_button_auto_repeat(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button != nullptr && button->autoRepeat();
+}
+
+void qt6cr_abstract_button_set_auto_repeat(qt6cr_handle_t handle, bool value) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->setAutoRepeat(value);
+  }
+}
+
+int qt6cr_abstract_button_auto_repeat_delay(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button == nullptr ? 0 : button->autoRepeatDelay();
+}
+
+void qt6cr_abstract_button_set_auto_repeat_delay(qt6cr_handle_t handle, int value) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->setAutoRepeatDelay(value);
+  }
+}
+
+int qt6cr_abstract_button_auto_repeat_interval(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button == nullptr ? 0 : button->autoRepeatInterval();
+}
+
+void qt6cr_abstract_button_set_auto_repeat_interval(qt6cr_handle_t handle, int value) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->setAutoRepeatInterval(value);
+  }
+}
+
+bool qt6cr_abstract_button_auto_exclusive(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button != nullptr && button->autoExclusive();
+}
+
+void qt6cr_abstract_button_set_auto_exclusive(qt6cr_handle_t handle, bool value) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->setAutoExclusive(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_abstract_button_group(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+  return button == nullptr ? nullptr : button->group();
+}
+
 void qt6cr_abstract_button_on_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *button = as_abstract_button(handle);
 
@@ -12170,6 +12253,18 @@ void qt6cr_abstract_button_on_clicked(qt6cr_handle_t handle, qt6cr_void_callback
 
   QObject::connect(button, &QAbstractButton::clicked, button, [callback, userdata](bool) {
     callback(userdata);
+  });
+}
+
+void qt6cr_abstract_button_on_clicked_checked(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *button = as_abstract_button(handle);
+
+  if (button == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button, &QAbstractButton::clicked, button, [callback, userdata](bool value) {
+    callback(userdata, value);
   });
 }
 
@@ -12185,11 +12280,51 @@ void qt6cr_abstract_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback
   });
 }
 
+void qt6cr_abstract_button_on_pressed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *button = as_abstract_button(handle);
+
+  if (button == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button, &QAbstractButton::pressed, button, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_abstract_button_on_released(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *button = as_abstract_button(handle);
+
+  if (button == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button, &QAbstractButton::released, button, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_abstract_button_animate_click(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->animateClick();
+  }
+}
+
 void qt6cr_abstract_button_click(qt6cr_handle_t handle) {
   auto *button = as_abstract_button(handle);
 
   if (button != nullptr) {
     button->click();
+  }
+}
+
+void qt6cr_abstract_button_toggle(qt6cr_handle_t handle) {
+  auto *button = as_abstract_button(handle);
+
+  if (button != nullptr) {
+    button->toggle();
   }
 }
 

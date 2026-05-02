@@ -568,6 +568,63 @@ describe Qt6 do
     window.release
   end
 
+  it "supports shared abstract button properties and slots" do
+    application = app
+    window = Qt6::Widget.new
+    button = Qt6::PushButton.new("Stateful")
+    group = Qt6::ButtonGroup.new(window)
+    group.add(button, 7)
+
+    clicks = 0
+    clicked_states = [] of Bool
+    lifecycle = [] of String
+
+    button.on_clicked { clicks += 1 }
+    button.on_clicked_checked { |value| clicked_states << value }
+    button.on_pressed { lifecycle << "pressed" }
+    button.on_released { lifecycle << "released" }
+
+    button.checkable = true
+    button.checked = false
+    button.shortcut = "Ctrl+Alt+S"
+    button.down = true
+    button.down = false
+    button.auto_repeat = true
+    button.auto_repeat_delay = 120
+    button.auto_repeat_interval = 45
+    button.auto_exclusive = true
+    button.icon = Qt6::QIcon.new
+    button.icon_size = Qt6::Size.new(18, 20)
+
+    button.toggle
+    application.process_events
+    button.click
+    application.process_events
+
+    loop = Qt6::QEventLoop.new
+    Qt6::QTimer.single_shot(150) { loop.quit }
+    button.animate_click
+    loop.run
+    application.process_events
+
+    button.checkable?.should be_true
+    button.checked?.should be_true
+    button.shortcut.to_s.should eq("Ctrl+Alt+S")
+    button.down?.should be_false
+    button.auto_repeat?.should be_true
+    button.auto_repeat_delay.should eq(120)
+    button.auto_repeat_interval.should eq(45)
+    button.auto_exclusive?.should be_true
+    button.group.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    button.icon.null?.should be_true
+    button.icon_size.should eq(Qt6::Size.new(18, 20))
+    clicks.should eq(2)
+    clicked_states.should eq([true, true])
+    lifecycle.should eq(["pressed", "released", "pressed", "released"])
+
+    window.release
+  end
+
   it "supports hbox, form, and grid layouts" do
     app
     window = Qt6::Widget.new

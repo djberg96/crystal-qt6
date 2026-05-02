@@ -38,6 +38,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsEffect` plus blur, colorize, drop-shadow, and opacity effect wrappers with widget attachment helpers and enabled-state callbacks.
 - Added `QShortcut` bindings with key-sequence, context, auto-repeat, enablement, parent-widget access, and activation callbacks.
 - Added `QBoxLayout` bindings with direction control plus shared widget, spacing, and stretch helpers under `VBoxLayout` and `HBoxLayout`.
+- Expanded `QAbstractButton` coverage with shortcut, down-state, auto-repeat, auto-exclusive, button-group, press/release, checked-click, and animate/toggle helpers shared by button widgets.
 
 ### Fixed
 
