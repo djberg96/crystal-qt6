@@ -1670,24 +1670,28 @@ describe Qt6 do
       sleep 10.milliseconds
     end
 
-    maps_index = Qt6::ModelIndex.new
-    terrain_index = Qt6::ModelIndex.new
-    notes_index = Qt6::ModelIndex.new
+    await_index = ->(path : String, minimum_children : Int32?) do
+      index = Qt6::ModelIndex.new
 
-    50.times do
-      application.process_events
+      50.times do
+        application.process_events
 
-      maps_index.release unless maps_index.destroyed?
-      terrain_index.release unless terrain_index.destroyed?
-      notes_index.release unless notes_index.destroyed?
+        index.release unless index.destroyed?
+        index = model.index(path)
 
-      maps_index = model.index(maps_path)
-      terrain_index = model.index(terrain_path)
-      notes_index = model.index(notes_path)
+        child_count_ready = minimum_children.nil? || (index.valid? && model.row_count(index) >= minimum_children.not_nil!)
+        break if index.valid? && child_count_ready
+        sleep 10.milliseconds
+      end
 
-      break if maps_index.valid? && terrain_index.valid? && notes_index.valid? && model.row_count(maps_index) >= 1
-      sleep 10.milliseconds
+      index
     end
+
+    root_index.release
+    root_index = await_index.call(root_path, 2)
+    maps_index = await_index.call(maps_path, 1)
+    terrain_index = await_index.call(terrain_path, nil)
+    notes_index = await_index.call(notes_path, nil)
 
     column_view.model = model
     column_view.root_index = root_index
@@ -1703,6 +1707,16 @@ describe Qt6 do
     column_view.scroll_to(terrain_index, Qt6::ScrollHint::PositionAtCenter)
     column_view.select_all
     application.process_events
+
+    maps_index.release
+    terrain_index.release
+    notes_index.release
+    root_index.release
+
+    root_index = await_index.call(root_path, 2)
+    maps_index = await_index.call(maps_path, 1)
+    terrain_index = await_index.call(terrain_path, nil)
+    notes_index = await_index.call(notes_path, nil)
 
     terrain_info = model.file_info(terrain_index)
     folder_icon = provider.icon(Qt6::FileIconType::Folder)
@@ -1758,16 +1772,7 @@ describe Qt6 do
     renamed_terrain_path = File.join(root_path, "terrain-renamed.map")
     model.rename(terrain_index, "terrain-renamed.map").should be_true
 
-    renamed_index = Qt6::ModelIndex.new
-    50.times do
-      application.process_events
-
-      renamed_index.release unless renamed_index.destroyed?
-      renamed_index = model.index(renamed_terrain_path)
-
-      break if File.exists?(renamed_terrain_path) && !File.exists?(terrain_path) && renamed_index.valid?
-      sleep 10.milliseconds
-    end
+    renamed_index = await_index.call(renamed_terrain_path, nil)
 
     renamed_index.valid?.should be_true
     model.file_name(renamed_index).should eq("terrain-renamed.map")
@@ -1775,12 +1780,17 @@ describe Qt6 do
     renamed_entries.should contain({root_path, "terrain.map", "terrain-renamed.map"})
     terrain_path = renamed_terrain_path
 
+    root_index.release
+    root_index = await_index.call(root_path, 2)
     generated_index = model.mkdir(root_index, "generated")
     20.times { application.process_events }
     generated_index.valid?.should be_true
     model.file_name(generated_index).should eq("generated")
     model.rmdir(generated_index).should be_true
     application.process_events
+
+    notes_index.release
+    notes_index = await_index.call(notes_path, nil)
     model.remove(notes_index).should be_true
     application.process_events
     File.exists?(notes_path).should be_false
