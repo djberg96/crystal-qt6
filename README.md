@@ -186,7 +186,7 @@ app.run
 - richer text and table polish through `QTextDocument#find`, `QTextCursor` null/replace helpers, editor-side plain-text/HTML insertion helpers, `QKeySequenceEdit` shortcut capture, standalone `QShortcut` wiring, wizard-page mandatory field registration and shared field lookups, `QDataWidgetMapper` form binding, completer wrap/visibility controls, header section-size/interaction access, table sort/resize-to-contents helpers, and `TableWidget#on_item_double_clicked`
 - `Qt6::AbstractItemView` and `Qt6::AbstractScrollArea` for shared item-view and scroll-surface infrastructure across list/tree/table widgets, model views, text editors, and scroll areas, including viewport access, index hit-testing, visual-rectangle lookup, and overwrite-mode drop configuration
 - `Qt6::TabWidget`, `Qt6::TabBar`, `Qt6::ScrollArea`, `Qt6::Splitter`, `Qt6::StackedWidget`, and `Qt6::Orientation` for editor-style panel and container composition, including page lookup, current-page selection, removal helpers, tab insertion/enabled-state/presentation controls, scroll-area child alignment, and splitter sizing/pane-polish controls
-- `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition, including box-layout stretch helpers
+- `Qt6::BoxLayout`, `Qt6::VBoxLayout`, `Qt6::HBoxLayout`, `Qt6::FormLayout`, and `Qt6::GridLayout` for layout composition, including shared box-layout direction, spacing, insertion, and stretch helpers
 
 ## Testing Strategy
 

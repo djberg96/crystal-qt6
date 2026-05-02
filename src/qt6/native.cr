@@ -2385,14 +2385,20 @@ module Qt6
     fun qt6cr_timer_stop = qt6cr_timer_stop(handle : Handle)
     fun qt6cr_timer_on_timeout = qt6cr_timer_on_timeout(handle : Handle, callback : (Handle ->), userdata : Handle)
 
+    fun qt6cr_box_layout_create = qt6cr_box_layout_create(parent_widget : Handle, direction : LibC::Int) : Handle
+    fun qt6cr_box_layout_direction = qt6cr_box_layout_direction(handle : Handle) : LibC::Int
+    fun qt6cr_box_layout_set_direction = qt6cr_box_layout_set_direction(handle : Handle, direction : LibC::Int)
+    fun qt6cr_box_layout_add_widget = qt6cr_box_layout_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_box_layout_insert_widget = qt6cr_box_layout_insert_widget(handle : Handle, index : LibC::Int, widget : Handle)
+    fun qt6cr_box_layout_add_spacing = qt6cr_box_layout_add_spacing(handle : Handle, size : LibC::Int)
+    fun qt6cr_box_layout_insert_spacing = qt6cr_box_layout_insert_spacing(handle : Handle, index : LibC::Int, size : LibC::Int)
+    fun qt6cr_box_layout_add_stretch = qt6cr_box_layout_add_stretch(handle : Handle, stretch : LibC::Int)
+    fun qt6cr_box_layout_insert_stretch = qt6cr_box_layout_insert_stretch(handle : Handle, index : LibC::Int, stretch : LibC::Int)
+    fun qt6cr_box_layout_set_stretch = qt6cr_box_layout_set_stretch(handle : Handle, index : LibC::Int, stretch : LibC::Int)
+
     fun qt6cr_v_box_layout_create = qt6cr_v_box_layout_create(parent_widget : Handle) : Handle
-    fun qt6cr_v_box_layout_add_widget = qt6cr_v_box_layout_add_widget(handle : Handle, widget : Handle)
-    fun qt6cr_v_box_layout_add_stretch = qt6cr_v_box_layout_add_stretch(handle : Handle, stretch : LibC::Int)
-    fun qt6cr_v_box_layout_insert_widget = qt6cr_v_box_layout_insert_widget(handle : Handle, index : LibC::Int, widget : Handle)
 
     fun qt6cr_h_box_layout_create = qt6cr_h_box_layout_create(parent_widget : Handle) : Handle
-    fun qt6cr_h_box_layout_add_widget = qt6cr_h_box_layout_add_widget(handle : Handle, widget : Handle)
-    fun qt6cr_h_box_layout_add_stretch = qt6cr_h_box_layout_add_stretch(handle : Handle, stretch : LibC::Int)
 
     fun qt6cr_grid_layout_create = qt6cr_grid_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_grid_layout_add_widget = qt6cr_grid_layout_add_widget(handle : Handle, widget : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)

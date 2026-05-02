@@ -627,6 +627,28 @@ describe Qt6 do
     window.release
   end
 
+  it "supports shared box layout helpers and direction control" do
+    app
+    window = Qt6::Widget.new
+    left = Qt6::Label.new("Left")
+    right = Qt6::Label.new("Right")
+
+    layout = Qt6::BoxLayout.new(Qt6::BoxLayoutDirection::LeftToRight, window)
+    layout << left
+    layout.insert_spacing(1, 8)
+    layout.insert(2, right)
+    layout.insert_stretch(3, 2)
+    layout.add_spacing(4)
+    layout.add_stretch
+    layout.set_stretch(0, 1)
+    layout.direction = Qt6::BoxLayoutDirection::RightToLeft
+
+    layout.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
+    left.text.should eq("Left")
+    right.text.should eq("Right")
+    window.release
+  end
+
   it "supports label alignment and pixmap display settings" do
     application = app
     window = Qt6::Widget.new

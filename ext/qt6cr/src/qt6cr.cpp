@@ -53,6 +53,7 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QFocusEvent>
+#include <QBoxLayout>
 #include <QGraphicsBlurEffect>
 #include <QGraphicsColorizeEffect>
 #include <QGraphicsDropShadowEffect>
@@ -1797,6 +1798,10 @@ QTableWidget *as_table_widget(qt6cr_handle_t handle) {
 
 QHBoxLayout *as_h_box_layout(qt6cr_handle_t handle) {
   return static_cast<QHBoxLayout *>(handle);
+}
+
+QBoxLayout *as_box_layout(qt6cr_handle_t handle) {
+  return static_cast<QBoxLayout *>(handle);
 }
 
 QGridLayout *as_grid_layout(qt6cr_handle_t handle) {
@@ -16843,8 +16848,25 @@ qt6cr_handle_t qt6cr_v_box_layout_create(qt6cr_handle_t parent_widget) {
   return new QVBoxLayout(as_widget(parent_widget));
 }
 
-void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
-  auto *layout = as_v_box_layout(handle);
+qt6cr_handle_t qt6cr_box_layout_create(qt6cr_handle_t parent_widget, int direction) {
+  return new QBoxLayout(static_cast<QBoxLayout::Direction>(direction), as_widget(parent_widget));
+}
+
+int qt6cr_box_layout_direction(qt6cr_handle_t handle) {
+  auto *layout = as_box_layout(handle);
+  return layout == nullptr ? static_cast<int>(QBoxLayout::TopToBottom) : static_cast<int>(layout->direction());
+}
+
+void qt6cr_box_layout_set_direction(qt6cr_handle_t handle, int direction) {
+  auto *layout = as_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setDirection(static_cast<QBoxLayout::Direction>(direction));
+  }
+}
+
+void qt6cr_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *layout = as_box_layout(handle);
   auto *child = as_widget(widget);
 
   if (layout != nullptr && child != nullptr) {
@@ -16852,16 +16874,8 @@ void qt6cr_v_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget)
   }
 }
 
-void qt6cr_v_box_layout_add_stretch(qt6cr_handle_t handle, int stretch) {
-  auto *layout = as_v_box_layout(handle);
-
-  if (layout != nullptr) {
-    layout->addStretch(stretch);
-  }
-}
-
-void qt6cr_v_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
-  auto *layout = as_v_box_layout(handle);
+void qt6cr_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
+  auto *layout = as_box_layout(handle);
   auto *child = as_widget(widget);
 
   if (layout != nullptr && child != nullptr) {
@@ -16869,25 +16883,48 @@ void qt6cr_v_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_ha
   }
 }
 
-qt6cr_handle_t qt6cr_h_box_layout_create(qt6cr_handle_t parent_widget) {
-  return new QHBoxLayout(as_widget(parent_widget));
-}
+void qt6cr_box_layout_add_spacing(qt6cr_handle_t handle, int size) {
+  auto *layout = as_box_layout(handle);
 
-void qt6cr_h_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
-  auto *layout = as_h_box_layout(handle);
-  auto *child = as_widget(widget);
-
-  if (layout != nullptr && child != nullptr) {
-    layout->addWidget(child);
+  if (layout != nullptr) {
+    layout->addSpacing(size);
   }
 }
 
-void qt6cr_h_box_layout_add_stretch(qt6cr_handle_t handle, int stretch) {
-  auto *layout = as_h_box_layout(handle);
+void qt6cr_box_layout_insert_spacing(qt6cr_handle_t handle, int index, int size) {
+  auto *layout = as_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->insertSpacing(index, size);
+  }
+}
+
+void qt6cr_box_layout_add_stretch(qt6cr_handle_t handle, int stretch) {
+  auto *layout = as_box_layout(handle);
 
   if (layout != nullptr) {
     layout->addStretch(stretch);
   }
+}
+
+void qt6cr_box_layout_insert_stretch(qt6cr_handle_t handle, int index, int stretch) {
+  auto *layout = as_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->insertStretch(index, stretch);
+  }
+}
+
+void qt6cr_box_layout_set_stretch(qt6cr_handle_t handle, int index, int stretch) {
+  auto *layout = as_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setStretch(index, stretch);
+  }
+}
+
+qt6cr_handle_t qt6cr_h_box_layout_create(qt6cr_handle_t parent_widget) {
+  return new QHBoxLayout(as_widget(parent_widget));
 }
 
 qt6cr_handle_t qt6cr_grid_layout_create(qt6cr_handle_t parent_widget) {
