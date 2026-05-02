@@ -412,8 +412,11 @@ module Qt6
     fun qt6cr_wizard_current_page = qt6cr_wizard_current_page(handle : Handle) : Handle
     fun qt6cr_wizard_current_id = qt6cr_wizard_current_id(handle : Handle) : LibC::Int
     fun qt6cr_wizard_set_current_id = qt6cr_wizard_set_current_id(handle : Handle, id : LibC::Int)
+    fun qt6cr_wizard_field = qt6cr_wizard_field(handle : Handle, name : UInt8*) : VariantValue
+    fun qt6cr_wizard_set_field = qt6cr_wizard_set_field(handle : Handle, name : UInt8*, value : VariantValue)
     fun qt6cr_wizard_back = qt6cr_wizard_back(handle : Handle)
     fun qt6cr_wizard_next = qt6cr_wizard_next(handle : Handle)
+    fun qt6cr_wizard_validate_current_page = qt6cr_wizard_validate_current_page(handle : Handle) : Bool
     fun qt6cr_wizard_restart = qt6cr_wizard_restart(handle : Handle)
     fun qt6cr_wizard_set_wizard_style = qt6cr_wizard_set_wizard_style(handle : Handle, style : LibC::Int)
     fun qt6cr_wizard_wizard_style = qt6cr_wizard_wizard_style(handle : Handle) : LibC::Int
@@ -439,6 +442,9 @@ module Qt6
     fun qt6cr_wizard_page_is_final_page = qt6cr_wizard_page_is_final_page(handle : Handle) : Bool
     fun qt6cr_wizard_page_set_commit_page = qt6cr_wizard_page_set_commit_page(handle : Handle, commit_page : Bool)
     fun qt6cr_wizard_page_is_commit_page = qt6cr_wizard_page_is_commit_page(handle : Handle) : Bool
+    fun qt6cr_wizard_page_wizard = qt6cr_wizard_page_wizard(handle : Handle) : Handle
+    fun qt6cr_wizard_page_field = qt6cr_wizard_page_field(handle : Handle, name : UInt8*) : VariantValue
+    fun qt6cr_wizard_page_set_field = qt6cr_wizard_page_set_field(handle : Handle, name : UInt8*, value : VariantValue)
     fun qt6cr_wizard_page_set_button_text = qt6cr_wizard_page_set_button_text(handle : Handle, which : LibC::Int, text : UInt8*)
     fun qt6cr_wizard_page_button_text = qt6cr_wizard_page_button_text(handle : Handle, which : LibC::Int) : UInt8*
     fun qt6cr_wizard_page_validate_page = qt6cr_wizard_page_validate_page(handle : Handle) : Bool

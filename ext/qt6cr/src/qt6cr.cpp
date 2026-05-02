@@ -466,6 +466,9 @@ class CrystalWizardPage final : public QWizardPage {
  public:
   using QWizardPage::QWizardPage;
   using QWizardPage::registerField;
+  using QWizardPage::field;
+  using QWizardPage::setField;
+  using QWizardPage::wizard;
 };
 
 class ModelListView final : public QListView {
@@ -3973,6 +3976,19 @@ void qt6cr_wizard_set_current_id(qt6cr_handle_t handle, int id) {
   }
 }
 
+qt6cr_variant_value_t qt6cr_wizard_field(qt6cr_handle_t handle, const char *name) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? to_variant_value(QVariant()) : to_variant_value(wizard->field(QString::fromUtf8(name == nullptr ? "" : name)));
+}
+
+void qt6cr_wizard_set_field(qt6cr_handle_t handle, const char *name, qt6cr_variant_value_t value) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setField(QString::fromUtf8(name == nullptr ? "" : name), from_variant_value(value));
+  }
+}
+
 void qt6cr_wizard_back(qt6cr_handle_t handle) {
   auto *wizard = as_wizard(handle);
 
@@ -3987,6 +4003,11 @@ void qt6cr_wizard_next(qt6cr_handle_t handle) {
   if (wizard != nullptr) {
     wizard->next();
   }
+}
+
+bool qt6cr_wizard_validate_current_page(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard != nullptr && wizard->validateCurrentPage();
 }
 
 void qt6cr_wizard_restart(qt6cr_handle_t handle) {
@@ -4148,6 +4169,24 @@ void qt6cr_wizard_page_set_commit_page(qt6cr_handle_t handle, bool commit_page) 
 bool qt6cr_wizard_page_is_commit_page(qt6cr_handle_t handle) {
   auto *page = as_wizard_page(handle);
   return page != nullptr && page->isCommitPage();
+}
+
+qt6cr_handle_t qt6cr_wizard_page_wizard(qt6cr_handle_t handle) {
+  auto *page = as_crystal_wizard_page(handle);
+  return page == nullptr ? nullptr : page->wizard();
+}
+
+qt6cr_variant_value_t qt6cr_wizard_page_field(qt6cr_handle_t handle, const char *name) {
+  auto *page = as_crystal_wizard_page(handle);
+  return page == nullptr ? to_variant_value(QVariant()) : to_variant_value(page->field(QString::fromUtf8(name == nullptr ? "" : name)));
+}
+
+void qt6cr_wizard_page_set_field(qt6cr_handle_t handle, const char *name, qt6cr_variant_value_t value) {
+  auto *page = as_crystal_wizard_page(handle);
+
+  if (page != nullptr) {
+    page->setField(QString::fromUtf8(name == nullptr ? "" : name), from_variant_value(value));
+  }
 }
 
 void qt6cr_wizard_page_set_button_text(qt6cr_handle_t handle, int which, const char *text) {

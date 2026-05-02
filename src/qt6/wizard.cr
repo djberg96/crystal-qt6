@@ -92,6 +92,18 @@ module Qt6
       int_value
     end
 
+    # Returns the current value of a registered wizard field.
+    def field(name : String) : ModelData
+      Qt6.model_data_from_native(LibQt6.qt6cr_wizard_field(to_unsafe, name.to_unsafe))
+    end
+
+    # Replaces the current value of a registered wizard field.
+    def set_field(name : String, value) : ModelData
+      normalized = Qt6.normalize_model_data(value)
+      LibQt6.qt6cr_wizard_set_field(to_unsafe, name.to_unsafe, Qt6.model_data_to_native(normalized))
+      normalized
+    end
+
     # Navigates backward.
     def back : self
       LibQt6.qt6cr_wizard_back(to_unsafe)
@@ -102,6 +114,11 @@ module Qt6
     def next : self
       LibQt6.qt6cr_wizard_next(to_unsafe)
       self
+    end
+
+    # Runs wizard-level validation for the current page.
+    def validate_current_page : Bool
+      LibQt6.qt6cr_wizard_validate_current_page(to_unsafe)
     end
 
     # Restarts the wizard from the start page.

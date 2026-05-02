@@ -476,6 +476,8 @@ describe Qt6 do
     intro_page.pixmap(Qt6::WizardPixmap::LogoPixmap).size.should eq(Qt6::Size.new(8, 8))
     summary_page.pixmap(Qt6::WizardPixmap::BannerPixmap).size.should eq(Qt6::Size.new(8, 8))
     intro_page.button_text(Qt6::WizardButton::NextButton).should eq("Continue")
+    intro_page.wizard.not_nil!.to_unsafe.should eq(wizard.to_unsafe)
+    summary_page.wizard.not_nil!.to_unsafe.should eq(wizard.to_unsafe)
     intro_page.complete?.should be_false
 
     required_name.text = "Map Generator"
@@ -484,6 +486,16 @@ describe Qt6 do
     intro_page.complete?.should be_true
     complete_changes.should be > 0
     intro_page.validate_page.should be_true
+    wizard.validate_current_page.should be_true
+    intro_page.field("project_name").should eq("Map Generator")
+    wizard.field("project_name").should eq("Map Generator")
+    summary_page.field("project_name").should eq("Map Generator")
+
+    summary_page.set_field("project_name", "Cartographer")
+    application.process_events
+
+    wizard.field("project_name").should eq("Cartographer")
+    required_name.text.should eq("Cartographer")
 
     wizard.button(Qt6::WizardButton::NextButton).not_nil!.click
     application.process_events

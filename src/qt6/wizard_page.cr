@@ -76,6 +76,24 @@ module Qt6
       value
     end
 
+    # Returns the owning wizard, if this page is currently installed in one.
+    def wizard : Wizard?
+      handle = LibQt6.qt6cr_wizard_page_wizard(to_unsafe)
+      handle.null? ? nil : Wizard.wrap(handle)
+    end
+
+    # Returns the current value of a registered wizard field.
+    def field(name : String) : ModelData
+      Qt6.model_data_from_native(LibQt6.qt6cr_wizard_page_field(to_unsafe, name.to_unsafe))
+    end
+
+    # Replaces the current value of a registered wizard field.
+    def set_field(name : String, value) : ModelData
+      normalized = Qt6.normalize_model_data(value)
+      LibQt6.qt6cr_wizard_page_set_field(to_unsafe, name.to_unsafe, Qt6.model_data_to_native(normalized))
+      normalized
+    end
+
     # Sets per-page button text and returns it.
     def set_button_text(which : WizardButton, value : String) : String
       LibQt6.qt6cr_wizard_page_set_button_text(to_unsafe, which.value, value.to_unsafe)
