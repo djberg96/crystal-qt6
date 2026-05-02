@@ -1639,7 +1639,7 @@ describe Qt6 do
       current_index_changes += 1
     end
 
-    model.filter = Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::NoDotAndDotDot
+    model.filter = Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::AllDirs | Qt6::DirectoryFilter::NoDotAndDotDot
     model.read_only = false
     model.resolve_symlinks = false
     model.name_filter_disables = false
@@ -1650,20 +1650,32 @@ describe Qt6 do
     50.times do
       application.process_events
       break if loaded_paths.includes?(root_path)
+      sleep 10.milliseconds
     end
 
     50.times do
       application.process_events
       break if model.row_count(root_index) >= 2
+      sleep 10.milliseconds
     end
 
-    maps_index = model.index(maps_path)
-    terrain_index = model.index(terrain_path)
-    notes_index = model.index(notes_path)
+    maps_index = Qt6::ModelIndex.new
+    terrain_index = Qt6::ModelIndex.new
+    notes_index = Qt6::ModelIndex.new
 
     50.times do
       application.process_events
+
+      maps_index.release unless maps_index.destroyed?
+      terrain_index.release unless terrain_index.destroyed?
+      notes_index.release unless notes_index.destroyed?
+
+      maps_index = model.index(maps_path)
+      terrain_index = model.index(terrain_path)
+      notes_index = model.index(notes_path)
+
       break if maps_index.valid? && terrain_index.valid? && notes_index.valid? && model.row_count(maps_index) >= 1
+      sleep 10.milliseconds
     end
 
     column_view.model = model
@@ -1686,7 +1698,7 @@ describe Qt6 do
     root_paths.should contain(root_path)
     loaded_paths.should contain(root_path)
     model.root_directory.absolute_path.should eq(root_path)
-    model.filter.should eq(Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::NoDotAndDotDot)
+    model.filter.should eq(Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::AllDirs | Qt6::DirectoryFilter::NoDotAndDotDot)
     model.read_only?.should be_false
     model.resolve_symlinks?.should be_false
     model.name_filter_disables?.should be_false
