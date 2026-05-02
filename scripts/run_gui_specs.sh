@@ -59,7 +59,12 @@ fi
 
 if [ "$filter_qpa_warnings" = "1" ]; then
   set +e
-  "$@" 2>&1 | awk '{ gsub(/This plugin does not support propagateSizeHints\(\)/, ""); if ($0 != "") print }'
+  "$@" 2>&1 | awk '{
+    gsub(/This plugin does not support propagateSizeHints\(\)/, "");
+    gsub(/This plugin does not support grabbing the keyboard/, "");
+    gsub(/This plugin does not support raise\(\)/, "");
+    if ($0 != "") print
+  }'
   status=${PIPESTATUS[0]}
   set -e
   exit "$status"
