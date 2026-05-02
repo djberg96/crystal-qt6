@@ -241,6 +241,8 @@ qt6cr_handle_t qt6cr_widget_mask(qt6cr_handle_t handle);
 void qt6cr_widget_set_mask(qt6cr_handle_t handle, qt6cr_handle_t region);
 qt6cr_handle_t qt6cr_widget_palette(qt6cr_handle_t handle);
 void qt6cr_widget_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette);
+qt6cr_handle_t qt6cr_widget_graphics_effect(qt6cr_handle_t handle);
+void qt6cr_widget_set_graphics_effect(qt6cr_handle_t handle, qt6cr_handle_t effect);
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
 char *qt6cr_widget_style_sheet(qt6cr_handle_t handle);
 void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
@@ -1102,6 +1104,38 @@ qt6cr_color_t qt6cr_qpalette_color(qt6cr_handle_t handle, int role);
 qt6cr_color_t qt6cr_qpalette_color_for_group(qt6cr_handle_t handle, int group, int role);
 void qt6cr_qpalette_set_color(qt6cr_handle_t handle, int role, qt6cr_color_t color);
 void qt6cr_qpalette_set_color_for_group(qt6cr_handle_t handle, int group, int role, qt6cr_color_t color);
+
+bool qt6cr_graphics_effect_is_enabled(qt6cr_handle_t handle);
+void qt6cr_graphics_effect_set_enabled(qt6cr_handle_t handle, bool value);
+qt6cr_rectf_t qt6cr_graphics_effect_bounding_rect(qt6cr_handle_t handle);
+void qt6cr_graphics_effect_update(qt6cr_handle_t handle);
+void qt6cr_graphics_effect_on_enabled_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+
+qt6cr_handle_t qt6cr_graphics_blur_effect_create(qt6cr_handle_t parent);
+double qt6cr_graphics_blur_effect_blur_radius(qt6cr_handle_t handle);
+void qt6cr_graphics_blur_effect_set_blur_radius(qt6cr_handle_t handle, double value);
+
+qt6cr_handle_t qt6cr_graphics_colorize_effect_create(qt6cr_handle_t parent);
+qt6cr_color_t qt6cr_graphics_colorize_effect_color(qt6cr_handle_t handle);
+void qt6cr_graphics_colorize_effect_set_color(qt6cr_handle_t handle, qt6cr_color_t value);
+double qt6cr_graphics_colorize_effect_strength(qt6cr_handle_t handle);
+void qt6cr_graphics_colorize_effect_set_strength(qt6cr_handle_t handle, double value);
+
+qt6cr_handle_t qt6cr_graphics_drop_shadow_effect_create(qt6cr_handle_t parent);
+double qt6cr_graphics_drop_shadow_effect_blur_radius(qt6cr_handle_t handle);
+void qt6cr_graphics_drop_shadow_effect_set_blur_radius(qt6cr_handle_t handle, double value);
+qt6cr_color_t qt6cr_graphics_drop_shadow_effect_color(qt6cr_handle_t handle);
+void qt6cr_graphics_drop_shadow_effect_set_color(qt6cr_handle_t handle, qt6cr_color_t value);
+qt6cr_pointf_t qt6cr_graphics_drop_shadow_effect_offset(qt6cr_handle_t handle);
+void qt6cr_graphics_drop_shadow_effect_set_offset(qt6cr_handle_t handle, qt6cr_pointf_t value);
+double qt6cr_graphics_drop_shadow_effect_x_offset(qt6cr_handle_t handle);
+void qt6cr_graphics_drop_shadow_effect_set_x_offset(qt6cr_handle_t handle, double value);
+double qt6cr_graphics_drop_shadow_effect_y_offset(qt6cr_handle_t handle);
+void qt6cr_graphics_drop_shadow_effect_set_y_offset(qt6cr_handle_t handle, double value);
+
+qt6cr_handle_t qt6cr_graphics_opacity_effect_create(qt6cr_handle_t parent);
+double qt6cr_graphics_opacity_effect_opacity(qt6cr_handle_t handle);
+void qt6cr_graphics_opacity_effect_set_opacity(qt6cr_handle_t handle, double value);
 
 qt6cr_handle_t qt6cr_qregion_create(void);
 qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type);

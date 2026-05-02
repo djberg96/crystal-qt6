@@ -217,6 +217,8 @@ module Qt6
     fun qt6cr_widget_set_mask = qt6cr_widget_set_mask(handle : Handle, region : Handle)
     fun qt6cr_widget_palette = qt6cr_widget_palette(handle : Handle) : Handle
     fun qt6cr_widget_set_palette = qt6cr_widget_set_palette(handle : Handle, palette : Handle)
+    fun qt6cr_widget_graphics_effect = qt6cr_widget_graphics_effect(handle : Handle) : Handle
+    fun qt6cr_widget_set_graphics_effect = qt6cr_widget_set_graphics_effect(handle : Handle, effect : Handle)
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
     fun qt6cr_widget_style_sheet = qt6cr_widget_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
@@ -1077,6 +1079,38 @@ module Qt6
     fun qt6cr_qpalette_color_for_group = qt6cr_qpalette_color_for_group(handle : Handle, group : LibC::Int, role : LibC::Int) : ColorValue
     fun qt6cr_qpalette_set_color = qt6cr_qpalette_set_color(handle : Handle, role : LibC::Int, color : ColorValue)
     fun qt6cr_qpalette_set_color_for_group = qt6cr_qpalette_set_color_for_group(handle : Handle, group : LibC::Int, role : LibC::Int, color : ColorValue)
+
+    fun qt6cr_graphics_effect_is_enabled = qt6cr_graphics_effect_is_enabled(handle : Handle) : Bool
+    fun qt6cr_graphics_effect_set_enabled = qt6cr_graphics_effect_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_graphics_effect_bounding_rect = qt6cr_graphics_effect_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_effect_update = qt6cr_graphics_effect_update(handle : Handle)
+    fun qt6cr_graphics_effect_on_enabled_changed = qt6cr_graphics_effect_on_enabled_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+
+    fun qt6cr_graphics_blur_effect_create = qt6cr_graphics_blur_effect_create(parent : Handle) : Handle
+    fun qt6cr_graphics_blur_effect_blur_radius = qt6cr_graphics_blur_effect_blur_radius(handle : Handle) : Float64
+    fun qt6cr_graphics_blur_effect_set_blur_radius = qt6cr_graphics_blur_effect_set_blur_radius(handle : Handle, value : Float64)
+
+    fun qt6cr_graphics_colorize_effect_create = qt6cr_graphics_colorize_effect_create(parent : Handle) : Handle
+    fun qt6cr_graphics_colorize_effect_color = qt6cr_graphics_colorize_effect_color(handle : Handle) : ColorValue
+    fun qt6cr_graphics_colorize_effect_set_color = qt6cr_graphics_colorize_effect_set_color(handle : Handle, value : ColorValue)
+    fun qt6cr_graphics_colorize_effect_strength = qt6cr_graphics_colorize_effect_strength(handle : Handle) : Float64
+    fun qt6cr_graphics_colorize_effect_set_strength = qt6cr_graphics_colorize_effect_set_strength(handle : Handle, value : Float64)
+
+    fun qt6cr_graphics_drop_shadow_effect_create = qt6cr_graphics_drop_shadow_effect_create(parent : Handle) : Handle
+    fun qt6cr_graphics_drop_shadow_effect_blur_radius = qt6cr_graphics_drop_shadow_effect_blur_radius(handle : Handle) : Float64
+    fun qt6cr_graphics_drop_shadow_effect_set_blur_radius = qt6cr_graphics_drop_shadow_effect_set_blur_radius(handle : Handle, value : Float64)
+    fun qt6cr_graphics_drop_shadow_effect_color = qt6cr_graphics_drop_shadow_effect_color(handle : Handle) : ColorValue
+    fun qt6cr_graphics_drop_shadow_effect_set_color = qt6cr_graphics_drop_shadow_effect_set_color(handle : Handle, value : ColorValue)
+    fun qt6cr_graphics_drop_shadow_effect_offset = qt6cr_graphics_drop_shadow_effect_offset(handle : Handle) : PointFValue
+    fun qt6cr_graphics_drop_shadow_effect_set_offset = qt6cr_graphics_drop_shadow_effect_set_offset(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_drop_shadow_effect_x_offset = qt6cr_graphics_drop_shadow_effect_x_offset(handle : Handle) : Float64
+    fun qt6cr_graphics_drop_shadow_effect_set_x_offset = qt6cr_graphics_drop_shadow_effect_set_x_offset(handle : Handle, value : Float64)
+    fun qt6cr_graphics_drop_shadow_effect_y_offset = qt6cr_graphics_drop_shadow_effect_y_offset(handle : Handle) : Float64
+    fun qt6cr_graphics_drop_shadow_effect_set_y_offset = qt6cr_graphics_drop_shadow_effect_set_y_offset(handle : Handle, value : Float64)
+
+    fun qt6cr_graphics_opacity_effect_create = qt6cr_graphics_opacity_effect_create(parent : Handle) : Handle
+    fun qt6cr_graphics_opacity_effect_opacity = qt6cr_graphics_opacity_effect_opacity(handle : Handle) : Float64
+    fun qt6cr_graphics_opacity_effect_set_opacity = qt6cr_graphics_opacity_effect_set_opacity(handle : Handle, value : Float64)
 
     fun qt6cr_qregion_create = qt6cr_qregion_create : Handle
     fun qt6cr_qregion_create_rect = qt6cr_qregion_create_rect(rect : RectValue, type : LibC::Int) : Handle

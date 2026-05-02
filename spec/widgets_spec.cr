@@ -413,6 +413,84 @@ describe Qt6 do
     host.release
   end
 
+  it "supports widget graphics effects" do
+    application = app
+    host = Qt6::Widget.new
+    host.resize(320, 220)
+
+    blur_target = Qt6::Label.new("Blur", host)
+    blur_target.move(12, 12)
+    color_target = Qt6::Label.new("Colorize", host)
+    color_target.move(12, 48)
+    shadow_target = Qt6::Label.new("Shadow", host)
+    shadow_target.move(12, 84)
+    opacity_target = Qt6::Label.new("Opacity", host)
+    opacity_target.move(12, 120)
+
+    blur = Qt6::GraphicsBlurEffect.new
+    enabled_changes = [] of Bool
+    blur.on_enabled_changed do |value|
+      enabled_changes << value
+    end
+    blur.blur_radius = 6.5
+
+    colorize = Qt6::GraphicsColorizeEffect.new
+    colorize.color = Qt6::Color.new(48, 112, 176)
+    colorize.strength = 0.45
+
+    shadow = Qt6::GraphicsDropShadowEffect.new
+    shadow.blur_radius = 9.0
+    shadow.color = Qt6::Color.new(20, 24, 32, 180)
+    shadow.offset = Qt6::PointF.new(3.0, 4.0)
+    shadow.x_offset = 5.0
+    shadow.y_offset = 6.0
+
+    opacity = Qt6::GraphicsOpacityEffect.new
+    opacity.opacity = 0.55
+
+    blur_target.graphics_effect = blur
+    color_target.graphics_effect = colorize
+    shadow_target.graphics_effect = shadow
+    opacity_target.graphics_effect = opacity
+
+    host.show
+    application.process_events
+
+    blur_target.graphics_effect.not_nil!.to_unsafe.should eq(blur.to_unsafe)
+    color_target.graphics_effect.not_nil!.to_unsafe.should eq(colorize.to_unsafe)
+    shadow_target.graphics_effect.not_nil!.to_unsafe.should eq(shadow.to_unsafe)
+    opacity_target.graphics_effect.not_nil!.to_unsafe.should eq(opacity.to_unsafe)
+
+    blur.blur_radius.should eq(6.5)
+    blur.enabled = false
+    application.process_events
+    blur.enabled?.should be_false
+    enabled_changes.last.should be_false
+    blur.enabled = true
+    application.process_events
+    blur.enabled?.should be_true
+    enabled_changes.last.should be_true
+    blur.bounding_rect.width.should be >= 0.0
+    blur.bounding_rect.height.should be >= 0.0
+
+    colorize.color.should eq(Qt6::Color.new(48, 112, 176))
+    colorize.strength.should eq(0.45)
+    colorize.bounding_rect.width.should be >= 0.0
+
+    shadow.blur_radius.should eq(9.0)
+    shadow.color.should eq(Qt6::Color.new(20, 24, 32, 180))
+    shadow.offset.should eq(Qt6::PointF.new(5.0, 6.0))
+    shadow.x_offset.should eq(5.0)
+    shadow.y_offset.should eq(6.0)
+
+    opacity.opacity.should eq(0.55)
+    opacity_target.graphics_effect = nil
+    application.process_events
+    opacity_target.graphics_effect.should be_nil
+
+    host.release
+  end
+
   it "supports wizard flows and wizard pages" do
     application = app
     wizard = Qt6::Wizard.new

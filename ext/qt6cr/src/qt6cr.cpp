@@ -53,6 +53,11 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QFocusEvent>
+#include <QGraphicsBlurEffect>
+#include <QGraphicsColorizeEffect>
+#include <QGraphicsDropShadowEffect>
+#include <QGraphicsEffect>
+#include <QGraphicsOpacityEffect>
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QHeaderView>
@@ -201,7 +206,13 @@ qt6cr_key_event_t to_key_event(QKeyEvent *event);
 qt6cr_color_t to_color(const QColor &color);
 qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
+QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
+QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
+QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
+QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle);
+QGraphicsDropShadowEffect *as_graphics_drop_shadow_effect(qt6cr_handle_t handle);
+QGraphicsOpacityEffect *as_graphics_opacity_effect(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
@@ -1223,8 +1234,32 @@ QMimeData *clone_mime_data(const QMimeData *source) {
   return copy;
 }
 
+QObject *as_qobject(qt6cr_handle_t handle) {
+  return static_cast<QObject *>(handle);
+}
+
 QWidget *as_widget(qt6cr_handle_t handle) {
   return static_cast<QWidget *>(handle);
+}
+
+QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsEffect *>(handle);
+}
+
+QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsBlurEffect *>(handle);
+}
+
+QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsColorizeEffect *>(handle);
+}
+
+QGraphicsDropShadowEffect *as_graphics_drop_shadow_effect(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsDropShadowEffect *>(handle);
+}
+
+QGraphicsOpacityEffect *as_graphics_opacity_effect(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsOpacityEffect *>(handle);
 }
 
 QMimeData *as_mime_data(qt6cr_handle_t handle) {
@@ -2718,12 +2753,25 @@ qt6cr_handle_t qt6cr_widget_palette(qt6cr_handle_t handle) {
   return widget == nullptr ? new QPalette() : new QPalette(widget->palette());
 }
 
+qt6cr_handle_t qt6cr_widget_graphics_effect(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : widget->graphicsEffect();
+}
+
 void qt6cr_widget_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
   auto *widget = as_widget(handle);
   auto *value = as_qpalette(palette);
 
   if (widget != nullptr && value != nullptr) {
     widget->setPalette(*value);
+  }
+}
+
+void qt6cr_widget_set_graphics_effect(qt6cr_handle_t handle, qt6cr_handle_t effect) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setGraphicsEffect(as_graphics_effect(effect));
   }
 }
 
@@ -8623,6 +8671,177 @@ void qt6cr_qpalette_set_color_for_group(qt6cr_handle_t handle, int group, int ro
 
   if (palette != nullptr) {
     palette->setColor(static_cast<QPalette::ColorGroup>(group), static_cast<QPalette::ColorRole>(role), from_color(color));
+  }
+}
+
+bool qt6cr_graphics_effect_is_enabled(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_effect(handle);
+  return effect != nullptr && effect->isEnabled();
+}
+
+void qt6cr_graphics_effect_set_enabled(qt6cr_handle_t handle, bool value) {
+  auto *effect = as_graphics_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setEnabled(value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_effect_bounding_rect(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_effect(handle);
+  return effect == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(effect->boundingRect());
+}
+
+void qt6cr_graphics_effect_update(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_effect(handle);
+
+  if (effect != nullptr) {
+    effect->update();
+  }
+}
+
+void qt6cr_graphics_effect_on_enabled_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsEffect::enabledChanged, effect, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+qt6cr_handle_t qt6cr_graphics_blur_effect_create(qt6cr_handle_t parent) {
+  return new QGraphicsBlurEffect(as_qobject(parent));
+}
+
+double qt6cr_graphics_blur_effect_blur_radius(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_blur_effect(handle);
+  return effect == nullptr ? 0.0 : effect->blurRadius();
+}
+
+void qt6cr_graphics_blur_effect_set_blur_radius(qt6cr_handle_t handle, double value) {
+  auto *effect = as_graphics_blur_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setBlurRadius(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_colorize_effect_create(qt6cr_handle_t parent) {
+  return new QGraphicsColorizeEffect(as_qobject(parent));
+}
+
+qt6cr_color_t qt6cr_graphics_colorize_effect_color(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_colorize_effect(handle);
+  return effect == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(effect->color());
+}
+
+void qt6cr_graphics_colorize_effect_set_color(qt6cr_handle_t handle, qt6cr_color_t value) {
+  auto *effect = as_graphics_colorize_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setColor(from_color(value));
+  }
+}
+
+double qt6cr_graphics_colorize_effect_strength(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_colorize_effect(handle);
+  return effect == nullptr ? 0.0 : effect->strength();
+}
+
+void qt6cr_graphics_colorize_effect_set_strength(qt6cr_handle_t handle, double value) {
+  auto *effect = as_graphics_colorize_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setStrength(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_drop_shadow_effect_create(qt6cr_handle_t parent) {
+  return new QGraphicsDropShadowEffect(as_qobject(parent));
+}
+
+double qt6cr_graphics_drop_shadow_effect_blur_radius(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+  return effect == nullptr ? 0.0 : effect->blurRadius();
+}
+
+void qt6cr_graphics_drop_shadow_effect_set_blur_radius(qt6cr_handle_t handle, double value) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setBlurRadius(value);
+  }
+}
+
+qt6cr_color_t qt6cr_graphics_drop_shadow_effect_color(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+  return effect == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(effect->color());
+}
+
+void qt6cr_graphics_drop_shadow_effect_set_color(qt6cr_handle_t handle, qt6cr_color_t value) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setColor(from_color(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_drop_shadow_effect_offset(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+  return effect == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(effect->offset());
+}
+
+void qt6cr_graphics_drop_shadow_effect_set_offset(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setOffset(from_pointf(value));
+  }
+}
+
+double qt6cr_graphics_drop_shadow_effect_x_offset(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+  return effect == nullptr ? 0.0 : effect->xOffset();
+}
+
+void qt6cr_graphics_drop_shadow_effect_set_x_offset(qt6cr_handle_t handle, double value) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setXOffset(value);
+  }
+}
+
+double qt6cr_graphics_drop_shadow_effect_y_offset(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+  return effect == nullptr ? 0.0 : effect->yOffset();
+}
+
+void qt6cr_graphics_drop_shadow_effect_set_y_offset(qt6cr_handle_t handle, double value) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setYOffset(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_opacity_effect_create(qt6cr_handle_t parent) {
+  return new QGraphicsOpacityEffect(as_qobject(parent));
+}
+
+double qt6cr_graphics_opacity_effect_opacity(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_opacity_effect(handle);
+  return effect == nullptr ? 1.0 : effect->opacity();
+}
+
+void qt6cr_graphics_opacity_effect_set_opacity(qt6cr_handle_t handle, double value) {
+  auto *effect = as_graphics_opacity_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setOpacity(value);
   }
 }
 

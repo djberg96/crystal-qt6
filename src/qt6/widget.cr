@@ -116,6 +116,19 @@ module Qt6
       value
     end
 
+    # Returns the widget's graphics effect, if one is installed.
+    def graphics_effect : GraphicsEffect?
+      handle = LibQt6.qt6cr_widget_graphics_effect(@to_unsafe)
+      handle.null? ? nil : GraphicsEffect.wrap(handle)
+    end
+
+    # Installs or clears a widget graphics effect.
+    def graphics_effect=(value : GraphicsEffect?) : GraphicsEffect?
+      LibQt6.qt6cr_widget_set_graphics_effect(@to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value.try(&.adopt_by_parent!)
+      value
+    end
+
     # Captures the widget's current contents into a pixmap.
     def grab : QPixmap
       QPixmap.new(LibQt6.qt6cr_widget_grab(@to_unsafe), true)
