@@ -1693,6 +1693,11 @@ describe Qt6 do
     terrain_info = model.file_info(terrain_index)
     folder_icon = provider.icon(Qt6::FileIconType::Folder)
     file_icon = provider.icon(terrain_info)
+    terrain_model_icon = model.icon(terrain_index)
+    terrain_modified = model.last_modified(terrain_index)
+    terrain_permissions = model.permissions(terrain_index)
+    terrain_info_modified = terrain_info.last_modified
+    terrain_info_permissions = terrain_info.permissions
 
     model.root_path.should eq(root_path)
     root_paths.should contain(root_path)
@@ -1713,10 +1718,16 @@ describe Qt6 do
     model.dir?(maps_index).should be_true
     model.dir?(terrain_index).should be_false
     model.size(terrain_index).should eq(7)
+    terrain_modified.valid?.should be_true
+    terrain_info_modified.valid?.should be_true
+    terrain_modified.to_string.should eq(terrain_info_modified.to_string)
+    terrain_permissions.should_not eq(Qt6::FilePermission::None)
+    terrain_permissions.should eq(terrain_info_permissions)
     model.type(terrain_index).should_not be_empty
     terrain_info.file_name.should eq("terrain.map")
     folder_icon.null?.should be_false
     file_icon.null?.should be_false
+    terrain_model_icon.null?.should be_false
 
     column_view.root_index.valid?.should be_true
     column_view.root_index.row.should eq(root_index.row)
@@ -1740,10 +1751,13 @@ describe Qt6 do
 
     notes_index.release
     generated_index.release
+    terrain_info_modified.release
     terrain_info.release
     terrain_index.release
+    terrain_modified.release
     file_icon.release
     folder_icon.release
+    terrain_model_icon.release
     maps_index.release
     root_index.release
     column_view.release

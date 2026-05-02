@@ -751,9 +751,12 @@ module Qt6
     fun qt6cr_file_system_model_set_option = qt6cr_file_system_model_set_option(handle : Handle, option : LibC::Int, value : Bool)
     fun qt6cr_file_system_model_test_option = qt6cr_file_system_model_test_option(handle : Handle, option : LibC::Int) : Bool
     fun qt6cr_file_system_model_file_path = qt6cr_file_system_model_file_path(handle : Handle, index : Handle) : UInt8*
+    fun qt6cr_file_system_model_icon = qt6cr_file_system_model_icon(handle : Handle, index : Handle) : Handle
     fun qt6cr_file_system_model_file_name = qt6cr_file_system_model_file_name(handle : Handle, index : Handle) : UInt8*
     fun qt6cr_file_system_model_is_dir = qt6cr_file_system_model_is_dir(handle : Handle, index : Handle) : Bool
     fun qt6cr_file_system_model_size = qt6cr_file_system_model_size(handle : Handle, index : Handle) : Int64
+    fun qt6cr_file_system_model_last_modified = qt6cr_file_system_model_last_modified(handle : Handle, index : Handle) : Handle
+    fun qt6cr_file_system_model_permissions = qt6cr_file_system_model_permissions(handle : Handle, index : Handle) : LibC::Int
     fun qt6cr_file_system_model_type = qt6cr_file_system_model_type(handle : Handle, index : Handle) : UInt8*
     fun qt6cr_file_system_model_file_info = qt6cr_file_system_model_file_info(handle : Handle, index : Handle) : Handle
     fun qt6cr_file_system_model_mkdir = qt6cr_file_system_model_mkdir(handle : Handle, parent : Handle, name : UInt8*) : Handle
@@ -1184,6 +1187,8 @@ module Qt6
     fun qt6cr_qfile_info_is_file = qt6cr_qfile_info_is_file(handle : Handle) : Bool
     fun qt6cr_qfile_info_is_dir = qt6cr_qfile_info_is_dir(handle : Handle) : Bool
     fun qt6cr_qfile_info_size = qt6cr_qfile_info_size(handle : Handle) : Int64
+    fun qt6cr_qfile_info_last_modified = qt6cr_qfile_info_last_modified(handle : Handle) : Handle
+    fun qt6cr_qfile_info_permissions = qt6cr_qfile_info_permissions(handle : Handle) : LibC::Int
 
     fun qt6cr_qdate_create = qt6cr_qdate_create(year : LibC::Int, month : LibC::Int, day : LibC::Int) : Handle
     fun qt6cr_qdate_destroy = qt6cr_qdate_destroy(handle : Handle)

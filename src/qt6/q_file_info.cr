@@ -64,6 +64,16 @@ module Qt6
       LibQt6.qt6cr_qfile_info_size(to_unsafe)
     end
 
+    # Returns the last modification timestamp.
+    def last_modified : QDateTime
+      QDateTime.wrap(LibQt6.qt6cr_qfile_info_last_modified(to_unsafe), true)
+    end
+
+    # Returns the current permission flags.
+    def permissions : FilePermission
+      FilePermission.from_value(LibQt6.qt6cr_qfile_info_permissions(to_unsafe))
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qfile_info_destroy(to_unsafe)
     end

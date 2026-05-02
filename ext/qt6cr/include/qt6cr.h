@@ -775,9 +775,12 @@ qt6cr_string_array_t qt6cr_file_system_model_name_filters(qt6cr_handle_t handle)
 void qt6cr_file_system_model_set_option(qt6cr_handle_t handle, int option, bool value);
 bool qt6cr_file_system_model_test_option(qt6cr_handle_t handle, int option);
 char *qt6cr_file_system_model_file_path(qt6cr_handle_t handle, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_file_system_model_icon(qt6cr_handle_t handle, qt6cr_handle_t index);
 char *qt6cr_file_system_model_file_name(qt6cr_handle_t handle, qt6cr_handle_t index);
 bool qt6cr_file_system_model_is_dir(qt6cr_handle_t handle, qt6cr_handle_t index);
 int64_t qt6cr_file_system_model_size(qt6cr_handle_t handle, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_file_system_model_last_modified(qt6cr_handle_t handle, qt6cr_handle_t index);
+int qt6cr_file_system_model_permissions(qt6cr_handle_t handle, qt6cr_handle_t index);
 char *qt6cr_file_system_model_type(qt6cr_handle_t handle, qt6cr_handle_t index);
 qt6cr_handle_t qt6cr_file_system_model_file_info(qt6cr_handle_t handle, qt6cr_handle_t index);
 qt6cr_handle_t qt6cr_file_system_model_mkdir(qt6cr_handle_t handle, qt6cr_handle_t parent, const char *name);
@@ -1208,6 +1211,8 @@ bool qt6cr_qfile_info_exists(qt6cr_handle_t handle);
 bool qt6cr_qfile_info_is_file(qt6cr_handle_t handle);
 bool qt6cr_qfile_info_is_dir(qt6cr_handle_t handle);
 int64_t qt6cr_qfile_info_size(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_qfile_info_last_modified(qt6cr_handle_t handle);
+int qt6cr_qfile_info_permissions(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qdate_create(int year, int month, int day);
 void qt6cr_qdate_destroy(qt6cr_handle_t handle);

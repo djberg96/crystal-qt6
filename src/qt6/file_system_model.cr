@@ -139,6 +139,11 @@ module Qt6
       Qt6.copy_and_release_string(LibQt6.qt6cr_file_system_model_file_path(to_unsafe, index.to_unsafe))
     end
 
+    # Returns the icon for the indexed entry.
+    def icon(index : ModelIndex) : QIcon
+      QIcon.wrap(LibQt6.qt6cr_file_system_model_icon(to_unsafe, index.to_unsafe), true)
+    end
+
     # Returns the leaf file name for an index.
     def file_name(index : ModelIndex) : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_file_system_model_file_name(to_unsafe, index.to_unsafe))
@@ -152,6 +157,16 @@ module Qt6
     # Returns the byte size for the indexed entry.
     def size(index : ModelIndex) : Int64
       LibQt6.qt6cr_file_system_model_size(to_unsafe, index.to_unsafe)
+    end
+
+    # Returns the last modification timestamp for the indexed entry.
+    def last_modified(index : ModelIndex) : QDateTime
+      QDateTime.wrap(LibQt6.qt6cr_file_system_model_last_modified(to_unsafe, index.to_unsafe), true)
+    end
+
+    # Returns the permission flags for the indexed entry.
+    def permissions(index : ModelIndex) : FilePermission
+      FilePermission.from_value(LibQt6.qt6cr_file_system_model_permissions(to_unsafe, index.to_unsafe))
     end
 
     # Returns Qt's localized type description for the indexed entry.

@@ -6257,6 +6257,12 @@ char *qt6cr_file_system_model_file_path(qt6cr_handle_t handle, qt6cr_handle_t in
   return model == nullptr || model_index == nullptr ? duplicate_string("") : duplicate_string(model->filePath(*model_index));
 }
 
+qt6cr_handle_t qt6cr_file_system_model_icon(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? new QIcon() : new QIcon(model->fileIcon(*model_index));
+}
+
 char *qt6cr_file_system_model_file_name(qt6cr_handle_t handle, qt6cr_handle_t index) {
   auto *model = as_file_system_model(handle);
   auto *model_index = as_model_index(index);
@@ -6273,6 +6279,18 @@ int64_t qt6cr_file_system_model_size(qt6cr_handle_t handle, qt6cr_handle_t index
   auto *model = as_file_system_model(handle);
   auto *model_index = as_model_index(index);
   return model == nullptr || model_index == nullptr ? 0 : model->size(*model_index);
+}
+
+qt6cr_handle_t qt6cr_file_system_model_last_modified(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? new QDateTime() : new QDateTime(model->lastModified(*model_index));
+}
+
+int qt6cr_file_system_model_permissions(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *model = as_file_system_model(handle);
+  auto *model_index = as_model_index(index);
+  return model == nullptr || model_index == nullptr ? 0 : static_cast<int>(model->permissions(*model_index));
 }
 
 char *qt6cr_file_system_model_type(qt6cr_handle_t handle, qt6cr_handle_t index) {
@@ -9051,6 +9069,16 @@ bool qt6cr_qfile_info_is_dir(qt6cr_handle_t handle) {
 int64_t qt6cr_qfile_info_size(qt6cr_handle_t handle) {
   auto *info = as_qfile_info(handle);
   return info == nullptr ? 0 : static_cast<int64_t>(info->size());
+}
+
+qt6cr_handle_t qt6cr_qfile_info_last_modified(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? new QDateTime() : new QDateTime(info->lastModified());
+}
+
+int qt6cr_qfile_info_permissions(qt6cr_handle_t handle) {
+  auto *info = as_qfile_info(handle);
+  return info == nullptr ? 0 : static_cast<int>(info->permissions());
 }
 
 qt6cr_handle_t qt6cr_qdate_create(int year, int month, int day) {
