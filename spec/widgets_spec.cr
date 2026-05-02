@@ -413,6 +413,41 @@ describe Qt6 do
     host.release
   end
 
+  it "supports standalone shortcuts" do
+    application = app
+    host = Qt6::EventWidget.new
+    host.resize(240, 120)
+    host.focus_policy = Qt6::FocusPolicy::StrongFocus
+
+    shortcut = Qt6::Shortcut.new("P", host)
+    activations = 0
+    shortcut.on_activated do
+      activations += 1
+    end
+
+    shortcut.auto_repeat = false
+    shortcut.context = Qt6::ShortcutContext::WidgetShortcut
+    shortcut.enabled = true
+    shortcut.key_sequence = Qt6::KeySequence.new("P")
+
+    host.show
+    host.set_focus
+    application.process_events
+
+    host.simulate_key_press(80)
+    host.simulate_key_release(80)
+    application.process_events
+
+    shortcut.parent_widget.not_nil!.to_unsafe.should eq(host.to_unsafe)
+    shortcut.key_sequence.to_s.should eq("P")
+    shortcut.auto_repeat?.should be_false
+    shortcut.context.should eq(Qt6::ShortcutContext::WidgetShortcut)
+    shortcut.enabled?.should be_true
+    activations.should eq(1)
+
+    host.release
+  end
+
   it "supports widget graphics effects" do
     application = app
     host = Qt6::Widget.new

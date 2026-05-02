@@ -107,6 +107,7 @@
 #include <QPolygonF>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QShortcut>
 #include <QSettings>
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
@@ -2894,6 +2895,92 @@ void qt6cr_widget_set_enabled(qt6cr_handle_t handle, bool value) {
 bool qt6cr_widget_has_focus(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget != nullptr && widget->hasFocus();
+}
+
+qt6cr_handle_t qt6cr_shortcut_create(qt6cr_handle_t parent, const char *sequence) {
+  auto *widget = as_widget(parent);
+  return widget == nullptr ? nullptr : new QShortcut(QKeySequence(QString::fromUtf8(sequence == nullptr ? "" : sequence)), widget);
+}
+
+char *qt6cr_shortcut_key_sequence(qt6cr_handle_t handle) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+  return shortcut == nullptr ? duplicate_string("") : duplicate_string(shortcut->key().toString());
+}
+
+void qt6cr_shortcut_set_key_sequence(qt6cr_handle_t handle, const char *sequence) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut != nullptr) {
+    shortcut->setKey(QKeySequence(QString::fromUtf8(sequence == nullptr ? "" : sequence)));
+  }
+}
+
+bool qt6cr_shortcut_is_enabled(qt6cr_handle_t handle) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+  return shortcut != nullptr && shortcut->isEnabled();
+}
+
+void qt6cr_shortcut_set_enabled(qt6cr_handle_t handle, bool value) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut != nullptr) {
+    shortcut->setEnabled(value);
+  }
+}
+
+bool qt6cr_shortcut_auto_repeat(qt6cr_handle_t handle) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+  return shortcut != nullptr && shortcut->autoRepeat();
+}
+
+void qt6cr_shortcut_set_auto_repeat(qt6cr_handle_t handle, bool value) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut != nullptr) {
+    shortcut->setAutoRepeat(value);
+  }
+}
+
+int qt6cr_shortcut_context(qt6cr_handle_t handle) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+  return shortcut == nullptr ? static_cast<int>(Qt::WindowShortcut) : static_cast<int>(shortcut->context());
+}
+
+void qt6cr_shortcut_set_context(qt6cr_handle_t handle, int value) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut != nullptr) {
+    shortcut->setContext(static_cast<Qt::ShortcutContext>(value));
+  }
+}
+
+qt6cr_handle_t qt6cr_shortcut_parent_widget(qt6cr_handle_t handle) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+  return shortcut == nullptr ? nullptr : qobject_cast<QWidget *>(shortcut->parent());
+}
+
+void qt6cr_shortcut_on_activated(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(shortcut, &QShortcut::activated, shortcut, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_shortcut_on_activated_ambiguously(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *shortcut = static_cast<QShortcut *>(handle);
+
+  if (shortcut == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(shortcut, &QShortcut::activatedAmbiguously, shortcut, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 qt6cr_handle_t qt6cr_mdi_area_create(qt6cr_handle_t parent) {

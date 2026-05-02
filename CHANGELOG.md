@@ -36,6 +36,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `BrushStyle` plus deeper `QBrush` style, texture, texture-image, and opacity helpers.
 - Added `QPainterPath#fill_rule` support for odd-even and winding interior control.
 - Added `QGraphicsEffect` plus blur, colorize, drop-shadow, and opacity effect wrappers with widget attachment helpers and enabled-state callbacks.
+- Added `QShortcut` bindings with key-sequence, context, auto-repeat, enablement, parent-widget access, and activation callbacks.
 
 ### Fixed
 
