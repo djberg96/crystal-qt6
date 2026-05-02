@@ -1782,10 +1782,13 @@ describe Qt6 do
 
     root_index.release
     root_index = await_index.call(root_path, 2)
+    generated_path = File.join(root_path, "generated")
     generated_index = model.mkdir(root_index, "generated")
     20.times { application.process_events }
+    generated_index.release
+    generated_index = await_index.call(generated_path, nil)
     generated_index.valid?.should be_true
-    model.file_name(generated_index).should eq("generated")
+    model.file_path(generated_index).should eq(generated_path)
     model.rmdir(generated_index).should be_true
     application.process_events
 
