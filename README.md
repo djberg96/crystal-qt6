@@ -60,6 +60,8 @@ Run the full test suite:
 make spec
 ```
 
+On Linux and macOS, `make spec` uses the same Qt platform defaults as CI so popup- and window-oriented specs do not inherit a Wayland session or other desktop-specific backend quirks by accident.
+
 Run the GUI-oriented spec suite with the same platform defaults CI uses:
 
 ```sh
@@ -95,6 +97,8 @@ Direct Crystal commands also work without a separate native build step:
 crystal run examples/hello_world.cr
 crystal spec
 ```
+
+When you invoke `crystal spec` directly, Qt uses your current desktop environment unless you set `QT_QPA_PLATFORM` yourself.
 
 Example highlights:
 

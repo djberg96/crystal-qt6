@@ -189,6 +189,8 @@ crystal run examples/dialog_gallery.cr
 
 For day-to-day work, use whichever form is clearer in context. The \api{make} targets are nice for discoverability and CI-style repetition; direct \api{crystal} commands are useful when you are experimenting with one file or passing compiler options.
 
+The repository's \api{make spec} target also applies the same Qt platform defaults that CI uses, so popup-oriented widget specs do not accidentally inherit a Wayland session or another desktop backend that changes window-manager behavior. A direct \api{crystal spec} run still uses whatever Qt platform backend your environment selects unless you override it yourself.
+
 \section{Running Without A Desktop}
 
 GUI code still needs a Qt platform backend, even when it is running in automation. The repository CI uses two different approaches:
@@ -198,7 +200,7 @@ GUI code still needs a Qt platform backend, even when it is running in automatio
 \item macOS runs the specs with \api{QT_QPA_PLATFORM=offscreen}. This is useful for noninteractive widget tests, but it is not a substitute for visually checking examples that depend on native window behavior.
 \end{itemize}
 
-For local Linux automation, the CI command is a good starting point:
+For local Linux automation, the CI command is a good starting point, and the repository's \api{make spec} target already follows this path:
 
 \begin{lstlisting}[style=crystal]
 xvfb-run -a env QT_QPA_PLATFORM=xcb make spec

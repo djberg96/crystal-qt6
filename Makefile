@@ -13,7 +13,7 @@ native:
 	QT_PKG='$(QT_PKG)' PKG_CONFIG=$(PKG_CONFIG) CXX=$(CXX) AR=$(AR) CXXFLAGS='$(CXXFLAGS)' sh $(BUILD_SCRIPT)
 
 spec: native
-	crystal spec
+	$(GUI_SPEC_SCRIPT) crystal spec
 
 gui-spec: native
 	$(GUI_SPEC_SCRIPT) crystal spec
