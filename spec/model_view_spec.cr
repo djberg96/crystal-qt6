@@ -1625,6 +1625,7 @@ describe Qt6 do
 
     root_paths = [] of String
     loaded_paths = [] of String
+    renamed_entries = [] of Tuple(String, String, String)
     preview_paths = [] of String
     current_index_changes = 0
 
@@ -1634,6 +1635,10 @@ describe Qt6 do
 
     model.on_directory_loaded do |path|
       loaded_paths << path
+    end
+
+    model.on_file_renamed do |path, old_name, new_name|
+      renamed_entries << {path, old_name, new_name}
     end
 
     column_view.on_current_index_changed do
@@ -1750,6 +1755,26 @@ describe Qt6 do
     preview_paths.should contain(terrain_path)
     column_view.selection_model.not_nil!.has_selection?.should be_true
 
+    renamed_terrain_path = File.join(root_path, "terrain-renamed.map")
+    model.rename(terrain_index, "terrain-renamed.map").should be_true
+
+    renamed_index = Qt6::ModelIndex.new
+    50.times do
+      application.process_events
+
+      renamed_index.release unless renamed_index.destroyed?
+      renamed_index = model.index(renamed_terrain_path)
+
+      break if File.exists?(renamed_terrain_path) && !File.exists?(terrain_path) && renamed_index.valid?
+      sleep 10.milliseconds
+    end
+
+    renamed_index.valid?.should be_true
+    model.file_name(renamed_index).should eq("terrain-renamed.map")
+    model.file_path(renamed_index).should eq(renamed_terrain_path)
+    renamed_entries.should contain({root_path, "terrain.map", "terrain-renamed.map"})
+    terrain_path = renamed_terrain_path
+
     generated_index = model.mkdir(root_index, "generated")
     20.times { application.process_events }
     generated_index.valid?.should be_true
@@ -1762,6 +1787,7 @@ describe Qt6 do
 
     notes_index.release
     generated_index.release
+    renamed_index.release
     terrain_info_modified.release
     terrain_info.release
     terrain_index.release

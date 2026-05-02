@@ -124,6 +124,7 @@ typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
 typedef void (*qt6cr_double_callback_t)(void *userdata, double value);
 typedef void (*qt6cr_handle_callback_t)(void *userdata, qt6cr_handle_t handle);
 typedef void (*qt6cr_string_callback_t)(void *userdata, const char *value);
+typedef void (*qt6cr_three_string_callback_t)(void *userdata, const char *first, const char *second, const char *third);
 typedef bool (*qt6cr_event_filter_callback_t)(void *userdata, qt6cr_handle_t watched, qt6cr_handle_t event);
 typedef void (*qt6cr_paint_callback_t)(void *userdata, qt6cr_rectf_t rect);
 typedef void (*qt6cr_paint_with_painter_callback_t)(void *userdata, qt6cr_handle_t painter, qt6cr_rectf_t rect);
@@ -798,6 +799,7 @@ bool qt6cr_file_system_model_rmdir(qt6cr_handle_t handle, qt6cr_handle_t index);
 bool qt6cr_file_system_model_remove(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_file_system_model_on_root_path_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 void qt6cr_file_system_model_on_directory_loaded(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+void qt6cr_file_system_model_on_file_renamed(qt6cr_handle_t handle, qt6cr_three_string_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent);
 void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);

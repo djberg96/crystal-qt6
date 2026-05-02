@@ -774,6 +774,7 @@ module Qt6
     fun qt6cr_file_system_model_remove = qt6cr_file_system_model_remove(handle : Handle, index : Handle) : Bool
     fun qt6cr_file_system_model_on_root_path_changed = qt6cr_file_system_model_on_root_path_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
     fun qt6cr_file_system_model_on_directory_loaded = qt6cr_file_system_model_on_directory_loaded(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+    fun qt6cr_file_system_model_on_file_renamed = qt6cr_file_system_model_on_file_renamed(handle : Handle, callback : (Handle, UInt8*, UInt8*, UInt8* ->), userdata : Handle)
 
     fun qt6cr_styled_item_delegate_create = qt6cr_styled_item_delegate_create(parent : Handle) : Handle
     fun qt6cr_styled_item_delegate_on_display_text = qt6cr_styled_item_delegate_on_display_text(handle : Handle, callback : (Handle, UInt8* -> UInt8*), userdata : Handle)

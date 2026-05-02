@@ -3,10 +3,12 @@ module Qt6
   class FileSystemModel < AbstractItemModel
     @root_path_changed : Signal(String) = Signal(String).new
     @directory_loaded : Signal(String) = Signal(String).new
+    @file_renamed : Signal(String, String, String) = Signal(String, String, String).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
     getter root_path_changed : Signal(String)
     getter directory_loaded : Signal(String)
+    getter file_renamed : Signal(String, String, String)
 
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
       new(handle, owned)
@@ -194,6 +196,11 @@ module Qt6
       LibQt6.qt6cr_file_system_model_remove(to_unsafe, index.to_unsafe)
     end
 
+    # Renames the indexed entry by setting its edit role to a new leaf name.
+    def rename(index : ModelIndex, new_name : String) : Bool
+      set_data(index, new_name, ItemDataRole::Edit)
+    end
+
     # Registers a block to run when the root path changes.
     def on_root_path_changed(&block : String ->) : self
       @root_path_changed.connect { |value| block.call(value) }
@@ -206,6 +213,12 @@ module Qt6
       self
     end
 
+    # Registers a block to run when a file or directory is renamed.
+    def on_file_renamed(&block : String, String, String ->) : self
+      @file_renamed.connect { |path, old_name, new_name| block.call(path, old_name, new_name) }
+      self
+    end
+
     protected def emit_root_path_changed(value : String) : Nil
       @root_path_changed.emit(value)
     end
@@ -214,12 +227,18 @@ module Qt6
       @directory_loaded.emit(value)
     end
 
+    protected def emit_file_renamed(path : String, old_name : String, new_name : String) : Nil
+      @file_renamed.emit(path, old_name, new_name)
+    end
+
     private def register_callbacks : Nil
       @root_path_changed = Signal(String).new
       @directory_loaded = Signal(String).new
+      @file_renamed = Signal(String, String, String).new
       @callback_userdata = Box.box(self)
       LibQt6.qt6cr_file_system_model_on_root_path_changed(to_unsafe, ROOT_PATH_CHANGED_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_file_system_model_on_directory_loaded(to_unsafe, DIRECTORY_LOADED_TRAMPOLINE, @callback_userdata)
+      LibQt6.qt6cr_file_system_model_on_file_renamed(to_unsafe, FILE_RENAMED_TRAMPOLINE, @callback_userdata)
     end
 
     private ROOT_PATH_CHANGED_TRAMPOLINE = ->(userdata : Void*, value : UInt8*) do
@@ -228,6 +247,14 @@ module Qt6
 
     private DIRECTORY_LOADED_TRAMPOLINE = ->(userdata : Void*, value : UInt8*) do
       Box(FileSystemModel).unbox(userdata).emit_directory_loaded(Qt6.copy_string(value))
+    end
+
+    private FILE_RENAMED_TRAMPOLINE = ->(userdata : Void*, path : UInt8*, old_name : UInt8*, new_name : UInt8*) do
+      Box(FileSystemModel).unbox(userdata).emit_file_renamed(
+        Qt6.copy_string(path),
+        Qt6.copy_string(old_name),
+        Qt6.copy_string(new_name)
+      )
     end
   end
 end

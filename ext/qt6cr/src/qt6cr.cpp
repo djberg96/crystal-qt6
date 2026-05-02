@@ -6459,6 +6459,18 @@ void qt6cr_file_system_model_on_directory_loaded(qt6cr_handle_t handle, qt6cr_st
   });
 }
 
+void qt6cr_file_system_model_on_file_renamed(qt6cr_handle_t handle, qt6cr_three_string_callback_t callback, void *userdata) {
+  auto *model = as_file_system_model(handle);
+
+  if (model == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(model, &QFileSystemModel::fileRenamed, model, [callback, userdata](const QString &path, const QString &old_name, const QString &new_name) {
+    callback(userdata, path.toUtf8().constData(), old_name.toUtf8().constData(), new_name.toUtf8().constData());
+  });
+}
+
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent) {
   return new CrystalStyledItemDelegate(as_object(parent));
 }
