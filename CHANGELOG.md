@@ -16,6 +16,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QMdiArea` and `QMdiSubWindow` wrappers with document-area options, tabbed-view controls, activation callbacks, and subwindow helpers for desktop multi-document shells.
 - Added `QColumnView`, `QFileIconProvider`, and `QFileSystemModel` wrappers for Finder-style model browsing, stock file icons, and live directory-tree models with filtering, name filters, and root-path callbacks.
 - Expanded `QFileSystemModel` and `QFileInfo` with file icons, permission flags, and last-modified metadata for richer filesystem browsers.
+- Expanded `QColumnView` with preview-update callbacks, and added shared `AbstractItemView#scroll_to` / `#select_all` helpers for model-view navigation.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

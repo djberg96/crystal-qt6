@@ -850,6 +850,7 @@ module Qt6
     fun qt6cr_column_view_column_widths = qt6cr_column_view_column_widths(handle : Handle) : IntArrayValue
     fun qt6cr_column_view_set_column_widths = qt6cr_column_view_set_column_widths(handle : Handle, widths : Int32*, count : LibC::Int)
     fun qt6cr_column_view_on_current_index_changed = qt6cr_column_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_column_view_on_update_preview_widget = qt6cr_column_view_on_update_preview_widget(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
 
     fun qt6cr_header_view_count = qt6cr_header_view_count(handle : Handle) : LibC::Int
     fun qt6cr_header_view_default_section_size = qt6cr_header_view_default_section_size(handle : Handle) : LibC::Int
@@ -1929,6 +1930,8 @@ module Qt6
     fun qt6cr_abstract_item_view_viewport = qt6cr_abstract_item_view_viewport(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_index_at = qt6cr_abstract_item_view_index_at(handle : Handle, point : PointFValue) : Handle
     fun qt6cr_abstract_item_view_visual_rect = qt6cr_abstract_item_view_visual_rect(handle : Handle, index : Handle) : RectFValue
+    fun qt6cr_abstract_item_view_scroll_to = qt6cr_abstract_item_view_scroll_to(handle : Handle, index : Handle, hint : LibC::Int)
+    fun qt6cr_abstract_item_view_select_all = qt6cr_abstract_item_view_select_all(handle : Handle)
     fun qt6cr_abstract_item_view_open_persistent_editor = qt6cr_abstract_item_view_open_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_close_persistent_editor = qt6cr_abstract_item_view_close_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_is_persistent_editor_open = qt6cr_abstract_item_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool

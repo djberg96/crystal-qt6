@@ -1625,6 +1625,7 @@ describe Qt6 do
 
     root_paths = [] of String
     loaded_paths = [] of String
+    preview_paths = [] of String
     current_index_changes = 0
 
     model.on_root_path_changed do |path|
@@ -1637,6 +1638,11 @@ describe Qt6 do
 
     column_view.on_current_index_changed do
       current_index_changes += 1
+    end
+
+    column_view.on_update_preview_widget do |index|
+      preview_paths << model.file_path(index)
+      index.release
     end
 
     model.filter = Qt6::DirectoryFilter::AllEntries | Qt6::DirectoryFilter::AllDirs | Qt6::DirectoryFilter::NoDotAndDotDot
@@ -1687,7 +1693,10 @@ describe Qt6 do
     column_view.show
     application.process_events
 
-    column_view.current_index = maps_index
+    column_view.current_index = terrain_index
+    application.process_events
+    column_view.scroll_to(terrain_index, Qt6::ScrollHint::PositionAtCenter)
+    column_view.select_all
     application.process_events
 
     terrain_info = model.file_info(terrain_index)
@@ -1736,8 +1745,10 @@ describe Qt6 do
     column_view.preview_widget.not_nil!.to_unsafe.should eq(preview.to_unsafe)
     column_view.column_widths.should eq([140, 220])
     column_view.current_index.valid?.should be_true
-    column_view.current_index.row.should eq(maps_index.row)
+    column_view.current_index.row.should eq(terrain_index.row)
     current_index_changes.should be >= 1
+    preview_paths.should contain(terrain_path)
+    column_view.selection_model.not_nil!.has_selection?.should be_true
 
     generated_index = model.mkdir(root_index, "generated")
     20.times { application.process_events }

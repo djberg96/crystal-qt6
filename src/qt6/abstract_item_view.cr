@@ -154,6 +154,18 @@ module Qt6
       RectF.from_native(LibQt6.qt6cr_abstract_item_view_visual_rect(to_unsafe, index.to_unsafe))
     end
 
+    # Scrolls the view so the given index is visible with the requested hint.
+    def scroll_to(index : ModelIndex, hint : ScrollHint = ScrollHint::EnsureVisible) : self
+      LibQt6.qt6cr_abstract_item_view_scroll_to(to_unsafe, index.to_unsafe, hint.value)
+      self
+    end
+
+    # Selects all items according to the current selection behavior.
+    def select_all : self
+      LibQt6.qt6cr_abstract_item_view_select_all(to_unsafe)
+      self
+    end
+
     # Opens a persistent editor for the given index.
     def open_persistent_editor(index : ModelIndex) : self
       LibQt6.qt6cr_abstract_item_view_open_persistent_editor(to_unsafe, index.to_unsafe)

@@ -560,6 +560,9 @@ class ModelColumnView final : public QColumnView {
 
   qt6cr_void_callback_t current_index_changed_callback = nullptr;
   void *current_index_changed_userdata = nullptr;
+  qt6cr_handle_callback_t update_preview_widget_callback = nullptr;
+  void *update_preview_widget_userdata = nullptr;
+  QMetaObject::Connection update_preview_widget_connection;
 
   void setModel(QAbstractItemModel *model) override {
     if (current_changed_connection) {
@@ -589,6 +592,22 @@ class ModelColumnView final : public QColumnView {
     current_changed_connection = QObject::connect(selection_model, &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &, const QModelIndex &) {
       if (current_index_changed_callback != nullptr) {
         current_index_changed_callback(current_index_changed_userdata);
+      }
+    });
+  }
+
+  void reconnect_update_preview_widget() {
+    if (update_preview_widget_connection) {
+      QObject::disconnect(update_preview_widget_connection);
+    }
+
+    if (update_preview_widget_callback == nullptr) {
+      return;
+    }
+
+    update_preview_widget_connection = QObject::connect(this, &QColumnView::updatePreviewWidget, this, [this](const QModelIndex &index) {
+      if (update_preview_widget_callback != nullptr) {
+        update_preview_widget_callback(update_preview_widget_userdata, new QModelIndex(index));
       }
     });
   }
@@ -6627,6 +6646,23 @@ qt6cr_rectf_t qt6cr_abstract_item_view_visual_rect(qt6cr_handle_t handle, qt6cr_
   return to_rectf(view->visualRect(*model_index));
 }
 
+void qt6cr_abstract_item_view_scroll_to(qt6cr_handle_t handle, qt6cr_handle_t index, int hint) {
+  auto *view = as_abstract_item_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->scrollTo(*model_index, static_cast<QAbstractItemView::ScrollHint>(hint));
+  }
+}
+
+void qt6cr_abstract_item_view_select_all(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->selectAll();
+  }
+}
+
 void qt6cr_abstract_item_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index) {
   auto *view = as_abstract_item_view(handle);
   auto *model_index = as_model_index(index);
@@ -7162,6 +7198,18 @@ void qt6cr_column_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_voi
   view->current_index_changed_callback = callback;
   view->current_index_changed_userdata = userdata;
   view->reconnect_current_changed();
+}
+
+void qt6cr_column_view_on_update_preview_widget(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *view = as_column_view(handle);
+
+  if (view == nullptr) {
+    return;
+  }
+
+  view->update_preview_widget_callback = callback;
+  view->update_preview_widget_userdata = userdata;
+  view->reconnect_update_preview_widget();
 }
 
 int qt6cr_header_view_count(qt6cr_handle_t handle) {

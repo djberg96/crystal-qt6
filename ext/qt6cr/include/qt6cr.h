@@ -874,6 +874,7 @@ void qt6cr_column_view_set_preview_widget(qt6cr_handle_t handle, qt6cr_handle_t 
 qt6cr_int_array_t qt6cr_column_view_column_widths(qt6cr_handle_t handle);
 void qt6cr_column_view_set_column_widths(qt6cr_handle_t handle, const int *widths, int count);
 void qt6cr_column_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_column_view_on_update_preview_widget(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
 
 int qt6cr_header_view_count(qt6cr_handle_t handle);
 int qt6cr_header_view_default_section_size(qt6cr_handle_t handle);
@@ -1970,6 +1971,8 @@ void qt6cr_abstract_item_view_set_drop_indicator_shown(qt6cr_handle_t handle, bo
 qt6cr_handle_t qt6cr_abstract_item_view_viewport(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_abstract_item_view_index_at(qt6cr_handle_t handle, qt6cr_pointf_t point);
 qt6cr_rectf_t qt6cr_abstract_item_view_visual_rect(qt6cr_handle_t handle, qt6cr_handle_t index);
+void qt6cr_abstract_item_view_scroll_to(qt6cr_handle_t handle, qt6cr_handle_t index, int hint);
+void qt6cr_abstract_item_view_select_all(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_abstract_item_view_close_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 bool qt6cr_abstract_item_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t index);
