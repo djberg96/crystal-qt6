@@ -207,6 +207,82 @@ describe Qt6 do
     icon.release
   end
 
+  it "supports styled item delegate paint and size hint hooks" do
+    application = app
+    list_view = Qt6::ListView.new
+    model = Qt6::StandardItemModel.new(list_view)
+    delegate = Qt6::StyledItemDelegate.new(list_view)
+    item = Qt6::StandardItem.new("Terrain\n2 tracks")
+    paint_calls = 0
+    size_hint_calls = 0
+    size_hint_index_valid_values = [] of Bool
+    size_hint_rect_widths = [] of Float64
+    painter_active_values = [] of Bool
+    paint_index_rows = [] of Int32
+    paint_rect_widths = [] of Float64
+    text_rect_widths = [] of Float64
+    selected_states = [] of Bool
+    enabled_states = [] of Bool
+    font_handles_seen = 0
+    palette_handles_seen = 0
+
+    delegate.on_size_hint do |option, index|
+      size_hint_calls += 1
+      size_hint_index_valid_values << index.valid?
+      size_hint_rect_widths << option.rect.width
+      Qt6::Size.new(0, 44)
+    end
+
+    delegate.on_paint do |painter, option, index|
+      font = option.font
+      palette = option.palette
+
+      paint_calls += 1
+      painter_active_values << painter.active?
+      paint_index_rows << index.row
+      paint_rect_widths << option.rect.width
+      text_rect_widths << option.text_rect.width
+      selected_states << option.selected?
+      enabled_states << option.enabled?
+      font_handles_seen += 1 unless font.to_unsafe.null?
+      palette_handles_seen += 1 unless palette.to_unsafe.null?
+      option.draw_background(painter)
+      option.draw_decoration(painter)
+      font.release
+      palette.release
+
+      false
+    end
+
+    model << item
+    list_view.model = model
+    list_view.item_delegate = delegate
+    list_view.icon_size = Qt6::Size.new(24, 26)
+    list_view.resize(240, 120)
+    list_view.show
+    5.times { application.process_events }
+    snapshot = list_view.grab
+    application.process_events
+
+    list_view.icon_size.should eq(Qt6::Size.new(24, 26))
+    snapshot.null?.should be_false
+    size_hint_calls.should be > 0
+    size_hint_index_valid_values.should contain(true)
+    size_hint_rect_widths.max.should be >= 0
+    paint_calls.should be > 0
+    painter_active_values.should contain(true)
+    paint_index_rows.should contain(0)
+    paint_rect_widths.max.should be > 0
+    text_rect_widths.max.should be > 0
+    selected_states.size.should eq(paint_calls)
+    enabled_states.should contain(true)
+    font_handles_seen.should eq(paint_calls)
+    palette_handles_seen.should eq(paint_calls)
+
+    snapshot.release
+    list_view.release
+  end
+
   it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do
     application = app
     list_view = Qt6::ListView.new
