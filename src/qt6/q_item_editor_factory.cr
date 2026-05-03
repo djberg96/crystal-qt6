@@ -1,0 +1,21 @@
+module Qt6
+  # Wraps `QItemEditorFactory`, which `QStyledItemDelegate` uses to create
+  # default editors for model values.
+  class QItemEditorFactory < NativeResource
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
+    def initialize
+      super(LibQt6.qt6cr_item_editor_factory_create)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+    end
+
+    protected def destroy_native : Nil
+      LibQt6.qt6cr_item_editor_factory_destroy(to_unsafe)
+    end
+  end
+end

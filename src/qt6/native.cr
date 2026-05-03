@@ -793,13 +793,40 @@ module Qt6
 
     fun qt6cr_styled_item_delegate_create = qt6cr_styled_item_delegate_create(parent : Handle) : Handle
     fun qt6cr_styled_item_delegate_on_display_text = qt6cr_styled_item_delegate_on_display_text(handle : Handle, callback : (Handle, UInt8* -> UInt8*), userdata : Handle)
-    fun qt6cr_styled_item_delegate_on_create_editor = qt6cr_styled_item_delegate_on_create_editor(handle : Handle, callback : (Handle, Handle, Handle -> Handle), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_create_editor = qt6cr_styled_item_delegate_on_create_editor(handle : Handle, callback : (Handle, Handle, Handle, Handle -> Handle), userdata : Handle)
     fun qt6cr_styled_item_delegate_on_set_editor_data = qt6cr_styled_item_delegate_on_set_editor_data(handle : Handle, callback : (Handle, Handle, VariantValue, Handle ->), userdata : Handle)
     fun qt6cr_styled_item_delegate_on_set_model_data = qt6cr_styled_item_delegate_on_set_model_data(handle : Handle, callback : (Handle, Handle, Handle, Handle ->), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_paint = qt6cr_styled_item_delegate_on_paint(handle : Handle, callback : (Handle, Handle, Handle, Handle -> Bool), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_size_hint = qt6cr_styled_item_delegate_on_size_hint(handle : Handle, callback : (Handle, Handle, Handle -> SizeValue), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_update_editor_geometry = qt6cr_styled_item_delegate_on_update_editor_geometry(handle : Handle, callback : (Handle, Handle, Handle, Handle ->), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_editor_event = qt6cr_styled_item_delegate_on_editor_event(handle : Handle, callback : (Handle, Handle, Handle, Handle, Handle -> Bool), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_event_filter = qt6cr_styled_item_delegate_on_event_filter(handle : Handle, callback : (Handle, Handle, Handle -> Bool), userdata : Handle)
+    fun qt6cr_styled_item_delegate_on_init_style_option = qt6cr_styled_item_delegate_on_init_style_option(handle : Handle, callback : (Handle, Handle, Handle ->), userdata : Handle)
     fun qt6cr_styled_item_delegate_display_text = qt6cr_styled_item_delegate_display_text(handle : Handle, value : VariantValue) : UInt8*
     fun qt6cr_styled_item_delegate_create_editor = qt6cr_styled_item_delegate_create_editor(handle : Handle, parent : Handle, index : Handle) : Handle
+    fun qt6cr_styled_item_delegate_create_editor_with_option = qt6cr_styled_item_delegate_create_editor_with_option(handle : Handle, parent : Handle, option : Handle, index : Handle) : Handle
     fun qt6cr_styled_item_delegate_set_editor_data = qt6cr_styled_item_delegate_set_editor_data(handle : Handle, editor : Handle, index : Handle)
     fun qt6cr_styled_item_delegate_set_model_data = qt6cr_styled_item_delegate_set_model_data(handle : Handle, editor : Handle, model : Handle, index : Handle)
+    fun qt6cr_styled_item_delegate_update_editor_geometry = qt6cr_styled_item_delegate_update_editor_geometry(handle : Handle, editor : Handle, option : Handle, index : Handle)
+    fun qt6cr_styled_item_delegate_editor_event = qt6cr_styled_item_delegate_editor_event(handle : Handle, event : Handle, model : Handle, option : Handle, index : Handle) : Bool
+    fun qt6cr_styled_item_delegate_event_filter = qt6cr_styled_item_delegate_event_filter(handle : Handle, object : Handle, event : Handle) : Bool
+    fun qt6cr_styled_item_delegate_init_style_option = qt6cr_styled_item_delegate_init_style_option(handle : Handle, index : Handle) : Handle
+    fun qt6cr_styled_item_delegate_item_editor_factory = qt6cr_styled_item_delegate_item_editor_factory(handle : Handle) : Handle
+    fun qt6cr_styled_item_delegate_set_item_editor_factory = qt6cr_styled_item_delegate_set_item_editor_factory(handle : Handle, factory : Handle)
+
+    fun qt6cr_item_editor_factory_create = qt6cr_item_editor_factory_create : Handle
+    fun qt6cr_item_editor_factory_destroy = qt6cr_item_editor_factory_destroy(handle : Handle)
+
+    fun qt6cr_style_option_view_item_create = qt6cr_style_option_view_item_create : Handle
+    fun qt6cr_style_option_view_item_destroy = qt6cr_style_option_view_item_destroy(handle : Handle)
+    fun qt6cr_style_option_view_item_rect = qt6cr_style_option_view_item_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_view_item_text_rect = qt6cr_style_option_view_item_text_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_view_item_font = qt6cr_style_option_view_item_font(handle : Handle) : Handle
+    fun qt6cr_style_option_view_item_palette = qt6cr_style_option_view_item_palette(handle : Handle) : Handle
+    fun qt6cr_style_option_view_item_selected = qt6cr_style_option_view_item_selected(handle : Handle) : Bool
+    fun qt6cr_style_option_view_item_enabled = qt6cr_style_option_view_item_enabled(handle : Handle) : Bool
+    fun qt6cr_style_option_view_item_draw_background = qt6cr_style_option_view_item_draw_background(handle : Handle, painter : Handle)
+    fun qt6cr_style_option_view_item_draw_decoration = qt6cr_style_option_view_item_draw_decoration(handle : Handle, painter : Handle)
 
     fun qt6cr_list_view_create = qt6cr_list_view_create(parent : Handle) : Handle
     fun qt6cr_list_view_set_model = qt6cr_list_view_set_model(handle : Handle, model : Handle)
@@ -1998,6 +2025,8 @@ module Qt6
 
     fun qt6cr_abstract_item_view_model = qt6cr_abstract_item_view_model(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_set_item_delegate = qt6cr_abstract_item_view_set_item_delegate(handle : Handle, delegate : Handle)
+    fun qt6cr_abstract_item_view_icon_size = qt6cr_abstract_item_view_icon_size(handle : Handle) : SizeValue
+    fun qt6cr_abstract_item_view_set_icon_size = qt6cr_abstract_item_view_set_icon_size(handle : Handle, size : SizeValue)
     fun qt6cr_abstract_item_view_selection_model = qt6cr_abstract_item_view_selection_model(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_set_selection_model = qt6cr_abstract_item_view_set_selection_model(handle : Handle, selection_model : Handle)
     fun qt6cr_abstract_item_view_current_index = qt6cr_abstract_item_view_current_index(handle : Handle) : Handle

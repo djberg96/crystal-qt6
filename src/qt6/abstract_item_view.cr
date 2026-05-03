@@ -17,6 +17,17 @@ module Qt6
       delegate
     end
 
+    # Returns the icon size used for item decorations.
+    def icon_size : Size
+      Size.from_native(LibQt6.qt6cr_abstract_item_view_icon_size(to_unsafe))
+    end
+
+    # Sets the icon size used for item decorations.
+    def icon_size=(value : Size) : Size
+      LibQt6.qt6cr_abstract_item_view_set_icon_size(to_unsafe, LibQt6::SizeValue.new(width: value.width, height: value.height))
+      value
+    end
+
     # Returns the active selection model, if one is installed.
     def selection_model : ItemSelectionModel?
       handle = LibQt6.qt6cr_abstract_item_view_selection_model(to_unsafe)
