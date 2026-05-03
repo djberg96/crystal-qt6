@@ -5,6 +5,10 @@ module Qt6
       new(handle, owned)
     end
 
+    def initialize
+      super(LibQt6.qt6cr_style_option_view_item_create)
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -44,6 +48,7 @@ module Qt6
     end
 
     protected def destroy_native : Nil
+      LibQt6.qt6cr_style_option_view_item_destroy(to_unsafe)
     end
   end
 end

@@ -831,6 +831,60 @@ describe Qt6 do
     host.release
   end
 
+  it "supports option-aware delegate editor hooks and item editor factories" do
+    app
+    host = Qt6::Widget.new
+    model = Qt6::StandardItemModel.new(host)
+    item = Qt6::StandardItem.new("terrain")
+    model << item
+    index = model.index(0)
+    delegate = Qt6::StyledItemDelegate.new(host)
+    factory = Qt6::QItemEditorFactory.new
+    initialized_indexes = [] of Int32
+    created_indexes = [] of Int32
+    geometry_indexes = [] of Int32
+    option_widths = [] of Float64
+
+    delegate.item_editor_factory.should be_nil
+    delegate.item_editor_factory = factory
+    delegate.item_editor_factory.not_nil!.to_unsafe.should eq(factory.to_unsafe)
+
+    delegate.on_init_style_option do |option, option_index|
+      initialized_indexes << option_index.row
+      option_widths << option.rect.width
+    end
+
+    delegate.on_create_editor_with_option do |parent, option, editor_index|
+      created_indexes << editor_index.row
+      option_widths << option.rect.width
+      Qt6::LineEdit.new(parent: parent)
+    end
+
+    delegate.on_update_editor_geometry do |editor, option, editor_index|
+      geometry_indexes << editor_index.row
+      option_widths << option.rect.width
+      editor.resize(80, 22)
+    end
+
+    option = delegate.init_style_option(index)
+    editor = delegate.create_editor(host, option, index)
+    editor.should be_a(Qt6::LineEdit)
+    delegate.update_editor_geometry(editor.not_nil!, option, index)
+
+    initialized_indexes.should contain(0)
+    created_indexes.should eq([0])
+    geometry_indexes.should eq([0])
+    option_widths.all? { |width| width >= 0 }.should be_true
+
+    delegate.item_editor_factory = nil
+    delegate.item_editor_factory.should be_nil
+
+    option.release
+    factory.release
+    index.release
+    host.release
+  end
+
   it "supports edit triggers and persistent editors in item views" do
     application = app
     list_view = Qt6::ListView.new
