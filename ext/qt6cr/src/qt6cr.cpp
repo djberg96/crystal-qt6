@@ -1122,6 +1122,10 @@ class CrystalStyledItemDelegate final : public QStyledItemDelegate {
   void *set_editor_data_userdata = nullptr;
   qt6cr_delegate_set_model_data_callback_t set_model_data_callback = nullptr;
   void *set_model_data_userdata = nullptr;
+  qt6cr_delegate_paint_callback_t paint_callback = nullptr;
+  void *paint_userdata = nullptr;
+  qt6cr_delegate_size_hint_callback_t size_hint_callback = nullptr;
+  void *size_hint_userdata = nullptr;
 
   QString displayText(const QVariant &value, const QLocale &locale) const override {
     const auto default_text = QStyledItemDelegate::displayText(value, locale);
@@ -1140,6 +1144,36 @@ class CrystalStyledItemDelegate final : public QStyledItemDelegate {
     const auto result = QString::fromUtf8(transformed);
     std::free(transformed);
     return result;
+  }
+
+  void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (paint_callback == nullptr) {
+      QStyledItemDelegate::paint(painter, option, index);
+      return;
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    initStyleOption(&option_copy, index);
+    QModelIndex index_copy(index);
+    const bool handled = paint_callback(paint_userdata, painter, &option_copy, &index_copy);
+    if (!handled) {
+      QStyledItemDelegate::paint(painter, option, index);
+    }
+  }
+
+  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (size_hint_callback == nullptr) {
+      return QStyledItemDelegate::sizeHint(option, index);
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    initStyleOption(&option_copy, index);
+    QModelIndex index_copy(index);
+    const auto size = size_hint_callback(size_hint_userdata, &option_copy, &index_copy);
+    if (size.width < 0 || size.height < 0) {
+      return QStyledItemDelegate::sizeHint(option, index);
+    }
+    return QSize(size.width, size.height);
   }
 
   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
@@ -6706,6 +6740,28 @@ void qt6cr_styled_item_delegate_on_set_model_data(qt6cr_handle_t handle, qt6cr_d
   delegate->set_model_data_userdata = userdata;
 }
 
+void qt6cr_styled_item_delegate_on_paint(qt6cr_handle_t handle, qt6cr_delegate_paint_callback_t callback, void *userdata) {
+  auto *delegate = as_styled_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->paint_callback = callback;
+  delegate->paint_userdata = userdata;
+}
+
+void qt6cr_styled_item_delegate_on_size_hint(qt6cr_handle_t handle, qt6cr_delegate_size_hint_callback_t callback, void *userdata) {
+  auto *delegate = as_styled_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->size_hint_callback = callback;
+  delegate->size_hint_userdata = userdata;
+}
+
 char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
   auto *delegate = as_styled_item_delegate(handle);
   return delegate == nullptr ? duplicate_string("") : duplicate_string(delegate->displayText(from_variant_value(value), QLocale()));
@@ -6749,6 +6805,72 @@ void qt6cr_styled_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_hand
   delegate->setModelData(editor_widget, abstract_item_model, *model_index);
 }
 
+qt6cr_rectf_t qt6cr_style_option_view_item_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->rect);
+}
+
+qt6cr_rectf_t qt6cr_style_option_view_item_text_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option == nullptr) {
+    return qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0};
+  }
+
+  const auto *widget = option->widget;
+  auto *style = widget == nullptr ? QApplication::style() : widget->style();
+  return to_rectf(style->subElementRect(QStyle::SE_ItemViewItemText, option, widget));
+}
+
+qt6cr_handle_t qt6cr_style_option_view_item_font(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? new QFont() : new QFont(option->font);
+}
+
+qt6cr_handle_t qt6cr_style_option_view_item_palette(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? new QPalette() : new QPalette(option->palette);
+}
+
+bool qt6cr_style_option_view_item_selected(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option != nullptr && (option->state & QStyle::State_Selected);
+}
+
+bool qt6cr_style_option_view_item_enabled(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option != nullptr && (option->state & QStyle::State_Enabled);
+}
+
+void qt6cr_style_option_view_item_draw_background(qt6cr_handle_t handle, qt6cr_handle_t painter_handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  auto *painter = as_qpainter(painter_handle);
+  if (option == nullptr || painter == nullptr) {
+    return;
+  }
+
+  const auto *widget = option->widget;
+  auto *style = widget == nullptr ? QApplication::style() : widget->style();
+  QStyleOptionViewItem copy(*option);
+  copy.text.clear();
+  copy.icon = QIcon();
+  style->drawPrimitive(QStyle::PE_PanelItemViewItem, &copy, painter, widget);
+}
+
+void qt6cr_style_option_view_item_draw_decoration(qt6cr_handle_t handle, qt6cr_handle_t painter_handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  auto *painter = as_qpainter(painter_handle);
+  if (option == nullptr || painter == nullptr || option->icon.isNull()) {
+    return;
+  }
+
+  const auto *widget = option->widget;
+  auto *style = widget == nullptr ? QApplication::style() : widget->style();
+  const QRect rect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, option, widget);
+  const auto mode = option->state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled;
+  const auto state = option->state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+  option->icon.paint(painter, rect, option->decorationAlignment, mode, state);
+}
+
 qt6cr_handle_t qt6cr_abstract_item_view_model(qt6cr_handle_t handle) {
   auto *view = as_abstract_item_view(handle);
   return view == nullptr ? nullptr : view->model();
@@ -6759,6 +6881,19 @@ void qt6cr_abstract_item_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_han
 
   if (view != nullptr) {
     view->setItemDelegate(as_styled_item_delegate(delegate));
+  }
+}
+
+qt6cr_size_t qt6cr_abstract_item_view_icon_size(qt6cr_handle_t handle) {
+  auto *view = as_abstract_item_view(handle);
+  return view == nullptr ? qt6cr_size_t{0, 0} : to_size(view->iconSize());
+}
+
+void qt6cr_abstract_item_view_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *view = as_abstract_item_view(handle);
+
+  if (view != nullptr) {
+    view->setIconSize(QSize(size.width, size.height));
   }
 }
 

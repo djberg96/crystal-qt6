@@ -150,6 +150,8 @@ typedef qt6cr_model_index_spec_t (*qt6cr_model_parent_callback_t)(void *userdata
 typedef qt6cr_handle_t (*qt6cr_delegate_create_editor_callback_t)(void *userdata, qt6cr_handle_t parent, qt6cr_handle_t index);
 typedef void (*qt6cr_delegate_set_editor_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_variant_value_t value, qt6cr_handle_t index);
 typedef void (*qt6cr_delegate_set_model_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
+typedef bool (*qt6cr_delegate_paint_callback_t)(void *userdata, qt6cr_handle_t painter, qt6cr_handle_t option, qt6cr_handle_t index);
+typedef qt6cr_size_t (*qt6cr_delegate_size_hint_callback_t)(void *userdata, qt6cr_handle_t option, qt6cr_handle_t index);
 
 void qt6cr_object_destroy(qt6cr_handle_t handle);
 void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -821,10 +823,21 @@ void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_str
 void qt6cr_styled_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata);
 void qt6cr_styled_item_delegate_on_set_editor_data(qt6cr_handle_t handle, qt6cr_delegate_set_editor_data_callback_t callback, void *userdata);
 void qt6cr_styled_item_delegate_on_set_model_data(qt6cr_handle_t handle, qt6cr_delegate_set_model_data_callback_t callback, void *userdata);
+void qt6cr_styled_item_delegate_on_paint(qt6cr_handle_t handle, qt6cr_delegate_paint_callback_t callback, void *userdata);
+void qt6cr_styled_item_delegate_on_size_hint(qt6cr_handle_t handle, qt6cr_delegate_size_hint_callback_t callback, void *userdata);
 char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value);
 qt6cr_handle_t qt6cr_styled_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index);
 void qt6cr_styled_item_delegate_set_editor_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t index);
 void qt6cr_styled_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
+
+qt6cr_rectf_t qt6cr_style_option_view_item_rect(qt6cr_handle_t handle);
+qt6cr_rectf_t qt6cr_style_option_view_item_text_rect(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_style_option_view_item_font(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_style_option_view_item_palette(qt6cr_handle_t handle);
+bool qt6cr_style_option_view_item_selected(qt6cr_handle_t handle);
+bool qt6cr_style_option_view_item_enabled(qt6cr_handle_t handle);
+void qt6cr_style_option_view_item_draw_background(qt6cr_handle_t handle, qt6cr_handle_t painter);
+void qt6cr_style_option_view_item_draw_decoration(qt6cr_handle_t handle, qt6cr_handle_t painter);
 
 qt6cr_handle_t qt6cr_list_view_create(qt6cr_handle_t parent);
 void qt6cr_list_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
@@ -2038,6 +2051,8 @@ void qt6cr_abstract_spin_box_set_accelerated(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_abstract_item_view_model(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate);
+qt6cr_size_t qt6cr_abstract_item_view_icon_size(qt6cr_handle_t handle);
+void qt6cr_abstract_item_view_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size);
 qt6cr_handle_t qt6cr_abstract_item_view_selection_model(qt6cr_handle_t handle);
 void qt6cr_abstract_item_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model);
 qt6cr_handle_t qt6cr_abstract_item_view_current_index(qt6cr_handle_t handle);

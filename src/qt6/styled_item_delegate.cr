@@ -10,6 +10,10 @@ module Qt6
     @set_editor_data_userdata : LibQt6::Handle = Pointer(Void).null
     @set_model_data_callback : Proc(Widget, AbstractItemModel, ModelIndex, Nil)? = nil
     @set_model_data_userdata : LibQt6::Handle = Pointer(Void).null
+    @paint_callback : Proc(QPainter, StyleOptionViewItem, ModelIndex, Bool)? = nil
+    @paint_userdata : LibQt6::Handle = Pointer(Void).null
+    @size_hint_callback : Proc(StyleOptionViewItem, ModelIndex, Size?)? = nil
+    @size_hint_userdata : LibQt6::Handle = Pointer(Void).null
     @editor_wrappers = {} of LibQt6::Handle => Widget
 
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
@@ -53,6 +57,20 @@ module Qt6
     def on_set_model_data(&block : Widget, AbstractItemModel, ModelIndex ->) : self
       @set_model_data_callback = block
       LibQt6.qt6cr_styled_item_delegate_on_set_model_data(to_unsafe, SET_MODEL_DATA_TRAMPOLINE, @set_model_data_userdata)
+      self
+    end
+
+    # Registers a block to custom-paint view items.
+    def on_paint(&block : QPainter, StyleOptionViewItem, ModelIndex -> Bool) : self
+      @paint_callback = block
+      LibQt6.qt6cr_styled_item_delegate_on_paint(to_unsafe, PAINT_TRAMPOLINE, @paint_userdata)
+      self
+    end
+
+    # Registers a block to provide custom item size hints.
+    def on_size_hint(&block : StyleOptionViewItem, ModelIndex -> Size?) : self
+      @size_hint_callback = block
+      LibQt6.qt6cr_styled_item_delegate_on_size_hint(to_unsafe, SIZE_HINT_TRAMPOLINE, @size_hint_userdata)
       self
     end
 
@@ -103,6 +121,16 @@ module Qt6
       callback.try(&.call(editor, model, index))
     end
 
+    protected def paint_item(painter : QPainter, option : StyleOptionViewItem, index : ModelIndex) : Bool
+      callback = @paint_callback
+      callback ? callback.call(painter, option, index) : false
+    end
+
+    protected def item_size_hint(option : StyleOptionViewItem, index : ModelIndex) : Size?
+      callback = @size_hint_callback
+      callback.try(&.call(option, index))
+    end
+
     private def remember_editor(editor : Widget) : Widget
       @editor_wrappers[editor.to_unsafe] = editor
       editor.destroyed.connect { @editor_wrappers.delete(editor.to_unsafe) }
@@ -119,6 +147,8 @@ module Qt6
       @create_editor_userdata = userdata
       @set_editor_data_userdata = userdata
       @set_model_data_userdata = userdata
+      @paint_userdata = userdata
+      @size_hint_userdata = userdata
     end
 
     private DISPLAY_TEXT_TRAMPOLINE = ->(userdata : Void*, text : UInt8*) do
@@ -146,6 +176,25 @@ module Qt6
       model = AbstractItemModel.wrap(model_handle)
       index = ModelIndex.wrap(index_handle)
       delegate.commit_editor(editor, model, index)
+    end
+
+    private PAINT_TRAMPOLINE = ->(userdata : Void*, painter_handle : Void*, option_handle : Void*, index_handle : Void*) do
+      delegate = Box(StyledItemDelegate).unbox(userdata)
+      painter = QPainter.wrap(painter_handle)
+      option = StyleOptionViewItem.wrap(option_handle)
+      index = ModelIndex.wrap(index_handle)
+      delegate.paint_item(painter, option, index)
+    end
+
+    private SIZE_HINT_TRAMPOLINE = ->(userdata : Void*, option_handle : Void*, index_handle : Void*) do
+      delegate = Box(StyledItemDelegate).unbox(userdata)
+      option = StyleOptionViewItem.wrap(option_handle)
+      index = ModelIndex.wrap(index_handle)
+      if size = delegate.item_size_hint(option, index)
+        LibQt6::SizeValue.new(width: size.width, height: size.height)
+      else
+        LibQt6::SizeValue.new(width: -1, height: -1)
+      end
     end
   end
 end
