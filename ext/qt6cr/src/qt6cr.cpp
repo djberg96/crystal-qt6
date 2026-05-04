@@ -7534,6 +7534,11 @@ void qt6cr_tree_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t ind
   }
 }
 
+qt6cr_handle_t qt6cr_tree_view_header(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? nullptr : view->header();
+}
+
 int qt6cr_tree_view_selection_mode(qt6cr_handle_t handle) {
   auto *view = as_tree_view(handle);
   return view == nullptr ? 0 : static_cast<int>(view->selectionMode());

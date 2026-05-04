@@ -892,6 +892,7 @@ qt6cr_handle_t qt6cr_tree_view_selection_model(qt6cr_handle_t handle);
 void qt6cr_tree_view_set_selection_model(qt6cr_handle_t handle, qt6cr_handle_t selection_model);
 qt6cr_handle_t qt6cr_tree_view_current_index(qt6cr_handle_t handle);
 void qt6cr_tree_view_set_current_index(qt6cr_handle_t handle, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_tree_view_header(qt6cr_handle_t handle);
 int qt6cr_tree_view_selection_mode(qt6cr_handle_t handle);
 void qt6cr_tree_view_set_selection_mode(qt6cr_handle_t handle, int mode);
 int qt6cr_tree_view_edit_triggers(qt6cr_handle_t handle);

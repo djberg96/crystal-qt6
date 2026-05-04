@@ -861,6 +861,7 @@ module Qt6
     fun qt6cr_tree_view_set_selection_model = qt6cr_tree_view_set_selection_model(handle : Handle, selection_model : Handle)
     fun qt6cr_tree_view_current_index = qt6cr_tree_view_current_index(handle : Handle) : Handle
     fun qt6cr_tree_view_set_current_index = qt6cr_tree_view_set_current_index(handle : Handle, index : Handle)
+    fun qt6cr_tree_view_header = qt6cr_tree_view_header(handle : Handle) : Handle
     fun qt6cr_tree_view_selection_mode = qt6cr_tree_view_selection_mode(handle : Handle) : LibC::Int
     fun qt6cr_tree_view_set_selection_mode = qt6cr_tree_view_set_selection_mode(handle : Handle, mode : LibC::Int)
     fun qt6cr_tree_view_edit_triggers = qt6cr_tree_view_edit_triggers(handle : Handle) : LibC::Int

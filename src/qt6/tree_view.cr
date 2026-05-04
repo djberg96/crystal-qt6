@@ -21,6 +21,11 @@ module Qt6
       model
     end
 
+    # Returns the header view controlling tree columns.
+    def header : HeaderView
+      HeaderView.wrap(LibQt6.qt6cr_tree_view_header(to_unsafe))
+    end
+
     # Returns whether the header is hidden.
     def header_hidden? : Bool
       LibQt6.qt6cr_tree_view_header_hidden(to_unsafe)
