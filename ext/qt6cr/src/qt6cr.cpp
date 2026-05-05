@@ -17945,21 +17945,39 @@ void qt6cr_box_layout_set_direction(qt6cr_handle_t handle, int direction) {
   }
 }
 
-void qt6cr_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+void qt6cr_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch) {
   auto *layout = as_box_layout(handle);
   auto *child = as_widget(widget);
 
   if (layout != nullptr && child != nullptr) {
-    layout->addWidget(child);
+    layout->addWidget(child, stretch);
   }
 }
 
-void qt6cr_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
+void qt6cr_box_layout_add_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout, int stretch) {
+  auto *layout = as_box_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->addLayout(child, stretch);
+  }
+}
+
+void qt6cr_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, int stretch) {
   auto *layout = as_box_layout(handle);
   auto *child = as_widget(widget);
 
   if (layout != nullptr && child != nullptr) {
-    layout->insertWidget(index, child);
+    layout->insertWidget(index, child, stretch);
+  }
+}
+
+void qt6cr_box_layout_insert_layout(qt6cr_handle_t handle, int index, qt6cr_handle_t child_layout, int stretch) {
+  auto *layout = as_box_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->insertLayout(index, child, stretch);
   }
 }
 
@@ -18000,6 +18018,31 @@ void qt6cr_box_layout_set_stretch(qt6cr_handle_t handle, int index, int stretch)
 
   if (layout != nullptr) {
     layout->setStretch(index, stretch);
+  }
+}
+
+int qt6cr_box_layout_stretch(qt6cr_handle_t handle, int index) {
+  auto *layout = as_box_layout(handle);
+  return layout == nullptr ? 0 : layout->stretch(index);
+}
+
+bool qt6cr_box_layout_set_stretch_factor_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch) {
+  auto *layout = as_box_layout(handle);
+  auto *child = as_widget(widget);
+  return layout != nullptr && child != nullptr && layout->setStretchFactor(child, stretch);
+}
+
+bool qt6cr_box_layout_set_stretch_factor_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout, int stretch) {
+  auto *layout = as_box_layout(handle);
+  auto *child = as_layout(child_layout);
+  return layout != nullptr && child != nullptr && layout->setStretchFactor(child, stretch);
+}
+
+void qt6cr_box_layout_add_strut(qt6cr_handle_t handle, int size) {
+  auto *layout = as_box_layout(handle);
+
+  if (layout != nullptr) {
+    layout->addStrut(size);
   }
 }
 

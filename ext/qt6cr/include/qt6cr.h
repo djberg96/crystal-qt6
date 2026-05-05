@@ -2542,13 +2542,19 @@ void qt6cr_timer_on_timeout(qt6cr_handle_t handle, qt6cr_void_callback_t callbac
 qt6cr_handle_t qt6cr_box_layout_create(qt6cr_handle_t parent_widget, int direction);
 int qt6cr_box_layout_direction(qt6cr_handle_t handle);
 void qt6cr_box_layout_set_direction(qt6cr_handle_t handle, int direction);
-void qt6cr_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
-void qt6cr_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget);
+void qt6cr_box_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch);
+void qt6cr_box_layout_add_layout(qt6cr_handle_t handle, qt6cr_handle_t layout, int stretch);
+void qt6cr_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, int stretch);
+void qt6cr_box_layout_insert_layout(qt6cr_handle_t handle, int index, qt6cr_handle_t layout, int stretch);
 void qt6cr_box_layout_add_spacing(qt6cr_handle_t handle, int size);
 void qt6cr_box_layout_insert_spacing(qt6cr_handle_t handle, int index, int size);
 void qt6cr_box_layout_add_stretch(qt6cr_handle_t handle, int stretch);
 void qt6cr_box_layout_insert_stretch(qt6cr_handle_t handle, int index, int stretch);
 void qt6cr_box_layout_set_stretch(qt6cr_handle_t handle, int index, int stretch);
+int qt6cr_box_layout_stretch(qt6cr_handle_t handle, int index);
+bool qt6cr_box_layout_set_stretch_factor_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch);
+bool qt6cr_box_layout_set_stretch_factor_layout(qt6cr_handle_t handle, qt6cr_handle_t layout, int stretch);
+void qt6cr_box_layout_add_strut(qt6cr_handle_t handle, int size);
 
 qt6cr_handle_t qt6cr_v_box_layout_create(qt6cr_handle_t parent_widget);
 

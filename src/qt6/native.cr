@@ -2528,13 +2528,19 @@ module Qt6
     fun qt6cr_box_layout_create = qt6cr_box_layout_create(parent_widget : Handle, direction : LibC::Int) : Handle
     fun qt6cr_box_layout_direction = qt6cr_box_layout_direction(handle : Handle) : LibC::Int
     fun qt6cr_box_layout_set_direction = qt6cr_box_layout_set_direction(handle : Handle, direction : LibC::Int)
-    fun qt6cr_box_layout_add_widget = qt6cr_box_layout_add_widget(handle : Handle, widget : Handle)
-    fun qt6cr_box_layout_insert_widget = qt6cr_box_layout_insert_widget(handle : Handle, index : LibC::Int, widget : Handle)
+    fun qt6cr_box_layout_add_widget = qt6cr_box_layout_add_widget(handle : Handle, widget : Handle, stretch : LibC::Int)
+    fun qt6cr_box_layout_add_layout = qt6cr_box_layout_add_layout(handle : Handle, layout : Handle, stretch : LibC::Int)
+    fun qt6cr_box_layout_insert_widget = qt6cr_box_layout_insert_widget(handle : Handle, index : LibC::Int, widget : Handle, stretch : LibC::Int)
+    fun qt6cr_box_layout_insert_layout = qt6cr_box_layout_insert_layout(handle : Handle, index : LibC::Int, layout : Handle, stretch : LibC::Int)
     fun qt6cr_box_layout_add_spacing = qt6cr_box_layout_add_spacing(handle : Handle, size : LibC::Int)
     fun qt6cr_box_layout_insert_spacing = qt6cr_box_layout_insert_spacing(handle : Handle, index : LibC::Int, size : LibC::Int)
     fun qt6cr_box_layout_add_stretch = qt6cr_box_layout_add_stretch(handle : Handle, stretch : LibC::Int)
     fun qt6cr_box_layout_insert_stretch = qt6cr_box_layout_insert_stretch(handle : Handle, index : LibC::Int, stretch : LibC::Int)
     fun qt6cr_box_layout_set_stretch = qt6cr_box_layout_set_stretch(handle : Handle, index : LibC::Int, stretch : LibC::Int)
+    fun qt6cr_box_layout_stretch = qt6cr_box_layout_stretch(handle : Handle, index : LibC::Int) : LibC::Int
+    fun qt6cr_box_layout_set_stretch_factor_widget = qt6cr_box_layout_set_stretch_factor_widget(handle : Handle, widget : Handle, stretch : LibC::Int) : Bool
+    fun qt6cr_box_layout_set_stretch_factor_layout = qt6cr_box_layout_set_stretch_factor_layout(handle : Handle, layout : Handle, stretch : LibC::Int) : Bool
+    fun qt6cr_box_layout_add_strut = qt6cr_box_layout_add_strut(handle : Handle, size : LibC::Int)
 
     fun qt6cr_v_box_layout_create = qt6cr_v_box_layout_create(parent_widget : Handle) : Handle
 

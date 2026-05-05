@@ -756,19 +756,32 @@ describe Qt6 do
     window = Qt6::Widget.new
     left = Qt6::Label.new("Left")
     right = Qt6::Label.new("Right")
+    center = Qt6::Label.new("Center")
+    row = Qt6::HBoxLayout.new
 
     layout = Qt6::BoxLayout.new(Qt6::BoxLayoutDirection::LeftToRight, window)
-    layout << left
+    row.add(left, 1)
+    row.insert(1, center, 3)
+    row.set_stretch_factor(center, 4).should be_true
+    row.stretch(0).should eq(1)
+    row.stretch(1).should eq(4)
+    layout.add(row, 2)
     layout.insert_spacing(1, 8)
-    layout.insert(2, right)
+    layout.insert(2, right, 5)
     layout.insert_stretch(3, 2)
     layout.add_spacing(4)
     layout.add_stretch
     layout.set_stretch(0, 1)
+    layout.set_stretch_factor(right, 6).should be_true
+    layout.set_stretch_factor(row, 7).should be_true
+    layout.stretch(0).should eq(7)
+    layout.stretch(2).should eq(6)
+    layout.add_strut(24)
     layout.direction = Qt6::BoxLayoutDirection::RightToLeft
 
     layout.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
     left.text.should eq("Left")
+    center.text.should eq("Center")
     right.text.should eq("Right")
     window.release
   end

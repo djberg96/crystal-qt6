@@ -2,8 +2,8 @@ module Qt6
   # Wraps `QHBoxLayout`.
   class HBoxLayout < BoxLayout
     # Creates a horizontal layout attached to the given parent widget.
-    def initialize(parent : Widget)
-      super(LibQt6.qt6cr_h_box_layout_create(parent.to_unsafe))
+    def initialize(parent : Widget? = nil)
+      super(LibQt6.qt6cr_h_box_layout_create(parent.try(&.to_unsafe) || Pointer(Void).null))
     end
   end
 end
