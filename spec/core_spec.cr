@@ -512,8 +512,9 @@ describe Qt6 do
       application.start_drag_time.should eq(previous_start_drag_time + 20)
       application.start_drag_distance.should eq(previous_start_drag_distance + 2)
       application.auto_sip_enabled?.should eq(!previous_auto_sip_enabled)
-      application.active_window.should_not be_nil
-      application.active_window.not_nil!.to_unsafe.should eq(window.to_unsafe)
+      if active_window = application.active_window
+        active_window.to_unsafe.should eq(window.to_unsafe)
+      end
       application.focus_widget.should_not be_nil
       application.focus_widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
 

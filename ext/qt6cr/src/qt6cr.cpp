@@ -3109,14 +3109,18 @@ void qt6cr_widget_set_accessible_description(qt6cr_handle_t handle, const char *
 
 char *qt6cr_widget_accessible_identifier(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
-  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->accessibleIdentifier());
+  if (widget == nullptr) {
+    return duplicate_string("");
+  }
+
+  return duplicate_string(widget->property("accessibleIdentifier").toString());
 }
 
 void qt6cr_widget_set_accessible_identifier(qt6cr_handle_t handle, const char *accessible_identifier) {
   auto *widget = as_widget(handle);
 
   if (widget != nullptr) {
-    widget->setAccessibleIdentifier(QString::fromUtf8(accessible_identifier == nullptr ? "" : accessible_identifier));
+    widget->setProperty("accessibleIdentifier", QString::fromUtf8(accessible_identifier == nullptr ? "" : accessible_identifier));
   }
 }
 
