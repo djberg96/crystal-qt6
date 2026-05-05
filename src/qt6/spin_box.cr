@@ -93,17 +93,6 @@ module Qt6
       value
     end
 
-    # Returns the special text displayed at the minimum value.
-    def special_value_text : String
-      Qt6.copy_and_release_string(LibQt6.qt6cr_spin_box_special_value_text(to_unsafe))
-    end
-
-    # Sets the special text displayed at the minimum value.
-    def special_value_text=(value : String) : String
-      LibQt6.qt6cr_spin_box_set_special_value_text(to_unsafe, value.to_unsafe)
-      value
-    end
-
     # Returns the current text without prefix, suffix, or surrounding spaces.
     def clean_text : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_spin_box_clean_text(to_unsafe))

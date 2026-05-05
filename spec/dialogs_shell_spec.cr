@@ -372,13 +372,21 @@ describe Qt6 do
     application = app
     spin_box = Qt6::SpinBox.new
     double_spin_box = Qt6::DoubleSpinBox.new
+    date_time_edit = Qt6::DateTimeEdit.new
     image = Qt6::QImage.new(32, 18)
     pixmap = Qt6::QPixmap.new(12, 7)
+    editing_finished = 0
+    return_pressed = 0
 
     spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::NoButtons
     spin_box.read_only = true
     spin_box.wrapping = true
     spin_box.accelerated = true
+    spin_box.correction_mode = Qt6::AbstractSpinBoxCorrectionMode::CorrectToNearestValue
+    spin_box.keyboard_tracking = false
+    spin_box.alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    spin_box.frame = false
+    spin_box.group_separator_shown = true
     spin_box.prefix = "Zoom "
     spin_box.suffix = "%"
     spin_box.special_value_text = "Auto"
@@ -394,6 +402,21 @@ describe Qt6 do
     double_spin_box.decimals = 3
     double_spin_box.set_range(0.0, 10.0)
     double_spin_box.value = 1.25
+    date_time_edit.keyboard_tracking = false
+    date_time_edit.read_only = false
+    date_time_edit.display_format = "yyyy/MM/dd HH:mm:ss"
+    date_time_edit.date_time = Qt6::QDateTime.new(2026, 4, 14, 9, 30, 15)
+
+    spin_box.on_editing_finished { editing_finished += 1 }
+    spin_box.on_return_pressed { return_pressed += 1 }
+    Qt6::LibQt6.qt6cr_abstract_spin_box_emit_editing_finished(spin_box.to_unsafe)
+    Qt6::LibQt6.qt6cr_abstract_spin_box_emit_return_pressed(spin_box.to_unsafe)
+    spin_box.select_all
+    spin_box.step_up
+    spin_box.step_down
+    spin_box.clear
+    spin_box.value = 25
+    spin_box.interpret_text
 
     rect = Qt6::Rect.new(1, 2, 30, 40)
     rect_f = rect.to_rect_f
@@ -410,10 +433,22 @@ describe Qt6 do
     spin_box.read_only?.should be_true
     spin_box.wrapping?.should be_true
     spin_box.accelerated?.should be_true
+    spin_box.correction_mode.should eq(Qt6::AbstractSpinBoxCorrectionMode::CorrectToNearestValue)
+    spin_box.acceptable_input?.should be_true
+    spin_box.keyboard_tracking?.should be_false
+    spin_box.alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+    spin_box.alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    spin_box.frame?.should be_false
+    spin_box.group_separator_shown?.should be_true
     spin_box.prefix.should eq("Zoom ")
     spin_box.suffix.should eq("%")
     spin_box.special_value_text.should eq("Auto")
+    spin_box.text.should eq("Zoom 25%")
     spin_box.clean_text.should eq("25")
+    spin_box.line_edit.should be_a(Qt6::LineEdit)
+    spin_box.line_edit.text.should eq("Zoom 25%")
+    editing_finished.should eq(1)
+    return_pressed.should eq(1)
     double_spin_box.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::PlusMinus)
     double_spin_box.read_only?.should be_false
     double_spin_box.wrapping?.should be_false
@@ -422,7 +457,12 @@ describe Qt6 do
     double_spin_box.prefix.should eq("~")
     double_spin_box.suffix.should eq("x")
     double_spin_box.special_value_text.should eq("Default")
+    double_spin_box.text.should eq("~1.250x")
     double_spin_box.clean_text.should eq("1.250")
+    date_time_edit.keyboard_tracking?.should be_false
+    date_time_edit.line_edit.should be_a(Qt6::LineEdit)
+    date_time_edit.text.should eq("2026/04/14 09:30:15")
+    date_time_edit.line_edit.text.should eq(date_time_edit.text)
 
     rect_f.should eq(Qt6::RectF.new(1.0, 2.0, 30.0, 40.0))
     rect_f.to_rect.should eq(rect)

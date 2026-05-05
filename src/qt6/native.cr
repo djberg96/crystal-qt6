@@ -2023,12 +2023,36 @@ module Qt6
 
     fun qt6cr_abstract_spin_box_button_symbols = qt6cr_abstract_spin_box_button_symbols(handle : Handle) : LibC::Int
     fun qt6cr_abstract_spin_box_set_button_symbols = qt6cr_abstract_spin_box_set_button_symbols(handle : Handle, value : LibC::Int)
+    fun qt6cr_abstract_spin_box_text = qt6cr_abstract_spin_box_text(handle : Handle) : UInt8*
+    fun qt6cr_abstract_spin_box_special_value_text = qt6cr_abstract_spin_box_special_value_text(handle : Handle) : UInt8*
+    fun qt6cr_abstract_spin_box_set_special_value_text = qt6cr_abstract_spin_box_set_special_value_text(handle : Handle, value : UInt8*)
     fun qt6cr_abstract_spin_box_is_read_only = qt6cr_abstract_spin_box_is_read_only(handle : Handle) : Bool
     fun qt6cr_abstract_spin_box_set_read_only = qt6cr_abstract_spin_box_set_read_only(handle : Handle, value : Bool)
     fun qt6cr_abstract_spin_box_wrapping = qt6cr_abstract_spin_box_wrapping(handle : Handle) : Bool
     fun qt6cr_abstract_spin_box_set_wrapping = qt6cr_abstract_spin_box_set_wrapping(handle : Handle, value : Bool)
     fun qt6cr_abstract_spin_box_is_accelerated = qt6cr_abstract_spin_box_is_accelerated(handle : Handle) : Bool
     fun qt6cr_abstract_spin_box_set_accelerated = qt6cr_abstract_spin_box_set_accelerated(handle : Handle, value : Bool)
+    fun qt6cr_abstract_spin_box_correction_mode = qt6cr_abstract_spin_box_correction_mode(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_spin_box_set_correction_mode = qt6cr_abstract_spin_box_set_correction_mode(handle : Handle, value : LibC::Int)
+    fun qt6cr_abstract_spin_box_has_acceptable_input = qt6cr_abstract_spin_box_has_acceptable_input(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_keyboard_tracking = qt6cr_abstract_spin_box_keyboard_tracking(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_set_keyboard_tracking = qt6cr_abstract_spin_box_set_keyboard_tracking(handle : Handle, value : Bool)
+    fun qt6cr_abstract_spin_box_alignment = qt6cr_abstract_spin_box_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_spin_box_set_alignment = qt6cr_abstract_spin_box_set_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_abstract_spin_box_has_frame = qt6cr_abstract_spin_box_has_frame(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_set_frame = qt6cr_abstract_spin_box_set_frame(handle : Handle, value : Bool)
+    fun qt6cr_abstract_spin_box_group_separator_shown = qt6cr_abstract_spin_box_group_separator_shown(handle : Handle) : Bool
+    fun qt6cr_abstract_spin_box_set_group_separator_shown = qt6cr_abstract_spin_box_set_group_separator_shown(handle : Handle, value : Bool)
+    fun qt6cr_abstract_spin_box_interpret_text = qt6cr_abstract_spin_box_interpret_text(handle : Handle)
+    fun qt6cr_abstract_spin_box_step_up = qt6cr_abstract_spin_box_step_up(handle : Handle)
+    fun qt6cr_abstract_spin_box_step_down = qt6cr_abstract_spin_box_step_down(handle : Handle)
+    fun qt6cr_abstract_spin_box_select_all = qt6cr_abstract_spin_box_select_all(handle : Handle)
+    fun qt6cr_abstract_spin_box_clear = qt6cr_abstract_spin_box_clear(handle : Handle)
+    fun qt6cr_abstract_spin_box_line_edit = qt6cr_abstract_spin_box_line_edit(handle : Handle) : Handle
+    fun qt6cr_abstract_spin_box_emit_editing_finished = qt6cr_abstract_spin_box_emit_editing_finished(handle : Handle)
+    fun qt6cr_abstract_spin_box_emit_return_pressed = qt6cr_abstract_spin_box_emit_return_pressed(handle : Handle)
+    fun qt6cr_abstract_spin_box_on_editing_finished = qt6cr_abstract_spin_box_on_editing_finished(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_abstract_spin_box_on_return_pressed = qt6cr_abstract_spin_box_on_return_pressed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_abstract_item_view_model = qt6cr_abstract_item_view_model(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_item_delegate = qt6cr_abstract_item_view_item_delegate(handle : Handle) : Handle
