@@ -224,6 +224,16 @@ module Qt6
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
     fun qt6cr_widget_tool_tip = qt6cr_widget_tool_tip(handle : Handle) : UInt8*
     fun qt6cr_widget_set_tool_tip = qt6cr_widget_set_tool_tip(handle : Handle, tool_tip : UInt8*)
+    fun qt6cr_widget_status_tip = qt6cr_widget_status_tip(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_status_tip = qt6cr_widget_set_status_tip(handle : Handle, status_tip : UInt8*)
+    fun qt6cr_widget_whats_this = qt6cr_widget_whats_this(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_whats_this = qt6cr_widget_set_whats_this(handle : Handle, whats_this : UInt8*)
+    fun qt6cr_widget_accessible_name = qt6cr_widget_accessible_name(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_accessible_name = qt6cr_widget_set_accessible_name(handle : Handle, accessible_name : UInt8*)
+    fun qt6cr_widget_accessible_description = qt6cr_widget_accessible_description(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_accessible_description = qt6cr_widget_set_accessible_description(handle : Handle, accessible_description : UInt8*)
+    fun qt6cr_widget_accessible_identifier = qt6cr_widget_accessible_identifier(handle : Handle) : UInt8*
+    fun qt6cr_widget_set_accessible_identifier = qt6cr_widget_set_accessible_identifier(handle : Handle, accessible_identifier : UInt8*)
     fun qt6cr_tool_tip_font = qt6cr_tool_tip_font : Handle
     fun qt6cr_tool_tip_set_font = qt6cr_tool_tip_set_font(font : Handle)
     fun qt6cr_tool_tip_hide_text = qt6cr_tool_tip_hide_text

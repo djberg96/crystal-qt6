@@ -2946,6 +2946,71 @@ void qt6cr_widget_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip) {
   }
 }
 
+char *qt6cr_widget_status_tip(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->statusTip());
+}
+
+void qt6cr_widget_set_status_tip(qt6cr_handle_t handle, const char *status_tip) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setStatusTip(QString::fromUtf8(status_tip == nullptr ? "" : status_tip));
+  }
+}
+
+char *qt6cr_widget_whats_this(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->whatsThis());
+}
+
+void qt6cr_widget_set_whats_this(qt6cr_handle_t handle, const char *whats_this) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setWhatsThis(QString::fromUtf8(whats_this == nullptr ? "" : whats_this));
+  }
+}
+
+char *qt6cr_widget_accessible_name(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->accessibleName());
+}
+
+void qt6cr_widget_set_accessible_name(qt6cr_handle_t handle, const char *accessible_name) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAccessibleName(QString::fromUtf8(accessible_name == nullptr ? "" : accessible_name));
+  }
+}
+
+char *qt6cr_widget_accessible_description(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->accessibleDescription());
+}
+
+void qt6cr_widget_set_accessible_description(qt6cr_handle_t handle, const char *accessible_description) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAccessibleDescription(QString::fromUtf8(accessible_description == nullptr ? "" : accessible_description));
+  }
+}
+
+char *qt6cr_widget_accessible_identifier(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->accessibleIdentifier());
+}
+
+void qt6cr_widget_set_accessible_identifier(qt6cr_handle_t handle, const char *accessible_identifier) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAccessibleIdentifier(QString::fromUtf8(accessible_identifier == nullptr ? "" : accessible_identifier));
+  }
+}
+
 qt6cr_handle_t qt6cr_tool_tip_font(void) {
   return new QFont(QToolTip::font());
 }

@@ -241,7 +241,7 @@ describe Qt6 do
     window.release
   end
 
-  it "supports core widget sizing and tooltip controls" do
+  it "supports core widget sizing, help text, and accessibility metadata" do
     application = app
     previous_tool_tip_font = Qt6::ToolTip.font
     previous_tool_tip_palette = Qt6::ToolTip.palette
@@ -249,6 +249,11 @@ describe Qt6 do
     line_edit = Qt6::LineEdit.new
 
     label.tool_tip = "Shared widget affordances"
+    label.status_tip = "Shown in the status bar when hovered"
+    label.whats_this = "Explains this widget in What's This mode"
+    label.accessible_name = "Widget controls label"
+    label.accessible_description = "Summarizes shared widget affordances"
+    label.accessible_identifier = "core-widget-controls-label"
     tool_tip_font = Qt6::QFont.new(point_size: 12, bold: true)
     tool_tip_palette = Qt6::QPalette.new
     tool_tip_palette.set_color(Qt6::ColorRole::ToolTipBase, Qt6::Color.new(28, 34, 42))
@@ -286,6 +291,11 @@ describe Qt6 do
     application.process_events
 
     label.tool_tip.should eq("Shared widget affordances")
+    label.status_tip.should eq("Shown in the status bar when hovered")
+    label.whats_this.should eq("Explains this widget in What's This mode")
+    label.accessible_name.should eq("Widget controls label")
+    label.accessible_description.should eq("Summarizes shared widget affordances")
+    label.accessible_identifier.should eq("core-widget-controls-label")
     label.word_wrap?.should be_true
     label.minimum_size.should eq(Qt6::Size.new(140, 40))
     label.minimum_width.should eq(140)

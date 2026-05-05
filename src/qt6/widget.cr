@@ -156,6 +156,61 @@ module Qt6
       value
     end
 
+    # Returns the widget's status-tip text.
+    def status_tip : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_status_tip(@to_unsafe))
+    end
+
+    # Sets the widget's status-tip text.
+    def status_tip=(value : String) : String
+      LibQt6.qt6cr_widget_set_status_tip(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the widget's What's This help text.
+    def whats_this : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_whats_this(@to_unsafe))
+    end
+
+    # Sets the widget's What's This help text.
+    def whats_this=(value : String) : String
+      LibQt6.qt6cr_widget_set_whats_this(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the widget's accessible name.
+    def accessible_name : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_accessible_name(@to_unsafe))
+    end
+
+    # Sets the widget's accessible name.
+    def accessible_name=(value : String) : String
+      LibQt6.qt6cr_widget_set_accessible_name(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the widget's accessible description.
+    def accessible_description : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_accessible_description(@to_unsafe))
+    end
+
+    # Sets the widget's accessible description.
+    def accessible_description=(value : String) : String
+      LibQt6.qt6cr_widget_set_accessible_description(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the widget's stable accessibility identifier.
+    def accessible_identifier : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_accessible_identifier(@to_unsafe))
+    end
+
+    # Sets the widget's stable accessibility identifier.
+    def accessible_identifier=(value : String) : String
+      LibQt6.qt6cr_widget_set_accessible_identifier(@to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns the widget's current window icon.
     def window_icon : QIcon
       QIcon.wrap(LibQt6.qt6cr_widget_window_icon(@to_unsafe), true)
