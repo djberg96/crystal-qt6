@@ -181,6 +181,7 @@ describe Qt6 do
     list_view.alternating_row_colors?.should be_true
     tree_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
     tree_view.alternating_row_colors?.should be_true
+    tree_view.header.should be_a(Qt6::HeaderView)
     tree_view.header_hidden?.should be_true
     tree_view.root_is_decorated?.should be_false
     tree_view.uniform_row_heights?.should be_true
