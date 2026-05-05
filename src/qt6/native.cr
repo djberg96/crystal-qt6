@@ -161,6 +161,23 @@ module Qt6
     fun qt6cr_application_set_window_icon = qt6cr_application_set_window_icon(handle : Handle, icon : Handle)
     fun qt6cr_application_palette = qt6cr_application_palette(handle : Handle) : Handle
     fun qt6cr_application_set_palette = qt6cr_application_set_palette(handle : Handle, palette : Handle)
+    fun qt6cr_application_cursor_flash_time = qt6cr_application_cursor_flash_time(handle : Handle) : LibC::Int
+    fun qt6cr_application_set_cursor_flash_time = qt6cr_application_set_cursor_flash_time(handle : Handle, msec : LibC::Int)
+    fun qt6cr_application_double_click_interval = qt6cr_application_double_click_interval(handle : Handle) : LibC::Int
+    fun qt6cr_application_set_double_click_interval = qt6cr_application_set_double_click_interval(handle : Handle, msec : LibC::Int)
+    fun qt6cr_application_keyboard_input_interval = qt6cr_application_keyboard_input_interval(handle : Handle) : LibC::Int
+    fun qt6cr_application_set_keyboard_input_interval = qt6cr_application_set_keyboard_input_interval(handle : Handle, msec : LibC::Int)
+    fun qt6cr_application_wheel_scroll_lines = qt6cr_application_wheel_scroll_lines(handle : Handle) : LibC::Int
+    fun qt6cr_application_set_wheel_scroll_lines = qt6cr_application_set_wheel_scroll_lines(handle : Handle, lines : LibC::Int)
+    fun qt6cr_application_start_drag_time = qt6cr_application_start_drag_time(handle : Handle) : LibC::Int
+    fun qt6cr_application_set_start_drag_time = qt6cr_application_set_start_drag_time(handle : Handle, msec : LibC::Int)
+    fun qt6cr_application_start_drag_distance = qt6cr_application_start_drag_distance(handle : Handle) : LibC::Int
+    fun qt6cr_application_set_start_drag_distance = qt6cr_application_set_start_drag_distance(handle : Handle, distance : LibC::Int)
+    fun qt6cr_application_auto_sip_enabled = qt6cr_application_auto_sip_enabled(handle : Handle) : Bool
+    fun qt6cr_application_set_auto_sip_enabled = qt6cr_application_set_auto_sip_enabled(handle : Handle, enabled : Bool)
+    fun qt6cr_application_active_window = qt6cr_application_active_window(handle : Handle) : Handle
+    fun qt6cr_application_focus_widget = qt6cr_application_focus_widget(handle : Handle) : Handle
+    fun qt6cr_application_close_all_windows = qt6cr_application_close_all_windows(handle : Handle)
 
     fun qt6cr_event_loop_create = qt6cr_event_loop_create(parent : Handle) : Handle
     fun qt6cr_event_loop_exec = qt6cr_event_loop_exec(handle : Handle) : LibC::Int

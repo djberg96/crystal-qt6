@@ -25,6 +25,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QAbstractSlider` as a shared base for sliders, scroll bars, and dials, including shared range/value/step/orientation helpers, slider actions, and inherited press/release and range/action callbacks.
 - Expanded `QAbstractSpinBox` with shared text/editor, correction/alignment/frame, keyboard-tracking, group-separator, line-edit access, step/select/clear helpers, and finish/return callbacks across spin boxes and date/time editors.
 - Expanded `QWidget` with status-tip, What's This, and accessibility name/description/identifier helpers to expose the metadata consumed by accessible widget interfaces.
+- Expanded `QApplication` with input-timing, wheel-scroll, drag-threshold, auto-SIP, active-window, focus-widget, and close-all-windows helpers.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

@@ -477,6 +477,62 @@ describe Qt6 do
     application.palette = previous_palette
   end
 
+  it "supports application timing, drag, and focus helpers" do
+    application = app
+    previous_cursor_flash_time = application.cursor_flash_time
+    previous_double_click_interval = application.double_click_interval
+    previous_keyboard_input_interval = application.keyboard_input_interval
+    previous_wheel_scroll_lines = application.wheel_scroll_lines
+    previous_start_drag_time = application.start_drag_time
+    previous_start_drag_distance = application.start_drag_distance
+    previous_auto_sip_enabled = application.auto_sip_enabled?
+
+    window = Qt6::Widget.new
+    line_edit = Qt6::LineEdit.new("", window)
+    line_edit.focus_policy = Qt6::FocusPolicy::StrongFocus
+
+    begin
+      application.cursor_flash_time = previous_cursor_flash_time + 100
+      application.double_click_interval = previous_double_click_interval + 25
+      application.keyboard_input_interval = previous_keyboard_input_interval + 15
+      application.wheel_scroll_lines = previous_wheel_scroll_lines + 1
+      application.start_drag_time = previous_start_drag_time + 20
+      application.start_drag_distance = previous_start_drag_distance + 2
+      application.auto_sip_enabled = !previous_auto_sip_enabled
+
+      window.show
+      application.process_events
+      line_edit.set_focus
+      5.times { application.process_events }
+
+      application.cursor_flash_time.should eq(previous_cursor_flash_time + 100)
+      application.double_click_interval.should eq(previous_double_click_interval + 25)
+      application.keyboard_input_interval.should eq(previous_keyboard_input_interval + 15)
+      application.wheel_scroll_lines.should eq(previous_wheel_scroll_lines + 1)
+      application.start_drag_time.should eq(previous_start_drag_time + 20)
+      application.start_drag_distance.should eq(previous_start_drag_distance + 2)
+      application.auto_sip_enabled?.should eq(!previous_auto_sip_enabled)
+      application.active_window.should_not be_nil
+      application.active_window.not_nil!.to_unsafe.should eq(window.to_unsafe)
+      application.focus_widget.should_not be_nil
+      application.focus_widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
+
+      application.close_all_windows
+      5.times { application.process_events }
+      window.visible?.should be_false
+    ensure
+      application.cursor_flash_time = previous_cursor_flash_time
+      application.double_click_interval = previous_double_click_interval
+      application.keyboard_input_interval = previous_keyboard_input_interval
+      application.wheel_scroll_lines = previous_wheel_scroll_lines
+      application.start_drag_time = previous_start_drag_time
+      application.start_drag_distance = previous_start_drag_distance
+      application.auto_sip_enabled = previous_auto_sip_enabled
+      line_edit.release
+      window.release
+    end
+  end
+
   it "supports queued application invocations" do
     application = app
     label = Qt6::Label.new("Waiting")

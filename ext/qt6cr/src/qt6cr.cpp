@@ -2458,6 +2458,115 @@ void qt6cr_application_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette
   }
 }
 
+int qt6cr_application_cursor_flash_time(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? 0 : state->application->cursorFlashTime();
+}
+
+void qt6cr_application_set_cursor_flash_time(qt6cr_handle_t handle, int msec) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setCursorFlashTime(msec);
+  }
+}
+
+int qt6cr_application_double_click_interval(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? 0 : state->application->doubleClickInterval();
+}
+
+void qt6cr_application_set_double_click_interval(qt6cr_handle_t handle, int msec) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setDoubleClickInterval(msec);
+  }
+}
+
+int qt6cr_application_keyboard_input_interval(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? 0 : state->application->keyboardInputInterval();
+}
+
+void qt6cr_application_set_keyboard_input_interval(qt6cr_handle_t handle, int msec) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setKeyboardInputInterval(msec);
+  }
+}
+
+int qt6cr_application_wheel_scroll_lines(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? 0 : state->application->wheelScrollLines();
+}
+
+void qt6cr_application_set_wheel_scroll_lines(qt6cr_handle_t handle, int lines) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setWheelScrollLines(lines);
+  }
+}
+
+int qt6cr_application_start_drag_time(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? 0 : state->application->startDragTime();
+}
+
+void qt6cr_application_set_start_drag_time(qt6cr_handle_t handle, int msec) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setStartDragTime(msec);
+  }
+}
+
+int qt6cr_application_start_drag_distance(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? 0 : state->application->startDragDistance();
+}
+
+void qt6cr_application_set_start_drag_distance(qt6cr_handle_t handle, int distance) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setStartDragDistance(distance);
+  }
+}
+
+bool qt6cr_application_auto_sip_enabled(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state != nullptr && state->application != nullptr && state->application->autoSipEnabled();
+}
+
+void qt6cr_application_set_auto_sip_enabled(qt6cr_handle_t handle, bool enabled) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->setAutoSipEnabled(enabled);
+  }
+}
+
+qt6cr_handle_t qt6cr_application_active_window(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? nullptr : state->application->activeWindow();
+}
+
+qt6cr_handle_t qt6cr_application_focus_widget(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? nullptr : state->application->focusWidget();
+}
+
+void qt6cr_application_close_all_windows(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+
+  if (state != nullptr && state->application != nullptr) {
+    state->application->closeAllWindows();
+  }
+}
+
 qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent) {
   return new QEventLoop(as_object(parent));
 }

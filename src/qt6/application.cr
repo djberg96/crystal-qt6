@@ -119,6 +119,106 @@ module Qt6
       value
     end
 
+    # Returns the cursor flash interval in milliseconds.
+    def cursor_flash_time : Int32
+      LibQt6.qt6cr_application_cursor_flash_time(@handle)
+    end
+
+    # Sets the cursor flash interval in milliseconds.
+    def cursor_flash_time=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_application_set_cursor_flash_time(@handle, int_value)
+      int_value
+    end
+
+    # Returns the double-click interval in milliseconds.
+    def double_click_interval : Int32
+      LibQt6.qt6cr_application_double_click_interval(@handle)
+    end
+
+    # Sets the double-click interval in milliseconds.
+    def double_click_interval=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_application_set_double_click_interval(@handle, int_value)
+      int_value
+    end
+
+    # Returns the keyboard input interval in milliseconds.
+    def keyboard_input_interval : Int32
+      LibQt6.qt6cr_application_keyboard_input_interval(@handle)
+    end
+
+    # Sets the keyboard input interval in milliseconds.
+    def keyboard_input_interval=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_application_set_keyboard_input_interval(@handle, int_value)
+      int_value
+    end
+
+    # Returns the number of lines scrolled per wheel step.
+    def wheel_scroll_lines : Int32
+      LibQt6.qt6cr_application_wheel_scroll_lines(@handle)
+    end
+
+    # Sets the number of lines scrolled per wheel step.
+    def wheel_scroll_lines=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_application_set_wheel_scroll_lines(@handle, int_value)
+      int_value
+    end
+
+    # Returns the drag start time in milliseconds.
+    def start_drag_time : Int32
+      LibQt6.qt6cr_application_start_drag_time(@handle)
+    end
+
+    # Sets the drag start time in milliseconds.
+    def start_drag_time=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_application_set_start_drag_time(@handle, int_value)
+      int_value
+    end
+
+    # Returns the drag start distance in pixels.
+    def start_drag_distance : Int32
+      LibQt6.qt6cr_application_start_drag_distance(@handle)
+    end
+
+    # Sets the drag start distance in pixels.
+    def start_drag_distance=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_application_set_start_drag_distance(@handle, int_value)
+      int_value
+    end
+
+    # Returns whether automatic SIP activation is enabled.
+    def auto_sip_enabled? : Bool
+      LibQt6.qt6cr_application_auto_sip_enabled(@handle)
+    end
+
+    # Enables or disables automatic SIP activation.
+    def auto_sip_enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_application_set_auto_sip_enabled(@handle, value)
+      value
+    end
+
+    # Returns the application's active top-level window, if any.
+    def active_window : Widget?
+      handle = LibQt6.qt6cr_application_active_window(@handle)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Returns the widget that currently owns keyboard focus, if any.
+    def focus_widget : Widget?
+      handle = LibQt6.qt6cr_application_focus_widget(@handle)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Requests that all top-level windows be closed.
+    def close_all_windows : Nil
+      LibQt6.qt6cr_application_close_all_windows(@handle)
+    end
+
     # Destroys the underlying Qt application if it is still active.
     def shutdown : Nil
       return if @destroyed
