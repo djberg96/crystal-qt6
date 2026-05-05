@@ -1721,6 +1721,10 @@ QDial *as_dial(qt6cr_handle_t handle) {
   return static_cast<QDial *>(handle);
 }
 
+QAbstractSlider *as_abstract_slider(qt6cr_handle_t handle) {
+  return static_cast<QAbstractSlider *>(handle);
+}
+
 QSpinBox *as_spin_box(qt6cr_handle_t handle) {
   return static_cast<QSpinBox *>(handle);
 }
@@ -14699,56 +14703,251 @@ qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation) {
   return new CrystalSlider(static_cast<Qt::Orientation>(orientation), as_widget(parent));
 }
 
-void qt6cr_slider_set_minimum(qt6cr_handle_t handle, int value) {
-  auto *slider = as_slider(handle);
+int qt6cr_abstract_slider_minimum(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? 0 : slider->minimum();
+}
+
+void qt6cr_abstract_slider_set_minimum(qt6cr_handle_t handle, int value) {
+  auto *slider = as_abstract_slider(handle);
 
   if (slider != nullptr) {
     slider->setMinimum(value);
   }
 }
 
-int qt6cr_slider_minimum(qt6cr_handle_t handle) {
-  auto *slider = as_slider(handle);
-  return slider == nullptr ? 0 : slider->minimum();
+int qt6cr_abstract_slider_maximum(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? 99 : slider->maximum();
 }
 
-void qt6cr_slider_set_maximum(qt6cr_handle_t handle, int value) {
-  auto *slider = as_slider(handle);
+void qt6cr_abstract_slider_set_maximum(qt6cr_handle_t handle, int value) {
+  auto *slider = as_abstract_slider(handle);
 
   if (slider != nullptr) {
     slider->setMaximum(value);
   }
 }
 
-int qt6cr_slider_maximum(qt6cr_handle_t handle) {
-  auto *slider = as_slider(handle);
-  return slider == nullptr ? 99 : slider->maximum();
-}
-
-void qt6cr_slider_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
-  auto *slider = as_slider(handle);
+void qt6cr_abstract_slider_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
+  auto *slider = as_abstract_slider(handle);
 
   if (slider != nullptr) {
     slider->setRange(minimum, maximum);
   }
 }
 
-void qt6cr_slider_set_value(qt6cr_handle_t handle, int value) {
-  auto *slider = as_slider(handle);
+int qt6cr_abstract_slider_value(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? 0 : slider->value();
+}
+
+void qt6cr_abstract_slider_set_value(qt6cr_handle_t handle, int value) {
+  auto *slider = as_abstract_slider(handle);
 
   if (slider != nullptr) {
     slider->setValue(value);
   }
 }
 
-int qt6cr_slider_value(qt6cr_handle_t handle) {
-  auto *slider = as_slider(handle);
-  return slider == nullptr ? 0 : slider->value();
+int qt6cr_abstract_slider_orientation(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(slider->orientation());
 }
 
-int qt6cr_slider_orientation(qt6cr_handle_t handle) {
-  auto *slider = as_slider(handle);
-  return slider == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(slider->orientation());
+void qt6cr_abstract_slider_set_orientation(qt6cr_handle_t handle, int orientation) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setOrientation(static_cast<Qt::Orientation>(orientation));
+  }
+}
+
+int qt6cr_abstract_slider_single_step(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? 1 : slider->singleStep();
+}
+
+void qt6cr_abstract_slider_set_single_step(qt6cr_handle_t handle, int value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setSingleStep(value);
+  }
+}
+
+int qt6cr_abstract_slider_page_step(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? 10 : slider->pageStep();
+}
+
+void qt6cr_abstract_slider_set_page_step(qt6cr_handle_t handle, int value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setPageStep(value);
+  }
+}
+
+int qt6cr_abstract_slider_slider_position(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr ? 0 : slider->sliderPosition();
+}
+
+void qt6cr_abstract_slider_set_slider_position(qt6cr_handle_t handle, int value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setSliderPosition(value);
+  }
+}
+
+bool qt6cr_abstract_slider_tracking(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider == nullptr || slider->hasTracking();
+}
+
+void qt6cr_abstract_slider_set_tracking(qt6cr_handle_t handle, bool value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setTracking(value);
+  }
+}
+
+bool qt6cr_abstract_slider_slider_down(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider != nullptr && slider->isSliderDown();
+}
+
+void qt6cr_abstract_slider_set_slider_down(qt6cr_handle_t handle, bool value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setSliderDown(value);
+  }
+}
+
+bool qt6cr_abstract_slider_inverted_appearance(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider != nullptr && slider->invertedAppearance();
+}
+
+void qt6cr_abstract_slider_set_inverted_appearance(qt6cr_handle_t handle, bool value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setInvertedAppearance(value);
+  }
+}
+
+bool qt6cr_abstract_slider_inverted_controls(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+  return slider != nullptr && slider->invertedControls();
+}
+
+void qt6cr_abstract_slider_set_inverted_controls(qt6cr_handle_t handle, bool value) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setInvertedControls(value);
+  }
+}
+
+void qt6cr_abstract_slider_trigger_action(qt6cr_handle_t handle, int action) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    slider->triggerAction(static_cast<QAbstractSlider::SliderAction>(action));
+  }
+}
+
+void qt6cr_abstract_slider_emit_pressed(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    emit slider->sliderPressed();
+  }
+}
+
+void qt6cr_abstract_slider_emit_released(qt6cr_handle_t handle) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider != nullptr) {
+    emit slider->sliderReleased();
+  }
+}
+
+void qt6cr_abstract_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QAbstractSlider::valueChanged, slider, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_abstract_slider_on_slider_moved(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QAbstractSlider::sliderMoved, slider, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_abstract_slider_on_action_triggered(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QAbstractSlider::actionTriggered, slider, [callback, userdata](int action) {
+    callback(userdata, action);
+  });
+}
+
+void qt6cr_abstract_slider_on_range_changed(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QAbstractSlider::rangeChanged, slider, [callback, userdata](int minimum, int maximum) {
+    callback(userdata, minimum, maximum);
+  });
+}
+
+void qt6cr_abstract_slider_on_pressed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QAbstractSlider::sliderPressed, slider, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_abstract_slider_on_released(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *slider = as_abstract_slider(handle);
+
+  if (slider == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(slider, &QAbstractSlider::sliderReleased, slider, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 bool qt6cr_slider_click_to_position(qt6cr_handle_t handle) {
@@ -14765,200 +14964,35 @@ void qt6cr_slider_set_click_to_position(qt6cr_handle_t handle, bool value) {
 }
 
 void qt6cr_slider_emit_pressed(qt6cr_handle_t handle) {
-  auto *slider = as_slider(handle);
-
-  if (slider != nullptr) {
-    emit slider->sliderPressed();
-  }
+  qt6cr_abstract_slider_emit_pressed(handle);
 }
 
 void qt6cr_slider_emit_released(qt6cr_handle_t handle) {
-  auto *slider = as_slider(handle);
-
-  if (slider != nullptr) {
-    emit slider->sliderReleased();
-  }
+  qt6cr_abstract_slider_emit_released(handle);
 }
 
 void qt6cr_slider_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
-  auto *slider = as_slider(handle);
-
-  if (slider == nullptr || callback == nullptr) {
-    return;
-  }
-
-  QObject::connect(slider, &QSlider::valueChanged, slider, [callback, userdata](int value) {
-    callback(userdata, value);
-  });
+  qt6cr_abstract_slider_on_value_changed(handle, callback, userdata);
 }
 
 void qt6cr_slider_on_pressed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
-  auto *slider = as_slider(handle);
-
-  if (slider == nullptr || callback == nullptr) {
-    return;
-  }
-
-  QObject::connect(slider, &QSlider::sliderPressed, slider, [callback, userdata]() {
-    callback(userdata);
-  });
+  qt6cr_abstract_slider_on_pressed(handle, callback, userdata);
 }
 
 void qt6cr_slider_on_released(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
-  auto *slider = as_slider(handle);
-
-  if (slider == nullptr || callback == nullptr) {
-    return;
-  }
-
-  QObject::connect(slider, &QSlider::sliderReleased, slider, [callback, userdata]() {
-    callback(userdata);
-  });
+  qt6cr_abstract_slider_on_released(handle, callback, userdata);
 }
 
 qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation) {
   return new QScrollBar(static_cast<Qt::Orientation>(orientation), as_widget(parent));
 }
 
-void qt6cr_scroll_bar_set_minimum(qt6cr_handle_t handle, int value) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar != nullptr) {
-    scroll_bar->setMinimum(value);
-  }
-}
-
-int qt6cr_scroll_bar_minimum(qt6cr_handle_t handle) {
-  auto *scroll_bar = as_scroll_bar(handle);
-  return scroll_bar == nullptr ? 0 : scroll_bar->minimum();
-}
-
-void qt6cr_scroll_bar_set_maximum(qt6cr_handle_t handle, int value) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar != nullptr) {
-    scroll_bar->setMaximum(value);
-  }
-}
-
-int qt6cr_scroll_bar_maximum(qt6cr_handle_t handle) {
-  auto *scroll_bar = as_scroll_bar(handle);
-  return scroll_bar == nullptr ? 99 : scroll_bar->maximum();
-}
-
-void qt6cr_scroll_bar_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar != nullptr) {
-    scroll_bar->setRange(minimum, maximum);
-  }
-}
-
-void qt6cr_scroll_bar_set_value(qt6cr_handle_t handle, int value) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar != nullptr) {
-    scroll_bar->setValue(value);
-  }
-}
-
-int qt6cr_scroll_bar_value(qt6cr_handle_t handle) {
-  auto *scroll_bar = as_scroll_bar(handle);
-  return scroll_bar == nullptr ? 0 : scroll_bar->value();
-}
-
-void qt6cr_scroll_bar_set_single_step(qt6cr_handle_t handle, int value) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar != nullptr) {
-    scroll_bar->setSingleStep(value);
-  }
-}
-
-int qt6cr_scroll_bar_single_step(qt6cr_handle_t handle) {
-  auto *scroll_bar = as_scroll_bar(handle);
-  return scroll_bar == nullptr ? 1 : scroll_bar->singleStep();
-}
-
-void qt6cr_scroll_bar_set_page_step(qt6cr_handle_t handle, int value) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar != nullptr) {
-    scroll_bar->setPageStep(value);
-  }
-}
-
-int qt6cr_scroll_bar_page_step(qt6cr_handle_t handle) {
-  auto *scroll_bar = as_scroll_bar(handle);
-  return scroll_bar == nullptr ? 10 : scroll_bar->pageStep();
-}
-
-int qt6cr_scroll_bar_orientation(qt6cr_handle_t handle) {
-  auto *scroll_bar = as_scroll_bar(handle);
-  return scroll_bar == nullptr ? static_cast<int>(Qt::Vertical) : static_cast<int>(scroll_bar->orientation());
-}
-
 void qt6cr_scroll_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
-  auto *scroll_bar = as_scroll_bar(handle);
-
-  if (scroll_bar == nullptr || callback == nullptr) {
-    return;
-  }
-
-  QObject::connect(scroll_bar, &QScrollBar::valueChanged, scroll_bar, [callback, userdata](int value) {
-    callback(userdata, value);
-  });
+  qt6cr_abstract_slider_on_value_changed(handle, callback, userdata);
 }
 
 qt6cr_handle_t qt6cr_dial_create(qt6cr_handle_t parent) {
   return new QDial(as_widget(parent));
-}
-
-void qt6cr_dial_set_minimum(qt6cr_handle_t handle, int value) {
-  auto *dial = as_dial(handle);
-
-  if (dial != nullptr) {
-    dial->setMinimum(value);
-  }
-}
-
-int qt6cr_dial_minimum(qt6cr_handle_t handle) {
-  auto *dial = as_dial(handle);
-  return dial == nullptr ? 0 : dial->minimum();
-}
-
-void qt6cr_dial_set_maximum(qt6cr_handle_t handle, int value) {
-  auto *dial = as_dial(handle);
-
-  if (dial != nullptr) {
-    dial->setMaximum(value);
-  }
-}
-
-int qt6cr_dial_maximum(qt6cr_handle_t handle) {
-  auto *dial = as_dial(handle);
-  return dial == nullptr ? 99 : dial->maximum();
-}
-
-void qt6cr_dial_set_range(qt6cr_handle_t handle, int minimum, int maximum) {
-  auto *dial = as_dial(handle);
-
-  if (dial != nullptr) {
-    dial->setRange(minimum, maximum);
-  }
-}
-
-void qt6cr_dial_set_value(qt6cr_handle_t handle, int value) {
-  auto *dial = as_dial(handle);
-
-  if (dial != nullptr) {
-    dial->setValue(value);
-  }
-}
-
-int qt6cr_dial_value(qt6cr_handle_t handle) {
-  auto *dial = as_dial(handle);
-  return dial == nullptr ? 0 : dial->value();
 }
 
 bool qt6cr_dial_wrapping(qt6cr_handle_t handle) {
@@ -14988,15 +15022,7 @@ void qt6cr_dial_set_notches_visible(qt6cr_handle_t handle, bool value) {
 }
 
 void qt6cr_dial_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
-  auto *dial = as_dial(handle);
-
-  if (dial == nullptr || callback == nullptr) {
-    return;
-  }
-
-  QObject::connect(dial, &QDial::valueChanged, dial, [callback, userdata](int value) {
-    callback(userdata, value);
-  });
+  qt6cr_abstract_slider_on_value_changed(handle, callback, userdata);
 }
 
 int qt6cr_abstract_spin_box_button_symbols(qt6cr_handle_t handle) {

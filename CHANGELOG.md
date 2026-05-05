@@ -22,6 +22,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QColumnView` with preview-update callbacks, and added shared `AbstractItemView#scroll_to` / `#select_all` helpers for model-view navigation.
 - Expanded `QAbstractItemView` with shared root-index, auto-scroll, Tab-navigation, selection-clearing, top/bottom scroll helpers, and corrected `QAbstractScrollArea` inheritance for list/tree/table-style views.
 - Expanded `QAbstractScrollArea` with shared viewport, corner-widget, maximum-viewport, and size-adjust-policy helpers across scroll areas, editors, and item views.
+- Added `QAbstractSlider` as a shared base for sliders, scroll bars, and dials, including shared range/value/step/orientation helpers, slider actions, and inherited press/release and range/action callbacks.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

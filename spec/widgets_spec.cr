@@ -3,6 +3,7 @@ require "./spec_helper"
 describe Qt6 do
   it "supports common control widgets and date-based editors" do
     application = app
+    slider = Qt6::Slider.new(Qt6::Orientation::Vertical)
     progress_bar = Qt6::ProgressBar.new
     scroll_bar = Qt6::ScrollBar.new(Qt6::Orientation::Horizontal)
     dial = Qt6::Dial.new
@@ -18,8 +19,16 @@ describe Qt6 do
     first_page = Qt6::Label.new("General")
     second_page = Qt6::Label.new("Preview")
 
+    slider_values = [] of Int32
+    slider_ranges = [] of Tuple(Int32, Int32)
+    slider_pressed = 0
+    slider_released = 0
     scroll_values = [] of Int32
+    scroll_actions = [] of Qt6::AbstractSliderAction
+    scroll_pressed = 0
     dial_values = [] of Int32
+    dial_ranges = [] of Tuple(Int32, Int32)
+    dial_released = 0
     date_time_values = [] of String
     date_values = [] of String
     time_values = [] of String
@@ -27,11 +36,35 @@ describe Qt6 do
     tab_indices = [] of Int32
     stacked_indices = [] of Int32
 
+    slider.on_value_changed do |value|
+      slider_values << value
+    end
+    slider.on_range_changed do |minimum, maximum|
+      slider_ranges << {minimum, maximum}
+    end
+    slider.on_pressed do
+      slider_pressed += 1
+    end
+    slider.on_released do
+      slider_released += 1
+    end
     scroll_bar.on_value_changed do |value|
       scroll_values << value
     end
+    scroll_bar.on_action_triggered do |action|
+      scroll_actions << action
+    end
+    scroll_bar.on_pressed do
+      scroll_pressed += 1
+    end
     dial.on_value_changed do |value|
       dial_values << value
+    end
+    dial.on_range_changed do |minimum, maximum|
+      dial_ranges << {minimum, maximum}
+    end
+    dial.on_released do
+      dial_released += 1
     end
     date_time_edit.on_date_time_changed do |value|
       date_time_values << value.to_string
@@ -60,15 +93,34 @@ describe Qt6 do
     progress_bar.alignment = Qt6::AlignmentFlag::Center
     progress_bar.orientation = Qt6::Orientation::Vertical
 
+    slider.orientation.should eq(Qt6::Orientation::Vertical)
+    slider.orientation = Qt6::Orientation::Horizontal
+    slider.set_range(10, 80)
+    slider.single_step = 4
+    slider.page_step = 12
+    slider.tracking = false
+    slider.inverted_appearance = true
+    slider.inverted_controls = true
+    slider.slider_down = true
+    slider.value = 29
+    Qt6::LibQt6.qt6cr_abstract_slider_emit_pressed(slider.to_unsafe)
+    Qt6::LibQt6.qt6cr_abstract_slider_emit_released(slider.to_unsafe)
+
     scroll_bar.set_range(5, 20)
     scroll_bar.single_step = 2
     scroll_bar.page_step = 5
     scroll_bar.value = 11
+    scroll_bar.trigger_action(Qt6::AbstractSliderAction::SliderPageStepAdd)
+    Qt6::LibQt6.qt6cr_abstract_slider_emit_pressed(scroll_bar.to_unsafe)
 
     dial.set_range(0, 360)
+    dial.single_step = 15
+    dial.page_step = 60
     dial.wrapping = true
     dial.notches_visible = true
+    dial.inverted_controls = true
     dial.value = 90
+    Qt6::LibQt6.qt6cr_abstract_slider_emit_released(dial.to_unsafe)
 
     date_time = Qt6::QDateTime.new(2026, 4, 14, 9, 30, 15)
     initial_calendar_date = calendar.selected_date.to_string
@@ -121,20 +173,43 @@ describe Qt6 do
     progress_bar.orientation.should eq(Qt6::Orientation::Vertical)
     progress_bar.reset.value.should eq(-1)
 
+    slider.orientation.should eq(Qt6::Orientation::Horizontal)
+    slider.minimum.should eq(10)
+    slider.maximum.should eq(80)
+    slider.single_step.should eq(4)
+    slider.page_step.should eq(12)
+    slider.tracking?.should be_false
+    slider.inverted_appearance?.should be_true
+    slider.inverted_controls?.should be_true
+    slider.slider_down?.should be_true
+    slider.slider_position.should eq(29)
+    slider.value.should eq(29)
+    slider_values.last.should eq(29)
+    slider_ranges.should contain({10, 80})
+    slider_pressed.should be >= 1
+    slider_released.should eq(1)
+
     scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
     scroll_bar.minimum.should eq(5)
     scroll_bar.maximum.should eq(20)
     scroll_bar.single_step.should eq(2)
     scroll_bar.page_step.should eq(5)
-    scroll_bar.value.should eq(11)
-    scroll_values.last.should eq(11)
+    scroll_bar.value.should eq(16)
+    scroll_values.last.should eq(16)
+    scroll_actions.should contain(Qt6::AbstractSliderAction::SliderPageStepAdd)
+    scroll_pressed.should eq(1)
 
     dial.minimum.should eq(0)
     dial.maximum.should eq(360)
+    dial.single_step.should eq(15)
+    dial.page_step.should eq(60)
     dial.wrapping?.should be_true
     dial.notches_visible?.should be_true
+    dial.inverted_controls?.should be_true
     dial.value.should eq(90)
     dial_values.last.should eq(90)
+    dial_ranges.should contain({0, 360})
+    dial_released.should eq(1)
 
     date_time_edit.display_format.should eq("yyyy/MM/dd HH:mm:ss")
     date_time_edit.calendar_popup?.should be_true
