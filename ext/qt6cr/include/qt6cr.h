@@ -2434,6 +2434,12 @@ int qt6cr_abstract_scroll_area_horizontal_scroll_bar_policy(qt6cr_handle_t handl
 void qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(qt6cr_handle_t handle, int policy);
 qt6cr_handle_t qt6cr_abstract_scroll_area_vertical_scroll_bar(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_abstract_scroll_area_horizontal_scroll_bar(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_abstract_scroll_area_viewport(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_abstract_scroll_area_corner_widget(qt6cr_handle_t handle);
+void qt6cr_abstract_scroll_area_set_corner_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_size_t qt6cr_abstract_scroll_area_maximum_viewport_size(qt6cr_handle_t handle);
+int qt6cr_abstract_scroll_area_size_adjust_policy(qt6cr_handle_t handle);
+void qt6cr_abstract_scroll_area_set_size_adjust_policy(qt6cr_handle_t handle, int policy);
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

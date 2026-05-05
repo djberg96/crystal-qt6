@@ -17131,6 +17131,42 @@ qt6cr_handle_t qt6cr_abstract_scroll_area_horizontal_scroll_bar(qt6cr_handle_t h
   return scroll_area == nullptr ? nullptr : scroll_area->horizontalScrollBar();
 }
 
+qt6cr_handle_t qt6cr_abstract_scroll_area_viewport(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? nullptr : scroll_area->viewport();
+}
+
+qt6cr_handle_t qt6cr_abstract_scroll_area_corner_widget(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? nullptr : scroll_area->cornerWidget();
+}
+
+void qt6cr_abstract_scroll_area_set_corner_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->setCornerWidget(as_widget(widget));
+  }
+}
+
+qt6cr_size_t qt6cr_abstract_scroll_area_maximum_viewport_size(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? qt6cr_size_t{0, 0} : to_size(scroll_area->maximumViewportSize());
+}
+
+int qt6cr_abstract_scroll_area_size_adjust_policy(qt6cr_handle_t handle) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+  return scroll_area == nullptr ? static_cast<int>(QAbstractScrollArea::AdjustIgnored) : static_cast<int>(scroll_area->sizeAdjustPolicy());
+}
+
+void qt6cr_abstract_scroll_area_set_size_adjust_policy(qt6cr_handle_t handle, int policy) {
+  auto *scroll_area = as_abstract_scroll_area(handle);
+
+  if (scroll_area != nullptr) {
+    scroll_area->setSizeAdjustPolicy(static_cast<QAbstractScrollArea::SizeAdjustPolicy>(policy));
+  }
+}
+
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent) {
   return new QScrollArea(as_widget(parent));
 }

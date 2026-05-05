@@ -201,11 +201,6 @@ module Qt6
       value
     end
 
-    # Returns the view's borrowed viewport widget.
-    def viewport : Widget
-      Widget.wrap(LibQt6.qt6cr_abstract_item_view_viewport(to_unsafe))
-    end
-
     # Returns the model index under the given viewport-local position.
     def index_at(position : PointF) : ModelIndex
       ModelIndex.wrap(LibQt6.qt6cr_abstract_item_view_index_at(to_unsafe, position.to_native), true)

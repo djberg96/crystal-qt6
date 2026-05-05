@@ -2414,6 +2414,12 @@ module Qt6
     fun qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy = qt6cr_abstract_scroll_area_set_horizontal_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_abstract_scroll_area_vertical_scroll_bar = qt6cr_abstract_scroll_area_vertical_scroll_bar(handle : Handle) : Handle
     fun qt6cr_abstract_scroll_area_horizontal_scroll_bar = qt6cr_abstract_scroll_area_horizontal_scroll_bar(handle : Handle) : Handle
+    fun qt6cr_abstract_scroll_area_viewport = qt6cr_abstract_scroll_area_viewport(handle : Handle) : Handle
+    fun qt6cr_abstract_scroll_area_corner_widget = qt6cr_abstract_scroll_area_corner_widget(handle : Handle) : Handle
+    fun qt6cr_abstract_scroll_area_set_corner_widget = qt6cr_abstract_scroll_area_set_corner_widget(handle : Handle, widget : Handle)
+    fun qt6cr_abstract_scroll_area_maximum_viewport_size = qt6cr_abstract_scroll_area_maximum_viewport_size(handle : Handle) : SizeValue
+    fun qt6cr_abstract_scroll_area_size_adjust_policy = qt6cr_abstract_scroll_area_size_adjust_policy(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_scroll_area_set_size_adjust_policy = qt6cr_abstract_scroll_area_set_size_adjust_policy(handle : Handle, policy : LibC::Int)
 
     fun qt6cr_splitter_create = qt6cr_splitter_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_splitter_add_widget = qt6cr_splitter_add_widget(handle : Handle, widget : Handle)

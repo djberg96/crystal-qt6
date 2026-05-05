@@ -1235,6 +1235,54 @@ describe Qt6 do
     plain_text_edit.release
   end
 
+  it "shares abstract scroll-area viewport, corner, and size-adjust helpers" do
+    application = app
+    main = Qt6::MainWindow.new
+    host = Qt6::Widget.new
+    layout = host.vbox do |column|
+      column.spacing = 4
+    end
+    scroll_area = Qt6::ScrollArea.new
+    text_edit = Qt6::TextEdit.new("alpha\nbeta\ngamma")
+    plain_text_edit = Qt6::PlainTextEdit.new("delta\nepsilon\nzeta")
+    content = Qt6::Label.new("Scrollable content")
+    corner = Qt6::Label.new("Corner")
+
+    content.set_fixed_size(320, 160)
+    scroll_area.widget = content
+    scroll_area.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+    scroll_area.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
+    scroll_area.corner_widget = corner
+    scroll_area.size_adjust_policy = Qt6::AbstractScrollAreaSizeAdjustPolicy::AdjustToContentsOnFirstShow
+    text_edit.size_adjust_policy = Qt6::AbstractScrollAreaSizeAdjustPolicy::AdjustIgnored
+    plain_text_edit.size_adjust_policy = Qt6::AbstractScrollAreaSizeAdjustPolicy::AdjustToContents
+
+    layout << scroll_area
+    layout << text_edit
+    layout << plain_text_edit
+    main.central_widget = host
+    main.resize(260, 320)
+    main.show
+    application.process_events
+
+    scroll_area.viewport.should be_a(Qt6::Widget)
+    text_edit.viewport.should be_a(Qt6::Widget)
+    plain_text_edit.viewport.should be_a(Qt6::Widget)
+    scroll_area.corner_widget.not_nil!.to_unsafe.should eq(corner.to_unsafe)
+    scroll_area.maximum_viewport_size.width.should be > 0
+    scroll_area.maximum_viewport_size.height.should be > 0
+    text_edit.maximum_viewport_size.width.should be > 0
+    plain_text_edit.maximum_viewport_size.height.should be > 0
+    scroll_area.size_adjust_policy.should eq(Qt6::AbstractScrollAreaSizeAdjustPolicy::AdjustToContentsOnFirstShow)
+    text_edit.size_adjust_policy.should eq(Qt6::AbstractScrollAreaSizeAdjustPolicy::AdjustIgnored)
+    plain_text_edit.size_adjust_policy.should eq(Qt6::AbstractScrollAreaSizeAdjustPolicy::AdjustToContents)
+
+    scroll_area.corner_widget = nil
+    scroll_area.corner_widget.should be_nil
+
+    main.release
+  end
+
   it "exposes scroll-area content access and visibility helpers" do
     application = app
     main = Qt6::MainWindow.new
