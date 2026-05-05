@@ -24,17 +24,6 @@ module Qt6
       model
     end
 
-    # Returns the current root index.
-    def root_index : ModelIndex
-      ModelIndex.wrap(LibQt6.qt6cr_column_view_root_index(to_unsafe), true)
-    end
-
-    # Changes the root index and returns it.
-    def root_index=(index : ModelIndex) : ModelIndex
-      LibQt6.qt6cr_column_view_set_root_index(to_unsafe, index.to_unsafe)
-      index
-    end
-
     # Returns `true` when resize grips are shown between columns.
     def resize_grips_visible? : Bool
       LibQt6.qt6cr_column_view_resize_grips_visible(to_unsafe)

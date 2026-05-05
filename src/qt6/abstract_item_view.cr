@@ -1,6 +1,6 @@
 module Qt6
   # Shared wrapper for `QAbstractItemView` descendants.
-  abstract class AbstractItemView < Widget
+  abstract class AbstractItemView < AbstractScrollArea
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -9,6 +9,12 @@ module Qt6
     def model : AbstractItemModel?
       handle = LibQt6.qt6cr_abstract_item_view_model(to_unsafe)
       handle.null? ? nil : AbstractItemModel.wrap(handle)
+    end
+
+    # Returns the current Crystal-backed item delegate, if one is installed.
+    def item_delegate : StyledItemDelegate?
+      handle = LibQt6.qt6cr_abstract_item_view_item_delegate(to_unsafe)
+      handle.null? ? nil : StyledItemDelegate.wrap(handle)
     end
 
     # Assigns the item delegate used for display/edit behavior.
@@ -38,6 +44,17 @@ module Qt6
     def selection_model=(selection_model : ItemSelectionModel) : ItemSelectionModel
       LibQt6.qt6cr_abstract_item_view_set_selection_model(to_unsafe, selection_model.to_unsafe)
       selection_model
+    end
+
+    # Returns the current root model index.
+    def root_index : ModelIndex
+      ModelIndex.wrap(LibQt6.qt6cr_abstract_item_view_root_index(to_unsafe), true)
+    end
+
+    # Changes the root model index and returns it.
+    def root_index=(index : ModelIndex) : ModelIndex
+      LibQt6.qt6cr_abstract_item_view_set_root_index(to_unsafe, index.to_unsafe)
+      index
     end
 
     # Returns the current model index.
@@ -81,6 +98,40 @@ module Qt6
     # Sets how selections expand within the view.
     def selection_behavior=(value : ItemSelectionBehavior) : ItemSelectionBehavior
       LibQt6.qt6cr_abstract_item_view_set_selection_behavior(to_unsafe, value.value)
+      value
+    end
+
+    # Returns whether edge-triggered auto-scrolling is enabled during drags.
+    def auto_scroll? : Bool
+      LibQt6.qt6cr_abstract_item_view_auto_scroll(to_unsafe)
+    end
+
+    # Enables or disables edge-triggered auto-scrolling during drags.
+    def auto_scroll=(value : Bool) : Bool
+      LibQt6.qt6cr_abstract_item_view_set_auto_scroll(to_unsafe, value)
+      value
+    end
+
+    # Returns the auto-scroll trigger margin in pixels.
+    def auto_scroll_margin : Int32
+      LibQt6.qt6cr_abstract_item_view_auto_scroll_margin(to_unsafe)
+    end
+
+    # Sets the auto-scroll trigger margin in pixels.
+    def auto_scroll_margin=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_abstract_item_view_set_auto_scroll_margin(to_unsafe, int_value)
+      int_value
+    end
+
+    # Returns whether Tab moves focus within the item view.
+    def tab_key_navigation? : Bool
+      LibQt6.qt6cr_abstract_item_view_tab_key_navigation(to_unsafe)
+    end
+
+    # Enables or disables Tab key navigation within the item view.
+    def tab_key_navigation=(value : Bool) : Bool
+      LibQt6.qt6cr_abstract_item_view_set_tab_key_navigation(to_unsafe, value)
       value
     end
 
@@ -171,9 +222,27 @@ module Qt6
       self
     end
 
+    # Scrolls the view to its first visible item.
+    def scroll_to_top : self
+      LibQt6.qt6cr_abstract_item_view_scroll_to_top(to_unsafe)
+      self
+    end
+
+    # Scrolls the view to its last visible item.
+    def scroll_to_bottom : self
+      LibQt6.qt6cr_abstract_item_view_scroll_to_bottom(to_unsafe)
+      self
+    end
+
     # Selects all items according to the current selection behavior.
     def select_all : self
       LibQt6.qt6cr_abstract_item_view_select_all(to_unsafe)
+      self
+    end
+
+    # Clears the current selection without changing the model or delegate.
+    def clear_selection : self
+      LibQt6.qt6cr_abstract_item_view_clear_selection(to_unsafe)
       self
     end
 

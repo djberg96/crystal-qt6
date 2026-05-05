@@ -783,6 +783,74 @@ describe Qt6 do
     host.release
   end
 
+  it "supports shared abstract item view navigation and scroll helpers" do
+    application = app
+    host = Qt6::Widget.new
+    tree_view = Qt6::TreeView.new(host)
+    model = Qt6::StandardItemModel.new(tree_view)
+    delegate = Qt6::StyledItemDelegate.new(tree_view)
+    branch = Qt6::StandardItem.new("Layers")
+
+    40.times do |index|
+      branch.append_row(Qt6::StandardItem.new("Layer #{index}"))
+    end
+    model.append_row(branch)
+
+    root_index = model.index(0)
+    target_index = model.index(25, 0, root_index)
+
+    tree_view.model = model
+    tree_view.item_delegate = delegate
+    tree_view.root_index = root_index
+    tree_view.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
+    tree_view.auto_scroll = false
+    tree_view.auto_scroll_margin = 18
+    tree_view.tab_key_navigation = true
+    tree_view.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AsNeeded
+    tree_view.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOff
+
+    host.vbox do |column|
+      column << tree_view
+    end
+    host.resize(220, 140)
+    host.show
+    application.process_events
+
+    tree_view.scroll_to(target_index, Qt6::ScrollHint::PositionAtCenter)
+    application.process_events
+    tree_view.select_all
+    application.process_events
+
+    tree_view.item_delegate.not_nil!.to_unsafe.should eq(delegate.to_unsafe)
+    tree_view.root_index.valid?.should be_true
+    tree_view.root_index.row.should eq(0)
+    tree_view.auto_scroll?.should be_false
+    tree_view.auto_scroll_margin.should eq(18)
+    tree_view.tab_key_navigation?.should be_true
+    tree_view.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AsNeeded)
+    tree_view.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
+    tree_view.vertical_scroll_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    tree_view.horizontal_scroll_bar.orientation.should eq(Qt6::Orientation::Horizontal)
+    tree_view.selection_model.not_nil!.has_selection?.should be_true
+    tree_view.vertical_scroll_bar.value.should be > 0
+
+    tree_view.clear_selection
+    application.process_events
+    tree_view.selection_model.not_nil!.has_selection?.should be_false
+
+    tree_view.scroll_to_bottom
+    application.process_events
+    tree_view.vertical_scroll_bar.value.should be > 0
+
+    tree_view.scroll_to_top
+    application.process_events
+    tree_view.vertical_scroll_bar.value.should eq(0)
+
+    target_index.release
+    root_index.release
+    host.release
+  end
+
   it "supports custom delegate editor creation and commit hooks" do
     app
     host = Qt6::Widget.new

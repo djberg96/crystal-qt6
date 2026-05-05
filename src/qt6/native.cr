@@ -2025,11 +2025,14 @@ module Qt6
     fun qt6cr_abstract_spin_box_set_accelerated = qt6cr_abstract_spin_box_set_accelerated(handle : Handle, value : Bool)
 
     fun qt6cr_abstract_item_view_model = qt6cr_abstract_item_view_model(handle : Handle) : Handle
+    fun qt6cr_abstract_item_view_item_delegate = qt6cr_abstract_item_view_item_delegate(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_set_item_delegate = qt6cr_abstract_item_view_set_item_delegate(handle : Handle, delegate : Handle)
     fun qt6cr_abstract_item_view_icon_size = qt6cr_abstract_item_view_icon_size(handle : Handle) : SizeValue
     fun qt6cr_abstract_item_view_set_icon_size = qt6cr_abstract_item_view_set_icon_size(handle : Handle, size : SizeValue)
     fun qt6cr_abstract_item_view_selection_model = qt6cr_abstract_item_view_selection_model(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_set_selection_model = qt6cr_abstract_item_view_set_selection_model(handle : Handle, selection_model : Handle)
+    fun qt6cr_abstract_item_view_root_index = qt6cr_abstract_item_view_root_index(handle : Handle) : Handle
+    fun qt6cr_abstract_item_view_set_root_index = qt6cr_abstract_item_view_set_root_index(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_current_index = qt6cr_abstract_item_view_current_index(handle : Handle) : Handle
     fun qt6cr_abstract_item_view_set_current_index = qt6cr_abstract_item_view_set_current_index(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_selection_mode = qt6cr_abstract_item_view_selection_mode(handle : Handle) : LibC::Int
@@ -2038,6 +2041,12 @@ module Qt6
     fun qt6cr_abstract_item_view_set_edit_triggers = qt6cr_abstract_item_view_set_edit_triggers(handle : Handle, triggers : LibC::Int)
     fun qt6cr_abstract_item_view_selection_behavior = qt6cr_abstract_item_view_selection_behavior(handle : Handle) : LibC::Int
     fun qt6cr_abstract_item_view_set_selection_behavior = qt6cr_abstract_item_view_set_selection_behavior(handle : Handle, behavior : LibC::Int)
+    fun qt6cr_abstract_item_view_auto_scroll = qt6cr_abstract_item_view_auto_scroll(handle : Handle) : Bool
+    fun qt6cr_abstract_item_view_set_auto_scroll = qt6cr_abstract_item_view_set_auto_scroll(handle : Handle, value : Bool)
+    fun qt6cr_abstract_item_view_auto_scroll_margin = qt6cr_abstract_item_view_auto_scroll_margin(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_view_set_auto_scroll_margin = qt6cr_abstract_item_view_set_auto_scroll_margin(handle : Handle, value : LibC::Int)
+    fun qt6cr_abstract_item_view_tab_key_navigation = qt6cr_abstract_item_view_tab_key_navigation(handle : Handle) : Bool
+    fun qt6cr_abstract_item_view_set_tab_key_navigation = qt6cr_abstract_item_view_set_tab_key_navigation(handle : Handle, value : Bool)
     fun qt6cr_abstract_item_view_alternating_row_colors = qt6cr_abstract_item_view_alternating_row_colors(handle : Handle) : Bool
     fun qt6cr_abstract_item_view_set_alternating_row_colors = qt6cr_abstract_item_view_set_alternating_row_colors(handle : Handle, value : Bool)
     fun qt6cr_abstract_item_view_drag_enabled = qt6cr_abstract_item_view_drag_enabled(handle : Handle) : Bool
@@ -2054,7 +2063,10 @@ module Qt6
     fun qt6cr_abstract_item_view_index_at = qt6cr_abstract_item_view_index_at(handle : Handle, point : PointFValue) : Handle
     fun qt6cr_abstract_item_view_visual_rect = qt6cr_abstract_item_view_visual_rect(handle : Handle, index : Handle) : RectFValue
     fun qt6cr_abstract_item_view_scroll_to = qt6cr_abstract_item_view_scroll_to(handle : Handle, index : Handle, hint : LibC::Int)
+    fun qt6cr_abstract_item_view_scroll_to_top = qt6cr_abstract_item_view_scroll_to_top(handle : Handle)
+    fun qt6cr_abstract_item_view_scroll_to_bottom = qt6cr_abstract_item_view_scroll_to_bottom(handle : Handle)
     fun qt6cr_abstract_item_view_select_all = qt6cr_abstract_item_view_select_all(handle : Handle)
+    fun qt6cr_abstract_item_view_clear_selection = qt6cr_abstract_item_view_clear_selection(handle : Handle)
     fun qt6cr_abstract_item_view_open_persistent_editor = qt6cr_abstract_item_view_open_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_close_persistent_editor = qt6cr_abstract_item_view_close_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_abstract_item_view_is_persistent_editor_open = qt6cr_abstract_item_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
