@@ -15220,9 +15220,10 @@ void qt6cr_abstract_spin_box_emit_editing_finished(qt6cr_handle_t handle) {
 
 void qt6cr_abstract_spin_box_emit_return_pressed(qt6cr_handle_t handle) {
   auto *spin_box = as_abstract_spin_box(handle);
+  auto *line_edit = spin_box == nullptr ? nullptr : spin_box->findChild<QLineEdit *>();
 
-  if (spin_box != nullptr) {
-    emit spin_box->returnPressed();
+  if (line_edit != nullptr) {
+    emit line_edit->returnPressed();
   }
 }
 
@@ -15240,12 +15241,13 @@ void qt6cr_abstract_spin_box_on_editing_finished(qt6cr_handle_t handle, qt6cr_vo
 
 void qt6cr_abstract_spin_box_on_return_pressed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *spin_box = as_abstract_spin_box(handle);
+  auto *line_edit = spin_box == nullptr ? nullptr : spin_box->findChild<QLineEdit *>();
 
-  if (spin_box == nullptr || callback == nullptr) {
+  if (line_edit == nullptr || callback == nullptr) {
     return;
   }
 
-  QObject::connect(spin_box, &QAbstractSpinBox::returnPressed, spin_box, [callback, userdata]() {
+  QObject::connect(line_edit, &QLineEdit::returnPressed, spin_box, [callback, userdata]() {
     callback(userdata);
   });
 }
