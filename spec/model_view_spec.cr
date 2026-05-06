@@ -522,10 +522,28 @@ describe Qt6 do
     mapper.current_index.should eq(1)
     name_edit.text.should eq("Units")
 
+    mapper.submit_policy = Qt6::DataWidgetMapperSubmitPolicy::AutoSubmit
+    mapper.submit_policy.should eq(Qt6::DataWidgetMapperSubmitPolicy::AutoSubmit)
+    mapper.set_current_index(0).should eq(0)
+    application.process_events
+    mapper.current_index.should eq(0)
+    mapper_changes.last.should eq(0)
+    name_edit.text.should eq("Terrain Layer")
+    visible_check.checked?.should be_false
+
+    mapper.to_next
+    application.process_events
+    mapper.current_index.should eq(1)
+    mapper_changes.last.should eq(1)
+    name_edit.text.should eq("Units")
+    visible_check.checked?.should be_false
+
     mapper.remove_mapping(visible_check)
     mapper.mapped_section(visible_check).should eq(-1)
+    mapper.mapped_widget_at(1).should be_nil
     mapper.clear_mapping
     mapper.mapped_section(name_edit).should eq(-1)
+    mapper.mapped_widget_at(0).should be_nil
 
     second_row_index.release
     root_index.release

@@ -131,6 +131,11 @@ module Qt6
       int_value
     end
 
+    # Slot-style alias for changing the current mapped row/column index.
+    def set_current_index(value : Int) : Int32
+      self.current_index = value
+    end
+
     # Positions the mapper at the given model index.
     def set_current_model_index(index : ModelIndex) : ModelIndex
       LibQt6.qt6cr_data_widget_mapper_set_current_model_index(to_unsafe, index.to_unsafe)
