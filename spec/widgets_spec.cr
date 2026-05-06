@@ -12,9 +12,11 @@ describe Qt6 do
     time_edit = Qt6::TimeEdit.new
     calendar = Qt6::CalendarWidget.new
     lcd = Qt6::LcdNumber.new
-    command_link = Qt6::CommandLinkButton.new("Export", "Save the current map")
-    tab_bar = Qt6::TabBar.new
     stacked_host = Qt6::Widget.new
+    command_link = Qt6::CommandLinkButton.new("Export", "Save the current map")
+    parented_command_link = Qt6::CommandLinkButton.new(stacked_host)
+    titled_command_link = Qt6::CommandLinkButton.new("Publish", stacked_host)
+    tab_bar = Qt6::TabBar.new
     stacked_layout = Qt6::StackedLayout.new(stacked_host)
     first_page = Qt6::Label.new("General")
     second_page = Qt6::Label.new("Preview")
@@ -170,6 +172,10 @@ describe Qt6 do
     lcd.display(255)
 
     command_link.description = "Save the current map as an image"
+    command_link.default = true
+    command_link.auto_default = true
+    command_link.flat = true
+    titled_command_link.set_description("Upload the current map package")
 
     tab_bar.add_tab("Layers")
     tab_bar.add_tab("Export")
@@ -272,6 +278,13 @@ describe Qt6 do
 
     command_link.text.should eq("Export")
     command_link.description.should eq("Save the current map as an image")
+    command_link.default?.should be_true
+    command_link.auto_default?.should be_true
+    command_link.flat?.should be_true
+    parented_command_link.text.should eq("")
+    parented_command_link.description.should eq("")
+    titled_command_link.text.should eq("Publish")
+    titled_command_link.description.should eq("Upload the current map package")
 
     tab_bar.count.should eq(2)
     tab_bar.current_index.should eq(1)
