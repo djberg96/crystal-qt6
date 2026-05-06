@@ -439,10 +439,22 @@ char *qt6cr_file_dialog_get_save_file_name(qt6cr_handle_t parent, const char *ti
 qt6cr_handle_t qt6cr_color_dialog_create(qt6cr_handle_t parent);
 void qt6cr_color_dialog_set_current_color(qt6cr_handle_t handle, qt6cr_color_t color);
 qt6cr_color_t qt6cr_color_dialog_current_color(qt6cr_handle_t handle);
+qt6cr_color_t qt6cr_color_dialog_selected_color(qt6cr_handle_t handle);
+void qt6cr_color_dialog_set_options(qt6cr_handle_t handle, int options);
+int qt6cr_color_dialog_options(qt6cr_handle_t handle);
+void qt6cr_color_dialog_set_option(qt6cr_handle_t handle, int option, bool value);
+bool qt6cr_color_dialog_test_option(qt6cr_handle_t handle, int option);
 void qt6cr_color_dialog_set_native_dialog(qt6cr_handle_t handle, bool value);
 bool qt6cr_color_dialog_native_dialog(qt6cr_handle_t handle);
 void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value);
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle);
+int qt6cr_color_dialog_custom_count(void);
+qt6cr_color_t qt6cr_color_dialog_custom_color(int index);
+void qt6cr_color_dialog_set_custom_color(int index, qt6cr_color_t color);
+qt6cr_color_t qt6cr_color_dialog_standard_color(int index);
+void qt6cr_color_dialog_set_standard_color(int index, qt6cr_color_t color);
+void qt6cr_color_dialog_on_current_color_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_color_dialog_on_color_selected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_font_dialog_create(qt6cr_handle_t parent, qt6cr_handle_t initial_font);
 void qt6cr_font_dialog_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font);

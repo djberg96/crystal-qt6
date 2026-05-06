@@ -4129,6 +4129,37 @@ qt6cr_color_t qt6cr_color_dialog_current_color(qt6cr_handle_t handle) {
   return color_dialog == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(color_dialog->currentColor());
 }
 
+qt6cr_color_t qt6cr_color_dialog_selected_color(qt6cr_handle_t handle) {
+  auto *color_dialog = as_color_dialog(handle);
+  return color_dialog == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(color_dialog->selectedColor());
+}
+
+void qt6cr_color_dialog_set_options(qt6cr_handle_t handle, int options) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog != nullptr) {
+    color_dialog->setOptions(static_cast<QColorDialog::ColorDialogOptions>(options));
+  }
+}
+
+int qt6cr_color_dialog_options(qt6cr_handle_t handle) {
+  auto *color_dialog = as_color_dialog(handle);
+  return color_dialog == nullptr ? 0 : static_cast<int>(color_dialog->options());
+}
+
+void qt6cr_color_dialog_set_option(qt6cr_handle_t handle, int option, bool value) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog != nullptr) {
+    color_dialog->setOption(static_cast<QColorDialog::ColorDialogOption>(option), value);
+  }
+}
+
+bool qt6cr_color_dialog_test_option(qt6cr_handle_t handle, int option) {
+  auto *color_dialog = as_color_dialog(handle);
+  return color_dialog != nullptr && color_dialog->testOption(static_cast<QColorDialog::ColorDialogOption>(option));
+}
+
 void qt6cr_color_dialog_set_native_dialog(qt6cr_handle_t handle, bool value) {
   auto *color_dialog = as_color_dialog(handle);
 
@@ -4153,6 +4184,50 @@ void qt6cr_color_dialog_set_show_alpha_channel(qt6cr_handle_t handle, bool value
 bool qt6cr_color_dialog_show_alpha_channel(qt6cr_handle_t handle) {
   auto *color_dialog = as_color_dialog(handle);
   return color_dialog != nullptr && color_dialog->testOption(QColorDialog::ShowAlphaChannel);
+}
+
+int qt6cr_color_dialog_custom_count(void) {
+  return QColorDialog::customCount();
+}
+
+qt6cr_color_t qt6cr_color_dialog_custom_color(int index) {
+  return to_color(QColorDialog::customColor(index));
+}
+
+void qt6cr_color_dialog_set_custom_color(int index, qt6cr_color_t color) {
+  QColorDialog::setCustomColor(index, QColor(color.red, color.green, color.blue, color.alpha));
+}
+
+qt6cr_color_t qt6cr_color_dialog_standard_color(int index) {
+  return to_color(QColorDialog::standardColor(index));
+}
+
+void qt6cr_color_dialog_set_standard_color(int index, qt6cr_color_t color) {
+  QColorDialog::setStandardColor(index, QColor(color.red, color.green, color.blue, color.alpha));
+}
+
+void qt6cr_color_dialog_on_current_color_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(color_dialog, &QColorDialog::currentColorChanged, color_dialog, [callback, userdata](const QColor &) {
+    callback(userdata);
+  });
+}
+
+void qt6cr_color_dialog_on_color_selected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *color_dialog = as_color_dialog(handle);
+
+  if (color_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(color_dialog, &QColorDialog::colorSelected, color_dialog, [callback, userdata](const QColor &) {
+    callback(userdata);
+  });
 }
 
 qt6cr_handle_t qt6cr_font_dialog_create(qt6cr_handle_t parent, qt6cr_handle_t initial_font) {

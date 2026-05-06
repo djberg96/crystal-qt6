@@ -78,11 +78,25 @@ describe Qt6 do
   it "configures color, font, and input dialogs" do
     app
     window = Qt6::MainWindow.new
-    color_dialog = Qt6::ColorDialog.new(window)
+    color_dialog = Qt6::ColorDialog.new(window, Qt6::Color.new(16, 24, 48, 96))
     font_dialog = Qt6::FontDialog.new(window, Qt6::QFont.new("Courier", 10))
     input_dialog = Qt6::InputDialog.new(window)
+    current_color_changes = [] of Qt6::Color
+    selected_colors = [] of Qt6::Color
     current_font_changes = [] of Qt6::QFont
     selected_fonts = [] of Qt6::QFont
+    custom_index = 0
+    standard_index = 0
+    original_custom_color = Qt6::ColorDialog.custom_color(custom_index)
+    original_standard_color = Qt6::ColorDialog.standard_color(standard_index)
+
+    color_dialog.on_current_color_changed do |color|
+      current_color_changes << color
+    end
+
+    color_dialog.on_color_selected do |color|
+      selected_colors << color
+    end
 
     font_dialog.on_current_font_changed do |font|
       current_font_changes << font
@@ -93,9 +107,13 @@ describe Qt6 do
     end
 
     color_dialog.window_title = "Pick Accent Color"
+    color_dialog.options = Qt6::ColorDialogOption::NoButtons | Qt6::ColorDialogOption::ShowAlphaChannel
     color_dialog.native_dialog = false
-    color_dialog.show_alpha_channel = true
+    color_dialog.set_option(Qt6::ColorDialogOption::NoEyeDropperButton)
+    color_dialog.clear_option(Qt6::ColorDialogOption::NoButtons)
     color_dialog.current_color = Qt6::Color.new(32, 96, 192, 180)
+    Qt6::ColorDialog.set_custom_color(custom_index, Qt6::Color.new(90, 45, 135, 225))
+    Qt6::ColorDialog.set_standard_color(standard_index, Qt6::Color.new(20, 40, 60, 255))
 
     font_dialog.window_title = "Pick Label Font"
     font_dialog.options = Qt6::FontDialogOption::ScalableFonts | Qt6::FontDialogOption::MonospacedFonts
@@ -121,8 +139,18 @@ describe Qt6 do
 
     color_dialog.window_title.should eq("Pick Accent Color")
     color_dialog.native_dialog?.should be_false
+    color_dialog.option?(Qt6::ColorDialogOption::ShowAlphaChannel).should be_true
+    color_dialog.option?(Qt6::ColorDialogOption::NoEyeDropperButton).should be_true
+    color_dialog.option?(Qt6::ColorDialogOption::NoButtons).should be_false
     color_dialog.current_color.should eq(Qt6::Color.new(32, 96, 192, 180))
     color_dialog.show_alpha_channel?.should be_true
+    color_dialog.accept
+    color_dialog.selected_color.should eq(Qt6::Color.new(32, 96, 192, 180))
+    current_color_changes.empty?.should be_false
+    selected_colors.should eq([Qt6::Color.new(32, 96, 192, 180)])
+    Qt6::ColorDialog.custom_count.should be > 0
+    Qt6::ColorDialog.custom_color(custom_index).should eq(Qt6::Color.new(90, 45, 135, 255))
+    Qt6::ColorDialog.standard_color(standard_index).should eq(Qt6::Color.new(20, 40, 60, 255))
 
     font_dialog.window_title.should eq("Pick Label Font")
     font_dialog.native_dialog?.should be_false
@@ -146,6 +174,8 @@ describe Qt6 do
     input_dialog.double_value.should eq(1.5)
     input_dialog.combo_box_items.should eq(["Terrain", "Units", "Roads"])
     input_dialog.combo_box_editable?.should be_false
+    Qt6::ColorDialog.set_custom_color(custom_index, original_custom_color)
+    Qt6::ColorDialog.set_standard_color(standard_index, original_standard_color)
     window.release
   end
 

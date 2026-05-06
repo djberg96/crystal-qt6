@@ -407,10 +407,22 @@ module Qt6
     fun qt6cr_color_dialog_create = qt6cr_color_dialog_create(parent : Handle) : Handle
     fun qt6cr_color_dialog_set_current_color = qt6cr_color_dialog_set_current_color(handle : Handle, color : ColorValue)
     fun qt6cr_color_dialog_current_color = qt6cr_color_dialog_current_color(handle : Handle) : ColorValue
+    fun qt6cr_color_dialog_selected_color = qt6cr_color_dialog_selected_color(handle : Handle) : ColorValue
+    fun qt6cr_color_dialog_set_options = qt6cr_color_dialog_set_options(handle : Handle, options : LibC::Int)
+    fun qt6cr_color_dialog_options = qt6cr_color_dialog_options(handle : Handle) : LibC::Int
+    fun qt6cr_color_dialog_set_option = qt6cr_color_dialog_set_option(handle : Handle, option : LibC::Int, value : Bool)
+    fun qt6cr_color_dialog_test_option = qt6cr_color_dialog_test_option(handle : Handle, option : LibC::Int) : Bool
     fun qt6cr_color_dialog_set_native_dialog = qt6cr_color_dialog_set_native_dialog(handle : Handle, value : Bool)
     fun qt6cr_color_dialog_native_dialog = qt6cr_color_dialog_native_dialog(handle : Handle) : Bool
     fun qt6cr_color_dialog_set_show_alpha_channel = qt6cr_color_dialog_set_show_alpha_channel(handle : Handle, value : Bool)
     fun qt6cr_color_dialog_show_alpha_channel = qt6cr_color_dialog_show_alpha_channel(handle : Handle) : Bool
+    fun qt6cr_color_dialog_custom_count = qt6cr_color_dialog_custom_count : LibC::Int
+    fun qt6cr_color_dialog_custom_color = qt6cr_color_dialog_custom_color(index : LibC::Int) : ColorValue
+    fun qt6cr_color_dialog_set_custom_color = qt6cr_color_dialog_set_custom_color(index : LibC::Int, color : ColorValue)
+    fun qt6cr_color_dialog_standard_color = qt6cr_color_dialog_standard_color(index : LibC::Int) : ColorValue
+    fun qt6cr_color_dialog_set_standard_color = qt6cr_color_dialog_set_standard_color(index : LibC::Int, color : ColorValue)
+    fun qt6cr_color_dialog_on_current_color_changed = qt6cr_color_dialog_on_current_color_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_color_dialog_on_color_selected = qt6cr_color_dialog_on_color_selected(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_font_dialog_create = qt6cr_font_dialog_create(parent : Handle, initial_font : Handle) : Handle
     fun qt6cr_font_dialog_set_current_font = qt6cr_font_dialog_set_current_font(handle : Handle, font : Handle)
