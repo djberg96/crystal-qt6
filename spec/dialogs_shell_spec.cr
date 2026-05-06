@@ -338,8 +338,11 @@ describe Qt6 do
     line_edit = Qt6::LineEdit.new("Hexes")
     check_box = Qt6::CheckBox.new("Snap")
     combo_box = Qt6::ComboBox.new
+    completer = Qt6::Completer.new(["Terrain", "Roads", "Units"], combo_box)
     state_changes = [] of Qt6::CheckState
     check_clicks = 0
+    combo_text_changes = [] of String
+    combo_edit_text_changes = [] of String
     check_box.on_toggled do |value|
       toggled << value
     end
@@ -351,6 +354,12 @@ describe Qt6 do
     end
     combo_box.on_current_index_changed do |index|
       indices << index
+    end
+    combo_box.on_current_text_changed do |value|
+      combo_text_changes << value
+    end
+    combo_box.on_edit_text_changed do |value|
+      combo_edit_text_changes << value
     end
     combo_box << "Units" << "Terrain"
     combo_box.insert_item(1, "Roads")
@@ -379,11 +388,22 @@ describe Qt6 do
     check_box.check_state = Qt6::CheckState::PartiallyChecked
     check_box.click
     combo_box.editable = true
+    combo_box.completer = completer
+    combo_box.placeholder_text = "Layer kind"
+    combo_box.max_visible_items = 12
+    combo_box.max_count = 6
+    combo_box.duplicates_enabled = true
+    combo_box.frame = false
+    combo_box.insert_policy = Qt6::ComboBoxInsertPolicy::InsertAlphabetically
+    combo_box.size_adjust_policy = Qt6::ComboBoxSizeAdjustPolicy::AdjustToContentsOnFirstShow
+    combo_box.set_item_data(1, "roads-meta")
     combo_box.item_text(1).should eq("Roads")
     combo_box.find_text("Roads").should eq(1)
     combo_box.remove_item(0)
+    combo_box.edit_text = "Overlay"
     combo_box.current_text = "Terrain"
     combo_box.current_index = combo_box.find_text("Terrain")
+    combo_box.set_item_data(combo_box.current_index, 99)
     open_action.trigger
     application.process_events
 
@@ -398,7 +418,20 @@ describe Qt6 do
     check_box.check_state.should eq(Qt6::CheckState::Checked)
     combo_box.count.should eq(2)
     combo_box.editable?.should be_true
+    combo_box.line_edit.should be_a(Qt6::LineEdit)
+    combo_box.completer.not_nil!.to_unsafe.should eq(completer.to_unsafe)
+    combo_box.placeholder_text.should eq("Layer kind")
+    combo_box.max_visible_items.should eq(12)
+    combo_box.max_count.should eq(6)
+    combo_box.duplicates_enabled?.should be_true
+    combo_box.frame?.should be_false
+    combo_box.insert_policy.should eq(Qt6::ComboBoxInsertPolicy::InsertAlphabetically)
+    combo_box.size_adjust_policy.should eq(Qt6::ComboBoxSizeAdjustPolicy::AdjustToContentsOnFirstShow)
+    combo_box.item_data(0).should eq("roads-meta")
+    combo_box.current_data.should eq(99)
     combo_box.current_text.should eq("Terrain")
+    combo_text_changes.should contain("Terrain")
+    combo_edit_text_changes.should contain("Overlay")
     toggled.last.should be_true
     state_changes.should contain(Qt6::CheckState::PartiallyChecked)
     state_changes.last.should eq(Qt6::CheckState::Checked)

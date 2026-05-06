@@ -13924,6 +13924,22 @@ char *qt6cr_combo_box_current_text(qt6cr_handle_t handle) {
   return combo_box == nullptr ? duplicate_string("") : duplicate_string(combo_box->currentText());
 }
 
+void qt6cr_combo_box_set_edit_text(qt6cr_handle_t handle, const char *text) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setEditText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+void qt6cr_combo_box_clear_edit_text(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->clearEditText();
+  }
+}
+
 void qt6cr_combo_box_set_current_text(qt6cr_handle_t handle, const char *text) {
   auto *combo_box = as_combo_box(handle);
 
@@ -13935,6 +13951,24 @@ void qt6cr_combo_box_set_current_text(qt6cr_handle_t handle, const char *text) {
 char *qt6cr_combo_box_item_text(qt6cr_handle_t handle, int index) {
   auto *combo_box = as_combo_box(handle);
   return combo_box == nullptr ? duplicate_string("") : duplicate_string(combo_box->itemText(index));
+}
+
+qt6cr_variant_value_t qt6cr_combo_box_current_data(qt6cr_handle_t handle, int role) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? to_variant_value(QVariant()) : to_variant_value(combo_box->currentData(role));
+}
+
+qt6cr_variant_value_t qt6cr_combo_box_item_data(qt6cr_handle_t handle, int index, int role) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? to_variant_value(QVariant()) : to_variant_value(combo_box->itemData(index, role));
+}
+
+void qt6cr_combo_box_set_item_data(qt6cr_handle_t handle, int index, int role, qt6cr_variant_value_t value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setItemData(index, from_variant_value(value), role);
+  }
 }
 
 int qt6cr_combo_box_find_text(qt6cr_handle_t handle, const char *text) {
@@ -13963,6 +13997,128 @@ bool qt6cr_combo_box_editable(qt6cr_handle_t handle) {
   return combo_box == nullptr ? false : combo_box->isEditable();
 }
 
+int qt6cr_combo_box_max_visible_items(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? 0 : combo_box->maxVisibleItems();
+}
+
+void qt6cr_combo_box_set_max_visible_items(qt6cr_handle_t handle, int value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setMaxVisibleItems(value);
+  }
+}
+
+int qt6cr_combo_box_max_count(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? 0 : combo_box->maxCount();
+}
+
+void qt6cr_combo_box_set_max_count(qt6cr_handle_t handle, int value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setMaxCount(value);
+  }
+}
+
+bool qt6cr_combo_box_duplicates_enabled(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? false : combo_box->duplicatesEnabled();
+}
+
+void qt6cr_combo_box_set_duplicates_enabled(qt6cr_handle_t handle, bool value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setDuplicatesEnabled(value);
+  }
+}
+
+bool qt6cr_combo_box_frame(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? false : combo_box->hasFrame();
+}
+
+void qt6cr_combo_box_set_frame(qt6cr_handle_t handle, bool value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setFrame(value);
+  }
+}
+
+char *qt6cr_combo_box_placeholder_text(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? duplicate_string("") : duplicate_string(combo_box->placeholderText());
+}
+
+void qt6cr_combo_box_set_placeholder_text(qt6cr_handle_t handle, const char *text) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setPlaceholderText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+int qt6cr_combo_box_insert_policy(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? 0 : static_cast<int>(combo_box->insertPolicy());
+}
+
+void qt6cr_combo_box_set_insert_policy(qt6cr_handle_t handle, int value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setInsertPolicy(static_cast<QComboBox::InsertPolicy>(value));
+  }
+}
+
+int qt6cr_combo_box_size_adjust_policy(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? 0 : static_cast<int>(combo_box->sizeAdjustPolicy());
+}
+
+void qt6cr_combo_box_set_size_adjust_policy(qt6cr_handle_t handle, int value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setSizeAdjustPolicy(static_cast<QComboBox::SizeAdjustPolicy>(value));
+  }
+}
+
+int qt6cr_combo_box_model_column(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? 0 : combo_box->modelColumn();
+}
+
+void qt6cr_combo_box_set_model_column(qt6cr_handle_t handle, int value) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setModelColumn(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_combo_box_line_edit(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? nullptr : combo_box->lineEdit();
+}
+
+qt6cr_handle_t qt6cr_combo_box_completer(qt6cr_handle_t handle) {
+  auto *combo_box = as_combo_box(handle);
+  return combo_box == nullptr ? nullptr : combo_box->completer();
+}
+
+void qt6cr_combo_box_set_completer(qt6cr_handle_t handle, qt6cr_handle_t completer) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box != nullptr) {
+    combo_box->setCompleter(as_completer(completer));
+  }
+}
+
 void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   auto *combo_box = as_combo_box(handle);
 
@@ -13972,6 +14128,30 @@ void qt6cr_combo_box_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_c
 
   QObject::connect(combo_box, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), combo_box, [callback, userdata](int index) {
     callback(userdata, index);
+  });
+}
+
+void qt6cr_combo_box_on_current_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(combo_box, &QComboBox::currentTextChanged, combo_box, [callback, userdata](const QString &text) {
+    callback(userdata, duplicate_string(text));
+  });
+}
+
+void qt6cr_combo_box_on_edit_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *combo_box = as_combo_box(handle);
+
+  if (combo_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(combo_box, &QComboBox::editTextChanged, combo_box, [callback, userdata](const QString &text) {
+    callback(userdata, duplicate_string(text));
   });
 }
 
