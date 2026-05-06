@@ -15633,6 +15633,24 @@ void qt6cr_dial_set_wrapping(qt6cr_handle_t handle, bool value) {
   }
 }
 
+int qt6cr_dial_notch_size(qt6cr_handle_t handle) {
+  auto *dial = as_dial(handle);
+  return dial == nullptr ? 0 : dial->notchSize();
+}
+
+double qt6cr_dial_notch_target(qt6cr_handle_t handle) {
+  auto *dial = as_dial(handle);
+  return dial == nullptr ? 0.0 : dial->notchTarget();
+}
+
+void qt6cr_dial_set_notch_target(qt6cr_handle_t handle, double value) {
+  auto *dial = as_dial(handle);
+
+  if (dial != nullptr) {
+    dial->setNotchTarget(value);
+  }
+}
+
 bool qt6cr_dial_notches_visible(qt6cr_handle_t handle) {
   auto *dial = as_dial(handle);
   return dial != nullptr && dial->notchesVisible();

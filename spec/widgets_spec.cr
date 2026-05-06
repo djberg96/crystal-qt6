@@ -131,6 +131,7 @@ describe Qt6 do
     dial.single_step = 15
     dial.page_step = 60
     dial.wrapping = true
+    dial.notch_target = 7.5
     dial.notches_visible = true
     dial.inverted_controls = true
     dial.value = 90
@@ -235,6 +236,8 @@ describe Qt6 do
     dial.single_step.should eq(15)
     dial.page_step.should eq(60)
     dial.wrapping?.should be_true
+    dial.notch_target.should eq(7.5)
+    dial.notch_size.should be > 0
     dial.notches_visible?.should be_true
     dial.inverted_controls?.should be_true
     dial.value.should eq(90)

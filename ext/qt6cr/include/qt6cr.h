@@ -2159,6 +2159,9 @@ qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation);
 qt6cr_handle_t qt6cr_dial_create(qt6cr_handle_t parent);
 bool qt6cr_dial_wrapping(qt6cr_handle_t handle);
 void qt6cr_dial_set_wrapping(qt6cr_handle_t handle, bool value);
+int qt6cr_dial_notch_size(qt6cr_handle_t handle);
+double qt6cr_dial_notch_target(qt6cr_handle_t handle);
+void qt6cr_dial_set_notch_target(qt6cr_handle_t handle, double value);
 bool qt6cr_dial_notches_visible(qt6cr_handle_t handle);
 void qt6cr_dial_set_notches_visible(qt6cr_handle_t handle, bool value);
 

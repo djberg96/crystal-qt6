@@ -2109,6 +2109,9 @@ module Qt6
     fun qt6cr_dial_create = qt6cr_dial_create(parent : Handle) : Handle
     fun qt6cr_dial_wrapping = qt6cr_dial_wrapping(handle : Handle) : Bool
     fun qt6cr_dial_set_wrapping = qt6cr_dial_set_wrapping(handle : Handle, value : Bool)
+    fun qt6cr_dial_notch_size = qt6cr_dial_notch_size(handle : Handle) : LibC::Int
+    fun qt6cr_dial_notch_target = qt6cr_dial_notch_target(handle : Handle) : Float64
+    fun qt6cr_dial_set_notch_target = qt6cr_dial_set_notch_target(handle : Handle, value : Float64)
     fun qt6cr_dial_notches_visible = qt6cr_dial_notches_visible(handle : Handle) : Bool
     fun qt6cr_dial_set_notches_visible = qt6cr_dial_set_notches_visible(handle : Handle, value : Bool)
     fun qt6cr_dial_on_value_changed = qt6cr_dial_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)

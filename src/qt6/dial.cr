@@ -22,6 +22,23 @@ module Qt6
       value
     end
 
+    # Returns the effective pixel spacing between visible notches.
+    def notch_size : Int32
+      LibQt6.qt6cr_dial_notch_size(to_unsafe)
+    end
+
+    # Returns the target pixel spacing Qt uses when calculating notch layout.
+    def notch_target : Float64
+      LibQt6.qt6cr_dial_notch_target(to_unsafe)
+    end
+
+    # Sets the target pixel spacing Qt uses when calculating notch layout.
+    def notch_target=(value : Number) : Float64
+      float_value = value.to_f64
+      LibQt6.qt6cr_dial_set_notch_target(to_unsafe, float_value)
+      float_value
+    end
+
     def notches_visible? : Bool
       LibQt6.qt6cr_dial_notches_visible(to_unsafe)
     end
