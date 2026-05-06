@@ -321,6 +321,7 @@ module Qt6
     fun qt6cr_widget_set_focus_policy = qt6cr_widget_set_focus_policy(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_focus = qt6cr_widget_set_focus(handle : Handle)
     fun qt6cr_widget_clear_focus = qt6cr_widget_clear_focus(handle : Handle)
+    fun qt6cr_widget_activate_window = qt6cr_widget_activate_window(handle : Handle)
     fun qt6cr_widget_move = qt6cr_widget_move(handle : Handle, x : LibC::Int, y : LibC::Int)
     fun qt6cr_widget_adjust_size = qt6cr_widget_adjust_size(handle : Handle)
     fun qt6cr_widget_raise_to_front = qt6cr_widget_raise_to_front(handle : Handle)

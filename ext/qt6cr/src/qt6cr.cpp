@@ -3599,6 +3599,14 @@ void qt6cr_widget_clear_focus(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_widget_activate_window(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->activateWindow();
+  }
+}
+
 void qt6cr_widget_move(qt6cr_handle_t handle, int x, int y) {
   auto *widget = as_widget(handle);
 

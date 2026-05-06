@@ -352,6 +352,7 @@ int qt6cr_widget_focus_policy(qt6cr_handle_t handle);
 void qt6cr_widget_set_focus_policy(qt6cr_handle_t handle, int value);
 void qt6cr_widget_set_focus(qt6cr_handle_t handle);
 void qt6cr_widget_clear_focus(qt6cr_handle_t handle);
+void qt6cr_widget_activate_window(qt6cr_handle_t handle);
 void qt6cr_widget_move(qt6cr_handle_t handle, int x, int y);
 void qt6cr_widget_adjust_size(qt6cr_handle_t handle);
 void qt6cr_widget_raise_to_front(qt6cr_handle_t handle);

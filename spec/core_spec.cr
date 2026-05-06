@@ -501,9 +501,15 @@ describe Qt6 do
       application.auto_sip_enabled = !previous_auto_sip_enabled
 
       window.show
+      window.raise_to_front
+      window.activate_window
       application.process_events
       line_edit.set_focus
-      5.times { application.process_events }
+      20.times do
+        application.process_events
+        break if line_edit.has_focus? || application.focus_widget.try(&.to_unsafe) == line_edit.to_unsafe
+        sleep 10.milliseconds
+      end
 
       application.cursor_flash_time.should eq(previous_cursor_flash_time + 100)
       application.double_click_interval.should eq(previous_double_click_interval + 25)
@@ -515,6 +521,7 @@ describe Qt6 do
       if active_window = application.active_window
         active_window.to_unsafe.should eq(window.to_unsafe)
       end
+      line_edit.has_focus?.should be_true
       application.focus_widget.should_not be_nil
       application.focus_widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
 

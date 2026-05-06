@@ -261,6 +261,12 @@ module Qt6
       self
     end
 
+    # Requests activation for the widget's top-level window.
+    def activate_window : self
+      LibQt6.qt6cr_widget_activate_window(@to_unsafe)
+      self
+    end
+
     # Moves the widget to the given parent-relative position and returns `self`.
     def move(x : Int, y : Int) : self
       LibQt6.qt6cr_widget_move(@to_unsafe, x, y)
