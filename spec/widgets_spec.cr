@@ -294,8 +294,40 @@ describe Qt6 do
     tool_button.enabled = true
 
     toggled_states = [] of Bool
+    clicked_labels = [] of String
+    pressed_labels = [] of String
+    released_labels = [] of String
+    clicked_ids = [] of Int32
+    pressed_ids = [] of Int32
+    released_ids = [] of Int32
+    group_toggles = [] of Tuple(String, Bool)
+    id_toggles = [] of Tuple(Int32, Bool)
     select_button.on_toggled do |value|
       toggled_states << value
+    end
+    mode_group.on_button_clicked do |button|
+      clicked_labels << (button.try(&.text) || "")
+    end
+    mode_group.on_button_pressed do |button|
+      pressed_labels << (button.try(&.text) || "")
+    end
+    mode_group.on_button_released do |button|
+      released_labels << (button.try(&.text) || "")
+    end
+    mode_group.on_button_toggled do |button, checked|
+      group_toggles << {(button.try(&.text) || ""), checked}
+    end
+    mode_group.on_id_clicked do |id|
+      clicked_ids << id
+    end
+    mode_group.on_id_pressed do |id|
+      pressed_ids << id
+    end
+    mode_group.on_id_released do |id|
+      released_ids << id
+    end
+    mode_group.on_id_toggled do |id, checked|
+      id_toggles << {id, checked}
     end
 
     place_button.checkable = true
@@ -308,6 +340,32 @@ describe Qt6 do
     mode_group.checked_button.not_nil!.to_unsafe.should eq(select_button.to_unsafe)
     mode_group.set_id(select_button, 5).should eq(5)
     mode_group.button(5).not_nil!.to_unsafe.should eq(select_button.to_unsafe)
+    mode_group.buttons.map(&.text).sort.should eq(["Place", "Select"])
+    mode_group << tool_button
+    mode_group.buttons.map(&.text).sort.should eq([tool_button.text, "Place", "Select"].sort)
+    mode_group.remove(tool_button)
+    mode_group.buttons.map(&.text).sort.should eq(["Place", "Select"])
+    clicked_labels.clear
+    pressed_labels.clear
+    released_labels.clear
+    clicked_ids.clear
+    pressed_ids.clear
+    released_ids.clear
+    group_toggles.clear
+    id_toggles.clear
+    select_button.click
+    place_button.click
+    application.process_events
+    clicked_labels.should eq(["Select", "Place"])
+    pressed_labels.should eq(["Select", "Place"])
+    released_labels.should eq(["Select", "Place"])
+    clicked_ids.should eq([5, 0])
+    pressed_ids.should eq([5, 0])
+    released_ids.should eq([5, 0])
+    group_toggles.should eq([{"Select", false}, {"Place", true}])
+    id_toggles.should eq([{5, false}, {0, true}])
+    select_button.click
+    application.process_events
 
     separator = Qt6::Frame.new
     separator.frame_shape = Qt6::FrameShape::HLine
@@ -380,6 +438,7 @@ describe Qt6 do
     place_button.checked?.should be_false
     select_button.checked?.should be_true
     mode_group.checked_id.should eq(5)
+    mode_group.buttons.size.should eq(2)
     mode_group.button(5).not_nil!.text.should eq("Select")
     mode_group.button(5).not_nil!.checked?.should be_true
     toggled_states.last.should be_true

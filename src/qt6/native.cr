@@ -102,6 +102,11 @@ module Qt6
       size : LibC::Int
     end
 
+    struct HandleArrayValue
+      data : Handle*
+      size : LibC::Int
+    end
+
     struct GradientStopValue
       position : Float64
       color : ColorValue
@@ -2509,12 +2514,21 @@ module Qt6
     fun qt6cr_button_group_is_exclusive = qt6cr_button_group_is_exclusive(handle : Handle) : Bool
     fun qt6cr_button_group_set_exclusive = qt6cr_button_group_set_exclusive(handle : Handle, value : Bool)
     fun qt6cr_button_group_add_button = qt6cr_button_group_add_button(handle : Handle, button : Handle, id : LibC::Int)
+    fun qt6cr_button_group_buttons = qt6cr_button_group_buttons(handle : Handle) : HandleArrayValue
     fun qt6cr_button_group_button = qt6cr_button_group_button(handle : Handle, id : LibC::Int) : Handle
     fun qt6cr_button_group_checked_id = qt6cr_button_group_checked_id(handle : Handle) : LibC::Int
     fun qt6cr_button_group_checked_button = qt6cr_button_group_checked_button(handle : Handle) : Handle
     fun qt6cr_button_group_id = qt6cr_button_group_id(handle : Handle, button : Handle) : LibC::Int
     fun qt6cr_button_group_set_id = qt6cr_button_group_set_id(handle : Handle, button : Handle, id : LibC::Int)
     fun qt6cr_button_group_remove_button = qt6cr_button_group_remove_button(handle : Handle, button : Handle)
+    fun qt6cr_button_group_on_button_clicked = qt6cr_button_group_on_button_clicked(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_button_group_on_button_pressed = qt6cr_button_group_on_button_pressed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_button_group_on_button_released = qt6cr_button_group_on_button_released(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_button_group_on_button_toggled = qt6cr_button_group_on_button_toggled(handle : Handle, callback : (Handle, Handle, Bool ->), userdata : Handle)
+    fun qt6cr_button_group_on_id_clicked = qt6cr_button_group_on_id_clicked(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_button_group_on_id_pressed = qt6cr_button_group_on_id_pressed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_button_group_on_id_released = qt6cr_button_group_on_id_released(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_button_group_on_id_toggled = qt6cr_button_group_on_id_toggled(handle : Handle, callback : (Handle, LibC::Int, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_timer_create = qt6cr_timer_create(parent : Handle) : Handle
     fun qt6cr_timer_set_interval = qt6cr_timer_set_interval(handle : Handle, interval : LibC::Int)
@@ -2562,6 +2576,7 @@ module Qt6
     fun qt6cr_string_free = qt6cr_string_free(value : UInt8*)
     fun qt6cr_string_array_free = qt6cr_string_array_free(value : StringArrayValue)
     fun qt6cr_int_array_free = qt6cr_int_array_free(value : IntArrayValue)
+    fun qt6cr_handle_array_free = qt6cr_handle_array_free(value : HandleArrayValue)
     fun qt6cr_gradient_stop_array_free = qt6cr_gradient_stop_array_free(value : GradientStopArrayValue)
   end
 end

@@ -221,6 +221,7 @@ QGraphicsOpacityEffect *as_graphics_opacity_effect(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1329,6 +1330,22 @@ qt6cr_int_array_t to_int_array_value(const QList<int> &values) {
   }
 
   return qt6cr_int_array_t{copy, size};
+}
+
+qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
 }
 
 QMimeData *clone_mime_data(const QMimeData *source) {
@@ -17830,6 +17847,11 @@ void qt6cr_button_group_add_button(qt6cr_handle_t handle, qt6cr_handle_t button,
   }
 }
 
+qt6cr_handle_array_t qt6cr_button_group_buttons(qt6cr_handle_t handle) {
+  auto *button_group = as_button_group(handle);
+  return button_group == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(button_group->buttons());
+}
+
 qt6cr_handle_t qt6cr_button_group_button(qt6cr_handle_t handle, int id) {
   auto *button_group = as_button_group(handle);
   return button_group == nullptr ? nullptr : button_group->button(id);
@@ -17867,6 +17889,102 @@ void qt6cr_button_group_remove_button(qt6cr_handle_t handle, qt6cr_handle_t butt
   if (button_group != nullptr && abstract_button != nullptr) {
     button_group->removeButton(abstract_button);
   }
+}
+
+void qt6cr_button_group_on_button_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::buttonClicked, button_group, [callback, userdata](QAbstractButton *button) {
+    callback(userdata, button);
+  });
+}
+
+void qt6cr_button_group_on_button_pressed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::buttonPressed, button_group, [callback, userdata](QAbstractButton *button) {
+    callback(userdata, button);
+  });
+}
+
+void qt6cr_button_group_on_button_released(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::buttonReleased, button_group, [callback, userdata](QAbstractButton *button) {
+    callback(userdata, button);
+  });
+}
+
+void qt6cr_button_group_on_button_toggled(qt6cr_handle_t handle, qt6cr_handle_bool_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::buttonToggled, button_group, [callback, userdata](QAbstractButton *button, bool checked) {
+    callback(userdata, button, checked);
+  });
+}
+
+void qt6cr_button_group_on_id_clicked(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::idClicked, button_group, [callback, userdata](int id) {
+    callback(userdata, id);
+  });
+}
+
+void qt6cr_button_group_on_id_pressed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::idPressed, button_group, [callback, userdata](int id) {
+    callback(userdata, id);
+  });
+}
+
+void qt6cr_button_group_on_id_released(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::idReleased, button_group, [callback, userdata](int id) {
+    callback(userdata, id);
+  });
+}
+
+void qt6cr_button_group_on_id_toggled(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *button_group = as_button_group(handle);
+
+  if (button_group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_group, &QButtonGroup::idToggled, button_group, [callback, userdata](int id, bool checked) {
+    callback(userdata, id, checked ? 1 : 0);
+  });
 }
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent) {
@@ -18150,6 +18268,14 @@ void qt6cr_string_array_free(qt6cr_string_array_t value) {
 }
 
 void qt6cr_int_array_free(qt6cr_int_array_t value) {
+  if (value.data == nullptr || value.size <= 0) {
+    return;
+  }
+
+  delete[] value.data;
+}
+
+void qt6cr_handle_array_free(qt6cr_handle_array_t value) {
   if (value.data == nullptr || value.size <= 0) {
     return;
   }

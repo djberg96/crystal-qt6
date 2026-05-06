@@ -93,6 +93,11 @@ typedef struct {
 } qt6cr_int_array_t;
 
 typedef struct {
+	qt6cr_handle_t *data;
+	int size;
+} qt6cr_handle_array_t;
+
+typedef struct {
 	double position;
 	qt6cr_color_t color;
 } qt6cr_gradient_stop_t;
@@ -124,6 +129,7 @@ typedef void (*qt6cr_int_callback_t)(void *userdata, int value);
 typedef void (*qt6cr_two_int_callback_t)(void *userdata, int first, int second);
 typedef void (*qt6cr_double_callback_t)(void *userdata, double value);
 typedef void (*qt6cr_handle_callback_t)(void *userdata, qt6cr_handle_t handle);
+typedef void (*qt6cr_handle_bool_callback_t)(void *userdata, qt6cr_handle_t handle, bool value);
 typedef void (*qt6cr_string_callback_t)(void *userdata, const char *value);
 typedef void (*qt6cr_three_string_callback_t)(void *userdata, const char *first, const char *second, const char *third);
 typedef bool (*qt6cr_event_filter_callback_t)(void *userdata, qt6cr_handle_t watched, qt6cr_handle_t event);
@@ -2523,12 +2529,21 @@ qt6cr_handle_t qt6cr_button_group_create(qt6cr_handle_t parent);
 bool qt6cr_button_group_is_exclusive(qt6cr_handle_t handle);
 void qt6cr_button_group_set_exclusive(qt6cr_handle_t handle, bool value);
 void qt6cr_button_group_add_button(qt6cr_handle_t handle, qt6cr_handle_t button, int id);
+qt6cr_handle_array_t qt6cr_button_group_buttons(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_button_group_button(qt6cr_handle_t handle, int id);
 int qt6cr_button_group_checked_id(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_button_group_checked_button(qt6cr_handle_t handle);
 int qt6cr_button_group_id(qt6cr_handle_t handle, qt6cr_handle_t button);
 void qt6cr_button_group_set_id(qt6cr_handle_t handle, qt6cr_handle_t button, int id);
 void qt6cr_button_group_remove_button(qt6cr_handle_t handle, qt6cr_handle_t button);
+void qt6cr_button_group_on_button_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_button_group_on_button_pressed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_button_group_on_button_released(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_button_group_on_button_toggled(qt6cr_handle_t handle, qt6cr_handle_bool_callback_t callback, void *userdata);
+void qt6cr_button_group_on_id_clicked(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_button_group_on_id_pressed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_button_group_on_id_released(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_button_group_on_id_toggled(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_timer_create(qt6cr_handle_t parent);
 void qt6cr_timer_set_interval(qt6cr_handle_t handle, int interval);
@@ -2576,6 +2591,7 @@ void qt6cr_layout_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_string_free(char *value);
 void qt6cr_string_array_free(qt6cr_string_array_t value);
 void qt6cr_int_array_free(qt6cr_int_array_t value);
+void qt6cr_handle_array_free(qt6cr_handle_array_t value);
 void qt6cr_gradient_stop_array_free(qt6cr_gradient_stop_array_t value);
 
 #ifdef __cplusplus

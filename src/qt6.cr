@@ -387,6 +387,24 @@ module Qt6
     ints
   end
 
+  def self.copy_and_release_handles(value : LibQt6::HandleArrayValue) : Array(LibQt6::Handle)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_handle_array_free(value)
+      return [] of LibQt6::Handle
+    end
+
+    handles = Array(LibQt6::Handle).new(size)
+    size.times do |index|
+      handles << pointer[index]
+    end
+
+    LibQt6.qt6cr_handle_array_free(value)
+    handles
+  end
+
   def self.copy_and_release_gradient_stops(value : LibQt6::GradientStopArrayValue) : Array(GradientStop)
     pointer = value.data
     size = value.size
