@@ -4177,6 +4177,58 @@ int qt6cr_file_dialog_file_mode(qt6cr_handle_t handle) {
   return file_dialog == nullptr ? 0 : static_cast<int>(file_dialog->fileMode());
 }
 
+void qt6cr_file_dialog_set_view_mode(qt6cr_handle_t handle, int view_mode) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setViewMode(static_cast<QFileDialog::ViewMode>(view_mode));
+  }
+}
+
+int qt6cr_file_dialog_view_mode(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? 0 : static_cast<int>(file_dialog->viewMode());
+}
+
+void qt6cr_file_dialog_set_options(qt6cr_handle_t handle, int options) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setOptions(static_cast<QFileDialog::Options>(options));
+  }
+}
+
+int qt6cr_file_dialog_options(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? 0 : static_cast<int>(file_dialog->options());
+}
+
+void qt6cr_file_dialog_set_option(qt6cr_handle_t handle, int option, bool value) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setOption(static_cast<QFileDialog::Option>(option), value);
+  }
+}
+
+bool qt6cr_file_dialog_test_option(qt6cr_handle_t handle, int option) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? false : file_dialog->testOption(static_cast<QFileDialog::Option>(option));
+}
+
+void qt6cr_file_dialog_set_filter(qt6cr_handle_t handle, int filters) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setFilter(static_cast<QDir::Filters>(filters));
+  }
+}
+
+int qt6cr_file_dialog_filter(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? 0 : static_cast<int>(file_dialog->filter());
+}
+
 void qt6cr_file_dialog_set_directory(qt6cr_handle_t handle, const char *directory) {
   auto *file_dialog = as_file_dialog(handle);
 
@@ -4201,6 +4253,111 @@ void qt6cr_file_dialog_set_name_filter(qt6cr_handle_t handle, const char *filter
 char *qt6cr_file_dialog_name_filter(qt6cr_handle_t handle) {
   auto *file_dialog = as_file_dialog(handle);
   return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->nameFilters().join(QStringLiteral(";;")));
+}
+
+void qt6cr_file_dialog_set_name_filters(qt6cr_handle_t handle, const char *const *filters, int count) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog == nullptr) {
+    return;
+  }
+
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    const char *value = filters == nullptr ? nullptr : filters[index];
+    values << QString::fromUtf8(value == nullptr ? "" : value);
+  }
+
+  file_dialog->setNameFilters(values);
+}
+
+qt6cr_string_array_t qt6cr_file_dialog_name_filters(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(file_dialog->nameFilters());
+}
+
+void qt6cr_file_dialog_select_name_filter(qt6cr_handle_t handle, const char *filter) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->selectNameFilter(QString::fromUtf8(filter == nullptr ? "" : filter));
+  }
+}
+
+char *qt6cr_file_dialog_selected_name_filter(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->selectedNameFilter());
+}
+
+void qt6cr_file_dialog_set_default_suffix(qt6cr_handle_t handle, const char *suffix) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setDefaultSuffix(QString::fromUtf8(suffix == nullptr ? "" : suffix));
+  }
+}
+
+char *qt6cr_file_dialog_default_suffix(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->defaultSuffix());
+}
+
+void qt6cr_file_dialog_set_history(qt6cr_handle_t handle, const char *const *paths, int count) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog == nullptr) {
+    return;
+  }
+
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    const char *value = paths == nullptr ? nullptr : paths[index];
+    values << QString::fromUtf8(value == nullptr ? "" : value);
+  }
+
+  file_dialog->setHistory(values);
+}
+
+qt6cr_string_array_t qt6cr_file_dialog_history(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(file_dialog->history());
+}
+
+void qt6cr_file_dialog_set_label_text(qt6cr_handle_t handle, int label, const char *text) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog != nullptr) {
+    file_dialog->setLabelText(
+      static_cast<QFileDialog::DialogLabel>(label),
+      QString::fromUtf8(text == nullptr ? "" : text)
+    );
+  }
+}
+
+char *qt6cr_file_dialog_label_text(qt6cr_handle_t handle, int label) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? duplicate_string("") : duplicate_string(file_dialog->labelText(static_cast<QFileDialog::DialogLabel>(label)));
+}
+
+void qt6cr_file_dialog_set_supported_schemes(qt6cr_handle_t handle, const char *const *schemes, int count) {
+  auto *file_dialog = as_file_dialog(handle);
+
+  if (file_dialog == nullptr) {
+    return;
+  }
+
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    const char *value = schemes == nullptr ? nullptr : schemes[index];
+    values << QString::fromUtf8(value == nullptr ? "" : value);
+  }
+
+  file_dialog->setSupportedSchemes(values);
+}
+
+qt6cr_string_array_t qt6cr_file_dialog_supported_schemes(qt6cr_handle_t handle) {
+  auto *file_dialog = as_file_dialog(handle);
+  return file_dialog == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(file_dialog->supportedSchemes());
 }
 
 void qt6cr_file_dialog_select_file(qt6cr_handle_t handle, const char *path) {
@@ -4245,6 +4402,15 @@ char *qt6cr_file_dialog_get_save_file_name(qt6cr_handle_t parent, const char *ti
       QString::fromUtf8(title == nullptr ? "" : title),
       QString::fromUtf8(directory == nullptr ? "" : directory),
       QString::fromUtf8(filter == nullptr ? "" : filter));
+  return result.isEmpty() ? nullptr : duplicate_string(result);
+}
+
+char *qt6cr_file_dialog_get_existing_directory(qt6cr_handle_t parent, const char *title, const char *directory, int options) {
+  const auto result = QFileDialog::getExistingDirectory(
+      as_widget(parent),
+      QString::fromUtf8(title == nullptr ? "" : title),
+      QString::fromUtf8(directory == nullptr ? "" : directory),
+      static_cast<QFileDialog::Options>(options));
   return result.isEmpty() ? nullptr : duplicate_string(result);
 }
 

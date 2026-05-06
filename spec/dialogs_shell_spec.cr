@@ -194,8 +194,18 @@ describe Qt6 do
 
     file_dialog.accept_mode = Qt6::FileDialogAcceptMode::Save
     file_dialog.file_mode = Qt6::FileDialogFileMode::AnyFile
+    file_dialog.view_mode = Qt6::FileDialogViewMode::List
+    file_dialog.options = Qt6::FileDialogOption::DontUseNativeDialog | Qt6::FileDialogOption::ReadOnly
+    file_dialog.set_option(Qt6::FileDialogOption::HideNameFilterDetails)
+    file_dialog.filter = Qt6::DirectoryFilter::Files | Qt6::DirectoryFilter::NoDotAndDotDot
     file_dialog.directory = "/tmp"
     file_dialog.name_filter = "Maps (*.map *.json)"
+    file_dialog.name_filters = ["Maps (*.map *.json)", "Images (*.png *.jpg)"]
+    file_dialog.select_name_filter("Images (*.png *.jpg)")
+    file_dialog.default_suffix = "map"
+    file_dialog.history = ["/tmp", "/var/tmp"]
+    file_dialog.set_label_text(Qt6::FileDialogLabel::Accept, "Export")
+    file_dialog.supported_schemes = ["file", "https"]
     file_dialog.select_file("/tmp/example.map")
 
     message_box.window_title.should eq("Unsaved Changes")
@@ -209,8 +219,20 @@ describe Qt6 do
 
     file_dialog.accept_mode.should eq(Qt6::FileDialogAcceptMode::Save)
     file_dialog.file_mode.should eq(Qt6::FileDialogFileMode::AnyFile)
+    file_dialog.view_mode.should eq(Qt6::FileDialogViewMode::List)
+    file_dialog.options.includes?(Qt6::FileDialogOption::DontUseNativeDialog).should be_true
+    file_dialog.options.includes?(Qt6::FileDialogOption::ReadOnly).should be_true
+    file_dialog.option?(Qt6::FileDialogOption::HideNameFilterDetails).should be_true
+    file_dialog.filter.includes?(Qt6::DirectoryFilter::Files).should be_true
+    file_dialog.filter.includes?(Qt6::DirectoryFilter::NoDotAndDotDot).should be_true
     file_dialog.directory.should eq("/tmp")
-    file_dialog.name_filter.should eq("Maps (*.map *.json)")
+    file_dialog.name_filter.should eq("Maps (*.map *.json);;Images (*.png *.jpg)")
+    file_dialog.name_filters.should eq(["Maps (*.map *.json)", "Images (*.png *.jpg)"])
+    file_dialog.selected_name_filter.should eq("Images (*.png *.jpg)")
+    file_dialog.default_suffix.should eq("map")
+    file_dialog.history.should eq(["/tmp", "/var/tmp"])
+    file_dialog.label_text(Qt6::FileDialogLabel::Accept).should eq("Export")
+    file_dialog.supported_schemes.should eq(["file", "https"])
     window.release
   end
 
@@ -787,6 +809,7 @@ describe Qt6 do
     file_dialog.file_mode.should eq(Qt6::FileDialogFileMode::ExistingFiles)
     file_dialog.directory.should eq("/tmp")
     file_dialog.name_filter.should eq("Maps (*.map *.json)")
+    file_dialog.selected_files.should eq(["/tmp/second.map"])
     triggered.should eq(["export-png"])
 
     loop.release
