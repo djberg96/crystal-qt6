@@ -743,15 +743,39 @@ describe Qt6 do
     name_field = Qt6::LineEdit.new("Terrain")
     kind_field = Qt6::ComboBox.new
     kind_field << "Hexes" << "Terrain"
+    description_field = Qt6::LineEdit.new("Detailed terrain notes")
+    temporary_field = Qt6::LineEdit.new("Temporary")
     primary = Qt6::PushButton.new("Primary")
     secondary = Qt6::PushButton.new("Secondary")
     top_left = Qt6::Label.new("A")
     top_right = Qt6::Label.new("B")
     footer = Qt6::Label.new("Footer")
+    kind_label = Qt6::Label.new("Kind")
+    map_name_label = Qt6::Label.new("Map Name")
+    advanced_row = Qt6::HBoxLayout.new
+    advanced_toggle = Qt6::CheckBox.new("Advanced")
+    advanced_mode = Qt6::ComboBox.new
+    advanced_mode << "Fog" << "LOS"
+    notes_layout = Qt6::HBoxLayout.new
+    notes_label = Qt6::Label.new("Notes")
+    notes_value = Qt6::Label.new("Ready")
 
-    window.form do |form|
-      form.add_row("Name", name_field)
-      form.add_row(Qt6::Label.new("Kind"), kind_field)
+    form = window.form do |form|
+      form.field_growth_policy = Qt6::FormLayoutFieldGrowthPolicy::ExpandingFieldsGrow
+      form.row_wrap_policy = Qt6::FormLayoutRowWrapPolicy::WrapLongRows
+      form.label_alignment = Qt6::AlignmentFlag::Right
+      form.form_alignment = Qt6::AlignmentFlag::Top | Qt6::AlignmentFlag::Left
+      form.horizontal_spacing = 12
+      form.vertical_spacing = 9
+      form.add_row(map_name_label, name_field)
+      form.add_row(kind_label, kind_field)
+      form.insert_row(1, "Description", description_field)
+      form.add_row("Advanced", advanced_row)
+      advanced_row.add_stretch
+      advanced_row << advanced_toggle
+      advanced_row << advanced_mode
+      notes_layout << notes_label
+      notes_layout << notes_value
       form.add_row(Qt6::Widget.new.tap do |button_row|
         button_row.hbox do |row|
           row.add_stretch
@@ -768,13 +792,35 @@ describe Qt6 do
           grid.add(footer, 1, 0, 1, 2)
         end
       end)
+      form.add_row("Temporary", temporary_field)
+      form.add_row(notes_layout)
     end
+    form.set_row_visible(advanced_row, false)
+    form.set_row_visible(advanced_row, true)
+    form.set_row_visible(notes_layout, false)
+    form.set_row_visible(notes_layout, true)
+    form.remove_row(temporary_field)
 
     name_field.text.should eq("Terrain")
+    description_field.text.should eq("Detailed terrain notes")
     kind_field.count.should eq(2)
+    advanced_mode.count.should eq(2)
     top_left.text.should eq("A")
     top_right.text.should eq("B")
     footer.text.should eq("Footer")
+    form.field_growth_policy.should eq(Qt6::FormLayoutFieldGrowthPolicy::ExpandingFieldsGrow)
+    form.row_wrap_policy.should eq(Qt6::FormLayoutRowWrapPolicy::WrapLongRows)
+    form.label_alignment.should eq(Qt6::AlignmentFlag::Right)
+    form.form_alignment.should eq(Qt6::AlignmentFlag::Top | Qt6::AlignmentFlag::Left)
+    form.horizontal_spacing.should eq(12)
+    form.vertical_spacing.should eq(9)
+    form.row_count.should eq(7)
+    form.label_for_field(name_field).not_nil!.to_unsafe.should eq(map_name_label.to_unsafe)
+    form.label_for_field(kind_field).not_nil!.to_unsafe.should eq(kind_label.to_unsafe)
+    form.label_for_field(advanced_row).should_not be_nil
+    form.row_visible?(advanced_row).should be_true
+    form.row_visible?(notes_layout).should be_true
+    notes_value.text.should eq("Ready")
     window.release
   end
 

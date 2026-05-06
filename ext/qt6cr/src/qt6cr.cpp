@@ -19586,9 +19586,96 @@ qt6cr_handle_t qt6cr_form_layout_create(qt6cr_handle_t parent_widget) {
   return new QFormLayout(as_widget(parent_widget));
 }
 
+void qt6cr_form_layout_set_field_growth_policy(qt6cr_handle_t handle, int policy) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setFieldGrowthPolicy(static_cast<QFormLayout::FieldGrowthPolicy>(policy));
+  }
+}
+
+int qt6cr_form_layout_field_growth_policy(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : static_cast<int>(layout->fieldGrowthPolicy());
+}
+
+void qt6cr_form_layout_set_row_wrap_policy(qt6cr_handle_t handle, int policy) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setRowWrapPolicy(static_cast<QFormLayout::RowWrapPolicy>(policy));
+  }
+}
+
+int qt6cr_form_layout_row_wrap_policy(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : static_cast<int>(layout->rowWrapPolicy());
+}
+
+void qt6cr_form_layout_set_label_alignment(qt6cr_handle_t handle, int alignment) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setLabelAlignment(static_cast<Qt::Alignment>(alignment));
+  }
+}
+
+int qt6cr_form_layout_label_alignment(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : static_cast<int>(layout->labelAlignment());
+}
+
+void qt6cr_form_layout_set_form_alignment(qt6cr_handle_t handle, int alignment) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setFormAlignment(static_cast<Qt::Alignment>(alignment));
+  }
+}
+
+int qt6cr_form_layout_form_alignment(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : static_cast<int>(layout->formAlignment());
+}
+
+void qt6cr_form_layout_set_horizontal_spacing(qt6cr_handle_t handle, int spacing) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setHorizontalSpacing(spacing);
+  }
+}
+
+int qt6cr_form_layout_horizontal_spacing(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : layout->horizontalSpacing();
+}
+
+void qt6cr_form_layout_set_vertical_spacing(qt6cr_handle_t handle, int spacing) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setVerticalSpacing(spacing);
+  }
+}
+
+int qt6cr_form_layout_vertical_spacing(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : layout->verticalSpacing();
+}
+
 void qt6cr_form_layout_add_row_label_widget(qt6cr_handle_t handle, const char *label, qt6cr_handle_t field_widget) {
   auto *layout = as_form_layout(handle);
   auto *field = as_widget(field_widget);
+
+  if (layout != nullptr && field != nullptr) {
+    layout->addRow(QString::fromUtf8(label == nullptr ? "" : label), field);
+  }
+}
+
+void qt6cr_form_layout_add_row_label_layout(qt6cr_handle_t handle, const char *label, qt6cr_handle_t field_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_layout(field_layout);
 
   if (layout != nullptr && field != nullptr) {
     layout->addRow(QString::fromUtf8(label == nullptr ? "" : label), field);
@@ -19605,6 +19692,16 @@ void qt6cr_form_layout_add_row_widget_widget(qt6cr_handle_t handle, qt6cr_handle
   }
 }
 
+void qt6cr_form_layout_add_row_widget_layout(qt6cr_handle_t handle, qt6cr_handle_t label_widget, qt6cr_handle_t field_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *label = as_widget(label_widget);
+  auto *field = as_layout(field_layout);
+
+  if (layout != nullptr && label != nullptr && field != nullptr) {
+    layout->addRow(label, field);
+  }
+}
+
 void qt6cr_form_layout_add_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   auto *layout = as_form_layout(handle);
   auto *child = as_widget(widget);
@@ -19612,6 +19709,175 @@ void qt6cr_form_layout_add_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widg
   if (layout != nullptr && child != nullptr) {
     layout->addRow(child);
   }
+}
+
+void qt6cr_form_layout_add_row_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->addRow(child);
+  }
+}
+
+void qt6cr_form_layout_insert_row_label_widget(qt6cr_handle_t handle, int row, const char *label, qt6cr_handle_t field_widget) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_widget(field_widget);
+
+  if (layout != nullptr && field != nullptr) {
+    layout->insertRow(row, QString::fromUtf8(label == nullptr ? "" : label), field);
+  }
+}
+
+void qt6cr_form_layout_insert_row_label_layout(qt6cr_handle_t handle, int row, const char *label, qt6cr_handle_t field_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_layout(field_layout);
+
+  if (layout != nullptr && field != nullptr) {
+    layout->insertRow(row, QString::fromUtf8(label == nullptr ? "" : label), field);
+  }
+}
+
+void qt6cr_form_layout_insert_row_widget_widget(qt6cr_handle_t handle, int row, qt6cr_handle_t label_widget, qt6cr_handle_t field_widget) {
+  auto *layout = as_form_layout(handle);
+  auto *label = as_widget(label_widget);
+  auto *field = as_widget(field_widget);
+
+  if (layout != nullptr && label != nullptr && field != nullptr) {
+    layout->insertRow(row, label, field);
+  }
+}
+
+void qt6cr_form_layout_insert_row_widget_layout(qt6cr_handle_t handle, int row, qt6cr_handle_t label_widget, qt6cr_handle_t field_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *label = as_widget(label_widget);
+  auto *field = as_layout(field_layout);
+
+  if (layout != nullptr && label != nullptr && field != nullptr) {
+    layout->insertRow(row, label, field);
+  }
+}
+
+void qt6cr_form_layout_insert_row_widget(qt6cr_handle_t handle, int row, qt6cr_handle_t widget) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->insertRow(row, child);
+  }
+}
+
+void qt6cr_form_layout_insert_row_layout(qt6cr_handle_t handle, int row, qt6cr_handle_t child_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->insertRow(row, child);
+  }
+}
+
+void qt6cr_form_layout_remove_row(qt6cr_handle_t handle, int row) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->removeRow(row);
+  }
+}
+
+void qt6cr_form_layout_remove_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->removeRow(child);
+  }
+}
+
+void qt6cr_form_layout_remove_row_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->removeRow(child);
+  }
+}
+
+void qt6cr_form_layout_set_widget(qt6cr_handle_t handle, int row, int role, qt6cr_handle_t widget) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->setWidget(row, static_cast<QFormLayout::ItemRole>(role), child);
+  }
+}
+
+void qt6cr_form_layout_set_layout(qt6cr_handle_t handle, int row, int role, qt6cr_handle_t child_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->setLayout(row, static_cast<QFormLayout::ItemRole>(role), child);
+  }
+}
+
+void qt6cr_form_layout_set_row_visible(qt6cr_handle_t handle, int row, bool on) {
+  auto *layout = as_form_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setRowVisible(row, on);
+  }
+}
+
+void qt6cr_form_layout_set_row_visible_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, bool on) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_widget(widget);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->setRowVisible(child, on);
+  }
+}
+
+void qt6cr_form_layout_set_row_visible_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout, bool on) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_layout(child_layout);
+
+  if (layout != nullptr && child != nullptr) {
+    layout->setRowVisible(child, on);
+  }
+}
+
+bool qt6cr_form_layout_is_row_visible(qt6cr_handle_t handle, int row) {
+  auto *layout = as_form_layout(handle);
+  return layout != nullptr && layout->isRowVisible(row);
+}
+
+bool qt6cr_form_layout_is_row_visible_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_widget(widget);
+  return layout != nullptr && child != nullptr && layout->isRowVisible(child);
+}
+
+bool qt6cr_form_layout_is_row_visible_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *child = as_layout(child_layout);
+  return layout != nullptr && child != nullptr && layout->isRowVisible(child);
+}
+
+qt6cr_handle_t qt6cr_form_layout_label_for_field_widget(qt6cr_handle_t handle, qt6cr_handle_t field_widget) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_widget(field_widget);
+  return layout == nullptr || field == nullptr ? nullptr : layout->labelForField(field);
+}
+
+qt6cr_handle_t qt6cr_form_layout_label_for_field_layout(qt6cr_handle_t handle, qt6cr_handle_t field_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_layout(field_layout);
+  return layout == nullptr || field == nullptr ? nullptr : layout->labelForField(field);
+}
+
+int qt6cr_form_layout_row_count(qt6cr_handle_t handle) {
+  auto *layout = as_form_layout(handle);
+  return layout == nullptr ? 0 : layout->rowCount();
 }
 
 int qt6cr_layout_spacing(qt6cr_handle_t handle) {
