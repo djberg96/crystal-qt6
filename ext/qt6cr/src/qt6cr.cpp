@@ -11630,9 +11630,88 @@ void qt6cr_dock_widget_set_floating(qt6cr_handle_t handle, bool value) {
   }
 }
 
+int qt6cr_dock_widget_features(qt6cr_handle_t handle) {
+  auto *dock = as_dock_widget(handle);
+  return dock == nullptr ? static_cast<int>(QDockWidget::NoDockWidgetFeatures) : static_cast<int>(dock->features());
+}
+
+void qt6cr_dock_widget_set_features(qt6cr_handle_t handle, int value) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock != nullptr) {
+    dock->setFeatures(static_cast<QDockWidget::DockWidgetFeatures>(value));
+  }
+}
+
+int qt6cr_dock_widget_allowed_areas(qt6cr_handle_t handle) {
+  auto *dock = as_dock_widget(handle);
+  return dock == nullptr ? static_cast<int>(Qt::NoDockWidgetArea) : static_cast<int>(dock->allowedAreas());
+}
+
+void qt6cr_dock_widget_set_allowed_areas(qt6cr_handle_t handle, int value) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock != nullptr) {
+    dock->setAllowedAreas(static_cast<Qt::DockWidgetAreas>(value));
+  }
+}
+
+bool qt6cr_dock_widget_is_area_allowed(qt6cr_handle_t handle, int area) {
+  auto *dock = as_dock_widget(handle);
+  return dock != nullptr && dock->isAreaAllowed(static_cast<Qt::DockWidgetArea>(area));
+}
+
 qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle) {
   auto *dock = as_dock_widget(handle);
   return dock == nullptr ? nullptr : static_cast<qt6cr_handle_t>(dock->toggleViewAction());
+}
+
+void qt6cr_dock_widget_on_features_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dock, &QDockWidget::featuresChanged, dock, [callback, userdata](QDockWidget::DockWidgetFeatures value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_dock_widget_on_top_level_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dock, &QDockWidget::topLevelChanged, dock, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_dock_widget_on_allowed_areas_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dock, &QDockWidget::allowedAreasChanged, dock, [callback, userdata](Qt::DockWidgetAreas value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_dock_widget_on_visibility_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *dock = as_dock_widget(handle);
+
+  if (dock == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dock, &QDockWidget::visibilityChanged, dock, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
 }
 
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text) {

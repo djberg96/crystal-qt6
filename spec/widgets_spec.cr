@@ -1291,9 +1291,22 @@ describe Qt6 do
     dock = Qt6::DockWidget.new("Layers", main)
     label = Qt6::Label.new("Layer list")
     title_bar = Qt6::Label.new("Dock Header")
+    feature_changes = [] of Qt6::DockWidgetFeature
+    top_level_changes = [] of Bool
+    allowed_area_changes = [] of Qt6::DockArea
+    visibility_changes = [] of Bool
+    dock.on_features_changed { |value| feature_changes << value }
+    dock.on_top_level_changed { |value| top_level_changes << value }
+    dock.on_allowed_areas_changed { |value| allowed_area_changes << value }
+    dock.on_visibility_changed { |value| visibility_changes << value }
     dock.widget = label
     dock.title_bar_widget.should be_nil
     dock.title_bar_widget = title_bar
+    dock.features = Qt6::DockWidgetFeature::DockWidgetClosable |
+      Qt6::DockWidgetFeature::DockWidgetMovable |
+      Qt6::DockWidgetFeature::DockWidgetFloatable |
+      Qt6::DockWidgetFeature::DockWidgetVerticalTitleBar
+    dock.allowed_areas = Qt6::DockArea::Left | Qt6::DockArea::Right
     main.add_dock_widget(dock, Qt6::DockArea::Left)
     toggle_action = dock.toggle_view_action
 
@@ -1309,26 +1322,42 @@ describe Qt6 do
     dock.visible?.should be_true
     toggle_action.checked?.should be_true
     dock.floating?.should be_false
+    dock.features.should eq(
+      Qt6::DockWidgetFeature::DockWidgetClosable |
+      Qt6::DockWidgetFeature::DockWidgetMovable |
+      Qt6::DockWidgetFeature::DockWidgetFloatable |
+      Qt6::DockWidgetFeature::DockWidgetVerticalTitleBar
+    )
+    dock.allowed_areas.should eq(Qt6::DockArea::Left | Qt6::DockArea::Right)
+    dock.area_allowed?(Qt6::DockArea::Left).should be_true
+    dock.area_allowed?(Qt6::DockArea::Right).should be_true
+    dock.area_allowed?(Qt6::DockArea::Bottom).should be_false
+    feature_changes.last.should eq(dock.features)
+    allowed_area_changes.last.should eq(dock.allowed_areas)
 
     dock.floating = true
     application.process_events
     dock.floating?.should be_true
+    top_level_changes.last.should be_true
 
     dock.floating = false
     application.process_events
     dock.floating?.should be_false
+    top_level_changes.last.should be_false
 
     toggle_action.trigger
     application.process_events
 
     dock.visible?.should be_false
     toggle_action.checked?.should be_false
+    visibility_changes.last.should be_false
 
     dock.visible = true
     application.process_events
 
     dock.visible?.should be_true
     toggle_action.checked?.should be_true
+    visibility_changes.last.should be_true
     dock.title_bar_widget = nil
     dock.title_bar_widget.should be_nil
 

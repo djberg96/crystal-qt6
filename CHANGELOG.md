@@ -34,6 +34,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QDial` with notch-target and computed notch-size helpers to round out the dial-specific API.
 - Expanded `QDialog` with modal and size-grip properties, explicit open/done/result controls, and `finished` callback support.
 - Expanded `QDialogButtonBox` with richer constructors, dynamic button add/remove/clear helpers, button-role and standard-button lookup, button enumeration, and clicked/help callbacks.
+- Expanded `QDockWidget` with features, allowed-areas checks, and dock lifecycle callbacks for richer shell docking behavior.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

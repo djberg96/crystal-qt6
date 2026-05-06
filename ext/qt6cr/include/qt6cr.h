@@ -1558,7 +1558,16 @@ qt6cr_handle_t qt6cr_dock_widget_title_bar_widget(qt6cr_handle_t handle);
 void qt6cr_dock_widget_set_title_bar_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 bool qt6cr_dock_widget_is_floating(qt6cr_handle_t handle);
 void qt6cr_dock_widget_set_floating(qt6cr_handle_t handle, bool value);
+int qt6cr_dock_widget_features(qt6cr_handle_t handle);
+void qt6cr_dock_widget_set_features(qt6cr_handle_t handle, int value);
+int qt6cr_dock_widget_allowed_areas(qt6cr_handle_t handle);
+void qt6cr_dock_widget_set_allowed_areas(qt6cr_handle_t handle, int value);
+bool qt6cr_dock_widget_is_area_allowed(qt6cr_handle_t handle, int area);
 qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle);
+void qt6cr_dock_widget_on_features_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_dock_widget_on_top_level_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+void qt6cr_dock_widget_on_allowed_areas_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_dock_widget_on_visibility_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_action_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_action_set_text(qt6cr_handle_t handle, const char *text);

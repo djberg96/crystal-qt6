@@ -1527,7 +1527,16 @@ module Qt6
     fun qt6cr_dock_widget_set_title_bar_widget = qt6cr_dock_widget_set_title_bar_widget(handle : Handle, widget : Handle)
     fun qt6cr_dock_widget_is_floating = qt6cr_dock_widget_is_floating(handle : Handle) : Bool
     fun qt6cr_dock_widget_set_floating = qt6cr_dock_widget_set_floating(handle : Handle, value : Bool)
+    fun qt6cr_dock_widget_features = qt6cr_dock_widget_features(handle : Handle) : LibC::Int
+    fun qt6cr_dock_widget_set_features = qt6cr_dock_widget_set_features(handle : Handle, value : LibC::Int)
+    fun qt6cr_dock_widget_allowed_areas = qt6cr_dock_widget_allowed_areas(handle : Handle) : LibC::Int
+    fun qt6cr_dock_widget_set_allowed_areas = qt6cr_dock_widget_set_allowed_areas(handle : Handle, value : LibC::Int)
+    fun qt6cr_dock_widget_is_area_allowed = qt6cr_dock_widget_is_area_allowed(handle : Handle, area : LibC::Int) : Bool
     fun qt6cr_dock_widget_toggle_view_action = qt6cr_dock_widget_toggle_view_action(handle : Handle) : Handle
+    fun qt6cr_dock_widget_on_features_changed = qt6cr_dock_widget_on_features_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_dock_widget_on_top_level_changed = qt6cr_dock_widget_on_top_level_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_dock_widget_on_allowed_areas_changed = qt6cr_dock_widget_on_allowed_areas_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_dock_widget_on_visibility_changed = qt6cr_dock_widget_on_visibility_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
     fun qt6cr_action_create = qt6cr_action_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_action_set_text = qt6cr_action_set_text(handle : Handle, text : UInt8*)
