@@ -869,6 +869,9 @@ qt6cr_handle_t qt6cr_file_icon_provider_create(void);
 void qt6cr_file_icon_provider_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_file_icon_provider_icon_for_type(qt6cr_handle_t handle, int type);
 qt6cr_handle_t qt6cr_file_icon_provider_icon_for_file_info(qt6cr_handle_t handle, qt6cr_handle_t file_info);
+char *qt6cr_file_icon_provider_type_for_file_info(qt6cr_handle_t handle, qt6cr_handle_t file_info);
+void qt6cr_file_icon_provider_set_options(qt6cr_handle_t handle, int options);
+int qt6cr_file_icon_provider_options(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_file_system_model_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_file_system_model_index_for_path(qt6cr_handle_t handle, const char *path, int column);

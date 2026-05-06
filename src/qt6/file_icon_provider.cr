@@ -24,6 +24,22 @@ module Qt6
       QIcon.wrap(LibQt6.qt6cr_file_icon_provider_icon_for_file_info(to_unsafe, file_info.to_unsafe), true)
     end
 
+    # Returns Qt's localized type description for the given file info.
+    def type(file_info : QFileInfo) : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_file_icon_provider_type_for_file_info(to_unsafe, file_info.to_unsafe))
+    end
+
+    # Returns the active provider options.
+    def options : FileIconProviderOption
+      FileIconProviderOption.from_value(LibQt6.qt6cr_file_icon_provider_options(to_unsafe))
+    end
+
+    # Replaces the active provider options and returns them.
+    def options=(value : FileIconProviderOption) : FileIconProviderOption
+      LibQt6.qt6cr_file_icon_provider_set_options(to_unsafe, value.value)
+      value
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_file_icon_provider_destroy(to_unsafe)
     end

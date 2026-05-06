@@ -2007,6 +2007,7 @@ describe Qt6 do
     terrain_info = model.file_info(terrain_index)
     folder_icon = provider.icon(Qt6::FileIconType::Folder)
     file_icon = provider.icon(terrain_info)
+    terrain_type_label = provider.type(terrain_info)
     terrain_model_icon = model.icon(terrain_index)
     terrain_modified = model.last_modified(terrain_index)
     terrain_permissions = model.permissions(terrain_index)
@@ -2023,6 +2024,9 @@ describe Qt6 do
     model.name_filter_disables?.should be_false
     model.name_filters.should eq(["*.map", "*.txt"])
     model.option?(Qt6::FileSystemModelOption::DontUseCustomDirectoryIcons).should be_true
+    provider.options.should eq(Qt6::FileIconProviderOption::None)
+    provider.options = Qt6::FileIconProviderOption::DontUseCustomDirectoryIcons
+    provider.options.should eq(Qt6::FileIconProviderOption::DontUseCustomDirectoryIcons)
     root_index.valid?.should be_true
     maps_index.valid?.should be_true
     terrain_index.valid?.should be_true
@@ -2038,6 +2042,7 @@ describe Qt6 do
     terrain_permissions.should_not eq(Qt6::FilePermission::None)
     terrain_permissions.should eq(terrain_info_permissions)
     model.type(terrain_index).should_not be_empty
+    terrain_type_label.should_not be_empty
     terrain_info.file_name.should eq("terrain.map")
     folder_icon.null?.should be_false
     file_icon.null?.should be_false

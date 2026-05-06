@@ -836,6 +836,9 @@ module Qt6
     fun qt6cr_file_icon_provider_destroy = qt6cr_file_icon_provider_destroy(handle : Handle)
     fun qt6cr_file_icon_provider_icon_for_type = qt6cr_file_icon_provider_icon_for_type(handle : Handle, type : LibC::Int) : Handle
     fun qt6cr_file_icon_provider_icon_for_file_info = qt6cr_file_icon_provider_icon_for_file_info(handle : Handle, file_info : Handle) : Handle
+    fun qt6cr_file_icon_provider_type_for_file_info = qt6cr_file_icon_provider_type_for_file_info(handle : Handle, file_info : Handle) : UInt8*
+    fun qt6cr_file_icon_provider_set_options = qt6cr_file_icon_provider_set_options(handle : Handle, options : LibC::Int)
+    fun qt6cr_file_icon_provider_options = qt6cr_file_icon_provider_options(handle : Handle) : LibC::Int
 
     fun qt6cr_file_system_model_create = qt6cr_file_system_model_create(parent : Handle) : Handle
     fun qt6cr_file_system_model_index_for_path = qt6cr_file_system_model_index_for_path(handle : Handle, path : UInt8*, column : LibC::Int) : Handle

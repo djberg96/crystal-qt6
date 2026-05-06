@@ -7094,6 +7094,25 @@ qt6cr_handle_t qt6cr_file_icon_provider_icon_for_file_info(qt6cr_handle_t handle
   return provider == nullptr || info == nullptr ? nullptr : new QIcon(provider->icon(*info));
 }
 
+char *qt6cr_file_icon_provider_type_for_file_info(qt6cr_handle_t handle, qt6cr_handle_t file_info) {
+  auto *provider = as_file_icon_provider(handle);
+  auto *info = as_qfile_info(file_info);
+  return provider == nullptr || info == nullptr ? duplicate_string("") : duplicate_string(provider->type(*info));
+}
+
+void qt6cr_file_icon_provider_set_options(qt6cr_handle_t handle, int options) {
+  auto *provider = as_file_icon_provider(handle);
+
+  if (provider != nullptr) {
+    provider->setOptions(static_cast<QAbstractFileIconProvider::Options>(options));
+  }
+}
+
+int qt6cr_file_icon_provider_options(qt6cr_handle_t handle) {
+  auto *provider = as_file_icon_provider(handle);
+  return provider == nullptr ? 0 : static_cast<int>(provider->options());
+}
+
 qt6cr_handle_t qt6cr_file_system_model_create(qt6cr_handle_t parent) {
   return new QFileSystemModel(as_object(parent));
 }

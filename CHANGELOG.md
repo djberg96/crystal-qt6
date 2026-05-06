@@ -38,6 +38,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QDockWidget` with features, allowed-areas checks, and dock lifecycle callbacks for richer shell docking behavior.
 - Expanded `QDoubleSpinBox` with shared step-type control and text-changed callback support.
 - Expanded `QFileDialog` with options, view mode, directory filters, wildcard filter lists, default suffix, history, label text, supported schemes, selected-files inspection, and existing-directory helpers.
+- Expanded `QFileIconProvider` with inherited type-description lookup and option flags for fuller standalone file-system icon customization.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.
