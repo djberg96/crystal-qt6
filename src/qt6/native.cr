@@ -1820,6 +1820,7 @@ module Qt6
     fun qt6cr_check_box_check_state = qt6cr_check_box_check_state(handle : Handle) : LibC::Int
     fun qt6cr_check_box_set_check_state = qt6cr_check_box_set_check_state(handle : Handle, value : LibC::Int)
     fun qt6cr_check_box_on_toggled = qt6cr_check_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_check_box_on_state_changed = qt6cr_check_box_on_state_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_radio_button_create = qt6cr_radio_button_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_radio_button_set_text = qt6cr_radio_button_set_text(handle : Handle, text : UInt8*)

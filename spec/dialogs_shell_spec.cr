@@ -308,8 +308,16 @@ describe Qt6 do
     line_edit = Qt6::LineEdit.new("Hexes")
     check_box = Qt6::CheckBox.new("Snap")
     combo_box = Qt6::ComboBox.new
+    state_changes = [] of Qt6::CheckState
+    check_clicks = 0
     check_box.on_toggled do |value|
       toggled << value
+    end
+    check_box.on_state_changed do |value|
+      state_changes << value
+    end
+    check_box.on_clicked do
+      check_clicks += 1
     end
     combo_box.on_current_index_changed do |index|
       indices << index
@@ -339,6 +347,7 @@ describe Qt6 do
     check_box.checked = true
     check_box.tristate = true
     check_box.check_state = Qt6::CheckState::PartiallyChecked
+    check_box.click
     combo_box.editable = true
     combo_box.item_text(1).should eq("Roads")
     combo_box.find_text("Roads").should eq(1)
@@ -352,12 +361,18 @@ describe Qt6 do
     main.status_bar.current_message.should eq("Ready")
     line_edit.text = "Terrain"
     line_edit.text.should eq("Terrain")
+    check_box.text.should eq("Snap")
+    check_box.checkable?.should be_true
     check_box.tristate?.should be_true
-    check_box.check_state.should eq(Qt6::CheckState::PartiallyChecked)
+    check_box.checked?.should be_true
+    check_box.check_state.should eq(Qt6::CheckState::Checked)
     combo_box.count.should eq(2)
     combo_box.editable?.should be_true
     combo_box.current_text.should eq("Terrain")
     toggled.last.should be_true
+    state_changes.should contain(Qt6::CheckState::PartiallyChecked)
+    state_changes.last.should eq(Qt6::CheckState::Checked)
+    check_clicks.should eq(1)
     indices.last.should eq(1)
     triggered.should eq(1)
     dialog.result.should eq(Qt6::DialogCode::Accepted)

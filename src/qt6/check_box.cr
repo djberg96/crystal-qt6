@@ -1,40 +1,25 @@
 module Qt6
   # Wraps `QCheckBox`.
-  class CheckBox < Widget
-    @toggled : Signal(Bool) = Signal(Bool).new
-    @callback_userdata : LibQt6::Handle = Pointer(Void).null
+  class CheckBox < AbstractButton
+    @state_changed : Signal(CheckState) = Signal(CheckState).new
+    @state_changed_userdata : LibQt6::Handle = Pointer(Void).null
 
-    # Signal emitted whenever the checkbox toggles.
-    getter toggled : Signal(Bool)
+    # Signal emitted whenever the full Qt check state changes.
+    getter state_changed : Signal(CheckState)
+
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
 
     # Creates a checkbox with optional text and parent.
     def initialize(text : String = "", parent : Widget? = nil)
       super(LibQt6.qt6cr_check_box_create(parent.try(&.to_unsafe) || Pointer(Void).null, text.to_unsafe), parent.nil?)
-      @toggled = Signal(Bool).new
-      @callback_userdata = Box.box(self)
-      LibQt6.qt6cr_check_box_on_toggled(to_unsafe, TOGGLED_TRAMPOLINE, @callback_userdata)
+      register_check_box_callbacks
     end
 
-    # Returns the checkbox label text.
-    def text : String
-      Qt6.copy_and_release_string(LibQt6.qt6cr_check_box_text(to_unsafe))
-    end
-
-    # Sets the checkbox label text and returns the assigned value.
-    def text=(value : String) : String
-      LibQt6.qt6cr_check_box_set_text(to_unsafe, value.to_unsafe)
-      value
-    end
-
-    # Returns `true` when the checkbox is checked.
-    def checked? : Bool
-      LibQt6.qt6cr_check_box_is_checked(to_unsafe)
-    end
-
-    # Sets the checked state and returns the assigned value.
-    def checked=(value : Bool) : Bool
-      LibQt6.qt6cr_check_box_set_checked(to_unsafe, value)
-      value
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      register_check_box_callbacks
     end
 
     # Returns `true` when the checkbox supports a partially checked state.
@@ -59,18 +44,24 @@ module Qt6
       value
     end
 
-    # Registers a block to run when the checked state changes.
-    def on_toggled(&block : Bool ->) : self
-      @toggled.connect { |value| block.call(value) }
+    # Registers a block to run when the full Qt check state changes.
+    def on_state_changed(&block : CheckState ->) : self
+      @state_changed.connect { |value| block.call(value) }
       self
     end
 
-    protected def emit_toggled(value : Bool) : Nil
-      @toggled.emit(value)
+    protected def emit_state_changed(value : Int32) : Nil
+      @state_changed.emit(CheckState.from_value(value))
     end
 
-    private TOGGLED_TRAMPOLINE = ->(userdata : Void*, value : Bool) do
-      Box(CheckBox).unbox(userdata).emit_toggled(value)
+    private def register_check_box_callbacks : Nil
+      @state_changed = Signal(CheckState).new
+      @state_changed_userdata = Box.box(self.as(CheckBox))
+      LibQt6.qt6cr_check_box_on_state_changed(to_unsafe, STATE_CHANGED_TRAMPOLINE, @state_changed_userdata)
+    end
+
+    private STATE_CHANGED_TRAMPOLINE = ->(userdata : Void*, value : Int32) do
+      Box(CheckBox).unbox(userdata).emit_state_changed(value)
     end
   end
 end

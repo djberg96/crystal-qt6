@@ -13641,6 +13641,24 @@ void qt6cr_check_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t cal
   });
 }
 
+void qt6cr_check_box_on_state_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *check_box = as_check_box(handle);
+
+  if (check_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  QObject::connect(check_box, &QCheckBox::checkStateChanged, check_box, [callback, userdata](Qt::CheckState value) {
+    callback(userdata, static_cast<int>(value));
+  });
+#else
+  QObject::connect(check_box, &QCheckBox::stateChanged, check_box, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+#endif
+}
+
 qt6cr_handle_t qt6cr_radio_button_create(qt6cr_handle_t parent, const char *text) {
   return new QRadioButton(QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent));
 }
