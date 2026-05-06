@@ -345,6 +345,9 @@ describe Qt6 do
 
     completer.case_sensitivity = Qt6::CaseSensitivity::Insensitive
     completer.completion_mode = Qt6::CompleterCompletionMode::PopupCompletion
+    completer.model_sorting = Qt6::CompleterModelSorting::CaseInsensitivelySortedModel
+    completer.completion_column = 0
+    completer.completion_role = Qt6::ItemDataRole::Display.value
     completer.wrap_around = true
     completer.max_visible_items = 9
     completer.completion_prefix = "uni"
@@ -359,6 +362,7 @@ describe Qt6 do
     line_edit.text = "Bravo"
     line_edit.cursor_position = 2
     line_edit.set_selection(1, 2)
+    completer.current_row = 0
     application.process_events
 
     int_validator.validate("42").should eq(Qt6::ValidatorState::Acceptable)
@@ -376,10 +380,16 @@ describe Qt6 do
     regex_validator.pattern.should eq("^[A-Z][a-z]+$")
     completer.case_sensitivity.should eq(Qt6::CaseSensitivity::Insensitive)
     completer.completion_mode.should eq(Qt6::CompleterCompletionMode::PopupCompletion)
+    completer.model_sorting.should eq(Qt6::CompleterModelSorting::CaseInsensitivelySortedModel)
+    completer.completion_column.should eq(0)
+    completer.completion_role.should eq(Qt6::ItemDataRole::Display.value)
     completer.wrap_around?.should be_true
     completer.max_visible_items.should eq(9)
     completer.completion_prefix.should eq("uni")
+    completer.completion_count.should eq(1)
+    completer.current_row.should eq(0)
     completer.current_completion.should eq("Units")
+    completer.widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
 
     line_edit.echo_mode.should eq(Qt6::EchoMode::Password)
     line_edit.input_mask.should eq("")

@@ -13696,6 +13696,81 @@ void qt6cr_completer_set_completion_mode(qt6cr_handle_t handle, int value) {
   }
 }
 
+int qt6cr_completer_model_sorting(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? static_cast<int>(QCompleter::UnsortedModel) : static_cast<int>(completer->modelSorting());
+}
+
+void qt6cr_completer_set_model_sorting(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setModelSorting(static_cast<QCompleter::ModelSorting>(value));
+  }
+}
+
+int qt6cr_completer_completion_column(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? 0 : completer->completionColumn();
+}
+
+void qt6cr_completer_set_completion_column(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setCompletionColumn(value);
+  }
+}
+
+int qt6cr_completer_completion_role(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? 0 : completer->completionRole();
+}
+
+void qt6cr_completer_set_completion_role(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setCompletionRole(value);
+  }
+}
+
+int qt6cr_completer_completion_count(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? 0 : completer->completionCount();
+}
+
+int qt6cr_completer_current_row(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? -1 : completer->currentRow();
+}
+
+bool qt6cr_completer_set_current_row(qt6cr_handle_t handle, int value) {
+  auto *completer = as_completer(handle);
+  return completer != nullptr && completer->setCurrentRow(value);
+}
+
+qt6cr_handle_t qt6cr_completer_widget(qt6cr_handle_t handle) {
+  auto *completer = as_completer(handle);
+  return completer == nullptr ? nullptr : completer->widget();
+}
+
+void qt6cr_completer_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->setWidget(as_widget(widget));
+  }
+}
+
+void qt6cr_completer_complete(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *completer = as_completer(handle);
+
+  if (completer != nullptr) {
+    completer->complete(QRect(rect.x, rect.y, rect.width, rect.height));
+  }
+}
+
 bool qt6cr_completer_wrap_around(qt6cr_handle_t handle) {
   auto *completer = as_completer(handle);
   return completer != nullptr && completer->wrapAround();

@@ -51,6 +51,67 @@ module Qt6
       value
     end
 
+    def model_sorting : CompleterModelSorting
+      CompleterModelSorting.from_value(LibQt6.qt6cr_completer_model_sorting(to_unsafe))
+    end
+
+    def model_sorting=(value : CompleterModelSorting) : CompleterModelSorting
+      LibQt6.qt6cr_completer_set_model_sorting(to_unsafe, value.value)
+      value
+    end
+
+    def completion_column : Int32
+      LibQt6.qt6cr_completer_completion_column(to_unsafe)
+    end
+
+    def completion_column=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_completer_set_completion_column(to_unsafe, int_value)
+      int_value
+    end
+
+    def completion_role : Int32
+      LibQt6.qt6cr_completer_completion_role(to_unsafe)
+    end
+
+    def completion_role=(value : Int) : Int32
+      int_value = value.to_i32
+      LibQt6.qt6cr_completer_set_completion_role(to_unsafe, int_value)
+      int_value
+    end
+
+    def completion_count : Int32
+      LibQt6.qt6cr_completer_completion_count(to_unsafe)
+    end
+
+    def current_row : Int32
+      LibQt6.qt6cr_completer_current_row(to_unsafe)
+    end
+
+    def current_row=(value : Int) : Bool
+      LibQt6.qt6cr_completer_set_current_row(to_unsafe, value.to_i32)
+    end
+
+    def widget : Widget?
+      handle = LibQt6.qt6cr_completer_widget(to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    def widget=(value : Widget?) : Widget?
+      LibQt6.qt6cr_completer_set_widget(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value
+    end
+
+    def complete : self
+      LibQt6.qt6cr_completer_complete(to_unsafe, Rect.new(0, 0, 0, 0).to_native)
+      self
+    end
+
+    def complete(rect : Rect) : self
+      LibQt6.qt6cr_completer_complete(to_unsafe, rect.to_native)
+      self
+    end
+
     def wrap_around? : Bool
       LibQt6.qt6cr_completer_wrap_around(to_unsafe)
     end
