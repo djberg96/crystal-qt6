@@ -551,9 +551,10 @@ describe Qt6 do
     button_box.standard_buttons.should eq(
       Qt6::DialogButtonBoxStandardButton::Ok |
       Qt6::DialogButtonBoxStandardButton::Cancel |
-      Qt6::DialogButtonBoxStandardButton::Help
+      Qt6::DialogButtonBoxStandardButton::Help |
+      Qt6::DialogButtonBoxStandardButton::Apply
     )
-    button_box.buttons.size.should eq(5)
+    button_box.buttons.size.should eq(6)
     button_box.button_role(ok_button).should eq(Qt6::DialogButtonBoxButtonRole::AcceptRole)
     button_box.button_role(custom_button).should eq(Qt6::DialogButtonBoxButtonRole::ActionRole)
     button_box.button_role(reset_button).should eq(Qt6::DialogButtonBoxButtonRole::ResetRole)
