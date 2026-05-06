@@ -375,14 +375,24 @@ describe Qt6 do
     main.status_bar.show_message("Ready")
 
     dialog = Qt6::Dialog.new(main)
+    finished = [] of Qt6::DialogCode
     dialog.on_accepted do
       accepted += 1
+    end
+    dialog.on_finished do |value|
+      finished << value
     end
     dialog.on_rejected do
       rejected += 1
     end
 
-    dialog.accept
+    dialog.modal = true
+    dialog.size_grip_enabled = true
+    dialog.result = Qt6::DialogCode::Rejected
+    dialog.open
+    application.process_events
+    dialog.visible?.should be_true
+    dialog.done(Qt6::DialogCode::Accepted).should eq(Qt6::DialogCode::Accepted)
     check_box.checked = true
     check_box.tristate = true
     check_box.check_state = Qt6::CheckState::PartiallyChecked
@@ -438,9 +448,12 @@ describe Qt6 do
     check_clicks.should eq(1)
     indices.last.should eq(1)
     triggered.should eq(1)
+    dialog.modal?.should be_true
+    dialog.size_grip_enabled?.should be_true
     dialog.result.should eq(Qt6::DialogCode::Accepted)
     accepted.should eq(1)
     rejected.should eq(0)
+    finished.should contain(Qt6::DialogCode::Accepted)
     combo_box.clear
     combo_box.count.should eq(0)
     main.release

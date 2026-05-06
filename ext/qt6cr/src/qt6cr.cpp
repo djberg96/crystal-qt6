@@ -3979,6 +3979,56 @@ int qt6cr_dialog_exec(qt6cr_handle_t handle) {
   return dialog == nullptr ? 0 : dialog->exec();
 }
 
+bool qt6cr_dialog_is_size_grip_enabled(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+  return dialog != nullptr && dialog->isSizeGripEnabled();
+}
+
+void qt6cr_dialog_set_size_grip_enabled(qt6cr_handle_t handle, bool value) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setSizeGripEnabled(value);
+  }
+}
+
+bool qt6cr_dialog_is_modal(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+  return dialog != nullptr && dialog->isModal();
+}
+
+void qt6cr_dialog_set_modal(qt6cr_handle_t handle, bool value) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setModal(value);
+  }
+}
+
+void qt6cr_dialog_set_result(qt6cr_handle_t handle, int value) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->setResult(value);
+  }
+}
+
+void qt6cr_dialog_open(qt6cr_handle_t handle) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->open();
+  }
+}
+
+void qt6cr_dialog_done(qt6cr_handle_t handle, int value) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog != nullptr) {
+    dialog->done(value);
+  }
+}
+
 void qt6cr_dialog_accept(qt6cr_handle_t handle) {
   auto *dialog = as_dialog(handle);
 
@@ -3998,6 +4048,18 @@ void qt6cr_dialog_reject(qt6cr_handle_t handle) {
 int qt6cr_dialog_result(qt6cr_handle_t handle) {
   auto *dialog = as_dialog(handle);
   return dialog == nullptr ? 0 : dialog->result();
+}
+
+void qt6cr_dialog_on_finished(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *dialog = as_dialog(handle);
+
+  if (dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(dialog, &QDialog::finished, dialog, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
 }
 
 void qt6cr_dialog_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {

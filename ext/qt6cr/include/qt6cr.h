@@ -411,9 +411,17 @@ void qt6cr_main_window_add_dock_widget(qt6cr_handle_t handle, int area, qt6cr_ha
 
 qt6cr_handle_t qt6cr_dialog_create(qt6cr_handle_t parent);
 int qt6cr_dialog_exec(qt6cr_handle_t handle);
+bool qt6cr_dialog_is_size_grip_enabled(qt6cr_handle_t handle);
+void qt6cr_dialog_set_size_grip_enabled(qt6cr_handle_t handle, bool value);
+bool qt6cr_dialog_is_modal(qt6cr_handle_t handle);
+void qt6cr_dialog_set_modal(qt6cr_handle_t handle, bool value);
+void qt6cr_dialog_set_result(qt6cr_handle_t handle, int value);
+void qt6cr_dialog_open(qt6cr_handle_t handle);
+void qt6cr_dialog_done(qt6cr_handle_t handle, int value);
 void qt6cr_dialog_accept(qt6cr_handle_t handle);
 void qt6cr_dialog_reject(qt6cr_handle_t handle);
 int qt6cr_dialog_result(qt6cr_handle_t handle);
+void qt6cr_dialog_on_finished(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 void qt6cr_dialog_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_dialog_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 

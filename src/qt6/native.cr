@@ -379,9 +379,17 @@ module Qt6
 
     fun qt6cr_dialog_create = qt6cr_dialog_create(parent : Handle) : Handle
     fun qt6cr_dialog_exec = qt6cr_dialog_exec(handle : Handle) : LibC::Int
+    fun qt6cr_dialog_is_size_grip_enabled = qt6cr_dialog_is_size_grip_enabled(handle : Handle) : Bool
+    fun qt6cr_dialog_set_size_grip_enabled = qt6cr_dialog_set_size_grip_enabled(handle : Handle, value : Bool)
+    fun qt6cr_dialog_is_modal = qt6cr_dialog_is_modal(handle : Handle) : Bool
+    fun qt6cr_dialog_set_modal = qt6cr_dialog_set_modal(handle : Handle, value : Bool)
+    fun qt6cr_dialog_set_result = qt6cr_dialog_set_result(handle : Handle, value : LibC::Int)
+    fun qt6cr_dialog_open = qt6cr_dialog_open(handle : Handle)
+    fun qt6cr_dialog_done = qt6cr_dialog_done(handle : Handle, value : LibC::Int)
     fun qt6cr_dialog_accept = qt6cr_dialog_accept(handle : Handle)
     fun qt6cr_dialog_reject = qt6cr_dialog_reject(handle : Handle)
     fun qt6cr_dialog_result = qt6cr_dialog_result(handle : Handle) : LibC::Int
+    fun qt6cr_dialog_on_finished = qt6cr_dialog_on_finished(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_dialog_on_accepted = qt6cr_dialog_on_accepted(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_dialog_on_rejected = qt6cr_dialog_on_rejected(handle : Handle, callback : (Handle ->), userdata : Handle)
 
