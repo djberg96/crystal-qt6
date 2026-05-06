@@ -2242,6 +2242,8 @@ module Qt6
     fun qt6cr_double_spin_box_value = qt6cr_double_spin_box_value(handle : Handle) : Float64
     fun qt6cr_double_spin_box_set_single_step = qt6cr_double_spin_box_set_single_step(handle : Handle, value : Float64)
     fun qt6cr_double_spin_box_single_step = qt6cr_double_spin_box_single_step(handle : Handle) : Float64
+    fun qt6cr_double_spin_box_step_type = qt6cr_double_spin_box_step_type(handle : Handle) : LibC::Int
+    fun qt6cr_double_spin_box_set_step_type = qt6cr_double_spin_box_set_step_type(handle : Handle, value : LibC::Int)
     fun qt6cr_double_spin_box_decimals = qt6cr_double_spin_box_decimals(handle : Handle) : LibC::Int
     fun qt6cr_double_spin_box_set_decimals = qt6cr_double_spin_box_set_decimals(handle : Handle, value : LibC::Int)
     fun qt6cr_double_spin_box_prefix = qt6cr_double_spin_box_prefix(handle : Handle) : UInt8*
@@ -2251,6 +2253,7 @@ module Qt6
     fun qt6cr_double_spin_box_special_value_text = qt6cr_double_spin_box_special_value_text(handle : Handle) : UInt8*
     fun qt6cr_double_spin_box_set_special_value_text = qt6cr_double_spin_box_set_special_value_text(handle : Handle, value : UInt8*)
     fun qt6cr_double_spin_box_clean_text = qt6cr_double_spin_box_clean_text(handle : Handle) : UInt8*
+    fun qt6cr_double_spin_box_on_text_changed = qt6cr_double_spin_box_on_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
     fun qt6cr_double_spin_box_on_value_changed = qt6cr_double_spin_box_on_value_changed(handle : Handle, callback : (Handle, Float64 ->), userdata : Handle)
 
     fun qt6cr_group_box_create = qt6cr_group_box_create(parent : Handle, title : UInt8*) : Handle

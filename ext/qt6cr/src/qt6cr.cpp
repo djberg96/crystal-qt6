@@ -16215,6 +16215,19 @@ double qt6cr_double_spin_box_single_step(qt6cr_handle_t handle) {
   return spin_box == nullptr ? 1.0 : spin_box->singleStep();
 }
 
+int qt6cr_double_spin_box_step_type(qt6cr_handle_t handle) {
+  auto *spin_box = as_double_spin_box(handle);
+  return spin_box == nullptr ? static_cast<int>(QAbstractSpinBox::DefaultStepType) : static_cast<int>(spin_box->stepType());
+}
+
+void qt6cr_double_spin_box_set_step_type(qt6cr_handle_t handle, int value) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box != nullptr) {
+    spin_box->setStepType(static_cast<QAbstractSpinBox::StepType>(value));
+  }
+}
+
 int qt6cr_double_spin_box_decimals(qt6cr_handle_t handle) {
   auto *spin_box = as_double_spin_box(handle);
   return spin_box == nullptr ? 2 : spin_box->decimals();
@@ -16265,6 +16278,18 @@ void qt6cr_double_spin_box_set_special_value_text(qt6cr_handle_t handle, const c
 char *qt6cr_double_spin_box_clean_text(qt6cr_handle_t handle) {
   auto *spin_box = as_double_spin_box(handle);
   return spin_box == nullptr ? duplicate_string("") : duplicate_string(spin_box->cleanText());
+}
+
+void qt6cr_double_spin_box_on_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *spin_box = as_double_spin_box(handle);
+
+  if (spin_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(spin_box, &QDoubleSpinBox::textChanged, spin_box, [callback, userdata](const QString &value) {
+    callback(userdata, duplicate_string(value));
+  });
 }
 
 void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {

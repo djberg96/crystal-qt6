@@ -468,7 +468,9 @@ describe Qt6 do
     pixmap = Qt6::QPixmap.new(12, 7)
     editing_finished = 0
     return_pressed = 0
+    double_text_changes = [] of String
 
+    double_spin_box.on_text_changed { |value| double_text_changes << value }
     spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::NoButtons
     spin_box.read_only = true
     spin_box.wrapping = true
@@ -490,6 +492,7 @@ describe Qt6 do
     double_spin_box.prefix = "~"
     double_spin_box.suffix = "x"
     double_spin_box.special_value_text = "Default"
+    double_spin_box.step_type = Qt6::AbstractSpinBoxStepType::AdaptiveDecimalStepType
     double_spin_box.decimals = 3
     double_spin_box.set_range(0.0, 10.0)
     double_spin_box.value = 1.25
@@ -544,12 +547,14 @@ describe Qt6 do
     double_spin_box.read_only?.should be_false
     double_spin_box.wrapping?.should be_false
     double_spin_box.accelerated?.should be_true
+    double_spin_box.step_type.should eq(Qt6::AbstractSpinBoxStepType::AdaptiveDecimalStepType)
     double_spin_box.decimals.should eq(3)
     double_spin_box.prefix.should eq("~")
     double_spin_box.suffix.should eq("x")
     double_spin_box.special_value_text.should eq("Default")
     double_spin_box.text.should eq("~1.250x")
     double_spin_box.clean_text.should eq("1.250")
+    double_text_changes.last.should eq("~1.250x")
     date_time_edit.keyboard_tracking?.should be_false
     date_time_edit.line_edit.should be_a(Qt6::LineEdit)
     date_time_edit.text.should eq("2026/04/14 09:30:15")

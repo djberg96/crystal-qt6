@@ -2291,6 +2291,8 @@ void qt6cr_double_spin_box_set_value(qt6cr_handle_t handle, double value);
 double qt6cr_double_spin_box_value(qt6cr_handle_t handle);
 void qt6cr_double_spin_box_set_single_step(qt6cr_handle_t handle, double value);
 double qt6cr_double_spin_box_single_step(qt6cr_handle_t handle);
+int qt6cr_double_spin_box_step_type(qt6cr_handle_t handle);
+void qt6cr_double_spin_box_set_step_type(qt6cr_handle_t handle, int value);
 int qt6cr_double_spin_box_decimals(qt6cr_handle_t handle);
 void qt6cr_double_spin_box_set_decimals(qt6cr_handle_t handle, int value);
 char *qt6cr_double_spin_box_prefix(qt6cr_handle_t handle);
@@ -2300,6 +2302,7 @@ void qt6cr_double_spin_box_set_suffix(qt6cr_handle_t handle, const char *value);
 char *qt6cr_double_spin_box_special_value_text(qt6cr_handle_t handle);
 void qt6cr_double_spin_box_set_special_value_text(qt6cr_handle_t handle, const char *value);
 char *qt6cr_double_spin_box_clean_text(qt6cr_handle_t handle);
+void qt6cr_double_spin_box_on_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_group_box_create(qt6cr_handle_t parent, const char *title);
