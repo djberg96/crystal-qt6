@@ -26,6 +26,12 @@ module Qt6
       value
     end
 
+    # Qt-style alias for assigning the currently highlighted font.
+    def set_current_font(value : QFont) : self
+      self.current_font = value
+      self
+    end
+
     # Returns the selected font after the dialog is accepted.
     def selected_font : QFont
       QFont.wrap(LibQt6.qt6cr_font_dialog_selected_font(to_unsafe), true)

@@ -120,7 +120,7 @@ describe Qt6 do
     font_dialog.native_dialog = false
     font_dialog.set_option(Qt6::FontDialogOption::NoButtons)
     font_dialog.clear_option(Qt6::FontDialogOption::NoButtons)
-    font_dialog.current_font = Qt6::QFont.new("Helvetica", 14, true, false)
+    font_dialog.set_current_font(Qt6::QFont.new("Helvetica", 14, true, false)).to_unsafe.should eq(font_dialog.to_unsafe)
 
     input_dialog.window_title = "Layer Details"
     input_dialog.input_mode = Qt6::InputDialogInputMode::Text
@@ -157,11 +157,17 @@ describe Qt6 do
     font_dialog.option?(Qt6::FontDialogOption::ScalableFonts).should be_true
     font_dialog.option?(Qt6::FontDialogOption::MonospacedFonts).should be_true
     font_dialog.option?(Qt6::FontDialogOption::NoButtons).should be_false
+    font_dialog.options.should eq(
+      Qt6::FontDialogOption::DontUseNativeDialog |
+      Qt6::FontDialogOption::ScalableFonts |
+      Qt6::FontDialogOption::MonospacedFonts
+    )
     font_dialog.current_font.point_size.should eq(14)
     font_dialog.accept
     font_dialog.selected_font.point_size.should eq(14)
     current_font_changes.empty?.should be_false
     selected_fonts.empty?.should be_false
+    selected_fonts.last.point_size.should eq(14)
 
     input_dialog.window_title.should eq("Layer Details")
     input_dialog.label_text.should eq("Layer name")
