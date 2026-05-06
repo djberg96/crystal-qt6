@@ -30,6 +30,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyle` and `QCommonStyle` wrappers with style-name and standard-palette access plus application/widget style get/set helpers.
 - Expanded `QCompleter` with model-sorting, completion-column/role, completion-count/current-row, bound-widget, and explicit `complete` helpers.
 - Expanded `QDataWidgetMapper` with a slot-style `set_current_index` alias and deeper navigation, auto-submit, and mapping-cleanup coverage.
+- Expanded `QDateEdit` through shared `QDateTimeEdit` range, section, and popup-calendar helpers, and added initial-date construction support.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

@@ -16492,6 +16492,235 @@ void qt6cr_date_time_edit_set_date_time(qt6cr_handle_t handle, qt6cr_handle_t va
   }
 }
 
+qt6cr_handle_t qt6cr_date_time_edit_minimum_date_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : new QDateTime(editor->minimumDateTime());
+}
+
+void qt6cr_date_time_edit_clear_minimum_date_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clearMinimumDateTime();
+  }
+}
+
+void qt6cr_date_time_edit_set_minimum_date_time(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *editor = as_date_time_edit(handle);
+  auto *date_time = as_qdatetime(value);
+
+  if (editor != nullptr && date_time != nullptr) {
+    editor->setMinimumDateTime(*date_time);
+  }
+}
+
+qt6cr_handle_t qt6cr_date_time_edit_maximum_date_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : new QDateTime(editor->maximumDateTime());
+}
+
+void qt6cr_date_time_edit_clear_maximum_date_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clearMaximumDateTime();
+  }
+}
+
+void qt6cr_date_time_edit_set_maximum_date_time(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *editor = as_date_time_edit(handle);
+  auto *date_time = as_qdatetime(value);
+
+  if (editor != nullptr && date_time != nullptr) {
+    editor->setMaximumDateTime(*date_time);
+  }
+}
+
+void qt6cr_date_time_edit_set_date_time_range(qt6cr_handle_t handle, qt6cr_handle_t minimum, qt6cr_handle_t maximum) {
+  auto *editor = as_date_time_edit(handle);
+  auto *minimum_date_time = as_qdatetime(minimum);
+  auto *maximum_date_time = as_qdatetime(maximum);
+
+  if (editor != nullptr && minimum_date_time != nullptr && maximum_date_time != nullptr) {
+    editor->setDateTimeRange(*minimum_date_time, *maximum_date_time);
+  }
+}
+
+qt6cr_handle_t qt6cr_date_time_edit_minimum_date(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : new QDate(editor->minimumDate());
+}
+
+void qt6cr_date_time_edit_set_minimum_date(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *editor = as_date_time_edit(handle);
+  auto *date = as_qdate(value);
+
+  if (editor != nullptr && date != nullptr) {
+    editor->setMinimumDate(*date);
+  }
+}
+
+void qt6cr_date_time_edit_clear_minimum_date(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clearMinimumDate();
+  }
+}
+
+qt6cr_handle_t qt6cr_date_time_edit_maximum_date(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : new QDate(editor->maximumDate());
+}
+
+void qt6cr_date_time_edit_set_maximum_date(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *editor = as_date_time_edit(handle);
+  auto *date = as_qdate(value);
+
+  if (editor != nullptr && date != nullptr) {
+    editor->setMaximumDate(*date);
+  }
+}
+
+void qt6cr_date_time_edit_clear_maximum_date(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clearMaximumDate();
+  }
+}
+
+void qt6cr_date_time_edit_set_date_range(qt6cr_handle_t handle, qt6cr_handle_t minimum, qt6cr_handle_t maximum) {
+  auto *editor = as_date_time_edit(handle);
+  auto *minimum_date = as_qdate(minimum);
+  auto *maximum_date = as_qdate(maximum);
+
+  if (editor != nullptr && minimum_date != nullptr && maximum_date != nullptr) {
+    editor->setDateRange(*minimum_date, *maximum_date);
+  }
+}
+
+qt6cr_handle_t qt6cr_date_time_edit_minimum_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : new QTime(editor->minimumTime());
+}
+
+void qt6cr_date_time_edit_set_minimum_time(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *editor = as_date_time_edit(handle);
+  auto *time = as_qtime(value);
+
+  if (editor != nullptr && time != nullptr) {
+    editor->setMinimumTime(*time);
+  }
+}
+
+void qt6cr_date_time_edit_clear_minimum_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clearMinimumTime();
+  }
+}
+
+qt6cr_handle_t qt6cr_date_time_edit_maximum_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : new QTime(editor->maximumTime());
+}
+
+void qt6cr_date_time_edit_set_maximum_time(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *editor = as_date_time_edit(handle);
+  auto *time = as_qtime(value);
+
+  if (editor != nullptr && time != nullptr) {
+    editor->setMaximumTime(*time);
+  }
+}
+
+void qt6cr_date_time_edit_clear_maximum_time(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->clearMaximumTime();
+  }
+}
+
+void qt6cr_date_time_edit_set_time_range(qt6cr_handle_t handle, qt6cr_handle_t minimum, qt6cr_handle_t maximum) {
+  auto *editor = as_date_time_edit(handle);
+  auto *minimum_time = as_qtime(minimum);
+  auto *maximum_time = as_qtime(maximum);
+
+  if (editor != nullptr && minimum_time != nullptr && maximum_time != nullptr) {
+    editor->setTimeRange(*minimum_time, *maximum_time);
+  }
+}
+
+int qt6cr_date_time_edit_displayed_sections(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? static_cast<int>(QDateTimeEdit::NoSection) : static_cast<int>(editor->displayedSections());
+}
+
+int qt6cr_date_time_edit_current_section(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? static_cast<int>(QDateTimeEdit::NoSection) : static_cast<int>(editor->currentSection());
+}
+
+int qt6cr_date_time_edit_section_at(qt6cr_handle_t handle, int index) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? static_cast<int>(QDateTimeEdit::NoSection) : static_cast<int>(editor->sectionAt(index));
+}
+
+void qt6cr_date_time_edit_set_current_section(qt6cr_handle_t handle, int value) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->setCurrentSection(static_cast<QDateTimeEdit::Section>(value));
+  }
+}
+
+int qt6cr_date_time_edit_current_section_index(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? 0 : editor->currentSectionIndex();
+}
+
+void qt6cr_date_time_edit_set_current_section_index(qt6cr_handle_t handle, int value) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->setCurrentSectionIndex(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_date_time_edit_calendar_widget(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? nullptr : editor->calendarWidget();
+}
+
+void qt6cr_date_time_edit_set_calendar_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->setCalendarWidget(as_calendar_widget(widget));
+  }
+}
+
+int qt6cr_date_time_edit_section_count(qt6cr_handle_t handle) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? 0 : editor->sectionCount();
+}
+
+void qt6cr_date_time_edit_set_selected_section(qt6cr_handle_t handle, int value) {
+  auto *editor = as_date_time_edit(handle);
+
+  if (editor != nullptr) {
+    editor->setSelectedSection(static_cast<QDateTimeEdit::Section>(value));
+  }
+}
+
+char *qt6cr_date_time_edit_section_text(qt6cr_handle_t handle, int value) {
+  auto *editor = as_date_time_edit(handle);
+  return editor == nullptr ? duplicate_string("") : duplicate_string(editor->sectionText(static_cast<QDateTimeEdit::Section>(value)));
+}
+
 void qt6cr_date_time_edit_on_date_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
   auto *editor = as_date_time_edit(handle);
 

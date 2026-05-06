@@ -1467,4 +1467,65 @@ describe Qt6 do
     window.release
   end
 
+  it "supports richer date edit sections, ranges, and popup calendar wiring" do
+    application = app
+    date = Qt6::QDate.new(2026, 4, 15)
+    min_date = Qt6::QDate.new(2026, 4, 1)
+    max_date = Qt6::QDate.new(2026, 4, 30)
+    min_time = Qt6::QTime.new(8, 0, 0)
+    max_time = Qt6::QTime.new(18, 30, 0)
+    min_date_time = Qt6::QDateTime.new(2026, 4, 1, 8, 0, 0)
+    max_date_time = Qt6::QDateTime.new(2026, 4, 30, 18, 30, 0)
+
+    date_edit = Qt6::DateEdit.new(date)
+    date_time_edit = Qt6::DateTimeEdit.new
+    popup_calendar = Qt6::CalendarWidget.new
+
+    date_edit.display_format = "dd/MM/yyyy"
+    date_edit.calendar_popup = true
+    date_edit.set_date_range(min_date, max_date)
+    date_edit.calendar_widget = popup_calendar
+    date_edit.current_section = Qt6::DateTimeEditSection::MonthSection
+    date_edit.current_section_index = 2
+    date_edit.selected_section = Qt6::DateTimeEditSection::YearSection
+
+    date_time_edit.display_format = "yyyy-MM-dd HH:mm:ss"
+    date_time_edit.set_date_time_range(min_date_time, max_date_time)
+    date_time_edit.set_time_range(min_time, max_time)
+    date_time_edit.minimum_date = min_date
+    date_time_edit.maximum_date = max_date
+
+    application.process_events
+
+    date_edit.date.to_string.should eq(date.to_string)
+    date_edit.minimum_date.to_string.should eq(min_date.to_string)
+    date_edit.maximum_date.to_string.should eq(max_date.to_string)
+    date_edit.displayed_sections.should eq(
+      Qt6::DateTimeEditSection::DaySection |
+      Qt6::DateTimeEditSection::MonthSection |
+      Qt6::DateTimeEditSection::YearSection
+    )
+    date_edit.section_count.should eq(3)
+    date_edit.section_at(0).should eq(Qt6::DateTimeEditSection::DaySection)
+    date_edit.section_at(1).should eq(Qt6::DateTimeEditSection::MonthSection)
+    date_edit.section_at(2).should eq(Qt6::DateTimeEditSection::YearSection)
+    date_edit.current_section.should eq(Qt6::DateTimeEditSection::YearSection)
+    date_edit.current_section_index.should eq(2)
+    date_edit.section_text(Qt6::DateTimeEditSection::DaySection).should eq("15")
+    date_edit.section_text(Qt6::DateTimeEditSection::MonthSection).should eq("04")
+    date_edit.section_text(Qt6::DateTimeEditSection::YearSection).should eq("2026")
+    date_edit.calendar_widget.not_nil!.to_unsafe.should eq(popup_calendar.to_unsafe)
+
+    date_time_edit.minimum_date_time.to_string.should eq(min_date_time.to_string)
+    date_time_edit.maximum_date_time.to_string.should eq(max_date_time.to_string)
+    date_time_edit.minimum_time.to_string.should eq(min_time.to_string)
+    date_time_edit.maximum_time.to_string.should eq(max_time.to_string)
+    date_time_edit.minimum_date.to_string.should eq(min_date.to_string)
+    date_time_edit.maximum_date.to_string.should eq(max_date.to_string)
+
+    popup_calendar.release
+    date_time_edit.release
+    date_edit.release
+  end
+
 end

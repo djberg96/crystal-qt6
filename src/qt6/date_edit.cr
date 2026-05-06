@@ -17,6 +17,14 @@ module Qt6
       LibQt6.qt6cr_date_edit_on_date_changed(to_unsafe, DATE_CHANGED_TRAMPOLINE, @date_callback_userdata)
     end
 
+    def initialize(date : QDate, parent : Widget? = nil)
+      super(LibQt6.qt6cr_date_edit_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+      @date_changed = Signal(QDate).new
+      @date_callback_userdata = Box.box(self)
+      LibQt6.qt6cr_date_edit_on_date_changed(to_unsafe, DATE_CHANGED_TRAMPOLINE, @date_callback_userdata)
+      self.date = date
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
       @date_changed = Signal(QDate).new
