@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QFocusFrame` bindings with tracked-widget get/set helpers for shell polish and focus highlighting.
 - Added `QToolBox` bindings with page insertion, selection, and current-index callback support, plus a `QSizeGrip` wrapper with `size_hint`.
 - Added `QKeySequenceEdit`, `QRubberBand`, and `QErrorMessage` bindings for shortcut capture, marquee selection overlays, and queued error-dialog workflows.
+- Expanded `QErrorMessage` with access to Qt's shared `qtHandler()` dialog for process-wide queued error reporting.
 - Added `QWizard` and `QWizardPage` bindings for page-based setup flows, including style and option controls, button and pixmap customization, visited-page tracking, and mandatory-field completion wiring.
 - Expanded `QWizard` and `QWizardPage` with wizard field access/setters, page-to-wizard lookup, and direct current-page validation helpers for richer multi-page workflows.
 - Expanded `QWizard` signal coverage with custom-button, help-requested, and page add/remove callbacks for richer interactive wizard flows.

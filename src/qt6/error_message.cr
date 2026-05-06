@@ -5,6 +5,11 @@ module Qt6
       new(handle, owned)
     end
 
+    # Returns Qt's shared process-wide error-message handler dialog.
+    def self.qt_handler : self
+      wrap(LibQt6.qt6cr_error_message_qt_handler)
+    end
+
     # Creates an error-message dialog with an optional parent.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_error_message_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)

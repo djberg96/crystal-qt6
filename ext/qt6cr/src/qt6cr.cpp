@@ -17295,6 +17295,10 @@ qt6cr_handle_t qt6cr_error_message_create(qt6cr_handle_t parent) {
   return new QErrorMessage(as_widget(parent));
 }
 
+qt6cr_handle_t qt6cr_error_message_qt_handler() {
+  return QErrorMessage::qtHandler();
+}
+
 void qt6cr_error_message_show_message(qt6cr_handle_t handle, const char *message) {
   auto *dialog = as_error_message(handle);
 

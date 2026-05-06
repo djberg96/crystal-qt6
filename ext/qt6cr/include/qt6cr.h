@@ -2436,6 +2436,7 @@ void qt6cr_lcd_number_display_string(qt6cr_handle_t handle, const char *value);
 qt6cr_handle_t qt6cr_command_link_button_create(qt6cr_handle_t parent, const char *text, const char *description);
 char *qt6cr_command_link_button_description(qt6cr_handle_t handle);
 void qt6cr_command_link_button_set_description(qt6cr_handle_t handle, const char *value);
+qt6cr_handle_t qt6cr_error_message_qt_handler(void);
 qt6cr_handle_t qt6cr_error_message_create(qt6cr_handle_t parent);
 void qt6cr_error_message_show_message(qt6cr_handle_t handle, const char *message);
 void qt6cr_error_message_show_typed_message(qt6cr_handle_t handle, const char *message, const char *type);

@@ -2407,6 +2407,7 @@ module Qt6
     fun qt6cr_command_link_button_create = qt6cr_command_link_button_create(parent : Handle, text : UInt8*, description : UInt8*) : Handle
     fun qt6cr_command_link_button_description = qt6cr_command_link_button_description(handle : Handle) : UInt8*
     fun qt6cr_command_link_button_set_description = qt6cr_command_link_button_set_description(handle : Handle, value : UInt8*)
+    fun qt6cr_error_message_qt_handler = qt6cr_error_message_qt_handler : Handle
     fun qt6cr_error_message_create = qt6cr_error_message_create(parent : Handle) : Handle
     fun qt6cr_error_message_show_message = qt6cr_error_message_show_message(handle : Handle, message : UInt8*)
     fun qt6cr_error_message_show_typed_message = qt6cr_error_message_show_typed_message(handle : Handle, message : UInt8*, type : UInt8*)
