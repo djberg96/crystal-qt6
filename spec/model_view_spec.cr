@@ -1869,12 +1869,14 @@ describe Qt6 do
     provider = Qt6::FileIconProvider.new
     column_view = Qt6::ColumnView.new
     preview = Qt6::Label.new("Preview", column_view)
+    replacement_preview = Qt6::Label.new("Replacement", column_view)
 
     root_paths = [] of String
     loaded_paths = [] of String
     renamed_entries = [] of Tuple(String, String, String)
     preview_paths = [] of String
     current_index_changes = 0
+    custom_selection_changes = 0
 
     model.on_root_path_changed do |path|
       root_paths << path
@@ -1949,10 +1951,29 @@ describe Qt6 do
     column_view.show
     application.process_events
 
+    column_view.preview_column_visible = false
+    application.process_events
+
+    column_view.preview_column_visible = true
+    application.process_events
+
+    column_view.preview_widget = nil
+    column_view.preview_widget.should be_nil
+    column_view.preview_widget = replacement_preview
+    column_view.preview_widget.not_nil!.to_unsafe.should eq(replacement_preview.to_unsafe)
+
     column_view.current_index = terrain_index
     application.process_events
     column_view.scroll_to(terrain_index, Qt6::ScrollHint::PositionAtCenter)
     column_view.select_all
+    application.process_events
+
+    custom_selection_model = Qt6::ItemSelectionModel.new(model, column_view)
+    custom_selection_model.on_current_index_changed do
+      custom_selection_changes += 1
+    end
+    column_view.selection_model = custom_selection_model
+    custom_selection_model.set_current_index(terrain_index, Qt6::SelectionFlag::Current | Qt6::SelectionFlag::Select)
     application.process_events
 
     maps_index.release
@@ -2008,13 +2029,17 @@ describe Qt6 do
     column_view.root_index.row.should eq(root_index.row)
     column_view.resize_grips_visible?.should be_true
     column_view.preview_column_visible?.should be_true
-    column_view.preview_widget.not_nil!.to_unsafe.should eq(preview.to_unsafe)
+    column_view.preview_widget.not_nil!.to_unsafe.should eq(replacement_preview.to_unsafe)
     column_view.column_widths.should eq([140, 220])
     column_view.current_index.valid?.should be_true
     column_view.current_index.row.should eq(terrain_index.row)
     current_index_changes.should be >= 1
+    custom_selection_changes.should be >= 1
     preview_paths.should contain(terrain_path)
     column_view.selection_model.not_nil!.has_selection?.should be_true
+
+    wrapped_column_view = Qt6::ColumnView.wrap(column_view.to_unsafe)
+    wrapped_column_view.to_unsafe.should eq(column_view.to_unsafe)
 
     renamed_terrain_path = File.join(root_path, "terrain-renamed.map")
     model.rename(terrain_index, "terrain-renamed.map").should be_true
@@ -2057,6 +2082,7 @@ describe Qt6 do
     terrain_model_icon.release
     maps_index.release
     root_index.release
+    wrapped_column_view.release
     column_view.release
     model.release
     provider.release

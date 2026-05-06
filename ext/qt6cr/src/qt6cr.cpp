@@ -105,6 +105,7 @@
 #include <QPen>
 #include <QPdfWriter>
 #include <QPixmap>
+#include <QPointer>
 #include <QProgressBar>
 #include <QPolygon>
 #include <QPolygonF>
@@ -596,6 +597,8 @@ class ModelColumnView final : public QColumnView {
   void *update_preview_widget_userdata = nullptr;
   QMetaObject::Connection update_preview_widget_connection;
   bool preview_column_visible = true;
+  QPointer<QWidget> logical_preview_widget;
+  QPointer<QWidget> placeholder_preview_widget;
 
   void setModel(QAbstractItemModel *model) override {
     if (current_changed_connection) {
@@ -657,12 +660,25 @@ class ModelColumnView final : public QColumnView {
     }
   }
 
-  void setPreviewWidget(QWidget *widget) {
-    QColumnView::setPreviewWidget(widget);
+  QWidget *previewWidget() const {
+    return logical_preview_widget.data();
+  }
 
-    if (widget != nullptr) {
-      widget->setVisible(preview_column_visible);
+  void setPreviewWidget(QWidget *widget) {
+    logical_preview_widget = widget;
+
+    if (widget == nullptr) {
+      if (placeholder_preview_widget == nullptr) {
+        placeholder_preview_widget = new QWidget(this);
+        placeholder_preview_widget->hide();
+      }
+
+      QColumnView::setPreviewWidget(placeholder_preview_widget);
+      return;
     }
+
+    QColumnView::setPreviewWidget(widget);
+    widget->setVisible(preview_column_visible);
   }
 
  private:

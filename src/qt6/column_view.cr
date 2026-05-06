@@ -5,15 +5,28 @@ module Qt6
     @update_preview_widget : Signal(ModelIndex) = Signal(ModelIndex).new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     getter current_index_changed : Signal()
     getter update_preview_widget : Signal(ModelIndex)
 
     # Creates a column view with an optional parent.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_column_view_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+      initialize_callbacks
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      initialize_callbacks
+    end
+
+    private def initialize_callbacks : Nil
       @current_index_changed = Signal().new
       @update_preview_widget = Signal(ModelIndex).new
-      @callback_userdata = Box.box(self)
+      @callback_userdata = Box.box(self.as(ColumnView))
       LibQt6.qt6cr_column_view_on_current_index_changed(to_unsafe, CURRENT_INDEX_CHANGED_TRAMPOLINE, @callback_userdata)
       LibQt6.qt6cr_column_view_on_update_preview_widget(to_unsafe, UPDATE_PREVIEW_WIDGET_TRAMPOLINE, @callback_userdata)
     end
