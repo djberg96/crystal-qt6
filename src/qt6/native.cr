@@ -1959,6 +1959,17 @@ module Qt6
     fun qt6cr_font_combo_box_create = qt6cr_font_combo_box_create(parent : Handle) : Handle
     fun qt6cr_font_combo_box_current_font = qt6cr_font_combo_box_current_font(handle : Handle) : Handle
     fun qt6cr_font_combo_box_set_current_font = qt6cr_font_combo_box_set_current_font(handle : Handle, font : Handle)
+    fun qt6cr_font_combo_box_set_writing_system = qt6cr_font_combo_box_set_writing_system(handle : Handle, writing_system : LibC::Int)
+    fun qt6cr_font_combo_box_writing_system = qt6cr_font_combo_box_writing_system(handle : Handle) : LibC::Int
+    fun qt6cr_font_combo_box_set_font_filters = qt6cr_font_combo_box_set_font_filters(handle : Handle, filters : LibC::Int)
+    fun qt6cr_font_combo_box_font_filters = qt6cr_font_combo_box_font_filters(handle : Handle) : LibC::Int
+    fun qt6cr_font_combo_box_size_hint = qt6cr_font_combo_box_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_font_combo_box_set_sample_text_for_system = qt6cr_font_combo_box_set_sample_text_for_system(handle : Handle, writing_system : LibC::Int, sample_text : UInt8*)
+    fun qt6cr_font_combo_box_sample_text_for_system = qt6cr_font_combo_box_sample_text_for_system(handle : Handle, writing_system : LibC::Int) : UInt8*
+    fun qt6cr_font_combo_box_set_sample_text_for_font = qt6cr_font_combo_box_set_sample_text_for_font(handle : Handle, family : UInt8*, sample_text : UInt8*)
+    fun qt6cr_font_combo_box_sample_text_for_font = qt6cr_font_combo_box_sample_text_for_font(handle : Handle, family : UInt8*) : UInt8*
+    fun qt6cr_font_combo_box_set_display_font = qt6cr_font_combo_box_set_display_font(handle : Handle, family : UInt8*, font : Handle)
+    fun qt6cr_font_combo_box_display_font = qt6cr_font_combo_box_display_font(handle : Handle, family : UInt8*) : Handle
     fun qt6cr_font_combo_box_on_current_font_changed = qt6cr_font_combo_box_on_current_font_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
     fun qt6cr_key_sequence_edit_create = qt6cr_key_sequence_edit_create(parent : Handle) : Handle
     fun qt6cr_key_sequence_edit_create_with_sequence = qt6cr_key_sequence_edit_create_with_sequence(sequence : UInt8*, parent : Handle) : Handle

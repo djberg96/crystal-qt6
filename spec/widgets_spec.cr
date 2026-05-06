@@ -993,6 +993,8 @@ describe Qt6 do
 
     font_combo = Qt6::FontComboBox.new(host)
     font_combo.set_size_policy(Qt6::SizePolicy::Ignored, Qt6::SizePolicy::Fixed)
+    font_combo.writing_system = Qt6::FontWritingSystem::Latin
+    font_combo.font_filters = Qt6::FontComboBoxFontFilter::ScalableFonts | Qt6::FontComboBoxFontFilter::ProportionalFonts
 
     font_families = [] of String
     font_combo.on_current_font_changed do |font|
@@ -1033,6 +1035,11 @@ describe Qt6 do
 
     font_combo.horizontal_size_policy.should eq(Qt6::SizePolicy::Ignored)
     font_combo.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    font_combo.writing_system.should eq(Qt6::FontWritingSystem::Latin)
+    font_combo.font_filters.includes?(Qt6::FontComboBoxFontFilter::ScalableFonts).should be_true
+    font_combo.font_filters.includes?(Qt6::FontComboBoxFontFilter::ProportionalFonts).should be_true
+    font_combo.size_hint.width.should be > 0
+    font_combo.size_hint.height.should be > 0
     font_combo.current_font.family.should_not be_empty
     font_families.last?.should_not be_nil if font_combo.count > 1 && font_combo.current_index != original_font_index
     browser.open_external_links?.should be_false

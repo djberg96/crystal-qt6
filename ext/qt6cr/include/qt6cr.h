@@ -1995,6 +1995,17 @@ void qt6cr_combo_box_on_edit_text_changed(qt6cr_handle_t handle, qt6cr_string_ca
 qt6cr_handle_t qt6cr_font_combo_box_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_font_combo_box_current_font(qt6cr_handle_t handle);
 void qt6cr_font_combo_box_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font);
+void qt6cr_font_combo_box_set_writing_system(qt6cr_handle_t handle, int writing_system);
+int qt6cr_font_combo_box_writing_system(qt6cr_handle_t handle);
+void qt6cr_font_combo_box_set_font_filters(qt6cr_handle_t handle, int filters);
+int qt6cr_font_combo_box_font_filters(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_font_combo_box_size_hint(qt6cr_handle_t handle);
+void qt6cr_font_combo_box_set_sample_text_for_system(qt6cr_handle_t handle, int writing_system, const char *sample_text);
+char *qt6cr_font_combo_box_sample_text_for_system(qt6cr_handle_t handle, int writing_system);
+void qt6cr_font_combo_box_set_sample_text_for_font(qt6cr_handle_t handle, const char *family, const char *sample_text);
+char *qt6cr_font_combo_box_sample_text_for_font(qt6cr_handle_t handle, const char *family);
+void qt6cr_font_combo_box_set_display_font(qt6cr_handle_t handle, const char *family, qt6cr_handle_t font);
+qt6cr_handle_t qt6cr_font_combo_box_display_font(qt6cr_handle_t handle, const char *family);
 void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
 qt6cr_handle_t qt6cr_key_sequence_edit_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_key_sequence_edit_create_with_sequence(const char *sequence, qt6cr_handle_t parent);

@@ -14632,6 +14632,131 @@ void qt6cr_font_combo_box_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t
   }
 }
 
+void qt6cr_font_combo_box_set_writing_system(qt6cr_handle_t handle, int writing_system) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+  if (font_combo_box != nullptr) {
+    font_combo_box->setWritingSystem(static_cast<QFontDatabase::WritingSystem>(writing_system));
+  }
+}
+
+int qt6cr_font_combo_box_writing_system(qt6cr_handle_t handle) {
+  auto *font_combo_box = as_font_combo_box(handle);
+  return font_combo_box == nullptr ? 0 : static_cast<int>(font_combo_box->writingSystem());
+}
+
+void qt6cr_font_combo_box_set_font_filters(qt6cr_handle_t handle, int filters) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+  if (font_combo_box != nullptr) {
+    font_combo_box->setFontFilters(static_cast<QFontComboBox::FontFilters>(filters));
+  }
+}
+
+int qt6cr_font_combo_box_font_filters(qt6cr_handle_t handle) {
+  auto *font_combo_box = as_font_combo_box(handle);
+  return font_combo_box == nullptr ? 0 : static_cast<int>(font_combo_box->fontFilters());
+}
+
+qt6cr_size_t qt6cr_font_combo_box_size_hint(qt6cr_handle_t handle) {
+  auto *font_combo_box = as_font_combo_box(handle);
+  return font_combo_box == nullptr ? qt6cr_size_t{0, 0} : to_size(font_combo_box->sizeHint());
+}
+
+void qt6cr_font_combo_box_set_sample_text_for_system(qt6cr_handle_t handle, int writing_system, const char *sample_text) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  if (font_combo_box != nullptr) {
+    font_combo_box->setSampleTextForSystem(
+      static_cast<QFontDatabase::WritingSystem>(writing_system),
+      QString::fromUtf8(sample_text == nullptr ? "" : sample_text)
+    );
+  }
+#else
+  (void)font_combo_box;
+  (void)writing_system;
+  (void)sample_text;
+#endif
+}
+
+char *qt6cr_font_combo_box_sample_text_for_system(qt6cr_handle_t handle, int writing_system) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  return font_combo_box == nullptr ? duplicate_string("") : duplicate_string(
+    font_combo_box->sampleTextForSystem(static_cast<QFontDatabase::WritingSystem>(writing_system))
+  );
+#else
+  (void)font_combo_box;
+  (void)writing_system;
+  return duplicate_string("");
+#endif
+}
+
+void qt6cr_font_combo_box_set_sample_text_for_font(qt6cr_handle_t handle, const char *family, const char *sample_text) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  if (font_combo_box != nullptr) {
+    font_combo_box->setSampleTextForFont(
+      QString::fromUtf8(family == nullptr ? "" : family),
+      QString::fromUtf8(sample_text == nullptr ? "" : sample_text)
+    );
+  }
+#else
+  (void)font_combo_box;
+  (void)family;
+  (void)sample_text;
+#endif
+}
+
+char *qt6cr_font_combo_box_sample_text_for_font(qt6cr_handle_t handle, const char *family) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  return font_combo_box == nullptr ? duplicate_string("") : duplicate_string(
+    font_combo_box->sampleTextForFont(QString::fromUtf8(family == nullptr ? "" : family))
+  );
+#else
+  (void)font_combo_box;
+  (void)family;
+  return duplicate_string("");
+#endif
+}
+
+void qt6cr_font_combo_box_set_display_font(qt6cr_handle_t handle, const char *family, qt6cr_handle_t font) {
+  auto *font_combo_box = as_font_combo_box(handle);
+  auto *value = as_qfont(font);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  if (font_combo_box != nullptr && value != nullptr) {
+    font_combo_box->setDisplayFont(QString::fromUtf8(family == nullptr ? "" : family), *value);
+  }
+#else
+  (void)font_combo_box;
+  (void)family;
+  (void)value;
+#endif
+}
+
+qt6cr_handle_t qt6cr_font_combo_box_display_font(qt6cr_handle_t handle, const char *family) {
+  auto *font_combo_box = as_font_combo_box(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+  if (font_combo_box == nullptr) {
+    return nullptr;
+  }
+
+  auto value = font_combo_box->displayFont(QString::fromUtf8(family == nullptr ? "" : family));
+  return value.has_value() ? new QFont(value.value()) : nullptr;
+#else
+  (void)font_combo_box;
+  (void)family;
+  return nullptr;
+#endif
+}
+
 void qt6cr_font_combo_box_on_current_font_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
   auto *font_combo_box = as_font_combo_box(handle);
 
