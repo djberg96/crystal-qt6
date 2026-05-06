@@ -25,5 +25,11 @@ module Qt6
       LibQt6.qt6cr_focus_frame_set_widget(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
       value
     end
+
+    # Qt-style alias for assigning the tracked widget.
+    def set_widget(value : Widget?) : self
+      self.widget = value
+      self
+    end
   end
 end

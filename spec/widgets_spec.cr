@@ -517,6 +517,8 @@ describe Qt6 do
     focus_frame.widget.should be_nil
     focus_frame.widget = select_button
     focus_frame.widget.not_nil!.to_unsafe.should eq(select_button.to_unsafe)
+    focus_frame.set_widget(place_button).to_unsafe.should eq(focus_frame.to_unsafe)
+    focus_frame.widget.not_nil!.to_unsafe.should eq(place_button.to_unsafe)
     focus_frame.widget = nil
     focus_frame.widget.should be_nil
     tool_box.count.should eq(3)
