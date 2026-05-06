@@ -215,6 +215,9 @@ void qt6cr_application_set_auto_sip_enabled(qt6cr_handle_t handle, bool enabled)
 qt6cr_handle_t qt6cr_application_active_window(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_application_focus_widget(qt6cr_handle_t handle);
 void qt6cr_application_close_all_windows(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_application_style(qt6cr_handle_t handle);
+void qt6cr_application_set_style(qt6cr_handle_t handle, qt6cr_handle_t style);
+qt6cr_handle_t qt6cr_application_set_style_by_name(qt6cr_handle_t handle, const char *name);
 
 qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent);
 int qt6cr_event_loop_exec(qt6cr_handle_t handle);
@@ -235,6 +238,9 @@ bool qt6cr_clipboard_has_pixmap(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_clipboard_mime_data(qt6cr_handle_t handle);
 void qt6cr_clipboard_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_data);
 void qt6cr_clipboard_clear(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_style_standard_palette(qt6cr_handle_t handle);
+char *qt6cr_style_name(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_common_style_create(void);
 
 qt6cr_handle_t qt6cr_mime_data_create(void);
 bool qt6cr_mime_data_has_text(qt6cr_handle_t handle);
@@ -276,6 +282,8 @@ void qt6cr_widget_set_graphics_effect(qt6cr_handle_t handle, qt6cr_handle_t effe
 qt6cr_handle_t qt6cr_widget_grab(qt6cr_handle_t handle);
 char *qt6cr_widget_style_sheet(qt6cr_handle_t handle);
 void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet);
+qt6cr_handle_t qt6cr_widget_style(qt6cr_handle_t handle);
+void qt6cr_widget_set_style(qt6cr_handle_t handle, qt6cr_handle_t style);
 char *qt6cr_widget_tool_tip(qt6cr_handle_t handle);
 void qt6cr_widget_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip);
 char *qt6cr_widget_status_tip(qt6cr_handle_t handle);

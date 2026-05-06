@@ -145,6 +145,19 @@ module Qt6
       value
     end
 
+    # Returns the widget's current style.
+    def style : Style?
+      handle = LibQt6.qt6cr_widget_style(@to_unsafe)
+      handle.null? ? nil : Style.wrap(handle)
+    end
+
+    # Sets the widget's current style.
+    def style=(value : Style) : Style
+      LibQt6.qt6cr_widget_set_style(@to_unsafe, value.to_unsafe)
+      value.adopt_by_parent!
+      value
+    end
+
     # Returns the widget's tooltip text.
     def tool_tip : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_widget_tool_tip(@to_unsafe))

@@ -183,6 +183,9 @@ module Qt6
     fun qt6cr_application_active_window = qt6cr_application_active_window(handle : Handle) : Handle
     fun qt6cr_application_focus_widget = qt6cr_application_focus_widget(handle : Handle) : Handle
     fun qt6cr_application_close_all_windows = qt6cr_application_close_all_windows(handle : Handle)
+    fun qt6cr_application_style = qt6cr_application_style(handle : Handle) : Handle
+    fun qt6cr_application_set_style = qt6cr_application_set_style(handle : Handle, style : Handle)
+    fun qt6cr_application_set_style_by_name = qt6cr_application_set_style_by_name(handle : Handle, name : UInt8*) : Handle
 
     fun qt6cr_event_loop_create = qt6cr_event_loop_create(parent : Handle) : Handle
     fun qt6cr_event_loop_exec = qt6cr_event_loop_exec(handle : Handle) : LibC::Int
@@ -203,6 +206,9 @@ module Qt6
     fun qt6cr_clipboard_mime_data = qt6cr_clipboard_mime_data(handle : Handle) : Handle
     fun qt6cr_clipboard_set_mime_data = qt6cr_clipboard_set_mime_data(handle : Handle, mime_data : Handle)
     fun qt6cr_clipboard_clear = qt6cr_clipboard_clear(handle : Handle)
+    fun qt6cr_style_standard_palette = qt6cr_style_standard_palette(handle : Handle) : Handle
+    fun qt6cr_style_name = qt6cr_style_name(handle : Handle) : UInt8*
+    fun qt6cr_common_style_create = qt6cr_common_style_create : Handle
 
     fun qt6cr_mime_data_create = qt6cr_mime_data_create : Handle
     fun qt6cr_mime_data_has_text = qt6cr_mime_data_has_text(handle : Handle) : Bool
@@ -244,6 +250,8 @@ module Qt6
     fun qt6cr_widget_grab = qt6cr_widget_grab(handle : Handle) : Handle
     fun qt6cr_widget_style_sheet = qt6cr_widget_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_widget_set_style_sheet = qt6cr_widget_set_style_sheet(handle : Handle, style_sheet : UInt8*)
+    fun qt6cr_widget_style = qt6cr_widget_style(handle : Handle) : Handle
+    fun qt6cr_widget_set_style = qt6cr_widget_set_style(handle : Handle, style : Handle)
     fun qt6cr_widget_tool_tip = qt6cr_widget_tool_tip(handle : Handle) : UInt8*
     fun qt6cr_widget_set_tool_tip = qt6cr_widget_set_tool_tip(handle : Handle, tool_tip : UInt8*)
     fun qt6cr_widget_status_tip = qt6cr_widget_status_tip(handle : Handle) : UInt8*

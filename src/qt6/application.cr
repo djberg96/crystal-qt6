@@ -119,6 +119,25 @@ module Qt6
       value
     end
 
+    # Returns the application's current style.
+    def style : Style?
+      handle = LibQt6.qt6cr_application_style(@handle)
+      handle.null? ? nil : Style.wrap(handle)
+    end
+
+    # Sets the application's current style.
+    def style=(value : Style) : Style
+      LibQt6.qt6cr_application_set_style(@handle, value.to_unsafe)
+      value.adopt_by_parent!
+      value
+    end
+
+    # Sets the application's current style by Qt style name.
+    def set_style(name : String) : Style?
+      handle = LibQt6.qt6cr_application_set_style_by_name(@handle, name.to_unsafe)
+      handle.null? ? nil : Style.wrap(handle)
+    end
+
     # Returns the cursor flash interval in milliseconds.
     def cursor_flash_time : Int32
       LibQt6.qt6cr_application_cursor_flash_time(@handle)

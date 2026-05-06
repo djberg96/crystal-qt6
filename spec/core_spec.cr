@@ -477,6 +477,34 @@ describe Qt6 do
     application.palette = previous_palette
   end
 
+  it "supports common styles on applications and widgets" do
+    application = app
+    previous_style_name = application.style.try(&.name)
+    window = Qt6::Widget.new
+    application_style = Qt6::CommonStyle.new
+    widget_style = Qt6::CommonStyle.new
+
+    begin
+      application.style = application_style
+      window.style = widget_style
+
+      active_application_style = application.style
+      active_widget_style = window.style
+      active_application_style.should_not be_nil
+      active_widget_style.should_not be_nil
+      active_application_style = active_application_style.not_nil!
+      active_widget_style = active_widget_style.not_nil!
+
+      active_application_style.name.should eq(application_style.name)
+      active_widget_style.name.should eq(widget_style.name)
+      active_application_style.standard_palette.color(Qt6::ColorRole::Window).should be_a(Qt6::Color)
+      active_widget_style.standard_palette.color(Qt6::ColorRole::WindowText).should be_a(Qt6::Color)
+    ensure
+      window.release
+      application.set_style(previous_style_name.not_nil!) if previous_style_name
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

@@ -24,6 +24,7 @@
 #include <QCalendarWidget>
 #include <QColumnView>
 #include <QCommandLinkButton>
+#include <QCommonStyle>
 #include <QCursor>
 #include <QDataWidgetMapper>
 #include <QDate>
@@ -213,6 +214,7 @@ qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
+QStyle *as_style(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
@@ -1388,6 +1390,10 @@ QObject *as_qobject(qt6cr_handle_t handle) {
 
 QWidget *as_widget(qt6cr_handle_t handle) {
   return static_cast<QWidget *>(handle);
+}
+
+QStyle *as_style(qt6cr_handle_t handle) {
+  return static_cast<QStyle *>(handle);
 }
 
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
@@ -2600,6 +2606,30 @@ void qt6cr_application_close_all_windows(qt6cr_handle_t handle) {
   }
 }
 
+qt6cr_handle_t qt6cr_application_style(qt6cr_handle_t handle) {
+  auto *state = as_application_state(handle);
+  return state == nullptr || state->application == nullptr ? nullptr : state->application->style();
+}
+
+void qt6cr_application_set_style(qt6cr_handle_t handle, qt6cr_handle_t style) {
+  auto *state = as_application_state(handle);
+  auto *value = as_style(style);
+
+  if (state != nullptr && state->application != nullptr && value != nullptr) {
+    state->application->setStyle(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_application_set_style_by_name(qt6cr_handle_t handle, const char *name) {
+  auto *state = as_application_state(handle);
+
+  if (state == nullptr || state->application == nullptr) {
+    return nullptr;
+  }
+
+  return state->application->setStyle(QString::fromUtf8(name == nullptr ? "" : name));
+}
+
 qt6cr_handle_t qt6cr_event_loop_create(qt6cr_handle_t parent) {
   return new QEventLoop(as_object(parent));
 }
@@ -2819,6 +2849,20 @@ void qt6cr_clipboard_clear(qt6cr_handle_t handle) {
   if (clipboard != nullptr) {
     clipboard->clear();
   }
+}
+
+qt6cr_handle_t qt6cr_style_standard_palette(qt6cr_handle_t handle) {
+  auto *style = as_style(handle);
+  return style == nullptr ? new QPalette() : new QPalette(style->standardPalette());
+}
+
+char *qt6cr_style_name(qt6cr_handle_t handle) {
+  auto *style = as_style(handle);
+  return style == nullptr ? duplicate_string("") : duplicate_string(style->name());
+}
+
+qt6cr_handle_t qt6cr_common_style_create(void) {
+  return new QCommonStyle();
 }
 
 qt6cr_handle_t qt6cr_mime_data_create(void) {
@@ -3072,6 +3116,20 @@ void qt6cr_widget_set_style_sheet(qt6cr_handle_t handle, const char *style_sheet
 
   if (widget != nullptr) {
     widget->setStyleSheet(QString::fromUtf8(style_sheet == nullptr ? "" : style_sheet));
+  }
+}
+
+qt6cr_handle_t qt6cr_widget_style(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : widget->style();
+}
+
+void qt6cr_widget_set_style(qt6cr_handle_t handle, qt6cr_handle_t style) {
+  auto *widget = as_widget(handle);
+  auto *value = as_style(style);
+
+  if (widget != nullptr && value != nullptr) {
+    widget->setStyle(value);
   }
 }
 
