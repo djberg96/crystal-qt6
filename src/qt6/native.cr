@@ -2620,7 +2620,18 @@ module Qt6
     fun qt6cr_splitter_sizes = qt6cr_splitter_sizes(handle : Handle) : IntArrayValue
     fun qt6cr_splitter_set_sizes = qt6cr_splitter_set_sizes(handle : Handle, sizes : Int32*, size : LibC::Int)
 
-    fun qt6cr_dialog_button_box_create = qt6cr_dialog_button_box_create(parent : Handle, buttons : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_create = qt6cr_dialog_button_box_create(parent : Handle) : Handle
+    fun qt6cr_dialog_button_box_create_with_orientation = qt6cr_dialog_button_box_create_with_orientation(parent : Handle, orientation : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_create_with_buttons = qt6cr_dialog_button_box_create_with_buttons(parent : Handle, buttons : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_create_with_buttons_orientation = qt6cr_dialog_button_box_create_with_buttons_orientation(parent : Handle, buttons : LibC::Int, orientation : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_add_button = qt6cr_dialog_button_box_add_button(handle : Handle, button : Handle, role : LibC::Int)
+    fun qt6cr_dialog_button_box_add_text_button = qt6cr_dialog_button_box_add_text_button(handle : Handle, text : UInt8*, role : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_add_standard_button = qt6cr_dialog_button_box_add_standard_button(handle : Handle, button : LibC::Int) : Handle
+    fun qt6cr_dialog_button_box_remove_button = qt6cr_dialog_button_box_remove_button(handle : Handle, button : Handle)
+    fun qt6cr_dialog_button_box_clear = qt6cr_dialog_button_box_clear(handle : Handle)
+    fun qt6cr_dialog_button_box_buttons = qt6cr_dialog_button_box_buttons(handle : Handle) : HandleArrayValue
+    fun qt6cr_dialog_button_box_button_role = qt6cr_dialog_button_box_button_role(handle : Handle, button : Handle) : LibC::Int
+    fun qt6cr_dialog_button_box_standard_button = qt6cr_dialog_button_box_standard_button(handle : Handle, button : Handle) : LibC::Int
     fun qt6cr_dialog_button_box_button = qt6cr_dialog_button_box_button(handle : Handle, button : LibC::Int) : Handle
     fun qt6cr_dialog_button_box_standard_buttons = qt6cr_dialog_button_box_standard_buttons(handle : Handle) : LibC::Int
     fun qt6cr_dialog_button_box_set_standard_buttons = qt6cr_dialog_button_box_set_standard_buttons(handle : Handle, buttons : LibC::Int)
@@ -2628,6 +2639,8 @@ module Qt6
     fun qt6cr_dialog_button_box_set_center_buttons = qt6cr_dialog_button_box_set_center_buttons(handle : Handle, value : Bool)
     fun qt6cr_dialog_button_box_orientation = qt6cr_dialog_button_box_orientation(handle : Handle) : LibC::Int
     fun qt6cr_dialog_button_box_set_orientation = qt6cr_dialog_button_box_set_orientation(handle : Handle, value : LibC::Int)
+    fun qt6cr_dialog_button_box_on_clicked = qt6cr_dialog_button_box_on_clicked(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_dialog_button_box_on_help_requested = qt6cr_dialog_button_box_on_help_requested(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_dialog_button_box_on_accepted = qt6cr_dialog_button_box_on_accepted(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_dialog_button_box_on_rejected = qt6cr_dialog_button_box_on_rejected(handle : Handle, callback : (Handle ->), userdata : Handle)
 

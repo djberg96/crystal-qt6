@@ -464,15 +464,28 @@ describe Qt6 do
     button_box.standard_buttons = Qt6::DialogButtonBoxStandardButton::Ok | Qt6::DialogButtonBoxStandardButton::Cancel | Qt6::DialogButtonBoxStandardButton::Help
     accepted = 0
     rejected = 0
+    help_requests = 0
+    clicked_buttons = [] of String
     button_box.on_accepted { accepted += 1 }
+    button_box.on_help_requested { help_requests += 1 }
+    button_box.on_clicked do |button|
+      clicked_buttons << (button.try(&.text) || "")
+    end
     button_box.on_rejected { rejected += 1 }
 
     ok_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Ok).not_nil!
     cancel_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Cancel).not_nil!
     help_button = button_box.button(Qt6::DialogButtonBoxStandardButton::Help).not_nil!
+    custom_button = Qt6::PushButton.new("Preview")
+    button_box.add_button(custom_button, Qt6::DialogButtonBoxButtonRole::ActionRole).to_unsafe.should eq(custom_button.to_unsafe)
+    reset_button = button_box.add_button("Reset Export", Qt6::DialogButtonBoxButtonRole::ResetRole)
+    apply_button = button_box.add_button(Qt6::DialogButtonBoxStandardButton::Apply)
     ok_button.text = "Export"
     ok_button.click
+    help_button.click
     cancel_button.click
+    custom_button.click
+    reset_button.click
     application.process_events
 
     dialog.minimum_width.should eq(280)
@@ -540,10 +553,27 @@ describe Qt6 do
       Qt6::DialogButtonBoxStandardButton::Cancel |
       Qt6::DialogButtonBoxStandardButton::Help
     )
+    button_box.buttons.size.should eq(5)
+    button_box.button_role(ok_button).should eq(Qt6::DialogButtonBoxButtonRole::AcceptRole)
+    button_box.button_role(custom_button).should eq(Qt6::DialogButtonBoxButtonRole::ActionRole)
+    button_box.button_role(reset_button).should eq(Qt6::DialogButtonBoxButtonRole::ResetRole)
+    button_box.standard_button(ok_button).should eq(Qt6::DialogButtonBoxStandardButton::Ok)
+    button_box.standard_button(apply_button).should eq(Qt6::DialogButtonBoxStandardButton::Apply)
+    button_box.standard_button(custom_button).should eq(Qt6::DialogButtonBoxStandardButton::NoButton)
     ok_button.text.should eq("Export")
     help_button.text.should_not be_empty
+    clicked_buttons.should contain("Export")
+    clicked_buttons.should contain(cancel_button.text)
+    clicked_buttons.should contain(help_button.text)
+    clicked_buttons.should contain("Preview")
+    clicked_buttons.should contain("Reset Export")
     accepted.should eq(1)
     rejected.should eq(1)
+    help_requests.should eq(1)
+    button_box.remove_button(custom_button).to_unsafe.should eq(custom_button.to_unsafe)
+    button_box.buttons.includes?(custom_button).should be_false
+    button_box.clear
+    button_box.buttons.should be_empty
     mode_group.remove(place_button)
     mode_group.id(place_button).should eq(-1)
 

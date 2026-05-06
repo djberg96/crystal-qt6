@@ -2643,7 +2643,18 @@ void qt6cr_splitter_set_handle_width(qt6cr_handle_t handle, int value);
 qt6cr_int_array_t qt6cr_splitter_sizes(qt6cr_handle_t handle);
 void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size);
 
-qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent, int buttons);
+qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_dialog_button_box_create_with_orientation(qt6cr_handle_t parent, int orientation);
+qt6cr_handle_t qt6cr_dialog_button_box_create_with_buttons(qt6cr_handle_t parent, int buttons);
+qt6cr_handle_t qt6cr_dialog_button_box_create_with_buttons_orientation(qt6cr_handle_t parent, int buttons, int orientation);
+void qt6cr_dialog_button_box_add_button(qt6cr_handle_t handle, qt6cr_handle_t button, int role);
+qt6cr_handle_t qt6cr_dialog_button_box_add_text_button(qt6cr_handle_t handle, const char *text, int role);
+qt6cr_handle_t qt6cr_dialog_button_box_add_standard_button(qt6cr_handle_t handle, int button);
+void qt6cr_dialog_button_box_remove_button(qt6cr_handle_t handle, qt6cr_handle_t button);
+void qt6cr_dialog_button_box_clear(qt6cr_handle_t handle);
+qt6cr_handle_array_t qt6cr_dialog_button_box_buttons(qt6cr_handle_t handle);
+int qt6cr_dialog_button_box_button_role(qt6cr_handle_t handle, qt6cr_handle_t button);
+int qt6cr_dialog_button_box_standard_button(qt6cr_handle_t handle, qt6cr_handle_t button);
 qt6cr_handle_t qt6cr_dialog_button_box_button(qt6cr_handle_t handle, int button);
 int qt6cr_dialog_button_box_standard_buttons(qt6cr_handle_t handle);
 void qt6cr_dialog_button_box_set_standard_buttons(qt6cr_handle_t handle, int buttons);
@@ -2651,6 +2662,8 @@ bool qt6cr_dialog_button_box_center_buttons(qt6cr_handle_t handle);
 void qt6cr_dialog_button_box_set_center_buttons(qt6cr_handle_t handle, bool value);
 int qt6cr_dialog_button_box_orientation(qt6cr_handle_t handle);
 void qt6cr_dialog_button_box_set_orientation(qt6cr_handle_t handle, int value);
+void qt6cr_dialog_button_box_on_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_dialog_button_box_on_help_requested(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_dialog_button_box_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_dialog_button_box_on_rejected(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 

@@ -18631,8 +18631,77 @@ void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size)
   splitter->setSizes(values);
 }
 
-qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent, int buttons) {
+qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent) {
+  return new QDialogButtonBox(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_dialog_button_box_create_with_orientation(qt6cr_handle_t parent, int orientation) {
+  return new QDialogButtonBox(static_cast<Qt::Orientation>(orientation), as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_dialog_button_box_create_with_buttons(qt6cr_handle_t parent, int buttons) {
   return new QDialogButtonBox(static_cast<QDialogButtonBox::StandardButtons>(buttons), as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_dialog_button_box_create_with_buttons_orientation(qt6cr_handle_t parent, int buttons, int orientation) {
+  return new QDialogButtonBox(
+    static_cast<QDialogButtonBox::StandardButtons>(buttons),
+    static_cast<Qt::Orientation>(orientation),
+    as_widget(parent)
+  );
+}
+
+void qt6cr_dialog_button_box_add_button(qt6cr_handle_t handle, qt6cr_handle_t button, int role) {
+  auto *button_box = as_dialog_button_box(handle);
+  auto *abstract_button = as_abstract_button(button);
+
+  if (button_box != nullptr && abstract_button != nullptr) {
+    button_box->addButton(abstract_button, static_cast<QDialogButtonBox::ButtonRole>(role));
+  }
+}
+
+qt6cr_handle_t qt6cr_dialog_button_box_add_text_button(qt6cr_handle_t handle, const char *text, int role) {
+  auto *button_box = as_dialog_button_box(handle);
+  return button_box == nullptr ? nullptr : button_box->addButton(QString::fromUtf8(text == nullptr ? "" : text), static_cast<QDialogButtonBox::ButtonRole>(role));
+}
+
+qt6cr_handle_t qt6cr_dialog_button_box_add_standard_button(qt6cr_handle_t handle, int button) {
+  auto *button_box = as_dialog_button_box(handle);
+  return button_box == nullptr ? nullptr : button_box->addButton(static_cast<QDialogButtonBox::StandardButton>(button));
+}
+
+void qt6cr_dialog_button_box_remove_button(qt6cr_handle_t handle, qt6cr_handle_t button) {
+  auto *button_box = as_dialog_button_box(handle);
+  auto *abstract_button = as_abstract_button(button);
+
+  if (button_box != nullptr && abstract_button != nullptr) {
+    button_box->removeButton(abstract_button);
+  }
+}
+
+void qt6cr_dialog_button_box_clear(qt6cr_handle_t handle) {
+  auto *button_box = as_dialog_button_box(handle);
+
+  if (button_box != nullptr) {
+    button_box->clear();
+  }
+}
+
+qt6cr_handle_array_t qt6cr_dialog_button_box_buttons(qt6cr_handle_t handle) {
+  auto *button_box = as_dialog_button_box(handle);
+  return button_box == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(button_box->buttons());
+}
+
+int qt6cr_dialog_button_box_button_role(qt6cr_handle_t handle, qt6cr_handle_t button) {
+  auto *button_box = as_dialog_button_box(handle);
+  auto *abstract_button = as_abstract_button(button);
+  return button_box == nullptr || abstract_button == nullptr ? static_cast<int>(QDialogButtonBox::InvalidRole) : static_cast<int>(button_box->buttonRole(abstract_button));
+}
+
+int qt6cr_dialog_button_box_standard_button(qt6cr_handle_t handle, qt6cr_handle_t button) {
+  auto *button_box = as_dialog_button_box(handle);
+  auto *abstract_button = as_abstract_button(button);
+  return button_box == nullptr || abstract_button == nullptr ? static_cast<int>(QDialogButtonBox::NoButton) : static_cast<int>(button_box->standardButton(abstract_button));
 }
 
 qt6cr_handle_t qt6cr_dialog_button_box_button(qt6cr_handle_t handle, int button) {
@@ -18677,6 +18746,30 @@ void qt6cr_dialog_button_box_set_orientation(qt6cr_handle_t handle, int value) {
   if (button_box != nullptr) {
     button_box->setOrientation(static_cast<Qt::Orientation>(value));
   }
+}
+
+void qt6cr_dialog_button_box_on_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *button_box = as_dialog_button_box(handle);
+
+  if (button_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_box, &QDialogButtonBox::clicked, button_box, [callback, userdata](QAbstractButton *button) {
+    callback(userdata, button);
+  });
+}
+
+void qt6cr_dialog_button_box_on_help_requested(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *button_box = as_dialog_button_box(handle);
+
+  if (button_box == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(button_box, &QDialogButtonBox::helpRequested, button_box, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 void qt6cr_dialog_button_box_on_accepted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
