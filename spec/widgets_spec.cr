@@ -33,6 +33,9 @@ describe Qt6 do
     date_values = [] of String
     time_values = [] of String
     calendar_values = [] of String
+    calendar_clicked = [] of String
+    calendar_activated = [] of String
+    calendar_pages = [] of Tuple(Int32, Int32)
     tab_indices = [] of Int32
     stacked_indices = [] of Int32
 
@@ -77,6 +80,15 @@ describe Qt6 do
     end
     calendar.on_selection_changed do
       calendar_values << calendar.selected_date.to_string
+    end
+    calendar.on_clicked do |value|
+      calendar_clicked << value.to_string
+    end
+    calendar.on_activated do |value|
+      calendar_activated << value.to_string
+    end
+    calendar.on_current_page_changed do |year, month|
+      calendar_pages << {year, month}
     end
     tab_bar.on_current_index_changed do |value|
       tab_indices << value
@@ -135,8 +147,21 @@ describe Qt6 do
 
     calendar.minimum_date = Qt6::QDate.new(2026, 1, 1)
     calendar.maximum_date = Qt6::QDate.new(2026, 12, 31)
+    calendar.set_date_range(Qt6::QDate.new(2026, 2, 1), Qt6::QDate.new(2026, 11, 30))
     calendar.grid_visible = true
+    calendar.navigation_bar_visible = false
+    calendar.date_edit_enabled = true
+    calendar.date_edit_accept_delay = 640
+    calendar.set_current_page(2026, 6)
+    calendar.show_next_month
+    calendar.show_previous_month
+    calendar.show_next_year
+    calendar.show_previous_year
+    calendar.show_selected_date
+    calendar.show_today
     calendar.selected_date = date
+    calendar.clicked.emit(date)
+    calendar.activated.emit(date)
 
     lcd.digit_count = 6
     lcd.mode = Qt6::LcdNumberMode::Hex
@@ -222,11 +247,20 @@ describe Qt6 do
     time_edit.time.to_string.should eq(time.to_string)
     time_values.last.should eq(time.to_string)
 
-    calendar.minimum_date.to_string.should eq("2026-01-01")
-    calendar.maximum_date.to_string.should eq("2026-12-31")
+    calendar.minimum_date.to_string.should eq("2026-02-01")
+    calendar.maximum_date.to_string.should eq("2026-11-30")
     calendar.grid_visible?.should be_true
+    calendar.navigation_bar_visible?.should be_false
+    calendar.date_edit_enabled?.should be_true
+    calendar.date_edit_accept_delay.should eq(640)
+    calendar.year_shown.should eq(2026)
+    calendar.month_shown.should be >= 1
+    calendar.month_shown.should be <= 12
     calendar.selected_date.to_string.should eq(date.to_string)
     calendar_values.last.should eq(date.to_string)
+    calendar_clicked.last.should eq(date.to_string)
+    calendar_activated.last.should eq(date.to_string)
+    calendar_pages.should contain({2026, 6})
 
     lcd.digit_count.should eq(6)
     lcd.mode.should eq(Qt6::LcdNumberMode::Hex)

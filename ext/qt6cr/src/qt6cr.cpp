@@ -16160,6 +16160,16 @@ void qt6cr_calendar_widget_set_maximum_date(qt6cr_handle_t handle, qt6cr_handle_
   }
 }
 
+void qt6cr_calendar_widget_set_date_range(qt6cr_handle_t handle, qt6cr_handle_t minimum, qt6cr_handle_t maximum) {
+  auto *calendar = as_calendar_widget(handle);
+  auto *minimum_date = as_qdate(minimum);
+  auto *maximum_date = as_qdate(maximum);
+
+  if (calendar != nullptr && minimum_date != nullptr && maximum_date != nullptr) {
+    calendar->setDateRange(*minimum_date, *maximum_date);
+  }
+}
+
 bool qt6cr_calendar_widget_grid_visible(qt6cr_handle_t handle) {
   auto *calendar = as_calendar_widget(handle);
   return calendar != nullptr && calendar->isGridVisible();
@@ -16173,6 +16183,111 @@ void qt6cr_calendar_widget_set_grid_visible(qt6cr_handle_t handle, bool value) {
   }
 }
 
+bool qt6cr_calendar_widget_navigation_bar_visible(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+  return calendar != nullptr && calendar->isNavigationBarVisible();
+}
+
+void qt6cr_calendar_widget_set_navigation_bar_visible(qt6cr_handle_t handle, bool value) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->setNavigationBarVisible(value);
+  }
+}
+
+bool qt6cr_calendar_widget_date_edit_enabled(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+  return calendar != nullptr && calendar->isDateEditEnabled();
+}
+
+void qt6cr_calendar_widget_set_date_edit_enabled(qt6cr_handle_t handle, bool value) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->setDateEditEnabled(value);
+  }
+}
+
+int qt6cr_calendar_widget_date_edit_accept_delay(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+  return calendar == nullptr ? 1500 : calendar->dateEditAcceptDelay();
+}
+
+void qt6cr_calendar_widget_set_date_edit_accept_delay(qt6cr_handle_t handle, int value) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr && value >= 0) {
+    calendar->setDateEditAcceptDelay(value);
+  }
+}
+
+int qt6cr_calendar_widget_year_shown(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+  return calendar == nullptr ? 0 : calendar->yearShown();
+}
+
+int qt6cr_calendar_widget_month_shown(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+  return calendar == nullptr ? 0 : calendar->monthShown();
+}
+
+void qt6cr_calendar_widget_set_current_page(qt6cr_handle_t handle, int year, int month) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->setCurrentPage(year, month);
+  }
+}
+
+void qt6cr_calendar_widget_show_next_month(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->showNextMonth();
+  }
+}
+
+void qt6cr_calendar_widget_show_previous_month(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->showPreviousMonth();
+  }
+}
+
+void qt6cr_calendar_widget_show_next_year(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->showNextYear();
+  }
+}
+
+void qt6cr_calendar_widget_show_previous_year(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->showPreviousYear();
+  }
+}
+
+void qt6cr_calendar_widget_show_selected_date(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->showSelectedDate();
+  }
+}
+
+void qt6cr_calendar_widget_show_today(qt6cr_handle_t handle) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar != nullptr) {
+    calendar->showToday();
+  }
+}
+
 void qt6cr_calendar_widget_on_selection_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *calendar = as_calendar_widget(handle);
 
@@ -16182,6 +16297,42 @@ void qt6cr_calendar_widget_on_selection_changed(qt6cr_handle_t handle, qt6cr_voi
 
   QObject::connect(calendar, &QCalendarWidget::selectionChanged, calendar, [callback, userdata]() {
     callback(userdata);
+  });
+}
+
+void qt6cr_calendar_widget_on_clicked(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(calendar, &QCalendarWidget::clicked, calendar, [callback, userdata](const QDate &date) {
+    callback(userdata, new QDate(date));
+  });
+}
+
+void qt6cr_calendar_widget_on_activated(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(calendar, &QCalendarWidget::activated, calendar, [callback, userdata](const QDate &date) {
+    callback(userdata, new QDate(date));
+  });
+}
+
+void qt6cr_calendar_widget_on_current_page_changed(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *calendar = as_calendar_widget(handle);
+
+  if (calendar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(calendar, &QCalendarWidget::currentPageChanged, calendar, [callback, userdata](int year, int month) {
+    callback(userdata, year, month);
   });
 }
 
