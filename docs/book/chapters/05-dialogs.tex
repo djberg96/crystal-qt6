@@ -176,7 +176,7 @@ end
 
 \section{Color Dialogs}
 
-\api{ColorDialog} returns a \api{Color}. It is useful for theme colors, layer colors, brush colors, annotation colors, and any workflow where the user needs a visual picker.
+\api{ColorDialog} returns a \api{Color}. It is useful for theme colors, layer colors, brush colors, annotation colors, and any workflow where the user needs a visual picker. The convenience helper is usually enough, but explicit instances also expose option flags, the currently highlighted color, the accepted color, and callbacks for live preview or selection-confirmed flows.
 
 \begin{lstlisting}[style=crystal]
 accent = Qt6::Color.new(52, 112, 176)
@@ -198,7 +198,27 @@ end
 \smallscreenshotplaceholder{docs/book/images/dialogs-color-dialog.png}{A color dialog initialized with the current accent color.}
 \smallscreenshotplaceholder{docs/book/images/dialogs-color-alpha.png}{A color dialog with alpha-channel editing enabled.}
 
-\api{ColorDialog#native_dialog=} can disable the platform-native picker. That is mainly useful for deterministic tests, where the widget-backed dialog behaves like an ordinary Qt dialog.
+\begin{lstlisting}[style=crystal]
+dialog = Qt6::ColorDialog.new(main, accent)
+dialog.window_title = "Tune Accent"
+dialog.native_dialog = false
+dialog.options = Qt6::ColorDialogOption::ShowAlphaChannel
+dialog.set_option(Qt6::ColorDialogOption::NoEyeDropperButton)
+
+dialog.on_current_color_changed do |preview|
+  preview_swatch.style_sheet = "background: rgba(#{preview.red}, #{preview.green}, #{preview.blue}, #{preview.alpha});"
+end
+
+if dialog.exec == Qt6::DialogCode::Accepted
+  accent = dialog.selected_color
+end
+
+dialog.release
+\end{lstlisting}
+
+\api{ColorDialog#native_dialog=} can disable the platform-native picker. That is mainly useful for deterministic tests, where the widget-backed dialog behaves like an ordinary Qt dialog. The binding also exposes \api{options}, \api{set_option}, and \api{clear_option} for workflows that need alpha editing, no-button live-preview modes, or other picker configuration.
+
+Qt also keeps shared custom and standard color slots. \api{ColorDialog.custom_color}, \api{set_custom_color}, \api{standard_color}, and \api{set_standard_color} are useful when an application wants to seed the picker with a house palette, terrain swatches, or other reusable colors.
 
 Native color, font, and file dialogs are the right default for user-facing applications because they match platform expectations. The widget-backed versions are useful when screenshots, tests, or tutorial examples need a predictable Qt window instead of a system sheet or platform-owned picker. If a chapter screenshot needs to teach the binding API rather than the operating system's picker, prefer the widget-backed version and mention that real applications can leave native dialogs enabled.
 

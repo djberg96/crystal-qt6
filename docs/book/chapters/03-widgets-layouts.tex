@@ -71,8 +71,32 @@ visibility = Qt6::CheckBox.new("Visible")
 visibility.tristate = true
 visibility.check_state = Qt6::CheckState::PartiallyChecked
 
+visibility.on_state_changed do |state|
+  status.text = "Visibility state: #{state}"
+end
+
 mode = Qt6::RadioButton.new("Preview Mode")
 mode.auto_exclusive = false
+\end{lstlisting}
+
+When several buttons represent a mode choice, group them with \api{ButtonGroup}. Groups can be exclusive like radio buttons, or they can simply provide shared callbacks and stable integer ids for toolbar-style toggle buttons.
+
+\begin{lstlisting}[style=crystal]
+terrain = Qt6::RadioButton.new("Terrain")
+units = Qt6::RadioButton.new("Units")
+roads = Qt6::RadioButton.new("Roads")
+
+layer_modes = Qt6::ButtonGroup.new
+layer_modes.add(terrain, 10)
+layer_modes.add(units, 20)
+layer_modes.add(roads, 30)
+layer_modes.exclusive = true
+
+layer_modes.on_id_clicked do |id|
+  activate_layer_mode(id)
+end
+
+terrain.checked = true
 \end{lstlisting}
 
 When a text field should complete from a known set, attach a \api{Completer}. This is especially useful for search fields, tags, layer names, and command palettes.
@@ -108,6 +132,27 @@ zoom.on_released do
 end
 \end{lstlisting}
 
+Date-oriented tools can move beyond spin boxes and text fields when the user needs to browse an actual month view. \api{CalendarWidget} works well for scheduling, journaling, replay controls, and any workflow where the visible page matters in addition to the selected date.
+
+\begin{lstlisting}[style=crystal]
+calendar = Qt6::CalendarWidget.new
+calendar.set_date_range(
+  Qt6::QDate.new(2026, 1, 1),
+  Qt6::QDate.new(2026, 12, 31)
+)
+calendar.navigation_bar_visible = true
+calendar.grid_visible = true
+calendar.selected_date = Qt6::QDate.new(2026, 5, 5)
+
+calendar.on_current_page_changed do |year, month|
+  status.text = "Showing #{year}-#{month}"
+end
+
+calendar.on_clicked do |date|
+  load_daily_summary(date)
+end
+\end{lstlisting}
+
 \section{Panel Polish Widgets}
 
 Desktop editors often need a few small shell widgets in addition to the primary value editors. \api{ToolBox} is a compact stacked-page container that works well for inspectors and sidebars. \api{FocusFrame} lets Qt draw a native-looking focus highlight around another widget. \api{SizeGrip} provides an explicit resize corner for custom dialogs or utility windows that do not already expose one through a status bar.
@@ -139,11 +184,12 @@ Control & Good fit \\
 \api{PushButton} & Direct commands such as Add, Reset, Export, or Apply. \\
 \api{LineEdit} & Short single-line text such as a name, path, or search term. \\
 \api{PlainTextEdit} & Multiline notes, logs, source snippets, and longer plain text. \\
-\api{CheckBox} & Independent boolean options. \\
-\api{RadioButton} & One choice from a small visible set. \\
+\api{CheckBox} & Independent boolean or tri-state options. \\
+\api{RadioButton} & One choice from a small visible set, often paired with \api{ButtonGroup}. \\
 \api{ComboBox} & A compact choice from a known option list. \\
 \api{SpinBox} and \api{DoubleSpinBox} & Bounded numeric values. \\
 \api{Slider} and \api{Dial} & Approximate numeric values where immediate feedback matters. \\
+\api{CalendarWidget} & Visual month-based date picking and schedule browsing. \\
 \api{ProgressBar} & Progress, completion, or a read-only bounded value. \\
 Item widgets & \api{ListWidget}, \api{TreeWidget}, and \api{TableWidget} are good for small owned item collections. For larger or shared data, prefer the model/view APIs in Chapter 10. \\
 \bottomrule
