@@ -1267,6 +1267,8 @@ module Qt6
     fun qt6cr_graphics_colorize_effect_set_color = qt6cr_graphics_colorize_effect_set_color(handle : Handle, value : ColorValue)
     fun qt6cr_graphics_colorize_effect_strength = qt6cr_graphics_colorize_effect_strength(handle : Handle) : Float64
     fun qt6cr_graphics_colorize_effect_set_strength = qt6cr_graphics_colorize_effect_set_strength(handle : Handle, value : Float64)
+    fun qt6cr_graphics_colorize_effect_on_color_changed = qt6cr_graphics_colorize_effect_on_color_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_graphics_colorize_effect_on_strength_changed = qt6cr_graphics_colorize_effect_on_strength_changed(handle : Handle, callback : (Handle, Float64 ->), userdata : Handle)
 
     fun qt6cr_graphics_drop_shadow_effect_create = qt6cr_graphics_drop_shadow_effect_create(parent : Handle) : Handle
     fun qt6cr_graphics_drop_shadow_effect_blur_radius = qt6cr_graphics_drop_shadow_effect_blur_radius(handle : Handle) : Float64

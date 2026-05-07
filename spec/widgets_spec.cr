@@ -813,8 +813,16 @@ describe Qt6 do
     blur.set_blur_hints(Qt6::GraphicsBlurHint::QualityHint | Qt6::GraphicsBlurHint::AnimationHint)
 
     colorize = Qt6::GraphicsColorizeEffect.new
+    color_changes = [] of Qt6::Color
+    strength_changes = [] of Float64
+    colorize.on_color_changed do |value|
+      color_changes << value
+    end
+    colorize.on_strength_changed do |value|
+      strength_changes << value
+    end
     colorize.color = Qt6::Color.new(48, 112, 176)
-    colorize.strength = 0.45
+    colorize.set_strength(0.45)
 
     shadow = Qt6::GraphicsDropShadowEffect.new
     shadow.blur_radius = 9.0
@@ -854,6 +862,8 @@ describe Qt6 do
 
     colorize.color.should eq(Qt6::Color.new(48, 112, 176))
     colorize.strength.should eq(0.45)
+    color_changes.last.should eq(Qt6::Color.new(48, 112, 176, 255))
+    strength_changes.last.should eq(0.45)
     colorize.bounding_rect.width.should be >= 0.0
 
     shadow.blur_radius.should eq(9.0)

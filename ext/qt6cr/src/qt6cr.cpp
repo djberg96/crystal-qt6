@@ -10260,6 +10260,30 @@ void qt6cr_graphics_colorize_effect_set_strength(qt6cr_handle_t handle, double v
   }
 }
 
+void qt6cr_graphics_colorize_effect_on_color_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_colorize_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsColorizeEffect::colorChanged, effect, [callback, userdata](const QColor &) {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_colorize_effect_on_strength_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_colorize_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsColorizeEffect::strengthChanged, effect, [callback, userdata](qreal value) {
+    callback(userdata, value);
+  });
+}
+
 qt6cr_handle_t qt6cr_graphics_drop_shadow_effect_create(qt6cr_handle_t parent) {
   return new QGraphicsDropShadowEffect(as_qobject(parent));
 }
