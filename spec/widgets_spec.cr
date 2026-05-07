@@ -810,6 +810,7 @@ describe Qt6 do
       enabled_changes << value
     end
     blur.blur_radius = 6.5
+    blur.set_blur_hints(Qt6::GraphicsBlurHint::QualityHint | Qt6::GraphicsBlurHint::AnimationHint)
 
     colorize = Qt6::GraphicsColorizeEffect.new
     colorize.color = Qt6::Color.new(48, 112, 176)
@@ -839,6 +840,7 @@ describe Qt6 do
     opacity_target.graphics_effect.not_nil!.to_unsafe.should eq(opacity.to_unsafe)
 
     blur.blur_radius.should eq(6.5)
+    blur.blur_hints.should eq(Qt6::GraphicsBlurHint::QualityHint | Qt6::GraphicsBlurHint::AnimationHint)
     blur.enabled = false
     application.process_events
     blur.enabled?.should be_false

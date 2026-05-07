@@ -10217,6 +10217,19 @@ void qt6cr_graphics_blur_effect_set_blur_radius(qt6cr_handle_t handle, double va
   }
 }
 
+int qt6cr_graphics_blur_effect_blur_hints(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_blur_effect(handle);
+  return effect == nullptr ? static_cast<int>(QGraphicsBlurEffect::PerformanceHint) : static_cast<int>(effect->blurHints());
+}
+
+void qt6cr_graphics_blur_effect_set_blur_hints(qt6cr_handle_t handle, int value) {
+  auto *effect = as_graphics_blur_effect(handle);
+
+  if (effect != nullptr) {
+    effect->setBlurHints(static_cast<QGraphicsBlurEffect::BlurHints>(value));
+  }
+}
+
 qt6cr_handle_t qt6cr_graphics_colorize_effect_create(qt6cr_handle_t parent) {
   return new QGraphicsColorizeEffect(as_qobject(parent));
 }

@@ -1295,6 +1295,8 @@ void qt6cr_graphics_effect_on_enabled_changed(qt6cr_handle_t handle, qt6cr_bool_
 qt6cr_handle_t qt6cr_graphics_blur_effect_create(qt6cr_handle_t parent);
 double qt6cr_graphics_blur_effect_blur_radius(qt6cr_handle_t handle);
 void qt6cr_graphics_blur_effect_set_blur_radius(qt6cr_handle_t handle, double value);
+int qt6cr_graphics_blur_effect_blur_hints(qt6cr_handle_t handle);
+void qt6cr_graphics_blur_effect_set_blur_hints(qt6cr_handle_t handle, int value);
 
 qt6cr_handle_t qt6cr_graphics_colorize_effect_create(qt6cr_handle_t parent);
 qt6cr_color_t qt6cr_graphics_colorize_effect_color(qt6cr_handle_t handle);

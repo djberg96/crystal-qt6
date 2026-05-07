@@ -25,5 +25,28 @@ module Qt6
       LibQt6.qt6cr_graphics_blur_effect_set_blur_radius(to_unsafe, radius)
       radius
     end
+
+    # Returns the active blur hints.
+    def blur_hints : GraphicsBlurHint
+      GraphicsBlurHint.from_value(LibQt6.qt6cr_graphics_blur_effect_blur_hints(to_unsafe))
+    end
+
+    # Sets the blur hints and returns them.
+    def blur_hints=(value : GraphicsBlurHint) : GraphicsBlurHint
+      LibQt6.qt6cr_graphics_blur_effect_set_blur_hints(to_unsafe, value.value)
+      value
+    end
+
+    # Qt-style alias for `blur_radius=`.
+    def set_blur_radius(value : Number) : self
+      self.blur_radius = value
+      self
+    end
+
+    # Qt-style alias for `blur_hints=`.
+    def set_blur_hints(value : GraphicsBlurHint) : self
+      self.blur_hints = value
+      self
+    end
   end
 end

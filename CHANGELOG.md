@@ -9,6 +9,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Added
 
 - Added `QGraphicsWidget`, `QGraphicsAnchorLayout`, and `QGraphicsAnchor` bindings with anchor spacing, size-policy, and layout-installation helpers for graphics-view layout composition.
+- Expanded `QGraphicsBlurEffect` with blur-hint flags and Qt-style setter aliases for fuller graphics-effect configuration.
 
 ## [0.9.0] - 2026-05-07
 

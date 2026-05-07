@@ -1259,6 +1259,8 @@ module Qt6
     fun qt6cr_graphics_blur_effect_create = qt6cr_graphics_blur_effect_create(parent : Handle) : Handle
     fun qt6cr_graphics_blur_effect_blur_radius = qt6cr_graphics_blur_effect_blur_radius(handle : Handle) : Float64
     fun qt6cr_graphics_blur_effect_set_blur_radius = qt6cr_graphics_blur_effect_set_blur_radius(handle : Handle, value : Float64)
+    fun qt6cr_graphics_blur_effect_blur_hints = qt6cr_graphics_blur_effect_blur_hints(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_blur_effect_set_blur_hints = qt6cr_graphics_blur_effect_set_blur_hints(handle : Handle, value : LibC::Int)
 
     fun qt6cr_graphics_colorize_effect_create = qt6cr_graphics_colorize_effect_create(parent : Handle) : Handle
     fun qt6cr_graphics_colorize_effect_color = qt6cr_graphics_colorize_effect_color(handle : Handle) : ColorValue
