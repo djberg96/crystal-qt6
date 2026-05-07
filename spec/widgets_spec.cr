@@ -675,6 +675,29 @@ describe Qt6 do
     host.release
   end
 
+  it "supports base gesture state, type, and hot-spot helpers" do
+    app
+    gesture = Qt6::Gesture.new
+    hot_spot = Qt6::PointF.new(12.5, 24.0)
+
+    gesture.gesture_type.should eq(Qt6::GestureType::CustomGesture)
+    gesture.state.should eq(Qt6::GestureState::NoGesture)
+    gesture.gesture_cancel_policy.should eq(Qt6::GestureCancelPolicy::CancelNone)
+    gesture.has_hot_spot?.should be_false
+
+    gesture.set_gesture_cancel_policy(Qt6::GestureCancelPolicy::CancelAllInContext)
+    gesture.set_hot_spot(hot_spot)
+
+    gesture.gesture_cancel_policy.should eq(Qt6::GestureCancelPolicy::CancelAllInContext)
+    gesture.has_hot_spot?.should be_true
+    gesture.hot_spot.should eq(hot_spot)
+
+    gesture.unset_hot_spot
+    gesture.has_hot_spot?.should be_false
+
+    gesture.release
+  end
+
   it "supports widget graphics effects" do
     application = app
     host = Qt6::Widget.new

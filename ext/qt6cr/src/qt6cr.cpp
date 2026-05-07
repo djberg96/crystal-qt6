@@ -51,6 +51,7 @@
 #include <QFontComboBox>
 #include <QFontDialog>
 #include <QFrame>
+#include <QGesture>
 #include <QFont>
 #include <QFontMetrics>
 #include <QFocusEvent>
@@ -1688,6 +1689,10 @@ QRegularExpressionValidator *as_regex_validator(qt6cr_handle_t handle) {
   return static_cast<QRegularExpressionValidator *>(handle);
 }
 
+QGesture *as_gesture(qt6cr_handle_t handle) {
+  return static_cast<QGesture *>(handle);
+}
+
 QCompleter *as_completer(qt6cr_handle_t handle) {
   return static_cast<QCompleter *>(handle);
 }
@@ -2277,6 +2282,59 @@ void qt6cr_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filt
 
   if (object != nullptr && event_filter != nullptr) {
     object->removeEventFilter(event_filter);
+  }
+}
+
+qt6cr_handle_t qt6cr_gesture_create(qt6cr_handle_t parent) {
+  return new QGesture(as_object(parent));
+}
+
+int qt6cr_gesture_type(qt6cr_handle_t handle) {
+  auto *gesture = as_gesture(handle);
+  return gesture == nullptr ? static_cast<int>(Qt::CustomGesture) : static_cast<int>(gesture->gestureType());
+}
+
+int qt6cr_gesture_state(qt6cr_handle_t handle) {
+  auto *gesture = as_gesture(handle);
+  return gesture == nullptr ? static_cast<int>(Qt::NoGesture) : static_cast<int>(gesture->state());
+}
+
+int qt6cr_gesture_cancel_policy(qt6cr_handle_t handle) {
+  auto *gesture = as_gesture(handle);
+  return gesture == nullptr ? static_cast<int>(QGesture::CancelNone) : static_cast<int>(gesture->gestureCancelPolicy());
+}
+
+void qt6cr_gesture_set_cancel_policy(qt6cr_handle_t handle, int value) {
+  auto *gesture = as_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setGestureCancelPolicy(static_cast<QGesture::GestureCancelPolicy>(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_gesture_hot_spot(qt6cr_handle_t handle) {
+  auto *gesture = as_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->hotSpot());
+}
+
+void qt6cr_gesture_set_hot_spot(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setHotSpot(QPointF(value.x, value.y));
+  }
+}
+
+bool qt6cr_gesture_has_hot_spot(qt6cr_handle_t handle) {
+  auto *gesture = as_gesture(handle);
+  return gesture != nullptr && gesture->hasHotSpot();
+}
+
+void qt6cr_gesture_unset_hot_spot(qt6cr_handle_t handle) {
+  auto *gesture = as_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->unsetHotSpot();
   }
 }
 

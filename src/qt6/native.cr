@@ -144,6 +144,15 @@ module Qt6
     fun qt6cr_object_signals_blocked = qt6cr_object_signals_blocked(handle : Handle) : Bool
     fun qt6cr_object_install_event_filter = qt6cr_object_install_event_filter(handle : Handle, filter : Handle)
     fun qt6cr_object_remove_event_filter = qt6cr_object_remove_event_filter(handle : Handle, filter : Handle)
+    fun qt6cr_gesture_create = qt6cr_gesture_create(parent : Handle) : Handle
+    fun qt6cr_gesture_type = qt6cr_gesture_type(handle : Handle) : LibC::Int
+    fun qt6cr_gesture_state = qt6cr_gesture_state(handle : Handle) : LibC::Int
+    fun qt6cr_gesture_cancel_policy = qt6cr_gesture_cancel_policy(handle : Handle) : LibC::Int
+    fun qt6cr_gesture_set_cancel_policy = qt6cr_gesture_set_cancel_policy(handle : Handle, value : LibC::Int)
+    fun qt6cr_gesture_hot_spot = qt6cr_gesture_hot_spot(handle : Handle) : PointFValue
+    fun qt6cr_gesture_set_hot_spot = qt6cr_gesture_set_hot_spot(handle : Handle, value : PointFValue)
+    fun qt6cr_gesture_has_hot_spot = qt6cr_gesture_has_hot_spot(handle : Handle) : Bool
+    fun qt6cr_gesture_unset_hot_spot = qt6cr_gesture_unset_hot_spot(handle : Handle)
     fun qt6cr_event_filter_create = qt6cr_event_filter_create(parent : Handle) : Handle
     fun qt6cr_event_filter_on_event = qt6cr_event_filter_on_event(handle : Handle, callback : (Handle, Handle, Handle -> Bool), userdata : Handle)
     fun qt6cr_event_type = qt6cr_event_type(handle : Handle) : LibC::Int

@@ -183,6 +183,15 @@ void qt6cr_event_accept(qt6cr_handle_t handle);
 void qt6cr_event_ignore(qt6cr_handle_t handle);
 bool qt6cr_event_is_accepted(qt6cr_handle_t handle);
 qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_gesture_create(qt6cr_handle_t parent);
+int qt6cr_gesture_type(qt6cr_handle_t handle);
+int qt6cr_gesture_state(qt6cr_handle_t handle);
+int qt6cr_gesture_cancel_policy(qt6cr_handle_t handle);
+void qt6cr_gesture_set_cancel_policy(qt6cr_handle_t handle, int value);
+qt6cr_pointf_t qt6cr_gesture_hot_spot(qt6cr_handle_t handle);
+void qt6cr_gesture_set_hot_spot(qt6cr_handle_t handle, qt6cr_pointf_t value);
+bool qt6cr_gesture_has_hot_spot(qt6cr_handle_t handle);
+void qt6cr_gesture_unset_hot_spot(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv);
 void qt6cr_application_destroy(qt6cr_handle_t handle);
