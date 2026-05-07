@@ -6,6 +6,11 @@ module Qt6
     end
 
     # Returns Qt's shared process-wide error-message handler dialog.
+    #
+    # This is a Qt-managed singleton with process-global UI state. Prefer
+    # `ErrorMessage.new` for normal app flows unless you specifically want the
+    # shared handler, and avoid treating the returned dialog like an isolated
+    # per-call instance.
     def self.qt_handler : self
       wrap(LibQt6.qt6cr_error_message_qt_handler)
     end

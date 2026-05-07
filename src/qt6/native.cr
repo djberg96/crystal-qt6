@@ -2314,11 +2314,15 @@ module Qt6
     fun qt6cr_frame_set_shape = qt6cr_frame_set_shape(handle : Handle, shape : LibC::Int)
     fun qt6cr_frame_shadow = qt6cr_frame_shadow(handle : Handle) : LibC::Int
     fun qt6cr_frame_set_shadow = qt6cr_frame_set_shadow(handle : Handle, shadow : LibC::Int)
+    fun qt6cr_frame_style = qt6cr_frame_style(handle : Handle) : LibC::Int
+    fun qt6cr_frame_set_style = qt6cr_frame_set_style(handle : Handle, style : LibC::Int)
     fun qt6cr_frame_line_width = qt6cr_frame_line_width(handle : Handle) : LibC::Int
     fun qt6cr_frame_set_line_width = qt6cr_frame_set_line_width(handle : Handle, value : LibC::Int)
     fun qt6cr_frame_mid_line_width = qt6cr_frame_mid_line_width(handle : Handle) : LibC::Int
     fun qt6cr_frame_set_mid_line_width = qt6cr_frame_set_mid_line_width(handle : Handle, value : LibC::Int)
     fun qt6cr_frame_frame_width = qt6cr_frame_frame_width(handle : Handle) : LibC::Int
+    fun qt6cr_frame_frame_rect = qt6cr_frame_frame_rect(handle : Handle) : RectValue
+    fun qt6cr_frame_set_frame_rect = qt6cr_frame_set_frame_rect(handle : Handle, rect : RectValue)
     fun qt6cr_focus_frame_create = qt6cr_focus_frame_create(parent : Handle) : Handle
     fun qt6cr_focus_frame_widget = qt6cr_focus_frame_widget(handle : Handle) : Handle
     fun qt6cr_focus_frame_set_widget = qt6cr_focus_frame_set_widget(handle : Handle, widget : Handle)

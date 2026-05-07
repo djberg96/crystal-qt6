@@ -16729,6 +16729,19 @@ void qt6cr_frame_set_shadow(qt6cr_handle_t handle, int shadow) {
   }
 }
 
+int qt6cr_frame_style(qt6cr_handle_t handle) {
+  auto *frame = as_frame(handle);
+  return frame == nullptr ? static_cast<int>(QFrame::NoFrame) : frame->frameStyle();
+}
+
+void qt6cr_frame_set_style(qt6cr_handle_t handle, int style) {
+  auto *frame = as_frame(handle);
+
+  if (frame != nullptr) {
+    frame->setFrameStyle(style);
+  }
+}
+
 int qt6cr_frame_line_width(qt6cr_handle_t handle) {
   auto *frame = as_frame(handle);
   return frame == nullptr ? 0 : frame->lineWidth();
@@ -16758,6 +16771,19 @@ void qt6cr_frame_set_mid_line_width(qt6cr_handle_t handle, int value) {
 int qt6cr_frame_frame_width(qt6cr_handle_t handle) {
   auto *frame = as_frame(handle);
   return frame == nullptr ? 0 : frame->frameWidth();
+}
+
+qt6cr_rect_t qt6cr_frame_frame_rect(qt6cr_handle_t handle) {
+  auto *frame = as_frame(handle);
+  return frame == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(frame->frameRect());
+}
+
+void qt6cr_frame_set_frame_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *frame = as_frame(handle);
+
+  if (frame != nullptr) {
+    frame->setFrameRect(QRect(rect.x, rect.y, rect.width, rect.height));
+  }
 }
 
 qt6cr_handle_t qt6cr_focus_frame_create(qt6cr_handle_t parent) {

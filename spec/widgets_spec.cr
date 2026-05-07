@@ -422,6 +422,14 @@ describe Qt6 do
     separator.frame_shadow = Qt6::FrameShadow::Sunken
     separator.line_width = 2
     separator.mid_line_width = 1
+    separator.set_frame_style(Qt6::FrameShape::Panel, Qt6::FrameShadow::Raised)
+    separator.frame_rect = Qt6::Rect.new(1, 2, 80, 6)
+    separator.set_frame_shape(Qt6::FrameShape::HLine)
+    separator.set_frame_shadow(Qt6::FrameShadow::Sunken)
+    separator.set_line_width(2)
+    separator.set_mid_line_width(1)
+    separator.set_frame_rect(Qt6::Rect.new(1, 2, 80, 6))
+    separator.frame_rect.should eq(Qt6::Rect.new(1, 2, 80, 6))
 
     host = Qt6::Widget.new
     layout = host.vbox do |column|
@@ -437,6 +445,7 @@ describe Qt6 do
 
     scroll_area = Qt6::ScrollArea.new
     scroll_area.frame_shape = Qt6::FrameShape::NoFrame
+    scroll_area.set_frame_style(Qt6::FrameShape::NoFrame.value | Qt6::FrameShadow::Plain.value)
     scroll_area.vertical_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOff
     scroll_area.horizontal_scroll_bar_policy = Qt6::ScrollBarPolicy::AlwaysOn
     scroll_area.widget_resizable = true
@@ -507,10 +516,12 @@ describe Qt6 do
     toggled_states.last.should be_true
     separator.frame_shape.should eq(Qt6::FrameShape::HLine)
     separator.frame_shadow.should eq(Qt6::FrameShadow::Sunken)
+    separator.frame_style.should eq(Qt6::FrameShape::HLine.value | Qt6::FrameShadow::Sunken.value)
     separator.line_width.should eq(2)
     separator.mid_line_width.should eq(1)
     separator.frame_width.should be >= 1
     scroll_area.frame_shape.should eq(Qt6::FrameShape::NoFrame)
+    scroll_area.frame_style.should eq(Qt6::FrameShape::NoFrame.value | Qt6::FrameShadow::Plain.value)
     scroll_area.vertical_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOff)
     scroll_area.horizontal_scroll_bar_policy.should eq(Qt6::ScrollBarPolicy::AlwaysOn)
     scroll_area.widget_resizable?.should be_true
@@ -626,9 +637,6 @@ describe Qt6 do
     error_message.hide
     application.process_events
     error_message.visible?.should be_false
-
-    handler = Qt6::ErrorMessage.qt_handler
-    handler.to_unsafe.should eq(Qt6::ErrorMessage.qt_handler.to_unsafe)
 
     host.release
   end

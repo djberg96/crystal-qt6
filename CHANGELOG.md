@@ -40,6 +40,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QFileDialog` with options, view mode, directory filters, wildcard filter lists, default suffix, history, label text, supported schemes, selected-files inspection, and existing-directory helpers.
 - Expanded `QFileIconProvider` with inherited type-description lookup and option flags for fuller standalone file-system icon customization.
 - Expanded `QFocusFrame` with a Qt-style `set_widget` alias and stronger tracked-widget coverage for focus-highlight helpers.
+- Expanded `QFrame` with combined frame-style masks, frame-rect access, and Qt-style setter aliases for fuller shared frame polish across framed widgets.
 - Expanded `QFontComboBox` with writing-system and font-filter controls, preferred-size access, and sample/display-font customization hooks.
 - Expanded `QFontDialog` with a Qt-style `set_current_font` alias and stronger selected-font coverage in dialog specs.
 - Expanded `QFormLayout` with growth/wrap/alignment controls, nested layout rows, row insertion/removal/visibility helpers, label lookup, `TakeRowResult` modeling, and optional unparented construction.
@@ -67,6 +68,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Fixed
 
 - Added handle-based wrapping support to `StyledItemDelegate`, so delegate getters can safely round-trip existing Qt delegate instances.
+- Documented `QErrorMessage.qt_handler` as a process-global Qt singleton that should be used sparingly compared with ordinary `ErrorMessage.new` dialogs.
 
 ## [0.8.0] - 2026-04-29
 
