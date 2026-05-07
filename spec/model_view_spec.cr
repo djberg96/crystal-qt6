@@ -208,6 +208,26 @@ describe Qt6 do
     icon.release
   end
 
+  it "supports standard item interaction flags" do
+    app
+    item = Qt6::StandardItem.new("Layer")
+
+    item.flags.includes?(Qt6::ItemFlag::Enabled).should be_true
+    item.flags.includes?(Qt6::ItemFlag::Selectable).should be_true
+    item.flags.includes?(Qt6::ItemFlag::DragEnabled).should be_true
+    item.flags.includes?(Qt6::ItemFlag::DropEnabled).should be_true
+
+    item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::DragEnabled
+
+    item.flags.includes?(Qt6::ItemFlag::Enabled).should be_true
+    item.flags.includes?(Qt6::ItemFlag::Selectable).should be_true
+    item.flags.includes?(Qt6::ItemFlag::DragEnabled).should be_true
+    item.flags.includes?(Qt6::ItemFlag::DropEnabled).should be_false
+    item.flags.includes?(Qt6::ItemFlag::Editable).should be_false
+
+    item.release
+  end
+
   it "supports styled item delegate paint and size hint hooks" do
     application = app
     list_view = Qt6::ListView.new
