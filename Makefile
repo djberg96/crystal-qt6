@@ -6,6 +6,11 @@ MT_WORKERS ?= 2
 
 BUILD_SCRIPT := scripts/build_qt6cr.sh
 GUI_SPEC_SCRIPT := scripts/run_gui_specs.sh
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+GUI_SPEC_PLATFORM := QT_QPA_PLATFORM=cocoa
+endif
 
 .PHONY: native spec gui-spec gui-spec-mt docs-book example-hello example-counter example-shell example-slice example-showcase example-events example-render example-svg example-inspector example-modelview example-services example-dialogs clean
 
@@ -16,10 +21,10 @@ spec: native
 	$(GUI_SPEC_SCRIPT) crystal spec
 
 gui-spec: native
-	QT_QPA_PLATFORM=cocoa $(GUI_SPEC_SCRIPT) crystal spec
+	$(GUI_SPEC_PLATFORM) $(GUI_SPEC_SCRIPT) crystal spec
 
 gui-spec-mt: native
-	CRYSTAL_WORKERS=$(MT_WORKERS) QT_QPA_PLATFORM=cocoa $(GUI_SPEC_SCRIPT) crystal spec -Dpreview_mt
+	CRYSTAL_WORKERS=$(MT_WORKERS) $(GUI_SPEC_PLATFORM) $(GUI_SPEC_SCRIPT) crystal spec -Dpreview_mt
 
 docs-book:
 	$(MAKE) -C docs/book
