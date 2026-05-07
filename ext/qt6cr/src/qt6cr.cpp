@@ -226,6 +226,7 @@ qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1367,6 +1368,22 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &value
   return qt6cr_handle_array_t{copy, size};
 }
 
+qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
 QMimeData *clone_mime_data(const QMimeData *source) {
   if (source == nullptr) {
     return nullptr;
@@ -1691,6 +1708,10 @@ QRegularExpressionValidator *as_regex_validator(qt6cr_handle_t handle) {
 
 QGesture *as_gesture(qt6cr_handle_t handle) {
   return static_cast<QGesture *>(handle);
+}
+
+QGestureEvent *as_gesture_event(qt6cr_handle_t handle) {
+  return static_cast<QGestureEvent *>(handle);
 }
 
 QCompleter *as_completer(qt6cr_handle_t handle) {
@@ -2335,6 +2356,115 @@ void qt6cr_gesture_unset_hot_spot(qt6cr_handle_t handle) {
 
   if (gesture != nullptr) {
     gesture->unsetHotSpot();
+  }
+}
+
+qt6cr_handle_t qt6cr_gesture_event_create(const qt6cr_handle_t *gestures, int count) {
+  QList<QGesture *> gesture_list;
+
+  for (int index = 0; index < count; ++index) {
+    auto *gesture = as_gesture(gestures[index]);
+
+    if (gesture != nullptr) {
+      gesture_list.append(gesture);
+    }
+  }
+
+  return new QGestureEvent(gesture_list);
+}
+
+void qt6cr_gesture_event_destroy(qt6cr_handle_t handle) {
+  delete as_gesture_event(handle);
+}
+
+qt6cr_handle_array_t qt6cr_gesture_event_gestures(qt6cr_handle_t handle) {
+  auto *event = as_gesture_event(handle);
+  return event == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(event->gestures());
+}
+
+qt6cr_handle_t qt6cr_gesture_event_gesture(qt6cr_handle_t handle, int type) {
+  auto *event = as_gesture_event(handle);
+  return event == nullptr ? nullptr : event->gesture(static_cast<Qt::GestureType>(type));
+}
+
+qt6cr_handle_array_t qt6cr_gesture_event_active_gestures(qt6cr_handle_t handle) {
+  auto *event = as_gesture_event(handle);
+  return event == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(event->activeGestures());
+}
+
+qt6cr_handle_array_t qt6cr_gesture_event_canceled_gestures(qt6cr_handle_t handle) {
+  auto *event = as_gesture_event(handle);
+  return event == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(event->canceledGestures());
+}
+
+void qt6cr_gesture_event_set_accepted_gesture(qt6cr_handle_t handle, qt6cr_handle_t gesture, bool accepted) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->setAccepted(as_gesture(gesture), accepted);
+  }
+}
+
+void qt6cr_gesture_event_accept_gesture(qt6cr_handle_t handle, qt6cr_handle_t gesture) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->accept(as_gesture(gesture));
+  }
+}
+
+void qt6cr_gesture_event_ignore_gesture(qt6cr_handle_t handle, qt6cr_handle_t gesture) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->ignore(as_gesture(gesture));
+  }
+}
+
+bool qt6cr_gesture_event_is_accepted_gesture(qt6cr_handle_t handle, qt6cr_handle_t gesture) {
+  auto *event = as_gesture_event(handle);
+  return event != nullptr && event->isAccepted(as_gesture(gesture));
+}
+
+void qt6cr_gesture_event_set_accepted_type(qt6cr_handle_t handle, int type, bool accepted) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->setAccepted(static_cast<Qt::GestureType>(type), accepted);
+  }
+}
+
+void qt6cr_gesture_event_accept_type(qt6cr_handle_t handle, int type) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->accept(static_cast<Qt::GestureType>(type));
+  }
+}
+
+void qt6cr_gesture_event_ignore_type(qt6cr_handle_t handle, int type) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->ignore(static_cast<Qt::GestureType>(type));
+  }
+}
+
+bool qt6cr_gesture_event_is_accepted_type(qt6cr_handle_t handle, int type) {
+  auto *event = as_gesture_event(handle);
+  return event != nullptr && event->isAccepted(static_cast<Qt::GestureType>(type));
+}
+
+qt6cr_handle_t qt6cr_gesture_event_widget(qt6cr_handle_t handle) {
+  auto *event = as_gesture_event(handle);
+  return event == nullptr ? nullptr : event->widget();
+}
+
+void qt6cr_gesture_event_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *event = as_gesture_event(handle);
+
+  if (event != nullptr) {
+    event->setWidget(as_widget(widget));
   }
 }
 
@@ -3274,6 +3404,22 @@ void qt6cr_widget_set_accessible_identifier(qt6cr_handle_t handle, const char *a
 
   if (widget != nullptr) {
     widget->setProperty("accessibleIdentifier", QString::fromUtf8(accessible_identifier == nullptr ? "" : accessible_identifier));
+  }
+}
+
+void qt6cr_widget_grab_gesture(qt6cr_handle_t handle, int type, int flags) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->grabGesture(static_cast<Qt::GestureType>(type), static_cast<Qt::GestureFlags>(flags));
+  }
+}
+
+void qt6cr_widget_ungrab_gesture(qt6cr_handle_t handle, int type) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->ungrabGesture(static_cast<Qt::GestureType>(type));
   }
 }
 

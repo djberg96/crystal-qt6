@@ -39,5 +39,10 @@ module Qt6
     def mouse_event : MouseEvent
       MouseEvent.from_native(LibQt6.qt6cr_event_mouse_event(to_unsafe))
     end
+
+    # Returns this event reinterpreted as a live `QGestureEvent`.
+    def gesture_event : GestureEvent
+      GestureEvent.wrap(to_unsafe)
+    end
   end
 end

@@ -698,6 +698,45 @@ describe Qt6 do
     gesture.release
   end
 
+  it "supports gesture events and widget gesture registration" do
+    app
+    host = Qt6::Widget.new
+    gesture = Qt6::Gesture.new
+    event = Qt6::GestureEvent.new([gesture])
+    live_event = Qt6::QEvent.new(event.to_unsafe)
+
+    host.grab_gesture(Qt6::GestureType::CustomGesture, Qt6::GestureFlag::ReceivePartialGestures | Qt6::GestureFlag::IgnoredGesturesPropagateToParent)
+    host.ungrab_gesture(Qt6::GestureType::CustomGesture)
+
+    event.type.should eq(Qt6::EventType::Gesture)
+    event.accepted?.should be_true
+    event.gestures.map(&.to_unsafe).should eq([gesture.to_unsafe])
+    event.active_gestures.map(&.to_unsafe).should eq([gesture.to_unsafe])
+    event.canceled_gestures.should be_empty
+    event.gesture(Qt6::GestureType::CustomGesture).not_nil!.to_unsafe.should eq(gesture.to_unsafe)
+
+    event.ignore(gesture)
+    event.accepted?(gesture).should be_false
+    event.accepted?(Qt6::GestureType::CustomGesture).should be_false
+
+    event.accept(gesture)
+    event.accepted?(gesture).should be_true
+
+    event.set_accepted(Qt6::GestureType::CustomGesture, false)
+    event.accepted?(gesture).should be_false
+
+    event.accept(Qt6::GestureType::CustomGesture)
+    event.accepted?(Qt6::GestureType::CustomGesture).should be_true
+
+    event.widget = host
+    event.widget.not_nil!.to_unsafe.should eq(host.to_unsafe)
+    live_event.gesture_event.to_unsafe.should eq(event.to_unsafe)
+
+    event.release
+    gesture.release
+    host.release
+  end
+
   it "supports widget graphics effects" do
     application = app
     host = Qt6::Widget.new
@@ -1347,9 +1386,9 @@ describe Qt6 do
     dock.title_bar_widget.should be_nil
     dock.title_bar_widget = title_bar
     dock.features = Qt6::DockWidgetFeature::DockWidgetClosable |
-      Qt6::DockWidgetFeature::DockWidgetMovable |
-      Qt6::DockWidgetFeature::DockWidgetFloatable |
-      Qt6::DockWidgetFeature::DockWidgetVerticalTitleBar
+                    Qt6::DockWidgetFeature::DockWidgetMovable |
+                    Qt6::DockWidgetFeature::DockWidgetFloatable |
+                    Qt6::DockWidgetFeature::DockWidgetVerticalTitleBar
     dock.allowed_areas = Qt6::DockArea::Left | Qt6::DockArea::Right
     main.add_dock_widget(dock, Qt6::DockArea::Left)
     toggle_action = dock.toggle_view_action
@@ -1633,5 +1672,4 @@ describe Qt6 do
     date_time_edit.release
     date_edit.release
   end
-
 end

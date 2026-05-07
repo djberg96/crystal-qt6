@@ -304,6 +304,18 @@ module Qt6
       action
     end
 
+    # Registers a gesture type for delivery to this widget.
+    def grab_gesture(type : GestureType, flags : GestureFlag = GestureFlag::None) : self
+      LibQt6.qt6cr_widget_grab_gesture(@to_unsafe, type.value, flags.value)
+      self
+    end
+
+    # Unregisters a previously grabbed gesture type from this widget.
+    def ungrab_gesture(type : GestureType) : self
+      LibQt6.qt6cr_widget_ungrab_gesture(@to_unsafe, type.value)
+      self
+    end
+
     # Locks the widget width and returns the assigned value.
     def fixed_width=(value : Int) : Int32
       int_value = value.to_i32
