@@ -501,6 +501,68 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics-view configuration and transforms" do
+    app
+
+    view = Qt6::GraphicsView.new
+    view.resize(200, 140)
+    view.show
+
+    background = Qt6::QBrush.new(Qt6::Color.new(10, 20, 30))
+    foreground = Qt6::QBrush.new(Qt6::Color.new(200, 210, 220))
+    view.background_brush = background
+    view.foreground_brush = foreground
+    view.interactive = false
+    view.scene_rect = Qt6::RectF.new(0.0, 0.0, 320.0, 240.0)
+    view.alignment = Qt6::AlignmentFlag::Center
+    view.render_hints = Qt6::PainterRenderHint::Antialiasing | Qt6::PainterRenderHint::TextAntialiasing
+    view.set_render_hint(Qt6::PainterRenderHint::SmoothPixmapTransform)
+    view.drag_mode = Qt6::GraphicsViewDragMode::ScrollHandDrag
+    view.cache_mode = Qt6::GraphicsViewCacheModeFlag::CacheBackground
+    view.transformation_anchor = Qt6::GraphicsViewViewportAnchor::AnchorUnderMouse
+    view.resize_anchor = Qt6::GraphicsViewViewportAnchor::AnchorViewCenter
+    view.viewport_update_mode = Qt6::GraphicsViewViewportUpdateMode::BoundingRectViewportUpdate
+    view.optimization_flags = Qt6::GraphicsViewOptimizationFlag::DontSavePainterState
+    view.set_optimization_flag(Qt6::GraphicsViewOptimizationFlag::DontAdjustForAntialiasing)
+
+    transform = Qt6::QTransform.new
+    transform.translate(5, 7)
+    view.set_transform(transform)
+    view.scale(2.0, 3.0)
+    view.rotate(90)
+    view.shear(0.5, 0.0)
+    view.translate(1.0, 2.0)
+    view.center_on(Qt6::PointF.new(12.0, 18.0))
+    view.ensure_visible(Qt6::RectF.new(0.0, 0.0, 20.0, 20.0), 4, 5)
+    view.fit_in_view(Qt6::RectF.new(0.0, 0.0, 40.0, 30.0), Qt6::AspectRatioMode::Keep)
+    view.reset_cached_content
+
+    view.background_brush.color.should eq(Qt6::Color.new(10, 20, 30, 255))
+    view.foreground_brush.color.should eq(Qt6::Color.new(200, 210, 220, 255))
+    view.interactive?.should be_false
+    view.scene_rect.should eq(Qt6::RectF.new(0.0, 0.0, 320.0, 240.0))
+    view.alignment.should eq(Qt6::AlignmentFlag::Center)
+    view.render_hints.includes?(Qt6::PainterRenderHint::Antialiasing).should be_true
+    view.render_hints.includes?(Qt6::PainterRenderHint::TextAntialiasing).should be_true
+    view.render_hints.includes?(Qt6::PainterRenderHint::SmoothPixmapTransform).should be_true
+    view.drag_mode.should eq(Qt6::GraphicsViewDragMode::ScrollHandDrag)
+    view.cache_mode.should eq(Qt6::GraphicsViewCacheModeFlag::CacheBackground)
+    view.transformation_anchor.should eq(Qt6::GraphicsViewViewportAnchor::AnchorUnderMouse)
+    view.resize_anchor.should eq(Qt6::GraphicsViewViewportAnchor::AnchorViewCenter)
+    view.viewport_update_mode.should eq(Qt6::GraphicsViewViewportUpdateMode::BoundingRectViewportUpdate)
+    view.optimization_flags.includes?(Qt6::GraphicsViewOptimizationFlag::DontSavePainterState).should be_true
+    view.optimization_flags.includes?(Qt6::GraphicsViewOptimizationFlag::DontAdjustForAntialiasing).should be_true
+    view.transformed?.should be_true
+    view.transform.map(Qt6::PointF.new(0.0, 0.0)).should_not eq(Qt6::PointF.new(0.0, 0.0))
+    view.viewport_transform.map(Qt6::PointF.new(0.0, 0.0)).should_not eq(Qt6::PointF.new(0.0, 0.0))
+
+    view.reset_transform
+    view.transform.map(Qt6::PointF.new(0.0, 0.0)).should eq(Qt6::PointF.new(0.0, 0.0))
+    view.transform.map(Qt6::PointF.new(2.0, 3.0)).should eq(Qt6::PointF.new(2.0, 3.0))
+
+    view.release
+  end
+
   it "supports gradients and advanced pen styling" do
     app
 

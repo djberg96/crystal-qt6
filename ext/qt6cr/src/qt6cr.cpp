@@ -63,6 +63,7 @@
 #include <QGraphicsEffect>
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsItem>
+#include <QGraphicsView>
 #include <QGraphicsWidget>
 #include <QGraphicsOpacityEffect>
 #include <QFormLayout>
@@ -221,6 +222,7 @@ QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
+QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
 QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle);
@@ -1465,6 +1467,10 @@ QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
 
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsItem *>(handle);
+}
+
+QGraphicsView *as_graphics_view(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsView *>(handle);
 }
 
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle) {
@@ -11510,6 +11516,280 @@ void qt6cr_graphics_widget_adjust_size(qt6cr_handle_t handle) {
 
   if (widget != nullptr) {
     widget->adjustSize();
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_view_create(qt6cr_handle_t parent) {
+  return new QGraphicsView(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_view_background_brush(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? new QBrush() : new QBrush(view->backgroundBrush());
+}
+
+void qt6cr_graphics_view_set_background_brush(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *view = as_graphics_view(handle);
+  auto *value = as_qbrush(brush);
+
+  if (view != nullptr && value != nullptr) {
+    view->setBackgroundBrush(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_view_foreground_brush(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? new QBrush() : new QBrush(view->foregroundBrush());
+}
+
+void qt6cr_graphics_view_set_foreground_brush(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *view = as_graphics_view(handle);
+  auto *value = as_qbrush(brush);
+
+  if (view != nullptr && value != nullptr) {
+    view->setForegroundBrush(*value);
+  }
+}
+
+bool qt6cr_graphics_view_is_interactive(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view != nullptr && view->isInteractive();
+}
+
+void qt6cr_graphics_view_set_interactive(qt6cr_handle_t handle, bool value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setInteractive(value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_view_scene_rect(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(view->sceneRect());
+}
+
+void qt6cr_graphics_view_set_scene_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setSceneRect(from_rectf(rect));
+  }
+}
+
+int qt6cr_graphics_view_alignment(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(Qt::Alignment()) : static_cast<int>(view->alignment());
+}
+
+void qt6cr_graphics_view_set_alignment(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setAlignment(Qt::Alignment(value));
+  }
+}
+
+int qt6cr_graphics_view_render_hints(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QPainter::RenderHints()) : static_cast<int>(view->renderHints());
+}
+
+void qt6cr_graphics_view_set_render_hints(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setRenderHints(QPainter::RenderHints(value));
+  }
+}
+
+void qt6cr_graphics_view_set_render_hint(qt6cr_handle_t handle, int hint, bool enabled) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setRenderHint(static_cast<QPainter::RenderHint>(hint), enabled);
+  }
+}
+
+int qt6cr_graphics_view_drag_mode(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QGraphicsView::NoDrag) : static_cast<int>(view->dragMode());
+}
+
+void qt6cr_graphics_view_set_drag_mode(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setDragMode(static_cast<QGraphicsView::DragMode>(value));
+  }
+}
+
+int qt6cr_graphics_view_cache_mode(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QGraphicsView::CacheNone) : static_cast<int>(view->cacheMode());
+}
+
+void qt6cr_graphics_view_set_cache_mode(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setCacheMode(QGraphicsView::CacheMode(value));
+  }
+}
+
+void qt6cr_graphics_view_reset_cached_content(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->resetCachedContent();
+  }
+}
+
+int qt6cr_graphics_view_transformation_anchor(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QGraphicsView::NoAnchor) : static_cast<int>(view->transformationAnchor());
+}
+
+void qt6cr_graphics_view_set_transformation_anchor(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setTransformationAnchor(static_cast<QGraphicsView::ViewportAnchor>(value));
+  }
+}
+
+int qt6cr_graphics_view_resize_anchor(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QGraphicsView::NoAnchor) : static_cast<int>(view->resizeAnchor());
+}
+
+void qt6cr_graphics_view_set_resize_anchor(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setResizeAnchor(static_cast<QGraphicsView::ViewportAnchor>(value));
+  }
+}
+
+int qt6cr_graphics_view_viewport_update_mode(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QGraphicsView::MinimalViewportUpdate) : static_cast<int>(view->viewportUpdateMode());
+}
+
+void qt6cr_graphics_view_set_viewport_update_mode(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setViewportUpdateMode(static_cast<QGraphicsView::ViewportUpdateMode>(value));
+  }
+}
+
+int qt6cr_graphics_view_optimization_flags(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? static_cast<int>(QGraphicsView::OptimizationFlags()) : static_cast<int>(view->optimizationFlags());
+}
+
+void qt6cr_graphics_view_set_optimization_flags(qt6cr_handle_t handle, int value) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setOptimizationFlags(QGraphicsView::OptimizationFlags(value));
+  }
+}
+
+void qt6cr_graphics_view_set_optimization_flag(qt6cr_handle_t handle, int flag, bool enabled) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setOptimizationFlag(static_cast<QGraphicsView::OptimizationFlag>(flag), enabled);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_view_transform(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? new QTransform() : new QTransform(view->transform());
+}
+
+qt6cr_handle_t qt6cr_graphics_view_viewport_transform(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? new QTransform() : new QTransform(view->viewportTransform());
+}
+
+bool qt6cr_graphics_view_is_transformed(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view != nullptr && view->isTransformed();
+}
+
+void qt6cr_graphics_view_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform, bool combine) {
+  auto *view = as_graphics_view(handle);
+  auto *value = as_qtransform(transform);
+
+  if (view != nullptr && value != nullptr) {
+    view->setTransform(*value, combine);
+  }
+}
+
+void qt6cr_graphics_view_reset_transform(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->resetTransform();
+  }
+}
+
+void qt6cr_graphics_view_rotate(qt6cr_handle_t handle, double angle) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->rotate(angle);
+  }
+}
+
+void qt6cr_graphics_view_scale(qt6cr_handle_t handle, double sx, double sy) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->scale(sx, sy);
+  }
+}
+
+void qt6cr_graphics_view_shear(qt6cr_handle_t handle, double sh, double sv) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->shear(sh, sv);
+  }
+}
+
+void qt6cr_graphics_view_translate(qt6cr_handle_t handle, double dx, double dy) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->translate(dx, dy);
+  }
+}
+
+void qt6cr_graphics_view_center_on(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->centerOn(from_pointf(point));
+  }
+}
+
+void qt6cr_graphics_view_ensure_visible(qt6cr_handle_t handle, qt6cr_rectf_t rect, int xmargin, int ymargin) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->ensureVisible(from_rectf(rect), xmargin, ymargin);
+  }
+}
+
+void qt6cr_graphics_view_fit_in_view(qt6cr_handle_t handle, qt6cr_rectf_t rect, int aspect_ratio_mode) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->fitInView(from_rectf(rect), static_cast<Qt::AspectRatioMode>(aspect_ratio_mode));
   }
 }
 
