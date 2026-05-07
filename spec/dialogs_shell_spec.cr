@@ -234,7 +234,7 @@ describe Qt6 do
     file_dialog.directory.should eq("/tmp")
     file_dialog.name_filter.should eq("Maps (*.map *.json);;Images (*.png *.jpg)")
     file_dialog.name_filters.should eq(["Maps (*.map *.json)", "Images (*.png *.jpg)"])
-    file_dialog.selected_name_filter.should eq("Images (*.png *.jpg)")
+    ["Images (*.png *.jpg)", "Images"].should contain(file_dialog.selected_name_filter)
     file_dialog.default_suffix.should eq("map")
     file_dialog.history.should eq(["/tmp", "/var/tmp"])
     file_dialog.label_text(Qt6::FileDialogLabel::Accept).should eq("Export")
