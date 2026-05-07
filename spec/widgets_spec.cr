@@ -861,11 +861,14 @@ describe Qt6 do
 
     blur.blur_radius.should eq(6.5)
     blur.blur_hints.should eq(Qt6::GraphicsBlurHint::QualityHint | Qt6::GraphicsBlurHint::AnimationHint)
+    blur_rect = blur.bounding_rect_for(Qt6::RectF.new(0.0, 0.0, 10.0, 10.0))
+    blur_rect.width.should be >= 10.0
+    blur_rect.height.should be >= 10.0
     blur.enabled = false
     application.process_events
     blur.enabled?.should be_false
     enabled_changes.last.should be_false
-    blur.enabled = true
+    blur.set_enabled(true)
     application.process_events
     blur.enabled?.should be_true
     enabled_changes.last.should be_true
@@ -877,6 +880,7 @@ describe Qt6 do
     color_changes.last.should eq(Qt6::Color.new(48, 112, 176, 255))
     strength_changes.last.should eq(0.45)
     colorize.bounding_rect.width.should be >= 0.0
+    colorize.bounding_rect_for(Qt6::RectF.new(1.0, 2.0, 10.0, 12.0)).should eq(Qt6::RectF.new(1.0, 2.0, 10.0, 12.0))
 
     shadow.blur_radius.should eq(9.0)
     shadow.color.should eq(Qt6::Color.new(20, 24, 32, 180))
@@ -886,6 +890,9 @@ describe Qt6 do
     shadow_blur_changes.last.should eq(9.0)
     shadow_color_changes.last.should eq(Qt6::Color.new(20, 24, 32, 180))
     shadow_offset_changes.last.should eq(Qt6::PointF.new(5.0, 6.0))
+    shadow_rect = shadow.bounding_rect_for(Qt6::RectF.new(0.0, 0.0, 10.0, 10.0))
+    shadow_rect.width.should be >= 10.0
+    shadow_rect.height.should be >= 10.0
 
     opacity.opacity.should eq(0.55)
     opacity_target.graphics_effect = nil

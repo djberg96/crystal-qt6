@@ -10180,6 +10180,11 @@ qt6cr_rectf_t qt6cr_graphics_effect_bounding_rect(qt6cr_handle_t handle) {
   return effect == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(effect->boundingRect());
 }
 
+qt6cr_rectf_t qt6cr_graphics_effect_bounding_rect_for(qt6cr_handle_t handle, qt6cr_rectf_t source_rect) {
+  auto *effect = as_graphics_effect(handle);
+  return effect == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(effect->boundingRectFor(from_rectf(source_rect)));
+}
+
 void qt6cr_graphics_effect_update(qt6cr_handle_t handle) {
   auto *effect = as_graphics_effect(handle);
 

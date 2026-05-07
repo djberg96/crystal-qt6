@@ -1289,6 +1289,7 @@ void qt6cr_qpalette_set_color_for_group(qt6cr_handle_t handle, int group, int ro
 bool qt6cr_graphics_effect_is_enabled(qt6cr_handle_t handle);
 void qt6cr_graphics_effect_set_enabled(qt6cr_handle_t handle, bool value);
 qt6cr_rectf_t qt6cr_graphics_effect_bounding_rect(qt6cr_handle_t handle);
+qt6cr_rectf_t qt6cr_graphics_effect_bounding_rect_for(qt6cr_handle_t handle, qt6cr_rectf_t source_rect);
 void qt6cr_graphics_effect_update(qt6cr_handle_t handle);
 void qt6cr_graphics_effect_on_enabled_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
 

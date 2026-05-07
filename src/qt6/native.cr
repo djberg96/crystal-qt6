@@ -1253,6 +1253,7 @@ module Qt6
     fun qt6cr_graphics_effect_is_enabled = qt6cr_graphics_effect_is_enabled(handle : Handle) : Bool
     fun qt6cr_graphics_effect_set_enabled = qt6cr_graphics_effect_set_enabled(handle : Handle, value : Bool)
     fun qt6cr_graphics_effect_bounding_rect = qt6cr_graphics_effect_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_effect_bounding_rect_for = qt6cr_graphics_effect_bounding_rect_for(handle : Handle, source_rect : RectFValue) : RectFValue
     fun qt6cr_graphics_effect_update = qt6cr_graphics_effect_update(handle : Handle)
     fun qt6cr_graphics_effect_on_enabled_changed = qt6cr_graphics_effect_on_enabled_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 

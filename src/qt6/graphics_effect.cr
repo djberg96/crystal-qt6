@@ -28,9 +28,20 @@ module Qt6
       value
     end
 
+    # Qt-style alias for `enabled=`.
+    def set_enabled(value : Bool) : self
+      self.enabled = value
+      self
+    end
+
     # Returns the effect's current bounding rect.
     def bounding_rect : RectF
       RectF.from_native(LibQt6.qt6cr_graphics_effect_bounding_rect(to_unsafe))
+    end
+
+    # Returns the effective bounding rect for a given source rect.
+    def bounding_rect_for(source_rect : RectF) : RectF
+      RectF.from_native(LibQt6.qt6cr_graphics_effect_bounding_rect_for(to_unsafe, source_rect.to_native))
     end
 
     # Requests a redraw of the effect and returns `self`.
