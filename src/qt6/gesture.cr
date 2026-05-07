@@ -14,9 +14,14 @@ module Qt6
       super(handle, owned)
     end
 
+    # Returns the raw Qt gesture type integer, including dynamically registered custom types.
+    def gesture_type_value : Int32
+      LibQt6.qt6cr_gesture_type(to_unsafe)
+    end
+
     # Returns the gesture's Qt-recognized type.
     def gesture_type : GestureType
-      GestureType.from_value(LibQt6.qt6cr_gesture_type(to_unsafe))
+      GestureType.values.find(&.value.==(gesture_type_value)) || GestureType::CustomGesture
     end
 
     # Returns the current gesture state.

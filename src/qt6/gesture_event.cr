@@ -56,7 +56,12 @@ module Qt6
 
     # Returns the gesture matching the given type, if present.
     def gesture(type : GestureType) : Gesture?
-      handle = LibQt6.qt6cr_gesture_event_gesture(to_unsafe, type.value)
+      gesture(type.value)
+    end
+
+    # Returns the gesture matching the given raw type id, if present.
+    def gesture(type : Int) : Gesture?
+      handle = LibQt6.qt6cr_gesture_event_gesture(to_unsafe, type.to_i32)
       handle.null? ? nil : Gesture.wrap(handle)
     end
 
@@ -99,25 +104,48 @@ module Qt6
 
     # Sets the accepted state for a whole gesture type.
     def set_accepted(type : GestureType, accepted : Bool) : self
-      LibQt6.qt6cr_gesture_event_set_accepted_type(to_unsafe, type.value, accepted)
+      set_accepted(type.value, accepted)
+      self
+    end
+
+    # Sets the accepted state for a whole raw gesture type id.
+    def set_accepted(type : Int, accepted : Bool) : self
+      LibQt6.qt6cr_gesture_event_set_accepted_type(to_unsafe, type.to_i32, accepted)
       self
     end
 
     # Marks the given gesture type as accepted.
     def accept(type : GestureType) : self
-      LibQt6.qt6cr_gesture_event_accept_type(to_unsafe, type.value)
+      accept(type.value)
+      self
+    end
+
+    # Marks the given raw gesture type id as accepted.
+    def accept(type : Int) : self
+      LibQt6.qt6cr_gesture_event_accept_type(to_unsafe, type.to_i32)
       self
     end
 
     # Marks the given gesture type as ignored.
     def ignore(type : GestureType) : self
-      LibQt6.qt6cr_gesture_event_ignore_type(to_unsafe, type.value)
+      ignore(type.value)
+      self
+    end
+
+    # Marks the given raw gesture type id as ignored.
+    def ignore(type : Int) : self
+      LibQt6.qt6cr_gesture_event_ignore_type(to_unsafe, type.to_i32)
       self
     end
 
     # Returns whether the given gesture type is currently accepted.
     def accepted?(type : GestureType) : Bool
-      LibQt6.qt6cr_gesture_event_is_accepted_type(to_unsafe, type.value)
+      accepted?(type.value)
+    end
+
+    # Returns whether the given raw gesture type id is currently accepted.
+    def accepted?(type : Int) : Bool
+      LibQt6.qt6cr_gesture_event_is_accepted_type(to_unsafe, type.to_i32)
     end
 
     # Returns the widget currently associated with the event, if any.

@@ -168,6 +168,9 @@ typedef void (*qt6cr_delegate_update_editor_geometry_callback_t)(void *userdata,
 typedef bool (*qt6cr_delegate_editor_event_callback_t)(void *userdata, qt6cr_handle_t event, qt6cr_handle_t model, qt6cr_handle_t option, qt6cr_handle_t index);
 typedef bool (*qt6cr_delegate_event_filter_callback_t)(void *userdata, qt6cr_handle_t object, qt6cr_handle_t event);
 typedef void (*qt6cr_delegate_init_style_option_callback_t)(void *userdata, qt6cr_handle_t option, qt6cr_handle_t index);
+typedef qt6cr_handle_t (*qt6cr_gesture_recognizer_create_callback_t)(void *userdata, qt6cr_handle_t target);
+typedef int (*qt6cr_gesture_recognizer_recognize_callback_t)(void *userdata, qt6cr_handle_t state, qt6cr_handle_t watched, qt6cr_handle_t event);
+typedef void (*qt6cr_gesture_recognizer_reset_callback_t)(void *userdata, qt6cr_handle_t state);
 
 void qt6cr_object_destroy(qt6cr_handle_t handle);
 void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -192,6 +195,16 @@ qt6cr_pointf_t qt6cr_gesture_hot_spot(qt6cr_handle_t handle);
 void qt6cr_gesture_set_hot_spot(qt6cr_handle_t handle, qt6cr_pointf_t value);
 bool qt6cr_gesture_has_hot_spot(qt6cr_handle_t handle);
 void qt6cr_gesture_unset_hot_spot(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_gesture_recognizer_create(void);
+void qt6cr_gesture_recognizer_destroy(qt6cr_handle_t handle);
+void qt6cr_gesture_recognizer_on_create(qt6cr_handle_t handle, qt6cr_gesture_recognizer_create_callback_t callback, void *userdata);
+void qt6cr_gesture_recognizer_on_recognize(qt6cr_handle_t handle, qt6cr_gesture_recognizer_recognize_callback_t callback, void *userdata);
+void qt6cr_gesture_recognizer_on_reset(qt6cr_handle_t handle, qt6cr_gesture_recognizer_reset_callback_t callback, void *userdata);
+qt6cr_handle_t qt6cr_gesture_recognizer_create_gesture(qt6cr_handle_t handle, qt6cr_handle_t target);
+int qt6cr_gesture_recognizer_recognize(qt6cr_handle_t handle, qt6cr_handle_t state, qt6cr_handle_t watched, qt6cr_handle_t event);
+void qt6cr_gesture_recognizer_reset_gesture(qt6cr_handle_t handle, qt6cr_handle_t state);
+int qt6cr_gesture_recognizer_register(qt6cr_handle_t handle);
+void qt6cr_gesture_recognizer_unregister(int type);
 qt6cr_handle_t qt6cr_gesture_event_create(const qt6cr_handle_t *gestures, int count);
 void qt6cr_gesture_event_destroy(qt6cr_handle_t handle);
 qt6cr_handle_array_t qt6cr_gesture_event_gestures(qt6cr_handle_t handle);

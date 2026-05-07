@@ -737,6 +737,58 @@ describe Qt6 do
     host.release
   end
 
+  it "supports callback-backed gesture recognizers" do
+    app
+    host = Qt6::Widget.new
+    recognizer = Qt6::GestureRecognizer.new
+    created_targets = [] of Void*
+    recognize_calls = [] of {Void*, Void*, Int32}
+    reset_calls = [] of Void*
+
+    recognizer.on_create do |target|
+      created_targets << target.not_nil!.to_unsafe
+      Qt6::Gesture.new(target)
+    end
+
+    recognizer.on_recognize do |state, watched, event|
+      recognize_calls << {state.to_unsafe, watched.not_nil!.to_unsafe, event.type_value}
+      Qt6::GestureRecognizerResult::MayBeGesture | Qt6::GestureRecognizerResult::ConsumeEventHint
+    end
+
+    recognizer.on_reset do |state|
+      reset_calls << state.to_unsafe
+    end
+
+    type_id = recognizer.register
+    type_id.should be >= Qt6::GestureType::CustomGesture.value
+    recognizer.registered_types.should eq([type_id])
+
+    host.grab_gesture(type_id, Qt6::GestureFlag::ReceivePartialGestures)
+    host.ungrab_gesture(type_id)
+
+    gesture = recognizer.create(host)
+    event = Qt6::GestureEvent.new([gesture])
+    event.set_widget(host)
+
+    created_targets.should eq([host.to_unsafe])
+    gesture.gesture_type_value.should eq(type_id)
+    event.gesture(type_id).not_nil!.to_unsafe.should eq(gesture.to_unsafe)
+
+    result = recognizer.recognize(gesture, host, Qt6::QEvent.new(event.to_unsafe))
+    result.should eq(Qt6::GestureRecognizerResult::MayBeGesture | Qt6::GestureRecognizerResult::ConsumeEventHint)
+    recognize_calls.should eq([{gesture.to_unsafe, host.to_unsafe, Qt6::EventType::Gesture.value}])
+
+    recognizer.reset(gesture)
+    reset_calls.should eq([gesture.to_unsafe])
+
+    recognizer.unregister(type_id)
+    recognizer.registered_types.should be_empty
+
+    event.release
+    host.release
+    recognizer.release
+  end
+
   it "supports widget graphics effects" do
     application = app
     host = Qt6::Widget.new

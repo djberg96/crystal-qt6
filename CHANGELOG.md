@@ -41,6 +41,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QFileIconProvider` with inherited type-description lookup and option flags for fuller standalone file-system icon customization.
 - Added `QGesture` bindings with gesture type/state inspection, cancel-policy control, and hot-spot helpers as a base for gesture-aware widget flows.
 - Added `QGestureEvent` bindings with gesture enumeration, per-gesture and per-type acceptance control, associated-widget access, live `QEvent#gesture_event` wrapping, and `QWidget#grab_gesture` helpers.
+- Added callback-backed `QGestureRecognizer` bindings with direct create/recognize/reset helpers, dynamic custom-type registration, and raw gesture-type support for recognizer-driven widget flows.
 - Expanded `QFocusFrame` with a Qt-style `set_widget` alias and stronger tracked-widget coverage for focus-highlight helpers.
 - Expanded `QFrame` with combined frame-style masks, frame-rect access, and Qt-style setter aliases for fuller shared frame polish across framed widgets.
 - Expanded `QFontComboBox` with writing-system and font-filter controls, preferred-size access, and sample/display-font customization hooks.

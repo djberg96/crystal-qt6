@@ -52,6 +52,7 @@
 #include <QFontDialog>
 #include <QFrame>
 #include <QGesture>
+#include <QGestureRecognizer>
 #include <QFont>
 #include <QFontMetrics>
 #include <QFocusEvent>
@@ -222,6 +223,7 @@ QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
 QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle);
 QGraphicsDropShadowEffect *as_graphics_drop_shadow_effect(qt6cr_handle_t handle);
 QGraphicsOpacityEffect *as_graphics_opacity_effect(qt6cr_handle_t handle);
+QGesture *as_gesture(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
@@ -746,6 +748,46 @@ class CrystalEventFilter final : public QObject {
     }
 
     return event_callback(event_userdata, dynamic_cast<QWidget *>(watched), event);
+  }
+};
+
+class CrystalGestureRecognizer final : public QGestureRecognizer {
+public:
+  qt6cr_gesture_recognizer_create_callback_t create_callback = nullptr;
+  void *create_userdata = nullptr;
+  qt6cr_gesture_recognizer_recognize_callback_t recognize_callback = nullptr;
+  void *recognize_userdata = nullptr;
+  qt6cr_gesture_recognizer_reset_callback_t reset_callback = nullptr;
+  void *reset_userdata = nullptr;
+
+  QGesture *create(QObject *target) override {
+    if (create_callback == nullptr) {
+      return QGestureRecognizer::create(target);
+    }
+
+    auto *gesture = as_gesture(create_callback(create_userdata, target));
+
+    if (gesture != nullptr && gesture->parent() == nullptr && target != nullptr) {
+      gesture->setParent(target);
+    }
+
+    return gesture;
+  }
+
+  QGestureRecognizer::Result recognize(QGesture *state, QObject *watched, QEvent *event) override {
+    if (recognize_callback == nullptr) {
+      return QGestureRecognizer::Ignore;
+    }
+
+    return static_cast<QGestureRecognizer::Result>(recognize_callback(recognize_userdata, state, watched, event));
+  }
+
+  void reset(QGesture *state) override {
+    if (reset_callback != nullptr) {
+      reset_callback(reset_userdata, state);
+    }
+
+    QGestureRecognizer::reset(state);
   }
 };
 
@@ -1710,6 +1752,10 @@ QGesture *as_gesture(qt6cr_handle_t handle) {
   return static_cast<QGesture *>(handle);
 }
 
+CrystalGestureRecognizer *as_gesture_recognizer(qt6cr_handle_t handle) {
+  return static_cast<CrystalGestureRecognizer *>(handle);
+}
+
 QGestureEvent *as_gesture_event(qt6cr_handle_t handle) {
   return static_cast<QGestureEvent *>(handle);
 }
@@ -2357,6 +2403,68 @@ void qt6cr_gesture_unset_hot_spot(qt6cr_handle_t handle) {
   if (gesture != nullptr) {
     gesture->unsetHotSpot();
   }
+}
+
+qt6cr_handle_t qt6cr_gesture_recognizer_create() {
+  return new CrystalGestureRecognizer();
+}
+
+void qt6cr_gesture_recognizer_destroy(qt6cr_handle_t handle) {
+  delete as_gesture_recognizer(handle);
+}
+
+void qt6cr_gesture_recognizer_on_create(qt6cr_handle_t handle, qt6cr_gesture_recognizer_create_callback_t callback, void *userdata) {
+  auto *recognizer = as_gesture_recognizer(handle);
+
+  if (recognizer != nullptr) {
+    recognizer->create_callback = callback;
+    recognizer->create_userdata = userdata;
+  }
+}
+
+void qt6cr_gesture_recognizer_on_recognize(qt6cr_handle_t handle, qt6cr_gesture_recognizer_recognize_callback_t callback, void *userdata) {
+  auto *recognizer = as_gesture_recognizer(handle);
+
+  if (recognizer != nullptr) {
+    recognizer->recognize_callback = callback;
+    recognizer->recognize_userdata = userdata;
+  }
+}
+
+void qt6cr_gesture_recognizer_on_reset(qt6cr_handle_t handle, qt6cr_gesture_recognizer_reset_callback_t callback, void *userdata) {
+  auto *recognizer = as_gesture_recognizer(handle);
+
+  if (recognizer != nullptr) {
+    recognizer->reset_callback = callback;
+    recognizer->reset_userdata = userdata;
+  }
+}
+
+qt6cr_handle_t qt6cr_gesture_recognizer_create_gesture(qt6cr_handle_t handle, qt6cr_handle_t target) {
+  auto *recognizer = as_gesture_recognizer(handle);
+  return recognizer == nullptr ? nullptr : recognizer->create(as_object(target));
+}
+
+int qt6cr_gesture_recognizer_recognize(qt6cr_handle_t handle, qt6cr_handle_t state, qt6cr_handle_t watched, qt6cr_handle_t event) {
+  auto *recognizer = as_gesture_recognizer(handle);
+  return recognizer == nullptr ? static_cast<int>(QGestureRecognizer::Ignore) : static_cast<int>(recognizer->recognize(as_gesture(state), as_object(watched), static_cast<QEvent *>(event)));
+}
+
+void qt6cr_gesture_recognizer_reset_gesture(qt6cr_handle_t handle, qt6cr_handle_t state) {
+  auto *recognizer = as_gesture_recognizer(handle);
+
+  if (recognizer != nullptr) {
+    recognizer->reset(as_gesture(state));
+  }
+}
+
+int qt6cr_gesture_recognizer_register(qt6cr_handle_t handle) {
+  auto *recognizer = as_gesture_recognizer(handle);
+  return recognizer == nullptr ? static_cast<int>(Qt::CustomGesture) : static_cast<int>(QGestureRecognizer::registerRecognizer(recognizer));
+}
+
+void qt6cr_gesture_recognizer_unregister(int type) {
+  QGestureRecognizer::unregisterRecognizer(static_cast<Qt::GestureType>(type));
 }
 
 qt6cr_handle_t qt6cr_gesture_event_create(const qt6cr_handle_t *gestures, int count) {

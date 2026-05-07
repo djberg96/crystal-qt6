@@ -306,13 +306,25 @@ module Qt6
 
     # Registers a gesture type for delivery to this widget.
     def grab_gesture(type : GestureType, flags : GestureFlag = GestureFlag::None) : self
-      LibQt6.qt6cr_widget_grab_gesture(@to_unsafe, type.value, flags.value)
+      grab_gesture(type.value, flags)
+      self
+    end
+
+    # Registers a raw gesture type id for delivery to this widget.
+    def grab_gesture(type : Int, flags : GestureFlag = GestureFlag::None) : self
+      LibQt6.qt6cr_widget_grab_gesture(@to_unsafe, type.to_i32, flags.value)
       self
     end
 
     # Unregisters a previously grabbed gesture type from this widget.
     def ungrab_gesture(type : GestureType) : self
-      LibQt6.qt6cr_widget_ungrab_gesture(@to_unsafe, type.value)
+      ungrab_gesture(type.value)
+      self
+    end
+
+    # Unregisters a previously grabbed raw gesture type id from this widget.
+    def ungrab_gesture(type : Int) : self
+      LibQt6.qt6cr_widget_ungrab_gesture(@to_unsafe, type.to_i32)
       self
     end
 

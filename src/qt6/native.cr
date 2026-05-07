@@ -153,6 +153,16 @@ module Qt6
     fun qt6cr_gesture_set_hot_spot = qt6cr_gesture_set_hot_spot(handle : Handle, value : PointFValue)
     fun qt6cr_gesture_has_hot_spot = qt6cr_gesture_has_hot_spot(handle : Handle) : Bool
     fun qt6cr_gesture_unset_hot_spot = qt6cr_gesture_unset_hot_spot(handle : Handle)
+    fun qt6cr_gesture_recognizer_create = qt6cr_gesture_recognizer_create : Handle
+    fun qt6cr_gesture_recognizer_destroy = qt6cr_gesture_recognizer_destroy(handle : Handle)
+    fun qt6cr_gesture_recognizer_on_create = qt6cr_gesture_recognizer_on_create(handle : Handle, callback : (Handle, Handle -> Handle), userdata : Handle)
+    fun qt6cr_gesture_recognizer_on_recognize = qt6cr_gesture_recognizer_on_recognize(handle : Handle, callback : (Handle, Handle, Handle, Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_gesture_recognizer_on_reset = qt6cr_gesture_recognizer_on_reset(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_gesture_recognizer_create_gesture = qt6cr_gesture_recognizer_create_gesture(handle : Handle, target : Handle) : Handle
+    fun qt6cr_gesture_recognizer_recognize = qt6cr_gesture_recognizer_recognize(handle : Handle, state : Handle, watched : Handle, event : Handle) : LibC::Int
+    fun qt6cr_gesture_recognizer_reset_gesture = qt6cr_gesture_recognizer_reset_gesture(handle : Handle, state : Handle)
+    fun qt6cr_gesture_recognizer_register = qt6cr_gesture_recognizer_register(handle : Handle) : LibC::Int
+    fun qt6cr_gesture_recognizer_unregister = qt6cr_gesture_recognizer_unregister(type : LibC::Int)
     fun qt6cr_gesture_event_create = qt6cr_gesture_event_create(gestures : Handle*, count : LibC::Int) : Handle
     fun qt6cr_gesture_event_destroy = qt6cr_gesture_event_destroy(handle : Handle)
     fun qt6cr_gesture_event_gestures = qt6cr_gesture_event_gestures(handle : Handle) : HandleArrayValue
