@@ -862,6 +862,8 @@ char *qt6cr_standard_item_text(qt6cr_handle_t handle);
 void qt6cr_standard_item_set_text(qt6cr_handle_t handle, const char *text);
 qt6cr_handle_t qt6cr_standard_item_icon(qt6cr_handle_t handle);
 void qt6cr_standard_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+int qt6cr_standard_item_flags(qt6cr_handle_t handle);
+void qt6cr_standard_item_set_flags(qt6cr_handle_t handle, int flags);
 qt6cr_variant_value_t qt6cr_standard_item_data(qt6cr_handle_t handle, int role);
 bool qt6cr_standard_item_set_data(qt6cr_handle_t handle, qt6cr_variant_value_t value, int role);
 void qt6cr_standard_item_append_row(qt6cr_handle_t handle, qt6cr_handle_t item);

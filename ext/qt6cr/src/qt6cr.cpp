@@ -7070,6 +7070,19 @@ void qt6cr_standard_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
   }
 }
 
+int qt6cr_standard_item_flags(qt6cr_handle_t handle) {
+  auto *item = as_standard_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->flags());
+}
+
+void qt6cr_standard_item_set_flags(qt6cr_handle_t handle, int flags) {
+  auto *item = as_standard_item(handle);
+
+  if (item != nullptr) {
+    item->setFlags(static_cast<Qt::ItemFlags>(flags));
+  }
+}
+
 qt6cr_variant_value_t qt6cr_standard_item_data(qt6cr_handle_t handle, int role) {
   auto *item = as_standard_item(handle);
   return item == nullptr ? to_variant_value(QVariant()) : to_variant_value(item->data(role));

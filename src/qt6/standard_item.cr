@@ -37,6 +37,17 @@ module Qt6
       value
     end
 
+    # Returns the item interaction flags.
+    def flags : ItemFlag
+      ItemFlag.from_value(LibQt6.qt6cr_standard_item_flags(to_unsafe))
+    end
+
+    # Sets the item interaction flags.
+    def flags=(value : ItemFlag) : ItemFlag
+      LibQt6.qt6cr_standard_item_set_flags(to_unsafe, value.value)
+      value
+    end
+
     # Returns role-backed data for the item.
     def data(role : ItemDataRole = ItemDataRole::Display) : ModelData
       Qt6.model_data_from_native(LibQt6.qt6cr_standard_item_data(to_unsafe, role.value))
