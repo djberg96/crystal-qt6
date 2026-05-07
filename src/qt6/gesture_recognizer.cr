@@ -22,6 +22,9 @@ module Qt6
     end
 
     # Registers a block that can create the gesture instance for a target.
+    #
+    # Qt may pass `nil` here while probing the recognizer during registration,
+    # so callbacks should not assume a watched object is always present.
     def on_create(&block : QObject? -> Gesture) : self
       @create_callback = block
       self
@@ -63,9 +66,15 @@ module Qt6
     end
 
     # Registers this recognizer with Qt and returns the raw custom gesture type id.
+    #
+    # This type id is what widgets grab and what Qt uses during live gesture
+    # delivery. Standalone `Gesture` instances returned by `create` still report
+    # their own native type, which for plain `Gesture.new` remains
+    # `GestureType::CustomGesture`.
     def register : Int32
       type = LibQt6.qt6cr_gesture_recognizer_register(to_unsafe)
       @registered_types << type unless @registered_types.includes?(type)
+      adopt_by_owner!
       type
     end
 
@@ -74,6 +83,7 @@ module Qt6
       type_value = type.to_i32
       LibQt6.qt6cr_gesture_recognizer_unregister(type_value)
       @registered_types.delete(type_value)
+      mark_destroyed
       self
     end
 

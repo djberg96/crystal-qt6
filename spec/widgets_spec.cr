@@ -746,7 +746,7 @@ describe Qt6 do
     reset_calls = [] of Void*
 
     recognizer.on_create do |target|
-      created_targets << target.not_nil!.to_unsafe
+      created_targets << (target.try(&.to_unsafe) || Pointer(Void).null)
       Qt6::Gesture.new(target)
     end
 
@@ -770,9 +770,10 @@ describe Qt6 do
     event = Qt6::GestureEvent.new([gesture])
     event.set_widget(host)
 
-    created_targets.should eq([host.to_unsafe])
-    gesture.gesture_type_value.should eq(type_id)
-    event.gesture(type_id).not_nil!.to_unsafe.should eq(gesture.to_unsafe)
+    created_targets.should eq([Pointer(Void).null, host.to_unsafe])
+    gesture.gesture_type.should eq(Qt6::GestureType::CustomGesture)
+    gesture.gesture_type_value.should eq(Qt6::GestureType::CustomGesture.value)
+    event.gesture(gesture.gesture_type_value).not_nil!.to_unsafe.should eq(gesture.to_unsafe)
 
     result = recognizer.recognize(gesture, host, Qt6::QEvent.new(event.to_unsafe))
     result.should eq(Qt6::GestureRecognizerResult::MayBeGesture | Qt6::GestureRecognizerResult::ConsumeEventHint)
