@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QGraphicsWidget` with font, palette, auto-fill background, geometry, and size-policy/min-max sizing helpers for richer graphics-view widget composition.
 - Added `QGraphicsView` bindings with brush, alignment, viewport-behavior, and transform helpers for scene viewport configuration.
 - Added `QGraphicsEllipseItem` bindings with rect, angle, bounding-rect, and hit-testing helpers for ellipse and pie graphics items.
+- Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.
 - Expanded `QGraphicsEffect` with `bounding_rect_for` and a Qt-style `set_enabled` alias for shared effect geometry helpers.
 - Expanded `QGraphicsBlurEffect` with blur-hint flags and Qt-style setter aliases for fuller graphics-effect configuration.
 - Expanded `QGraphicsColorizeEffect` with color/strength change callbacks and Qt-style setter aliases for richer live effect updates.

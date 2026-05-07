@@ -87,17 +87,17 @@ module Qt6
       value
     end
 
-    # Installs an anchor layout on this widget.
-    def layout=(value : GraphicsAnchorLayout?) : GraphicsAnchorLayout?
+    # Installs a graphics layout on this widget.
+    def layout=(value : GraphicsLayout?) : GraphicsLayout?
       LibQt6.qt6cr_graphics_widget_set_layout(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
       value.try(&.adopt_by_owner!)
       value
     end
 
-    # Returns the installed anchor layout, if present.
-    def layout : GraphicsAnchorLayout?
+    # Returns the installed graphics layout, if present.
+    def layout : GraphicsLayout?
       handle = LibQt6.qt6cr_graphics_widget_layout(to_unsafe)
-      handle.null? ? nil : GraphicsAnchorLayout.wrap(handle)
+      handle.null? ? nil : GraphicsLayout.wrap(handle)
     end
 
     # Returns the widget geometry.

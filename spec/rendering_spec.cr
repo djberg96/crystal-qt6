@@ -533,6 +533,70 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics grid layouts" do
+    app
+
+    parent = Qt6::GraphicsWidget.new
+    layout = Qt6::GraphicsGridLayout.new
+    first = Qt6::GraphicsWidget.new(parent)
+    second = Qt6::GraphicsWidget.new(parent)
+
+    parent.layout = layout
+    parent.layout.should be_a(Qt6::GraphicsGridLayout)
+    parent.layout.not_nil!.to_unsafe.should eq(layout.to_unsafe)
+
+    layout.set_contents_margins(1, 2, 3, 4)
+    layout.add_item(first, 0, 0, Qt6::AlignmentFlag::Center)
+    layout.add_item(second, 0, 1, 2, 1, Qt6::AlignmentFlag::Bottom)
+    layout.spacing = 6.5
+    layout.horizontal_spacing = 7.5
+    layout.vertical_spacing = 8.5
+    layout.set_row_spacing(1, 11.0)
+    layout.set_column_spacing(1, 12.0)
+    layout.set_row_stretch_factor(0, 2)
+    layout.set_column_stretch_factor(1, 3)
+    layout.set_row_minimum_height(0, 14.0)
+    layout.set_row_preferred_height(0, 18.0)
+    layout.set_row_maximum_height(0, 22.0)
+    layout.set_column_minimum_width(1, 16.0)
+    layout.set_column_preferred_width(1, 20.0)
+    layout.set_column_maximum_width(1, 24.0)
+    layout.set_row_alignment(0, Qt6::AlignmentFlag::VCenter)
+    layout.set_column_alignment(1, Qt6::AlignmentFlag::Right)
+    layout.set_alignment(first, Qt6::AlignmentFlag::Center)
+    layout.activate
+
+    layout.activated?.should be_true
+    layout.horizontal_spacing.should eq(7.5)
+    layout.vertical_spacing.should eq(8.5)
+    layout.row_spacing(1).should eq(11.0)
+    layout.column_spacing(1).should eq(12.0)
+    layout.row_stretch_factor(0).should eq(2)
+    layout.column_stretch_factor(1).should eq(3)
+    layout.row_minimum_height(0).should eq(14.0)
+    layout.row_preferred_height(0).should eq(18.0)
+    layout.row_maximum_height(0).should eq(22.0)
+    layout.column_minimum_width(1).should eq(16.0)
+    layout.column_preferred_width(1).should eq(20.0)
+    layout.column_maximum_width(1).should eq(24.0)
+    layout.row_alignment(0).should eq(Qt6::AlignmentFlag::VCenter)
+    layout.column_alignment(1).should eq(Qt6::AlignmentFlag::Right)
+    layout.alignment(first).should eq(Qt6::AlignmentFlag::Center)
+    layout.row_count.should eq(2)
+    layout.column_count.should eq(2)
+    layout.count.should eq(2)
+    layout.item_at(0, 0).not_nil!.to_unsafe.should eq(first.to_unsafe)
+    layout.item_at(0, 1).not_nil!.to_unsafe.should eq(second.to_unsafe)
+
+    layout.remove_item(first)
+    layout.count.should eq(1)
+    layout.item_at(0, 0).should be_nil
+    layout.remove_at(0)
+    layout.count.should eq(0)
+
+    parent.release
+  end
+
   it "supports graphics-view configuration and transforms" do
     app
 

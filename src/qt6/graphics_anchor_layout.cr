@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QGraphicsAnchorLayout`.
-  class GraphicsAnchorLayout < NativeResource
+  class GraphicsAnchorLayout < GraphicsLayout
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
       new(handle, owned)
     end
@@ -80,17 +80,6 @@ module Qt6
     # Returns the vertical spacing.
     def vertical_spacing : Float64
       LibQt6.qt6cr_graphics_anchor_layout_vertical_spacing(to_unsafe)
-    end
-
-    # Returns the number of layout items currently tracked by the layout.
-    def count : Int32
-      LibQt6.qt6cr_graphics_anchor_layout_count(to_unsafe)
-    end
-
-    # Invalidates cached layout geometry.
-    def invalidate : self
-      LibQt6.qt6cr_graphics_anchor_layout_invalidate(to_unsafe)
-      self
     end
 
     # Qt-style alias for `spacing=`.
