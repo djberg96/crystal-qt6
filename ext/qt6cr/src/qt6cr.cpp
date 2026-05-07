@@ -11338,6 +11338,217 @@ qt6cr_handle_t qt6cr_graphics_item_parent_item(qt6cr_handle_t handle) {
   return item == nullptr ? nullptr : item->parentItem();
 }
 
+qt6cr_handle_t qt6cr_graphics_item_top_level_item(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? nullptr : item->topLevelItem();
+}
+
+bool qt6cr_graphics_item_is_selected(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->isSelected();
+}
+
+void qt6cr_graphics_item_set_selected(qt6cr_handle_t handle, bool value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setSelected(value);
+  }
+}
+
+bool qt6cr_graphics_item_accept_drops(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->acceptDrops();
+}
+
+void qt6cr_graphics_item_set_accept_drops(qt6cr_handle_t handle, bool value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setAcceptDrops(value);
+  }
+}
+
+double qt6cr_graphics_item_effective_opacity(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? 0.0 : item->effectiveOpacity();
+}
+
+qt6cr_pointf_t qt6cr_graphics_item_pos(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(item->pos());
+}
+
+void qt6cr_graphics_item_set_pos(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setPos(from_pointf(point));
+  }
+}
+
+void qt6cr_graphics_item_set_x(qt6cr_handle_t handle, double value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setX(value);
+  }
+}
+
+void qt6cr_graphics_item_set_y(qt6cr_handle_t handle, double value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setY(value);
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_item_scene_pos(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(item->scenePos());
+}
+
+void qt6cr_graphics_item_move_by(qt6cr_handle_t handle, double dx, double dy) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->moveBy(dx, dy);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_item_transform(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? new QTransform() : new QTransform(item->transform());
+}
+
+qt6cr_handle_t qt6cr_graphics_item_scene_transform(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? new QTransform() : new QTransform(item->sceneTransform());
+}
+
+void qt6cr_graphics_item_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform, bool combine) {
+  auto *item = as_graphics_item(handle);
+  auto *value = as_qtransform(transform);
+
+  if (item != nullptr && value != nullptr) {
+    item->setTransform(*value, combine);
+  }
+}
+
+void qt6cr_graphics_item_reset_transform(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->resetTransform();
+  }
+}
+
+double qt6cr_graphics_item_rotation(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? 0.0 : item->rotation();
+}
+
+void qt6cr_graphics_item_set_rotation(qt6cr_handle_t handle, double value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setRotation(value);
+  }
+}
+
+double qt6cr_graphics_item_scale(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? 1.0 : item->scale();
+}
+
+void qt6cr_graphics_item_set_scale(qt6cr_handle_t handle, double value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setScale(value);
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_item_transform_origin_point(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(item->transformOriginPoint());
+}
+
+void qt6cr_graphics_item_set_transform_origin_point(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setTransformOriginPoint(from_pointf(point));
+  }
+}
+
+double qt6cr_graphics_item_z_value(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? 0.0 : item->zValue();
+}
+
+void qt6cr_graphics_item_set_z_value(qt6cr_handle_t handle, double value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setZValue(value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_item_scene_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->sceneBoundingRect());
+}
+
+int qt6cr_graphics_item_flags(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->flags());
+}
+
+void qt6cr_graphics_item_set_flags(qt6cr_handle_t handle, int value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setFlags(QGraphicsItem::GraphicsItemFlags(value));
+  }
+}
+
+void qt6cr_graphics_item_set_flag(qt6cr_handle_t handle, int flag, bool enabled) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setFlag(static_cast<QGraphicsItem::GraphicsItemFlag>(flag), enabled);
+  }
+}
+
+int qt6cr_graphics_item_cache_mode(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? static_cast<int>(QGraphicsItem::NoCache) : static_cast<int>(item->cacheMode());
+}
+
+void qt6cr_graphics_item_set_cache_mode(qt6cr_handle_t handle, int value) {
+  auto *item = as_graphics_item(handle);
+
+  if (item != nullptr) {
+    item->setCacheMode(static_cast<QGraphicsItem::CacheMode>(value));
+  }
+}
+
+bool qt6cr_graphics_item_is_widget(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->isWidget();
+}
+
+bool qt6cr_graphics_item_is_window(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->isWindow();
+}
+
+bool qt6cr_graphics_item_is_panel(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item != nullptr && item->isPanel();
+}
+
 qt6cr_handle_t qt6cr_graphics_widget_create(qt6cr_handle_t parent) {
   auto *parent_widget = as_graphics_widget(parent);
   return new QGraphicsWidget(parent_widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(parent_widget));
@@ -11389,6 +11600,217 @@ void qt6cr_graphics_widget_set_opacity(qt6cr_handle_t handle, double value) {
 qt6cr_handle_t qt6cr_graphics_widget_parent_item(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(widget)->parentItem();
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_top_level_item(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(widget)->topLevelItem();
+}
+
+bool qt6cr_graphics_widget_is_selected(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isSelected();
+}
+
+void qt6cr_graphics_widget_set_selected(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setSelected(value);
+  }
+}
+
+bool qt6cr_graphics_widget_accept_drops(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->acceptDrops();
+}
+
+void qt6cr_graphics_widget_set_accept_drops(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setAcceptDrops(value);
+  }
+}
+
+double qt6cr_graphics_widget_effective_opacity(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? 0.0 : static_cast<QGraphicsItem *>(widget)->effectiveOpacity();
+}
+
+qt6cr_pointf_t qt6cr_graphics_widget_pos(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(static_cast<QGraphicsItem *>(widget)->pos());
+}
+
+void qt6cr_graphics_widget_set_pos(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setPos(from_pointf(point));
+  }
+}
+
+void qt6cr_graphics_widget_set_x(qt6cr_handle_t handle, double value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setX(value);
+  }
+}
+
+void qt6cr_graphics_widget_set_y(qt6cr_handle_t handle, double value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setY(value);
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_widget_scene_pos(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(static_cast<QGraphicsItem *>(widget)->scenePos());
+}
+
+void qt6cr_graphics_widget_move_by(qt6cr_handle_t handle, double dx, double dy) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->moveBy(dx, dy);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_transform(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? new QTransform() : new QTransform(static_cast<QGraphicsItem *>(widget)->transform());
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_scene_transform(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? new QTransform() : new QTransform(static_cast<QGraphicsItem *>(widget)->sceneTransform());
+}
+
+void qt6cr_graphics_widget_set_transform(qt6cr_handle_t handle, qt6cr_handle_t transform, bool combine) {
+  auto *widget = as_graphics_widget(handle);
+  auto *value = as_qtransform(transform);
+
+  if (widget != nullptr && value != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setTransform(*value, combine);
+  }
+}
+
+void qt6cr_graphics_widget_reset_transform(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->resetTransform();
+  }
+}
+
+double qt6cr_graphics_widget_rotation(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? 0.0 : static_cast<QGraphicsItem *>(widget)->rotation();
+}
+
+void qt6cr_graphics_widget_set_rotation(qt6cr_handle_t handle, double value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setRotation(value);
+  }
+}
+
+double qt6cr_graphics_widget_scale(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? 1.0 : static_cast<QGraphicsItem *>(widget)->scale();
+}
+
+void qt6cr_graphics_widget_set_scale(qt6cr_handle_t handle, double value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setScale(value);
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_widget_transform_origin_point(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(static_cast<QGraphicsItem *>(widget)->transformOriginPoint());
+}
+
+void qt6cr_graphics_widget_set_transform_origin_point(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setTransformOriginPoint(from_pointf(point));
+  }
+}
+
+double qt6cr_graphics_widget_z_value(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? 0.0 : static_cast<QGraphicsItem *>(widget)->zValue();
+}
+
+void qt6cr_graphics_widget_set_z_value(qt6cr_handle_t handle, double value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setZValue(value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_widget_scene_bounding_rect(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(static_cast<QGraphicsItem *>(widget)->sceneBoundingRect());
+}
+
+int qt6cr_graphics_widget_flags(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? 0 : static_cast<int>(static_cast<QGraphicsItem *>(widget)->flags());
+}
+
+void qt6cr_graphics_widget_set_flags(qt6cr_handle_t handle, int value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setFlags(QGraphicsItem::GraphicsItemFlags(value));
+  }
+}
+
+void qt6cr_graphics_widget_set_flag(qt6cr_handle_t handle, int flag, bool enabled) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setFlag(static_cast<QGraphicsItem::GraphicsItemFlag>(flag), enabled);
+  }
+}
+
+int qt6cr_graphics_widget_cache_mode(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? static_cast<int>(QGraphicsItem::NoCache) : static_cast<int>(static_cast<QGraphicsItem *>(widget)->cacheMode());
+}
+
+void qt6cr_graphics_widget_set_cache_mode(qt6cr_handle_t handle, int value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setCacheMode(static_cast<QGraphicsItem::CacheMode>(value));
+  }
+}
+
+bool qt6cr_graphics_widget_is_widget(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isWidget();
+}
+
+bool qt6cr_graphics_widget_is_window(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isWindow();
+}
+
+bool qt6cr_graphics_widget_is_panel(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isPanel();
 }
 
 qt6cr_handle_t qt6cr_graphics_widget_font(qt6cr_handle_t handle) {

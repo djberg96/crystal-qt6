@@ -434,6 +434,72 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports richer graphics item state and transforms" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    child = Qt6::GraphicsEllipseItem.new(Qt6::RectF.new(0.0, 0.0, 12.0, 8.0), parent)
+
+    child.flags = Qt6::GraphicsItemFlag::ItemIsMovable | Qt6::GraphicsItemFlag::ItemIsSelectable
+    child.set_flag(Qt6::GraphicsItemFlag::ItemClipsToShape)
+    child.selected = true
+    child.accept_drops = true
+    child.opacity = 0.5
+    child.set_pos(4, 6)
+    child.move_by(1, 2)
+    child.rotation = 30
+    child.scale = 1.25
+    child.transform_origin_point = Qt6::PointF.new(2.0, 3.0)
+    child.z_value = 7.5
+    child.cache_mode = Qt6::GraphicsItemCacheMode::DeviceCoordinateCache
+
+    transform = Qt6::QTransform.new
+    transform.translate(3, 4)
+    child.set_transform(transform)
+
+    child.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    child.top_level_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    child.flags.includes?(Qt6::GraphicsItemFlag::ItemIsMovable).should be_true
+    child.flags.includes?(Qt6::GraphicsItemFlag::ItemIsSelectable).should be_true
+    child.flags.includes?(Qt6::GraphicsItemFlag::ItemClipsToShape).should be_true
+    child.selected?.should be_true
+    child.accept_drops?.should be_true
+    child.effective_opacity.should eq(0.5)
+    child.pos.should eq(Qt6::PointF.new(5.0, 8.0))
+    child.x.should eq(5.0)
+    child.y.should eq(8.0)
+    child.scene_pos.should_not eq(Qt6::PointF.new(0.0, 0.0))
+    child.rotation.should eq(30.0)
+    child.scale.should eq(1.25)
+    child.transform_origin_point.should eq(Qt6::PointF.new(2.0, 3.0))
+    child.z_value.should eq(7.5)
+    child.cache_mode.should eq(Qt6::GraphicsItemCacheMode::DeviceCoordinateCache)
+    child.transform.map(Qt6::PointF.new(0.0, 0.0)).should eq(Qt6::PointF.new(3.0, 4.0))
+    child.scene_transform.map(Qt6::PointF.new(0.0, 0.0)).should_not eq(Qt6::PointF.new(0.0, 0.0))
+    child.scene_bounding_rect.width.should be > 0.0
+    child.scene_bounding_rect.height.should be > 0.0
+    child.widget?.should be_false
+    child.window?.should be_false
+    child.panel?.should be_false
+
+    widget = Qt6::GraphicsWidget.new
+    widget.set_pos(9, 11)
+    widget.rotation = 15
+    widget.scale = 1.5
+    widget.z_value = 2.0
+    widget.set_flag(Qt6::GraphicsItemFlag::ItemIsSelectable)
+    widget.selected = true
+    widget.widget?.should be_true
+    widget.pos.should eq(Qt6::PointF.new(9.0, 11.0))
+    widget.rotation.should eq(15.0)
+    widget.scale.should eq(1.5)
+    widget.z_value.should eq(2.0)
+    widget.selected?.should be_true
+
+    parent.release
+    widget.release
+  end
+
   it "supports graphics ellipse items" do
     app
 

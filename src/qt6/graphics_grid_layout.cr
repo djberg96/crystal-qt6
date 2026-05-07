@@ -15,12 +15,12 @@ module Qt6
     end
 
     # Adds a graphics widget to the given row and column.
-    def add_item(item : GraphicsWidget, row : Int, column : Int, alignment : AlignmentFlag = AlignmentFlag::AlignLeft) : self
+    def add_item(item : GraphicsWidget, row : Int, column : Int, alignment : AlignmentFlag = AlignmentFlag::Left) : self
       add_item(item, row, column, 1, 1, alignment)
     end
 
     # Adds a graphics widget spanning the given rows and columns.
-    def add_item(item : GraphicsWidget, row : Int, column : Int, row_span : Int, column_span : Int, alignment : AlignmentFlag = AlignmentFlag::AlignLeft) : self
+    def add_item(item : GraphicsWidget, row : Int, column : Int, row_span : Int, column_span : Int, alignment : AlignmentFlag = AlignmentFlag::Left) : self
       LibQt6.qt6cr_graphics_grid_layout_add_item(
         to_unsafe,
         item.to_unsafe,

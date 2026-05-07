@@ -1,5 +1,5 @@
 module Qt6
-  # Minimal wrapper for `QGraphicsItem` handles.
+  # Shared wrapper for `QGraphicsItem` handles.
   class GraphicsItem < NativeResource
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
       new(handle, owned)
@@ -59,6 +59,220 @@ module Qt6
     def parent_item : GraphicsItem?
       handle = LibQt6.qt6cr_graphics_item_parent_item(to_unsafe)
       handle.null? ? nil : GraphicsItem.wrap(handle)
+    end
+
+    # Returns the top-level graphics item in this item's parent chain.
+    def top_level_item : GraphicsItem?
+      handle = LibQt6.qt6cr_graphics_item_top_level_item(to_unsafe)
+      handle.null? ? nil : GraphicsItem.wrap(handle)
+    end
+
+    # Returns `true` when the item is selected.
+    def selected? : Bool
+      LibQt6.qt6cr_graphics_item_is_selected(to_unsafe)
+    end
+
+    # Selects or deselects the item.
+    def selected=(value : Bool) : Bool
+      LibQt6.qt6cr_graphics_item_set_selected(to_unsafe, value)
+      value
+    end
+
+    # Returns `true` when the item accepts drops.
+    def accept_drops? : Bool
+      LibQt6.qt6cr_graphics_item_accept_drops(to_unsafe)
+    end
+
+    # Enables or disables drop acceptance.
+    def accept_drops=(value : Bool) : Bool
+      LibQt6.qt6cr_graphics_item_set_accept_drops(to_unsafe, value)
+      value
+    end
+
+    # Returns the item's effective opacity after parent propagation.
+    def effective_opacity : Float64
+      LibQt6.qt6cr_graphics_item_effective_opacity(to_unsafe)
+    end
+
+    # Returns the item position in parent coordinates.
+    def pos : PointF
+      PointF.from_native(LibQt6.qt6cr_graphics_item_pos(to_unsafe))
+    end
+
+    # Sets the item position and returns it.
+    def pos=(value : PointF) : PointF
+      LibQt6.qt6cr_graphics_item_set_pos(to_unsafe, value.to_native)
+      value
+    end
+
+    # Returns the X position in parent coordinates.
+    def x : Float64
+      pos.x
+    end
+
+    # Sets the X position and returns it.
+    def x=(value : Number) : Float64
+      x = value.to_f64
+      LibQt6.qt6cr_graphics_item_set_x(to_unsafe, x)
+      x
+    end
+
+    # Returns the Y position in parent coordinates.
+    def y : Float64
+      pos.y
+    end
+
+    # Sets the Y position and returns it.
+    def y=(value : Number) : Float64
+      y = value.to_f64
+      LibQt6.qt6cr_graphics_item_set_y(to_unsafe, y)
+      y
+    end
+
+    # Returns the item position in scene coordinates.
+    def scene_pos : PointF
+      PointF.from_native(LibQt6.qt6cr_graphics_item_scene_pos(to_unsafe))
+    end
+
+    # Sets the item position and returns `self`.
+    def set_pos(value : PointF) : self
+      self.pos = value
+      self
+    end
+
+    # Sets the item position from coordinates and returns `self`.
+    def set_pos(x : Number, y : Number) : self
+      self.pos = PointF.new(x.to_f64, y.to_f64)
+      self
+    end
+
+    # Moves the item by the given delta and returns `self`.
+    def move_by(dx : Number, dy : Number) : self
+      LibQt6.qt6cr_graphics_item_move_by(to_unsafe, dx.to_f64, dy.to_f64)
+      self
+    end
+
+    # Returns the local transform.
+    def transform : QTransform
+      QTransform.wrap(LibQt6.qt6cr_graphics_item_transform(to_unsafe), true)
+    end
+
+    # Returns the item transform in scene coordinates.
+    def scene_transform : QTransform
+      QTransform.wrap(LibQt6.qt6cr_graphics_item_scene_transform(to_unsafe), true)
+    end
+
+    # Applies a new local transform and returns `self`.
+    def set_transform(value : QTransform, combine : Bool = false) : self
+      LibQt6.qt6cr_graphics_item_set_transform(to_unsafe, value.to_unsafe, combine)
+      self
+    end
+
+    # Clears the local transform and returns `self`.
+    def reset_transform : self
+      LibQt6.qt6cr_graphics_item_reset_transform(to_unsafe)
+      self
+    end
+
+    # Returns the item rotation in degrees.
+    def rotation : Float64
+      LibQt6.qt6cr_graphics_item_rotation(to_unsafe)
+    end
+
+    # Sets the item rotation and returns it.
+    def rotation=(value : Number) : Float64
+      rotation = value.to_f64
+      LibQt6.qt6cr_graphics_item_set_rotation(to_unsafe, rotation)
+      rotation
+    end
+
+    # Returns the item scale factor.
+    def scale : Float64
+      LibQt6.qt6cr_graphics_item_scale(to_unsafe)
+    end
+
+    # Sets the item scale and returns it.
+    def scale=(value : Number) : Float64
+      scale = value.to_f64
+      LibQt6.qt6cr_graphics_item_set_scale(to_unsafe, scale)
+      scale
+    end
+
+    # Returns the transform origin point.
+    def transform_origin_point : PointF
+      PointF.from_native(LibQt6.qt6cr_graphics_item_transform_origin_point(to_unsafe))
+    end
+
+    # Sets the transform origin point and returns it.
+    def transform_origin_point=(value : PointF) : PointF
+      LibQt6.qt6cr_graphics_item_set_transform_origin_point(to_unsafe, value.to_native)
+      value
+    end
+
+    # Sets the transform origin point from coordinates and returns `self`.
+    def set_transform_origin_point(x : Number, y : Number) : self
+      self.transform_origin_point = PointF.new(x.to_f64, y.to_f64)
+      self
+    end
+
+    # Returns the Z stacking value.
+    def z_value : Float64
+      LibQt6.qt6cr_graphics_item_z_value(to_unsafe)
+    end
+
+    # Sets the Z stacking value and returns it.
+    def z_value=(value : Number) : Float64
+      z = value.to_f64
+      LibQt6.qt6cr_graphics_item_set_z_value(to_unsafe, z)
+      z
+    end
+
+    # Returns the scene-space bounding rectangle.
+    def scene_bounding_rect : RectF
+      RectF.from_native(LibQt6.qt6cr_graphics_item_scene_bounding_rect(to_unsafe))
+    end
+
+    # Returns the current item flags.
+    def flags : GraphicsItemFlag
+      GraphicsItemFlag.from_value(LibQt6.qt6cr_graphics_item_flags(to_unsafe))
+    end
+
+    # Replaces the current item flags and returns them.
+    def flags=(value : GraphicsItemFlag) : GraphicsItemFlag
+      LibQt6.qt6cr_graphics_item_set_flags(to_unsafe, value.value)
+      value
+    end
+
+    # Enables or disables a single item flag.
+    def set_flag(flag : GraphicsItemFlag, enabled : Bool = true) : self
+      LibQt6.qt6cr_graphics_item_set_flag(to_unsafe, flag.value, enabled)
+      self
+    end
+
+    # Returns the current cache mode.
+    def cache_mode : GraphicsItemCacheMode
+      GraphicsItemCacheMode.from_value(LibQt6.qt6cr_graphics_item_cache_mode(to_unsafe))
+    end
+
+    # Sets the cache mode and returns it.
+    def cache_mode=(value : GraphicsItemCacheMode) : GraphicsItemCacheMode
+      LibQt6.qt6cr_graphics_item_set_cache_mode(to_unsafe, value.value)
+      value
+    end
+
+    # Returns `true` when the item is a graphics widget.
+    def widget? : Bool
+      LibQt6.qt6cr_graphics_item_is_widget(to_unsafe)
+    end
+
+    # Returns `true` when the item is a graphics window.
+    def window? : Bool
+      LibQt6.qt6cr_graphics_item_is_window(to_unsafe)
+    end
+
+    # Returns `true` when the item is a panel.
+    def panel? : Bool
+      LibQt6.qt6cr_graphics_item_is_panel(to_unsafe)
     end
 
     protected def destroy_native : Nil
