@@ -452,9 +452,35 @@ describe Qt6 do
     first.enabled?.should be_false
     first.opacity = 0.75
     first.opacity.should eq(0.75)
+    first.auto_fill_background = true
+    first.auto_fill_background?.should be_true
 
+    font = Qt6::QFont.new("Helvetica", 13, bold: true)
+    first.font = font
+    first.font.family.should eq(font.family)
+    first.font.point_size.should eq(13)
+    first.font.bold?.should be_true
+
+    palette = Qt6::QPalette.new
+    palette.set_color(Qt6::ColorRole::WindowText, Qt6::Color.new(12, 34, 56))
+    first.palette = palette
+    first.palette.color(Qt6::ColorRole::WindowText).should eq(Qt6::Color.new(12, 34, 56, 255))
+
+    first.set_size_policy(Qt6::SizePolicy::MinimumExpanding, Qt6::SizePolicy::Fixed)
+    first.horizontal_size_policy.should eq(Qt6::SizePolicy::MinimumExpanding)
+    first.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+
+    first.set_minimum_size(20, 10)
     first.set_preferred_size(40, 20)
+    first.set_maximum_size(80, 40)
     second.set_preferred_size(50, 30)
+    first.minimum_size.should eq(Qt6::SizeF.new(20.0, 10.0))
+    first.preferred_size.should eq(Qt6::SizeF.new(40.0, 20.0))
+    first.maximum_size.should eq(Qt6::SizeF.new(80.0, 40.0))
+
+    first.set_geometry(2, 3, 40, 20)
+    first.geometry.should eq(Qt6::RectF.new(2.0, 3.0, 40.0, 20.0))
+    first.adjust_size
 
     anchor = layout.add_anchor(first, Qt6::AnchorPoint::AnchorLeft, second, Qt6::AnchorPoint::AnchorLeft)
     mirror = layout.anchor(first, Qt6::AnchorPoint::AnchorLeft, second, Qt6::AnchorPoint::AnchorLeft)

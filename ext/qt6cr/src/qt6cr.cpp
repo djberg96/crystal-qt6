@@ -11368,6 +11368,47 @@ qt6cr_handle_t qt6cr_graphics_widget_parent_item(qt6cr_handle_t handle) {
   return widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(widget)->parentItem();
 }
 
+qt6cr_handle_t qt6cr_graphics_widget_font(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? new QFont() : new QFont(widget->font());
+}
+
+void qt6cr_graphics_widget_set_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *widget = as_graphics_widget(handle);
+  auto *value = as_qfont(font);
+
+  if (widget != nullptr && value != nullptr) {
+    widget->setFont(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_palette(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? new QPalette() : new QPalette(widget->palette());
+}
+
+void qt6cr_graphics_widget_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
+  auto *widget = as_graphics_widget(handle);
+  auto *value = as_qpalette(palette);
+
+  if (widget != nullptr && value != nullptr) {
+    widget->setPalette(*value);
+  }
+}
+
+bool qt6cr_graphics_widget_auto_fill_background(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && widget->autoFillBackground();
+}
+
+void qt6cr_graphics_widget_set_auto_fill_background(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAutoFillBackground(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_graphics_widget_layout(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget == nullptr ? nullptr : widget->layout();
@@ -11378,6 +11419,19 @@ void qt6cr_graphics_widget_set_layout(qt6cr_handle_t handle, qt6cr_handle_t layo
 
   if (widget != nullptr) {
     widget->setLayout(static_cast<QGraphicsLayout *>(layout));
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_widget_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(widget->geometry());
+}
+
+void qt6cr_graphics_widget_set_geometry(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setGeometry(from_rectf(rect));
   }
 }
 
@@ -11394,6 +11448,37 @@ qt6cr_sizef_t qt6cr_graphics_widget_size(qt6cr_handle_t handle) {
   return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->size());
 }
 
+int qt6cr_graphics_widget_horizontal_size_policy(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? static_cast<int>(QSizePolicy::Preferred) : static_cast<int>(widget->sizePolicy().horizontalPolicy());
+}
+
+int qt6cr_graphics_widget_vertical_size_policy(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? static_cast<int>(QSizePolicy::Preferred) : static_cast<int>(widget->sizePolicy().verticalPolicy());
+}
+
+void qt6cr_graphics_widget_set_size_policy(qt6cr_handle_t handle, int horizontal, int vertical) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setSizePolicy(static_cast<QSizePolicy::Policy>(horizontal), static_cast<QSizePolicy::Policy>(vertical));
+  }
+}
+
+qt6cr_sizef_t qt6cr_graphics_widget_minimum_size(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->minimumSize());
+}
+
+void qt6cr_graphics_widget_set_minimum_size(qt6cr_handle_t handle, double width, double height) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setMinimumSize(width, height);
+  }
+}
+
 void qt6cr_graphics_widget_set_preferred_size(qt6cr_handle_t handle, double width, double height) {
   auto *widget = as_graphics_widget(handle);
 
@@ -11405,6 +11490,27 @@ void qt6cr_graphics_widget_set_preferred_size(qt6cr_handle_t handle, double widt
 qt6cr_sizef_t qt6cr_graphics_widget_preferred_size(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->preferredSize());
+}
+
+qt6cr_sizef_t qt6cr_graphics_widget_maximum_size(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->maximumSize());
+}
+
+void qt6cr_graphics_widget_set_maximum_size(qt6cr_handle_t handle, double width, double height) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setMaximumSize(width, height);
+  }
+}
+
+void qt6cr_graphics_widget_adjust_size(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->adjustSize();
+  }
 }
 
 double qt6cr_graphics_anchor_spacing(qt6cr_handle_t handle) {
