@@ -42,7 +42,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QFocusFrame` with a Qt-style `set_widget` alias and stronger tracked-widget coverage for focus-highlight helpers.
 - Expanded `QFontComboBox` with writing-system and font-filter controls, preferred-size access, and sample/display-font customization hooks.
 - Expanded `QFontDialog` with a Qt-style `set_current_font` alias and stronger selected-font coverage in dialog specs.
-- Expanded `QFormLayout` with growth/wrap/alignment controls, nested layout rows, row insertion/removal/visibility helpers, label lookup, and optional unparented construction.
+- Expanded `QFormLayout` with growth/wrap/alignment controls, nested layout rows, row insertion/removal/visibility helpers, label lookup, `TakeRowResult` modeling, and optional unparented construction.
 - Added deeper `QPainter` coverage with rounded rectangles, polylines, arc/pie/chord primitives, and rect-aligned text drawing helpers.
 - Added `QRegion` and `RegionType` bindings for painter clip regions, widget masks, and region set operations.
 - Added `QConicalGradient` bindings, including `QBrush` support and rendering-spec coverage for angular gradient fills.

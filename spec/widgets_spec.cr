@@ -622,19 +622,21 @@ describe Qt6 do
     application.process_events
     rubber_band.visible?.should be_false
 
-    handler = Qt6::ErrorMessage.qt_handler
-    handler.to_unsafe.should eq(Qt6::ErrorMessage.qt_handler.to_unsafe)
-    handler.show_message("Background importer warning", "import")
-    application.process_events
-
     error_message.visible?.should be_true
     error_message.hide
     application.process_events
     error_message.visible?.should be_false
-    handler.visible?.should be_true
-    handler.hide
-    application.process_events
-    handler.visible?.should be_false
+
+    stdout = IO::Memory.new
+    stderr = IO::Memory.new
+    status = Process.run(
+      "crystal",
+      ["run", "spec/support/error_message_qt_handler_probe.cr"],
+      output: stdout,
+      error: stderr
+    )
+
+    status.success?.should be_true
 
     host.release
   end

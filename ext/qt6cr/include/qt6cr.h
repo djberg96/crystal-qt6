@@ -98,6 +98,11 @@ typedef struct {
 } qt6cr_handle_array_t;
 
 typedef struct {
+	qt6cr_handle_t label_item;
+	qt6cr_handle_t field_item;
+} qt6cr_form_layout_take_row_result_t;
+
+typedef struct {
 	double position;
 	qt6cr_color_t color;
 } qt6cr_gradient_stop_t;
@@ -2807,7 +2812,18 @@ bool qt6cr_form_layout_is_row_visible_widget(qt6cr_handle_t handle, qt6cr_handle
 bool qt6cr_form_layout_is_row_visible_layout(qt6cr_handle_t handle, qt6cr_handle_t layout);
 qt6cr_handle_t qt6cr_form_layout_label_for_field_widget(qt6cr_handle_t handle, qt6cr_handle_t field_widget);
 qt6cr_handle_t qt6cr_form_layout_label_for_field_layout(qt6cr_handle_t handle, qt6cr_handle_t field_layout);
+qt6cr_form_layout_take_row_result_t qt6cr_form_layout_take_row(qt6cr_handle_t handle, int row);
+qt6cr_form_layout_take_row_result_t qt6cr_form_layout_take_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_form_layout_take_row_result_t qt6cr_form_layout_take_row_layout(qt6cr_handle_t handle, qt6cr_handle_t layout);
 int qt6cr_form_layout_row_count(qt6cr_handle_t handle);
+void qt6cr_layout_item_destroy(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_layout_item_size_hint(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_layout_item_minimum_size(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_layout_item_maximum_size(qt6cr_handle_t handle);
+qt6cr_rect_t qt6cr_layout_item_geometry(qt6cr_handle_t handle);
+bool qt6cr_layout_item_is_empty(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_layout_item_widget(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_layout_item_layout(qt6cr_handle_t handle);
 int qt6cr_layout_spacing(qt6cr_handle_t handle);
 void qt6cr_layout_set_spacing(qt6cr_handle_t handle, int value);
 void qt6cr_layout_set_contents_margins(qt6cr_handle_t handle, double left, double top, double right, double bottom);

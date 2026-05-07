@@ -107,6 +107,11 @@ module Qt6
       size : LibC::Int
     end
 
+    struct FormLayoutTakeRowResultValue
+      label_item : Handle
+      field_item : Handle
+    end
+
     struct GradientStopValue
       position : Float64
       color : ColorValue
@@ -2784,7 +2789,18 @@ module Qt6
     fun qt6cr_form_layout_is_row_visible_layout = qt6cr_form_layout_is_row_visible_layout(handle : Handle, layout : Handle) : Bool
     fun qt6cr_form_layout_label_for_field_widget = qt6cr_form_layout_label_for_field_widget(handle : Handle, field_widget : Handle) : Handle
     fun qt6cr_form_layout_label_for_field_layout = qt6cr_form_layout_label_for_field_layout(handle : Handle, field_layout : Handle) : Handle
+    fun qt6cr_form_layout_take_row = qt6cr_form_layout_take_row(handle : Handle, row : LibC::Int) : FormLayoutTakeRowResultValue
+    fun qt6cr_form_layout_take_row_widget = qt6cr_form_layout_take_row_widget(handle : Handle, widget : Handle) : FormLayoutTakeRowResultValue
+    fun qt6cr_form_layout_take_row_layout = qt6cr_form_layout_take_row_layout(handle : Handle, layout : Handle) : FormLayoutTakeRowResultValue
     fun qt6cr_form_layout_row_count = qt6cr_form_layout_row_count(handle : Handle) : LibC::Int
+    fun qt6cr_layout_item_destroy = qt6cr_layout_item_destroy(handle : Handle)
+    fun qt6cr_layout_item_size_hint = qt6cr_layout_item_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_layout_item_minimum_size = qt6cr_layout_item_minimum_size(handle : Handle) : SizeValue
+    fun qt6cr_layout_item_maximum_size = qt6cr_layout_item_maximum_size(handle : Handle) : SizeValue
+    fun qt6cr_layout_item_geometry = qt6cr_layout_item_geometry(handle : Handle) : RectValue
+    fun qt6cr_layout_item_is_empty = qt6cr_layout_item_is_empty(handle : Handle) : Bool
+    fun qt6cr_layout_item_widget = qt6cr_layout_item_widget(handle : Handle) : Handle
+    fun qt6cr_layout_item_layout = qt6cr_layout_item_layout(handle : Handle) : Handle
     fun qt6cr_layout_spacing = qt6cr_layout_spacing(handle : Handle) : LibC::Int
     fun qt6cr_layout_set_spacing = qt6cr_layout_set_spacing(handle : Handle, value : LibC::Int)
     fun qt6cr_layout_set_contents_margins = qt6cr_layout_set_contents_margins(handle : Handle, left : Float64, top : Float64, right : Float64, bottom : Float64)

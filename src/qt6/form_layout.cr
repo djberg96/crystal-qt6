@@ -246,5 +246,27 @@ module Qt6
       handle = LibQt6.qt6cr_form_layout_label_for_field_layout(@to_unsafe, field.to_unsafe)
       handle.null? ? nil : Widget.wrap(handle)
     end
+
+    # Extracts and returns the row at the given index.
+    def take_row(row : Int) : FormLayoutTakeRowResult
+      take_row_result_from_native(LibQt6.qt6cr_form_layout_take_row(@to_unsafe, row.to_i32))
+    end
+
+    # Extracts and returns the row containing the given widget.
+    def take_row(widget : Widget) : FormLayoutTakeRowResult
+      take_row_result_from_native(LibQt6.qt6cr_form_layout_take_row_widget(@to_unsafe, widget.to_unsafe))
+    end
+
+    # Extracts and returns the row containing the given child layout.
+    def take_row(layout : Layout) : FormLayoutTakeRowResult
+      take_row_result_from_native(LibQt6.qt6cr_form_layout_take_row_layout(@to_unsafe, layout.to_unsafe))
+    end
+
+    private def take_row_result_from_native(value : LibQt6::FormLayoutTakeRowResultValue) : FormLayoutTakeRowResult
+      FormLayoutTakeRowResult.new(
+        value.label_item.null? ? nil : LayoutItem.wrap(value.label_item, true),
+        value.field_item.null? ? nil : LayoutItem.wrap(value.field_item, true)
+      )
+    end
   end
 end

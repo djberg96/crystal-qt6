@@ -1972,6 +1972,10 @@ QFormLayout *as_form_layout(qt6cr_handle_t handle) {
   return static_cast<QFormLayout *>(handle);
 }
 
+QLayoutItem *as_layout_item(qt6cr_handle_t handle) {
+  return static_cast<QLayoutItem *>(handle);
+}
+
 QVBoxLayout *as_v_box_layout(qt6cr_handle_t handle) {
   return static_cast<QVBoxLayout *>(handle);
 }
@@ -19875,9 +19879,80 @@ qt6cr_handle_t qt6cr_form_layout_label_for_field_layout(qt6cr_handle_t handle, q
   return layout == nullptr || field == nullptr ? nullptr : layout->labelForField(field);
 }
 
+qt6cr_form_layout_take_row_result_t qt6cr_form_layout_take_row(qt6cr_handle_t handle, int row) {
+  auto *layout = as_form_layout(handle);
+  if (layout == nullptr) {
+    return qt6cr_form_layout_take_row_result_t{nullptr, nullptr};
+  }
+
+  const auto result = layout->takeRow(row);
+  return qt6cr_form_layout_take_row_result_t{result.labelItem, result.fieldItem};
+}
+
+qt6cr_form_layout_take_row_result_t qt6cr_form_layout_take_row_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_widget(widget);
+  if (layout == nullptr || field == nullptr) {
+    return qt6cr_form_layout_take_row_result_t{nullptr, nullptr};
+  }
+
+  const auto result = layout->takeRow(field);
+  return qt6cr_form_layout_take_row_result_t{result.labelItem, result.fieldItem};
+}
+
+qt6cr_form_layout_take_row_result_t qt6cr_form_layout_take_row_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout) {
+  auto *layout = as_form_layout(handle);
+  auto *field = as_layout(child_layout);
+  if (layout == nullptr || field == nullptr) {
+    return qt6cr_form_layout_take_row_result_t{nullptr, nullptr};
+  }
+
+  const auto result = layout->takeRow(field);
+  return qt6cr_form_layout_take_row_result_t{result.labelItem, result.fieldItem};
+}
+
 int qt6cr_form_layout_row_count(qt6cr_handle_t handle) {
   auto *layout = as_form_layout(handle);
   return layout == nullptr ? 0 : layout->rowCount();
+}
+
+void qt6cr_layout_item_destroy(qt6cr_handle_t handle) {
+  delete as_layout_item(handle);
+}
+
+qt6cr_size_t qt6cr_layout_item_size_hint(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? qt6cr_size_t{0, 0} : to_size(item->sizeHint());
+}
+
+qt6cr_size_t qt6cr_layout_item_minimum_size(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? qt6cr_size_t{0, 0} : to_size(item->minimumSize());
+}
+
+qt6cr_size_t qt6cr_layout_item_maximum_size(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? qt6cr_size_t{0, 0} : to_size(item->maximumSize());
+}
+
+qt6cr_rect_t qt6cr_layout_item_geometry(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(item->geometry());
+}
+
+bool qt6cr_layout_item_is_empty(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item != nullptr && item->isEmpty();
+}
+
+qt6cr_handle_t qt6cr_layout_item_widget(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? nullptr : item->widget();
+}
+
+qt6cr_handle_t qt6cr_layout_item_layout(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? nullptr : item->layout();
 }
 
 int qt6cr_layout_spacing(qt6cr_handle_t handle) {

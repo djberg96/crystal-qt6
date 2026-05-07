@@ -799,7 +799,6 @@ describe Qt6 do
     form.set_row_visible(advanced_row, true)
     form.set_row_visible(notes_layout, false)
     form.set_row_visible(notes_layout, true)
-    form.remove_row(temporary_field)
 
     name_field.text.should eq("Terrain")
     description_field.text.should eq("Detailed terrain notes")
@@ -814,13 +813,24 @@ describe Qt6 do
     form.form_alignment.should eq(Qt6::AlignmentFlag::Top | Qt6::AlignmentFlag::Left)
     form.horizontal_spacing.should eq(12)
     form.vertical_spacing.should eq(9)
-    form.row_count.should eq(7)
+    form.row_count.should eq(8)
     form.label_for_field(name_field).not_nil!.to_unsafe.should eq(map_name_label.to_unsafe)
     form.label_for_field(kind_field).not_nil!.to_unsafe.should eq(kind_label.to_unsafe)
     form.label_for_field(advanced_row).should_not be_nil
     form.row_visible?(advanced_row).should be_true
     form.row_visible?(notes_layout).should be_true
+    temporary_result = form.take_row(temporary_field)
+    advanced_result = form.take_row(advanced_row)
+    form.row_count.should eq(6)
+    temporary_result.label_item.should_not be_nil
+    temporary_result.label_item.not_nil!.widget.should_not be_nil
+    temporary_result.field_item.not_nil!.widget.not_nil!.to_unsafe.should eq(temporary_field.to_unsafe)
+    advanced_result.label_item.should_not be_nil
+    advanced_result.label_item.not_nil!.widget.should_not be_nil
+    advanced_result.field_item.not_nil!.layout.not_nil!.to_unsafe.should eq(advanced_row.to_unsafe)
     notes_value.text.should eq("Ready")
+    temporary_result.release
+    advanced_result.release
     window.release
   end
 
