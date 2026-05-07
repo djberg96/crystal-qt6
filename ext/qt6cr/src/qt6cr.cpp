@@ -61,7 +61,9 @@
 #include <QGraphicsColorizeEffect>
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsEffect>
+#include <QGraphicsAnchorLayout>
 #include <QGraphicsItem>
+#include <QGraphicsWidget>
 #include <QGraphicsOpacityEffect>
 #include <QFormLayout>
 #include <QGridLayout>
@@ -219,6 +221,7 @@ QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
+QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
 QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle);
 QGraphicsDropShadowEffect *as_graphics_drop_shadow_effect(qt6cr_handle_t handle);
@@ -1462,6 +1465,10 @@ QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
 
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsItem *>(handle);
+}
+
+QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsWidget *>(handle);
 }
 
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle) {
@@ -11228,6 +11235,220 @@ void qt6cr_graphics_item_set_opacity(qt6cr_handle_t handle, double value) {
 qt6cr_handle_t qt6cr_graphics_item_parent_item(qt6cr_handle_t handle) {
   auto *item = as_graphics_item(handle);
   return item == nullptr ? nullptr : item->parentItem();
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_create(qt6cr_handle_t parent) {
+  auto *parent_widget = as_graphics_widget(parent);
+  return new QGraphicsWidget(parent_widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(parent_widget));
+}
+
+void qt6cr_graphics_widget_destroy(qt6cr_handle_t handle) {
+  delete as_graphics_widget(handle);
+}
+
+bool qt6cr_graphics_widget_is_visible(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isVisible();
+}
+
+void qt6cr_graphics_widget_set_visible(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setVisible(value);
+  }
+}
+
+bool qt6cr_graphics_widget_is_enabled(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isEnabled();
+}
+
+void qt6cr_graphics_widget_set_enabled(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setEnabled(value);
+  }
+}
+
+double qt6cr_graphics_widget_opacity(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? 0.0 : static_cast<QGraphicsItem *>(widget)->opacity();
+}
+
+void qt6cr_graphics_widget_set_opacity(qt6cr_handle_t handle, double value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    static_cast<QGraphicsItem *>(widget)->setOpacity(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_parent_item(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(widget)->parentItem();
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_layout(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? nullptr : widget->layout();
+}
+
+void qt6cr_graphics_widget_set_layout(qt6cr_handle_t handle, qt6cr_handle_t layout) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setLayout(static_cast<QGraphicsLayout *>(layout));
+  }
+}
+
+void qt6cr_graphics_widget_resize(qt6cr_handle_t handle, double width, double height) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->resize(width, height);
+  }
+}
+
+qt6cr_sizef_t qt6cr_graphics_widget_size(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->size());
+}
+
+void qt6cr_graphics_widget_set_preferred_size(qt6cr_handle_t handle, double width, double height) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setPreferredSize(width, height);
+  }
+}
+
+qt6cr_sizef_t qt6cr_graphics_widget_preferred_size(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->preferredSize());
+}
+
+double qt6cr_graphics_anchor_spacing(qt6cr_handle_t handle) {
+  auto *anchor = static_cast<QGraphicsAnchor *>(handle);
+  return anchor == nullptr ? 0.0 : anchor->spacing();
+}
+
+void qt6cr_graphics_anchor_set_spacing(qt6cr_handle_t handle, double spacing) {
+  auto *anchor = static_cast<QGraphicsAnchor *>(handle);
+
+  if (anchor != nullptr) {
+    anchor->setSpacing(spacing);
+  }
+}
+
+void qt6cr_graphics_anchor_unset_spacing(qt6cr_handle_t handle) {
+  auto *anchor = static_cast<QGraphicsAnchor *>(handle);
+
+  if (anchor != nullptr) {
+    anchor->unsetSpacing();
+  }
+}
+
+int qt6cr_graphics_anchor_size_policy(qt6cr_handle_t handle) {
+  auto *anchor = static_cast<QGraphicsAnchor *>(handle);
+  return anchor == nullptr ? static_cast<int>(QSizePolicy::Fixed) : static_cast<int>(anchor->sizePolicy());
+}
+
+void qt6cr_graphics_anchor_set_size_policy(qt6cr_handle_t handle, int policy) {
+  auto *anchor = static_cast<QGraphicsAnchor *>(handle);
+
+  if (anchor != nullptr) {
+    anchor->setSizePolicy(static_cast<QSizePolicy::Policy>(policy));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_anchor_layout_create(qt6cr_handle_t parent) {
+  return new QGraphicsAnchorLayout(static_cast<QGraphicsLayoutItem *>(as_graphics_widget(parent)));
+}
+
+void qt6cr_graphics_anchor_layout_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsAnchorLayout *>(handle);
+}
+
+qt6cr_handle_t qt6cr_graphics_anchor_layout_add_anchor(qt6cr_handle_t handle, qt6cr_handle_t first_item, int first_edge, qt6cr_handle_t second_item, int second_edge) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+  return layout == nullptr ? nullptr : layout->addAnchor(
+    static_cast<QGraphicsLayoutItem *>(as_graphics_widget(first_item)),
+    static_cast<Qt::AnchorPoint>(first_edge),
+    static_cast<QGraphicsLayoutItem *>(as_graphics_widget(second_item)),
+    static_cast<Qt::AnchorPoint>(second_edge)
+  );
+}
+
+qt6cr_handle_t qt6cr_graphics_anchor_layout_anchor(qt6cr_handle_t handle, qt6cr_handle_t first_item, int first_edge, qt6cr_handle_t second_item, int second_edge) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+  return layout == nullptr ? nullptr : layout->anchor(
+    static_cast<QGraphicsLayoutItem *>(as_graphics_widget(first_item)),
+    static_cast<Qt::AnchorPoint>(first_edge),
+    static_cast<QGraphicsLayoutItem *>(as_graphics_widget(second_item)),
+    static_cast<Qt::AnchorPoint>(second_edge)
+  );
+}
+
+void qt6cr_graphics_anchor_layout_add_corner_anchors(qt6cr_handle_t handle, qt6cr_handle_t first_item, int first_corner, qt6cr_handle_t second_item, int second_corner) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+
+  if (layout != nullptr) {
+    layout->addCornerAnchors(
+      static_cast<QGraphicsLayoutItem *>(as_graphics_widget(first_item)),
+      static_cast<Qt::Corner>(first_corner),
+      static_cast<QGraphicsLayoutItem *>(as_graphics_widget(second_item)),
+      static_cast<Qt::Corner>(second_corner)
+    );
+  }
+}
+
+void qt6cr_graphics_anchor_layout_set_horizontal_spacing(qt6cr_handle_t handle, double spacing) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+
+  if (layout != nullptr) {
+    layout->setHorizontalSpacing(spacing);
+  }
+}
+
+void qt6cr_graphics_anchor_layout_set_vertical_spacing(qt6cr_handle_t handle, double spacing) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+
+  if (layout != nullptr) {
+    layout->setVerticalSpacing(spacing);
+  }
+}
+
+void qt6cr_graphics_anchor_layout_set_spacing(qt6cr_handle_t handle, double spacing) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+
+  if (layout != nullptr) {
+    layout->setSpacing(spacing);
+  }
+}
+
+double qt6cr_graphics_anchor_layout_horizontal_spacing(qt6cr_handle_t handle) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+  return layout == nullptr ? 0.0 : layout->horizontalSpacing();
+}
+
+double qt6cr_graphics_anchor_layout_vertical_spacing(qt6cr_handle_t handle) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+  return layout == nullptr ? 0.0 : layout->verticalSpacing();
+}
+
+int qt6cr_graphics_anchor_layout_count(qt6cr_handle_t handle) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+  return layout == nullptr ? 0 : layout->count();
+}
+
+void qt6cr_graphics_anchor_layout_invalidate(qt6cr_handle_t handle) {
+  auto *layout = static_cast<QGraphicsAnchorLayout *>(handle);
+
+  if (layout != nullptr) {
+    layout->invalidate();
+  }
 }
 
 qt6cr_handle_t qt6cr_abstract_graphics_shape_item_create(qt6cr_handle_t parent) {

@@ -434,6 +434,47 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics anchor layouts and anchors" do
+    app
+
+    parent = Qt6::GraphicsWidget.new
+    layout = Qt6::GraphicsAnchorLayout.new
+    first = Qt6::GraphicsWidget.new(parent)
+    second = Qt6::GraphicsWidget.new(parent)
+
+    parent.layout = layout
+    parent.layout.not_nil!.to_unsafe.should eq(layout.to_unsafe)
+    first.parent_item.should_not be_nil
+
+    first.visible = false
+    first.visible?.should be_false
+    first.enabled = false
+    first.enabled?.should be_false
+    first.opacity = 0.75
+    first.opacity.should eq(0.75)
+
+    first.set_preferred_size(40, 20)
+    second.set_preferred_size(50, 30)
+
+    anchor = layout.add_anchor(first, Qt6::AnchorPoint::AnchorLeft, second, Qt6::AnchorPoint::AnchorLeft)
+    mirror = layout.anchor(first, Qt6::AnchorPoint::AnchorLeft, second, Qt6::AnchorPoint::AnchorLeft)
+
+    anchor.set_spacing(12.5)
+    anchor.set_size_policy(Qt6::SizePolicy::Expanding)
+    layout.set_horizontal_spacing(3.0)
+    layout.set_vertical_spacing(7.0)
+    layout.invalidate
+
+    mirror.not_nil!.to_unsafe.should eq(anchor.to_unsafe)
+    anchor.spacing.should eq(12.5)
+    anchor.size_policy.should eq(Qt6::SizePolicy::Expanding)
+    layout.horizontal_spacing.should eq(3.0)
+    layout.vertical_spacing.should eq(7.0)
+    layout.count.should eq(2)
+
+    parent.release
+  end
+
   it "supports gradients and advanced pen styling" do
     app
 
@@ -1489,5 +1530,4 @@ describe Qt6 do
 
     widget.release
   end
-
 end

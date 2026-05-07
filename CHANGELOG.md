@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- Added `QGraphicsWidget`, `QGraphicsAnchorLayout`, and `QGraphicsAnchor` bindings with anchor spacing, size-policy, and layout-installation helpers for graphics-view layout composition.
+
 ## [0.9.0] - 2026-05-07
 
 ### Added
