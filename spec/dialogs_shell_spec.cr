@@ -797,6 +797,7 @@ describe Qt6 do
     end
 
     file_dialog.file_mode = Qt6::FileDialogFileMode::ExistingFiles
+    file_dialog.set_option(Qt6::FileDialogOption::DontUseNativeDialog)
     file_dialog.select_file("/tmp/first.map")
     file_dialog.select_file("/tmp/second.map")
 

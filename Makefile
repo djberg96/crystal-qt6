@@ -16,10 +16,10 @@ spec: native
 	$(GUI_SPEC_SCRIPT) crystal spec
 
 gui-spec: native
-	$(GUI_SPEC_SCRIPT) crystal spec
+	QT_QPA_PLATFORM=cocoa $(GUI_SPEC_SCRIPT) crystal spec
 
 gui-spec-mt: native
-	CRYSTAL_WORKERS=$(MT_WORKERS) $(GUI_SPEC_SCRIPT) crystal spec -Dpreview_mt
+	CRYSTAL_WORKERS=$(MT_WORKERS) QT_QPA_PLATFORM=cocoa $(GUI_SPEC_SCRIPT) crystal spec -Dpreview_mt
 
 docs-book:
 	$(MAKE) -C docs/book

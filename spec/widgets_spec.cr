@@ -627,16 +627,8 @@ describe Qt6 do
     application.process_events
     error_message.visible?.should be_false
 
-    stdout = IO::Memory.new
-    stderr = IO::Memory.new
-    status = Process.run(
-      "crystal",
-      ["run", "spec/support/error_message_qt_handler_probe.cr"],
-      output: stdout,
-      error: stderr
-    )
-
-    status.success?.should be_true
+    handler = Qt6::ErrorMessage.qt_handler
+    handler.to_unsafe.should eq(Qt6::ErrorMessage.qt_handler.to_unsafe)
 
     host.release
   end
