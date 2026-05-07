@@ -10353,6 +10353,42 @@ void qt6cr_graphics_drop_shadow_effect_set_y_offset(qt6cr_handle_t handle, doubl
   }
 }
 
+void qt6cr_graphics_drop_shadow_effect_on_blur_radius_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsDropShadowEffect::blurRadiusChanged, effect, [callback, userdata](qreal value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_graphics_drop_shadow_effect_on_color_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsDropShadowEffect::colorChanged, effect, [callback, userdata](const QColor &) {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_drop_shadow_effect_on_offset_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_drop_shadow_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsDropShadowEffect::offsetChanged, effect, [callback, userdata](const QPointF &) {
+    callback(userdata);
+  });
+}
+
 qt6cr_handle_t qt6cr_graphics_opacity_effect_create(qt6cr_handle_t parent) {
   return new QGraphicsOpacityEffect(as_qobject(parent));
 }

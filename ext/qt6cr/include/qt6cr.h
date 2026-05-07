@@ -1317,6 +1317,9 @@ double qt6cr_graphics_drop_shadow_effect_x_offset(qt6cr_handle_t handle);
 void qt6cr_graphics_drop_shadow_effect_set_x_offset(qt6cr_handle_t handle, double value);
 double qt6cr_graphics_drop_shadow_effect_y_offset(qt6cr_handle_t handle);
 void qt6cr_graphics_drop_shadow_effect_set_y_offset(qt6cr_handle_t handle, double value);
+void qt6cr_graphics_drop_shadow_effect_on_blur_radius_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata);
+void qt6cr_graphics_drop_shadow_effect_on_color_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_graphics_drop_shadow_effect_on_offset_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_graphics_opacity_effect_create(qt6cr_handle_t parent);
 double qt6cr_graphics_opacity_effect_opacity(qt6cr_handle_t handle);

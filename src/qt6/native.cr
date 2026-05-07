@@ -1281,6 +1281,9 @@ module Qt6
     fun qt6cr_graphics_drop_shadow_effect_set_x_offset = qt6cr_graphics_drop_shadow_effect_set_x_offset(handle : Handle, value : Float64)
     fun qt6cr_graphics_drop_shadow_effect_y_offset = qt6cr_graphics_drop_shadow_effect_y_offset(handle : Handle) : Float64
     fun qt6cr_graphics_drop_shadow_effect_set_y_offset = qt6cr_graphics_drop_shadow_effect_set_y_offset(handle : Handle, value : Float64)
+    fun qt6cr_graphics_drop_shadow_effect_on_blur_radius_changed = qt6cr_graphics_drop_shadow_effect_on_blur_radius_changed(handle : Handle, callback : (Handle, Float64 ->), userdata : Handle)
+    fun qt6cr_graphics_drop_shadow_effect_on_color_changed = qt6cr_graphics_drop_shadow_effect_on_color_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_graphics_drop_shadow_effect_on_offset_changed = qt6cr_graphics_drop_shadow_effect_on_offset_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_graphics_opacity_effect_create = qt6cr_graphics_opacity_effect_create(parent : Handle) : Handle
     fun qt6cr_graphics_opacity_effect_opacity = qt6cr_graphics_opacity_effect_opacity(handle : Handle) : Float64

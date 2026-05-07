@@ -825,9 +825,21 @@ describe Qt6 do
     colorize.set_strength(0.45)
 
     shadow = Qt6::GraphicsDropShadowEffect.new
-    shadow.blur_radius = 9.0
-    shadow.color = Qt6::Color.new(20, 24, 32, 180)
-    shadow.offset = Qt6::PointF.new(3.0, 4.0)
+    shadow_blur_changes = [] of Float64
+    shadow_color_changes = [] of Qt6::Color
+    shadow_offset_changes = [] of Qt6::PointF
+    shadow.on_blur_radius_changed do |value|
+      shadow_blur_changes << value
+    end
+    shadow.on_color_changed do |value|
+      shadow_color_changes << value
+    end
+    shadow.on_offset_changed do |value|
+      shadow_offset_changes << value
+    end
+    shadow.set_blur_radius(9.0)
+    shadow.set_color(Qt6::Color.new(20, 24, 32, 180))
+    shadow.set_offset(3.0, 4.0)
     shadow.x_offset = 5.0
     shadow.y_offset = 6.0
 
@@ -871,6 +883,9 @@ describe Qt6 do
     shadow.offset.should eq(Qt6::PointF.new(5.0, 6.0))
     shadow.x_offset.should eq(5.0)
     shadow.y_offset.should eq(6.0)
+    shadow_blur_changes.last.should eq(9.0)
+    shadow_color_changes.last.should eq(Qt6::Color.new(20, 24, 32, 180))
+    shadow_offset_changes.last.should eq(Qt6::PointF.new(5.0, 6.0))
 
     opacity.opacity.should eq(0.55)
     opacity_target.graphics_effect = nil
