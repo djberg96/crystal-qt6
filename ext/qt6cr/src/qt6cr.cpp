@@ -62,6 +62,7 @@
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsEffect>
 #include <QGraphicsAnchorLayout>
+#include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsWidget>
@@ -222,6 +223,7 @@ QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
+QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
@@ -1467,6 +1469,10 @@ QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
 
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsItem *>(handle);
+}
+
+QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsEllipseItem *>(handle);
 }
 
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle) {
@@ -11956,6 +11962,63 @@ bool qt6cr_abstract_graphics_shape_item_is_obscured_by(qt6cr_handle_t handle, qt
 qt6cr_handle_t qt6cr_abstract_graphics_shape_item_opaque_area(qt6cr_handle_t handle) {
   auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
   return item == nullptr ? nullptr : new QPainterPath(item->opaqueArea());
+}
+
+qt6cr_handle_t qt6cr_graphics_ellipse_item_create(qt6cr_handle_t parent) {
+  return new QGraphicsEllipseItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_ellipse_item_create_with_rect(qt6cr_rectf_t rect, qt6cr_handle_t parent) {
+  return new QGraphicsEllipseItem(from_rectf(rect), as_graphics_item(parent));
+}
+
+qt6cr_rectf_t qt6cr_graphics_ellipse_item_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_ellipse_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->rect());
+}
+
+void qt6cr_graphics_ellipse_item_set_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *item = as_graphics_ellipse_item(handle);
+
+  if (item != nullptr) {
+    item->setRect(from_rectf(rect));
+  }
+}
+
+int qt6cr_graphics_ellipse_item_start_angle(qt6cr_handle_t handle) {
+  auto *item = as_graphics_ellipse_item(handle);
+  return item == nullptr ? 0 : item->startAngle();
+}
+
+void qt6cr_graphics_ellipse_item_set_start_angle(qt6cr_handle_t handle, int angle) {
+  auto *item = as_graphics_ellipse_item(handle);
+
+  if (item != nullptr) {
+    item->setStartAngle(angle);
+  }
+}
+
+int qt6cr_graphics_ellipse_item_span_angle(qt6cr_handle_t handle) {
+  auto *item = as_graphics_ellipse_item(handle);
+  return item == nullptr ? 0 : item->spanAngle();
+}
+
+void qt6cr_graphics_ellipse_item_set_span_angle(qt6cr_handle_t handle, int angle) {
+  auto *item = as_graphics_ellipse_item(handle);
+
+  if (item != nullptr) {
+    item->setSpanAngle(angle);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_ellipse_item_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_ellipse_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->boundingRect());
+}
+
+bool qt6cr_graphics_ellipse_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_ellipse_item(handle);
+  return item != nullptr && item->contains(from_pointf(point));
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

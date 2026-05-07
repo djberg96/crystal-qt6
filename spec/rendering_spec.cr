@@ -434,6 +434,38 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics ellipse items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    ellipse = Qt6::GraphicsEllipseItem.new(Qt6::RectF.new(0.0, 0.0, 20.0, 10.0), parent)
+    pen = Qt6::QPen.new(Qt6::Color.new(140, 20, 30), 2.0)
+    brush = Qt6::QBrush.new(Qt6::Color.new(40, 120, 200))
+
+    ellipse.pen = pen
+    ellipse.brush = brush
+
+    ellipse.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    ellipse.rect.should eq(Qt6::RectF.new(0.0, 0.0, 20.0, 10.0))
+    ellipse.contains?(Qt6::PointF.new(10.0, 5.0)).should be_true
+    ellipse.contains?(Qt6::PointF.new(24.0, 5.0)).should be_false
+    ellipse.opaque_area.empty?.should be_false
+    ellipse.bounding_rect.width.should be > ellipse.rect.width
+    ellipse.bounding_rect.height.should be > ellipse.rect.height
+
+    ellipse.set_rect(2, 3, 18, 12)
+    ellipse.start_angle = 16 * 90
+    ellipse.span_angle = 16 * 180
+
+    ellipse.rect.should eq(Qt6::RectF.new(2.0, 3.0, 18.0, 12.0))
+    ellipse.start_angle.should eq(16 * 90)
+    ellipse.span_angle.should eq(16 * 180)
+    ellipse.bounding_rect.width.should be > 0.0
+    ellipse.bounding_rect.height.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics anchor layouts and anchors" do
     app
 

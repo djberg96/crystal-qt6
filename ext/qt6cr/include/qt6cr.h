@@ -1629,6 +1629,16 @@ qt6cr_handle_t qt6cr_abstract_graphics_shape_item_brush(qt6cr_handle_t handle);
 void qt6cr_abstract_graphics_shape_item_set_brush(qt6cr_handle_t handle, qt6cr_handle_t brush);
 bool qt6cr_abstract_graphics_shape_item_is_obscured_by(qt6cr_handle_t handle, qt6cr_handle_t other);
 qt6cr_handle_t qt6cr_abstract_graphics_shape_item_opaque_area(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_graphics_ellipse_item_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_graphics_ellipse_item_create_with_rect(qt6cr_rectf_t rect, qt6cr_handle_t parent);
+qt6cr_rectf_t qt6cr_graphics_ellipse_item_rect(qt6cr_handle_t handle);
+void qt6cr_graphics_ellipse_item_set_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect);
+int qt6cr_graphics_ellipse_item_start_angle(qt6cr_handle_t handle);
+void qt6cr_graphics_ellipse_item_set_start_angle(qt6cr_handle_t handle, int angle);
+int qt6cr_graphics_ellipse_item_span_angle(qt6cr_handle_t handle);
+void qt6cr_graphics_ellipse_item_set_span_angle(qt6cr_handle_t handle, int angle);
+qt6cr_rectf_t qt6cr_graphics_ellipse_item_bounding_rect(qt6cr_handle_t handle);
+bool qt6cr_graphics_ellipse_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point);
 
 qt6cr_handle_t qt6cr_qpainter_path_stroker_create(void);
 void qt6cr_qpainter_path_stroker_destroy(qt6cr_handle_t handle);
