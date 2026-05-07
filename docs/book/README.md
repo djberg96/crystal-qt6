@@ -2,7 +2,7 @@
 
 This directory contains the source for a longer-form LaTeX guide that can grow into publishable documentation for the shard.
 
-The current guide text is aligned with the `0.8.0` release surface plus the current unreleased widget and painting additions.
+The current guide text is aligned with the `0.9.0` release surface.
 
 Build the PDF from this directory:
 

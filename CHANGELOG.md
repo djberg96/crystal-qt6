@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-07
+
 ### Added
 
 - Added `QFocusFrame` bindings with tracked-widget get/set helpers for shell polish and focus highlighting.
