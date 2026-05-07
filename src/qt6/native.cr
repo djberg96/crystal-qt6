@@ -1500,6 +1500,8 @@ module Qt6
     fun qt6cr_graphics_item_set_opacity = qt6cr_graphics_item_set_opacity(handle : Handle, value : Float64)
     fun qt6cr_graphics_item_parent_item = qt6cr_graphics_item_parent_item(handle : Handle) : Handle
     fun qt6cr_graphics_item_top_level_item = qt6cr_graphics_item_top_level_item(handle : Handle) : Handle
+    fun qt6cr_graphics_item_group = qt6cr_graphics_item_group(handle : Handle) : Handle
+    fun qt6cr_graphics_item_set_group = qt6cr_graphics_item_set_group(handle : Handle, group : Handle)
     fun qt6cr_graphics_item_is_selected = qt6cr_graphics_item_is_selected(handle : Handle) : Bool
     fun qt6cr_graphics_item_set_selected = qt6cr_graphics_item_set_selected(handle : Handle, value : Bool)
     fun qt6cr_graphics_item_accept_drops = qt6cr_graphics_item_accept_drops(handle : Handle) : Bool
@@ -1532,6 +1534,12 @@ module Qt6
     fun qt6cr_graphics_item_is_widget = qt6cr_graphics_item_is_widget(handle : Handle) : Bool
     fun qt6cr_graphics_item_is_window = qt6cr_graphics_item_is_window(handle : Handle) : Bool
     fun qt6cr_graphics_item_is_panel = qt6cr_graphics_item_is_panel(handle : Handle) : Bool
+    fun qt6cr_graphics_item_group_create = qt6cr_graphics_item_group_create(parent : Handle) : Handle
+    fun qt6cr_graphics_item_group_add_to_group = qt6cr_graphics_item_group_add_to_group(handle : Handle, item : Handle)
+    fun qt6cr_graphics_item_group_remove_from_group = qt6cr_graphics_item_group_remove_from_group(handle : Handle, item : Handle)
+    fun qt6cr_graphics_item_group_bounding_rect = qt6cr_graphics_item_group_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_item_group_is_obscured_by = qt6cr_graphics_item_group_is_obscured_by(handle : Handle, item : Handle) : Bool
+    fun qt6cr_graphics_item_group_opaque_area = qt6cr_graphics_item_group_opaque_area(handle : Handle) : Handle
     fun qt6cr_graphics_widget_create = qt6cr_graphics_widget_create(parent : Handle) : Handle
     fun qt6cr_graphics_widget_destroy = qt6cr_graphics_widget_destroy(handle : Handle)
     fun qt6cr_graphics_widget_is_visible = qt6cr_graphics_widget_is_visible(handle : Handle) : Bool

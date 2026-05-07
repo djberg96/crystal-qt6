@@ -227,6 +227,7 @@ QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
 QGraphicsLayout *as_graphics_layout(qt6cr_handle_t handle);
 QGraphicsGridLayout *as_graphics_grid_layout(qt6cr_handle_t handle);
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
+QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle);
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
 QGraphicsBlurEffect *as_graphics_blur_effect(qt6cr_handle_t handle);
@@ -1484,6 +1485,10 @@ QGraphicsGridLayout *as_graphics_grid_layout(qt6cr_handle_t handle) {
 
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsEllipseItem *>(handle);
+}
+
+QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsItemGroup *>(handle);
 }
 
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle) {
@@ -11343,6 +11348,20 @@ qt6cr_handle_t qt6cr_graphics_item_top_level_item(qt6cr_handle_t handle) {
   return item == nullptr ? nullptr : item->topLevelItem();
 }
 
+qt6cr_handle_t qt6cr_graphics_item_group(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? nullptr : item->group();
+}
+
+void qt6cr_graphics_item_set_group(qt6cr_handle_t handle, qt6cr_handle_t group) {
+  auto *item = as_graphics_item(handle);
+  auto *value = as_graphics_item_group(group);
+
+  if (item != nullptr) {
+    item->setGroup(value);
+  }
+}
+
 bool qt6cr_graphics_item_is_selected(qt6cr_handle_t handle) {
   auto *item = as_graphics_item(handle);
   return item != nullptr && item->isSelected();
@@ -11547,6 +11566,44 @@ bool qt6cr_graphics_item_is_window(qt6cr_handle_t handle) {
 bool qt6cr_graphics_item_is_panel(qt6cr_handle_t handle) {
   auto *item = as_graphics_item(handle);
   return item != nullptr && item->isPanel();
+}
+
+qt6cr_handle_t qt6cr_graphics_item_group_create(qt6cr_handle_t parent) {
+  return new QGraphicsItemGroup(as_graphics_item(parent));
+}
+
+void qt6cr_graphics_item_group_add_to_group(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *group = as_graphics_item_group(handle);
+  auto *value = as_graphics_item(item);
+
+  if (group != nullptr && value != nullptr) {
+    group->addToGroup(value);
+  }
+}
+
+void qt6cr_graphics_item_group_remove_from_group(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *group = as_graphics_item_group(handle);
+  auto *value = as_graphics_item(item);
+
+  if (group != nullptr && value != nullptr) {
+    group->removeFromGroup(value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_item_group_bounding_rect(qt6cr_handle_t handle) {
+  auto *group = as_graphics_item_group(handle);
+  return group == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(group->boundingRect());
+}
+
+bool qt6cr_graphics_item_group_is_obscured_by(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *group = as_graphics_item_group(handle);
+  auto *value = as_graphics_item(item);
+  return group != nullptr && value != nullptr && group->isObscuredBy(value);
+}
+
+qt6cr_handle_t qt6cr_graphics_item_group_opaque_area(qt6cr_handle_t handle) {
+  auto *group = as_graphics_item_group(handle);
+  return group == nullptr ? nullptr : new QPainterPath(group->opaqueArea());
 }
 
 qt6cr_handle_t qt6cr_graphics_widget_create(qt6cr_handle_t parent) {

@@ -35,6 +35,14 @@ module Qt6
       @owned = false
     end
 
+    # Starts releasing this resource directly again because native ownership returned here.
+    def assume_ownership! : Nil
+      return if @destroyed || @owned
+
+      @owned = true
+      Qt6.track_object(self)
+    end
+
     protected abstract def destroy_native : Nil
   end
 end

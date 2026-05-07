@@ -67,6 +67,23 @@ module Qt6
       handle.null? ? nil : GraphicsItem.wrap(handle)
     end
 
+    # Returns the item group, if present.
+    def group : GraphicsItemGroup?
+      handle = LibQt6.qt6cr_graphics_item_group(to_unsafe)
+      handle.null? ? nil : GraphicsItemGroup.wrap(handle)
+    end
+
+    # Moves the item into the given group and returns it.
+    def group=(value : GraphicsItemGroup?) : GraphicsItemGroup?
+      LibQt6.qt6cr_graphics_item_set_group(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      if value
+        adopt_by_owner!
+      elsif parent_item.nil? && group.nil?
+        assume_ownership!
+      end
+      value
+    end
+
     # Returns `true` when the item is selected.
     def selected? : Bool
       LibQt6.qt6cr_graphics_item_is_selected(to_unsafe)

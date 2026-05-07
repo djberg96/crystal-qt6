@@ -532,6 +532,39 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics item groups" do
+    app
+
+    group = Qt6::GraphicsItemGroup.new
+    first = Qt6::GraphicsEllipseItem.new(0, 0, 10, 10)
+    second = Qt6::GraphicsEllipseItem.new(20, 0, 8, 8)
+    blocker = Qt6::GraphicsEllipseItem.new(0, 0, 4, 4)
+    first.brush = Qt6::QBrush.new(Qt6::Color.new(200, 20, 20))
+    second.brush = Qt6::QBrush.new(Qt6::Color.new(20, 120, 220))
+
+    first.group = group
+    group.add_to_group(second)
+
+    first.group.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    second.group.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    first.parent_item.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    second.parent_item.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    group.bounding_rect.width.should be > 20.0
+    group.bounding_rect.height.should be > 0.0
+    group.opaque_area.empty?.should be_true
+    group.obscured_by?(blocker).should be_false
+
+    group.remove_from_group(second)
+    second.group.should be_nil
+    second.parent_item.should be_nil
+    second.scene_bounding_rect.x.should be > 19.0
+    group.bounding_rect.width.should be < 20.0
+
+    group.release
+    second.release
+    blocker.release
+  end
+
   it "supports graphics anchor layouts and anchors" do
     app
 
