@@ -200,8 +200,9 @@ describe Qt6 do
 
     file_dialog.accept_mode = Qt6::FileDialogAcceptMode::Save
     file_dialog.file_mode = Qt6::FileDialogFileMode::AnyFile
-    file_dialog.view_mode = Qt6::FileDialogViewMode::List
+    # Configure the widget-backed dialog before applying view-specific state.
     file_dialog.options = Qt6::FileDialogOption::DontUseNativeDialog | Qt6::FileDialogOption::ReadOnly
+    file_dialog.view_mode = Qt6::FileDialogViewMode::List
     file_dialog.set_option(Qt6::FileDialogOption::HideNameFilterDetails)
     file_dialog.filter = Qt6::DirectoryFilter::Files | Qt6::DirectoryFilter::NoDotAndDotDot
     file_dialog.directory = "/tmp"
