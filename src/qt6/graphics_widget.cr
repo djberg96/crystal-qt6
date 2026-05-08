@@ -268,6 +268,55 @@ module Qt6
       LibQt6.qt6cr_graphics_widget_is_panel(to_unsafe)
     end
 
+    # Returns the layout-item contents margins.
+    def contents_margins : MarginsF
+      value = LibQt6.qt6cr_graphics_widget_contents_margins(to_unsafe)
+      MarginsF.new(value.left, value.top, value.right, value.bottom)
+    end
+
+    # Returns the rectangle inside the current contents margins.
+    def contents_rect : RectF
+      RectF.from_native(LibQt6.qt6cr_graphics_widget_contents_rect(to_unsafe))
+    end
+
+    # Returns the effective size hint for the given hint type.
+    def effective_size_hint(which : GraphicsLayoutItemSizeHint) : SizeF
+      effective_size_hint(which, SizeF.new(-1.0, -1.0))
+    end
+
+    # Returns the effective size hint for the given hint type and constraint.
+    def effective_size_hint(which : GraphicsLayoutItemSizeHint, constraint : SizeF) : SizeF
+      SizeF.from_native(
+        LibQt6.qt6cr_graphics_widget_effective_size_hint(
+          to_unsafe,
+          which.value,
+          constraint.width,
+          constraint.height
+        )
+      )
+    end
+
+    # Returns `true` when the widget contributes no visible layout geometry.
+    def empty? : Bool
+      LibQt6.qt6cr_graphics_widget_empty(to_unsafe)
+    end
+
+    # Returns the parent layout item, if present.
+    def parent_layout_item : GraphicsLayout | GraphicsWidget | Nil
+      handle = LibQt6.qt6cr_graphics_widget_parent_layout_item(to_unsafe)
+      handle.null? ? nil : GraphicsLayoutItem.wrap(handle)
+    end
+
+    # Returns `true` when this layout item is itself a graphics layout.
+    def graphics_layout? : Bool
+      LibQt6.qt6cr_graphics_widget_is_layout(to_unsafe)
+    end
+
+    # Returns `true` when ownership currently belongs to a parent layout.
+    def owned_by_layout? : Bool
+      LibQt6.qt6cr_graphics_widget_owned_by_layout(to_unsafe)
+    end
+
     # Returns the widget font.
     def font : QFont
       QFont.wrap(LibQt6.qt6cr_graphics_widget_font(to_unsafe), true)

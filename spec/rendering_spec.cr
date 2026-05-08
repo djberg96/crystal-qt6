@@ -641,6 +641,12 @@ describe Qt6 do
     second = Qt6::GraphicsWidget.new(parent)
 
     parent.layout = layout
+    parent.geometry = Qt6::RectF.new(0.0, 0.0, 120.0, 60.0)
+    first.set_preferred_size(26, 27)
+    layout.set_size_policy(Qt6::SizePolicy::Expanding, Qt6::SizePolicy::Fixed)
+    layout.set_minimum_size(10, 11)
+    layout.set_preferred_size(30, 31)
+    layout.set_maximum_size(50, 51)
     parent.layout.should be_a(Qt6::GraphicsGridLayout)
     parent.layout.not_nil!.to_unsafe.should eq(layout.to_unsafe)
     previous_propagation = Qt6::GraphicsLayout.instant_invalidate_propagation?
@@ -670,6 +676,18 @@ describe Qt6 do
     layout.update_geometry
 
     layout.contents_margins.should eq(Qt6::MarginsF.new(1.0, 2.0, 3.0, 4.0))
+    layout.horizontal_size_policy.should eq(Qt6::SizePolicy::Expanding)
+    layout.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    layout.minimum_size.should eq(Qt6::SizeF.new(10.0, 11.0))
+    layout.preferred_size.should eq(Qt6::SizeF.new(30.0, 31.0))
+    layout.maximum_size.should eq(Qt6::SizeF.new(50.0, 51.0))
+    layout.geometry.should eq(Qt6::RectF.new(0.0, 0.0, 50.0, 51.0))
+    layout.contents_rect.should eq(Qt6::RectF.new(1.0, 2.0, 46.0, 45.0))
+    layout.effective_size_hint(Qt6::GraphicsLayoutItemSizeHint::PreferredSize).width.should be >= 30.0
+    layout.empty?.should be_false
+    layout.parent_layout_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    layout.graphics_layout?.should be_true
+    layout.graphics_item.should be_nil
     Qt6::GraphicsLayout.instant_invalidate_propagation?.should eq(!previous_propagation)
     layout.horizontal_spacing.should eq(7.5)
     layout.vertical_spacing.should eq(8.5)
@@ -691,6 +709,15 @@ describe Qt6 do
     layout.count.should eq(2)
     layout.item_at(0, 0).not_nil!.to_unsafe.should eq(first.to_unsafe)
     layout.item_at(0, 1).not_nil!.to_unsafe.should eq(second.to_unsafe)
+    first.contents_margins.should eq(Qt6::MarginsF.new(0.0, 0.0, 0.0, 0.0))
+    first.contents_rect.width.should be >= 0.0
+    first.effective_size_hint(Qt6::GraphicsLayoutItemSizeHint::PreferredSize).should eq(Qt6::SizeF.new(26.0, 27.0))
+    first.empty?.should be_false
+    first.parent_layout_item.not_nil!.to_unsafe.should eq(layout.to_unsafe)
+    first.graphics_layout?.should be_false
+    first.owned_by_layout?.should be_false
+    parent.parent_layout_item.should be_nil
+    parent.graphics_layout?.should be_false
 
     layout.remove_item(first)
     layout.count.should eq(1)
