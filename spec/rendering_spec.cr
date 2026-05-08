@@ -760,6 +760,60 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics linear layouts" do
+    app
+
+    parent = Qt6::GraphicsWidget.new
+    outer = Qt6::GraphicsLinearLayout.new(Qt6::Orientation::Horizontal)
+    inner = Qt6::GraphicsLinearLayout.new(Qt6::Orientation::Vertical)
+    first = Qt6::GraphicsWidget.new(parent)
+    second = Qt6::GraphicsWidget.new(parent)
+
+    parent.layout = outer
+    parent.geometry = Qt6::RectF.new(0.0, 0.0, 160.0, 90.0)
+    first.set_preferred_size(30, 20)
+    second.set_preferred_size(25, 15)
+
+    outer.add_item(first)
+    outer.insert_stretch(1, 2)
+    outer.insert_item(2, inner)
+    inner.add_item(second)
+    outer.spacing = 9.5
+    outer.set_item_spacing(0, 6.5)
+    outer.set_stretch_factor(first, 3)
+    outer.set_stretch_factor(inner, 4)
+    outer.set_alignment(first, Qt6::AlignmentFlag::Center)
+    outer.set_alignment(inner, Qt6::AlignmentFlag::Bottom)
+    outer.activate
+
+    parent.layout.should be_a(Qt6::GraphicsLinearLayout)
+    parent.layout.not_nil!.to_unsafe.should eq(outer.to_unsafe)
+    outer.orientation.should eq(Qt6::Orientation::Horizontal)
+    inner.orientation.should eq(Qt6::Orientation::Vertical)
+    outer.spacing.should eq(9.5)
+    outer.item_spacing(0).should eq(6.5)
+    outer.stretch_factor(first).should eq(3)
+    outer.stretch_factor(inner).should eq(4)
+    outer.alignment(first).should eq(Qt6::AlignmentFlag::Center)
+    outer.alignment(inner).should eq(Qt6::AlignmentFlag::Bottom)
+    outer.count.should eq(2)
+    outer.item_at(0).not_nil!.to_unsafe.should eq(first.to_unsafe)
+    outer.item_at(1).not_nil!.to_unsafe.should eq(inner.to_unsafe)
+    outer.geometry.width.should be > 0.0
+    outer.geometry.height.should be > 0.0
+    inner.parent_layout_item.not_nil!.to_unsafe.should eq(outer.to_unsafe)
+    inner.graphics_layout?.should be_true
+    inner.graphics_item.should be_nil
+    second.parent_layout_item.not_nil!.to_unsafe.should eq(inner.to_unsafe)
+
+    outer.remove_item(inner)
+    outer.count.should eq(1)
+    inner.parent_layout_item.should be_nil
+
+    inner.release
+    parent.release
+  end
+
   it "supports graphics-view configuration and transforms" do
     app
 

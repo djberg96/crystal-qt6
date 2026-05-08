@@ -3,6 +3,7 @@ module Qt6
   abstract class GraphicsLayout < NativeResource
     private ANCHOR_KIND = 1
     private GRID_KIND   = 2
+    private LINEAR_KIND = 3
 
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : GraphicsLayout
       case LibQt6.qt6cr_graphics_layout_kind(handle)
@@ -10,6 +11,8 @@ module Qt6
         GraphicsAnchorLayout.wrap(handle, owned)
       when GRID_KIND
         GraphicsGridLayout.wrap(handle, owned)
+      when LINEAR_KIND
+        GraphicsLinearLayout.wrap(handle, owned)
       else
         raise Error.new("Unsupported QGraphicsLayout handle")
       end
