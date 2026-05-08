@@ -706,6 +706,54 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics polygon items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    polygon = Qt6::QPolygonF.new([
+      Qt6::PointF.new(0.0, 0.0),
+      Qt6::PointF.new(14.0, 0.0),
+      Qt6::PointF.new(8.0, 10.0),
+    ])
+    item = Qt6::GraphicsPolygonItem.new(polygon, parent)
+    pen = Qt6::QPen.new(Qt6::Color.new(160, 40, 90), 2.0)
+    brush = Qt6::QBrush.new(Qt6::Color.new(30, 170, 120, 220))
+
+    item.pen = pen
+    item.brush = brush
+    item.fill_rule = Qt6::FillRule::Winding
+
+    item.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    item.polygon.size.should eq(3)
+    item.polygon.bounding_rect.should eq(Qt6::RectF.new(0.0, 0.0, 14.0, 10.0))
+    item.pen.color.should eq(Qt6::Color.new(160, 40, 90, 255))
+    item.pen.width.should eq(2.0)
+    item.brush.color.should eq(Qt6::Color.new(30, 170, 120, 220))
+    item.fill_rule.should eq(Qt6::FillRule::Winding)
+    item.contains?(Qt6::PointF.new(7.0, 3.0)).should be_true
+    item.contains?(Qt6::PointF.new(13.5, 9.0)).should be_false
+    item.obscured_by?(parent).should be_false
+    item.bounding_rect.width.should be > item.polygon.bounding_rect.width
+    item.bounding_rect.height.should be > item.polygon.bounding_rect.height
+
+    replacement = Qt6::QPolygonF.new([
+      Qt6::PointF.new(2.0, 1.0),
+      Qt6::PointF.new(18.0, 1.0),
+      Qt6::PointF.new(18.0, 8.0),
+      Qt6::PointF.new(2.0, 8.0),
+    ])
+    item.set_polygon(replacement)
+
+    item.polygon.size.should eq(4)
+    item.polygon.bounding_rect.should eq(Qt6::RectF.new(2.0, 1.0, 16.0, 7.0))
+    item.contains?(Qt6::PointF.new(10.0, 4.0)).should be_true
+    item.contains?(Qt6::PointF.new(0.0, 0.0)).should be_false
+    item.bounding_rect.width.should be > 0.0
+    item.bounding_rect.height.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics item groups" do
     app
 

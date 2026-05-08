@@ -1843,6 +1843,14 @@ module Qt6
     fun qt6cr_graphics_pixmap_item_opaque_area = qt6cr_graphics_pixmap_item_opaque_area(handle : Handle) : Handle
     fun qt6cr_graphics_pixmap_item_shape_mode = qt6cr_graphics_pixmap_item_shape_mode(handle : Handle) : LibC::Int
     fun qt6cr_graphics_pixmap_item_set_shape_mode = qt6cr_graphics_pixmap_item_set_shape_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_graphics_polygon_item_create = qt6cr_graphics_polygon_item_create(parent : Handle) : Handle
+    fun qt6cr_graphics_polygon_item_create_with_polygon = qt6cr_graphics_polygon_item_create_with_polygon(polygon : Handle, parent : Handle) : Handle
+    fun qt6cr_graphics_polygon_item_polygon = qt6cr_graphics_polygon_item_polygon(handle : Handle) : Handle
+    fun qt6cr_graphics_polygon_item_set_polygon = qt6cr_graphics_polygon_item_set_polygon(handle : Handle, polygon : Handle)
+    fun qt6cr_graphics_polygon_item_fill_rule = qt6cr_graphics_polygon_item_fill_rule(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_polygon_item_set_fill_rule = qt6cr_graphics_polygon_item_set_fill_rule(handle : Handle, rule : LibC::Int)
+    fun qt6cr_graphics_polygon_item_bounding_rect = qt6cr_graphics_polygon_item_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_polygon_item_contains = qt6cr_graphics_polygon_item_contains(handle : Handle, point : PointFValue) : Bool
 
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
     fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)

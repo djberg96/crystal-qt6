@@ -1884,6 +1884,14 @@ bool qt6cr_graphics_pixmap_item_is_obscured_by(qt6cr_handle_t handle, qt6cr_hand
 qt6cr_handle_t qt6cr_graphics_pixmap_item_opaque_area(qt6cr_handle_t handle);
 int qt6cr_graphics_pixmap_item_shape_mode(qt6cr_handle_t handle);
 void qt6cr_graphics_pixmap_item_set_shape_mode(qt6cr_handle_t handle, int mode);
+qt6cr_handle_t qt6cr_graphics_polygon_item_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_graphics_polygon_item_create_with_polygon(qt6cr_handle_t polygon, qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_graphics_polygon_item_polygon(qt6cr_handle_t handle);
+void qt6cr_graphics_polygon_item_set_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon);
+int qt6cr_graphics_polygon_item_fill_rule(qt6cr_handle_t handle);
+void qt6cr_graphics_polygon_item_set_fill_rule(qt6cr_handle_t handle, int rule);
+qt6cr_rectf_t qt6cr_graphics_polygon_item_bounding_rect(qt6cr_handle_t handle);
+bool qt6cr_graphics_polygon_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point);
 
 qt6cr_handle_t qt6cr_qpainter_path_stroker_create(void);
 void qt6cr_qpainter_path_stroker_destroy(qt6cr_handle_t handle);

@@ -237,6 +237,7 @@ QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
 QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle);
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle);
 QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle);
+QGraphicsPolygonItem *as_graphics_polygon_item(qt6cr_handle_t handle);
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle);
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
@@ -1540,6 +1541,10 @@ QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle) {
 
 QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsPixmapItem *>(handle);
+}
+
+QGraphicsPolygonItem *as_graphics_polygon_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsPolygonItem *>(handle);
 }
 
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle) {
@@ -13673,6 +13678,52 @@ void qt6cr_graphics_pixmap_item_set_shape_mode(qt6cr_handle_t handle, int mode) 
   if (item != nullptr) {
     item->setShapeMode(static_cast<QGraphicsPixmapItem::ShapeMode>(mode));
   }
+}
+
+qt6cr_handle_t qt6cr_graphics_polygon_item_create(qt6cr_handle_t parent) {
+  return new QGraphicsPolygonItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_polygon_item_create_with_polygon(qt6cr_handle_t polygon, qt6cr_handle_t parent) {
+  auto *value = as_qpolygonf(polygon);
+  return value == nullptr ? new QGraphicsPolygonItem(as_graphics_item(parent)) : new QGraphicsPolygonItem(*value, as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_polygon_item_polygon(qt6cr_handle_t handle) {
+  auto *item = as_graphics_polygon_item(handle);
+  return item == nullptr ? nullptr : new QPolygonF(item->polygon());
+}
+
+void qt6cr_graphics_polygon_item_set_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon) {
+  auto *item = as_graphics_polygon_item(handle);
+  auto *value = as_qpolygonf(polygon);
+
+  if (item != nullptr && value != nullptr) {
+    item->setPolygon(*value);
+  }
+}
+
+int qt6cr_graphics_polygon_item_fill_rule(qt6cr_handle_t handle) {
+  auto *item = as_graphics_polygon_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->fillRule());
+}
+
+void qt6cr_graphics_polygon_item_set_fill_rule(qt6cr_handle_t handle, int rule) {
+  auto *item = as_graphics_polygon_item(handle);
+
+  if (item != nullptr) {
+    item->setFillRule(static_cast<Qt::FillRule>(rule));
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_polygon_item_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_polygon_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->boundingRect());
+}
+
+bool qt6cr_graphics_polygon_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_polygon_item(handle);
+  return item != nullptr && item->contains(from_pointf(point));
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {
