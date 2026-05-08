@@ -532,6 +532,37 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics line items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    line = Qt6::GraphicsLineItem.new(Qt6::LineF.new(1, 2, 21, 2), parent)
+    pen = Qt6::QPen.new(Qt6::Color.new(220, 40, 60), 3.0)
+
+    line.pen = pen
+
+    line.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    line.pen.color.should eq(Qt6::Color.new(220, 40, 60, 255))
+    line.pen.width.should eq(3.0)
+    line.line.should eq(Qt6::LineF.new(1.0, 2.0, 21.0, 2.0))
+    line.line.length.should eq(20.0)
+    line.contains?(Qt6::PointF.new(10.0, 2.0)).should be_true
+    line.contains?(Qt6::PointF.new(10.0, 8.0)).should be_false
+    line.obscured_by?(parent).should be_false
+    line.opaque_area.empty?.should be_true
+    line.bounding_rect.width.should be > 20.0
+    line.bounding_rect.height.should be > 0.0
+
+    line.set_line(3, 4, 18, 12)
+
+    line.line.should eq(Qt6::LineF.new(3.0, 4.0, 18.0, 12.0))
+    line.line.length.should be > 16.0
+    line.bounding_rect.width.should be > 0.0
+    line.bounding_rect.height.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics item groups" do
     app
 

@@ -210,6 +210,7 @@ struct ApplicationState {
 qt6cr_pointf_t to_pointf(const QPointF &point);
 qt6cr_pointf_t to_pointf(const QPoint &point);
 qt6cr_point_t to_point(const QPoint &point);
+qt6cr_linef_t to_linef(const QLineF &line);
 qt6cr_size_t to_size(const QSize &size);
 qt6cr_rect_t to_rect(const QRect &rect);
 qt6cr_rectf_t to_rectf(const QRectF &rect);
@@ -219,6 +220,7 @@ qt6cr_key_event_t to_key_event(QKeyEvent *event);
 qt6cr_color_t to_color(const QColor &color);
 qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
+QLineF from_linef(qt6cr_linef_t line);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
@@ -228,6 +230,7 @@ QGraphicsLayout *as_graphics_layout(qt6cr_handle_t handle);
 QGraphicsLayoutItem *as_graphics_layout_item(qt6cr_handle_t handle);
 QGraphicsGridLayout *as_graphics_grid_layout(qt6cr_handle_t handle);
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
+QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle);
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle);
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
@@ -1492,6 +1495,10 @@ QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsEllipseItem *>(handle);
 }
 
+QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsLineItem *>(handle);
+}
+
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle) {
   return static_cast<QGraphicsItemGroup *>(handle);
 }
@@ -2152,6 +2159,10 @@ qt6cr_point_t to_point(const QPoint &point) {
   return qt6cr_point_t{point.x(), point.y()};
 }
 
+qt6cr_linef_t to_linef(const QLineF &line) {
+  return qt6cr_linef_t{line.x1(), line.y1(), line.x2(), line.y2()};
+}
+
 qt6cr_gradient_stop_t to_gradient_stop(const QGradientStop &stop) {
   return qt6cr_gradient_stop_t{stop.first, to_color(stop.second)};
 }
@@ -2253,6 +2264,10 @@ QPointF from_pointf(qt6cr_pointf_t point) {
 
 QPoint from_point(qt6cr_point_t point) {
   return QPoint(point.x, point.y);
+}
+
+QLineF from_linef(qt6cr_linef_t line) {
+  return QLineF(line.x1, line.y1, line.x2, line.y2);
 }
 
 QRectF from_rectf(qt6cr_rectf_t rect) {
@@ -13050,6 +13065,62 @@ qt6cr_rectf_t qt6cr_graphics_ellipse_item_bounding_rect(qt6cr_handle_t handle) {
 bool qt6cr_graphics_ellipse_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
   auto *item = as_graphics_ellipse_item(handle);
   return item != nullptr && item->contains(from_pointf(point));
+}
+
+qt6cr_handle_t qt6cr_graphics_line_item_create(qt6cr_handle_t parent) {
+  return new QGraphicsLineItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_line_item_create_with_line(qt6cr_linef_t line, qt6cr_handle_t parent) {
+  return new QGraphicsLineItem(from_linef(line), as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_line_item_pen(qt6cr_handle_t handle) {
+  auto *item = as_graphics_line_item(handle);
+  return item == nullptr ? nullptr : new QPen(item->pen());
+}
+
+void qt6cr_graphics_line_item_set_pen(qt6cr_handle_t handle, qt6cr_handle_t pen) {
+  auto *item = as_graphics_line_item(handle);
+  auto *value = as_qpen(pen);
+
+  if (item != nullptr && value != nullptr) {
+    item->setPen(*value);
+  }
+}
+
+qt6cr_linef_t qt6cr_graphics_line_item_line(qt6cr_handle_t handle) {
+  auto *item = as_graphics_line_item(handle);
+  return item == nullptr ? qt6cr_linef_t{0.0, 0.0, 0.0, 0.0} : to_linef(item->line());
+}
+
+void qt6cr_graphics_line_item_set_line(qt6cr_handle_t handle, qt6cr_linef_t line) {
+  auto *item = as_graphics_line_item(handle);
+
+  if (item != nullptr) {
+    item->setLine(from_linef(line));
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_line_item_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_line_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->boundingRect());
+}
+
+bool qt6cr_graphics_line_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_line_item(handle);
+  return item != nullptr && item->contains(from_pointf(point));
+}
+
+bool qt6cr_graphics_line_item_is_obscured_by(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *item = as_graphics_line_item(handle);
+  auto *value = as_graphics_item(other);
+  return item != nullptr && value != nullptr && item->isObscuredBy(value);
+}
+
+qt6cr_handle_t qt6cr_graphics_line_item_opaque_area(qt6cr_handle_t handle) {
+  auto *item = as_graphics_line_item(handle);
+  return item == nullptr ? nullptr : new QPainterPath(item->opaqueArea());
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

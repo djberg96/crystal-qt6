@@ -1764,6 +1764,16 @@ module Qt6
     fun qt6cr_graphics_ellipse_item_set_span_angle = qt6cr_graphics_ellipse_item_set_span_angle(handle : Handle, angle : LibC::Int)
     fun qt6cr_graphics_ellipse_item_bounding_rect = qt6cr_graphics_ellipse_item_bounding_rect(handle : Handle) : RectFValue
     fun qt6cr_graphics_ellipse_item_contains = qt6cr_graphics_ellipse_item_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_graphics_line_item_create = qt6cr_graphics_line_item_create(parent : Handle) : Handle
+    fun qt6cr_graphics_line_item_create_with_line = qt6cr_graphics_line_item_create_with_line(line : LineFValue, parent : Handle) : Handle
+    fun qt6cr_graphics_line_item_pen = qt6cr_graphics_line_item_pen(handle : Handle) : Handle
+    fun qt6cr_graphics_line_item_set_pen = qt6cr_graphics_line_item_set_pen(handle : Handle, pen : Handle)
+    fun qt6cr_graphics_line_item_line = qt6cr_graphics_line_item_line(handle : Handle) : LineFValue
+    fun qt6cr_graphics_line_item_set_line = qt6cr_graphics_line_item_set_line(handle : Handle, line : LineFValue)
+    fun qt6cr_graphics_line_item_bounding_rect = qt6cr_graphics_line_item_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_line_item_contains = qt6cr_graphics_line_item_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_graphics_line_item_is_obscured_by = qt6cr_graphics_line_item_is_obscured_by(handle : Handle, other : Handle) : Bool
+    fun qt6cr_graphics_line_item_opaque_area = qt6cr_graphics_line_item_opaque_area(handle : Handle) : Handle
 
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
     fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)

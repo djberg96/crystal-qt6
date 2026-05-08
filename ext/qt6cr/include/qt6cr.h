@@ -29,6 +29,13 @@ typedef struct {
 } qt6cr_sizef_t;
 
 typedef struct {
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+} qt6cr_linef_t;
+
+typedef struct {
 	double x;
 	double y;
 	double width;
@@ -1798,6 +1805,16 @@ int qt6cr_graphics_ellipse_item_span_angle(qt6cr_handle_t handle);
 void qt6cr_graphics_ellipse_item_set_span_angle(qt6cr_handle_t handle, int angle);
 qt6cr_rectf_t qt6cr_graphics_ellipse_item_bounding_rect(qt6cr_handle_t handle);
 bool qt6cr_graphics_ellipse_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point);
+qt6cr_handle_t qt6cr_graphics_line_item_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_graphics_line_item_create_with_line(qt6cr_linef_t line, qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_graphics_line_item_pen(qt6cr_handle_t handle);
+void qt6cr_graphics_line_item_set_pen(qt6cr_handle_t handle, qt6cr_handle_t pen);
+qt6cr_linef_t qt6cr_graphics_line_item_line(qt6cr_handle_t handle);
+void qt6cr_graphics_line_item_set_line(qt6cr_handle_t handle, qt6cr_linef_t line);
+qt6cr_rectf_t qt6cr_graphics_line_item_bounding_rect(qt6cr_handle_t handle);
+bool qt6cr_graphics_line_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point);
+bool qt6cr_graphics_line_item_is_obscured_by(qt6cr_handle_t handle, qt6cr_handle_t other);
+qt6cr_handle_t qt6cr_graphics_line_item_opaque_area(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qpainter_path_stroker_create(void);
 void qt6cr_qpainter_path_stroker_destroy(qt6cr_handle_t handle);
