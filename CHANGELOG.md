@@ -24,6 +24,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QGraphicsBlurEffect` with blur-hint flags and Qt-style setter aliases for fuller graphics-effect configuration.
 - Expanded `QGraphicsColorizeEffect` with color/strength change callbacks and Qt-style setter aliases for richer live effect updates.
 - Expanded `QGraphicsDropShadowEffect` with blur/color/offset change callbacks and Qt-style setter aliases for richer shadow effect control.
+- Expanded `QGraphicsOpacityEffect` with opacity-mask support, change callbacks, and Qt-style setter aliases for richer live effect updates.
 
 ## [0.9.0] - 2026-05-07
 

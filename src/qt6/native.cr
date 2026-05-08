@@ -1317,6 +1317,10 @@ module Qt6
     fun qt6cr_graphics_opacity_effect_create = qt6cr_graphics_opacity_effect_create(parent : Handle) : Handle
     fun qt6cr_graphics_opacity_effect_opacity = qt6cr_graphics_opacity_effect_opacity(handle : Handle) : Float64
     fun qt6cr_graphics_opacity_effect_set_opacity = qt6cr_graphics_opacity_effect_set_opacity(handle : Handle, value : Float64)
+    fun qt6cr_graphics_opacity_effect_opacity_mask = qt6cr_graphics_opacity_effect_opacity_mask(handle : Handle) : Handle
+    fun qt6cr_graphics_opacity_effect_set_opacity_mask = qt6cr_graphics_opacity_effect_set_opacity_mask(handle : Handle, value : Handle)
+    fun qt6cr_graphics_opacity_effect_on_opacity_changed = qt6cr_graphics_opacity_effect_on_opacity_changed(handle : Handle, callback : (Handle, Float64 ->), userdata : Handle)
+    fun qt6cr_graphics_opacity_effect_on_opacity_mask_changed = qt6cr_graphics_opacity_effect_on_opacity_mask_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
 
     fun qt6cr_qregion_create = qt6cr_qregion_create : Handle
     fun qt6cr_qregion_create_rect = qt6cr_qregion_create_rect(rect : RectValue, type : LibC::Int) : Handle

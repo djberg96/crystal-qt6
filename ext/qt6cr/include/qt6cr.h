@@ -1360,6 +1360,10 @@ void qt6cr_graphics_drop_shadow_effect_on_offset_changed(qt6cr_handle_t handle, 
 qt6cr_handle_t qt6cr_graphics_opacity_effect_create(qt6cr_handle_t parent);
 double qt6cr_graphics_opacity_effect_opacity(qt6cr_handle_t handle);
 void qt6cr_graphics_opacity_effect_set_opacity(qt6cr_handle_t handle, double value);
+qt6cr_handle_t qt6cr_graphics_opacity_effect_opacity_mask(qt6cr_handle_t handle);
+void qt6cr_graphics_opacity_effect_set_opacity_mask(qt6cr_handle_t handle, qt6cr_handle_t value);
+void qt6cr_graphics_opacity_effect_on_opacity_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata);
+void qt6cr_graphics_opacity_effect_on_opacity_mask_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_qregion_create(void);
 qt6cr_handle_t qt6cr_qregion_create_rect(qt6cr_rect_t rect, int type);

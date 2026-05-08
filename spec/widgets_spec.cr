@@ -844,7 +844,17 @@ describe Qt6 do
     shadow.y_offset = 6.0
 
     opacity = Qt6::GraphicsOpacityEffect.new
-    opacity.opacity = 0.55
+    opacity_changes = [] of Float64
+    opacity_mask_changes = [] of Qt6::Color
+    opacity_mask = Qt6::QBrush.new(Qt6::Color.new(140, 120, 220, 180))
+    opacity.on_opacity_changed do |value|
+      opacity_changes << value
+    end
+    opacity.on_opacity_mask_changed do |value|
+      opacity_mask_changes << value.color
+    end
+    opacity.set_opacity(0.55)
+    opacity.set_opacity_mask(opacity_mask)
 
     blur_target.graphics_effect = blur
     color_target.graphics_effect = colorize
@@ -895,6 +905,10 @@ describe Qt6 do
     shadow_rect.height.should be >= 10.0
 
     opacity.opacity.should eq(0.55)
+    opacity.opacity_mask.color.should eq(Qt6::Color.new(140, 120, 220, 180))
+    opacity_changes.last.should eq(0.55)
+    opacity_mask_changes.last.should eq(Qt6::Color.new(140, 120, 220, 180))
+    opacity.bounding_rect_for(Qt6::RectF.new(2.0, 3.0, 10.0, 12.0)).should eq(Qt6::RectF.new(2.0, 3.0, 10.0, 12.0))
     opacity_target.graphics_effect = nil
     application.process_events
     opacity_target.graphics_effect.should be_nil

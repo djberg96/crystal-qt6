@@ -10684,6 +10684,44 @@ void qt6cr_graphics_opacity_effect_set_opacity(qt6cr_handle_t handle, double val
   }
 }
 
+qt6cr_handle_t qt6cr_graphics_opacity_effect_opacity_mask(qt6cr_handle_t handle) {
+  auto *effect = as_graphics_opacity_effect(handle);
+  return effect == nullptr ? nullptr : new QBrush(effect->opacityMask());
+}
+
+void qt6cr_graphics_opacity_effect_set_opacity_mask(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *effect = as_graphics_opacity_effect(handle);
+  auto *brush = as_qbrush(value);
+
+  if (effect != nullptr && brush != nullptr) {
+    effect->setOpacityMask(*brush);
+  }
+}
+
+void qt6cr_graphics_opacity_effect_on_opacity_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_opacity_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsOpacityEffect::opacityChanged, effect, [callback, userdata](qreal value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_graphics_opacity_effect_on_opacity_mask_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *effect = as_graphics_opacity_effect(handle);
+
+  if (effect == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(effect, &QGraphicsOpacityEffect::opacityMaskChanged, effect, [callback, userdata](const QBrush &value) {
+    callback(userdata, new QBrush(value));
+  });
+}
+
 qt6cr_handle_t qt6cr_qregion_create(void) {
   return new QRegion();
 }
