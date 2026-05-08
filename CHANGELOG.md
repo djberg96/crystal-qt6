@@ -15,6 +15,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsObject` bindings with QObject-style property-change callbacks, parent-object lookup, graphics-effect access, signal blocking, and gesture helpers on graphics items.
 - Added `QGraphicsLineItem` bindings with line geometry, pen, bounding-rect, hit-testing, and opaque-area helpers for stroked scene primitives.
 - Added `QGraphicsPathItem` bindings with painter-path, bounding-rect, hit-testing, and inherited pen/brush helpers for filled and stroked vector scene items.
+- Added `QGraphicsPixmapItem` bindings with pixmap, transform-mode, offset, shape-mode, bounding-rect, and hit-testing helpers for scene-image items.
 - Added `QGraphicsLinearLayout` bindings with orientation, nested layout insertion, stretch, spacing, alignment, and layout-item lookup helpers for ordered graphics-view composition.
 - Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.
 - Expanded `QGraphicsItem` bindings with shared state, flags, cache-mode, geometry, transform, opacity, and stacking helpers, with matching safe inherited support on `QGraphicsWidget`.

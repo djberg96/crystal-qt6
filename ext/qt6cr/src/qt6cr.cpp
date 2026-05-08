@@ -236,6 +236,7 @@ QGraphicsLinearLayout *as_graphics_linear_layout(qt6cr_handle_t handle);
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
 QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle);
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle);
+QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle);
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle);
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
@@ -1535,6 +1536,10 @@ QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle) {
 
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsPathItem *>(handle);
+}
+
+QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsPixmapItem *>(handle);
 }
 
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle) {
@@ -13585,6 +13590,89 @@ qt6cr_rectf_t qt6cr_graphics_path_item_bounding_rect(qt6cr_handle_t handle) {
 bool qt6cr_graphics_path_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
   auto *item = as_graphics_path_item(handle);
   return item != nullptr && item->contains(from_pointf(point));
+}
+
+qt6cr_handle_t qt6cr_graphics_pixmap_item_create(qt6cr_handle_t parent) {
+  return new QGraphicsPixmapItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_pixmap_item_create_with_pixmap(qt6cr_handle_t pixmap, qt6cr_handle_t parent) {
+  auto *value = as_qpixmap(pixmap);
+  return value == nullptr ? new QGraphicsPixmapItem(as_graphics_item(parent)) : new QGraphicsPixmapItem(*value, as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_pixmap_item_pixmap(qt6cr_handle_t handle) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item == nullptr ? nullptr : new QPixmap(item->pixmap());
+}
+
+void qt6cr_graphics_pixmap_item_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
+  auto *item = as_graphics_pixmap_item(handle);
+  auto *value = as_qpixmap(pixmap);
+
+  if (item != nullptr && value != nullptr) {
+    item->setPixmap(*value);
+  }
+}
+
+int qt6cr_graphics_pixmap_item_transformation_mode(qt6cr_handle_t handle) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->transformationMode());
+}
+
+void qt6cr_graphics_pixmap_item_set_transformation_mode(qt6cr_handle_t handle, int mode) {
+  auto *item = as_graphics_pixmap_item(handle);
+
+  if (item != nullptr) {
+    item->setTransformationMode(static_cast<Qt::TransformationMode>(mode));
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_pixmap_item_offset(qt6cr_handle_t handle) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(item->offset());
+}
+
+void qt6cr_graphics_pixmap_item_set_offset(qt6cr_handle_t handle, qt6cr_pointf_t offset) {
+  auto *item = as_graphics_pixmap_item(handle);
+
+  if (item != nullptr) {
+    item->setOffset(from_pointf(offset));
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_pixmap_item_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->boundingRect());
+}
+
+bool qt6cr_graphics_pixmap_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item != nullptr && item->contains(from_pointf(point));
+}
+
+bool qt6cr_graphics_pixmap_item_is_obscured_by(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *item = as_graphics_pixmap_item(handle);
+  auto *value = as_graphics_item(other);
+  return item != nullptr && value != nullptr && item->isObscuredBy(value);
+}
+
+qt6cr_handle_t qt6cr_graphics_pixmap_item_opaque_area(qt6cr_handle_t handle) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item == nullptr ? nullptr : new QPainterPath(item->opaqueArea());
+}
+
+int qt6cr_graphics_pixmap_item_shape_mode(qt6cr_handle_t handle) {
+  auto *item = as_graphics_pixmap_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->shapeMode());
+}
+
+void qt6cr_graphics_pixmap_item_set_shape_mode(qt6cr_handle_t handle, int mode) {
+  auto *item = as_graphics_pixmap_item(handle);
+
+  if (item != nullptr) {
+    item->setShapeMode(static_cast<QGraphicsPixmapItem::ShapeMode>(mode));
+  }
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

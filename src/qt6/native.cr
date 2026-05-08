@@ -1829,6 +1829,20 @@ module Qt6
     fun qt6cr_graphics_path_item_set_path = qt6cr_graphics_path_item_set_path(handle : Handle, path : Handle)
     fun qt6cr_graphics_path_item_bounding_rect = qt6cr_graphics_path_item_bounding_rect(handle : Handle) : RectFValue
     fun qt6cr_graphics_path_item_contains = qt6cr_graphics_path_item_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_graphics_pixmap_item_create = qt6cr_graphics_pixmap_item_create(parent : Handle) : Handle
+    fun qt6cr_graphics_pixmap_item_create_with_pixmap = qt6cr_graphics_pixmap_item_create_with_pixmap(pixmap : Handle, parent : Handle) : Handle
+    fun qt6cr_graphics_pixmap_item_pixmap = qt6cr_graphics_pixmap_item_pixmap(handle : Handle) : Handle
+    fun qt6cr_graphics_pixmap_item_set_pixmap = qt6cr_graphics_pixmap_item_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_graphics_pixmap_item_transformation_mode = qt6cr_graphics_pixmap_item_transformation_mode(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_pixmap_item_set_transformation_mode = qt6cr_graphics_pixmap_item_set_transformation_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_graphics_pixmap_item_offset = qt6cr_graphics_pixmap_item_offset(handle : Handle) : PointFValue
+    fun qt6cr_graphics_pixmap_item_set_offset = qt6cr_graphics_pixmap_item_set_offset(handle : Handle, offset : PointFValue)
+    fun qt6cr_graphics_pixmap_item_bounding_rect = qt6cr_graphics_pixmap_item_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_pixmap_item_contains = qt6cr_graphics_pixmap_item_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_graphics_pixmap_item_is_obscured_by = qt6cr_graphics_pixmap_item_is_obscured_by(handle : Handle, other : Handle) : Bool
+    fun qt6cr_graphics_pixmap_item_opaque_area = qt6cr_graphics_pixmap_item_opaque_area(handle : Handle) : Handle
+    fun qt6cr_graphics_pixmap_item_shape_mode = qt6cr_graphics_pixmap_item_shape_mode(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_pixmap_item_set_shape_mode = qt6cr_graphics_pixmap_item_set_shape_mode(handle : Handle, mode : LibC::Int)
 
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
     fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)

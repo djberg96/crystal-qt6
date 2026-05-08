@@ -668,6 +668,44 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics pixmap items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    pixmap = Qt6::QPixmap.new(8, 6)
+    pixmap.fill(Qt6::Color.new(220, 60, 90))
+    item = Qt6::GraphicsPixmapItem.new(pixmap, parent)
+    replacement = Qt6::QPixmap.new(12, 9)
+    replacement.fill(Qt6::Color.new(40, 120, 220))
+
+    item.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    item.pixmap.width.should eq(8)
+    item.pixmap.height.should eq(6)
+    item.set_transformation_mode(Qt6::TransformationMode::Smooth)
+    item.set_shape_mode(Qt6::GraphicsPixmapItemShapeMode::BoundingRectShape)
+    item.set_offset(3, 4)
+
+    item.transformation_mode.should eq(Qt6::TransformationMode::Smooth)
+    item.shape_mode.should eq(Qt6::GraphicsPixmapItemShapeMode::BoundingRectShape)
+    item.offset.should eq(Qt6::PointF.new(3.0, 4.0))
+    item.bounding_rect.should eq(Qt6::RectF.new(3.0, 4.0, 8.0, 6.0))
+    item.contains?(Qt6::PointF.new(4.0, 5.0)).should be_true
+    item.contains?(Qt6::PointF.new(2.0, 2.0)).should be_false
+    item.obscured_by?(parent).should be_false
+    item.opaque_area.bounding_rect.width.should be > 0.0
+    item.opaque_area.bounding_rect.height.should be > 0.0
+
+    item.set_pixmap(replacement)
+
+    item.pixmap.width.should eq(12)
+    item.pixmap.height.should eq(9)
+    item.bounding_rect.should eq(Qt6::RectF.new(3.0, 4.0, 12.0, 9.0))
+    item.contains?(Qt6::PointF.new(10.0, 10.0)).should be_true
+    item.contains?(Qt6::PointF.new(20.0, 20.0)).should be_false
+
+    parent.release
+  end
+
   it "supports graphics item groups" do
     app
 
