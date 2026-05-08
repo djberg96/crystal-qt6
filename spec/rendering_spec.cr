@@ -629,6 +629,45 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics path items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    original_path = Qt6::QPainterPath.new
+    original_path.add_rect(Qt6::RectF.new(0.0, 0.0, 18.0, 10.0))
+    item = Qt6::GraphicsPathItem.new(original_path, parent)
+    pen = Qt6::QPen.new(Qt6::Color.new(180, 30, 80), 2.0)
+    brush = Qt6::QBrush.new(Qt6::Color.new(30, 160, 200, 220))
+
+    item.pen = pen
+    item.brush = brush
+
+    item.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    item.path.bounding_rect.should eq(Qt6::RectF.new(0.0, 0.0, 18.0, 10.0))
+    item.path.element_count.should eq(original_path.element_count)
+    item.pen.color.should eq(Qt6::Color.new(180, 30, 80, 255))
+    item.pen.width.should eq(2.0)
+    item.brush.color.should eq(Qt6::Color.new(30, 160, 200, 220))
+    item.contains?(Qt6::PointF.new(6.0, 4.0)).should be_true
+    item.contains?(Qt6::PointF.new(22.0, 4.0)).should be_false
+    item.obscured_by?(parent).should be_false
+    item.bounding_rect.width.should be > item.path.bounding_rect.width
+    item.bounding_rect.height.should be > item.path.bounding_rect.height
+
+    replacement_path = Qt6::QPainterPath.new
+    replacement_path.add_ellipse(Qt6::RectF.new(2.0, 3.0, 12.0, 9.0))
+    item.set_path(replacement_path)
+
+    item.path.bounding_rect.should eq(Qt6::RectF.new(2.0, 3.0, 12.0, 9.0))
+    item.path.element_count.should eq(replacement_path.element_count)
+    item.contains?(Qt6::PointF.new(8.0, 7.0)).should be_true
+    item.contains?(Qt6::PointF.new(0.0, 0.0)).should be_false
+    item.bounding_rect.width.should be > 0.0
+    item.bounding_rect.height.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics item groups" do
     app
 
