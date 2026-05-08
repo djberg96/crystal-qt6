@@ -15,6 +15,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.
 - Expanded `QGraphicsItem` bindings with shared state, flags, cache-mode, geometry, transform, opacity, and stacking helpers, with matching safe inherited support on `QGraphicsWidget`.
 - Added `QGraphicsItemGroup` bindings with grouping, ungrouping, bounding-rect, and opaque-area helpers, plus shared `QGraphicsItem#group` accessors.
+- Expanded `QGraphicsLayout` bindings with contents-margins readback, `update_geometry`, and the shared instant-invalidate propagation toggle.
 - Expanded `QGraphicsEffect` with `bounding_rect_for` and a Qt-style `set_enabled` alias for shared effect geometry helpers.
 - Expanded `QGraphicsBlurEffect` with blur-hint flags and Qt-style setter aliases for fuller graphics-effect configuration.
 - Expanded `QGraphicsColorizeEffect` with color/strength change callbacks and Qt-style setter aliases for richer live effect updates.

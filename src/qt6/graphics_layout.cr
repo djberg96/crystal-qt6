@@ -41,6 +41,12 @@ module Qt6
       self
     end
 
+    # Notifies the parent widget that this layout's geometry hints changed.
+    def update_geometry : self
+      LibQt6.qt6cr_graphics_layout_update_geometry(to_unsafe)
+      self
+    end
+
     # Removes the layout item at the given linear index.
     def remove_at(index : Int) : self
       LibQt6.qt6cr_graphics_layout_remove_at(to_unsafe, index.to_i)
@@ -57,6 +63,23 @@ module Qt6
         bottom.to_f64
       )
       self
+    end
+
+    # Returns the current contents margins.
+    def contents_margins : MarginsF
+      value = LibQt6.qt6cr_graphics_layout_contents_margins(to_unsafe)
+      MarginsF.new(value.left, value.top, value.right, value.bottom)
+    end
+
+    # Enables or disables Qt's instant invalidate propagation globally.
+    def self.instant_invalidate_propagation=(value : Bool) : Bool
+      LibQt6.qt6cr_graphics_layout_set_instant_invalidate_propagation(value)
+      value
+    end
+
+    # Returns `true` when instant invalidate propagation is enabled globally.
+    def self.instant_invalidate_propagation? : Bool
+      LibQt6.qt6cr_graphics_layout_instant_invalidate_propagation
     end
   end
 end

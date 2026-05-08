@@ -643,8 +643,10 @@ describe Qt6 do
     parent.layout = layout
     parent.layout.should be_a(Qt6::GraphicsGridLayout)
     parent.layout.not_nil!.to_unsafe.should eq(layout.to_unsafe)
+    previous_propagation = Qt6::GraphicsLayout.instant_invalidate_propagation?
 
     layout.set_contents_margins(1, 2, 3, 4)
+    Qt6::GraphicsLayout.instant_invalidate_propagation = !previous_propagation
     layout.add_item(first, 0, 0, Qt6::AlignmentFlag::Center)
     layout.add_item(second, 0, 1, 2, 1, Qt6::AlignmentFlag::Bottom)
     layout.spacing = 6.5
@@ -664,8 +666,11 @@ describe Qt6 do
     layout.set_column_alignment(1, Qt6::AlignmentFlag::Right)
     layout.set_alignment(first, Qt6::AlignmentFlag::Center)
     layout.activate
-
     layout.activated?.should be_true
+    layout.update_geometry
+
+    layout.contents_margins.should eq(Qt6::MarginsF.new(1.0, 2.0, 3.0, 4.0))
+    Qt6::GraphicsLayout.instant_invalidate_propagation?.should eq(!previous_propagation)
     layout.horizontal_spacing.should eq(7.5)
     layout.vertical_spacing.should eq(8.5)
     layout.row_spacing(1).should eq(11.0)
@@ -692,6 +697,7 @@ describe Qt6 do
     layout.item_at(0, 0).should be_nil
     layout.remove_at(0)
     layout.count.should eq(0)
+    Qt6::GraphicsLayout.instant_invalidate_propagation = previous_propagation
 
     parent.release
   end

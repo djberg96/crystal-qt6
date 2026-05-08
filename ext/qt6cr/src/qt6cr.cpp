@@ -12438,6 +12438,14 @@ void qt6cr_graphics_layout_invalidate(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_graphics_layout_update_geometry(qt6cr_handle_t handle) {
+  auto *layout = as_graphics_layout(handle);
+
+  if (layout != nullptr) {
+    layout->updateGeometry();
+  }
+}
+
 void qt6cr_graphics_layout_remove_at(qt6cr_handle_t handle, int index) {
   auto *layout = as_graphics_layout(handle);
 
@@ -12452,6 +12460,29 @@ void qt6cr_graphics_layout_set_contents_margins(qt6cr_handle_t handle, double le
   if (layout != nullptr) {
     layout->setContentsMargins(left, top, right, bottom);
   }
+}
+
+qt6cr_marginsf_t qt6cr_graphics_layout_contents_margins(qt6cr_handle_t handle) {
+  auto *layout = as_graphics_layout(handle);
+
+  if (layout == nullptr) {
+    return qt6cr_marginsf_t{0.0, 0.0, 0.0, 0.0};
+  }
+
+  qreal left = 0.0;
+  qreal top = 0.0;
+  qreal right = 0.0;
+  qreal bottom = 0.0;
+  layout->getContentsMargins(&left, &top, &right, &bottom);
+  return qt6cr_marginsf_t{left, top, right, bottom};
+}
+
+void qt6cr_graphics_layout_set_instant_invalidate_propagation(bool enabled) {
+  QGraphicsLayout::setInstantInvalidatePropagation(enabled);
+}
+
+bool qt6cr_graphics_layout_instant_invalidate_propagation(void) {
+  return QGraphicsLayout::instantInvalidatePropagation();
 }
 
 qt6cr_handle_t qt6cr_graphics_grid_layout_create(qt6cr_handle_t parent) {

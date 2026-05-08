@@ -36,6 +36,13 @@ typedef struct {
 } qt6cr_rectf_t;
 
 typedef struct {
+	double left;
+	double top;
+	double right;
+	double bottom;
+} qt6cr_marginsf_t;
+
+typedef struct {
 	int x;
 	int y;
 	int width;
@@ -1699,8 +1706,12 @@ int qt6cr_graphics_layout_count(qt6cr_handle_t handle);
 void qt6cr_graphics_layout_activate(qt6cr_handle_t handle);
 bool qt6cr_graphics_layout_is_activated(qt6cr_handle_t handle);
 void qt6cr_graphics_layout_invalidate(qt6cr_handle_t handle);
+void qt6cr_graphics_layout_update_geometry(qt6cr_handle_t handle);
 void qt6cr_graphics_layout_remove_at(qt6cr_handle_t handle, int index);
 void qt6cr_graphics_layout_set_contents_margins(qt6cr_handle_t handle, double left, double top, double right, double bottom);
+qt6cr_marginsf_t qt6cr_graphics_layout_contents_margins(qt6cr_handle_t handle);
+void qt6cr_graphics_layout_set_instant_invalidate_propagation(bool enabled);
+bool qt6cr_graphics_layout_instant_invalidate_propagation(void);
 qt6cr_handle_t qt6cr_graphics_grid_layout_create(qt6cr_handle_t parent);
 void qt6cr_graphics_grid_layout_destroy(qt6cr_handle_t handle);
 void qt6cr_graphics_grid_layout_add_item(qt6cr_handle_t handle, qt6cr_handle_t item, int row, int column, int row_span, int column_span, int alignment);

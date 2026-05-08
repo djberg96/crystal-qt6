@@ -45,6 +45,13 @@ module Qt6
       height : Float64
     end
 
+    struct MarginsFValue
+      left : Float64
+      top : Float64
+      right : Float64
+      bottom : Float64
+    end
+
     struct RectValue
       x : LibC::Int
       y : LibC::Int
@@ -1664,8 +1671,12 @@ module Qt6
     fun qt6cr_graphics_layout_activate = qt6cr_graphics_layout_activate(handle : Handle)
     fun qt6cr_graphics_layout_is_activated = qt6cr_graphics_layout_is_activated(handle : Handle) : Bool
     fun qt6cr_graphics_layout_invalidate = qt6cr_graphics_layout_invalidate(handle : Handle)
+    fun qt6cr_graphics_layout_update_geometry = qt6cr_graphics_layout_update_geometry(handle : Handle)
     fun qt6cr_graphics_layout_remove_at = qt6cr_graphics_layout_remove_at(handle : Handle, index : LibC::Int)
     fun qt6cr_graphics_layout_set_contents_margins = qt6cr_graphics_layout_set_contents_margins(handle : Handle, left : Float64, top : Float64, right : Float64, bottom : Float64)
+    fun qt6cr_graphics_layout_contents_margins = qt6cr_graphics_layout_contents_margins(handle : Handle) : MarginsFValue
+    fun qt6cr_graphics_layout_set_instant_invalidate_propagation = qt6cr_graphics_layout_set_instant_invalidate_propagation(enabled : Bool)
+    fun qt6cr_graphics_layout_instant_invalidate_propagation = qt6cr_graphics_layout_instant_invalidate_propagation : Bool
     fun qt6cr_graphics_grid_layout_create = qt6cr_graphics_grid_layout_create(parent : Handle) : Handle
     fun qt6cr_graphics_grid_layout_destroy = qt6cr_graphics_grid_layout_destroy(handle : Handle)
     fun qt6cr_graphics_grid_layout_add_item = qt6cr_graphics_grid_layout_add_item(handle : Handle, item : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int, alignment : LibC::Int)
