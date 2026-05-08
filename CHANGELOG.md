@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QGraphicsWidget` with font, palette, auto-fill background, geometry, and size-policy/min-max sizing helpers for richer graphics-view widget composition.
 - Added `QGraphicsView` bindings with brush, alignment, viewport-behavior, and transform helpers for scene viewport configuration.
 - Added `QGraphicsEllipseItem` bindings with rect, angle, bounding-rect, and hit-testing helpers for ellipse and pie graphics items.
+- Added `QGraphicsObject` bindings with QObject-style property-change callbacks, parent-object lookup, graphics-effect access, signal blocking, and gesture helpers on graphics items.
 - Added `QGraphicsLineItem` bindings with line geometry, pen, bounding-rect, hit-testing, and opaque-area helpers for stroked scene primitives.
 - Added `QGraphicsLinearLayout` bindings with orientation, nested layout insertion, stretch, spacing, alignment, and layout-item lookup helpers for ordered graphics-view composition.
 - Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.

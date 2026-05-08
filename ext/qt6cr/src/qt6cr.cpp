@@ -66,6 +66,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QGraphicsView>
 #include <QGraphicsWidget>
 #include <QGraphicsOpacityEffect>
@@ -225,6 +226,7 @@ QLineF from_linef(qt6cr_linef_t line);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
+QGraphicsObject *as_graphics_object(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
 QGraphicsLayout *as_graphics_layout(qt6cr_handle_t handle);
@@ -437,6 +439,27 @@ class CrystalAbstractGraphicsShapeItem final : public QAbstractGraphicsShapeItem
  public:
   explicit CrystalAbstractGraphicsShapeItem(QGraphicsItem *parent = nullptr)
       : QAbstractGraphicsShapeItem(parent) {}
+
+  QRectF boundingRect() const override {
+    return QRectF(0.0, 0.0, 16.0, 16.0);
+  }
+
+  void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override {}
+};
+
+class CrystalGraphicsObject final : public QGraphicsObject {
+ public:
+  explicit CrystalGraphicsObject(QGraphicsItem *parent = nullptr)
+      : QGraphicsObject(parent) {}
+
+  ~CrystalGraphicsObject() override {
+    if (destroy_callback != nullptr) {
+      destroy_callback(destroy_userdata);
+    }
+  }
+
+  qt6cr_void_callback_t destroy_callback = nullptr;
+  void *destroy_userdata = nullptr;
 
   QRectF boundingRect() const override {
     return QRectF(0.0, 0.0, 16.0, 16.0);
@@ -1473,6 +1496,10 @@ QStyle *as_style(qt6cr_handle_t handle) {
   return static_cast<QStyle *>(handle);
 }
 
+QGraphicsObject *as_graphics_object(qt6cr_handle_t handle) {
+  return dynamic_cast<QGraphicsObject *>(as_graphics_item(handle));
+}
+
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle) {
   return static_cast<QGraphicsEffect *>(handle);
 }
@@ -2411,6 +2438,198 @@ void qt6cr_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filt
   if (object != nullptr && event_filter != nullptr) {
     object->removeEventFilter(event_filter);
   }
+}
+
+qt6cr_handle_t qt6cr_graphics_object_create(qt6cr_handle_t parent) {
+  auto *object = new CrystalGraphicsObject(as_graphics_item(parent));
+  return static_cast<QGraphicsItem *>(object);
+}
+
+void qt6cr_graphics_object_destroy(qt6cr_handle_t handle) {
+  delete as_graphics_object(handle);
+}
+
+qt6cr_handle_t qt6cr_graphics_object_parent_object(qt6cr_handle_t handle) {
+  auto *object = as_graphics_object(handle);
+  auto *parent = object == nullptr ? nullptr : object->parentObject();
+  return parent == nullptr ? nullptr : static_cast<QGraphicsItem *>(parent);
+}
+
+qt6cr_handle_t qt6cr_graphics_object_graphics_effect(qt6cr_handle_t handle) {
+  auto *object = as_graphics_object(handle);
+  return object == nullptr ? nullptr : object->graphicsEffect();
+}
+
+void qt6cr_graphics_object_set_graphics_effect(qt6cr_handle_t handle, qt6cr_handle_t effect) {
+  auto *object = as_graphics_object(handle);
+  auto *value = as_graphics_effect(effect);
+
+  if (object != nullptr) {
+    object->setGraphicsEffect(value);
+  }
+}
+
+void qt6cr_graphics_object_grab_gesture(qt6cr_handle_t handle, int type, int flags) {
+  auto *object = as_graphics_object(handle);
+
+  if (object != nullptr) {
+    object->grabGesture(static_cast<Qt::GestureType>(type), static_cast<Qt::GestureFlags>(flags));
+  }
+}
+
+void qt6cr_graphics_object_ungrab_gesture(qt6cr_handle_t handle, int type) {
+  auto *object = as_graphics_object(handle);
+
+  if (object != nullptr) {
+    object->ungrabGesture(static_cast<Qt::GestureType>(type));
+  }
+}
+
+void qt6cr_graphics_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = dynamic_cast<CrystalGraphicsObject *>(as_graphics_object(handle));
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  object->destroy_callback = callback;
+  object->destroy_userdata = userdata;
+}
+
+bool qt6cr_graphics_object_block_signals(qt6cr_handle_t handle, bool block) {
+  auto *object = as_graphics_object(handle);
+  return object != nullptr && object->blockSignals(block);
+}
+
+bool qt6cr_graphics_object_signals_blocked(qt6cr_handle_t handle) {
+  auto *object = as_graphics_object(handle);
+  return object != nullptr && object->signalsBlocked();
+}
+
+void qt6cr_graphics_object_install_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filter) {
+  auto *object = as_graphics_object(handle);
+  auto *event_filter = as_event_filter(filter);
+
+  if (object != nullptr && event_filter != nullptr) {
+    object->installEventFilter(event_filter);
+  }
+}
+
+void qt6cr_graphics_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filter) {
+  auto *object = as_graphics_object(handle);
+  auto *event_filter = as_event_filter(filter);
+
+  if (object != nullptr && event_filter != nullptr) {
+    object->removeEventFilter(event_filter);
+  }
+}
+
+void qt6cr_graphics_object_on_parent_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::parentChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_opacity_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::opacityChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_visible_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::visibleChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_enabled_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::enabledChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_x_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::xChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_y_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::yChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_z_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::zChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_rotation_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::rotationChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_object_on_scale_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *object = as_graphics_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QGraphicsObject::scaleChanged, object, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 qt6cr_handle_t qt6cr_gesture_create(qt6cr_handle_t parent) {

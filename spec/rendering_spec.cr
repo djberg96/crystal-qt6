@@ -500,6 +500,72 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics objects" do
+    app
+
+    parent = Qt6::GraphicsObject.new
+    child = Qt6::GraphicsObject.new(parent)
+    effect = Qt6::GraphicsBlurEffect.new
+    destroyed = false
+    parent_changed = 0
+    opacity_changed = 0
+    visible_changed = 0
+    enabled_changed = 0
+    x_changed = 0
+    y_changed = 0
+    z_changed = 0
+    rotation_changed = 0
+    scale_changed = 0
+
+    child.on_destroyed { destroyed = true }
+    child.on_parent_changed { parent_changed += 1 }
+    child.on_opacity_changed { opacity_changed += 1 }
+    child.on_visible_changed { visible_changed += 1 }
+    child.on_enabled_changed { enabled_changed += 1 }
+    child.on_x_changed { x_changed += 1 }
+    child.on_y_changed { y_changed += 1 }
+    child.on_z_changed { z_changed += 1 }
+    child.on_rotation_changed { rotation_changed += 1 }
+    child.on_scale_changed { scale_changed += 1 }
+
+    child.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    child.parent_object.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    child.graphics_effect = effect
+    child.graphics_effect.not_nil!.to_unsafe.should eq(effect.to_unsafe)
+    child.grab_gesture(Qt6::GestureType::TapGesture)
+    child.ungrab_gesture(Qt6::GestureType::TapGesture)
+    child.signals_blocked?.should be_false
+    child.block_signals = true
+    child.signals_blocked?.should be_true
+    child.opacity = 0.6
+    child.block_signals = false
+    child.opacity = 0.7
+    child.visible = false
+    child.enabled = false
+    child.x = 11
+    child.y = 12
+    child.z_value = 4
+    child.rotation = 25
+    child.scale = 1.5
+
+    parent_changed.should eq(0)
+    opacity_changed.should eq(1)
+    visible_changed.should eq(1)
+    enabled_changed.should eq(1)
+    x_changed.should eq(1)
+    y_changed.should eq(1)
+    z_changed.should eq(1)
+    rotation_changed.should eq(1)
+    scale_changed.should eq(1)
+
+    filter = Qt6::EventFilter.new
+    child.install_event_filter(filter)
+    child.remove_event_filter(filter)
+
+    parent.release
+    destroyed.should be_true
+  end
+
   it "supports graphics ellipse items" do
     app
 
