@@ -67,6 +67,7 @@
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
 #include <QGraphicsObject>
+#include <QGraphicsProxyWidget>
 #include <QGraphicsView>
 #include <QGraphicsWidget>
 #include <QGraphicsOpacityEffect>
@@ -238,6 +239,7 @@ QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle);
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle);
 QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle);
 QGraphicsPolygonItem *as_graphics_polygon_item(qt6cr_handle_t handle);
+QGraphicsProxyWidget *as_graphics_proxy_widget(qt6cr_handle_t handle);
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle);
 QGraphicsView *as_graphics_view(qt6cr_handle_t handle);
 QGraphicsWidget *as_graphics_widget(qt6cr_handle_t handle);
@@ -1545,6 +1547,10 @@ QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle) {
 
 QGraphicsPolygonItem *as_graphics_polygon_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsPolygonItem *>(handle);
+}
+
+QGraphicsProxyWidget *as_graphics_proxy_widget(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsProxyWidget *>(handle);
 }
 
 QGraphicsItemGroup *as_graphics_item_group(qt6cr_handle_t handle) {
@@ -13724,6 +13730,40 @@ qt6cr_rectf_t qt6cr_graphics_polygon_item_bounding_rect(qt6cr_handle_t handle) {
 bool qt6cr_graphics_polygon_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
   auto *item = as_graphics_polygon_item(handle);
   return item != nullptr && item->contains(from_pointf(point));
+}
+
+qt6cr_handle_t qt6cr_graphics_proxy_widget_create(qt6cr_handle_t parent) {
+  auto *parent_widget = as_graphics_widget(parent);
+  return new QGraphicsProxyWidget(static_cast<QGraphicsItem *>(parent_widget));
+}
+
+void qt6cr_graphics_proxy_widget_destroy(qt6cr_handle_t handle) {
+  delete as_graphics_proxy_widget(handle);
+}
+
+qt6cr_handle_t qt6cr_graphics_proxy_widget_widget(qt6cr_handle_t handle) {
+  auto *proxy = as_graphics_proxy_widget(handle);
+  return proxy == nullptr ? nullptr : proxy->widget();
+}
+
+void qt6cr_graphics_proxy_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *proxy = as_graphics_proxy_widget(handle);
+
+  if (proxy != nullptr) {
+    proxy->setWidget(as_widget(widget));
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_proxy_widget_sub_widget_rect(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *proxy = as_graphics_proxy_widget(handle);
+  auto *value = as_widget(widget);
+  return (proxy == nullptr || value == nullptr) ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(proxy->subWidgetRect(value));
+}
+
+qt6cr_handle_t qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(qt6cr_handle_t handle, qt6cr_handle_t child) {
+  auto *proxy = as_graphics_proxy_widget(handle);
+  auto *value = as_widget(child);
+  return (proxy == nullptr || value == nullptr) ? nullptr : proxy->createProxyForChildWidget(value);
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

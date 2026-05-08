@@ -754,6 +754,41 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics proxy widgets" do
+    app
+
+    parent = Qt6::GraphicsWidget.new
+    container = Qt6::Widget.new
+    container.resize(160, 50)
+    field = Qt6::LineEdit.new("Proxy child", container)
+    field.resize(90, 24)
+    proxy = Qt6::GraphicsProxyWidget.new(container, parent)
+
+    proxy.parent_item.should_not be_nil
+    proxy.widget.not_nil!.to_unsafe.should eq(container.to_unsafe)
+
+    root_rect = proxy.sub_widget_rect(container)
+    child_rect = proxy.sub_widget_rect(field)
+    root_rect.width.should be > 0.0
+    root_rect.height.should be > 0.0
+    child_rect.width.should be > 0.0
+    child_rect.height.should be > 0.0
+
+    child_proxy = proxy.create_proxy_for_child_widget(field)
+    child_proxy.should_not be_nil
+    child_proxy.not_nil!.widget.not_nil!.to_unsafe.should eq(field.to_unsafe)
+    child_proxy.not_nil!.parent_item.should_not be_nil
+
+    replacement = Qt6::Label.new("Replacement")
+    replacement.resize(120, 30)
+    proxy.set_widget(replacement).to_unsafe.should eq(proxy.to_unsafe)
+    proxy.widget.not_nil!.to_unsafe.should eq(replacement.to_unsafe)
+    proxy.sub_widget_rect(replacement).width.should be > 0.0
+    proxy.sub_widget_rect(replacement).height.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics item groups" do
     app
 

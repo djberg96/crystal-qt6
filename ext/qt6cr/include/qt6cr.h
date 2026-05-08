@@ -1892,6 +1892,12 @@ int qt6cr_graphics_polygon_item_fill_rule(qt6cr_handle_t handle);
 void qt6cr_graphics_polygon_item_set_fill_rule(qt6cr_handle_t handle, int rule);
 qt6cr_rectf_t qt6cr_graphics_polygon_item_bounding_rect(qt6cr_handle_t handle);
 bool qt6cr_graphics_polygon_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point);
+qt6cr_handle_t qt6cr_graphics_proxy_widget_create(qt6cr_handle_t parent);
+void qt6cr_graphics_proxy_widget_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_graphics_proxy_widget_widget(qt6cr_handle_t handle);
+void qt6cr_graphics_proxy_widget_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_rectf_t qt6cr_graphics_proxy_widget_sub_widget_rect(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(qt6cr_handle_t handle, qt6cr_handle_t child);
 
 qt6cr_handle_t qt6cr_qpainter_path_stroker_create(void);
 void qt6cr_qpainter_path_stroker_destroy(qt6cr_handle_t handle);

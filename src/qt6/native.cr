@@ -1851,6 +1851,12 @@ module Qt6
     fun qt6cr_graphics_polygon_item_set_fill_rule = qt6cr_graphics_polygon_item_set_fill_rule(handle : Handle, rule : LibC::Int)
     fun qt6cr_graphics_polygon_item_bounding_rect = qt6cr_graphics_polygon_item_bounding_rect(handle : Handle) : RectFValue
     fun qt6cr_graphics_polygon_item_contains = qt6cr_graphics_polygon_item_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_graphics_proxy_widget_create = qt6cr_graphics_proxy_widget_create(parent : Handle) : Handle
+    fun qt6cr_graphics_proxy_widget_destroy = qt6cr_graphics_proxy_widget_destroy(handle : Handle)
+    fun qt6cr_graphics_proxy_widget_widget = qt6cr_graphics_proxy_widget_widget(handle : Handle) : Handle
+    fun qt6cr_graphics_proxy_widget_set_widget = qt6cr_graphics_proxy_widget_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_graphics_proxy_widget_sub_widget_rect = qt6cr_graphics_proxy_widget_sub_widget_rect(handle : Handle, widget : Handle) : RectFValue
+    fun qt6cr_graphics_proxy_widget_create_proxy_for_child_widget = qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(handle : Handle, child : Handle) : Handle
 
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
     fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)
