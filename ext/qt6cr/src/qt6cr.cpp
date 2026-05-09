@@ -67,6 +67,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneMoveEvent>
+#include <QGraphicsSceneWheelEvent>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -4359,6 +4360,144 @@ void qt6cr_graphics_scene_move_event_set_new_pos(qt6cr_handle_t handle, qt6cr_po
 
   if (event != nullptr) {
     event->setNewPos(from_pointf(value));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_wheel_event_create(int type) {
+  return new QGraphicsSceneWheelEvent(static_cast<QEvent::Type>(type));
+}
+
+void qt6cr_graphics_scene_wheel_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsSceneWheelEvent *>(handle);
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_wheel_event_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->pos());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setPos(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_wheel_event_scene_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->scenePos());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_scene_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScenePos(from_pointf(value));
+  }
+}
+
+qt6cr_point_t qt6cr_graphics_scene_wheel_event_screen_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->screenPos());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_screen_pos(qt6cr_handle_t handle, qt6cr_point_t value) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScreenPos(from_point(value));
+  }
+}
+
+int qt6cr_graphics_scene_wheel_event_buttons(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->buttons());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_buttons(qt6cr_handle_t handle, int buttons) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setButtons(static_cast<Qt::MouseButtons>(buttons));
+  }
+}
+
+int qt6cr_graphics_scene_wheel_event_modifiers(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->modifiers());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_modifiers(qt6cr_handle_t handle, int modifiers) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setModifiers(static_cast<Qt::KeyboardModifiers>(modifiers));
+  }
+}
+
+int qt6cr_graphics_scene_wheel_event_delta(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? 0 : event->delta();
+}
+
+void qt6cr_graphics_scene_wheel_event_set_delta(qt6cr_handle_t handle, int delta) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setDelta(delta);
+  }
+}
+
+int qt6cr_graphics_scene_wheel_event_orientation(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->orientation());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_orientation(qt6cr_handle_t handle, int orientation) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setOrientation(static_cast<Qt::Orientation>(orientation));
+  }
+}
+
+int qt6cr_graphics_scene_wheel_event_phase(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->phase());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_phase(qt6cr_handle_t handle, int phase) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setPhase(static_cast<Qt::ScrollPhase>(phase));
+  }
+}
+
+qt6cr_point_t qt6cr_graphics_scene_wheel_event_pixel_delta(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->pixelDelta());
+}
+
+void qt6cr_graphics_scene_wheel_event_set_pixel_delta(qt6cr_handle_t handle, qt6cr_point_t value) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setPixelDelta(from_point(value));
+  }
+}
+
+bool qt6cr_graphics_scene_wheel_event_is_inverted(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+  return event != nullptr ? event->isInverted() : false;
+}
+
+void qt6cr_graphics_scene_wheel_event_set_inverted(qt6cr_handle_t handle, bool inverted) {
+  auto *event = static_cast<QGraphicsSceneWheelEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setInverted(inverted);
   }
 }
 

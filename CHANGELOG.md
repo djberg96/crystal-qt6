@@ -27,6 +27,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsSceneHoverEvent` bindings with current/previous position, modifier, and shared graphics-scene event helpers for hover-tracking workflows.
 - Added `QGraphicsSceneMouseEvent` bindings with current, previous, and button-down positions plus button, modifier, source, and flag helpers for graphics-scene mouse workflows.
 - Added `QGraphicsSceneMoveEvent` bindings with old/new position helpers plus shared graphics-scene event state for graphics-widget move handling.
+- Added `QGraphicsSceneWheelEvent` bindings with position, delta, orientation, scroll-phase, pixel-delta, and inversion helpers for graphics-scene wheel handling.
 - Added `QGraphicsLinearLayout` bindings with orientation, nested layout insertion, stretch, spacing, alignment, and layout-item lookup helpers for ordered graphics-view composition.
 - Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.
 - Expanded `QGraphicsItem` bindings with shared state, flags, cache-mode, geometry, transform, opacity, and stacking helpers, with matching safe inherited support on `QGraphicsWidget`.

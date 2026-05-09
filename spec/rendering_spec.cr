@@ -1016,6 +1016,63 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene wheel events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneWheelEvent.new
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneWheel)
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 789_456
+    event.pos = Qt6::PointF.new(9.0, 11.0)
+    event.scene_pos = Qt6::PointF.new(19.0, 21.0)
+    event.screen_pos = Qt6::Point.new(29, 31)
+    event.buttons = 1
+    event.modifiers = 0x02000000
+    event.delta = 120
+    event.orientation = Qt6::Orientation::Vertical
+    event.phase = Qt6::ScrollPhase::ScrollUpdate
+    event.pixel_delta = Qt6::Point.new(0, -40)
+    event.inverted = true
+    event.ignore
+    event.accepted?.should be_false
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(789_456_u64)
+    event.pos.should eq(Qt6::PointF.new(9.0, 11.0))
+    event.scene_pos.should eq(Qt6::PointF.new(19.0, 21.0))
+    event.screen_pos.should eq(Qt6::Point.new(29, 31))
+    event.buttons.should eq(1)
+    event.modifiers.should eq(0x02000000)
+    event.delta.should eq(120)
+    event.orientation.should eq(Qt6::Orientation::Vertical)
+    event.phase.should eq(Qt6::ScrollPhase::ScrollUpdate)
+    event.pixel_delta.should eq(Qt6::Point.new(0, -40))
+    event.inverted?.should be_true
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneWheel)
+    live_event = qevent.graphics_scene_wheel_event
+    live_event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    live_event.timestamp.should eq(789_456_u64)
+    live_event.pos.should eq(Qt6::PointF.new(9.0, 11.0))
+    live_event.scene_pos.should eq(Qt6::PointF.new(19.0, 21.0))
+    live_event.screen_pos.should eq(Qt6::Point.new(29, 31))
+    live_event.delta.should eq(120)
+    live_event.orientation.should eq(Qt6::Orientation::Vertical)
+    live_event.phase.should eq(Qt6::ScrollPhase::ScrollUpdate)
+    live_event.pixel_delta.should eq(Qt6::Point.new(0, -40))
+    live_event.inverted?.should be_true
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

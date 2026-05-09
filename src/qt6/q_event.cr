@@ -79,5 +79,10 @@ module Qt6
     def graphics_scene_move_event : GraphicsSceneMoveEvent
       GraphicsSceneMoveEvent.wrap(to_unsafe)
     end
+
+    # Returns this event reinterpreted as a live `QGraphicsSceneWheelEvent`.
+    def graphics_scene_wheel_event : GraphicsSceneWheelEvent
+      GraphicsSceneWheelEvent.wrap(to_unsafe)
+    end
   end
 end
