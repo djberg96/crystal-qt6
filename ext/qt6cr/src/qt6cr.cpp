@@ -234,6 +234,7 @@ QGraphicsLayout *as_graphics_layout(qt6cr_handle_t handle);
 QGraphicsLayoutItem *as_graphics_layout_item(qt6cr_handle_t handle);
 QGraphicsGridLayout *as_graphics_grid_layout(qt6cr_handle_t handle);
 QGraphicsLinearLayout *as_graphics_linear_layout(qt6cr_handle_t handle);
+QGraphicsRectItem *as_graphics_rect_item(qt6cr_handle_t handle);
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
 QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle);
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle);
@@ -1527,6 +1528,10 @@ QGraphicsGridLayout *as_graphics_grid_layout(qt6cr_handle_t handle) {
 
 QGraphicsLinearLayout *as_graphics_linear_layout(qt6cr_handle_t handle) {
   return static_cast<QGraphicsLinearLayout *>(handle);
+}
+
+QGraphicsRectItem *as_graphics_rect_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsRectItem *>(handle);
 }
 
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle) {
@@ -13455,6 +13460,37 @@ bool qt6cr_abstract_graphics_shape_item_is_obscured_by(qt6cr_handle_t handle, qt
 qt6cr_handle_t qt6cr_abstract_graphics_shape_item_opaque_area(qt6cr_handle_t handle) {
   auto *item = static_cast<QAbstractGraphicsShapeItem *>(as_graphics_item(handle));
   return item == nullptr ? nullptr : new QPainterPath(item->opaqueArea());
+}
+
+qt6cr_handle_t qt6cr_graphics_rect_item_create(qt6cr_handle_t parent) {
+  return new QGraphicsRectItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_rect_item_create_with_rect(qt6cr_rectf_t rect, qt6cr_handle_t parent) {
+  return new QGraphicsRectItem(from_rectf(rect), as_graphics_item(parent));
+}
+
+qt6cr_rectf_t qt6cr_graphics_rect_item_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_rect_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->rect());
+}
+
+void qt6cr_graphics_rect_item_set_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *item = as_graphics_rect_item(handle);
+
+  if (item != nullptr) {
+    item->setRect(from_rectf(rect));
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_rect_item_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_rect_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->boundingRect());
+}
+
+bool qt6cr_graphics_rect_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_rect_item(handle);
+  return item != nullptr && item->contains(from_pointf(point));
 }
 
 qt6cr_handle_t qt6cr_graphics_ellipse_item_create(qt6cr_handle_t parent) {

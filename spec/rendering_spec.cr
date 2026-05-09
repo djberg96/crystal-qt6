@@ -566,6 +566,34 @@ describe Qt6 do
     destroyed.should be_true
   end
 
+  it "supports graphics rect items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    rect = Qt6::GraphicsRectItem.new(Qt6::RectF.new(0.0, 0.0, 20.0, 10.0), parent)
+    pen = Qt6::QPen.new(Qt6::Color.new(120, 30, 40), 2.0)
+    brush = Qt6::QBrush.new(Qt6::Color.new(50, 130, 210))
+
+    rect.pen = pen
+    rect.brush = brush
+
+    rect.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    rect.rect.should eq(Qt6::RectF.new(0.0, 0.0, 20.0, 10.0))
+    rect.contains?(Qt6::PointF.new(10.0, 5.0)).should be_true
+    rect.contains?(Qt6::PointF.new(24.0, 5.0)).should be_false
+    rect.opaque_area.empty?.should be_false
+    rect.bounding_rect.width.should be > rect.rect.width
+    rect.bounding_rect.height.should be > rect.rect.height
+
+    rect.set_rect(2, 3, 18, 12)
+
+    rect.rect.should eq(Qt6::RectF.new(2.0, 3.0, 18.0, 12.0))
+    rect.bounding_rect.width.should be > 0.0
+    rect.bounding_rect.height.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics ellipse items" do
     app
 
