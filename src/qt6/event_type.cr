@@ -55,6 +55,10 @@ module Qt6
     GraphicsSceneHoverMove           = 161
     GraphicsSceneHoverLeave          = 162
     GraphicsSceneHelp                = 163
+    GraphicsSceneDragEnter           = 164
+    GraphicsSceneDragMove            = 165
+    GraphicsSceneDragLeave           = 166
+    GraphicsSceneDrop                = 167
     GraphicsSceneWheel               = 168
     NativeGesture                    = 197
     Gesture                          = 198

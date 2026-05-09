@@ -741,6 +741,68 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene drag-drop events" do
+    app
+
+    widget = Qt6::Widget.new
+    source = Qt6::Widget.new
+    mime_data = Qt6::MimeData.new
+    mime_data.text = "drag payload"
+    event = Qt6::GraphicsSceneDragDropEvent.new(Qt6::EventType::GraphicsSceneDragEnter)
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneDragEnter)
+    event.widget.should be_nil
+    event.source.should be_nil
+    event.mime_data.should be_nil
+
+    event.widget = widget
+    event.source = source
+    event.mime_data = mime_data
+    event.timestamp = 456_789
+    event.pos = Qt6::PointF.new(5.5, 7.5)
+    event.scene_pos = Qt6::PointF.new(15.0, 17.0)
+    event.screen_pos = Qt6::Point.new(25, 27)
+    event.buttons = 1
+    event.modifiers = 0x04000000
+    event.possible_actions = Qt6::DropAction::CopyAction | Qt6::DropAction::MoveAction
+    event.proposed_action = Qt6::DropAction::MoveAction
+    event.drop_action = Qt6::DropAction::CopyAction
+    event.ignore
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.source.not_nil!.to_unsafe.should eq(source.to_unsafe)
+    event.mime_data.not_nil!.text.should eq("drag payload")
+    event.timestamp.should eq(456_789_u64)
+    event.pos.should eq(Qt6::PointF.new(5.5, 7.5))
+    event.scene_pos.should eq(Qt6::PointF.new(15.0, 17.0))
+    event.screen_pos.should eq(Qt6::Point.new(25, 27))
+    event.buttons.should eq(1)
+    event.modifiers.should eq(0x04000000)
+    event.possible_actions.should eq(Qt6::DropAction::CopyAction | Qt6::DropAction::MoveAction)
+    event.proposed_action.should eq(Qt6::DropAction::MoveAction)
+    event.drop_action.should eq(Qt6::DropAction::CopyAction)
+    event.accepted?.should be_false
+
+    event.accept_proposed_action
+    event.drop_action.should eq(Qt6::DropAction::MoveAction)
+    event.accept
+    event.accepted?.should be_true
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneDragEnter)
+    live_event = qevent.graphics_scene_drag_drop_event
+    live_event.pos.should eq(Qt6::PointF.new(5.5, 7.5))
+    live_event.scene_pos.should eq(Qt6::PointF.new(15.0, 17.0))
+    live_event.screen_pos.should eq(Qt6::Point.new(25, 27))
+    live_event.mime_data.not_nil!.text.should eq("drag payload")
+    live_event.drop_action.should eq(Qt6::DropAction::MoveAction)
+
+    event.release
+    mime_data.release
+    source.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

@@ -3797,6 +3797,178 @@ void qt6cr_graphics_scene_context_menu_event_set_reason(qt6cr_handle_t handle, i
   }
 }
 
+qt6cr_handle_t qt6cr_graphics_scene_drag_drop_event_create(int type) {
+  return new QGraphicsSceneDragDropEvent(static_cast<QEvent::Type>(type));
+}
+
+void qt6cr_graphics_scene_drag_drop_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsSceneDragDropEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_drag_drop_event_widget(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? nullptr : event->widget();
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setWidget(as_widget(widget));
+  }
+}
+
+uint64_t qt6cr_graphics_scene_drag_drop_event_timestamp(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? 0 : event->timestamp();
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_timestamp(qt6cr_handle_t handle, uint64_t timestamp) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setTimestamp(timestamp);
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_drag_drop_event_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->pos());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setPos(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_drag_drop_event_scene_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->scenePos());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_scene_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScenePos(from_pointf(value));
+  }
+}
+
+qt6cr_point_t qt6cr_graphics_scene_drag_drop_event_screen_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->screenPos());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_screen_pos(qt6cr_handle_t handle, qt6cr_point_t value) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScreenPos(from_point(value));
+  }
+}
+
+int qt6cr_graphics_scene_drag_drop_event_buttons(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->buttons());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_buttons(qt6cr_handle_t handle, int buttons) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setButtons(static_cast<Qt::MouseButtons>(buttons));
+  }
+}
+
+int qt6cr_graphics_scene_drag_drop_event_modifiers(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->modifiers());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_modifiers(qt6cr_handle_t handle, int modifiers) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setModifiers(static_cast<Qt::KeyboardModifiers>(modifiers));
+  }
+}
+
+int qt6cr_graphics_scene_drag_drop_event_possible_actions(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->possibleActions());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_possible_actions(qt6cr_handle_t handle, int actions) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setPossibleActions(static_cast<Qt::DropActions>(actions));
+  }
+}
+
+int qt6cr_graphics_scene_drag_drop_event_proposed_action(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->proposedAction());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_proposed_action(qt6cr_handle_t handle, int action) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setProposedAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
+void qt6cr_graphics_scene_drag_drop_event_accept_proposed_action(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->acceptProposedAction();
+  }
+}
+
+int qt6cr_graphics_scene_drag_drop_event_drop_action(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->dropAction());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_drop_action(qt6cr_handle_t handle, int action) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setDropAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_drag_drop_event_source(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? nullptr : event->source();
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_source(qt6cr_handle_t handle, qt6cr_handle_t source) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setSource(as_widget(source));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_drag_drop_event_mime_data(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+  return event == nullptr ? nullptr : const_cast<QMimeData *>(event->mimeData());
+}
+
+void qt6cr_graphics_scene_drag_drop_event_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_data) {
+  auto *event = static_cast<QGraphicsSceneDragDropEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setMimeData(as_mime_data(mime_data));
+  }
+}
+
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv) {
   auto *state = new ApplicationState{};
   state->application = qobject_cast<QApplication *>(QCoreApplication::instance());

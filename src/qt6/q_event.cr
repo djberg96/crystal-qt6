@@ -49,5 +49,10 @@ module Qt6
     def graphics_scene_context_menu_event : GraphicsSceneContextMenuEvent
       GraphicsSceneContextMenuEvent.wrap(to_unsafe)
     end
+
+    # Returns this event reinterpreted as a live `QGraphicsSceneDragDropEvent`.
+    def graphics_scene_drag_drop_event : GraphicsSceneDragDropEvent
+      GraphicsSceneDragDropEvent.wrap(to_unsafe)
+    end
   end
 end

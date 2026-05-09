@@ -21,6 +21,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsRectItem` bindings with rect geometry, bounding-rect, hit-testing, and inherited pen/brush helpers for scene rectangle items.
 - Added `QGraphicsScene` bindings with scene-rect, indexing, brush/font/palette, focus, rendering, item-query, item-creation, and view-association helpers for graphics-view scene composition.
 - Added `QGraphicsSceneContextMenuEvent` bindings with widget/timestamp, position, modifier, reason, and live `QEvent` reinterpretation helpers for graphics-scene context-menu handling.
+- Added `QGraphicsSceneDragDropEvent` bindings with widget/timestamp, position, buttons/modifiers, action, source, MIME payload, and live `QEvent` reinterpretation helpers for graphics-scene drag/drop handling.
 - Added `QGraphicsLinearLayout` bindings with orientation, nested layout insertion, stretch, spacing, alignment, and layout-item lookup helpers for ordered graphics-view composition.
 - Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.
 - Expanded `QGraphicsItem` bindings with shared state, flags, cache-mode, geometry, transform, opacity, and stacking helpers, with matching safe inherited support on `QGraphicsWidget`.
