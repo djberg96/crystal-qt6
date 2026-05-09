@@ -13864,6 +13864,41 @@ bool qt6cr_graphics_widget_is_panel(qt6cr_handle_t handle) {
   return widget != nullptr && static_cast<QGraphicsItem *>(widget)->isPanel();
 }
 
+int qt6cr_graphics_widget_layout_direction(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? static_cast<int>(Qt::LeftToRight) : static_cast<int>(widget->layoutDirection());
+}
+
+void qt6cr_graphics_widget_set_layout_direction(qt6cr_handle_t handle, int value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setLayoutDirection(static_cast<Qt::LayoutDirection>(value));
+  }
+}
+
+void qt6cr_graphics_widget_unset_layout_direction(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->unsetLayoutDirection();
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_style(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? nullptr : widget->style();
+}
+
+void qt6cr_graphics_widget_set_style(qt6cr_handle_t handle, qt6cr_handle_t style) {
+  auto *widget = as_graphics_widget(handle);
+  auto *value = as_style(style);
+
+  if (widget != nullptr) {
+    widget->setStyle(value);
+  }
+}
+
 qt6cr_marginsf_t qt6cr_graphics_widget_contents_margins(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
 
@@ -13880,9 +13915,58 @@ qt6cr_marginsf_t qt6cr_graphics_widget_contents_margins(qt6cr_handle_t handle) {
   return qt6cr_marginsf_t{left, top, right, bottom};
 }
 
+void qt6cr_graphics_widget_set_contents_margins(qt6cr_handle_t handle, double left, double top, double right, double bottom) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setContentsMargins(left, top, right, bottom);
+  }
+}
+
 qt6cr_rectf_t qt6cr_graphics_widget_contents_rect(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(static_cast<QGraphicsLayoutItem *>(widget)->contentsRect());
+}
+
+qt6cr_marginsf_t qt6cr_graphics_widget_window_frame_margins(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget == nullptr) {
+    return qt6cr_marginsf_t{0.0, 0.0, 0.0, 0.0};
+  }
+
+  qreal left = 0.0;
+  qreal top = 0.0;
+  qreal right = 0.0;
+  qreal bottom = 0.0;
+  widget->getWindowFrameMargins(&left, &top, &right, &bottom);
+  return qt6cr_marginsf_t{left, top, right, bottom};
+}
+
+void qt6cr_graphics_widget_set_window_frame_margins(qt6cr_handle_t handle, double left, double top, double right, double bottom) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setWindowFrameMargins(left, top, right, bottom);
+  }
+}
+
+void qt6cr_graphics_widget_unset_window_frame_margins(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->unsetWindowFrameMargins();
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_widget_window_frame_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(widget->windowFrameGeometry());
+}
+
+qt6cr_rectf_t qt6cr_graphics_widget_window_frame_rect(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(widget->windowFrameRect());
 }
 
 qt6cr_sizef_t qt6cr_graphics_widget_effective_size_hint(qt6cr_handle_t handle, int which, double width, double height) {
@@ -13908,6 +13992,64 @@ bool qt6cr_graphics_widget_is_layout(qt6cr_handle_t handle) {
 bool qt6cr_graphics_widget_owned_by_layout(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget != nullptr && static_cast<QGraphicsLayoutItem *>(widget)->ownedByLayout();
+}
+
+int qt6cr_graphics_widget_focus_policy(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? static_cast<int>(Qt::NoFocus) : static_cast<int>(widget->focusPolicy());
+}
+
+void qt6cr_graphics_widget_set_focus_policy(qt6cr_handle_t handle, int value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setFocusPolicy(static_cast<Qt::FocusPolicy>(value));
+  }
+}
+
+bool qt6cr_graphics_widget_is_active_window(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && widget->isActiveWindow();
+}
+
+char *qt6cr_graphics_widget_window_title(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->windowTitle());
+}
+
+void qt6cr_graphics_widget_set_window_title(qt6cr_handle_t handle, const char *value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setWindowTitle(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_focus_widget(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? nullptr : widget->focusWidget();
+}
+
+void qt6cr_graphics_widget_set_tab_order(qt6cr_handle_t first, qt6cr_handle_t second) {
+  auto *first_widget = as_graphics_widget(first);
+  auto *second_widget = as_graphics_widget(second);
+
+  if (first_widget != nullptr && second_widget != nullptr) {
+    QGraphicsWidget::setTabOrder(first_widget, second_widget);
+  }
+}
+
+bool qt6cr_graphics_widget_test_attribute(qt6cr_handle_t handle, int attribute) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && widget->testAttribute(static_cast<Qt::WidgetAttribute>(attribute));
+}
+
+void qt6cr_graphics_widget_set_attribute(qt6cr_handle_t handle, int attribute, bool value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAttribute(static_cast<Qt::WidgetAttribute>(attribute), value);
+  }
 }
 
 qt6cr_handle_t qt6cr_graphics_widget_font(qt6cr_handle_t handle) {
@@ -13990,6 +14132,11 @@ qt6cr_sizef_t qt6cr_graphics_widget_size(qt6cr_handle_t handle) {
   return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->size());
 }
 
+qt6cr_rectf_t qt6cr_graphics_widget_rect(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(widget->rect());
+}
+
 int qt6cr_graphics_widget_horizontal_size_policy(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget == nullptr ? static_cast<int>(QSizePolicy::Preferred) : static_cast<int>(widget->sizePolicy().horizontalPolicy());
@@ -14053,6 +14200,11 @@ void qt6cr_graphics_widget_adjust_size(qt6cr_handle_t handle) {
   if (widget != nullptr) {
     widget->adjustSize();
   }
+}
+
+bool qt6cr_graphics_widget_close(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget != nullptr && widget->close();
 }
 
 qt6cr_handle_t qt6cr_graphics_view_create(qt6cr_handle_t parent) {

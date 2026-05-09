@@ -1545,10 +1545,12 @@ describe Qt6 do
   it "supports graphics anchor layouts and anchors" do
     app
 
+    scene = Qt6::GraphicsScene.new(Qt6::RectF.new(0.0, 0.0, 120.0, 80.0))
     parent = Qt6::GraphicsWidget.new
     layout = Qt6::GraphicsAnchorLayout.new
     first = Qt6::GraphicsWidget.new(parent)
     second = Qt6::GraphicsWidget.new(parent)
+    scene.add_item(parent)
 
     parent.layout = layout
     parent.layout.not_nil!.to_unsafe.should eq(layout.to_unsafe)
@@ -1573,6 +1575,23 @@ describe Qt6 do
     palette.set_color(Qt6::ColorRole::WindowText, Qt6::Color.new(12, 34, 56))
     first.palette = palette
     first.palette.color(Qt6::ColorRole::WindowText).should eq(Qt6::Color.new(12, 34, 56, 255))
+    assigned_style = Qt6::CommonStyle.new
+    first.style = assigned_style
+    first.style.not_nil!.to_unsafe.should eq(assigned_style.to_unsafe)
+    first.style.not_nil!.standard_palette.should be_a(Qt6::QPalette)
+
+    first.layout_direction = Qt6::LayoutDirection::RightToLeft
+    first.layout_direction.should eq(Qt6::LayoutDirection::RightToLeft)
+    first.unset_layout_direction
+    first.layout_direction.should eq(Qt6::LayoutDirection::LeftToRight)
+
+    first.focus_policy = Qt6::FocusPolicy::StrongFocus
+    first.focus_policy.should eq(Qt6::FocusPolicy::StrongFocus)
+    first.window_title = "Inspector Panel"
+    first.window_title.should eq("Inspector Panel")
+    first.attribute?(Qt6::WidgetAttribute::SetPalette).should be_true
+    first.set_attribute(Qt6::WidgetAttribute::SetPalette, true)
+    first.attribute?(Qt6::WidgetAttribute::SetPalette).should be_true
 
     first.set_size_policy(Qt6::SizePolicy::MinimumExpanding, Qt6::SizePolicy::Fixed)
     first.horizontal_size_policy.should eq(Qt6::SizePolicy::MinimumExpanding)
@@ -1588,6 +1607,15 @@ describe Qt6 do
 
     first.set_geometry(2, 3, 40, 20)
     first.geometry.should eq(Qt6::RectF.new(2.0, 3.0, 40.0, 20.0))
+    first.rect.should eq(Qt6::RectF.new(0.0, 0.0, 40.0, 20.0))
+    first.set_contents_margins(1, 2, 3, 4)
+    first.contents_margins.should eq(Qt6::MarginsF.new(1.0, 2.0, 3.0, 4.0))
+    first.contents_rect.should eq(Qt6::RectF.new(1.0, 2.0, 36.0, 14.0))
+    first.set_window_frame_margins(2, 3, 4, 5)
+    first.window_frame_margins.should eq(Qt6::MarginsF.new(2.0, 3.0, 4.0, 5.0))
+    first.window_frame_geometry.should eq(Qt6::RectF.new(0.0, 0.0, 46.0, 28.0))
+    first.window_frame_rect.should eq(Qt6::RectF.new(-2.0, -3.0, 46.0, 28.0))
+    first.unset_window_frame_margins
     first.adjust_size
 
     anchor = layout.add_anchor(first, Qt6::AnchorPoint::AnchorLeft, second, Qt6::AnchorPoint::AnchorLeft)
@@ -1605,8 +1633,14 @@ describe Qt6 do
     layout.horizontal_spacing.should eq(3.0)
     layout.vertical_spacing.should eq(7.0)
     layout.count.should eq(2)
+    scene.active_window = parent
+    parent.active_window?.should be_false
+    parent.focus_widget.should be_nil
+    Qt6::GraphicsWidget.set_tab_order(first, second)
+    first.close.should be_true
 
     parent.release
+    scene.release
   end
 
   it "supports graphics grid layouts" do

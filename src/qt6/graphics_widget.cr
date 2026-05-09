@@ -291,15 +291,79 @@ module Qt6
       LibQt6.qt6cr_graphics_widget_is_panel(to_unsafe)
     end
 
+    # Returns the widget layout direction.
+    def layout_direction : LayoutDirection
+      LayoutDirection.from_value(LibQt6.qt6cr_graphics_widget_layout_direction(to_unsafe))
+    end
+
+    # Sets the widget layout direction.
+    def layout_direction=(value : LayoutDirection) : LayoutDirection
+      LibQt6.qt6cr_graphics_widget_set_layout_direction(to_unsafe, value.value)
+      value
+    end
+
+    # Resets the widget layout direction to Qt's inherited default.
+    def unset_layout_direction : self
+      LibQt6.qt6cr_graphics_widget_unset_layout_direction(to_unsafe)
+      self
+    end
+
+    # Returns the widget style, if present.
+    def style : Style?
+      handle = LibQt6.qt6cr_graphics_widget_style(to_unsafe)
+      handle.null? ? nil : Style.wrap(handle)
+    end
+
+    # Sets the widget style.
+    def style=(value : Style?) : Style?
+      LibQt6.qt6cr_graphics_widget_set_style(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value.try(&.adopt_by_parent!)
+      value
+    end
+
     # Returns the layout-item contents margins.
     def contents_margins : MarginsF
       value = LibQt6.qt6cr_graphics_widget_contents_margins(to_unsafe)
       MarginsF.new(value.left, value.top, value.right, value.bottom)
     end
 
+    # Sets the layout-item contents margins.
+    def set_contents_margins(left : Number, top : Number, right : Number, bottom : Number) : self
+      LibQt6.qt6cr_graphics_widget_set_contents_margins(to_unsafe, left.to_f64, top.to_f64, right.to_f64, bottom.to_f64)
+      self
+    end
+
     # Returns the rectangle inside the current contents margins.
     def contents_rect : RectF
       RectF.from_native(LibQt6.qt6cr_graphics_widget_contents_rect(to_unsafe))
+    end
+
+    # Returns the window-frame margins.
+    def window_frame_margins : MarginsF
+      value = LibQt6.qt6cr_graphics_widget_window_frame_margins(to_unsafe)
+      MarginsF.new(value.left, value.top, value.right, value.bottom)
+    end
+
+    # Sets the window-frame margins.
+    def set_window_frame_margins(left : Number, top : Number, right : Number, bottom : Number) : self
+      LibQt6.qt6cr_graphics_widget_set_window_frame_margins(to_unsafe, left.to_f64, top.to_f64, right.to_f64, bottom.to_f64)
+      self
+    end
+
+    # Resets explicit window-frame margins.
+    def unset_window_frame_margins : self
+      LibQt6.qt6cr_graphics_widget_unset_window_frame_margins(to_unsafe)
+      self
+    end
+
+    # Returns the window-frame geometry.
+    def window_frame_geometry : RectF
+      RectF.from_native(LibQt6.qt6cr_graphics_widget_window_frame_geometry(to_unsafe))
+    end
+
+    # Returns the window-frame rect in local coordinates.
+    def window_frame_rect : RectF
+      RectF.from_native(LibQt6.qt6cr_graphics_widget_window_frame_rect(to_unsafe))
     end
 
     # Returns the effective size hint for the given hint type.
@@ -338,6 +402,60 @@ module Qt6
     # Returns `true` when ownership currently belongs to a parent layout.
     def owned_by_layout? : Bool
       LibQt6.qt6cr_graphics_widget_owned_by_layout(to_unsafe)
+    end
+
+    # Returns the widget focus policy.
+    def focus_policy : FocusPolicy
+      FocusPolicy.from_value(LibQt6.qt6cr_graphics_widget_focus_policy(to_unsafe))
+    end
+
+    # Sets the widget focus policy.
+    def focus_policy=(value : FocusPolicy) : FocusPolicy
+      LibQt6.qt6cr_graphics_widget_set_focus_policy(to_unsafe, value.value)
+      value
+    end
+
+    # Returns `true` when the widget is the active scene window.
+    def active_window? : Bool
+      LibQt6.qt6cr_graphics_widget_is_active_window(to_unsafe)
+    end
+
+    # Returns the widget window title.
+    def window_title : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_graphics_widget_window_title(to_unsafe))
+    end
+
+    # Sets the widget window title.
+    def window_title=(value : String) : String
+      LibQt6.qt6cr_graphics_widget_set_window_title(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the focused descendant graphics widget, if any.
+    def focus_widget : GraphicsWidget?
+      handle = LibQt6.qt6cr_graphics_widget_focus_widget(to_unsafe)
+      handle.null? ? nil : GraphicsWidget.wrap(handle)
+    end
+
+    # Sets the tab order between two graphics widgets.
+    def self.set_tab_order(first : GraphicsWidget, second : GraphicsWidget) : Nil
+      LibQt6.qt6cr_graphics_widget_set_tab_order(first.to_unsafe, second.to_unsafe)
+    end
+
+    # Returns whether a widget attribute is currently set.
+    def attribute?(attribute : WidgetAttribute) : Bool
+      LibQt6.qt6cr_graphics_widget_test_attribute(to_unsafe, attribute.value)
+    end
+
+    # Sets or clears a widget attribute.
+    def set_attribute(attribute : WidgetAttribute, value : Bool = true) : self
+      LibQt6.qt6cr_graphics_widget_set_attribute(to_unsafe, attribute.value, value)
+      self
+    end
+
+    # Clears a widget attribute.
+    def clear_attribute(attribute : WidgetAttribute) : self
+      set_attribute(attribute, false)
     end
 
     # Returns the widget font.
@@ -420,6 +538,11 @@ module Qt6
       SizeF.from_native(LibQt6.qt6cr_graphics_widget_size(to_unsafe))
     end
 
+    # Returns the widget local rect.
+    def rect : RectF
+      RectF.from_native(LibQt6.qt6cr_graphics_widget_rect(to_unsafe))
+    end
+
     # Returns the widget's horizontal size policy.
     def horizontal_size_policy : SizePolicy
       SizePolicy.from_value(LibQt6.qt6cr_graphics_widget_horizontal_size_policy(to_unsafe))
@@ -473,6 +596,11 @@ module Qt6
     def adjust_size : self
       LibQt6.qt6cr_graphics_widget_adjust_size(to_unsafe)
       self
+    end
+
+    # Closes the graphics widget and returns Qt's close result.
+    def close : Bool
+      LibQt6.qt6cr_graphics_widget_close(to_unsafe)
     end
 
     protected def destroy_native : Nil
