@@ -408,6 +408,12 @@ module Qt6
     fun qt6cr_graphics_scene_mouse_event_set_source = qt6cr_graphics_scene_mouse_event_set_source(handle : Handle, source : LibC::Int)
     fun qt6cr_graphics_scene_mouse_event_flags = qt6cr_graphics_scene_mouse_event_flags(handle : Handle) : LibC::Int
     fun qt6cr_graphics_scene_mouse_event_set_flags = qt6cr_graphics_scene_mouse_event_set_flags(handle : Handle, flags : LibC::Int)
+    fun qt6cr_graphics_scene_move_event_create = qt6cr_graphics_scene_move_event_create : Handle
+    fun qt6cr_graphics_scene_move_event_destroy = qt6cr_graphics_scene_move_event_destroy(handle : Handle)
+    fun qt6cr_graphics_scene_move_event_old_pos = qt6cr_graphics_scene_move_event_old_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_move_event_set_old_pos = qt6cr_graphics_scene_move_event_set_old_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_move_event_new_pos = qt6cr_graphics_scene_move_event_new_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_move_event_set_new_pos = qt6cr_graphics_scene_move_event_set_new_pos(handle : Handle, value : PointFValue)
 
     fun qt6cr_application_create = qt6cr_application_create(argc : LibC::Int, argv : UInt8**) : Handle
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)

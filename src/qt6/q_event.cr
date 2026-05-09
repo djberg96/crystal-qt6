@@ -74,5 +74,10 @@ module Qt6
     def graphics_scene_mouse_event : GraphicsSceneMouseEvent
       GraphicsSceneMouseEvent.wrap(to_unsafe)
     end
+
+    # Returns this event reinterpreted as a live `QGraphicsSceneMoveEvent`.
+    def graphics_scene_move_event : GraphicsSceneMoveEvent
+      GraphicsSceneMoveEvent.wrap(to_unsafe)
+    end
   end
 end

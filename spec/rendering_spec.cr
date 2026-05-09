@@ -981,6 +981,41 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene move events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneMoveEvent.new
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneMove)
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 678_345
+    event.old_pos = Qt6::PointF.new(12.5, 22.5)
+    event.new_pos = Qt6::PointF.new(32.5, 42.5)
+    event.ignore
+    event.accepted?.should be_false
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(678_345_u64)
+    event.old_pos.should eq(Qt6::PointF.new(12.5, 22.5))
+    event.new_pos.should eq(Qt6::PointF.new(32.5, 42.5))
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneMove)
+    live_event = qevent.graphics_scene_move_event
+    live_event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    live_event.timestamp.should eq(678_345_u64)
+    live_event.old_pos.should eq(Qt6::PointF.new(12.5, 22.5))
+    live_event.new_pos.should eq(Qt6::PointF.new(32.5, 42.5))
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

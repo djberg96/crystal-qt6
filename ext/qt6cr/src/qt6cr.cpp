@@ -66,6 +66,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneMoveEvent>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -4324,6 +4325,40 @@ void qt6cr_graphics_scene_mouse_event_set_flags(qt6cr_handle_t handle, int flags
 
   if (event != nullptr) {
     event->setFlags(static_cast<Qt::MouseEventFlags>(flags));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_move_event_create() {
+  return new QGraphicsSceneMoveEvent();
+}
+
+void qt6cr_graphics_scene_move_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsSceneMoveEvent *>(handle);
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_move_event_old_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneMoveEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->oldPos());
+}
+
+void qt6cr_graphics_scene_move_event_set_old_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneMoveEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setOldPos(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_move_event_new_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneMoveEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->newPos());
+}
+
+void qt6cr_graphics_scene_move_event_set_new_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneMoveEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setNewPos(from_pointf(value));
   }
 }
 
