@@ -916,6 +916,71 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene mouse events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneMouseEvent.new(Qt6::EventType::GraphicsSceneMousePress)
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneMousePress)
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 567_234
+    event.pos = Qt6::PointF.new(7.0, 9.0)
+    event.scene_pos = Qt6::PointF.new(17.0, 19.0)
+    event.screen_pos = Qt6::Point.new(27, 29)
+    event.set_button_down_pos(1, Qt6::PointF.new(6.0, 8.0))
+    event.set_button_down_scene_pos(1, Qt6::PointF.new(16.0, 18.0))
+    event.set_button_down_screen_pos(1, Qt6::Point.new(26, 28))
+    event.last_pos = Qt6::PointF.new(6.5, 8.5)
+    event.last_scene_pos = Qt6::PointF.new(16.5, 18.5)
+    event.last_screen_pos = Qt6::Point.new(26, 28)
+    event.buttons = 1
+    event.button = 1
+    event.modifiers = 0x02000000
+    event.source = 1
+    event.flags = 1
+    event.ignore
+    event.accepted?.should be_false
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(567_234_u64)
+    event.pos.should eq(Qt6::PointF.new(7.0, 9.0))
+    event.scene_pos.should eq(Qt6::PointF.new(17.0, 19.0))
+    event.screen_pos.should eq(Qt6::Point.new(27, 29))
+    event.button_down_pos(1).should eq(Qt6::PointF.new(6.0, 8.0))
+    event.button_down_scene_pos(1).should eq(Qt6::PointF.new(16.0, 18.0))
+    event.button_down_screen_pos(1).should eq(Qt6::Point.new(26, 28))
+    event.last_pos.should eq(Qt6::PointF.new(6.5, 8.5))
+    event.last_scene_pos.should eq(Qt6::PointF.new(16.5, 18.5))
+    event.last_screen_pos.should eq(Qt6::Point.new(26, 28))
+    event.buttons.should eq(1)
+    event.button.should eq(1)
+    event.modifiers.should eq(0x02000000)
+    event.source.should eq(1)
+    event.flags.should eq(1)
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneMousePress)
+    live_event = qevent.graphics_scene_mouse_event
+    live_event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    live_event.timestamp.should eq(567_234_u64)
+    live_event.pos.should eq(Qt6::PointF.new(7.0, 9.0))
+    live_event.scene_pos.should eq(Qt6::PointF.new(17.0, 19.0))
+    live_event.screen_pos.should eq(Qt6::Point.new(27, 29))
+    live_event.button_down_pos(1).should eq(Qt6::PointF.new(6.0, 8.0))
+    live_event.last_pos.should eq(Qt6::PointF.new(6.5, 8.5))
+    live_event.button.should eq(1)
+    live_event.source.should eq(1)
+    live_event.flags.should eq(1)
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 
