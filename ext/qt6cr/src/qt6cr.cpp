@@ -66,6 +66,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
+#include <QGraphicsScale>
 #include <QGraphicsRotation>
 #include <QGraphicsTransform>
 #include <QGraphicsObject>
@@ -232,6 +233,7 @@ QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
 QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle);
+QGraphicsScale *as_graphics_scale(qt6cr_handle_t handle);
 QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle);
 QGraphicsObject *as_graphics_object(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
@@ -1529,6 +1531,10 @@ QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle) {
   return static_cast<QGraphicsTransform *>(handle);
 }
 
+QGraphicsScale *as_graphics_scale(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsScale *>(handle);
+}
+
 QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle) {
   return static_cast<QGraphicsRotation *>(handle);
 }
@@ -2512,6 +2518,10 @@ int qt6cr_graphics_transform_kind(qt6cr_handle_t handle) {
     return 0;
   }
 
+  if (dynamic_cast<QGraphicsScale *>(transform) != nullptr) {
+    return 2;
+  }
+
   if (dynamic_cast<QGraphicsRotation *>(transform) != nullptr) {
     return 1;
   }
@@ -2521,6 +2531,126 @@ int qt6cr_graphics_transform_kind(qt6cr_handle_t handle) {
 
 qt6cr_handle_t qt6cr_graphics_transform_to_rotation(qt6cr_handle_t handle) {
   return dynamic_cast<QGraphicsRotation *>(as_graphics_transform(handle));
+}
+
+qt6cr_handle_t qt6cr_graphics_transform_to_scale(qt6cr_handle_t handle) {
+  return dynamic_cast<QGraphicsScale *>(as_graphics_transform(handle));
+}
+
+qt6cr_handle_t qt6cr_graphics_scale_create(qt6cr_handle_t parent) {
+  return new QGraphicsScale(as_object(parent));
+}
+
+qt6cr_vector3d_t qt6cr_graphics_scale_origin(qt6cr_handle_t handle) {
+  auto *scale = as_graphics_scale(handle);
+  return scale == nullptr ? qt6cr_vector3d_t{0.0, 0.0, 0.0} : to_vector3d(scale->origin());
+}
+
+void qt6cr_graphics_scale_set_origin(qt6cr_handle_t handle, qt6cr_vector3d_t value) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale != nullptr) {
+    scale->setOrigin(from_vector3d(value));
+  }
+}
+
+double qt6cr_graphics_scale_x_scale(qt6cr_handle_t handle) {
+  auto *scale = as_graphics_scale(handle);
+  return scale == nullptr ? 1.0 : scale->xScale();
+}
+
+void qt6cr_graphics_scale_set_x_scale(qt6cr_handle_t handle, double value) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale != nullptr) {
+    scale->setXScale(value);
+  }
+}
+
+double qt6cr_graphics_scale_y_scale(qt6cr_handle_t handle) {
+  auto *scale = as_graphics_scale(handle);
+  return scale == nullptr ? 1.0 : scale->yScale();
+}
+
+void qt6cr_graphics_scale_set_y_scale(qt6cr_handle_t handle, double value) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale != nullptr) {
+    scale->setYScale(value);
+  }
+}
+
+double qt6cr_graphics_scale_z_scale(qt6cr_handle_t handle) {
+  auto *scale = as_graphics_scale(handle);
+  return scale == nullptr ? 1.0 : scale->zScale();
+}
+
+void qt6cr_graphics_scale_set_z_scale(qt6cr_handle_t handle, double value) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale != nullptr) {
+    scale->setZScale(value);
+  }
+}
+
+void qt6cr_graphics_scale_on_origin_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scale, &QGraphicsScale::originChanged, scale, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_scale_on_x_scale_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scale, &QGraphicsScale::xScaleChanged, scale, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_scale_on_y_scale_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scale, &QGraphicsScale::yScaleChanged, scale, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_scale_on_z_scale_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scale, &QGraphicsScale::zScaleChanged, scale, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_scale_on_scale_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scale = as_graphics_scale(handle);
+
+  if (scale == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scale, &QGraphicsScale::scaleChanged, scale, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 qt6cr_handle_t qt6cr_graphics_rotation_create(qt6cr_handle_t parent) {

@@ -552,6 +552,47 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scales" do
+    app
+
+    item = Qt6::GraphicsRectItem.new(0, 0, 12, 8)
+    scale = Qt6::GraphicsScale.new
+    origin_changes = 0
+    x_scale_changes = 0
+    y_scale_changes = 0
+    z_scale_changes = 0
+    scale_changes = 0
+
+    scale.on_origin_changed { origin_changes += 1 }
+    scale.on_x_scale_changed { x_scale_changes += 1 }
+    scale.on_y_scale_changed { y_scale_changes += 1 }
+    scale.on_z_scale_changed { z_scale_changes += 1 }
+    scale.on_scale_changed { scale_changes += 1 }
+
+    scale.origin = Qt6::Vector3D.new(2.0, 3.0, 4.0)
+    scale.x_scale = 1.5
+    scale.set_y_scale(2.0)
+    scale.set_z_scale(0.75)
+    item.transformations = [scale]
+
+    item_scale = item.transformations.first.as(Qt6::GraphicsScale)
+
+    scale.origin.should eq(Qt6::Vector3D.new(2.0, 3.0, 4.0))
+    scale.x_scale.should eq(1.5)
+    scale.y_scale.should eq(2.0)
+    scale.z_scale.should eq(0.75)
+    origin_changes.should eq(1)
+    x_scale_changes.should eq(1)
+    y_scale_changes.should eq(1)
+    z_scale_changes.should eq(1)
+    scale_changes.should eq(3)
+    item.transformations.size.should eq(1)
+    item_scale.to_unsafe.should eq(scale.to_unsafe)
+
+    scale.release
+    item.release
+  end
+
   it "supports graphics objects" do
     app
 
