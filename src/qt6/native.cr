@@ -21,6 +21,12 @@ module Qt6
       y : Float64
     end
 
+    struct Vector3DValue
+      x : Float64
+      y : Float64
+      z : Float64
+    end
+
     struct LineFValue
       x1 : Float64
       y1 : Float64
@@ -151,6 +157,19 @@ module Qt6
     fun qt6cr_object_signals_blocked = qt6cr_object_signals_blocked(handle : Handle) : Bool
     fun qt6cr_object_install_event_filter = qt6cr_object_install_event_filter(handle : Handle, filter : Handle)
     fun qt6cr_object_remove_event_filter = qt6cr_object_remove_event_filter(handle : Handle, filter : Handle)
+    fun qt6cr_graphics_transform_kind = qt6cr_graphics_transform_kind(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_transform_to_rotation = qt6cr_graphics_transform_to_rotation(handle : Handle) : Handle
+    fun qt6cr_graphics_rotation_create = qt6cr_graphics_rotation_create(parent : Handle) : Handle
+    fun qt6cr_graphics_rotation_origin = qt6cr_graphics_rotation_origin(handle : Handle) : Vector3DValue
+    fun qt6cr_graphics_rotation_set_origin = qt6cr_graphics_rotation_set_origin(handle : Handle, value : Vector3DValue)
+    fun qt6cr_graphics_rotation_angle = qt6cr_graphics_rotation_angle(handle : Handle) : Float64
+    fun qt6cr_graphics_rotation_set_angle = qt6cr_graphics_rotation_set_angle(handle : Handle, value : Float64)
+    fun qt6cr_graphics_rotation_axis = qt6cr_graphics_rotation_axis(handle : Handle) : Vector3DValue
+    fun qt6cr_graphics_rotation_set_axis_vector = qt6cr_graphics_rotation_set_axis_vector(handle : Handle, value : Vector3DValue)
+    fun qt6cr_graphics_rotation_set_axis_enum = qt6cr_graphics_rotation_set_axis_enum(handle : Handle, value : LibC::Int)
+    fun qt6cr_graphics_rotation_on_origin_changed = qt6cr_graphics_rotation_on_origin_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_graphics_rotation_on_angle_changed = qt6cr_graphics_rotation_on_angle_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_graphics_rotation_on_axis_changed = qt6cr_graphics_rotation_on_axis_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_graphics_object_create = qt6cr_graphics_object_create(parent : Handle) : Handle
     fun qt6cr_graphics_object_destroy = qt6cr_graphics_object_destroy(handle : Handle)
     fun qt6cr_graphics_object_parent_object = qt6cr_graphics_object_parent_object(handle : Handle) : Handle
@@ -1553,6 +1572,8 @@ module Qt6
     fun qt6cr_graphics_item_set_rotation = qt6cr_graphics_item_set_rotation(handle : Handle, value : Float64)
     fun qt6cr_graphics_item_scale = qt6cr_graphics_item_scale(handle : Handle) : Float64
     fun qt6cr_graphics_item_set_scale = qt6cr_graphics_item_set_scale(handle : Handle, value : Float64)
+    fun qt6cr_graphics_item_transformations = qt6cr_graphics_item_transformations(handle : Handle) : HandleArrayValue
+    fun qt6cr_graphics_item_set_transformations = qt6cr_graphics_item_set_transformations(handle : Handle, values : Handle*, count : LibC::Int)
     fun qt6cr_graphics_item_transform_origin_point = qt6cr_graphics_item_transform_origin_point(handle : Handle) : PointFValue
     fun qt6cr_graphics_item_set_transform_origin_point = qt6cr_graphics_item_set_transform_origin_point(handle : Handle, point : PointFValue)
     fun qt6cr_graphics_item_z_value = qt6cr_graphics_item_z_value(handle : Handle) : Float64
@@ -1601,6 +1622,8 @@ module Qt6
     fun qt6cr_graphics_widget_set_rotation = qt6cr_graphics_widget_set_rotation(handle : Handle, value : Float64)
     fun qt6cr_graphics_widget_scale = qt6cr_graphics_widget_scale(handle : Handle) : Float64
     fun qt6cr_graphics_widget_set_scale = qt6cr_graphics_widget_set_scale(handle : Handle, value : Float64)
+    fun qt6cr_graphics_widget_transformations = qt6cr_graphics_widget_transformations(handle : Handle) : HandleArrayValue
+    fun qt6cr_graphics_widget_set_transformations = qt6cr_graphics_widget_set_transformations(handle : Handle, values : Handle*, count : LibC::Int)
     fun qt6cr_graphics_widget_transform_origin_point = qt6cr_graphics_widget_transform_origin_point(handle : Handle) : PointFValue
     fun qt6cr_graphics_widget_set_transform_origin_point = qt6cr_graphics_widget_set_transform_origin_point(handle : Handle, point : PointFValue)
     fun qt6cr_graphics_widget_z_value = qt6cr_graphics_widget_z_value(handle : Handle) : Float64

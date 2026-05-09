@@ -191,6 +191,25 @@ module Qt6
       scale
     end
 
+    # Returns the ordered list of graphics transforms applied after the local transform.
+    def transformations : Array(GraphicsTransform)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_graphics_widget_transformations(to_unsafe)).map do |handle|
+        GraphicsTransform.wrap(handle).as(GraphicsTransform)
+      end
+    end
+
+    # Replaces the ordered list of graphics transforms and returns it.
+    def transformations=(value : Enumerable(GraphicsTransform)) : Array(GraphicsTransform)
+      transforms = value.to_a.map(&.as(GraphicsTransform))
+      handles = transforms.map(&.to_unsafe)
+      LibQt6.qt6cr_graphics_widget_set_transformations(
+        to_unsafe,
+        handles.empty? ? Pointer(LibQt6::Handle).null : handles.to_unsafe,
+        handles.size
+      )
+      transforms
+    end
+
     # Returns the transform origin point.
     def transform_origin_point : PointF
       PointF.from_native(LibQt6.qt6cr_graphics_widget_transform_origin_point(to_unsafe))

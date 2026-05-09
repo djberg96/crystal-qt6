@@ -19,6 +19,12 @@ typedef struct {
 } qt6cr_pointf_t;
 
 typedef struct {
+	double x;
+	double y;
+	double z;
+} qt6cr_vector3d_t;
+
+typedef struct {
 	int width;
 	int height;
 } qt6cr_size_t;
@@ -192,6 +198,19 @@ bool qt6cr_object_block_signals(qt6cr_handle_t handle, bool block);
 bool qt6cr_object_signals_blocked(qt6cr_handle_t handle);
 void qt6cr_object_install_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filter);
 void qt6cr_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filter);
+int qt6cr_graphics_transform_kind(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_graphics_transform_to_rotation(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_graphics_rotation_create(qt6cr_handle_t parent);
+qt6cr_vector3d_t qt6cr_graphics_rotation_origin(qt6cr_handle_t handle);
+void qt6cr_graphics_rotation_set_origin(qt6cr_handle_t handle, qt6cr_vector3d_t value);
+double qt6cr_graphics_rotation_angle(qt6cr_handle_t handle);
+void qt6cr_graphics_rotation_set_angle(qt6cr_handle_t handle, double value);
+qt6cr_vector3d_t qt6cr_graphics_rotation_axis(qt6cr_handle_t handle);
+void qt6cr_graphics_rotation_set_axis_vector(qt6cr_handle_t handle, qt6cr_vector3d_t value);
+void qt6cr_graphics_rotation_set_axis_enum(qt6cr_handle_t handle, int value);
+void qt6cr_graphics_rotation_on_origin_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_graphics_rotation_on_angle_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_graphics_rotation_on_axis_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 qt6cr_handle_t qt6cr_graphics_object_create(qt6cr_handle_t parent);
 void qt6cr_graphics_object_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_graphics_object_parent_object(qt6cr_handle_t handle);
@@ -1595,6 +1614,8 @@ double qt6cr_graphics_item_rotation(qt6cr_handle_t handle);
 void qt6cr_graphics_item_set_rotation(qt6cr_handle_t handle, double value);
 double qt6cr_graphics_item_scale(qt6cr_handle_t handle);
 void qt6cr_graphics_item_set_scale(qt6cr_handle_t handle, double value);
+qt6cr_handle_array_t qt6cr_graphics_item_transformations(qt6cr_handle_t handle);
+void qt6cr_graphics_item_set_transformations(qt6cr_handle_t handle, qt6cr_handle_t *values, int count);
 qt6cr_pointf_t qt6cr_graphics_item_transform_origin_point(qt6cr_handle_t handle);
 void qt6cr_graphics_item_set_transform_origin_point(qt6cr_handle_t handle, qt6cr_pointf_t point);
 double qt6cr_graphics_item_z_value(qt6cr_handle_t handle);
@@ -1643,6 +1664,8 @@ double qt6cr_graphics_widget_rotation(qt6cr_handle_t handle);
 void qt6cr_graphics_widget_set_rotation(qt6cr_handle_t handle, double value);
 double qt6cr_graphics_widget_scale(qt6cr_handle_t handle);
 void qt6cr_graphics_widget_set_scale(qt6cr_handle_t handle, double value);
+qt6cr_handle_array_t qt6cr_graphics_widget_transformations(qt6cr_handle_t handle);
+void qt6cr_graphics_widget_set_transformations(qt6cr_handle_t handle, qt6cr_handle_t *values, int count);
 qt6cr_pointf_t qt6cr_graphics_widget_transform_origin_point(qt6cr_handle_t handle);
 void qt6cr_graphics_widget_set_transform_origin_point(qt6cr_handle_t handle, qt6cr_pointf_t point);
 double qt6cr_graphics_widget_z_value(qt6cr_handle_t handle);

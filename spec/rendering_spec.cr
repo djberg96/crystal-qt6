@@ -500,6 +500,58 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics rotations and transformation lists" do
+    app
+
+    item = Qt6::GraphicsRectItem.new(0, 0, 12, 8)
+    widget = Qt6::GraphicsWidget.new
+    rotation = Qt6::GraphicsRotation.new
+    widget_rotation_source = Qt6::GraphicsRotation.new
+    origin_changes = 0
+    angle_changes = 0
+    axis_changes = 0
+
+    rotation.on_origin_changed { origin_changes += 1 }
+    rotation.on_angle_changed { angle_changes += 1 }
+    rotation.on_axis_changed { axis_changes += 1 }
+
+    rotation.origin = Qt6::Vector3D.new(1.0, 2.0, 3.0)
+    rotation.angle = 45
+    rotation.axis = Qt6::Vector3D.new(0.0, 1.0, 0.0)
+    rotation.set_axis(Qt6::Axis::XAxis)
+
+    item.transformations = [rotation]
+    widget_rotation_source.angle = 12
+    widget_rotation_source.axis = Qt6::Axis::YAxis
+
+    widget.transformations = [widget_rotation_source]
+
+    item_rotation = item.transformations.first.as(Qt6::GraphicsRotation)
+    widget_rotation = widget.transformations.first.as(Qt6::GraphicsRotation)
+
+    rotation.origin.should eq(Qt6::Vector3D.new(1.0, 2.0, 3.0))
+    rotation.angle.should eq(45.0)
+    rotation.axis.should eq(Qt6::Vector3D.new(1.0, 0.0, 0.0))
+    origin_changes.should eq(1)
+    angle_changes.should eq(1)
+    axis_changes.should eq(2)
+    item.transformations.size.should eq(1)
+    widget.transformations.size.should eq(1)
+    item_rotation.to_unsafe.should eq(rotation.to_unsafe)
+    widget_rotation.to_unsafe.should eq(widget_rotation_source.to_unsafe)
+    widget_rotation.angle.should eq(12.0)
+    widget_rotation.axis.should eq(Qt6::Vector3D.new(0.0, 1.0, 0.0))
+
+    widget.transformations = [] of Qt6::GraphicsTransform
+    widget.transformations.should be_empty
+
+    # Qt expects graphics transforms to outlive graphics widgets that used them.
+    rotation.release
+    widget_rotation_source.release
+    item.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

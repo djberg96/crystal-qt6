@@ -66,6 +66,8 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
+#include <QGraphicsRotation>
+#include <QGraphicsTransform>
 #include <QGraphicsObject>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsView>
@@ -213,6 +215,7 @@ struct ApplicationState {
 qt6cr_pointf_t to_pointf(const QPointF &point);
 qt6cr_pointf_t to_pointf(const QPoint &point);
 qt6cr_point_t to_point(const QPoint &point);
+qt6cr_vector3d_t to_vector3d(const QVector3D &vector);
 qt6cr_linef_t to_linef(const QLineF &line);
 qt6cr_size_t to_size(const QSize &size);
 qt6cr_rect_t to_rect(const QRect &rect);
@@ -224,9 +227,12 @@ qt6cr_color_t to_color(const QColor &color);
 qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
 QLineF from_linef(qt6cr_linef_t line);
+QVector3D from_vector3d(qt6cr_vector3d_t vector);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
+QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle);
+QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle);
 QGraphicsObject *as_graphics_object(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
@@ -254,6 +260,7 @@ qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1472,6 +1479,22 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values) {
   return qt6cr_handle_array_t{copy, size};
 }
 
+qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
 QMimeData *clone_mime_data(const QMimeData *source) {
   if (source == nullptr) {
     return nullptr;
@@ -1500,6 +1523,14 @@ QWidget *as_widget(qt6cr_handle_t handle) {
 
 QStyle *as_style(qt6cr_handle_t handle) {
   return static_cast<QStyle *>(handle);
+}
+
+QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsTransform *>(handle);
+}
+
+QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsRotation *>(handle);
 }
 
 QGraphicsObject *as_graphics_object(qt6cr_handle_t handle) {
@@ -2218,6 +2249,10 @@ qt6cr_point_t to_point(const QPoint &point) {
   return qt6cr_point_t{point.x(), point.y()};
 }
 
+qt6cr_vector3d_t to_vector3d(const QVector3D &vector) {
+  return qt6cr_vector3d_t{vector.x(), vector.y(), vector.z()};
+}
+
 qt6cr_linef_t to_linef(const QLineF &line) {
   return qt6cr_linef_t{line.x1(), line.y1(), line.x2(), line.y2()};
 }
@@ -2327,6 +2362,10 @@ QPoint from_point(qt6cr_point_t point) {
 
 QLineF from_linef(qt6cr_linef_t line) {
   return QLineF(line.x1, line.y1, line.x2, line.y2);
+}
+
+QVector3D from_vector3d(qt6cr_vector3d_t vector) {
+  return QVector3D(vector.x, vector.y, vector.z);
 }
 
 QRectF from_rectf(qt6cr_rectf_t rect) {
@@ -2464,6 +2503,111 @@ void qt6cr_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filt
   if (object != nullptr && event_filter != nullptr) {
     object->removeEventFilter(event_filter);
   }
+}
+
+int qt6cr_graphics_transform_kind(qt6cr_handle_t handle) {
+  auto *transform = as_graphics_transform(handle);
+
+  if (transform == nullptr) {
+    return 0;
+  }
+
+  if (dynamic_cast<QGraphicsRotation *>(transform) != nullptr) {
+    return 1;
+  }
+
+  return 0;
+}
+
+qt6cr_handle_t qt6cr_graphics_transform_to_rotation(qt6cr_handle_t handle) {
+  return dynamic_cast<QGraphicsRotation *>(as_graphics_transform(handle));
+}
+
+qt6cr_handle_t qt6cr_graphics_rotation_create(qt6cr_handle_t parent) {
+  return new QGraphicsRotation(as_object(parent));
+}
+
+qt6cr_vector3d_t qt6cr_graphics_rotation_origin(qt6cr_handle_t handle) {
+  auto *rotation = as_graphics_rotation(handle);
+  return rotation == nullptr ? qt6cr_vector3d_t{0.0, 0.0, 0.0} : to_vector3d(rotation->origin());
+}
+
+void qt6cr_graphics_rotation_set_origin(qt6cr_handle_t handle, qt6cr_vector3d_t value) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation != nullptr) {
+    rotation->setOrigin(from_vector3d(value));
+  }
+}
+
+double qt6cr_graphics_rotation_angle(qt6cr_handle_t handle) {
+  auto *rotation = as_graphics_rotation(handle);
+  return rotation == nullptr ? 0.0 : rotation->angle();
+}
+
+void qt6cr_graphics_rotation_set_angle(qt6cr_handle_t handle, double value) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation != nullptr) {
+    rotation->setAngle(value);
+  }
+}
+
+qt6cr_vector3d_t qt6cr_graphics_rotation_axis(qt6cr_handle_t handle) {
+  auto *rotation = as_graphics_rotation(handle);
+  return rotation == nullptr ? qt6cr_vector3d_t{0.0, 0.0, 1.0} : to_vector3d(rotation->axis());
+}
+
+void qt6cr_graphics_rotation_set_axis_vector(qt6cr_handle_t handle, qt6cr_vector3d_t value) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation != nullptr) {
+    rotation->setAxis(from_vector3d(value));
+  }
+}
+
+void qt6cr_graphics_rotation_set_axis_enum(qt6cr_handle_t handle, int value) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation != nullptr) {
+    rotation->setAxis(static_cast<Qt::Axis>(value));
+  }
+}
+
+void qt6cr_graphics_rotation_on_origin_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(rotation, &QGraphicsRotation::originChanged, rotation, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_rotation_on_angle_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(rotation, &QGraphicsRotation::angleChanged, rotation, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_rotation_on_axis_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *rotation = as_graphics_rotation(handle);
+
+  if (rotation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(rotation, &QGraphicsRotation::axisChanged, rotation, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 qt6cr_handle_t qt6cr_graphics_object_create(qt6cr_handle_t parent) {
@@ -11797,6 +11941,35 @@ void qt6cr_graphics_item_set_scale(qt6cr_handle_t handle, double value) {
   }
 }
 
+qt6cr_handle_array_t qt6cr_graphics_item_transformations(qt6cr_handle_t handle) {
+  auto *item = as_graphics_item(handle);
+  return item == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(item->transformations());
+}
+
+void qt6cr_graphics_item_set_transformations(qt6cr_handle_t handle, qt6cr_handle_t *values, int count) {
+  auto *item = as_graphics_item(handle);
+
+  if (item == nullptr) {
+    return;
+  }
+
+  QList<QGraphicsTransform *> transforms;
+
+  if (values != nullptr && count > 0) {
+    transforms.reserve(count);
+
+    for (int index = 0; index < count; ++index) {
+      auto *transform = as_graphics_transform(values[index]);
+
+      if (transform != nullptr) {
+        transforms.append(transform);
+      }
+    }
+  }
+
+  item->setTransformations(transforms);
+}
+
 qt6cr_pointf_t qt6cr_graphics_item_transform_origin_point(qt6cr_handle_t handle) {
   auto *item = as_graphics_item(handle);
   return item == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(item->transformOriginPoint());
@@ -12097,6 +12270,35 @@ void qt6cr_graphics_widget_set_scale(qt6cr_handle_t handle, double value) {
   if (widget != nullptr) {
     static_cast<QGraphicsItem *>(widget)->setScale(value);
   }
+}
+
+qt6cr_handle_array_t qt6cr_graphics_widget_transformations(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(static_cast<QGraphicsItem *>(widget)->transformations());
+}
+
+void qt6cr_graphics_widget_set_transformations(qt6cr_handle_t handle, qt6cr_handle_t *values, int count) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget == nullptr) {
+    return;
+  }
+
+  QList<QGraphicsTransform *> transforms;
+
+  if (values != nullptr && count > 0) {
+    transforms.reserve(count);
+
+    for (int index = 0; index < count; ++index) {
+      auto *transform = as_graphics_transform(values[index]);
+
+      if (transform != nullptr) {
+        transforms.append(transform);
+      }
+    }
+  }
+
+  static_cast<QGraphicsItem *>(widget)->setTransformations(transforms);
 }
 
 qt6cr_pointf_t qt6cr_graphics_widget_transform_origin_point(qt6cr_handle_t handle) {
