@@ -2064,6 +2064,15 @@ module Qt6
     fun qt6cr_graphics_path_item_set_path = qt6cr_graphics_path_item_set_path(handle : Handle, path : Handle)
     fun qt6cr_graphics_path_item_bounding_rect = qt6cr_graphics_path_item_bounding_rect(handle : Handle) : RectFValue
     fun qt6cr_graphics_path_item_contains = qt6cr_graphics_path_item_contains(handle : Handle, point : PointFValue) : Bool
+    fun qt6cr_graphics_simple_text_item_create = qt6cr_graphics_simple_text_item_create(parent : Handle) : Handle
+    fun qt6cr_graphics_simple_text_item_create_with_text = qt6cr_graphics_simple_text_item_create_with_text(text : UInt8*, parent : Handle) : Handle
+    fun qt6cr_graphics_simple_text_item_text = qt6cr_graphics_simple_text_item_text(handle : Handle) : UInt8*
+    fun qt6cr_graphics_simple_text_item_set_text = qt6cr_graphics_simple_text_item_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_graphics_simple_text_item_font = qt6cr_graphics_simple_text_item_font(handle : Handle) : Handle
+    fun qt6cr_graphics_simple_text_item_set_font = qt6cr_graphics_simple_text_item_set_font(handle : Handle, font : Handle)
+    fun qt6cr_graphics_simple_text_item_bounding_rect = qt6cr_graphics_simple_text_item_bounding_rect(handle : Handle) : RectFValue
+    fun qt6cr_graphics_simple_text_item_shape = qt6cr_graphics_simple_text_item_shape(handle : Handle) : Handle
+    fun qt6cr_graphics_simple_text_item_contains = qt6cr_graphics_simple_text_item_contains(handle : Handle, point : PointFValue) : Bool
     fun qt6cr_graphics_pixmap_item_create = qt6cr_graphics_pixmap_item_create(parent : Handle) : Handle
     fun qt6cr_graphics_pixmap_item_create_with_pixmap = qt6cr_graphics_pixmap_item_create_with_pixmap(pixmap : Handle, parent : Handle) : Handle
     fun qt6cr_graphics_pixmap_item_pixmap = qt6cr_graphics_pixmap_item_pixmap(handle : Handle) : Handle

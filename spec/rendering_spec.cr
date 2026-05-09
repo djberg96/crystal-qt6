@@ -1269,6 +1269,47 @@ describe Qt6 do
     parent.release
   end
 
+  it "supports graphics simple text items" do
+    app
+
+    parent = Qt6::AbstractGraphicsShapeItem.new
+    item = Qt6::GraphicsSimpleTextItem.new("I", parent)
+    font = Qt6::QFont.new("Helvetica", 18, bold: true)
+    pen = Qt6::QPen.new(Qt6::Color.new(180, 40, 90), 1.5)
+    brush = Qt6::QBrush.new(Qt6::Color.new(30, 120, 210, 220))
+
+    item.font = font
+    item.pen = pen
+    item.brush = brush
+
+    item.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    item.text.should eq("I")
+    item.font.family.should eq(font.family)
+    item.font.point_size.should eq(18)
+    item.font.bold?.should be_true
+    item.pen.color.should eq(Qt6::Color.new(180, 40, 90, 255))
+    item.pen.width.should eq(1.5)
+    item.brush.color.should eq(Qt6::Color.new(30, 120, 210, 220))
+    item.bounding_rect.width.should be > 0.0
+    item.bounding_rect.height.should be > 0.0
+    item.shape.bounding_rect.width.should be > 0.0
+    item.shape.bounding_rect.height.should be > 0.0
+
+    hit = item.shape.bounding_rect
+    item.contains?(Qt6::PointF.new(hit.x + hit.width / 2.0, hit.y + hit.height / 2.0)).should be_true
+    item.contains?(Qt6::PointF.new(hit.x - 5.0, hit.y - 5.0)).should be_false
+    item.obscured_by?(parent).should be_false
+
+    before = item.bounding_rect.width
+    item.set_text("Qt6")
+
+    item.text.should eq("Qt6")
+    item.bounding_rect.width.should be > before
+    item.shape.bounding_rect.width.should be > 0.0
+
+    parent.release
+  end
+
   it "supports graphics pixmap items" do
     app
 

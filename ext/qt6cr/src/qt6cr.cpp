@@ -75,6 +75,7 @@
 #include <QGraphicsRotation>
 #include <QGraphicsTransform>
 #include <QGraphicsObject>
+#include <QGraphicsSimpleTextItem>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsView>
 #include <QGraphicsWidget>
@@ -252,6 +253,7 @@ QGraphicsRectItem *as_graphics_rect_item(qt6cr_handle_t handle);
 QGraphicsEllipseItem *as_graphics_ellipse_item(qt6cr_handle_t handle);
 QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle);
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle);
+QGraphicsSimpleTextItem *as_graphics_simple_text_item(qt6cr_handle_t handle);
 QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle);
 QGraphicsPolygonItem *as_graphics_polygon_item(qt6cr_handle_t handle);
 QGraphicsProxyWidget *as_graphics_proxy_widget(qt6cr_handle_t handle);
@@ -1625,6 +1627,10 @@ QGraphicsLineItem *as_graphics_line_item(qt6cr_handle_t handle) {
 
 QGraphicsPathItem *as_graphics_path_item(qt6cr_handle_t handle) {
   return static_cast<QGraphicsPathItem *>(handle);
+}
+
+QGraphicsSimpleTextItem *as_graphics_simple_text_item(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsSimpleTextItem *>(handle);
 }
 
 QGraphicsPixmapItem *as_graphics_pixmap_item(qt6cr_handle_t handle) {
@@ -15274,6 +15280,56 @@ qt6cr_rectf_t qt6cr_graphics_path_item_bounding_rect(qt6cr_handle_t handle) {
 
 bool qt6cr_graphics_path_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
   auto *item = as_graphics_path_item(handle);
+  return item != nullptr && item->contains(from_pointf(point));
+}
+
+qt6cr_handle_t qt6cr_graphics_simple_text_item_create(qt6cr_handle_t parent) {
+  return new QGraphicsSimpleTextItem(as_graphics_item(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_simple_text_item_create_with_text(const char *text, qt6cr_handle_t parent) {
+  return new QGraphicsSimpleTextItem(QString::fromUtf8(text == nullptr ? "" : text), as_graphics_item(parent));
+}
+
+char *qt6cr_graphics_simple_text_item_text(qt6cr_handle_t handle) {
+  auto *item = as_graphics_simple_text_item(handle);
+  return item == nullptr ? duplicate_string("") : duplicate_string(item->text());
+}
+
+void qt6cr_graphics_simple_text_item_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *item = as_graphics_simple_text_item(handle);
+
+  if (item != nullptr) {
+    item->setText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_simple_text_item_font(qt6cr_handle_t handle) {
+  auto *item = as_graphics_simple_text_item(handle);
+  return item == nullptr ? nullptr : new QFont(item->font());
+}
+
+void qt6cr_graphics_simple_text_item_set_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *item = as_graphics_simple_text_item(handle);
+  auto *value = as_qfont(font);
+
+  if (item != nullptr && value != nullptr) {
+    item->setFont(*value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_simple_text_item_bounding_rect(qt6cr_handle_t handle) {
+  auto *item = as_graphics_simple_text_item(handle);
+  return item == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(item->boundingRect());
+}
+
+qt6cr_handle_t qt6cr_graphics_simple_text_item_shape(qt6cr_handle_t handle) {
+  auto *item = as_graphics_simple_text_item(handle);
+  return item == nullptr ? nullptr : new QPainterPath(item->shape());
+}
+
+bool qt6cr_graphics_simple_text_item_contains(qt6cr_handle_t handle, qt6cr_pointf_t point) {
+  auto *item = as_graphics_simple_text_item(handle);
   return item != nullptr && item->contains(from_pointf(point));
 }
 
