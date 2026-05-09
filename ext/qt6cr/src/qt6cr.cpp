@@ -2315,6 +2315,14 @@ qt6cr_vector3d_t to_vector3d(const QVector3D &vector) {
   return qt6cr_vector3d_t{vector.x(), vector.y(), vector.z()};
 }
 
+qt6cr_matrix4x4_t to_matrix4x4(const QMatrix4x4 &matrix) {
+  return qt6cr_matrix4x4_t{
+      matrix(0, 0), matrix(0, 1), matrix(0, 2), matrix(0, 3),
+      matrix(1, 0), matrix(1, 1), matrix(1, 2), matrix(1, 3),
+      matrix(2, 0), matrix(2, 1), matrix(2, 2), matrix(2, 3),
+      matrix(3, 0), matrix(3, 1), matrix(3, 2), matrix(3, 3)};
+}
+
 qt6cr_linef_t to_linef(const QLineF &line) {
   return qt6cr_linef_t{line.x1(), line.y1(), line.x2(), line.y2()};
 }
@@ -2428,6 +2436,27 @@ QLineF from_linef(qt6cr_linef_t line) {
 
 QVector3D from_vector3d(qt6cr_vector3d_t vector) {
   return QVector3D(vector.x, vector.y, vector.z);
+}
+
+QMatrix4x4 from_matrix4x4(qt6cr_matrix4x4_t matrix) {
+  QMatrix4x4 value;
+  value(0, 0) = matrix.m11;
+  value(0, 1) = matrix.m12;
+  value(0, 2) = matrix.m13;
+  value(0, 3) = matrix.m14;
+  value(1, 0) = matrix.m21;
+  value(1, 1) = matrix.m22;
+  value(1, 2) = matrix.m23;
+  value(1, 3) = matrix.m24;
+  value(2, 0) = matrix.m31;
+  value(2, 1) = matrix.m32;
+  value(2, 2) = matrix.m33;
+  value(2, 3) = matrix.m34;
+  value(3, 0) = matrix.m41;
+  value(3, 1) = matrix.m42;
+  value(3, 2) = matrix.m43;
+  value(3, 3) = matrix.m44;
+  return value;
 }
 
 QRectF from_rectf(qt6cr_rectf_t rect) {
@@ -2591,6 +2620,25 @@ qt6cr_handle_t qt6cr_graphics_transform_to_rotation(qt6cr_handle_t handle) {
 
 qt6cr_handle_t qt6cr_graphics_transform_to_scale(qt6cr_handle_t handle) {
   return dynamic_cast<QGraphicsScale *>(as_graphics_transform(handle));
+}
+
+qt6cr_matrix4x4_t qt6cr_graphics_transform_apply_to(qt6cr_handle_t handle, qt6cr_matrix4x4_t matrix) {
+  auto *transform = as_graphics_transform(handle);
+  QMatrix4x4 value = from_matrix4x4(matrix);
+
+  if (transform != nullptr) {
+    transform->applyTo(&value);
+  }
+
+  return to_matrix4x4(value);
+}
+
+void qt6cr_graphics_transform_update(qt6cr_handle_t handle) {
+  auto *transform = as_graphics_transform(handle);
+
+  if (transform != nullptr) {
+    QMetaObject::invokeMethod(transform, "update", Qt::DirectConnection);
+  }
 }
 
 qt6cr_handle_t qt6cr_graphics_scale_create(qt6cr_handle_t parent) {

@@ -506,6 +506,7 @@ describe Qt6 do
     item = Qt6::GraphicsRectItem.new(0, 0, 12, 8)
     widget = Qt6::GraphicsWidget.new
     rotation = Qt6::GraphicsRotation.new
+    matrix_rotation = Qt6::GraphicsRotation.new
     widget_rotation_source = Qt6::GraphicsRotation.new
     origin_changes = 0
     angle_changes = 0
@@ -541,12 +542,22 @@ describe Qt6 do
     widget_rotation.to_unsafe.should eq(widget_rotation_source.to_unsafe)
     widget_rotation.angle.should eq(12.0)
     widget_rotation.axis.should eq(Qt6::Vector3D.new(0.0, 1.0, 0.0))
+    matrix_rotation.angle = 45
+    matrix_rotation.axis = Qt6::Axis::ZAxis
+    rotated = matrix_rotation.apply_to(Qt6::Matrix4x4.identity)
+    rotated[0, 0].should be_close(0.707106, 1e-5)
+    rotated[0, 1].should be_close(-0.707106, 1e-5)
+    rotated[1, 0].should be_close(0.707106, 1e-5)
+    rotated[1, 1].should be_close(0.707106, 1e-5)
+    rotated[2, 2].should be_close(1.0, 1e-6)
+    matrix_rotation.update
 
     widget.transformations = [] of Qt6::GraphicsTransform
     widget.transformations.should be_empty
 
     # Qt expects graphics transforms to outlive graphics widgets that used them.
     rotation.release
+    matrix_rotation.release
     widget_rotation_source.release
     item.release
     widget.release
@@ -588,6 +599,14 @@ describe Qt6 do
     scale_changes.should eq(3)
     item.transformations.size.should eq(1)
     item_scale.to_unsafe.should eq(scale.to_unsafe)
+    scaled = scale.apply_to(Qt6::Matrix4x4.identity)
+    scaled[0, 0].should be_close(1.5, 1e-6)
+    scaled[1, 1].should be_close(2.0, 1e-6)
+    scaled[2, 2].should be_close(0.75, 1e-6)
+    scaled[0, 3].should be_close(-1.0, 1e-6)
+    scaled[1, 3].should be_close(-3.0, 1e-6)
+    scaled[2, 3].should be_close(1.0, 1e-6)
+    scale.update
 
     scale.release
     item.release

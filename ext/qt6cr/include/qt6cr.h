@@ -25,6 +25,25 @@ typedef struct {
 } qt6cr_vector3d_t;
 
 typedef struct {
+	double m11;
+	double m12;
+	double m13;
+	double m14;
+	double m21;
+	double m22;
+	double m23;
+	double m24;
+	double m31;
+	double m32;
+	double m33;
+	double m34;
+	double m41;
+	double m42;
+	double m43;
+	double m44;
+} qt6cr_matrix4x4_t;
+
+typedef struct {
 	int width;
 	int height;
 } qt6cr_size_t;
@@ -201,6 +220,8 @@ void qt6cr_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filt
 int qt6cr_graphics_transform_kind(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_graphics_transform_to_rotation(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_graphics_transform_to_scale(qt6cr_handle_t handle);
+qt6cr_matrix4x4_t qt6cr_graphics_transform_apply_to(qt6cr_handle_t handle, qt6cr_matrix4x4_t matrix);
+void qt6cr_graphics_transform_update(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_graphics_scale_create(qt6cr_handle_t parent);
 qt6cr_vector3d_t qt6cr_graphics_scale_origin(qt6cr_handle_t handle);
 void qt6cr_graphics_scale_set_origin(qt6cr_handle_t handle, qt6cr_vector3d_t value);

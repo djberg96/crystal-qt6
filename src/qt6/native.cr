@@ -27,6 +27,25 @@ module Qt6
       z : Float64
     end
 
+    struct Matrix4x4Value
+      m11 : Float64
+      m12 : Float64
+      m13 : Float64
+      m14 : Float64
+      m21 : Float64
+      m22 : Float64
+      m23 : Float64
+      m24 : Float64
+      m31 : Float64
+      m32 : Float64
+      m33 : Float64
+      m34 : Float64
+      m41 : Float64
+      m42 : Float64
+      m43 : Float64
+      m44 : Float64
+    end
+
     struct LineFValue
       x1 : Float64
       y1 : Float64
@@ -160,6 +179,8 @@ module Qt6
     fun qt6cr_graphics_transform_kind = qt6cr_graphics_transform_kind(handle : Handle) : LibC::Int
     fun qt6cr_graphics_transform_to_rotation = qt6cr_graphics_transform_to_rotation(handle : Handle) : Handle
     fun qt6cr_graphics_transform_to_scale = qt6cr_graphics_transform_to_scale(handle : Handle) : Handle
+    fun qt6cr_graphics_transform_apply_to = qt6cr_graphics_transform_apply_to(handle : Handle, matrix : Matrix4x4Value) : Matrix4x4Value
+    fun qt6cr_graphics_transform_update = qt6cr_graphics_transform_update(handle : Handle)
     fun qt6cr_graphics_scale_create = qt6cr_graphics_scale_create(parent : Handle) : Handle
     fun qt6cr_graphics_scale_origin = qt6cr_graphics_scale_origin(handle : Handle) : Vector3DValue
     fun qt6cr_graphics_scale_set_origin = qt6cr_graphics_scale_set_origin(handle : Handle, value : Vector3DValue)

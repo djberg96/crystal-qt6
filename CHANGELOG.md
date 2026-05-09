@@ -33,7 +33,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsLinearLayout` bindings with orientation, nested layout insertion, stretch, spacing, alignment, and layout-item lookup helpers for ordered graphics-view composition.
 - Added `QGraphicsGridLayout` bindings with row and column placement, spacing, stretch, sizing, alignment, and shared graphics-layout helpers.
 - Expanded `QGraphicsItem` bindings with shared state, flags, cache-mode, geometry, transform, opacity, and stacking helpers, with matching safe inherited support on `QGraphicsWidget`.
-- Added `QGraphicsTransform` and `QGraphicsRotation` bindings with 3D origin/axis/angle helpers, change callbacks, and shared graphics-item transformation-list support.
+- Expanded `QGraphicsTransform` with shared matrix-application and update helpers, and added a `Matrix4x4` value type for graphics-view transform inspection.
 - Added `QGraphicsScale` bindings with origin and per-axis scale helpers plus change callbacks for 3D scale transforms in graphics-view scenes.
 - Added `QGraphicsItemGroup` bindings with grouping, ungrouping, bounding-rect, and opaque-area helpers, plus shared `QGraphicsItem#group` accessors.
 - Expanded `QGraphicsLayout` bindings with contents-margins readback, `update_geometry`, and the shared instant-invalidate propagation toggle.
