@@ -832,6 +832,41 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene help events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneHelpEvent.new
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneHelp)
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 345_678
+    event.scene_pos = Qt6::PointF.new(18.0, 28.0)
+    event.screen_pos = Qt6::Point.new(38, 48)
+    event.ignore
+    event.accepted?.should be_false
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(345_678_u64)
+    event.scene_pos.should eq(Qt6::PointF.new(18.0, 28.0))
+    event.screen_pos.should eq(Qt6::Point.new(38, 48))
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneHelp)
+    live_event = qevent.graphics_scene_help_event
+    live_event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    live_event.timestamp.should eq(345_678_u64)
+    live_event.scene_pos.should eq(Qt6::PointF.new(18.0, 28.0))
+    live_event.screen_pos.should eq(Qt6::Point.new(38, 48))
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

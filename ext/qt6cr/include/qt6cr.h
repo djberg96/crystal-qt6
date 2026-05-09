@@ -363,6 +363,12 @@ qt6cr_handle_t qt6cr_graphics_scene_drag_drop_event_source(qt6cr_handle_t handle
 void qt6cr_graphics_scene_drag_drop_event_set_source(qt6cr_handle_t handle, qt6cr_handle_t source);
 qt6cr_handle_t qt6cr_graphics_scene_drag_drop_event_mime_data(qt6cr_handle_t handle);
 void qt6cr_graphics_scene_drag_drop_event_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_data);
+qt6cr_handle_t qt6cr_graphics_scene_help_event_create(int type);
+void qt6cr_graphics_scene_help_event_destroy(qt6cr_handle_t handle);
+qt6cr_pointf_t qt6cr_graphics_scene_help_event_scene_pos(qt6cr_handle_t handle);
+void qt6cr_graphics_scene_help_event_set_scene_pos(qt6cr_handle_t handle, qt6cr_pointf_t value);
+qt6cr_point_t qt6cr_graphics_scene_help_event_screen_pos(qt6cr_handle_t handle);
+void qt6cr_graphics_scene_help_event_set_screen_pos(qt6cr_handle_t handle, qt6cr_point_t value);
 qt6cr_handle_t qt6cr_gesture_create(qt6cr_handle_t parent);
 int qt6cr_gesture_type(qt6cr_handle_t handle);
 int qt6cr_gesture_state(qt6cr_handle_t handle);

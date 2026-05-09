@@ -4003,6 +4003,40 @@ void qt6cr_graphics_scene_drag_drop_event_set_mime_data(qt6cr_handle_t handle, q
   }
 }
 
+qt6cr_handle_t qt6cr_graphics_scene_help_event_create(int type) {
+  return new QGraphicsSceneHelpEvent(static_cast<QEvent::Type>(type));
+}
+
+void qt6cr_graphics_scene_help_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsSceneHelpEvent *>(handle);
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_help_event_scene_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneHelpEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->scenePos());
+}
+
+void qt6cr_graphics_scene_help_event_set_scene_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneHelpEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScenePos(from_pointf(value));
+  }
+}
+
+qt6cr_point_t qt6cr_graphics_scene_help_event_screen_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneHelpEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->screenPos());
+}
+
+void qt6cr_graphics_scene_help_event_set_screen_pos(qt6cr_handle_t handle, qt6cr_point_t value) {
+  auto *event = static_cast<QGraphicsSceneHelpEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScreenPos(from_point(value));
+  }
+}
+
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv) {
   auto *state = new ApplicationState{};
   state->application = qobject_cast<QApplication *>(QCoreApplication::instance());
