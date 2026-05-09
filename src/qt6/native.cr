@@ -307,6 +307,12 @@ module Qt6
     fun qt6cr_event_ignore = qt6cr_event_ignore(handle : Handle)
     fun qt6cr_event_is_accepted = qt6cr_event_is_accepted(handle : Handle) : Bool
     fun qt6cr_event_mouse_event = qt6cr_event_mouse_event(handle : Handle) : MouseEventValue
+    fun qt6cr_graphics_scene_event_create = qt6cr_graphics_scene_event_create(type : LibC::Int) : Handle
+    fun qt6cr_graphics_scene_event_destroy = qt6cr_graphics_scene_event_destroy(handle : Handle)
+    fun qt6cr_graphics_scene_event_widget = qt6cr_graphics_scene_event_widget(handle : Handle) : Handle
+    fun qt6cr_graphics_scene_event_set_widget = qt6cr_graphics_scene_event_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_graphics_scene_event_timestamp = qt6cr_graphics_scene_event_timestamp(handle : Handle) : UInt64
+    fun qt6cr_graphics_scene_event_set_timestamp = qt6cr_graphics_scene_event_set_timestamp(handle : Handle, timestamp : UInt64)
     fun qt6cr_graphics_scene_context_menu_event_create = qt6cr_graphics_scene_context_menu_event_create(type : LibC::Int) : Handle
     fun qt6cr_graphics_scene_context_menu_event_destroy = qt6cr_graphics_scene_context_menu_event_destroy(handle : Handle)
     fun qt6cr_graphics_scene_context_menu_event_widget = qt6cr_graphics_scene_context_menu_event_widget(handle : Handle) : Handle

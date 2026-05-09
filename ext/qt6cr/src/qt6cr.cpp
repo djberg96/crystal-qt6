@@ -3698,6 +3698,40 @@ qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle) {
   return result;
 }
 
+qt6cr_handle_t qt6cr_graphics_scene_event_create(int type) {
+  return new QGraphicsSceneEvent(static_cast<QEvent::Type>(type));
+}
+
+void qt6cr_graphics_scene_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsSceneEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_event_widget(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneEvent *>(handle);
+  return event == nullptr ? nullptr : event->widget();
+}
+
+void qt6cr_graphics_scene_event_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *event = static_cast<QGraphicsSceneEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setWidget(as_widget(widget));
+  }
+}
+
+uint64_t qt6cr_graphics_scene_event_timestamp(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneEvent *>(handle);
+  return event == nullptr ? 0 : event->timestamp();
+}
+
+void qt6cr_graphics_scene_event_set_timestamp(qt6cr_handle_t handle, uint64_t timestamp) {
+  auto *event = static_cast<QGraphicsSceneEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setTimestamp(timestamp);
+  }
+}
+
 qt6cr_handle_t qt6cr_graphics_scene_context_menu_event_create(int type) {
   return new QGraphicsSceneContextMenuEvent(static_cast<QEvent::Type>(type));
 }

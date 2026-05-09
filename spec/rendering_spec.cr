@@ -741,6 +741,35 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneEvent.new(Qt6::EventType::GraphicsSceneContextMenu)
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneContextMenu)
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 234_567
+    event.ignore
+    event.accepted?.should be_false
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(234_567_u64)
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneContextMenu)
+    live_event = qevent.graphics_scene_event
+    live_event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    live_event.timestamp.should eq(234_567_u64)
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics scene drag-drop events" do
     app
 
