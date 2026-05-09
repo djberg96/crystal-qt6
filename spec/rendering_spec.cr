@@ -1763,9 +1763,13 @@ describe Qt6 do
   it "supports graphics-view configuration and transforms" do
     app
 
-    view = Qt6::GraphicsView.new
+    scene = Qt6::GraphicsScene.new(Qt6::RectF.new(0.0, 0.0, 80.0, 60.0))
+    rect_item = scene.add_rect(10, 10, 20, 12)
+    ellipse_item = scene.add_ellipse(42, 18, 14, 14)
+    view = Qt6::GraphicsView.new(scene)
     view.resize(200, 140)
     view.show
+    app.process_events
 
     background = Qt6::QBrush.new(Qt6::Color.new(10, 20, 30))
     foreground = Qt6::QBrush.new(Qt6::Color.new(200, 210, 220))
@@ -1781,6 +1785,7 @@ describe Qt6 do
     view.transformation_anchor = Qt6::GraphicsViewViewportAnchor::AnchorUnderMouse
     view.resize_anchor = Qt6::GraphicsViewViewportAnchor::AnchorViewCenter
     view.viewport_update_mode = Qt6::GraphicsViewViewportUpdateMode::BoundingRectViewportUpdate
+    view.rubber_band_selection_mode = Qt6::GraphicsItemSelectionMode::ContainsItemShape
     view.optimization_flags = Qt6::GraphicsViewOptimizationFlag::DontSavePainterState
     view.set_optimization_flag(Qt6::GraphicsViewOptimizationFlag::DontAdjustForAntialiasing)
 
@@ -1792,12 +1797,20 @@ describe Qt6 do
     view.shear(0.5, 0.0)
     view.translate(1.0, 2.0)
     view.center_on(Qt6::PointF.new(12.0, 18.0))
+    view.center_on(rect_item)
     view.ensure_visible(Qt6::RectF.new(0.0, 0.0, 20.0, 20.0), 4, 5)
+    view.ensure_visible(rect_item, 2, 3)
     view.fit_in_view(Qt6::RectF.new(0.0, 0.0, 40.0, 30.0), Qt6::AspectRatioMode::Keep)
+    view.fit_in_view(rect_item, Qt6::AspectRatioMode::Keep)
     view.reset_cached_content
+    view.invalidate_scene(Qt6::RectF.new(0.0, 0.0, 20.0, 20.0), Qt6::GraphicsSceneLayer::BackgroundLayer | Qt6::GraphicsSceneLayer::ItemLayer)
+    view.update_scene_rect(scene.scene_rect)
 
     view.background_brush.color.should eq(Qt6::Color.new(10, 20, 30, 255))
     view.foreground_brush.color.should eq(Qt6::Color.new(200, 210, 220, 255))
+    view.scene.not_nil!.to_unsafe.should eq(scene.to_unsafe)
+    view.size_hint.width.should be > 0
+    view.size_hint.height.should be > 0
     view.interactive?.should be_false
     view.scene_rect.should eq(Qt6::RectF.new(0.0, 0.0, 320.0, 240.0))
     view.alignment.should eq(Qt6::AlignmentFlag::Center)
@@ -1809,6 +1822,9 @@ describe Qt6 do
     view.transformation_anchor.should eq(Qt6::GraphicsViewViewportAnchor::AnchorUnderMouse)
     view.resize_anchor.should eq(Qt6::GraphicsViewViewportAnchor::AnchorViewCenter)
     view.viewport_update_mode.should eq(Qt6::GraphicsViewViewportUpdateMode::BoundingRectViewportUpdate)
+    view.rubber_band_selection_mode.should eq(Qt6::GraphicsItemSelectionMode::ContainsItemShape)
+    view.rubber_band_rect.width.should eq(0)
+    view.rubber_band_rect.height.should eq(0)
     view.optimization_flags.includes?(Qt6::GraphicsViewOptimizationFlag::DontSavePainterState).should be_true
     view.optimization_flags.includes?(Qt6::GraphicsViewOptimizationFlag::DontAdjustForAntialiasing).should be_true
     view.transformed?.should be_true
@@ -1818,8 +1834,56 @@ describe Qt6 do
     view.reset_transform
     view.transform.map(Qt6::PointF.new(0.0, 0.0)).should eq(Qt6::PointF.new(0.0, 0.0))
     view.transform.map(Qt6::PointF.new(2.0, 3.0)).should eq(Qt6::PointF.new(2.0, 3.0))
+    app.process_events
+
+    viewport_point = view.map_from_scene(Qt6::PointF.new(20.0, 16.0))
+    mapped_scene_point = view.map_to_scene(viewport_point)
+    mapped_scene_point.x.should be_close(20.0, 2.0)
+    mapped_scene_point.y.should be_close(16.0, 2.0)
+    view.item_at(viewport_point).should_not be_nil
+    view.item_at(viewport_point.x, viewport_point.y).should_not be_nil
+    view.items.should_not be_empty
+    view.items(viewport_point).any? { |item| item.to_unsafe == rect_item.to_unsafe }.should be_true
+
+    viewport_rect = Qt6::Rect.new(viewport_point.x - 4, viewport_point.y - 4, 8, 8)
+    view.items(viewport_rect, Qt6::GraphicsItemSelectionMode::IntersectsItemBoundingRect).any? { |item| item.to_unsafe == rect_item.to_unsafe }.should be_true
+
+    viewport_polygon = Qt6::QPolygon.new([
+      Qt6::Point.new(viewport_point.x - 5, viewport_point.y - 5),
+      Qt6::Point.new(viewport_point.x + 5, viewport_point.y - 5),
+      Qt6::Point.new(viewport_point.x + 5, viewport_point.y + 5),
+      Qt6::Point.new(viewport_point.x - 5, viewport_point.y + 5),
+    ])
+    view.items(viewport_polygon, Qt6::GraphicsItemSelectionMode::IntersectsItemShape).should_not be_empty
+
+    viewport_path = Qt6::QPainterPath.new
+    viewport_path.add_rect(Qt6::RectF.new(viewport_point.x - 6.0, viewport_point.y - 6.0, 12.0, 12.0))
+    view.items(viewport_path, Qt6::GraphicsItemSelectionMode::IntersectsItemShape).should_not be_empty
+
+    view.map_to_scene(viewport_rect).empty?.should be_false
+    view.map_to_scene(viewport_polygon).empty?.should be_false
+    view.map_to_scene(viewport_path).empty?.should be_false
+    view.map_from_scene(Qt6::RectF.new(10.0, 10.0, 20.0, 12.0)).empty?.should be_false
+    scene_polygon = Qt6::QPolygonF.new([
+      Qt6::PointF.new(10.0, 10.0),
+      Qt6::PointF.new(30.0, 10.0),
+      Qt6::PointF.new(30.0, 22.0),
+      Qt6::PointF.new(10.0, 22.0),
+    ])
+    view.map_from_scene(scene_polygon).empty?.should be_false
+    scene_path = Qt6::QPainterPath.new
+    scene_path.add_ellipse(Qt6::RectF.new(42.0, 18.0, 14.0, 14.0))
+    view.map_from_scene(scene_path).empty?.should be_false
+
+    canvas = Qt6::QImage.new(64, 48)
+    canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+    Qt6::QPainter.paint(canvas) do |painter|
+      view.render(painter, Qt6::RectF.new(0.0, 0.0, 64.0, 48.0))
+    end
+    canvas.pixel_color(1, 1).alpha.should be > 0
 
     view.release
+    scene.release
   end
 
   it "supports gradients and advanced pen styling" do
