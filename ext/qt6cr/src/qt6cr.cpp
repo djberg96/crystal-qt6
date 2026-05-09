@@ -64,6 +64,7 @@
 #include <QGraphicsAnchorLayout>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -3695,6 +3696,105 @@ qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle) {
   result.buttons = static_cast<int>(event->buttons());
   result.modifiers = static_cast<int>(event->modifiers());
   return result;
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_context_menu_event_create(int type) {
+  return new QGraphicsSceneContextMenuEvent(static_cast<QEvent::Type>(type));
+}
+
+void qt6cr_graphics_scene_context_menu_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_context_menu_event_widget(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? nullptr : event->widget();
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setWidget(as_widget(widget));
+  }
+}
+
+uint64_t qt6cr_graphics_scene_context_menu_event_timestamp(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? 0 : event->timestamp();
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_timestamp(qt6cr_handle_t handle, uint64_t timestamp) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setTimestamp(timestamp);
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_context_menu_event_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->pos());
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setPos(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_graphics_scene_context_menu_event_scene_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->scenePos());
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_scene_pos(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScenePos(from_pointf(value));
+  }
+}
+
+qt6cr_point_t qt6cr_graphics_scene_context_menu_event_screen_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->screenPos());
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_screen_pos(qt6cr_handle_t handle, qt6cr_point_t value) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setScreenPos(from_point(value));
+  }
+}
+
+int qt6cr_graphics_scene_context_menu_event_modifiers(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->modifiers());
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_modifiers(qt6cr_handle_t handle, int modifiers) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setModifiers(static_cast<Qt::KeyboardModifiers>(modifiers));
+  }
+}
+
+int qt6cr_graphics_scene_context_menu_event_reason(qt6cr_handle_t handle) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->reason());
+}
+
+void qt6cr_graphics_scene_context_menu_event_set_reason(qt6cr_handle_t handle, int reason) {
+  auto *event = static_cast<QGraphicsSceneContextMenuEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setReason(static_cast<QGraphicsSceneContextMenuEvent::Reason>(reason));
+  }
 }
 
 qt6cr_handle_t qt6cr_application_create(int argc, const char *const *argv) {

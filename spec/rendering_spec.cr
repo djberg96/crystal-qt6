@@ -699,6 +699,48 @@ describe Qt6 do
     scene.release
   end
 
+  it "supports graphics scene context-menu events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneContextMenuEvent.new
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneContextMenu)
+    event.accepted?.should be_true
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 123_456
+    event.pos = Qt6::PointF.new(4.5, 6.5)
+    event.scene_pos = Qt6::PointF.new(14.0, 16.0)
+    event.screen_pos = Qt6::Point.new(24, 26)
+    event.modifiers = 0x02000000
+    event.reason = Qt6::GraphicsSceneContextMenuEventReason::Keyboard
+    event.ignore
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(123_456_u64)
+    event.pos.should eq(Qt6::PointF.new(4.5, 6.5))
+    event.scene_pos.should eq(Qt6::PointF.new(14.0, 16.0))
+    event.screen_pos.should eq(Qt6::Point.new(24, 26))
+    event.modifiers.should eq(0x02000000)
+    event.reason.should eq(Qt6::GraphicsSceneContextMenuEventReason::Keyboard)
+    event.accepted?.should be_false
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneContextMenu)
+    live_event = qevent.graphics_scene_context_menu_event
+    live_event.pos.should eq(Qt6::PointF.new(4.5, 6.5))
+    live_event.scene_pos.should eq(Qt6::PointF.new(14.0, 16.0))
+    live_event.screen_pos.should eq(Qt6::Point.new(24, 26))
+    live_event.reason.should eq(Qt6::GraphicsSceneContextMenuEventReason::Keyboard)
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

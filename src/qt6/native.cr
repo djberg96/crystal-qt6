@@ -307,6 +307,22 @@ module Qt6
     fun qt6cr_event_ignore = qt6cr_event_ignore(handle : Handle)
     fun qt6cr_event_is_accepted = qt6cr_event_is_accepted(handle : Handle) : Bool
     fun qt6cr_event_mouse_event = qt6cr_event_mouse_event(handle : Handle) : MouseEventValue
+    fun qt6cr_graphics_scene_context_menu_event_create = qt6cr_graphics_scene_context_menu_event_create(type : LibC::Int) : Handle
+    fun qt6cr_graphics_scene_context_menu_event_destroy = qt6cr_graphics_scene_context_menu_event_destroy(handle : Handle)
+    fun qt6cr_graphics_scene_context_menu_event_widget = qt6cr_graphics_scene_context_menu_event_widget(handle : Handle) : Handle
+    fun qt6cr_graphics_scene_context_menu_event_set_widget = qt6cr_graphics_scene_context_menu_event_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_graphics_scene_context_menu_event_timestamp = qt6cr_graphics_scene_context_menu_event_timestamp(handle : Handle) : UInt64
+    fun qt6cr_graphics_scene_context_menu_event_set_timestamp = qt6cr_graphics_scene_context_menu_event_set_timestamp(handle : Handle, timestamp : UInt64)
+    fun qt6cr_graphics_scene_context_menu_event_pos = qt6cr_graphics_scene_context_menu_event_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_context_menu_event_set_pos = qt6cr_graphics_scene_context_menu_event_set_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_context_menu_event_scene_pos = qt6cr_graphics_scene_context_menu_event_scene_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_context_menu_event_set_scene_pos = qt6cr_graphics_scene_context_menu_event_set_scene_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_context_menu_event_screen_pos = qt6cr_graphics_scene_context_menu_event_screen_pos(handle : Handle) : PointValue
+    fun qt6cr_graphics_scene_context_menu_event_set_screen_pos = qt6cr_graphics_scene_context_menu_event_set_screen_pos(handle : Handle, value : PointValue)
+    fun qt6cr_graphics_scene_context_menu_event_modifiers = qt6cr_graphics_scene_context_menu_event_modifiers(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_scene_context_menu_event_set_modifiers = qt6cr_graphics_scene_context_menu_event_set_modifiers(handle : Handle, modifiers : LibC::Int)
+    fun qt6cr_graphics_scene_context_menu_event_reason = qt6cr_graphics_scene_context_menu_event_reason(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_scene_context_menu_event_set_reason = qt6cr_graphics_scene_context_menu_event_set_reason(handle : Handle, reason : LibC::Int)
 
     fun qt6cr_application_create = qt6cr_application_create(argc : LibC::Int, argv : UInt8**) : Handle
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)

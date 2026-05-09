@@ -44,5 +44,10 @@ module Qt6
     def gesture_event : GestureEvent
       GestureEvent.wrap(to_unsafe)
     end
+
+    # Returns this event reinterpreted as a live `QGraphicsSceneContextMenuEvent`.
+    def graphics_scene_context_menu_event : GraphicsSceneContextMenuEvent
+      GraphicsSceneContextMenuEvent.wrap(to_unsafe)
+    end
   end
 end

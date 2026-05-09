@@ -46,6 +46,16 @@ module Qt6
     DragMove                         =  61
     DragLeave                        =  62
     Drop                             =  63
+    GraphicsSceneMouseMove           = 155
+    GraphicsSceneMousePress          = 156
+    GraphicsSceneMouseRelease        = 157
+    GraphicsSceneMouseDoubleClick    = 158
+    GraphicsSceneContextMenu         = 159
+    GraphicsSceneHoverEnter          = 160
+    GraphicsSceneHoverMove           = 161
+    GraphicsSceneHoverLeave          = 162
+    GraphicsSceneHelp                = 163
+    GraphicsSceneWheel               = 168
     NativeGesture                    = 197
     Gesture                          = 198
     GestureOverride                  = 202
