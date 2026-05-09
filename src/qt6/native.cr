@@ -362,6 +362,22 @@ module Qt6
     fun qt6cr_graphics_scene_help_event_set_scene_pos = qt6cr_graphics_scene_help_event_set_scene_pos(handle : Handle, value : PointFValue)
     fun qt6cr_graphics_scene_help_event_screen_pos = qt6cr_graphics_scene_help_event_screen_pos(handle : Handle) : PointValue
     fun qt6cr_graphics_scene_help_event_set_screen_pos = qt6cr_graphics_scene_help_event_set_screen_pos(handle : Handle, value : PointValue)
+    fun qt6cr_graphics_scene_hover_event_create = qt6cr_graphics_scene_hover_event_create(type : LibC::Int) : Handle
+    fun qt6cr_graphics_scene_hover_event_destroy = qt6cr_graphics_scene_hover_event_destroy(handle : Handle)
+    fun qt6cr_graphics_scene_hover_event_pos = qt6cr_graphics_scene_hover_event_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_hover_event_set_pos = qt6cr_graphics_scene_hover_event_set_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_hover_event_scene_pos = qt6cr_graphics_scene_hover_event_scene_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_hover_event_set_scene_pos = qt6cr_graphics_scene_hover_event_set_scene_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_hover_event_screen_pos = qt6cr_graphics_scene_hover_event_screen_pos(handle : Handle) : PointValue
+    fun qt6cr_graphics_scene_hover_event_set_screen_pos = qt6cr_graphics_scene_hover_event_set_screen_pos(handle : Handle, value : PointValue)
+    fun qt6cr_graphics_scene_hover_event_last_pos = qt6cr_graphics_scene_hover_event_last_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_hover_event_set_last_pos = qt6cr_graphics_scene_hover_event_set_last_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_hover_event_last_scene_pos = qt6cr_graphics_scene_hover_event_last_scene_pos(handle : Handle) : PointFValue
+    fun qt6cr_graphics_scene_hover_event_set_last_scene_pos = qt6cr_graphics_scene_hover_event_set_last_scene_pos(handle : Handle, value : PointFValue)
+    fun qt6cr_graphics_scene_hover_event_last_screen_pos = qt6cr_graphics_scene_hover_event_last_screen_pos(handle : Handle) : PointValue
+    fun qt6cr_graphics_scene_hover_event_set_last_screen_pos = qt6cr_graphics_scene_hover_event_set_last_screen_pos(handle : Handle, value : PointValue)
+    fun qt6cr_graphics_scene_hover_event_modifiers = qt6cr_graphics_scene_hover_event_modifiers(handle : Handle) : LibC::Int
+    fun qt6cr_graphics_scene_hover_event_set_modifiers = qt6cr_graphics_scene_hover_event_set_modifiers(handle : Handle, modifiers : LibC::Int)
 
     fun qt6cr_application_create = qt6cr_application_create(argc : LibC::Int, argv : UInt8**) : Handle
     fun qt6cr_application_destroy = qt6cr_application_destroy(handle : Handle)

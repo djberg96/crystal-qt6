@@ -867,6 +867,55 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports graphics scene hover events" do
+    app
+
+    widget = Qt6::Widget.new
+    event = Qt6::GraphicsSceneHoverEvent.new
+
+    event.type.should eq(Qt6::EventType::GraphicsSceneHoverMove)
+    event.widget.should be_nil
+
+    event.widget = widget
+    event.timestamp = 456_123
+    event.pos = Qt6::PointF.new(6.0, 8.0)
+    event.scene_pos = Qt6::PointF.new(16.0, 18.0)
+    event.screen_pos = Qt6::Point.new(26, 28)
+    event.last_pos = Qt6::PointF.new(5.0, 7.0)
+    event.last_scene_pos = Qt6::PointF.new(15.0, 17.0)
+    event.last_screen_pos = Qt6::Point.new(25, 27)
+    event.modifiers = 0x02000000
+    event.ignore
+    event.accepted?.should be_false
+
+    event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    event.timestamp.should eq(456_123_u64)
+    event.pos.should eq(Qt6::PointF.new(6.0, 8.0))
+    event.scene_pos.should eq(Qt6::PointF.new(16.0, 18.0))
+    event.screen_pos.should eq(Qt6::Point.new(26, 28))
+    event.last_pos.should eq(Qt6::PointF.new(5.0, 7.0))
+    event.last_scene_pos.should eq(Qt6::PointF.new(15.0, 17.0))
+    event.last_screen_pos.should eq(Qt6::Point.new(25, 27))
+    event.modifiers.should eq(0x02000000)
+
+    qevent = Qt6::QEvent.new(event.to_unsafe)
+    qevent.type.should eq(Qt6::EventType::GraphicsSceneHoverMove)
+    live_event = qevent.graphics_scene_hover_event
+    live_event.widget.not_nil!.to_unsafe.should eq(widget.to_unsafe)
+    live_event.timestamp.should eq(456_123_u64)
+    live_event.pos.should eq(Qt6::PointF.new(6.0, 8.0))
+    live_event.scene_pos.should eq(Qt6::PointF.new(16.0, 18.0))
+    live_event.screen_pos.should eq(Qt6::Point.new(26, 28))
+    live_event.last_pos.should eq(Qt6::PointF.new(5.0, 7.0))
+    live_event.last_scene_pos.should eq(Qt6::PointF.new(15.0, 17.0))
+    live_event.last_screen_pos.should eq(Qt6::Point.new(25, 27))
+    live_event.accept
+    event.accepted?.should be_true
+
+    event.release
+    widget.release
+  end
+
   it "supports graphics objects" do
     app
 

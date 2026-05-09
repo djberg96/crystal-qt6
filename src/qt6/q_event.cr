@@ -64,5 +64,10 @@ module Qt6
     def graphics_scene_help_event : GraphicsSceneHelpEvent
       GraphicsSceneHelpEvent.wrap(to_unsafe)
     end
+
+    # Returns this event reinterpreted as a live `QGraphicsSceneHoverEvent`.
+    def graphics_scene_hover_event : GraphicsSceneHoverEvent
+      GraphicsSceneHoverEvent.wrap(to_unsafe)
+    end
   end
 end
