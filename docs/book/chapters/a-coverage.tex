@@ -19,6 +19,9 @@ Model/View & Item widgets, abstract list/tree models, standard item models, stan
 \bottomrule
 \end{longtable}
 
+\noindent
+For the narrative overview of the scene/view stack, item model, transforms, and scene-local panels, see Chapter 8. The appendix material below is meant to be the compact lookup companion to that chapter.
+
 \section{Widget Reference}
 
 The following table collects the major visible widget wrappers in one place. It is intentionally brief: use it as a map of the UI surface, then jump to the earlier chapters or the source when a widget becomes central to your application.
@@ -114,6 +117,35 @@ Type & Summary \\
 \api{QFont} & Typeface, size, weight, and style description for painter text output and widget typography. \\
 \api{QFontMetrics} & Integer text metrics for measuring width, ascent, descent, and layout spacing before drawing text. \\
 \api{QFontMetricsF} & Floating-point text metrics that fit painter-coordinate work more naturally than integer metrics. \\
+\bottomrule
+\end{longtable}
+
+\section{Graphics View Reference}
+
+The Graphics View layer now has enough surface area to deserve its own appendix map. Use Chapter 8 for the mental model and workflows; use this table when you want a quick reminder of which wrapper to reach for.
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Type & Summary \\
+\midrule
+\api{GraphicsScene} & Scene container for item ownership, scene bounds, background and foreground brushes, selection, focus, rendering, and scene-space item queries. \\
+\api{GraphicsView} & Scrollable widget viewport over a scene, with scene attachment, item lookup, render hints, drag modes, transforms, mapping helpers, and view-side invalidation. \\
+\api{GraphicsItem} & Base scene item with position, transforms, flags, selection, opacity, stacking, grouping, and scene-space geometry. \\
+\api{GraphicsObject} & QObject-backed graphics item for signal-style property change callbacks, gesture hooks, event filters, and graphics effects. \\
+\api{GraphicsWidget} & Layout-capable scene item with size policies, contents margins, focus policy, style, window-title helpers, and other panel-like widget behavior inside the scene. \\
+\api{GraphicsProxyWidget} & Bridge for embedding ordinary \api{QWidget} controls inside the scene while keeping them addressable as scene items. \\
+\api{GraphicsLayout} & Shared base for graphics-native layouts, including activation, invalidation, contents margins, size policies, and geometry queries. \\
+\api{GraphicsLinearLayout} & Row or column layout for \api{GraphicsWidget} trees, nested layouts, stretch spacers, and per-item alignment or spacing. \\
+\api{GraphicsGridLayout} & Grid layout for scene widgets with row and column spacing, alignment, stretch, and cell lookup. \\
+\api{GraphicsAnchorLayout} and \api{GraphicsAnchor} & Constraint-style layout surface for edge and corner anchoring between graphics widgets. \\
+\api{GraphicsRectItem}, \api{GraphicsEllipseItem}, \api{GraphicsLineItem} & Lightweight shape items with geometry access plus the familiar pen and brush styling surface. \\
+\api{GraphicsPathItem} and \api{GraphicsPolygonItem} & Vector-geometry items for arbitrary paths, routes, outlines, and polygonal regions. \\
+\api{GraphicsPixmapItem} & Pixmap-backed scene item for icons, markers, tokens, thumbnails, and raster overlays. \\
+\api{GraphicsSimpleTextItem} and \api{GraphicsTextItem} & Scene text surfaces ranging from lightweight string rendering to document-backed rich text with cursor and link support. \\
+\api{GraphicsItemGroup} & Grouping helper for moving or treating several scene items as a single unit while preserving item identities. \\
+\api{GraphicsTransform}, \api{GraphicsRotation}, \api{GraphicsScale} & Reusable transform objects for ordered item transform lists beyond a single local rotation or scale value. \\
+\api{GraphicsBlurEffect}, \api{GraphicsColorizeEffect}, \api{GraphicsDropShadowEffect}, \api{GraphicsOpacityEffect} & Item effects for emphasis, depth, tinting, softening, and overlay presentation. \\
+\api{GraphicsSceneEvent} and subclasses & Scene-specific event wrappers for mouse, hover, wheel, drag/drop, context-menu, help, and move event inspection or synthetic test setup. \\
 \bottomrule
 \end{longtable}
 
@@ -235,6 +267,29 @@ Enum & Values \\
 \api{SelectionFlag} & \begin{tabular}[t]{@{}l@{}}\api{NoUpdate = 0}\\\api{Clear = 1}\\\api{Select = 2}\\\api{Deselect = 4}\\\api{Toggle = 8}\\\api{Current = 16}\\\api{Rows = 32}\\\api{Columns = 64}\\\api{SelectCurrent = 18}\\\api{ToggleCurrent = 24}\\\api{ClearAndSelect = 3}\end{tabular} \\
 \api{DropAction} & \begin{tabular}[t]{@{}l@{}}\api{IgnoreAction = 0}\\\api{CopyAction = 1}\\\api{MoveAction = 2}\\\api{LinkAction = 4}\end{tabular} \\
 \api{EditTrigger} & \begin{tabular}[t]{@{}l@{}}\api{NoEditTriggers = 0}\\\api{CurrentChanged = 1}\\\api{DoubleClicked = 2}\\\api{SelectedClicked = 4}\\\api{EditKeyPressed = 8}\\\api{AnyKeyPressed = 16}\\\api{AllEditTriggers = 31}\end{tabular} \\
+\bottomrule
+\end{longtable}
+}
+
+\subsection{Graphics View Enums and Flags}
+
+{\small
+\begin{longtable}{@{}p{0.34\textwidth}p{0.56\textwidth}@{}}
+\toprule
+Enum & Values \\
+\midrule
+\api{GraphicsItemFlag} & \begin{tabular}[t]{@{}l@{}}\api{None = 0}\\\api{ItemIsMovable = 1}\\\api{ItemIsSelectable = 2}\\\api{ItemIsFocusable = 4}\\\api{ItemClipsToShape = 8}\\\api{ItemClipsChildrenToShape = 16}\\\api{ItemIgnoresTransformations = 32}\\\api{ItemIgnoresParentOpacity = 64}\\\api{ItemDoesntPropagateOpacityToChildren = 128}\\\api{ItemStacksBehindParent = 256}\\\api{ItemUsesExtendedStyleOption = 512}\\\api{ItemHasNoContents = 1024}\\\api{ItemSendsGeometryChanges = 2048}\\\api{ItemAcceptsInputMethod = 4096}\\\api{ItemNegativeZStacksBehindParent = 8192}\\\api{ItemIsPanel = 16384}\\\api{ItemSendsScenePositionChanges = 65536}\end{tabular} \\
+\api{GraphicsItemCacheMode} & \begin{tabular}[t]{@{}l@{}}\api{NoCache = 0}\\\api{ItemCoordinateCache = 1}\\\api{DeviceCoordinateCache = 2}\end{tabular} \\
+\api{GraphicsSceneItemIndexMethod} & \begin{tabular}[t]{@{}l@{}}\api{BspTreeIndex = 0}\\\api{NoIndex = -1}\end{tabular} \\
+\api{GraphicsSceneLayer} & \begin{tabular}[t]{@{}l@{}}\api{ItemLayer = 1}\\\api{BackgroundLayer = 2}\\\api{ForegroundLayer = 4}\\\api{AllLayers = 65535}\end{tabular} \\
+\api{GraphicsItemSelectionMode} & \begin{tabular}[t]{@{}l@{}}\api{IntersectsItemShape = 0}\\\api{ContainsItemShape = 1}\\\api{IntersectsItemBoundingRect = 2}\\\api{ContainsItemBoundingRect = 3}\end{tabular} \\
+\api{GraphicsViewDragMode} & \begin{tabular}[t]{@{}l@{}}\api{NoDrag = 0}\\\api{ScrollHandDrag = 1}\\\api{RubberBandDrag = 2}\end{tabular} \\
+\api{GraphicsViewViewportAnchor} & \begin{tabular}[t]{@{}l@{}}\api{NoAnchor = 0}\\\api{AnchorViewCenter = 1}\\\api{AnchorUnderMouse = 2}\end{tabular} \\
+\api{GraphicsViewViewportUpdateMode} & \begin{tabular}[t]{@{}l@{}}\api{FullViewportUpdate = 0}\\\api{MinimalViewportUpdate = 1}\\\api{SmartViewportUpdate = 2}\\\api{NoViewportUpdate = 3}\\\api{BoundingRectViewportUpdate = 4}\end{tabular} \\
+\api{GraphicsViewOptimizationFlag} & \begin{tabular}[t]{@{}l@{}}\api{DontSavePainterState = 1}\\\api{DontAdjustForAntialiasing = 2}\\\api{IndirectPainting = 4}\end{tabular} \\
+\api{GraphicsViewCacheModeFlag} & \begin{tabular}[t]{@{}l@{}}\api{CacheNone = 0}\\\api{CacheBackground = 1}\end{tabular} \\
+\api{GraphicsPixmapItemShapeMode} & \begin{tabular}[t]{@{}l@{}}\api{MaskShape = 0}\\\api{BoundingRectShape = 1}\\\api{HeuristicMaskShape = 2}\end{tabular} \\
+\api{GraphicsSceneContextMenuEventReason} & \begin{tabular}[t]{@{}l@{}}\api{Mouse = 0}\\\api{Keyboard = 1}\\\api{Other = 2}\end{tabular} \\
 \bottomrule
 \end{longtable}
 }
