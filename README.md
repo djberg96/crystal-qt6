@@ -121,7 +121,7 @@ Build the long-form LaTeX guide:
 make docs-book
 ```
 
-The guide source lives under `docs/book/` and includes screenshot placeholders for publishable dialog and example documentation.
+The guide source lives under `docs/book/` and includes screenshot-oriented chapters for dialogs, graphics-view scenes, and larger example documentation.
 
 ## Continuous Integration
 

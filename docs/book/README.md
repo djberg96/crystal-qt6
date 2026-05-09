@@ -16,9 +16,15 @@ or from the repository root:
 make docs-book
 ```
 
-The guide is intentionally written with screenshot placeholders so it can compile before every image has been captured. Store dialog and example screenshots in `docs/book/images/` using the filenames named by the placeholders in `chapters/05-dialogs.tex`.
+The guide is intentionally written with screenshot placeholders so it can compile before every image has been captured. Store screenshots in `docs/book/images/` using the filenames named by the chapter figures and placeholders.
 
-Recommended first screenshot set:
+The guide now includes a dedicated Graphics View chapter alongside the existing dialog, model/view, painting, and worked-example material.
+
+Recommended screenshot refresh set:
+
+- `graphics-view-overview.png`
+- `graphics-view-floating-panel.png`
+- `graphics-view-transforms.png`
 
 - `dialogs-main-window.png`
 - `dialogs-message-question.png`
@@ -36,8 +42,18 @@ Recommended first screenshot set:
 - `dialogs-progress-canceled.png`
 - `dialogs-custom-settings.png`
 
-Use `make example-dialogs` to launch the dialog gallery that these screenshots should document.
+Refresh the graphics-view captures with:
 
-When replacing placeholders with real screenshots, capture the gallery in a consistent theme and window size. The book Makefile tracks `docs/book/images/*.png`, so replacing a screenshot and rerunning `make docs-book` rebuilds the PDF. If you add a new image format or store generated screenshots elsewhere, update `docs/book/Makefile` so image changes remain visible to the build.
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_graphics_view_screenshots.cr
+```
+
+Refresh the dialog gallery captures with:
+
+```sh
+make example-dialogs
+```
+
+When replacing placeholders with real screenshots, keep the theme and window size consistent across a chapter. The book Makefile tracks `docs/book/images/*.png`, so replacing a screenshot and rerunning `make docs-book` rebuilds the PDF. If you add a new image format or store generated screenshots elsewhere, update `docs/book/Makefile` so image changes remain visible to the build.
 
 Deferred chapter ideas are tracked in `TODO.md`.

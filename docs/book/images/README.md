@@ -16,9 +16,10 @@ Use a chapter-oriented prefix when adding images:
 - `application-shell-*` for Chapter 4 main window examples.
 - `dialogs-*` for Chapter 5 dialog screenshots.
 - `painting-*` for Chapter 7 generated painting figures.
-- `images-*` for Chapter 8 image workflow figures.
-- `model-view-*` for Chapter 10 model/view figures and screenshots.
-- `putting-together-*` for Chapter 11 worked-example screenshots.
+- `graphics-view-*` for Chapter 8 graphics-view screenshots.
+- `images-*` for Chapter 9 image workflow figures.
+- `model-view-*` for Chapter 11 model/view figures and screenshots.
+- `putting-together-*` for Chapter 12 worked-example screenshots.
 
 Keep names descriptive and stable, since the `.tex` files reference them
 directly.
@@ -64,7 +65,17 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_application_she
 
 - `application-shell-main-window.png`
 
-Chapter 10:
+Chapter 8:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_graphics_view_screenshots.cr
+```
+
+- `graphics-view-overview.png`
+- `graphics-view-floating-panel.png`
+- `graphics-view-transforms.png`
+
+Chapter 11:
 
 ```sh
 CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_model_view_widget_screenshots.cr
@@ -80,7 +91,7 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_model_view_widg
 - `model-view-tree-widget.png`
 - `model-view-workbench.png`
 
-Chapter 11:
+Chapter 12:
 
 ```sh
 CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_worked_example_screenshots.cr

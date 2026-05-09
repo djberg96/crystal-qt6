@@ -1,0 +1,238 @@
+\chapter{Graphics View Scenes And Items}
+
+Qt's Graphics View framework is the 2D scene-graph layer in the classic widgets stack. It gives you a scrollable, zoomable view over a scene full of independently addressable items. If custom widget painting feels like ``draw everything yourself into one canvas,'' Graphics View feels like ``compose a world out of objects and let Qt manage visibility, stacking, clipping, selection, and coordinate mapping.''
+
+This is a good fit for map editors, diagram tools, node editors, whiteboards, layered dashboards, and any surface where panning, zooming, grouping, or spatial hit testing matter. It is less about form controls and more about a world of positioned objects.
+
+\section{The Mental Model}
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Type & Role \\
+\midrule
+\api{GraphicsScene} & Owns the item world: bounds, background and foreground brushes, selection, focus, lookup queries, and scene rendering. \\
+\api{GraphicsView} & A scrollable widget that shows part of the scene, maps scene coordinates into viewport coordinates, and handles zooming, transforms, and item queries at the widget boundary. \\
+\api{GraphicsItem} & The base item in the scene. Items have position, transforms, Z ordering, selection, flags, and scene-space geometry. \\
+\api{GraphicsWidget} & A layout-capable item for panel-like scene content. It sits between ordinary scene items and embedded widgets. \\
+\api{GraphicsProxyWidget} & Embeds a regular \api{QWidget} inside the scene. Use it when you want existing line edits, buttons, sliders, or combo boxes to float over a graphics surface. \\
+\api{GraphicsLayout} and friends & Scene-native layout managers for arranging \api{GraphicsWidget} trees without dropping back to normal widget windows. \\
+\bottomrule
+\end{longtable}
+
+The most important distinction is between scene space and viewport space. Scene coordinates describe your world. Viewport coordinates describe the on-screen widget showing that world. \api{GraphicsView} maps between the two, which is why it becomes so useful once zooming and panning enter the picture.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/graphics-view-overview.png}{width=0.94\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{A single \api{GraphicsScene} can mix shapes, paths, text, and pixmaps while the \api{GraphicsView} handles scrolling, clipping, and scene-to-viewport mapping.}
+\end{figure}
+
+\section{Building A Small Scene}
+
+Start with a scene rectangle, then attach it to a view. The scene owns the world; the view is just one way of looking at it.
+
+\begin{lstlisting}[style=crystal]
+scene = Qt6::GraphicsScene.new(0, 0, 640, 420)
+scene.background_brush = Qt6::QBrush.new(Qt6::Color.new(244, 245, 247))
+
+view = Qt6::GraphicsView.new(scene)
+view.render_hints =
+  Qt6::PainterRenderHint::Antialiasing |
+  Qt6::PainterRenderHint::TextAntialiasing
+view.resize(900, 560)
+\end{lstlisting}
+
+Then add scene items. For simple geometry, the convenience constructors on \api{GraphicsScene} are the fastest path.
+
+\begin{lstlisting}[style=crystal]
+terrain = scene.add_rect(
+  24, 24, 180, 120,
+  Qt6::QPen.new(Qt6::Color.new(70, 91, 108), 2.0),
+  Qt6::QBrush.new(Qt6::Color.new(221, 233, 214))
+)
+
+zone = scene.add_ellipse(
+  430, 180, 92, 92,
+  Qt6::QPen.new(Qt6::Color.new(150, 58, 68), 3.0),
+  Qt6::QBrush.new(Qt6::Color.new(222, 121, 130, 210))
+)
+\end{lstlisting}
+
+Paths, text, and pixmaps use explicit item types because their state is richer than a basic rectangle.
+
+\begin{lstlisting}[style=crystal]
+route = Qt6::QPainterPath.new
+route.move_to(Qt6::PointF.new(90.0, 90.0))
+route.cubic_to(
+  Qt6::PointF.new(170.0, 40.0),
+  Qt6::PointF.new(280.0, 210.0),
+  Qt6::PointF.new(360.0, 120.0)
+)
+
+route_item = scene.add_path(
+  route,
+  Qt6::QPen.new(Qt6::Color.new(31, 78, 121), 8.0)
+)
+
+label = Qt6::GraphicsTextItem.new("Supply Corridor")
+label.default_text_color = Qt6::Color.new(44, 54, 66)
+label.font = Qt6::QFont.new("Helvetica", 16, bold: true)
+label.set_pos(72, 48)
+scene.add_item(label)
+\end{lstlisting}
+
+Once an item is in the scene, it behaves like a scene object rather than a painted pixel fragment. You can move it, rotate it, change its Z order, select it, group it, or query what it collides with.
+
+\begin{lstlisting}[style=crystal]
+zone.set_flag(Qt6::GraphicsItemFlag::ItemIsSelectable)
+zone.selected = true
+zone.z_value = 3.0
+
+items_under_pointer = scene.items(Qt6::PointF.new(450.0, 220.0))
+top_item = scene.item_at(Qt6::PointF.new(450.0, 220.0))
+\end{lstlisting}
+
+\section{Choosing An Item Type}
+
+Most scene code becomes clearer when the item choice reflects the kind of content you are expressing.
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Type & Use it for \\
+\midrule
+\api{GraphicsRectItem}, \api{GraphicsEllipseItem}, \api{GraphicsLineItem} & Lightweight shape primitives with familiar pen and brush control. \\
+\api{GraphicsPathItem} & Arbitrary vector geometry such as routes, curved connectors, editable outlines, or stroked hit regions. \\
+\api{GraphicsPolygonItem} & Closed polygonal surfaces such as map areas, regions, or simple markers. \\
+\api{GraphicsSimpleTextItem} & Fast, straightforward scene text when you just need text and font control. \\
+\api{GraphicsTextItem} & Richer text with a backing document, cursor access, text interaction flags, and link callbacks. \\
+\api{GraphicsPixmapItem} & Raster artwork, icons, tokens, thumbnails, and image-backed markers. \\
+\api{GraphicsItemGroup} & Temporary grouping for moving, selecting, or treating several items as one unit. \\
+\bottomrule
+\end{longtable}
+
+The scene API does not replace \api{QPainter}. It sits one level higher. Painter paths and brushes still matter, but instead of repainting everything by hand on every frame, you are handing Qt a set of movable, queryable objects.
+
+\section{Panels Inside The Scene}
+
+\api{GraphicsWidget} is where Graphics View stops being just ``drawn items'' and starts supporting panel composition inside the scene itself. A graphics widget can have size policies, geometry, contents margins, focus policy, tab order, and a graphics-native layout.
+
+That is useful when the scene needs floating inspectors, anchored overlays, node cards, labels attached to a map, or other panel-like structures that should pan and zoom with the world.
+
+\begin{lstlisting}[style=crystal]
+panel = Qt6::GraphicsWidget.new
+panel.set_geometry(250, 36, 180, 170)
+
+layout = Qt6::GraphicsLinearLayout.new(Qt6::Orientation::Vertical)
+layout.set_contents_margins(10, 10, 10, 10)
+layout.spacing = 8.0
+panel.layout = layout
+
+scene.add_item(panel)
+\end{lstlisting}
+
+If the content should be built from graphics items, use \api{GraphicsWidget} plus \api{GraphicsLinearLayout}, \api{GraphicsGridLayout}, or \api{GraphicsAnchorLayout}. If the content should reuse existing widget controls, use \api{GraphicsProxyWidget}.
+
+\begin{lstlisting}[style=crystal]
+name = Qt6::LineEdit.new("Rail Bridge")
+apply = Qt6::PushButton.new("Apply Changes")
+
+name_proxy = Qt6::GraphicsProxyWidget.new(name, panel)
+apply_proxy = Qt6::GraphicsProxyWidget.new(apply, panel)
+
+layout.add_item(name_proxy)
+layout.add_item(apply_proxy)
+\end{lstlisting}
+
+\api{GraphicsProxyWidget} is especially helpful when you already know how to build a small widget form and do not want to recreate it from lower-level scene items. It lets regular widgets ride inside the scene without turning the whole scene back into ordinary nested windows.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/graphics-view-floating-panel.png}{width=0.90\textwidth,height=0.40\textheight,keepaspectratio}%
+  \caption{A floating inspector built from \api{GraphicsWidget}, \api{GraphicsLinearLayout}, and \api{GraphicsProxyWidget}; the panel lives inside the scene rather than above it.}
+\end{figure}
+
+\section{Transforms, Zoom, And The Camera}
+
+\api{GraphicsView} can transform the whole camera, while items can also carry their own local transforms. Those are different layers of motion.
+
+\begin{itemize}
+\item Move the \api{GraphicsView} when the user pans or zooms the whole scene.
+\item Move or transform individual \api{GraphicsItem}s when the object itself rotates, scales, or animates.
+\end{itemize}
+
+At the view level, use \api{center_on}, \api{fit_in_view}, \api{scale}, \api{rotate}, and the scene/viewport mapping helpers.
+
+\begin{lstlisting}[style=crystal]
+view.scale(1.25, 1.25)
+view.center_on(Qt6::PointF.new(320.0, 210.0))
+
+viewport_point = view.map_from_scene(Qt6::PointF.new(320.0, 210.0))
+scene_point = view.map_to_scene(viewport_point)
+\end{lstlisting}
+
+At the item level, the simplest tools are still position, rotation, scale, and transform origin:
+
+\begin{lstlisting}[style=crystal]
+token.set_pos(180, 120)
+token.rotation = 18
+token.scale = 1.2
+token.transform_origin_point = Qt6::PointF.new(24.0, 24.0)
+\end{lstlisting}
+
+When you need reusable transform objects, the binding also exposes \api{GraphicsRotation}, \api{GraphicsScale}, and the shared \api{GraphicsTransform} base. Those become more interesting when you want ordered transform lists rather than a single ad hoc local transform.
+
+\begin{lstlisting}[style=crystal]
+rotation = Qt6::GraphicsRotation.new
+rotation.origin = Qt6::Vector3D.new(24.0, 24.0, 0.0)
+rotation.angle = 18
+rotation.axis = Qt6::Axis::ZAxis
+
+scale = Qt6::GraphicsScale.new
+scale.origin = Qt6::Vector3D.new(24.0, 24.0, 0.0)
+scale.x_scale = 1.2
+scale.y_scale = 1.2
+
+token.transformations = [rotation, scale]
+\end{lstlisting}
+
+Keep the transform objects alive as long as the item is using them. They are part of the item's live transform stack, not just temporary values.
+
+Effects sit nearby conceptually. The current binding covers blur, colorize, drop-shadow, and opacity effects, which are useful for emphasizing selection, softening overlays, and giving floating scene panels more depth.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/graphics-view-transforms.png}{width=0.90\textwidth,height=0.40\textheight,keepaspectratio}%
+  \caption{Scene items can carry their own transforms while the view itself still controls the overall camera into the scene.}
+\end{figure}
+
+\section{Events And Interaction}
+
+Graphics View has its own event vocabulary because scene interaction is more spatial than ordinary widget interaction. The binding now exposes scene-event wrappers such as:
+
+\begin{itemize}
+\item \api{GraphicsSceneMouseEvent}
+\item \api{GraphicsSceneHoverEvent}
+\item \api{GraphicsSceneWheelEvent}
+\item \api{GraphicsSceneDragDropEvent}
+\item \api{GraphicsSceneContextMenuEvent}
+\item \api{GraphicsSceneHelpEvent}
+\item \api{GraphicsSceneMoveEvent}
+\end{itemize}
+
+You do not need those wrappers for every scene. Many applications stay at the view layer, using \api{GraphicsView} item lookup and coordinate mapping to decide what happened. The specialized event wrappers matter more once you are subclassing custom scene items or inspecting generic \api{QEvent} values and reinterpreting them as scene events.
+
+\section{When Graphics View Is The Right Tool}
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Choose & When \\
+\midrule
+\api{GraphicsView} + \api{GraphicsScene} & The UI needs a zoomable 2D world with many positioned objects, spatial queries, grouping, overlays, or scene-local panels. \\
+Custom \api{EventWidget} painting & You want one canvas, your own rendering loop, and direct control over all hit testing and redraw logic. \\
+Ordinary widgets and layouts & The UI is mostly forms, dialogs, inspectors, and panels rather than a world of objects in continuous coordinates. \\
+\bottomrule
+\end{longtable}
+
+The dividing line is usually whether the thing on screen is a document-like world or a conventional form. A map editor, flow editor, or overlay workbench often wants Graphics View. A preferences dialog, inspector sidebar, or admin table usually does not.
+
+That is why Graphics View pairs so naturally with the rest of the toolkit rather than replacing it. Use it for the spatial core, then surround it with ordinary menus, docks, dialogs, model/view sidebars, and application services.
