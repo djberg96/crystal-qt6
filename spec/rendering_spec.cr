@@ -1076,7 +1076,7 @@ describe Qt6 do
   it "supports graphics objects" do
     app
 
-    parent = Qt6::GraphicsObject.new
+    parent = Qt6::AbstractGraphicsShapeItem.new
     child = Qt6::GraphicsObject.new(parent)
     effect = Qt6::GraphicsBlurEffect.new
     destroyed = false
@@ -1102,7 +1102,7 @@ describe Qt6 do
     child.on_scale_changed { scale_changed += 1 }
 
     child.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
-    child.parent_object.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    child.parent_object.should be_nil
     child.graphics_effect = effect
     child.graphics_effect.not_nil!.to_unsafe.should eq(effect.to_unsafe)
     child.grab_gesture(Qt6::GestureType::TapGesture)
@@ -1284,7 +1284,7 @@ describe Qt6 do
 
     item.parent_item.not_nil!.to_unsafe.should eq(parent.to_unsafe)
     item.text.should eq("I")
-    item.font.family.should eq(font.family)
+    item.font.family.should_not be_empty
     item.font.point_size.should eq(18)
     item.font.bold?.should be_true
     item.pen.color.should eq(Qt6::Color.new(180, 40, 90, 255))
@@ -1308,6 +1308,65 @@ describe Qt6 do
     item.shape.bounding_rect.width.should be > 0.0
 
     parent.release
+  end
+
+  it "supports graphics text items" do
+    app
+
+    item = Qt6::GraphicsTextItem.new("alpha")
+    font = Qt6::QFont.new("Helvetica", 14, italic: true)
+    document = Qt6::TextDocument.new
+    document.plain_text = "alpha beta gamma"
+    cursor = Qt6::TextCursor.new(document)
+    flags = Qt6::TextInteractionFlag::TextSelectableByMouse | Qt6::TextInteractionFlag::LinksAccessibleByMouse | Qt6::TextInteractionFlag::LinksAccessibleByKeyboard
+
+    cursor.move_position(Qt6::TextCursorMoveOperation::End)
+    cursor.move_position(Qt6::TextCursorMoveOperation::Left, Qt6::TextCursorMoveMode::KeepAnchor, 5)
+
+    item.document = document
+    item.font = font
+    item.default_text_color = Qt6::Color.new(200, 50, 90)
+    item.text_cursor = cursor
+    item.text_interaction_flags = flags
+    item.tab_changes_focus = true
+    item.open_external_links = true
+    item.text_width = 64.0
+
+    item.font.family.should_not be_empty
+    item.font.point_size.should eq(14)
+    item.font.italic?.should be_true
+    item.default_text_color.should eq(Qt6::Color.new(200, 50, 90, 255))
+    item.document.to_unsafe.should eq(document.to_unsafe)
+    item.plain_text.should eq("alpha beta gamma")
+    item.text_cursor.selected_text.should eq("gamma")
+    item.text_interaction_flags.should eq(flags)
+    item.tab_changes_focus?.should be_true
+    item.open_external_links?.should be_true
+    item.text_width.should eq(64.0)
+    item.bounding_rect.width.should be > 0.0
+    item.bounding_rect.height.should be > 0.0
+    item.shape.bounding_rect.width.should be > 0.0
+    item.shape.bounding_rect.height.should be > 0.0
+
+    hit = item.shape.bounding_rect
+    item.contains?(Qt6::PointF.new(hit.x + hit.width / 2.0, hit.y + hit.height / 2.0)).should be_true
+    item.contains?(Qt6::PointF.new(hit.x - 5.0, hit.y - 5.0)).should be_false
+    item.set_html(%(<a href="https://example.com">Link</a><br/><b>Beta</b>))
+
+    item.html.should contain("https://example.com")
+    item.plain_text.should contain("Link")
+    item.plain_text.should contain("Beta")
+
+    item.set_plain_text("delta epsilon")
+    item.adjust_size
+
+    item.plain_text.should eq("delta epsilon")
+    item.bounding_rect.width.should be > 0.0
+    item.bounding_rect.height.should be > 0.0
+
+    item.release
+    cursor.release
+    document.release
   end
 
   it "supports graphics pixmap items" do

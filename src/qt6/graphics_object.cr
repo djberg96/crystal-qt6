@@ -32,11 +32,17 @@ module Qt6
     def initialize(parent : GraphicsItem? = nil)
       super(LibQt6.qt6cr_graphics_object_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
       setup_graphics_object_callbacks
+      Qt6.track_object(self) unless @owned
     end
 
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
       setup_graphics_object_callbacks
+      Qt6.track_object(self) unless @owned
+    end
+
+    def graphics_item_handle : LibQt6::Handle
+      LibQt6.qt6cr_graphics_object_as_item(to_unsafe)
     end
 
     # Returns the parent graphics object, if present.

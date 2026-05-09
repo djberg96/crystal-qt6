@@ -16,6 +16,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QGraphicsLineItem` bindings with line geometry, pen, bounding-rect, hit-testing, and opaque-area helpers for stroked scene primitives.
 - Added `QGraphicsPathItem` bindings with painter-path, bounding-rect, hit-testing, and inherited pen/brush helpers for filled and stroked vector scene items.
 - Added `QGraphicsSimpleTextItem` bindings with text, font, bounding-rect, shape, and inherited pen/brush helpers for lightweight scene text labels.
+- Added `QGraphicsTextItem` bindings with rich/plain text, font/color, document, cursor, interaction-flag, text-width, and link-callback helpers for document-backed scene text.
 - Added `QGraphicsPixmapItem` bindings with pixmap, transform-mode, offset, shape-mode, bounding-rect, and hit-testing helpers for scene-image items.
 - Added `QGraphicsPolygonItem` bindings with polygon, fill-rule, bounding-rect, hit-testing, and inherited pen/brush helpers for scene polygon items.
 - Added `QGraphicsProxyWidget` bindings with embedded-widget access, sub-widget rect lookup, and child-proxy creation helpers for scene-hosted widgets.
