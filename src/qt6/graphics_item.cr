@@ -9,6 +9,10 @@ module Qt6
       super(handle, owned)
     end
 
+    def graphics_item_handle : LibQt6::Handle
+      to_unsafe
+    end
+
     # Returns `true` when the item is visible.
     def visible? : Bool
       LibQt6.qt6cr_graphics_item_is_visible(to_unsafe)

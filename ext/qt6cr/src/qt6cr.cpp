@@ -66,6 +66,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItem>
+#include <QGraphicsScene>
 #include <QGraphicsScale>
 #include <QGraphicsRotation>
 #include <QGraphicsTransform>
@@ -235,6 +236,7 @@ QStyle *as_style(qt6cr_handle_t handle);
 QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle);
 QGraphicsScale *as_graphics_scale(qt6cr_handle_t handle);
 QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle);
+QGraphicsScene *as_graphics_scene(qt6cr_handle_t handle);
 QGraphicsObject *as_graphics_object(qt6cr_handle_t handle);
 QGraphicsEffect *as_graphics_effect(qt6cr_handle_t handle);
 QGraphicsItem *as_graphics_item(qt6cr_handle_t handle);
@@ -263,6 +265,8 @@ qt6cr_int_array_t to_int_array_value(const QList<int> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsView *> &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1497,6 +1501,38 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &va
   return qt6cr_handle_array_t{copy, size};
 }
 
+qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
+qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsView *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
 QMimeData *clone_mime_data(const QMimeData *source) {
   if (source == nullptr) {
     return nullptr;
@@ -1537,6 +1573,10 @@ QGraphicsScale *as_graphics_scale(qt6cr_handle_t handle) {
 
 QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle) {
   return static_cast<QGraphicsRotation *>(handle);
+}
+
+QGraphicsScene *as_graphics_scene(qt6cr_handle_t handle) {
+  return static_cast<QGraphicsScene *>(handle);
 }
 
 QGraphicsObject *as_graphics_object(qt6cr_handle_t handle) {
@@ -2736,6 +2776,450 @@ void qt6cr_graphics_rotation_on_axis_changed(qt6cr_handle_t handle, qt6cr_void_c
   }
 
   QObject::connect(rotation, &QGraphicsRotation::axisChanged, rotation, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_create(qt6cr_handle_t parent) {
+  return new QGraphicsScene(as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_create_with_rect(qt6cr_rectf_t rect, qt6cr_handle_t parent) {
+  return new QGraphicsScene(from_rectf(rect), as_object(parent));
+}
+
+qt6cr_rectf_t qt6cr_graphics_scene_scene_rect(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(scene->sceneRect());
+}
+
+void qt6cr_graphics_scene_set_scene_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setSceneRect(from_rectf(rect));
+  }
+}
+
+void qt6cr_graphics_scene_render(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rectf_t target, qt6cr_rectf_t source, int aspect_ratio_mode) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qpainter(painter);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->render(value, from_rectf(target), from_rectf(source), static_cast<Qt::AspectRatioMode>(aspect_ratio_mode));
+  }
+}
+
+int qt6cr_graphics_scene_item_index_method(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? static_cast<int>(QGraphicsScene::BspTreeIndex) : static_cast<int>(scene->itemIndexMethod());
+}
+
+void qt6cr_graphics_scene_set_item_index_method(qt6cr_handle_t handle, int method) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setItemIndexMethod(static_cast<QGraphicsScene::ItemIndexMethod>(method));
+  }
+}
+
+int qt6cr_graphics_scene_bsp_tree_depth(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? 0 : scene->bspTreeDepth();
+}
+
+void qt6cr_graphics_scene_set_bsp_tree_depth(qt6cr_handle_t handle, int depth) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setBspTreeDepth(depth);
+  }
+}
+
+qt6cr_rectf_t qt6cr_graphics_scene_items_bounding_rect(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(scene->itemsBoundingRect());
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_items(qt6cr_handle_t handle, int order) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(scene->items(static_cast<Qt::SortOrder>(order)));
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_items_at_point(qt6cr_handle_t handle, qt6cr_pointf_t point, int mode, int order, qt6cr_handle_t device_transform) {
+  auto *scene = as_graphics_scene(handle);
+  auto *transform = as_qtransform(device_transform);
+  return scene == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(
+    scene->items(
+      from_pointf(point),
+      static_cast<Qt::ItemSelectionMode>(mode),
+      static_cast<Qt::SortOrder>(order),
+      transform == nullptr ? QTransform() : *transform
+    )
+  );
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_items_in_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, int mode, int order, qt6cr_handle_t device_transform) {
+  auto *scene = as_graphics_scene(handle);
+  auto *transform = as_qtransform(device_transform);
+  return scene == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(
+    scene->items(
+      from_rectf(rect),
+      static_cast<Qt::ItemSelectionMode>(mode),
+      static_cast<Qt::SortOrder>(order),
+      transform == nullptr ? QTransform() : *transform
+    )
+  );
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_items_in_path(qt6cr_handle_t handle, qt6cr_handle_t path, int mode, int order, qt6cr_handle_t device_transform) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qpainter_path(path);
+  auto *transform = as_qtransform(device_transform);
+
+  if (scene == nullptr || value == nullptr) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  return to_handle_array_value(
+    scene->items(
+      *value,
+      static_cast<Qt::ItemSelectionMode>(mode),
+      static_cast<Qt::SortOrder>(order),
+      transform == nullptr ? QTransform() : *transform
+    )
+  );
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_colliding_items(qt6cr_handle_t handle, qt6cr_handle_t item, int mode) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_graphics_item(item);
+  return scene == nullptr || value == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(scene->collidingItems(value, static_cast<Qt::ItemSelectionMode>(mode)));
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_item_at(qt6cr_handle_t handle, qt6cr_pointf_t point, qt6cr_handle_t device_transform) {
+  auto *scene = as_graphics_scene(handle);
+  auto *transform = as_qtransform(device_transform);
+  return scene == nullptr ? nullptr : scene->itemAt(from_pointf(point), transform == nullptr ? QTransform() : *transform);
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_selected_items(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(scene->selectedItems());
+}
+
+void qt6cr_graphics_scene_add_item(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_graphics_item(item);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->addItem(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_add_ellipse(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_handle_t pen, qt6cr_handle_t brush) {
+  auto *scene = as_graphics_scene(handle);
+  auto *pen_value = as_qpen(pen);
+  auto *brush_value = as_qbrush(brush);
+
+  return scene == nullptr ? nullptr : scene->addEllipse(from_rectf(rect), pen_value == nullptr ? QPen() : *pen_value, brush_value == nullptr ? QBrush() : *brush_value);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_add_line(qt6cr_handle_t handle, qt6cr_linef_t line, qt6cr_handle_t pen) {
+  auto *scene = as_graphics_scene(handle);
+  auto *pen_value = as_qpen(pen);
+  return scene == nullptr ? nullptr : scene->addLine(from_linef(line), pen_value == nullptr ? QPen() : *pen_value);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_add_path(qt6cr_handle_t handle, qt6cr_handle_t path, qt6cr_handle_t pen, qt6cr_handle_t brush) {
+  auto *scene = as_graphics_scene(handle);
+  auto *path_value = as_qpainter_path(path);
+  auto *pen_value = as_qpen(pen);
+  auto *brush_value = as_qbrush(brush);
+
+  if (scene == nullptr || path_value == nullptr) {
+    return nullptr;
+  }
+
+  return scene->addPath(*path_value, pen_value == nullptr ? QPen() : *pen_value, brush_value == nullptr ? QBrush() : *brush_value);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_add_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qpixmap(pixmap);
+  return scene == nullptr || value == nullptr ? nullptr : scene->addPixmap(*value);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_add_polygon(qt6cr_handle_t handle, qt6cr_handle_t polygon, qt6cr_handle_t pen, qt6cr_handle_t brush) {
+  auto *scene = as_graphics_scene(handle);
+  auto *polygon_value = as_qpolygonf(polygon);
+  auto *pen_value = as_qpen(pen);
+  auto *brush_value = as_qbrush(brush);
+
+  if (scene == nullptr || polygon_value == nullptr) {
+    return nullptr;
+  }
+
+  return scene->addPolygon(*polygon_value, pen_value == nullptr ? QPen() : *pen_value, brush_value == nullptr ? QBrush() : *brush_value);
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_add_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect, qt6cr_handle_t pen, qt6cr_handle_t brush) {
+  auto *scene = as_graphics_scene(handle);
+  auto *pen_value = as_qpen(pen);
+  auto *brush_value = as_qbrush(brush);
+  return scene == nullptr ? nullptr : scene->addRect(from_rectf(rect), pen_value == nullptr ? QPen() : *pen_value, brush_value == nullptr ? QBrush() : *brush_value);
+}
+
+void qt6cr_graphics_scene_remove_item(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_graphics_item(item);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->removeItem(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_focus_item(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? nullptr : scene->focusItem();
+}
+
+void qt6cr_graphics_scene_set_focus_item(qt6cr_handle_t handle, qt6cr_handle_t item, int reason) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setFocusItem(as_graphics_item(item), static_cast<Qt::FocusReason>(reason));
+  }
+}
+
+bool qt6cr_graphics_scene_has_focus(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene != nullptr && scene->hasFocus();
+}
+
+void qt6cr_graphics_scene_set_focus(qt6cr_handle_t handle, int reason) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setFocus(static_cast<Qt::FocusReason>(reason));
+  }
+}
+
+void qt6cr_graphics_scene_clear_focus(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->clearFocus();
+  }
+}
+
+bool qt6cr_graphics_scene_sticky_focus(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene != nullptr && scene->stickyFocus();
+}
+
+void qt6cr_graphics_scene_set_sticky_focus(qt6cr_handle_t handle, bool value) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setStickyFocus(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_mouse_grabber_item(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? nullptr : scene->mouseGrabberItem();
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_background_brush(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? new QBrush() : new QBrush(scene->backgroundBrush());
+}
+
+void qt6cr_graphics_scene_set_background_brush(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qbrush(brush);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->setBackgroundBrush(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_foreground_brush(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? new QBrush() : new QBrush(scene->foregroundBrush());
+}
+
+void qt6cr_graphics_scene_set_foreground_brush(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qbrush(brush);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->setForegroundBrush(*value);
+  }
+}
+
+qt6cr_handle_array_t qt6cr_graphics_scene_views(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(scene->views());
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_style(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? nullptr : scene->style();
+}
+
+void qt6cr_graphics_scene_set_style(qt6cr_handle_t handle, qt6cr_handle_t style) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setStyle(as_style(style));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_font(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? nullptr : new QFont(scene->font());
+}
+
+void qt6cr_graphics_scene_set_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qfont(font);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->setFont(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_palette(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? nullptr : new QPalette(scene->palette());
+}
+
+void qt6cr_graphics_scene_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
+  auto *scene = as_graphics_scene(handle);
+  auto *value = as_qpalette(palette);
+
+  if (scene != nullptr && value != nullptr) {
+    scene->setPalette(*value);
+  }
+}
+
+bool qt6cr_graphics_scene_is_active(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene != nullptr && scene->isActive();
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_active_panel(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? nullptr : scene->activePanel();
+}
+
+void qt6cr_graphics_scene_set_active_panel(qt6cr_handle_t handle, qt6cr_handle_t item) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setActivePanel(as_graphics_item(item));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_scene_active_window(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene == nullptr) {
+    return nullptr;
+  }
+
+  auto *window = scene->activeWindow();
+  return window == nullptr ? nullptr : static_cast<QGraphicsItem *>(window);
+}
+
+void qt6cr_graphics_scene_set_active_window(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setActiveWindow(as_graphics_widget(widget));
+  }
+}
+
+double qt6cr_graphics_scene_minimum_render_size(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene == nullptr ? 0.0 : scene->minimumRenderSize();
+}
+
+void qt6cr_graphics_scene_set_minimum_render_size(qt6cr_handle_t handle, double value) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setMinimumRenderSize(value);
+  }
+}
+
+bool qt6cr_graphics_scene_focus_on_touch(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+  return scene != nullptr && scene->focusOnTouch();
+}
+
+void qt6cr_graphics_scene_set_focus_on_touch(qt6cr_handle_t handle, bool value) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->setFocusOnTouch(value);
+  }
+}
+
+void qt6cr_graphics_scene_update(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->update(from_rectf(rect));
+  }
+}
+
+void qt6cr_graphics_scene_invalidate(qt6cr_handle_t handle, qt6cr_rectf_t rect, int layers) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->invalidate(from_rectf(rect), QGraphicsScene::SceneLayers(layers));
+  }
+}
+
+void qt6cr_graphics_scene_advance(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->advance();
+  }
+}
+
+void qt6cr_graphics_scene_clear_selection(qt6cr_handle_t handle) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene != nullptr) {
+    scene->clearSelection();
+  }
+}
+
+void qt6cr_graphics_scene_on_scene_rect_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scene, &QGraphicsScene::sceneRectChanged, scene, [callback, userdata](const QRectF &) {
+    callback(userdata);
+  });
+}
+
+void qt6cr_graphics_scene_on_selection_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *scene = as_graphics_scene(handle);
+
+  if (scene == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scene, &QGraphicsScene::selectionChanged, scene, [callback, userdata]() {
     callback(userdata);
   });
 }
@@ -12704,6 +13188,24 @@ void qt6cr_graphics_widget_adjust_size(qt6cr_handle_t handle) {
 
 qt6cr_handle_t qt6cr_graphics_view_create(qt6cr_handle_t parent) {
   return new QGraphicsView(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_graphics_view_scene(qt6cr_handle_t handle) {
+  auto *view = as_graphics_view(handle);
+  return view == nullptr ? nullptr : view->scene();
+}
+
+void qt6cr_graphics_view_set_scene(qt6cr_handle_t handle, qt6cr_handle_t scene) {
+  auto *view = as_graphics_view(handle);
+
+  if (view != nullptr) {
+    view->setScene(as_graphics_scene(scene));
+  }
+}
+
+qt6cr_handle_t qt6cr_graphics_widget_as_item(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? nullptr : static_cast<QGraphicsItem *>(widget);
 }
 
 qt6cr_handle_t qt6cr_graphics_view_background_brush(qt6cr_handle_t handle) {

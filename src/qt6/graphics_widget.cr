@@ -14,6 +14,10 @@ module Qt6
       super(handle, owned)
     end
 
+    def graphics_item_handle : LibQt6::Handle
+      LibQt6.qt6cr_graphics_widget_as_item(to_unsafe)
+    end
+
     # Returns `true` when the widget is visible.
     def visible? : Bool
       LibQt6.qt6cr_graphics_widget_is_visible(to_unsafe)

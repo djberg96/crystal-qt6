@@ -14,6 +14,18 @@ module Qt6
       super(handle, owned)
     end
 
+    # Returns the attached graphics scene, if present.
+    def scene : GraphicsScene?
+      handle = LibQt6.qt6cr_graphics_view_scene(to_unsafe)
+      handle.null? ? nil : GraphicsScene.wrap(handle)
+    end
+
+    # Attaches a graphics scene to the view.
+    def scene=(value : GraphicsScene?) : GraphicsScene?
+      LibQt6.qt6cr_graphics_view_set_scene(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value
+    end
+
     # Returns the background brush used behind scene contents.
     def background_brush : QBrush
       QBrush.wrap(LibQt6.qt6cr_graphics_view_background_brush(to_unsafe), true)

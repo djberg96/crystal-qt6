@@ -593,6 +593,112 @@ describe Qt6 do
     item.release
   end
 
+  it "supports graphics scenes" do
+    app
+
+    scene = Qt6::GraphicsScene.new(Qt6::RectF.new(0.0, 0.0, 40.0, 30.0))
+    view = Qt6::GraphicsView.new
+    rect_pen = Qt6::QPen.new(Qt6::Color.new(180, 20, 40), 2.0)
+    rect_brush = Qt6::QBrush.new(Qt6::Color.new(220, 80, 90, 220))
+    ellipse_brush = Qt6::QBrush.new(Qt6::Color.new(40, 150, 90, 220))
+    font = Qt6::QFont.new("Courier", 12)
+    palette = Qt6::QPalette.new
+    scene_rect_changes = 0
+    selection_changes = 0
+
+    scene.on_scene_rect_changed { |rect| scene_rect_changes += 1; rect.should eq(Qt6::RectF.new(0.0, 0.0, 60.0, 45.0)) }
+    scene.on_selection_changed { selection_changes += 1 }
+
+    view.scene = scene
+    view.scene.not_nil!.to_unsafe.should eq(scene.to_unsafe)
+    scene.views.size.should eq(1)
+    scene.views.first.to_unsafe.should eq(view.to_unsafe)
+
+    scene.scene_rect = Qt6::RectF.new(0.0, 0.0, 60.0, 45.0)
+    scene.bsp_tree_depth = 3
+    scene.bsp_tree_depth.should eq(3)
+    scene.item_index_method = Qt6::GraphicsSceneItemIndexMethod::NoIndex
+    scene.background_brush = Qt6::QBrush.new(Qt6::Color.new(245, 245, 248))
+    scene.foreground_brush = Qt6::QBrush.new(Qt6::Color.new(10, 10, 10, 24))
+    palette.set_color(Qt6::ColorRole::Window, Qt6::Color.new(230, 230, 235))
+    scene.font = font
+    scene.palette = palette
+    scene.sticky_focus = true
+    scene.minimum_render_size = 0.5
+    scene.focus_on_touch = false
+
+    panel = Qt6::GraphicsWidget.new
+    panel.set_geometry(1, 1, 12, 10)
+    panel.set_flag(Qt6::GraphicsItemFlag::ItemIsFocusable)
+    scene.add_item(panel)
+
+    ellipse = Qt6::GraphicsEllipseItem.new(6, 5, 12, 10)
+    ellipse.brush = ellipse_brush
+    ellipse.set_flag(Qt6::GraphicsItemFlag::ItemIsSelectable)
+    scene.add_item(ellipse)
+    ellipse.selected = true
+
+    rect = scene.add_rect(Qt6::RectF.new(2.0, 2.0, 18.0, 12.0), rect_pen, rect_brush)
+
+    scene.item_index_method.should eq(Qt6::GraphicsSceneItemIndexMethod::NoIndex)
+    scene.scene_rect.should eq(Qt6::RectF.new(0.0, 0.0, 60.0, 45.0))
+    scene.background_brush.color.should eq(Qt6::Color.new(245, 245, 248, 255))
+    scene.foreground_brush.color.should eq(Qt6::Color.new(10, 10, 10, 24))
+    scene.font.point_size.should eq(12)
+    scene.palette.color(Qt6::ColorRole::Window).should eq(Qt6::Color.new(230, 230, 235, 255))
+    scene.sticky_focus?.should be_true
+    scene.minimum_render_size.should eq(0.5)
+    scene.focus_on_touch?.should be_false
+    scene_rect_changes.should eq(1)
+    selection_changes.should be >= 1
+
+    scene.active_panel = panel
+    scene.active_window = panel
+    scene.set_focus_item(panel, Qt6::FocusReason::OtherFocusReason)
+    scene.focus_item.not_nil!.to_unsafe.should eq(panel.graphics_item_handle)
+    scene.mouse_grabber_item.should be_nil
+
+    all_items = scene.items
+    all_items.size.should eq(3)
+    all_items.any? { |item| item.to_unsafe == panel.graphics_item_handle }.should be_true
+    all_items.any? { |item| item.to_unsafe == ellipse.to_unsafe }.should be_true
+    all_items.any? { |item| item.to_unsafe == rect.to_unsafe }.should be_true
+
+    point_items = scene.items(Qt6::PointF.new(8.0, 8.0))
+    point_items.any? { |item| item.to_unsafe == rect.to_unsafe }.should be_true
+
+    path = Qt6::QPainterPath.new
+    path.add_rect(Qt6::RectF.new(0.0, 0.0, 24.0, 20.0))
+    path_items = scene.items(path)
+    path_items.any? { |item| item.to_unsafe == ellipse.to_unsafe }.should be_true
+
+    scene.items(Qt6::RectF.new(0.0, 0.0, 24.0, 20.0), Qt6::GraphicsItemSelectionMode::IntersectsItemBoundingRect).size.should eq(3)
+    scene.colliding_items(rect).any? { |item| item.to_unsafe == ellipse.to_unsafe }.should be_true
+    scene.item_at(Qt6::PointF.new(3.0, 3.0)).should_not be_nil
+    scene.selected_items.any? { |item| item.to_unsafe == ellipse.to_unsafe }.should be_true
+    scene.items_bounding_rect.width.should be > 15.0
+    scene.items_bounding_rect.height.should be > 10.0
+    scene.style.should_not be_nil
+
+    image = Qt6::QImage.new(80, 60)
+    image.fill(Qt6::Color.new(255, 255, 255))
+    Qt6::QPainter.paint(image) do |painter|
+      scene.render(painter, Qt6::RectF.new(0.0, 0.0, 80.0, 60.0), scene.scene_rect, Qt6::AspectRatioMode::Keep)
+    end
+    image.pixel_color(8, 8).should_not eq(Qt6::Color.new(255, 255, 255, 255))
+
+    scene.update(Qt6::RectF.new(0.0, 0.0, 12.0, 12.0))
+    scene.invalidate(Qt6::RectF.new(0.0, 0.0, 12.0, 12.0), Qt6::GraphicsSceneLayer::ItemLayer | Qt6::GraphicsSceneLayer::BackgroundLayer)
+    scene.advance
+    scene.clear_selection
+    scene.selected_items.should be_empty
+
+    panel.release
+    ellipse.release
+    view.release
+    scene.release
+  end
+
   it "supports graphics objects" do
     app
 
