@@ -896,6 +896,7 @@ describe Qt6 do
     right = Qt6::Label.new("Right")
     center = Qt6::Label.new("Center")
     row = Qt6::HBoxLayout.new
+    mirrored_row = Qt6::HBoxLayout.wrap(row.to_unsafe)
 
     layout = Qt6::BoxLayout.new(Qt6::BoxLayoutDirection::LeftToRight, window)
     row.add(left, 1)
@@ -915,8 +916,12 @@ describe Qt6 do
     layout.stretch(0).should eq(7)
     layout.stretch(2).should eq(6)
     layout.add_strut(24)
+    mirrored_row.direction.should eq(Qt6::BoxLayoutDirection::LeftToRight)
+    mirrored_row.direction = Qt6::BoxLayoutDirection::RightToLeft
     layout.direction = Qt6::BoxLayoutDirection::RightToLeft
 
+    row.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
+    mirrored_row.to_unsafe.should eq(row.to_unsafe)
     layout.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
     left.text.should eq("Left")
     center.text.should eq("Center")
