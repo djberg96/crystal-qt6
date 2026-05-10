@@ -2629,9 +2629,16 @@ int qt6cr_label_alignment(qt6cr_handle_t handle);
 void qt6cr_label_set_alignment(qt6cr_handle_t handle, int value);
 bool qt6cr_label_word_wrap(qt6cr_handle_t handle);
 void qt6cr_label_set_word_wrap(qt6cr_handle_t handle, bool value);
+qt6cr_handle_t qt6cr_label_pixmap(qt6cr_handle_t handle);
 void qt6cr_label_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap);
+int qt6cr_label_indent(qt6cr_handle_t handle);
+void qt6cr_label_set_indent(qt6cr_handle_t handle, int value);
+int qt6cr_label_margin(qt6cr_handle_t handle);
+void qt6cr_label_set_margin(qt6cr_handle_t handle, int value);
 bool qt6cr_label_has_scaled_contents(qt6cr_handle_t handle);
 void qt6cr_label_set_scaled_contents(qt6cr_handle_t handle, bool value);
+qt6cr_handle_t qt6cr_label_buddy(qt6cr_handle_t handle);
+void qt6cr_label_set_buddy(qt6cr_handle_t handle, qt6cr_handle_t buddy);
 
 char *qt6cr_abstract_button_text(qt6cr_handle_t handle);
 void qt6cr_abstract_button_set_text(qt6cr_handle_t handle, const char *text);

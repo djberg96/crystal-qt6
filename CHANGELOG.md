@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QHeaderView` with orientation/length/offset introspection, hidden-section counts, minimum/maximum/default alignment controls, highlight and cascading resize toggles, and visual/logical section mapping helpers.
 - Expanded `QKeySequenceEdit` with string-based construction and a Qt-style clear-button setter alias.
 - Expanded `QLCDNumber` with Qt-style mode/property setter aliases and `overflow` signal support.
+- Expanded `QLabel` with pixmap readback, indent/margin and buddy helpers, plus Qt-style setter aliases for common label properties.
 
 ## [0.10.0] - 2026-05-10
 

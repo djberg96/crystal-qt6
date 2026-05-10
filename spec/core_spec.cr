@@ -933,32 +933,49 @@ describe Qt6 do
     application = app
     window = Qt6::Widget.new
     label = Qt6::Label.new("Centered")
+    buddy = Qt6::LineEdit.new("", window)
     pixmap = Qt6::QPixmap.new(24, 12)
     pixmap.fill(Qt6::Color.new(80, 120, 160))
 
     window.vbox do |column|
       column << label
+      column << buddy
     end
 
-    label.alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
-    label.pixmap = pixmap
-    label.scaled_contents = true
+    label.set_text("Centered")
+    label.set_alignment(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter)
+    label.set_word_wrap(true)
+    label.set_indent(6)
+    label.set_margin(4)
+    label.set_buddy(buddy)
+    label.set_pixmap(pixmap)
+    label.set_scaled_contents(true)
 
     window.resize(80, 40)
     window.show
     application.process_events
 
+    returned_pixmap = label.pixmap
     label.alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
     label.alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    label.word_wrap?.should be_true
+    label.indent.should eq(6)
+    label.margin.should eq(4)
+    label.buddy.not_nil!.to_unsafe.should eq(buddy.to_unsafe)
+    returned_pixmap.should_not be_nil
+    returned_pixmap.not_nil!.size.should eq(Qt6::Size.new(24, 12))
     label.scaled_contents?.should be_true
 
     label.pixmap = nil
     label.text = "Fallback text"
     label.pixmap = nil
     label.scaled_contents = false
+    label.buddy = nil
     label.text.should eq("Fallback text")
     label.scaled_contents?.should be_false
+    label.buddy.should be_nil
 
+    returned_pixmap.try(&.release)
     pixmap.release
     window.release
   end

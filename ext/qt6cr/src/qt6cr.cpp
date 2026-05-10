@@ -19250,6 +19250,16 @@ void qt6cr_label_set_word_wrap(qt6cr_handle_t handle, bool value) {
   }
 }
 
+qt6cr_handle_t qt6cr_label_pixmap(qt6cr_handle_t handle) {
+  auto *label = as_label(handle);
+  if (label == nullptr) {
+    return nullptr;
+  }
+
+  const QPixmap pixmap = label->pixmap(Qt::ReturnByValue);
+  return pixmap.isNull() ? nullptr : new QPixmap(pixmap);
+}
+
 void qt6cr_label_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
   auto *label = as_label(handle);
 
@@ -19270,6 +19280,32 @@ void qt6cr_label_set_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap) {
   }
 }
 
+int qt6cr_label_indent(qt6cr_handle_t handle) {
+  auto *label = as_label(handle);
+  return label == nullptr ? 0 : label->indent();
+}
+
+void qt6cr_label_set_indent(qt6cr_handle_t handle, int value) {
+  auto *label = as_label(handle);
+
+  if (label != nullptr) {
+    label->setIndent(value);
+  }
+}
+
+int qt6cr_label_margin(qt6cr_handle_t handle) {
+  auto *label = as_label(handle);
+  return label == nullptr ? 0 : label->margin();
+}
+
+void qt6cr_label_set_margin(qt6cr_handle_t handle, int value) {
+  auto *label = as_label(handle);
+
+  if (label != nullptr) {
+    label->setMargin(value);
+  }
+}
+
 bool qt6cr_label_has_scaled_contents(qt6cr_handle_t handle) {
   auto *label = as_label(handle);
   return label != nullptr && label->hasScaledContents();
@@ -19280,6 +19316,19 @@ void qt6cr_label_set_scaled_contents(qt6cr_handle_t handle, bool value) {
 
   if (label != nullptr) {
     label->setScaledContents(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_label_buddy(qt6cr_handle_t handle) {
+  auto *label = as_label(handle);
+  return label == nullptr ? nullptr : label->buddy();
+}
+
+void qt6cr_label_set_buddy(qt6cr_handle_t handle, qt6cr_handle_t buddy) {
+  auto *label = as_label(handle);
+
+  if (label != nullptr) {
+    label->setBuddy(as_widget(buddy));
   }
 }
 

@@ -2587,9 +2587,16 @@ module Qt6
     fun qt6cr_label_set_alignment = qt6cr_label_set_alignment(handle : Handle, value : LibC::Int)
     fun qt6cr_label_word_wrap = qt6cr_label_word_wrap(handle : Handle) : Bool
     fun qt6cr_label_set_word_wrap = qt6cr_label_set_word_wrap(handle : Handle, value : Bool)
+    fun qt6cr_label_pixmap = qt6cr_label_pixmap(handle : Handle) : Handle
     fun qt6cr_label_set_pixmap = qt6cr_label_set_pixmap(handle : Handle, pixmap : Handle)
+    fun qt6cr_label_indent = qt6cr_label_indent(handle : Handle) : LibC::Int
+    fun qt6cr_label_set_indent = qt6cr_label_set_indent(handle : Handle, value : LibC::Int)
+    fun qt6cr_label_margin = qt6cr_label_margin(handle : Handle) : LibC::Int
+    fun qt6cr_label_set_margin = qt6cr_label_set_margin(handle : Handle, value : LibC::Int)
     fun qt6cr_label_has_scaled_contents = qt6cr_label_has_scaled_contents(handle : Handle) : Bool
     fun qt6cr_label_set_scaled_contents = qt6cr_label_set_scaled_contents(handle : Handle, value : Bool)
+    fun qt6cr_label_buddy = qt6cr_label_buddy(handle : Handle) : Handle
+    fun qt6cr_label_set_buddy = qt6cr_label_set_buddy(handle : Handle, buddy : Handle)
 
     fun qt6cr_abstract_button_text = qt6cr_abstract_button_text(handle : Handle) : UInt8*
     fun qt6cr_abstract_button_set_text = qt6cr_abstract_button_set_text(handle : Handle, text : UInt8*)
