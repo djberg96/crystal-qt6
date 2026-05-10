@@ -115,4 +115,8 @@ module Qt6
       nil
     end
   end
+
+  def self.model_data_user_type(value) : Int32
+    LibQt6.qt6cr_variant_value_user_type(model_data_to_native(value))
+  end
 end

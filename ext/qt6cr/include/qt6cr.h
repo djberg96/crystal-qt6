@@ -198,6 +198,7 @@ typedef int (*qt6cr_model_actions_callback_t)(void *userdata);
 typedef int (*qt6cr_model_count_with_parent_callback_t)(void *userdata, qt6cr_handle_t parent_index);
 typedef uint64_t (*qt6cr_model_index_id_callback_t)(void *userdata, int row, int column, qt6cr_handle_t parent_index);
 typedef qt6cr_model_index_spec_t (*qt6cr_model_parent_callback_t)(void *userdata, qt6cr_handle_t index);
+typedef qt6cr_handle_t (*qt6cr_item_editor_create_widget_callback_t)(void *userdata, qt6cr_handle_t parent);
 typedef qt6cr_handle_t (*qt6cr_delegate_create_editor_callback_t)(void *userdata, qt6cr_handle_t parent, qt6cr_handle_t option, qt6cr_handle_t index);
 typedef void (*qt6cr_delegate_set_editor_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_variant_value_t value, qt6cr_handle_t index);
 typedef void (*qt6cr_delegate_set_model_data_callback_t)(void *userdata, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
@@ -1284,6 +1285,24 @@ void qt6cr_styled_item_delegate_set_item_editor_factory(qt6cr_handle_t handle, q
 
 qt6cr_handle_t qt6cr_item_editor_factory_create(void);
 void qt6cr_item_editor_factory_destroy(qt6cr_handle_t handle);
+int qt6cr_variant_value_user_type(qt6cr_variant_value_t value);
+qt6cr_handle_t qt6cr_item_editor_creator_base_create(const char *value_property_name);
+void qt6cr_item_editor_creator_base_destroy(qt6cr_handle_t handle);
+void qt6cr_item_editor_creator_base_set_create_widget_callback(qt6cr_handle_t handle, qt6cr_item_editor_create_widget_callback_t callback, void *userdata);
+qt6cr_handle_t qt6cr_item_editor_creator_base_create_widget(qt6cr_handle_t handle, qt6cr_handle_t parent);
+char *qt6cr_item_editor_creator_base_value_property_name(qt6cr_handle_t handle);
+void qt6cr_item_editor_creator_base_set_value_property_name(qt6cr_handle_t handle, const char *value_property_name);
+qt6cr_handle_t qt6cr_item_editor_creator_create(const char *value_property_name);
+void qt6cr_item_editor_creator_destroy(qt6cr_handle_t handle);
+void qt6cr_item_editor_creator_set_create_widget_callback(qt6cr_handle_t handle, qt6cr_item_editor_create_widget_callback_t callback, void *userdata);
+qt6cr_handle_t qt6cr_item_editor_creator_create_widget(qt6cr_handle_t handle, qt6cr_handle_t parent);
+char *qt6cr_item_editor_creator_value_property_name(qt6cr_handle_t handle);
+void qt6cr_item_editor_creator_set_value_property_name(qt6cr_handle_t handle, const char *value_property_name);
+qt6cr_handle_t qt6cr_item_editor_factory_create_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t parent);
+char *qt6cr_item_editor_factory_value_property_name(qt6cr_handle_t handle, int user_type);
+void qt6cr_item_editor_factory_register_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t creator);
+qt6cr_handle_t qt6cr_item_editor_factory_default_factory(void);
+void qt6cr_item_editor_factory_set_default_factory(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_style_option_view_item_create(void);
 void qt6cr_style_option_view_item_destroy(qt6cr_handle_t handle);

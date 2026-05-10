@@ -1241,6 +1241,24 @@ module Qt6
 
     fun qt6cr_item_editor_factory_create = qt6cr_item_editor_factory_create : Handle
     fun qt6cr_item_editor_factory_destroy = qt6cr_item_editor_factory_destroy(handle : Handle)
+    fun qt6cr_variant_value_user_type = qt6cr_variant_value_user_type(value : VariantValue) : LibC::Int
+    fun qt6cr_item_editor_creator_base_create = qt6cr_item_editor_creator_base_create(value_property_name : UInt8*) : Handle
+    fun qt6cr_item_editor_creator_base_destroy = qt6cr_item_editor_creator_base_destroy(handle : Handle)
+    fun qt6cr_item_editor_creator_base_set_create_widget_callback = qt6cr_item_editor_creator_base_set_create_widget_callback(handle : Handle, callback : (Handle, Handle -> Handle), userdata : Handle)
+    fun qt6cr_item_editor_creator_base_create_widget = qt6cr_item_editor_creator_base_create_widget(handle : Handle, parent : Handle) : Handle
+    fun qt6cr_item_editor_creator_base_value_property_name = qt6cr_item_editor_creator_base_value_property_name(handle : Handle) : UInt8*
+    fun qt6cr_item_editor_creator_base_set_value_property_name = qt6cr_item_editor_creator_base_set_value_property_name(handle : Handle, value_property_name : UInt8*)
+    fun qt6cr_item_editor_creator_create = qt6cr_item_editor_creator_create(value_property_name : UInt8*) : Handle
+    fun qt6cr_item_editor_creator_destroy = qt6cr_item_editor_creator_destroy(handle : Handle)
+    fun qt6cr_item_editor_creator_set_create_widget_callback = qt6cr_item_editor_creator_set_create_widget_callback(handle : Handle, callback : (Handle, Handle -> Handle), userdata : Handle)
+    fun qt6cr_item_editor_creator_create_widget = qt6cr_item_editor_creator_create_widget(handle : Handle, parent : Handle) : Handle
+    fun qt6cr_item_editor_creator_value_property_name = qt6cr_item_editor_creator_value_property_name(handle : Handle) : UInt8*
+    fun qt6cr_item_editor_creator_set_value_property_name = qt6cr_item_editor_creator_set_value_property_name(handle : Handle, value_property_name : UInt8*)
+    fun qt6cr_item_editor_factory_create_editor = qt6cr_item_editor_factory_create_editor(handle : Handle, user_type : LibC::Int, parent : Handle) : Handle
+    fun qt6cr_item_editor_factory_value_property_name = qt6cr_item_editor_factory_value_property_name(handle : Handle, user_type : LibC::Int) : UInt8*
+    fun qt6cr_item_editor_factory_register_editor = qt6cr_item_editor_factory_register_editor(handle : Handle, user_type : LibC::Int, creator : Handle)
+    fun qt6cr_item_editor_factory_default_factory = qt6cr_item_editor_factory_default_factory : Handle
+    fun qt6cr_item_editor_factory_set_default_factory = qt6cr_item_editor_factory_set_default_factory(handle : Handle)
 
     fun qt6cr_style_option_view_item_create = qt6cr_style_option_view_item_create : Handle
     fun qt6cr_style_option_view_item_destroy = qt6cr_style_option_view_item_destroy(handle : Handle)

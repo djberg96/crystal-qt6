@@ -1382,6 +1382,34 @@ class CrystalItemDelegate final : public QItemDelegate {
   }
 };
 
+class CrystalItemEditorCreatorBase : public QItemEditorCreatorBase {
+ public:
+  qt6cr_item_editor_create_widget_callback_t create_widget_callback = nullptr;
+  void *create_widget_userdata = nullptr;
+  QByteArray property_name;
+
+  explicit CrystalItemEditorCreatorBase(const QByteArray &value_property_name = QByteArray())
+      : property_name(value_property_name) {}
+
+  QWidget *createWidget(QWidget *parent) const override {
+    if (create_widget_callback == nullptr) {
+      return nullptr;
+    }
+
+    return as_widget(create_widget_callback(create_widget_userdata, parent));
+  }
+
+  QByteArray valuePropertyName() const override {
+    return property_name;
+  }
+};
+
+class CrystalItemEditorCreator final : public CrystalItemEditorCreatorBase {
+ public:
+  explicit CrystalItemEditorCreator(const QByteArray &value_property_name = QByteArray())
+      : CrystalItemEditorCreatorBase(value_property_name) {}
+};
+
 class CrystalStyledItemDelegate final : public QStyledItemDelegate {
  public:
   explicit CrystalStyledItemDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) {}
@@ -1910,6 +1938,14 @@ QSortFilterProxyModel *as_sort_filter_proxy_model(qt6cr_handle_t handle) {
 
 CrystalItemDelegate *as_item_delegate(qt6cr_handle_t handle) {
   return static_cast<CrystalItemDelegate *>(handle);
+}
+
+CrystalItemEditorCreatorBase *as_item_editor_creator_base(qt6cr_handle_t handle) {
+  return static_cast<CrystalItemEditorCreatorBase *>(handle);
+}
+
+CrystalItemEditorCreator *as_item_editor_creator(qt6cr_handle_t handle) {
+  return static_cast<CrystalItemEditorCreator *>(handle);
 }
 
 CrystalStyledItemDelegate *as_styled_item_delegate(qt6cr_handle_t handle) {
@@ -2570,6 +2606,10 @@ QVariant from_variant_value(const qt6cr_variant_value_t &value) {
     default:
       return QVariant();
   }
+}
+
+int variant_user_type(const qt6cr_variant_value_t &value) {
+  return from_variant_value(value).metaType().id();
 }
 
 QPointF from_pointf(qt6cr_pointf_t point) {
@@ -10258,6 +10298,129 @@ qt6cr_handle_t qt6cr_item_editor_factory_create(void) {
 
 void qt6cr_item_editor_factory_destroy(qt6cr_handle_t handle) {
   delete static_cast<QItemEditorFactory *>(handle);
+}
+
+int qt6cr_variant_value_user_type(qt6cr_variant_value_t value) {
+  return variant_user_type(value);
+}
+
+qt6cr_handle_t qt6cr_item_editor_creator_base_create(const char *value_property_name) {
+  return new CrystalItemEditorCreatorBase(QByteArray(value_property_name == nullptr ? "" : value_property_name));
+}
+
+void qt6cr_item_editor_creator_base_destroy(qt6cr_handle_t handle) {
+  delete as_item_editor_creator_base(handle);
+}
+
+void qt6cr_item_editor_creator_base_set_create_widget_callback(qt6cr_handle_t handle, qt6cr_item_editor_create_widget_callback_t callback, void *userdata) {
+  auto *creator = as_item_editor_creator_base(handle);
+
+  if (creator == nullptr) {
+    return;
+  }
+
+  creator->create_widget_callback = callback;
+  creator->create_widget_userdata = userdata;
+}
+
+qt6cr_handle_t qt6cr_item_editor_creator_base_create_widget(qt6cr_handle_t handle, qt6cr_handle_t parent) {
+  auto *creator = as_item_editor_creator_base(handle);
+  auto *widget_parent = as_widget(parent);
+
+  if (creator == nullptr || widget_parent == nullptr) {
+    return nullptr;
+  }
+
+  return creator->createWidget(widget_parent);
+}
+
+char *qt6cr_item_editor_creator_base_value_property_name(qt6cr_handle_t handle) {
+  auto *creator = as_item_editor_creator_base(handle);
+  return creator == nullptr ? duplicate_string("") : duplicate_string(QString::fromUtf8(creator->valuePropertyName()));
+}
+
+void qt6cr_item_editor_creator_base_set_value_property_name(qt6cr_handle_t handle, const char *value_property_name) {
+  auto *creator = as_item_editor_creator_base(handle);
+
+  if (creator != nullptr) {
+    creator->property_name = QByteArray(value_property_name == nullptr ? "" : value_property_name);
+  }
+}
+
+qt6cr_handle_t qt6cr_item_editor_creator_create(const char *value_property_name) {
+  return new CrystalItemEditorCreator(QByteArray(value_property_name == nullptr ? "" : value_property_name));
+}
+
+void qt6cr_item_editor_creator_destroy(qt6cr_handle_t handle) {
+  delete as_item_editor_creator(handle);
+}
+
+void qt6cr_item_editor_creator_set_create_widget_callback(qt6cr_handle_t handle, qt6cr_item_editor_create_widget_callback_t callback, void *userdata) {
+  auto *creator = as_item_editor_creator(handle);
+
+  if (creator == nullptr) {
+    return;
+  }
+
+  creator->create_widget_callback = callback;
+  creator->create_widget_userdata = userdata;
+}
+
+qt6cr_handle_t qt6cr_item_editor_creator_create_widget(qt6cr_handle_t handle, qt6cr_handle_t parent) {
+  auto *creator = as_item_editor_creator(handle);
+  auto *widget_parent = as_widget(parent);
+
+  if (creator == nullptr || widget_parent == nullptr) {
+    return nullptr;
+  }
+
+  return creator->createWidget(widget_parent);
+}
+
+char *qt6cr_item_editor_creator_value_property_name(qt6cr_handle_t handle) {
+  auto *creator = as_item_editor_creator(handle);
+  return creator == nullptr ? duplicate_string("") : duplicate_string(QString::fromUtf8(creator->valuePropertyName()));
+}
+
+void qt6cr_item_editor_creator_set_value_property_name(qt6cr_handle_t handle, const char *value_property_name) {
+  auto *creator = as_item_editor_creator(handle);
+
+  if (creator != nullptr) {
+    creator->property_name = QByteArray(value_property_name == nullptr ? "" : value_property_name);
+  }
+}
+
+qt6cr_handle_t qt6cr_item_editor_factory_create_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t parent) {
+  auto *factory = static_cast<QItemEditorFactory *>(handle);
+  auto *widget_parent = as_widget(parent);
+
+  if (factory == nullptr || widget_parent == nullptr) {
+    return nullptr;
+  }
+
+  return factory->createEditor(user_type, widget_parent);
+}
+
+char *qt6cr_item_editor_factory_value_property_name(qt6cr_handle_t handle, int user_type) {
+  auto *factory = static_cast<QItemEditorFactory *>(handle);
+  return factory == nullptr ? duplicate_string("") : duplicate_string(QString::fromUtf8(factory->valuePropertyName(user_type)));
+}
+
+void qt6cr_item_editor_factory_register_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t creator) {
+  auto *factory = static_cast<QItemEditorFactory *>(handle);
+  auto *editor_creator = as_item_editor_creator_base(creator);
+
+  if (factory != nullptr && editor_creator != nullptr) {
+    factory->registerEditor(user_type, editor_creator);
+  }
+}
+
+qt6cr_handle_t qt6cr_item_editor_factory_default_factory(void) {
+  return const_cast<QItemEditorFactory *>(QItemEditorFactory::defaultFactory());
+}
+
+void qt6cr_item_editor_factory_set_default_factory(qt6cr_handle_t handle) {
+  QItemEditorFactory::setDefaultFactory(static_cast<QItemEditorFactory *>(handle));
 }
 
 qt6cr_handle_t qt6cr_style_option_view_item_create(void) {

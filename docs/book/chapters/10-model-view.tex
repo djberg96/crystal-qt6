@@ -425,7 +425,7 @@ Movable and clickable sections are small features, but they make data-heavy tabl
 
 \section{Delegates}
 
-\api{ItemDelegate} and \api{StyledItemDelegate} control how items are displayed and edited. Start with \api{StyledItemDelegate} when you want Qt's newer style-aware defaults plus optional style-option customization. Use \api{ItemDelegate} when you want the classic delegate behavior, clipping control, or the same editor lifecycle hooks without the styled-only option-initialization callback. Both wrappers support display formatting, custom editor creation, editor-data commits, paint hooks, size hints, editor-event hooks, and shared item-editor factories.
+\api{ItemDelegate} and \api{StyledItemDelegate} control how items are displayed and edited. Start with \api{StyledItemDelegate} when you want Qt's newer style-aware defaults plus optional style-option customization. Use \api{ItemDelegate} when you want the classic delegate behavior, clipping control, or the same editor lifecycle hooks without the styled-only option-initialization callback. Both wrappers support display formatting, custom editor creation, editor-data commits, paint hooks, size hints, editor-event hooks, and shared item-editor factories. When a project needs reusable editor registration, \api{QItemEditorCreatorBase}, \api{QItemEditorCreator}, and \api{QItemEditorFactory} let you register callback-backed editors by Qt user type and hand the resulting factory to either delegate class.
 
 \begin{lstlisting}[style=crystal]
 delegate = Qt6::StyledItemDelegate.new(main)

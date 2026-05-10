@@ -1063,6 +1063,67 @@ describe Qt6 do
     host.release
   end
 
+  it "supports item editor creators and factory registration" do
+    app
+    host = Qt6::Widget.new
+    model = Qt6::StandardItemModel.new(host)
+    item = Qt6::StandardItem.new("terrain")
+    model << item
+    index = model.index(0)
+    delegate = Qt6::StyledItemDelegate.new(host)
+    factory = Qt6::QItemEditorFactory.new
+    string_creator = Qt6::QItemEditorCreator.new("text")
+    int_creator = Qt6::QItemEditorCreatorBase.new("value")
+    string_creations = [] of Pointer(Void)
+    int_creations = [] of Pointer(Void)
+
+    string_creator.on_create_widget do |parent|
+      editor = Qt6::LineEdit.new(parent: parent)
+      string_creations << editor.to_unsafe
+      editor
+    end
+
+    int_creator.on_create_widget do |parent|
+      editor = Qt6::SpinBox.new(parent: parent)
+      int_creations << editor.to_unsafe
+      editor
+    end
+
+    string_creator.value_property_name.should eq("text")
+    int_creator.value_property_name.should eq("value")
+
+    preview_line_edit = string_creator.create_widget(host)
+    preview_line_edit.should be_a(Qt6::LineEdit)
+    preview_line_edit.not_nil!.release
+
+    preview_spin_box = int_creator.create_widget(host)
+    preview_spin_box.should be_a(Qt6::SpinBox)
+    preview_spin_box.not_nil!.release
+
+    factory.register_editor_for("terrain", string_creator)
+    factory.register_editor_for(1, int_creator)
+    factory.value_property_name_for("terrain").should eq("text")
+    factory.value_property_name_for(1).should eq("value")
+
+    string_editor = factory.create_editor_for("terrain", host)
+    string_editor.should be_a(Qt6::LineEdit)
+    int_editor = factory.create_editor_for(1, host)
+    int_editor.should be_a(Qt6::SpinBox)
+
+    delegate.item_editor_factory = factory
+    delegate_editor = delegate.create_editor(host, index)
+    delegate_editor.should_not be_nil
+
+    string_creations.size.should be >= 2
+    int_creations.size.should be >= 2
+
+    delegate_editor.try(&.release)
+    string_editor.try(&.release)
+    int_editor.try(&.release)
+    index.release
+    host.release
+  end
+
   it "supports item delegate editor hooks, factories, and mapper/view assignment" do
     app
     host = Qt6::Widget.new
