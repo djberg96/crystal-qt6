@@ -890,7 +890,7 @@ describe Qt6 do
   end
 
   it "supports shared box layout helpers and direction control" do
-    app
+    application = app
     window = Qt6::Widget.new
     left = Qt6::Label.new("Left")
     right = Qt6::Label.new("Right")
@@ -899,6 +899,10 @@ describe Qt6 do
     mirrored_row = Qt6::HBoxLayout.wrap(row.to_unsafe)
 
     layout = Qt6::BoxLayout.new(Qt6::BoxLayoutDirection::LeftToRight, window)
+    layout.enabled = false
+    layout.enabled?.should be_false
+    layout.set_enabled(true)
+    layout.set_contents_margins(3, 4, 5, 6)
     row.add(left, 1)
     row.insert(1, center, 3)
     row.set_stretch_factor(center, 4).should be_true
@@ -919,13 +923,40 @@ describe Qt6 do
     mirrored_row.direction.should eq(Qt6::BoxLayoutDirection::LeftToRight)
     mirrored_row.direction = Qt6::BoxLayoutDirection::RightToLeft
     layout.direction = Qt6::BoxLayoutDirection::RightToLeft
+    window.resize(180, 60)
+    window.show
+    application.process_events
 
     row.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
     mirrored_row.to_unsafe.should eq(row.to_unsafe)
     layout.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
+    layout.contents_margins.should eq(Qt6::Margins.new(3, 4, 5, 6))
+    layout.count.should eq(7)
+    layout.index_of(right).should eq(2)
+    layout.size_hint.width.should be >= 0
+    layout.size_hint.height.should be >= 0
+    layout.minimum_size.width.should be >= 0
+    layout.maximum_size.width.should be >= layout.minimum_size.width
+    layout.geometry.width.should be > 0
+    layout.geometry.height.should be > 0
+    layout.contents_rect.width.should be >= 0
+    layout.contents_rect.height.should be >= 0
+    layout.invalidate
+    layout.activate.should be_true
+    layout.update
+    layout_item = layout.item_at(0).not_nil!
+    layout_item.layout.not_nil!.to_unsafe.should eq(row.to_unsafe)
+    layout_item.geometry.width.should be >= 0
+    row.count.should eq(2)
+    row_item = row.item_at(0).not_nil!
+    row_item.widget.not_nil!.to_unsafe.should eq(left.to_unsafe)
+    removed_item = row.take_at(1).not_nil!
+    row.count.should eq(1)
+    removed_item.widget.not_nil!.to_unsafe.should eq(center.to_unsafe)
     left.text.should eq("Left")
     center.text.should eq("Center")
     right.text.should eq("Right")
+    removed_item.release
     window.release
   end
 

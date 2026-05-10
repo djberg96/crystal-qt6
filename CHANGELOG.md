@@ -15,6 +15,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QKeySequenceEdit` with string-based construction and a Qt-style clear-button setter alias.
 - Expanded `QLCDNumber` with Qt-style mode/property setter aliases and `overflow` signal support.
 - Expanded `QLabel` with pixmap readback, indent/margin and buddy helpers, plus Qt-style setter aliases for common label properties.
+- Expanded `QLayout` and `QLayoutItem` with shared count, enablement, activation, geometry, contents-margins readback, safe `item_at`/`take_at`, index lookup, and item contents-rect helpers for richer layout introspection.
 
 ## [0.10.0] - 2026-05-10
 

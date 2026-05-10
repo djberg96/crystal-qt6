@@ -68,11 +68,18 @@ typedef struct {
 } qt6cr_rectf_t;
 
 typedef struct {
-	double left;
-	double top;
-	double right;
-	double bottom;
+  double left;
+  double top;
+  double right;
+  double bottom;
 } qt6cr_marginsf_t;
+
+typedef struct {
+  int left;
+  int top;
+  int right;
+  int bottom;
+} qt6cr_margins_t;
 
 typedef struct {
 	int x;
@@ -3682,9 +3689,25 @@ qt6cr_size_t qt6cr_layout_item_size_hint(qt6cr_handle_t handle);
 qt6cr_size_t qt6cr_layout_item_minimum_size(qt6cr_handle_t handle);
 qt6cr_size_t qt6cr_layout_item_maximum_size(qt6cr_handle_t handle);
 qt6cr_rect_t qt6cr_layout_item_geometry(qt6cr_handle_t handle);
+int qt6cr_layout_item_alignment(qt6cr_handle_t handle);
 bool qt6cr_layout_item_is_empty(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_layout_item_widget(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_layout_item_layout(qt6cr_handle_t handle);
+int qt6cr_layout_count(qt6cr_handle_t handle);
+bool qt6cr_layout_is_enabled(qt6cr_handle_t handle);
+void qt6cr_layout_set_enabled(qt6cr_handle_t handle, bool value);
+bool qt6cr_layout_activate(qt6cr_handle_t handle);
+void qt6cr_layout_update(qt6cr_handle_t handle);
+void qt6cr_layout_invalidate(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_layout_size_hint(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_layout_minimum_size(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_layout_maximum_size(qt6cr_handle_t handle);
+qt6cr_rect_t qt6cr_layout_geometry(qt6cr_handle_t handle);
+qt6cr_rect_t qt6cr_layout_contents_rect(qt6cr_handle_t handle);
+qt6cr_margins_t qt6cr_layout_contents_margins(qt6cr_handle_t handle);
+int qt6cr_layout_index_of_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_layout_item_at(qt6cr_handle_t handle, int index);
+qt6cr_handle_t qt6cr_layout_take_at(qt6cr_handle_t handle, int index);
 int qt6cr_layout_spacing(qt6cr_handle_t handle);
 void qt6cr_layout_set_spacing(qt6cr_handle_t handle, int value);
 void qt6cr_layout_set_contents_margins(qt6cr_handle_t handle, double left, double top, double right, double bottom);

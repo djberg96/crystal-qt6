@@ -77,6 +77,13 @@ module Qt6
       bottom : Float64
     end
 
+    struct MarginsValue
+      left : LibC::Int
+      top : LibC::Int
+      right : LibC::Int
+      bottom : LibC::Int
+    end
+
     struct RectValue
       x : LibC::Int
       y : LibC::Int
@@ -3648,9 +3655,25 @@ module Qt6
     fun qt6cr_layout_item_minimum_size = qt6cr_layout_item_minimum_size(handle : Handle) : SizeValue
     fun qt6cr_layout_item_maximum_size = qt6cr_layout_item_maximum_size(handle : Handle) : SizeValue
     fun qt6cr_layout_item_geometry = qt6cr_layout_item_geometry(handle : Handle) : RectValue
+    fun qt6cr_layout_item_alignment = qt6cr_layout_item_alignment(handle : Handle) : LibC::Int
     fun qt6cr_layout_item_is_empty = qt6cr_layout_item_is_empty(handle : Handle) : Bool
     fun qt6cr_layout_item_widget = qt6cr_layout_item_widget(handle : Handle) : Handle
     fun qt6cr_layout_item_layout = qt6cr_layout_item_layout(handle : Handle) : Handle
+    fun qt6cr_layout_count = qt6cr_layout_count(handle : Handle) : LibC::Int
+    fun qt6cr_layout_is_enabled = qt6cr_layout_is_enabled(handle : Handle) : Bool
+    fun qt6cr_layout_set_enabled = qt6cr_layout_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_layout_activate = qt6cr_layout_activate(handle : Handle) : Bool
+    fun qt6cr_layout_update = qt6cr_layout_update(handle : Handle)
+    fun qt6cr_layout_invalidate = qt6cr_layout_invalidate(handle : Handle)
+    fun qt6cr_layout_size_hint = qt6cr_layout_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_layout_minimum_size = qt6cr_layout_minimum_size(handle : Handle) : SizeValue
+    fun qt6cr_layout_maximum_size = qt6cr_layout_maximum_size(handle : Handle) : SizeValue
+    fun qt6cr_layout_geometry = qt6cr_layout_geometry(handle : Handle) : RectValue
+    fun qt6cr_layout_contents_rect = qt6cr_layout_contents_rect(handle : Handle) : RectValue
+    fun qt6cr_layout_contents_margins = qt6cr_layout_contents_margins(handle : Handle) : MarginsValue
+    fun qt6cr_layout_index_of_widget = qt6cr_layout_index_of_widget(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_layout_item_at = qt6cr_layout_item_at(handle : Handle, index : LibC::Int) : Handle
+    fun qt6cr_layout_take_at = qt6cr_layout_take_at(handle : Handle, index : LibC::Int) : Handle
     fun qt6cr_layout_spacing = qt6cr_layout_spacing(handle : Handle) : LibC::Int
     fun qt6cr_layout_set_spacing = qt6cr_layout_set_spacing(handle : Handle, value : LibC::Int)
     fun qt6cr_layout_set_contents_margins = qt6cr_layout_set_contents_margins(handle : Handle, left : Float64, top : Float64, right : Float64, bottom : Float64)

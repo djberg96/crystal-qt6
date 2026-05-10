@@ -29,6 +29,11 @@ module Qt6
       Rect.from_native(LibQt6.qt6cr_layout_item_geometry(to_unsafe))
     end
 
+    # Returns the item's alignment flags within its parent layout.
+    def alignment : AlignmentFlag
+      AlignmentFlag.from_value(LibQt6.qt6cr_layout_item_alignment(to_unsafe))
+    end
+
     # Returns `true` when the item contributes no visible or measurable content.
     def empty? : Bool
       LibQt6.qt6cr_layout_item_is_empty(to_unsafe)
