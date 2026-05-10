@@ -671,12 +671,18 @@ describe Qt6 do
 
     horizontal_header = table_view.horizontal_header
     horizontal_header.default_section_size = 96
+    horizontal_header.minimum_section_size = 40
+    horizontal_header.maximum_section_size = 180
+    horizontal_header.default_alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
     horizontal_header.stretch_last_section = true
     horizontal_header.sections_movable = true
     horizontal_header.sections_clickable = true
+    horizontal_header.highlight_sections = false
+    horizontal_header.cascading_section_resizes = true
     horizontal_header.set_section_resize_mode(0, Qt6::HeaderResizeMode::Fixed)
     horizontal_header.resize_section(0, 120)
     vertical_header = table_view.vertical_header
+    vertical_header.default_section_size = 32
     vertical_header.set_section_hidden(1, true)
 
     selected_index = model.index(1, 1)
@@ -685,6 +691,7 @@ describe Qt6 do
     table_view.sort_by_column(0, Qt6::SortOrder::Descending)
     table_view.resize_columns_to_contents
     table_view.resize_rows_to_contents
+    horizontal_header.move_section(0, 1)
 
     table_widget.row_count = 2
     table_widget.column_count = 2
@@ -733,13 +740,28 @@ describe Qt6 do
     current_index.column.should eq(1)
     current_index_changes.should be >= 1
     horizontal_header.count.should eq(2)
+    horizontal_header.orientation.should eq(Qt6::Orientation::Horizontal)
     horizontal_header.default_section_size.should eq(96)
+    horizontal_header.minimum_section_size.should eq(40)
+    horizontal_header.maximum_section_size.should eq(180)
+    horizontal_header.default_alignment.should eq(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter)
     horizontal_header.stretch_last_section?.should be_true
     horizontal_header.sections_movable?.should be_true
     horizontal_header.sections_clickable?.should be_true
+    horizontal_header.highlight_sections?.should be_false
+    horizontal_header.cascading_section_resizes?.should be_true
+    horizontal_header.length.should be > 0
+    horizontal_header.offset.should be >= 0
     horizontal_header.section_size(0).should be > 0
     horizontal_header.section_resize_mode(0).should eq(Qt6::HeaderResizeMode::Fixed)
+    horizontal_header.visual_index(0).should eq(1)
+    horizontal_header.visual_index(1).should eq(0)
+    horizontal_header.logical_index(0).should eq(1)
+    horizontal_header.logical_index(1).should eq(0)
     vertical_header.count.should eq(2)
+    vertical_header.orientation.should eq(Qt6::Orientation::Vertical)
+    vertical_header.hidden_section_count.should eq(1)
+    vertical_header.default_section_size.should eq(32)
     vertical_header.section_hidden?(1).should be_true
     table_view.row_span(0, 0).should eq(1)
     table_view.column_span(0, 0).should eq(2)

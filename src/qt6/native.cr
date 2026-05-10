@@ -1308,20 +1308,37 @@ module Qt6
     fun qt6cr_column_view_on_update_preview_widget = qt6cr_column_view_on_update_preview_widget(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
 
     fun qt6cr_header_view_count = qt6cr_header_view_count(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_orientation = qt6cr_header_view_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_length = qt6cr_header_view_length(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_offset = qt6cr_header_view_offset(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_hidden_section_count = qt6cr_header_view_hidden_section_count(handle : Handle) : LibC::Int
     fun qt6cr_header_view_default_section_size = qt6cr_header_view_default_section_size(handle : Handle) : LibC::Int
     fun qt6cr_header_view_set_default_section_size = qt6cr_header_view_set_default_section_size(handle : Handle, value : LibC::Int)
+    fun qt6cr_header_view_minimum_section_size = qt6cr_header_view_minimum_section_size(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_set_minimum_section_size = qt6cr_header_view_set_minimum_section_size(handle : Handle, value : LibC::Int)
+    fun qt6cr_header_view_maximum_section_size = qt6cr_header_view_maximum_section_size(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_set_maximum_section_size = qt6cr_header_view_set_maximum_section_size(handle : Handle, value : LibC::Int)
+    fun qt6cr_header_view_default_alignment = qt6cr_header_view_default_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_header_view_set_default_alignment = qt6cr_header_view_set_default_alignment(handle : Handle, value : LibC::Int)
     fun qt6cr_header_view_stretch_last_section = qt6cr_header_view_stretch_last_section(handle : Handle) : Bool
     fun qt6cr_header_view_set_stretch_last_section = qt6cr_header_view_set_stretch_last_section(handle : Handle, value : Bool)
     fun qt6cr_header_view_sections_movable = qt6cr_header_view_sections_movable(handle : Handle) : Bool
     fun qt6cr_header_view_set_sections_movable = qt6cr_header_view_set_sections_movable(handle : Handle, value : Bool)
     fun qt6cr_header_view_sections_clickable = qt6cr_header_view_sections_clickable(handle : Handle) : Bool
     fun qt6cr_header_view_set_sections_clickable = qt6cr_header_view_set_sections_clickable(handle : Handle, value : Bool)
+    fun qt6cr_header_view_highlight_sections = qt6cr_header_view_highlight_sections(handle : Handle) : Bool
+    fun qt6cr_header_view_set_highlight_sections = qt6cr_header_view_set_highlight_sections(handle : Handle, value : Bool)
+    fun qt6cr_header_view_cascading_section_resizes = qt6cr_header_view_cascading_section_resizes(handle : Handle) : Bool
+    fun qt6cr_header_view_set_cascading_section_resizes = qt6cr_header_view_set_cascading_section_resizes(handle : Handle, value : Bool)
     fun qt6cr_header_view_section_hidden = qt6cr_header_view_section_hidden(handle : Handle, index : LibC::Int) : Bool
     fun qt6cr_header_view_set_section_hidden = qt6cr_header_view_set_section_hidden(handle : Handle, index : LibC::Int, value : Bool)
     fun qt6cr_header_view_section_resize_mode = qt6cr_header_view_section_resize_mode(handle : Handle, index : LibC::Int) : LibC::Int
     fun qt6cr_header_view_set_section_resize_mode = qt6cr_header_view_set_section_resize_mode(handle : Handle, index : LibC::Int, value : LibC::Int)
     fun qt6cr_header_view_resize_section = qt6cr_header_view_resize_section(handle : Handle, index : LibC::Int, size : LibC::Int)
     fun qt6cr_header_view_section_size = qt6cr_header_view_section_size(handle : Handle, index : LibC::Int) : LibC::Int
+    fun qt6cr_header_view_visual_index = qt6cr_header_view_visual_index(handle : Handle, logical_index : LibC::Int) : LibC::Int
+    fun qt6cr_header_view_logical_index = qt6cr_header_view_logical_index(handle : Handle, visual_index : LibC::Int) : LibC::Int
+    fun qt6cr_header_view_move_section = qt6cr_header_view_move_section(handle : Handle, from : LibC::Int, to : LibC::Int)
 
     fun qt6cr_table_view_create = qt6cr_table_view_create(parent : Handle) : Handle
     fun qt6cr_table_view_set_model = qt6cr_table_view_set_model(handle : Handle, model : Handle)

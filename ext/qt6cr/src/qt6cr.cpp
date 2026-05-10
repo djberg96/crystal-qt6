@@ -10799,6 +10799,26 @@ int qt6cr_header_view_count(qt6cr_handle_t handle) {
   return header == nullptr ? 0 : header->count();
 }
 
+int qt6cr_header_view_orientation(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(header->orientation());
+}
+
+int qt6cr_header_view_length(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? 0 : header->length();
+}
+
+int qt6cr_header_view_offset(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? 0 : header->offset();
+}
+
+int qt6cr_header_view_hidden_section_count(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? 0 : header->hiddenSectionCount();
+}
+
 int qt6cr_header_view_default_section_size(qt6cr_handle_t handle) {
   auto *header = as_header_view(handle);
   return header == nullptr ? 0 : header->defaultSectionSize();
@@ -10809,6 +10829,45 @@ void qt6cr_header_view_set_default_section_size(qt6cr_handle_t handle, int value
 
   if (header != nullptr && value >= 0) {
     header->setDefaultSectionSize(value);
+  }
+}
+
+int qt6cr_header_view_minimum_section_size(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? 0 : header->minimumSectionSize();
+}
+
+void qt6cr_header_view_set_minimum_section_size(qt6cr_handle_t handle, int value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr && value >= 0) {
+    header->setMinimumSectionSize(value);
+  }
+}
+
+int qt6cr_header_view_maximum_section_size(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? 0 : header->maximumSectionSize();
+}
+
+void qt6cr_header_view_set_maximum_section_size(qt6cr_handle_t handle, int value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr && value >= 0) {
+    header->setMaximumSectionSize(value);
+  }
+}
+
+int qt6cr_header_view_default_alignment(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header == nullptr ? 0 : static_cast<int>(header->defaultAlignment());
+}
+
+void qt6cr_header_view_set_default_alignment(qt6cr_handle_t handle, int value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr) {
+    header->setDefaultAlignment(static_cast<Qt::Alignment>(value));
   }
 }
 
@@ -10851,6 +10910,32 @@ void qt6cr_header_view_set_sections_clickable(qt6cr_handle_t handle, bool value)
   }
 }
 
+bool qt6cr_header_view_highlight_sections(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header != nullptr && header->highlightSections();
+}
+
+void qt6cr_header_view_set_highlight_sections(qt6cr_handle_t handle, bool value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr) {
+    header->setHighlightSections(value);
+  }
+}
+
+bool qt6cr_header_view_cascading_section_resizes(qt6cr_handle_t handle) {
+  auto *header = as_header_view(handle);
+  return header != nullptr && header->cascadingSectionResizes();
+}
+
+void qt6cr_header_view_set_cascading_section_resizes(qt6cr_handle_t handle, bool value) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr) {
+    header->setCascadingSectionResizes(value);
+  }
+}
+
 bool qt6cr_header_view_section_hidden(qt6cr_handle_t handle, int index) {
   auto *header = as_header_view(handle);
   return header != nullptr && index >= 0 && header->isSectionHidden(index);
@@ -10888,6 +10973,24 @@ void qt6cr_header_view_resize_section(qt6cr_handle_t handle, int index, int size
 int qt6cr_header_view_section_size(qt6cr_handle_t handle, int index) {
   auto *header = as_header_view(handle);
   return header == nullptr || index < 0 ? 0 : header->sectionSize(index);
+}
+
+int qt6cr_header_view_visual_index(qt6cr_handle_t handle, int logical_index) {
+  auto *header = as_header_view(handle);
+  return header == nullptr || logical_index < 0 ? -1 : header->visualIndex(logical_index);
+}
+
+int qt6cr_header_view_logical_index(qt6cr_handle_t handle, int visual_index) {
+  auto *header = as_header_view(handle);
+  return header == nullptr || visual_index < 0 ? -1 : header->logicalIndex(visual_index);
+}
+
+void qt6cr_header_view_move_section(qt6cr_handle_t handle, int from, int to) {
+  auto *header = as_header_view(handle);
+
+  if (header != nullptr && from >= 0 && to >= 0) {
+    header->moveSection(from, to);
+  }
 }
 
 qt6cr_handle_t qt6cr_table_view_create(qt6cr_handle_t parent) {

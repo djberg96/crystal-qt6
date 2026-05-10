@@ -1351,20 +1351,37 @@ void qt6cr_column_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_voi
 void qt6cr_column_view_on_update_preview_widget(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
 
 int qt6cr_header_view_count(qt6cr_handle_t handle);
+int qt6cr_header_view_orientation(qt6cr_handle_t handle);
+int qt6cr_header_view_length(qt6cr_handle_t handle);
+int qt6cr_header_view_offset(qt6cr_handle_t handle);
+int qt6cr_header_view_hidden_section_count(qt6cr_handle_t handle);
 int qt6cr_header_view_default_section_size(qt6cr_handle_t handle);
 void qt6cr_header_view_set_default_section_size(qt6cr_handle_t handle, int value);
+int qt6cr_header_view_minimum_section_size(qt6cr_handle_t handle);
+void qt6cr_header_view_set_minimum_section_size(qt6cr_handle_t handle, int value);
+int qt6cr_header_view_maximum_section_size(qt6cr_handle_t handle);
+void qt6cr_header_view_set_maximum_section_size(qt6cr_handle_t handle, int value);
+int qt6cr_header_view_default_alignment(qt6cr_handle_t handle);
+void qt6cr_header_view_set_default_alignment(qt6cr_handle_t handle, int value);
 bool qt6cr_header_view_stretch_last_section(qt6cr_handle_t handle);
 void qt6cr_header_view_set_stretch_last_section(qt6cr_handle_t handle, bool value);
 bool qt6cr_header_view_sections_movable(qt6cr_handle_t handle);
 void qt6cr_header_view_set_sections_movable(qt6cr_handle_t handle, bool value);
 bool qt6cr_header_view_sections_clickable(qt6cr_handle_t handle);
 void qt6cr_header_view_set_sections_clickable(qt6cr_handle_t handle, bool value);
+bool qt6cr_header_view_highlight_sections(qt6cr_handle_t handle);
+void qt6cr_header_view_set_highlight_sections(qt6cr_handle_t handle, bool value);
+bool qt6cr_header_view_cascading_section_resizes(qt6cr_handle_t handle);
+void qt6cr_header_view_set_cascading_section_resizes(qt6cr_handle_t handle, bool value);
 bool qt6cr_header_view_section_hidden(qt6cr_handle_t handle, int index);
 void qt6cr_header_view_set_section_hidden(qt6cr_handle_t handle, int index, bool value);
 int qt6cr_header_view_section_resize_mode(qt6cr_handle_t handle, int index);
 void qt6cr_header_view_set_section_resize_mode(qt6cr_handle_t handle, int index, int value);
 void qt6cr_header_view_resize_section(qt6cr_handle_t handle, int index, int size);
 int qt6cr_header_view_section_size(qt6cr_handle_t handle, int index);
+int qt6cr_header_view_visual_index(qt6cr_handle_t handle, int logical_index);
+int qt6cr_header_view_logical_index(qt6cr_handle_t handle, int visual_index);
+void qt6cr_header_view_move_section(qt6cr_handle_t handle, int from, int to);
 
 qt6cr_handle_t qt6cr_table_view_create(qt6cr_handle_t parent);
 void qt6cr_table_view_set_model(qt6cr_handle_t handle, qt6cr_handle_t model);
