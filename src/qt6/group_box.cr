@@ -26,6 +26,12 @@ module Qt6
       value
     end
 
+    # Qt-style alias for `title=`.
+    def set_title(value : String) : self
+      self.title = value
+      self
+    end
+
     # Returns the group-box title alignment flags.
     def alignment : AlignmentFlag
       AlignmentFlag.from_value(LibQt6.qt6cr_group_box_alignment(to_unsafe))
@@ -35,6 +41,12 @@ module Qt6
     def alignment=(value : AlignmentFlag) : AlignmentFlag
       LibQt6.qt6cr_group_box_set_alignment(to_unsafe, value.value)
       value
+    end
+
+    # Qt-style alias for `alignment=`.
+    def set_alignment(value : AlignmentFlag) : self
+      self.alignment = value
+      self
     end
 
     # Returns `true` when the group box shows a checkbox in its title.
@@ -48,6 +60,12 @@ module Qt6
       value
     end
 
+    # Qt-style alias for `checkable=`.
+    def set_checkable(value : Bool) : self
+      self.checkable = value
+      self
+    end
+
     # Returns `true` when the group box is checked.
     def checked? : Bool
       LibQt6.qt6cr_group_box_is_checked(to_unsafe)
@@ -59,6 +77,12 @@ module Qt6
       value
     end
 
+    # Qt-style alias for `checked=`.
+    def set_checked(value : Bool) : self
+      self.checked = value
+      self
+    end
+
     # Returns `true` when the group box hides the frame side lines.
     def flat? : Bool
       LibQt6.qt6cr_group_box_is_flat(to_unsafe)
@@ -68,6 +92,12 @@ module Qt6
     def flat=(value : Bool) : Bool
       LibQt6.qt6cr_group_box_set_flat(to_unsafe, value)
       value
+    end
+
+    # Qt-style alias for `flat=`.
+    def set_flat(value : Bool) : self
+      self.flat = value
+      self
     end
 
     # Registers a block to run when the group-box checked state changes.

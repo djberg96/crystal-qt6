@@ -670,9 +670,10 @@ describe Qt6 do
       tab_indices << value
     end
 
-    options_group.checkable = true
-    options_group.alignment = Qt6::AlignmentFlag::HCenter
-    options_group.flat = true
+    options_group.set_title("Inspector Options")
+    options_group.set_checkable(true)
+    options_group.set_alignment(Qt6::AlignmentFlag::HCenter)
+    options_group.set_flat(true)
     options_group.vbox do |column|
       column << auto_mode
       column << manual_mode
@@ -710,8 +711,15 @@ describe Qt6 do
     auto_mode.auto_exclusive?.should be_true
     manual_mode.auto_exclusive = false
     manual_mode.click
-    options_group.checked = false
-    options_group.checked = true
+    options_group.set_checked(false)
+    application.process_events
+    auto_mode.enabled?.should be_false
+    manual_mode.enabled?.should be_false
+    slider.enabled?.should be_false
+    spin_box.enabled?.should be_false
+    double_spin_box.enabled?.should be_false
+    options_group.set_checked(true)
+    application.process_events
     splitter.widget(0).not_nil!.to_unsafe.should eq(scroll_area.to_unsafe)
     splitter.widget(1).not_nil!.to_unsafe.should eq(tab_widget.to_unsafe)
     splitter.opaque_resize = false
@@ -745,11 +753,16 @@ describe Qt6 do
     tab_widget.widget(1).not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
     tab_widget.index_of(export_page).should eq(-1)
     tab_widget.tab_text(1).should eq("Inspect")
-    options_group.title.should eq("Options")
+    options_group.title.should eq("Inspector Options")
     options_group.alignment.should eq(Qt6::AlignmentFlag::HCenter)
     options_group.checkable?.should be_true
     options_group.checked?.should be_true
     options_group.flat?.should be_true
+    auto_mode.enabled?.should be_true
+    manual_mode.enabled?.should be_true
+    slider.enabled?.should be_true
+    spin_box.enabled?.should be_true
+    double_spin_box.enabled?.should be_true
     auto_mode.checked?.should be_false
     manual_mode.auto_exclusive?.should be_false
     manual_mode.checked?.should be_true
