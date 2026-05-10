@@ -600,11 +600,11 @@ describe Qt6 do
     host.resize(240, 180)
 
     sequence_changes = [] of String
-    key_sequence_edit = Qt6::KeySequenceEdit.new(Qt6::KeySequence.new("Ctrl+Shift+P"), host)
+    key_sequence_edit = Qt6::KeySequenceEdit.new("Ctrl+Shift+P", host)
     key_sequence_edit.on_key_sequence_changed do |value|
       sequence_changes << value.to_s
     end
-    key_sequence_edit.clear_button_enabled = true
+    key_sequence_edit.set_clear_button_enabled(true)
     key_sequence_edit.key_sequence = "Ctrl+Alt+L"
     application.process_events
 
@@ -621,6 +621,7 @@ describe Qt6 do
 
     key_sequence_edit.key_sequence.to_s.should_not be_empty
     sequence_changes.last.should eq(key_sequence_edit.key_sequence.to_s)
+    key_sequence_edit.clear_button_enabled?.should be_true
     key_sequence_edit.clear
     application.process_events
     key_sequence_edit.key_sequence.to_s.should eq("")

@@ -24,6 +24,12 @@ module Qt6
       register_callbacks
     end
 
+    # Creates an editor preloaded with a shortcut string.
+    def initialize(key_sequence : String, parent : Widget? = nil)
+      super(LibQt6.qt6cr_key_sequence_edit_create_with_sequence(key_sequence.to_unsafe, parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+      register_callbacks
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
       register_callbacks
@@ -66,6 +72,12 @@ module Qt6
     def clear_button_enabled=(value : Bool) : Bool
       LibQt6.qt6cr_key_sequence_edit_set_clear_button_enabled(to_unsafe, value)
       value
+    end
+
+    # Qt-style alias for `clear_button_enabled=`.
+    def set_clear_button_enabled(value : Bool) : self
+      self.clear_button_enabled = value
+      self
     end
 
     # Clears the current shortcut.
