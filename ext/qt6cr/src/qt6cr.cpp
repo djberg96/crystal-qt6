@@ -16846,6 +16846,32 @@ int qt6cr_input_dialog_input_mode(qt6cr_handle_t handle) {
   return input_dialog == nullptr ? 0 : static_cast<int>(input_dialog->inputMode());
 }
 
+void qt6cr_input_dialog_set_options(qt6cr_handle_t handle, int options) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setOptions(static_cast<QInputDialog::InputDialogOptions>(options));
+  }
+}
+
+int qt6cr_input_dialog_options(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : static_cast<int>(input_dialog->options());
+}
+
+void qt6cr_input_dialog_set_option(qt6cr_handle_t handle, int option, bool value) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setOption(static_cast<QInputDialog::InputDialogOption>(option), value);
+  }
+}
+
+bool qt6cr_input_dialog_test_option(qt6cr_handle_t handle, int option) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog != nullptr && input_dialog->testOption(static_cast<QInputDialog::InputDialogOption>(option));
+}
+
 void qt6cr_input_dialog_set_label_text(qt6cr_handle_t handle, const char *text) {
   auto *input_dialog = as_input_dialog(handle);
 
@@ -16857,6 +16883,45 @@ void qt6cr_input_dialog_set_label_text(qt6cr_handle_t handle, const char *text) 
 char *qt6cr_input_dialog_label_text(qt6cr_handle_t handle) {
   auto *input_dialog = as_input_dialog(handle);
   return input_dialog == nullptr ? duplicate_string("") : duplicate_string(input_dialog->labelText());
+}
+
+void qt6cr_input_dialog_set_ok_button_text(qt6cr_handle_t handle, const char *text) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setOkButtonText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_input_dialog_ok_button_text(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? duplicate_string("") : duplicate_string(input_dialog->okButtonText());
+}
+
+void qt6cr_input_dialog_set_cancel_button_text(qt6cr_handle_t handle, const char *text) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setCancelButtonText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_input_dialog_cancel_button_text(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? duplicate_string("") : duplicate_string(input_dialog->cancelButtonText());
+}
+
+void qt6cr_input_dialog_set_text_echo_mode(qt6cr_handle_t handle, int mode) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setTextEchoMode(static_cast<QLineEdit::EchoMode>(mode));
+  }
+}
+
+int qt6cr_input_dialog_text_echo_mode(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : static_cast<int>(input_dialog->textEchoMode());
 }
 
 void qt6cr_input_dialog_set_text_value(qt6cr_handle_t handle, const char *text) {
@@ -16903,6 +16968,19 @@ int qt6cr_input_dialog_int_maximum(qt6cr_handle_t handle) {
   return input_dialog == nullptr ? 0 : input_dialog->intMaximum();
 }
 
+void qt6cr_input_dialog_set_int_step(qt6cr_handle_t handle, int value) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setIntStep(value);
+  }
+}
+
+int qt6cr_input_dialog_int_step(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : input_dialog->intStep();
+}
+
 void qt6cr_input_dialog_set_double_value(qt6cr_handle_t handle, double value) {
   auto *input_dialog = as_input_dialog(handle);
 
@@ -16932,6 +17010,19 @@ double qt6cr_input_dialog_double_minimum(qt6cr_handle_t handle) {
 double qt6cr_input_dialog_double_maximum(qt6cr_handle_t handle) {
   auto *input_dialog = as_input_dialog(handle);
   return input_dialog == nullptr ? 0.0 : input_dialog->doubleMaximum();
+}
+
+void qt6cr_input_dialog_set_double_decimals(qt6cr_handle_t handle, int value) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog != nullptr) {
+    input_dialog->setDoubleDecimals(value);
+  }
+}
+
+int qt6cr_input_dialog_double_decimals(qt6cr_handle_t handle) {
+  auto *input_dialog = as_input_dialog(handle);
+  return input_dialog == nullptr ? 0 : input_dialog->doubleDecimals();
 }
 
 void qt6cr_input_dialog_set_combo_box_items(qt6cr_handle_t handle, const char *const *items, int count) {
@@ -16988,6 +17079,78 @@ char *qt6cr_input_dialog_get_item(qt6cr_handle_t parent, const char *title, cons
       editable,
       &ok);
   return ok ? duplicate_string(result) : nullptr;
+}
+
+void qt6cr_input_dialog_on_text_value_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(input_dialog, &QInputDialog::textValueChanged, input_dialog, [callback, userdata](const QString &value) {
+    callback(userdata, value.toUtf8().constData());
+  });
+}
+
+void qt6cr_input_dialog_on_text_value_selected(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(input_dialog, &QInputDialog::textValueSelected, input_dialog, [callback, userdata](const QString &value) {
+    callback(userdata, value.toUtf8().constData());
+  });
+}
+
+void qt6cr_input_dialog_on_int_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(input_dialog, &QInputDialog::intValueChanged, input_dialog, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_input_dialog_on_int_value_selected(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(input_dialog, &QInputDialog::intValueSelected, input_dialog, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_input_dialog_on_double_value_changed(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(input_dialog, &QInputDialog::doubleValueChanged, input_dialog, [callback, userdata](double value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_input_dialog_on_double_value_selected(qt6cr_handle_t handle, qt6cr_double_callback_t callback, void *userdata) {
+  auto *input_dialog = as_input_dialog(handle);
+
+  if (input_dialog == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(input_dialog, &QInputDialog::doubleValueSelected, input_dialog, [callback, userdata](double value) {
+    callback(userdata, value);
+  });
 }
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title) {

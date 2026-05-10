@@ -4,6 +4,12 @@ describe Qt6 do
   it "provides convenience helpers for common dialogs" do
     app
     window = Qt6::MainWindow.new
+    text_changes = [] of String
+    text_selected = [] of String
+    int_changes = [] of Int32
+    int_selected = [] of Int32
+    double_changes = [] of Float64
+    double_selected = [] of Float64
 
     message_result = Qt6::MessageBox.information(window, title: "About", text: "Helper test") do |dialog|
       timer = Qt6::QTimer.new(dialog)
@@ -30,7 +36,10 @@ describe Qt6 do
       timer.start(0)
     end
 
-    text_value = Qt6::InputDialog.get_text(window, title: "Rename", label: "Layer", value: "Terrain") do |dialog|
+    text_value = Qt6::InputDialog.get_text(window, title: "Rename", label: "Layer", value: "Terrain", echo_mode: Qt6::EchoMode::Password) do |dialog|
+      dialog.text_echo_mode.should eq(Qt6::EchoMode::Password)
+      dialog.on_text_value_changed { |value| text_changes << value }
+      dialog.on_text_value_selected { |value| text_selected << value }
       dialog.text_value = "Roads"
       timer = Qt6::QTimer.new(dialog)
       timer.single_shot = true
@@ -38,7 +47,19 @@ describe Qt6 do
       timer.start(0)
     end
 
-    int_value = Qt6::InputDialog.get_int(window, title: "Count", label: "Columns", value: 3, minimum: 1, maximum: 12) do |dialog|
+    multi_line_value = Qt6::InputDialog.get_multi_line_text(window, title: "Notes", label: "Summary", value: "Terrain") do |dialog|
+      dialog.option?(Qt6::InputDialogOption::UsePlainTextEditForTextInput).should be_true
+      dialog.text_value = "Terrain\nRoads"
+      timer = Qt6::QTimer.new(dialog)
+      timer.single_shot = true
+      timer.on_timeout { dialog.accept }
+      timer.start(0)
+    end
+
+    int_value = Qt6::InputDialog.get_int(window, title: "Count", label: "Columns", value: 3, minimum: 1, maximum: 12, step: 2) do |dialog|
+      dialog.int_step.should eq(2)
+      dialog.on_int_value_changed { |value| int_changes << value }
+      dialog.on_int_value_selected { |value| int_selected << value }
       dialog.int_value = 7
       timer = Qt6::QTimer.new(dialog)
       timer.single_shot = true
@@ -46,7 +67,10 @@ describe Qt6 do
       timer.start(0)
     end
 
-    double_value = Qt6::InputDialog.get_double(window, title: "Scale", label: "Zoom", value: 1.0, minimum: 0.5, maximum: 4.0) do |dialog|
+    double_value = Qt6::InputDialog.get_double(window, title: "Scale", label: "Zoom", value: 1.0, minimum: 0.5, maximum: 4.0, decimals: 3) do |dialog|
+      dialog.double_decimals.should eq(3)
+      dialog.on_double_value_changed { |value| double_changes << value }
+      dialog.on_double_value_selected { |value| double_selected << value }
       dialog.double_value = 1.25
       timer = Qt6::QTimer.new(dialog)
       timer.single_shot = true
@@ -68,9 +92,22 @@ describe Qt6 do
     selected_color.should eq(Qt6::Color.new(32, 64, 96, 128))
     selected_font.not_nil!.point_size.should eq(13)
     text_value.should eq("Roads")
+    multi_line_value.should eq("Terrain\nRoads")
     int_value.should eq(7)
     double_value.should eq(1.25)
     item_value.should eq("Roads")
+    text_changes.should contain("Roads")
+    text_changes.last.should eq("Roads")
+    text_selected.should contain("Roads")
+    text_selected.last.should eq("Roads")
+    int_changes.should contain(7)
+    int_changes.last.should eq(7)
+    int_selected.should contain(7)
+    int_selected.last.should eq(7)
+    double_changes.should contain(1.25)
+    double_changes.last.should eq(1.25)
+    double_selected.should contain(1.25)
+    double_selected.last.should eq(1.25)
     selected_font.try(&.release)
     window.release
   end
@@ -85,6 +122,9 @@ describe Qt6 do
     selected_colors = [] of Qt6::Color
     current_font_changes = [] of Qt6::QFont
     selected_fonts = [] of Qt6::QFont
+    text_value_changes = [] of String
+    int_value_changes = [] of Int32
+    double_value_changes = [] of Float64
     custom_index = 0
     standard_index = 0
     original_custom_color = Qt6::ColorDialog.custom_color(custom_index)
@@ -106,6 +146,18 @@ describe Qt6 do
       selected_fonts << font
     end
 
+    input_dialog.on_text_value_changed do |value|
+      text_value_changes << value
+    end
+
+    input_dialog.on_int_value_changed do |value|
+      int_value_changes << value
+    end
+
+    input_dialog.on_double_value_changed do |value|
+      double_value_changes << value
+    end
+
     color_dialog.window_title = "Pick Accent Color"
     color_dialog.options = Qt6::ColorDialogOption::NoButtons | Qt6::ColorDialogOption::ShowAlphaChannel
     color_dialog.native_dialog = false
@@ -123,16 +175,25 @@ describe Qt6 do
     font_dialog.set_current_font(Qt6::QFont.new("Helvetica", 14, true, false)).to_unsafe.should eq(font_dialog.to_unsafe)
 
     input_dialog.window_title = "Layer Details"
+    input_dialog.options = Qt6::InputDialogOption::NoButtons
+    input_dialog.set_option(Qt6::InputDialogOption::UseListViewForComboBoxItems)
+    input_dialog.clear_option(Qt6::InputDialogOption::NoButtons)
     input_dialog.input_mode = Qt6::InputDialogInputMode::Text
     input_dialog.label_text = "Layer name"
+    input_dialog.ok_button_text = "Rename"
+    input_dialog.cancel_button_text = "Skip"
+    input_dialog.text_echo_mode = Qt6::EchoMode::PasswordEchoOnEdit
     input_dialog.text_value = "Terrain"
     input_dialog.input_mode = Qt6::InputDialogInputMode::Int
     input_dialog.int_range = 1..12
+    input_dialog.int_step = 3
     input_dialog.int_value = 4
     input_dialog.input_mode = Qt6::InputDialogInputMode::Double
     input_dialog.double_range = 0.5..4.0
+    input_dialog.double_decimals = 2
     input_dialog.double_value = 1.5
     input_dialog.input_mode = Qt6::InputDialogInputMode::Text
+    input_dialog.set_option(Qt6::InputDialogOption::UsePlainTextEditForTextInput)
     input_dialog.combo_box_items = ["Terrain", "Units", "Roads"]
     input_dialog.combo_box_editable = false
     input_dialog.text_value = "Units"
@@ -170,16 +231,30 @@ describe Qt6 do
     selected_fonts.last.point_size.should eq(14)
 
     input_dialog.window_title.should eq("Layer Details")
+    input_dialog.option?(Qt6::InputDialogOption::UseListViewForComboBoxItems).should be_true
+    input_dialog.option?(Qt6::InputDialogOption::UsePlainTextEditForTextInput).should be_true
+    input_dialog.option?(Qt6::InputDialogOption::NoButtons).should be_false
+    input_dialog.ok_button_text.should eq("Rename")
+    input_dialog.cancel_button_text.should eq("Skip")
     input_dialog.label_text.should eq("Layer name")
+    input_dialog.text_echo_mode.should eq(Qt6::EchoMode::PasswordEchoOnEdit)
     input_dialog.text_value.should eq("Units")
     input_dialog.int_minimum.should eq(1)
     input_dialog.int_maximum.should eq(12)
+    input_dialog.int_step.should eq(3)
     input_dialog.int_value.should eq(4)
     input_dialog.double_minimum.should eq(0.5)
     input_dialog.double_maximum.should eq(4.0)
+    input_dialog.double_decimals.should eq(2)
     input_dialog.double_value.should eq(1.5)
     input_dialog.combo_box_items.should eq(["Terrain", "Units", "Roads"])
     input_dialog.combo_box_editable?.should be_false
+    text_value_changes.should contain("Terrain")
+    text_value_changes.should contain("Units")
+    int_value_changes.should contain(4)
+    int_value_changes.last.should eq(4)
+    double_value_changes.should contain(1.5)
+    double_value_changes.last.should eq(1.5)
     Qt6::ColorDialog.set_custom_color(custom_index, original_custom_color)
     Qt6::ColorDialog.set_standard_color(standard_index, original_standard_color)
     window.release

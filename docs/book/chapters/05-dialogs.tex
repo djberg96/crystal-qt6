@@ -251,7 +251,7 @@ font = Qt6::FontDialog.get_font(
 
 \section{Input Dialogs}
 
-\api{InputDialog} is a compact way to request one value from the user. The convenience helpers cover text, integers, floating-point values, and item choices.
+\api{InputDialog} is a compact way to request one value from the user. The convenience helpers cover text, multiline text, integers, floating-point values, and item choices.
 
 \begin{lstlisting}[style=crystal]
 name = Qt6::InputDialog.get_text(
@@ -270,6 +270,15 @@ opacity = Qt6::InputDialog.get_int(
   value: 72,
   minimum: 0,
   maximum: 100
+)
+\end{lstlisting}
+
+\begin{lstlisting}[style=crystal]
+notes = Qt6::InputDialog.get_multi_line_text(
+  main,
+  title: "Export Notes",
+  label: "Summary",
+  value: "Tiles ready for review."
 )
 \end{lstlisting}
 
@@ -308,7 +317,7 @@ tag = Qt6::InputDialog.get_item(
 
 \inputdialogscreenshots
 
-Use explicit \api{InputDialog} instances when you need to change the input mode, inspect range values, or configure combo-box editability directly.
+Use explicit \api{InputDialog} instances when you need to change the input mode, inspect range values, adjust integer steps or floating-point decimals, customize button labels, switch text echo modes, or listen to value-changed and value-selected signals directly.
 
 \section{Progress Dialogs}
 
