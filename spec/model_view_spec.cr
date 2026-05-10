@@ -13,9 +13,10 @@ describe Qt6 do
     end
 
     terrain_item = list_widget.add_item("Terrain")
+    roads_item = list_widget.insert_item(1, "Roads")
     unit_item = Qt6::ListWidgetItem.new("Units")
     list_widget.add_item(unit_item)
-    list_widget.current_row = 1
+    list_widget.current_item = unit_item
 
     tree_widget.on_current_item_changed do
       tree_changes += 1
@@ -36,14 +37,16 @@ describe Qt6 do
     tree_widget.expand_all
     application.process_events
 
-    list_widget.count.should eq(2)
+    list_widget.count.should eq(3)
     terrain_item.text.should eq("Terrain")
-    list_widget.item(1).not_nil!.text.should eq("Units")
+    roads_item.text.should eq("Roads")
+    list_widget.row(roads_item).should eq(1)
+    list_widget.item(1).not_nil!.text.should eq("Roads")
     list_widget.item_text(0).should eq("Terrain")
-    list_widget.current_row.should eq(1)
+    list_widget.current_row.should eq(2)
     list_widget.current_item.not_nil!.text.should eq("Units")
     list_widget.current_text.should eq("Units")
-    row_changes.last.should eq(1)
+    row_changes.last.should eq(2)
 
     tree_widget.column_count.should eq(2)
     tree_widget.header_label.should eq("Layer")
@@ -72,6 +75,7 @@ describe Qt6 do
     list_widget = Qt6::ListWidget.new
     list_widget.resize(240, 180)
     list_widget.show
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-list-widget-item-#{Process.pid}.png")
 
     changed_texts = [] of String
     double_clicked_texts = [] of String
@@ -93,20 +97,40 @@ describe Qt6 do
     list_widget.selection_mode = Qt6::ItemSelectionMode::ExtendedSelection
     list_widget.default_drop_action = Qt6::DropAction::MoveAction
 
-    terrain_item = Qt6::ListWidgetItem.new(Qt6::QIcon.new, "Terrain")
+    icon_image = Qt6::QImage.new(8, 8)
+    icon_image.fill(Qt6::Color.new(32, 96, 192))
+    icon_image.save(icon_path).should be_true
+    terrain_icon = Qt6::QIcon.from_file(icon_path)
+    terrain_item = Qt6::ListWidgetItem.new(terrain_icon, "Terrain")
     terrain_item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable | Qt6::ItemFlag::UserCheckable | Qt6::ItemFlag::DragEnabled | Qt6::ItemFlag::DropEnabled
     terrain_item.check_state = Qt6::CheckState::Checked
     terrain_item.set_data("ground", Qt6::ItemDataRole::User)
     terrain_item.foreground = Qt6::Color.new(32, 96, 192)
+    terrain_item.background = Qt6::QBrush.new(Qt6::Color.new(228, 236, 248))
+    terrain_font = terrain_item.font
+    terrain_font.bold = true
+    terrain_item.font = terrain_font
+    terrain_item.tool_tip = "Terrain controls"
+    terrain_item.status_tip = "Toggle terrain visibility"
+    terrain_item.whats_this = "Used for managing terrain-related layers."
+    terrain_item.text_alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    terrain_item.size_hint = Qt6::Size.new(140, 30)
     list_widget.add_item(terrain_item)
     list_widget.add_item("Units")
     list_widget.add_item("Roads")
     application.process_events
 
+    terrain_item.hidden = true
+    application.process_events
+    terrain_item.hidden?.should be_true
+    terrain_item.hidden = false
+    terrain_item.selected = true
     terrain_item.text = "Terrain Layer"
     application.process_events
 
-    list_widget.move_item(0, 2).should be_true
+    list_widget.sort_items(Qt6::SortOrder::Descending)
+    application.process_events
+    list_widget.move_item(1, 2).should be_true
     application.process_events
     Qt6::LibQt6.qt6cr_list_widget_emit_item_double_clicked(list_widget.to_unsafe, 2)
     application.process_events
@@ -118,12 +142,26 @@ describe Qt6 do
     terrain_item.flags.includes?(Qt6::ItemFlag::UserCheckable).should be_true
     terrain_item.check_state.should eq(Qt6::CheckState::Checked)
     terrain_item.data(Qt6::ItemDataRole::User).should eq("ground")
+    terrain_item.icon.null?.should be_false
     terrain_item.foreground.should eq(Qt6::Color.new(32, 96, 192, 255))
+    terrain_item.background.color.should eq(Qt6::Color.new(228, 236, 248, 255))
+    terrain_item.font.bold?.should be_true
+    terrain_item.tool_tip.should eq("Terrain controls")
+    terrain_item.status_tip.should eq("Toggle terrain visibility")
+    terrain_item.whats_this.should eq("Used for managing terrain-related layers.")
+    terrain_item.text_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+    terrain_item.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    terrain_item.size_hint.should eq(Qt6::Size.new(140, 30))
+    terrain_item.selected?.should be_true
+    terrain_item.hidden?.should be_false
     changed_texts.includes?("Terrain Layer").should be_true
     list_widget.item_text(2).should eq("Terrain Layer")
     double_clicked_texts.should eq(["Terrain Layer"])
     rows_moved.should be >= 1
 
+    File.delete(icon_path) if File.exists?(icon_path)
+    terrain_icon.release
+    icon_image.release
     list_widget.release
   end
 

@@ -42,6 +42,18 @@ module Qt6
       ListWidgetItem.wrap(LibQt6.qt6cr_list_widget_add_item_text(to_unsafe, text.to_unsafe))
     end
 
+    # Inserts an existing item at the given index and returns it.
+    def insert_item(index : Int, item : ListWidgetItem) : ListWidgetItem
+      LibQt6.qt6cr_list_widget_insert_item(to_unsafe, index.to_i32, item.to_unsafe)
+      item.adopt_by_parent!
+      item
+    end
+
+    # Creates, inserts, and returns a borrowed item for the given text.
+    def insert_item(index : Int, text : String) : ListWidgetItem
+      ListWidgetItem.wrap(LibQt6.qt6cr_list_widget_insert_item_text(to_unsafe, index.to_i32, text.to_unsafe))
+    end
+
     # Appends an item and returns `self`.
     def <<(item : ListWidgetItem) : self
       add_item(item)
@@ -88,9 +100,20 @@ module Qt6
       handle.null? ? nil : ListWidgetItem.wrap(handle)
     end
 
+    # Changes the current item and returns it.
+    def current_item=(value : ListWidgetItem) : ListWidgetItem
+      LibQt6.qt6cr_list_widget_set_current_item(to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Returns the current item text.
     def current_text : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_list_widget_current_text(to_unsafe))
+    end
+
+    # Returns the row index for the given item, or `-1`.
+    def row(item : ListWidgetItem) : Int32
+      LibQt6.qt6cr_list_widget_row(to_unsafe, item.to_unsafe)
     end
 
     # Removes all items.
@@ -109,6 +132,12 @@ module Qt6
       int_value = value.to_i32
       LibQt6.qt6cr_list_widget_set_spacing(to_unsafe, int_value)
       int_value
+    end
+
+    # Sorts all items using the given order.
+    def sort_items(order : SortOrder = SortOrder::Ascending) : self
+      LibQt6.qt6cr_list_widget_sort_items(to_unsafe, order.value)
+      self
     end
 
     # Reorders an item within the list.

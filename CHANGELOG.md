@@ -17,6 +17,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QLabel` with pixmap readback, indent/margin and buddy helpers, plus Qt-style setter aliases for common label properties.
 - Expanded `QLayout` and `QLayoutItem` with shared count, enablement, activation, geometry, contents-margins readback, safe `item_at`/`take_at`, index lookup, and item contents-rect helpers for richer layout introspection.
 - Expanded `QListView` with flow, movement, list/icon layout modes, wrapping, spacing/grid sizing, model-column, uniform-item-size, word-wrap, selection-rectangle, batch-layout, and row-visibility helpers for fuller list and icon-view configuration.
+- Expanded `QListWidget` and `QListWidgetItem` with insert/current-item/row/sort helpers plus richer item icon, background, font, selection/hidden state, size-hint, alignment, and tip/help metadata for fuller item-based side-panel control.
 - Expanded `QLineEdit` with display-text, read-only/modified/max-length, clear-button and drag toggles, acceptable-input checks, and editing-finished / return-pressed signal coverage for fuller text-entry control.
 
 ## [0.10.0] - 2026-05-10
