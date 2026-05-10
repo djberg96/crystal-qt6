@@ -153,6 +153,12 @@ calendar.on_clicked do |date|
 end
 \end{lstlisting}
 
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/widgets-core-controls-panel.png}{width=0.72\textwidth,height=0.62\textheight,keepaspectratio}%
+  \caption{Core widget controls in one small preferences-style panel: line edits, combo boxes, spin boxes, sliders, radio buttons, and a calendar widget.}
+\end{figure}
+
 \section{Panel Polish Widgets}
 
 Desktop editors often need a few small shell widgets in addition to the primary value editors. \api{ToolBox} is a compact stacked-page container that works well for inspectors and sidebars. \api{FocusFrame} lets Qt draw a native-looking focus highlight around another widget. \api{SizeGrip} provides an explicit resize corner for custom dialogs or utility windows that do not already expose one through a status bar.
@@ -379,6 +385,12 @@ stack << advanced_page
 mode_combo.on_current_index_changed { |index| stack.current_index = index }
 stack.current_widget = simple_page
 \end{lstlisting}
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/widgets-container-workbench.png}{width=0.92\textwidth,height=0.44\textheight,keepaspectratio}%
+  \caption{Container widgets working together: a \api{ToolBox} beside a \api{TabWidget}, with a \api{ScrollArea}, \api{Splitter}, and \api{StackedWidget} inside the workbench.}
+\end{figure}
 
 \section{Composing A Panel}
 

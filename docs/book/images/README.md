@@ -56,6 +56,8 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_widgets_layouts
 ```
 
 - `widgets-layer-inspector-panel.png`
+- `widgets-core-controls-panel.png`
+- `widgets-container-workbench.png`
 
 Chapter 4:
 
