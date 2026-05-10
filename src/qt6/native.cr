@@ -2654,6 +2654,7 @@ module Qt6
     fun qt6cr_line_edit_create = qt6cr_line_edit_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_line_edit_set_text = qt6cr_line_edit_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_line_edit_text = qt6cr_line_edit_text(handle : Handle) : UInt8*
+    fun qt6cr_line_edit_display_text = qt6cr_line_edit_display_text(handle : Handle) : UInt8*
     fun qt6cr_line_edit_placeholder_text = qt6cr_line_edit_placeholder_text(handle : Handle) : UInt8*
     fun qt6cr_line_edit_set_placeholder_text = qt6cr_line_edit_set_placeholder_text(handle : Handle, text : UInt8*)
     fun qt6cr_line_edit_echo_mode = qt6cr_line_edit_echo_mode(handle : Handle) : LibC::Int
@@ -2662,6 +2663,16 @@ module Qt6
     fun qt6cr_line_edit_set_input_mask = qt6cr_line_edit_set_input_mask(handle : Handle, value : UInt8*)
     fun qt6cr_line_edit_alignment = qt6cr_line_edit_alignment(handle : Handle) : LibC::Int
     fun qt6cr_line_edit_set_alignment = qt6cr_line_edit_set_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_line_edit_is_read_only = qt6cr_line_edit_is_read_only(handle : Handle) : Bool
+    fun qt6cr_line_edit_set_read_only = qt6cr_line_edit_set_read_only(handle : Handle, value : Bool)
+    fun qt6cr_line_edit_is_modified = qt6cr_line_edit_is_modified(handle : Handle) : Bool
+    fun qt6cr_line_edit_set_modified = qt6cr_line_edit_set_modified(handle : Handle, value : Bool)
+    fun qt6cr_line_edit_max_length = qt6cr_line_edit_max_length(handle : Handle) : LibC::Int
+    fun qt6cr_line_edit_set_max_length = qt6cr_line_edit_set_max_length(handle : Handle, value : LibC::Int)
+    fun qt6cr_line_edit_clear_button_enabled = qt6cr_line_edit_clear_button_enabled(handle : Handle) : Bool
+    fun qt6cr_line_edit_set_clear_button_enabled = qt6cr_line_edit_set_clear_button_enabled(handle : Handle, value : Bool)
+    fun qt6cr_line_edit_drag_enabled = qt6cr_line_edit_drag_enabled(handle : Handle) : Bool
+    fun qt6cr_line_edit_set_drag_enabled = qt6cr_line_edit_set_drag_enabled(handle : Handle, value : Bool)
     fun qt6cr_line_edit_cursor_position = qt6cr_line_edit_cursor_position(handle : Handle) : LibC::Int
     fun qt6cr_line_edit_set_cursor_position = qt6cr_line_edit_set_cursor_position(handle : Handle, value : LibC::Int)
     fun qt6cr_line_edit_selected_text = qt6cr_line_edit_selected_text(handle : Handle) : UInt8*
@@ -2675,6 +2686,11 @@ module Qt6
     fun qt6cr_line_edit_set_validator = qt6cr_line_edit_set_validator(handle : Handle, validator : Handle)
     fun qt6cr_line_edit_completer = qt6cr_line_edit_completer(handle : Handle) : Handle
     fun qt6cr_line_edit_set_completer = qt6cr_line_edit_set_completer(handle : Handle, completer : Handle)
+    fun qt6cr_line_edit_has_acceptable_input = qt6cr_line_edit_has_acceptable_input(handle : Handle) : Bool
+    fun qt6cr_line_edit_emit_editing_finished = qt6cr_line_edit_emit_editing_finished(handle : Handle)
+    fun qt6cr_line_edit_emit_return_pressed = qt6cr_line_edit_emit_return_pressed(handle : Handle)
+    fun qt6cr_line_edit_on_editing_finished = qt6cr_line_edit_on_editing_finished(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_line_edit_on_return_pressed = qt6cr_line_edit_on_return_pressed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_line_edit_on_text_changed = qt6cr_line_edit_on_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
 
     fun qt6cr_validator_validate = qt6cr_validator_validate(handle : Handle, input : UInt8*) : LibC::Int

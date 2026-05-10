@@ -338,10 +338,14 @@ describe Qt6 do
     regex_validator = Qt6::RegexValidator.new("^[A-Z][a-z]+$", line_edit)
     completer = Qt6::Completer.new(["Terrain", "Units", "Roads"], line_edit)
     changed_texts = [] of String
+    editing_finished = 0
+    return_pressed = 0
 
     line_edit.on_text_changed do |value|
       changed_texts << value
     end
+    line_edit.on_editing_finished { editing_finished += 1 }
+    line_edit.on_return_pressed { return_pressed += 1 }
 
     completer.case_sensitivity = Qt6::CaseSensitivity::Insensitive
     completer.completion_mode = Qt6::CompleterCompletionMode::PopupCompletion
@@ -352,17 +356,34 @@ describe Qt6 do
     completer.max_visible_items = 9
     completer.completion_prefix = "uni"
 
-    line_edit.echo_mode = Qt6::EchoMode::Password
-    line_edit.input_mask = "00-00;_"
-    line_edit.alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    line_edit.set_placeholder_text("Search terrain")
+    line_edit.set_clear_button_enabled(true)
+    line_edit.set_drag_enabled(true)
+    line_edit.set_echo_mode(Qt6::EchoMode::Password)
+    line_edit.set_input_mask("00-00;_")
+    line_edit.set_alignment(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter)
     line_edit.validator = regex_validator
     line_edit.completer = completer
     line_edit.input_mask.should eq("00-00;_")
     line_edit.input_mask = ""
-    line_edit.text = "Bravo"
-    line_edit.cursor_position = 2
+    line_edit.set_max_length(8)
+    line_edit.set_text("terrain")
+    line_edit.acceptable_input?.should be_false
+    line_edit.set_text("Bravo")
+    line_edit.acceptable_input?.should be_true
+    line_edit.display_text.should_not eq("Bravo")
+    line_edit.set_read_only(true)
+    line_edit.read_only?.should be_true
+    line_edit.set_read_only(false)
+    line_edit.set_modified(true)
+    line_edit.modified?.should be_true
+    line_edit.set_modified(false)
+    line_edit.modified?.should be_false
+    line_edit.set_cursor_position(2)
     line_edit.set_selection(1, 2)
     completer.current_row = 0
+    Qt6::LibQt6.qt6cr_line_edit_emit_editing_finished(line_edit.to_unsafe)
+    Qt6::LibQt6.qt6cr_line_edit_emit_return_pressed(line_edit.to_unsafe)
     application.process_events
 
     int_validator.validate("42").should eq(Qt6::ValidatorState::Acceptable)
@@ -391,10 +412,14 @@ describe Qt6 do
     completer.current_completion.should eq("Units")
     completer.widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
 
+    line_edit.placeholder_text.should eq("Search terrain")
     line_edit.echo_mode.should eq(Qt6::EchoMode::Password)
     line_edit.input_mask.should eq("")
     line_edit.alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
     line_edit.alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    line_edit.max_length.should eq(8)
+    line_edit.clear_button_enabled?.should be_true
+    line_edit.drag_enabled?.should be_true
     line_edit.validator.not_nil!.validate("Roads").should eq(Qt6::ValidatorState::Acceptable)
     line_edit.completer.not_nil!.completion_prefix.should eq("uni")
     line_edit.text.should eq("Bravo")
@@ -403,6 +428,8 @@ describe Qt6 do
     line_edit.has_selected_text?.should be_true
     line_edit.selection_start.should eq(1)
     changed_texts.last.should eq("Bravo")
+    editing_finished.should eq(1)
+    return_pressed.should eq(1)
 
     line_edit.select_all
     line_edit.selected_text.should eq("Bravo")

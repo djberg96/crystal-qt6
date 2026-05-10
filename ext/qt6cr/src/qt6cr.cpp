@@ -19675,6 +19675,11 @@ char *qt6cr_line_edit_text(qt6cr_handle_t handle) {
   return line_edit == nullptr ? duplicate_string("") : duplicate_string(line_edit->text());
 }
 
+char *qt6cr_line_edit_display_text(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? duplicate_string("") : duplicate_string(line_edit->displayText());
+}
+
 char *qt6cr_line_edit_placeholder_text(qt6cr_handle_t handle) {
   auto *line_edit = as_line_edit(handle);
   return line_edit == nullptr ? duplicate_string("") : duplicate_string(line_edit->placeholderText());
@@ -19724,6 +19729,71 @@ void qt6cr_line_edit_set_alignment(qt6cr_handle_t handle, int value) {
 
   if (line_edit != nullptr) {
     line_edit->setAlignment(static_cast<Qt::Alignment>(value));
+  }
+}
+
+bool qt6cr_line_edit_is_read_only(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit != nullptr && line_edit->isReadOnly();
+}
+
+void qt6cr_line_edit_set_read_only(qt6cr_handle_t handle, bool value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setReadOnly(value);
+  }
+}
+
+bool qt6cr_line_edit_is_modified(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit != nullptr && line_edit->isModified();
+}
+
+void qt6cr_line_edit_set_modified(qt6cr_handle_t handle, bool value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setModified(value);
+  }
+}
+
+int qt6cr_line_edit_max_length(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit == nullptr ? 32767 : line_edit->maxLength();
+}
+
+void qt6cr_line_edit_set_max_length(qt6cr_handle_t handle, int value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setMaxLength(value);
+  }
+}
+
+bool qt6cr_line_edit_clear_button_enabled(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit != nullptr && line_edit->isClearButtonEnabled();
+}
+
+void qt6cr_line_edit_set_clear_button_enabled(qt6cr_handle_t handle, bool value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setClearButtonEnabled(value);
+  }
+}
+
+bool qt6cr_line_edit_drag_enabled(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit != nullptr && line_edit->dragEnabled();
+}
+
+void qt6cr_line_edit_set_drag_enabled(qt6cr_handle_t handle, bool value) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    line_edit->setDragEnabled(value);
   }
 }
 
@@ -19813,6 +19883,51 @@ void qt6cr_line_edit_set_completer(qt6cr_handle_t handle, qt6cr_handle_t complet
   if (line_edit != nullptr) {
     line_edit->setCompleter(value);
   }
+}
+
+bool qt6cr_line_edit_has_acceptable_input(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+  return line_edit != nullptr && line_edit->hasAcceptableInput();
+}
+
+void qt6cr_line_edit_emit_editing_finished(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    emit line_edit->editingFinished();
+  }
+}
+
+void qt6cr_line_edit_emit_return_pressed(qt6cr_handle_t handle) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit != nullptr) {
+    emit line_edit->returnPressed();
+  }
+}
+
+void qt6cr_line_edit_on_editing_finished(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(line_edit, &QLineEdit::editingFinished, line_edit, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_line_edit_on_return_pressed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *line_edit = as_line_edit(handle);
+
+  if (line_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(line_edit, &QLineEdit::returnPressed, line_edit, [callback, userdata]() {
+    callback(userdata);
+  });
 }
 
 void qt6cr_line_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
