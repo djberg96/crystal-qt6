@@ -10958,6 +10958,189 @@ void qt6cr_list_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value)
   }
 }
 
+int qt6cr_list_view_flow(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? static_cast<int>(QListView::TopToBottom) : static_cast<int>(view->flow());
+}
+
+void qt6cr_list_view_set_flow(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setFlow(static_cast<QListView::Flow>(value));
+  }
+}
+
+bool qt6cr_list_view_is_wrapping(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->isWrapping();
+}
+
+void qt6cr_list_view_set_wrapping(qt6cr_handle_t handle, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setWrapping(value);
+  }
+}
+
+int qt6cr_list_view_resize_mode(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? static_cast<int>(QListView::Fixed) : static_cast<int>(view->resizeMode());
+}
+
+void qt6cr_list_view_set_resize_mode(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setResizeMode(static_cast<QListView::ResizeMode>(value));
+  }
+}
+
+int qt6cr_list_view_layout_mode(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? static_cast<int>(QListView::SinglePass) : static_cast<int>(view->layoutMode());
+}
+
+void qt6cr_list_view_set_layout_mode(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setLayoutMode(static_cast<QListView::LayoutMode>(value));
+  }
+}
+
+int qt6cr_list_view_view_mode(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? static_cast<int>(QListView::ListMode) : static_cast<int>(view->viewMode());
+}
+
+void qt6cr_list_view_set_view_mode(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setViewMode(static_cast<QListView::ViewMode>(value));
+  }
+}
+
+int qt6cr_list_view_movement(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? static_cast<int>(QListView::Static) : static_cast<int>(view->movement());
+}
+
+void qt6cr_list_view_set_movement(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setMovement(static_cast<QListView::Movement>(value));
+  }
+}
+
+int qt6cr_list_view_spacing(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? 0 : view->spacing();
+}
+
+void qt6cr_list_view_set_spacing(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setSpacing(value);
+  }
+}
+
+qt6cr_size_t qt6cr_list_view_grid_size(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  auto size = view == nullptr ? QSize() : view->gridSize();
+  return qt6cr_size_t{size.width(), size.height()};
+}
+
+void qt6cr_list_view_set_grid_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setGridSize(QSize(value.width, value.height));
+  }
+}
+
+int qt6cr_list_view_model_column(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? 0 : view->modelColumn();
+}
+
+void qt6cr_list_view_set_model_column(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setModelColumn(value);
+  }
+}
+
+bool qt6cr_list_view_uniform_item_sizes(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->uniformItemSizes();
+}
+
+void qt6cr_list_view_set_uniform_item_sizes(qt6cr_handle_t handle, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setUniformItemSizes(value);
+  }
+}
+
+bool qt6cr_list_view_word_wrap(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->wordWrap();
+}
+
+void qt6cr_list_view_set_word_wrap(qt6cr_handle_t handle, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setWordWrap(value);
+  }
+}
+
+bool qt6cr_list_view_selection_rect_visible(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->isSelectionRectVisible();
+}
+
+void qt6cr_list_view_set_selection_rect_visible(qt6cr_handle_t handle, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setSelectionRectVisible(value);
+  }
+}
+
+int qt6cr_list_view_batch_size(qt6cr_handle_t handle) {
+  auto *view = as_list_view(handle);
+  return view == nullptr ? 100 : view->batchSize();
+}
+
+void qt6cr_list_view_set_batch_size(qt6cr_handle_t handle, int value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setBatchSize(value);
+  }
+}
+
+bool qt6cr_list_view_is_row_hidden(qt6cr_handle_t handle, int row) {
+  auto *view = as_list_view(handle);
+  return view != nullptr && view->isRowHidden(row);
+}
+
+void qt6cr_list_view_set_row_hidden(qt6cr_handle_t handle, int row, bool value) {
+  auto *view = as_list_view(handle);
+
+  if (view != nullptr) {
+    view->setRowHidden(row, value);
+  }
+}
+
 void qt6cr_list_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index) {
   auto *view = as_list_view(handle);
   auto *model_index = as_model_index(index);

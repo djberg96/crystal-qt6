@@ -151,6 +151,8 @@ describe Qt6 do
 
     list_model << Qt6::StandardItem.new("Terrain")
     list_model << Qt6::StandardItem.new("Units")
+    list_model.set_item(0, 1, Qt6::StandardItem.new("Ground"))
+    list_model.set_item(1, 1, Qt6::StandardItem.new("Air"))
 
     root_item = Qt6::StandardItem.new("Terrain")
     root_item.set_child(0, 0, Qt6::StandardItem.new("Contours"))
@@ -159,6 +161,20 @@ describe Qt6 do
     list_view.model = list_model
     list_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
     list_view.alternating_row_colors = true
+    list_view.flow = Qt6::ListViewFlow::LeftToRight
+    list_view.wrapping = true
+    list_view.resize_mode = Qt6::ListViewResizeMode::Adjust
+    list_view.layout_mode = Qt6::ListViewLayoutMode::Batched
+    list_view.view_mode = Qt6::ListViewViewMode::IconMode
+    list_view.movement = Qt6::ListViewMovement::Snap
+    list_view.spacing = 6
+    list_view.grid_size = Qt6::Size.new(96, 48)
+    list_view.model_column = 1
+    list_view.uniform_item_sizes = true
+    list_view.word_wrap = true
+    list_view.selection_rect_visible = true
+    list_view.batch_size = 4
+    list_view.set_row_hidden(1, true)
 
     tree_view.model = tree_model
     tree_view.selection_mode = Qt6::ItemSelectionMode::SingleSelection
@@ -179,6 +195,20 @@ describe Qt6 do
 
     list_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
     list_view.alternating_row_colors?.should be_true
+    list_view.flow.should eq(Qt6::ListViewFlow::LeftToRight)
+    list_view.wrapping?.should be_true
+    list_view.resize_mode.should eq(Qt6::ListViewResizeMode::Adjust)
+    list_view.layout_mode.should eq(Qt6::ListViewLayoutMode::Batched)
+    list_view.view_mode.should eq(Qt6::ListViewViewMode::IconMode)
+    list_view.movement.should eq(Qt6::ListViewMovement::Snap)
+    list_view.spacing.should eq(6)
+    list_view.grid_size.should eq(Qt6::Size.new(96, 48))
+    list_view.model_column.should eq(1)
+    list_view.uniform_item_sizes?.should be_true
+    list_view.word_wrap?.should be_true
+    list_view.selection_rect_visible?.should be_true
+    list_view.batch_size.should eq(4)
+    list_view.row_hidden?(1).should be_true
     tree_view.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
     tree_view.alternating_row_colors?.should be_true
     tree_view.header.should be_a(Qt6::HeaderView)
