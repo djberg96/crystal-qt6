@@ -88,6 +88,7 @@
 #include <QIcon>
 #include <QInputDialog>
 #include <QItemEditorFactory>
+#include <QItemDelegate>
 #include <QItemSelectionModel>
 #include <QIODevice>
 #include <QKeyEvent>
@@ -1241,6 +1242,146 @@ class CrystalAbstractTreeModel final : public QAbstractItemModel {
   }
 };
 
+class CrystalItemDelegate final : public QItemDelegate {
+ public:
+  explicit CrystalItemDelegate(QObject *parent = nullptr) : QItemDelegate(parent) {}
+
+  qt6cr_string_transform_callback_t display_text_callback = nullptr;
+  void *display_text_userdata = nullptr;
+  qt6cr_delegate_create_editor_callback_t create_editor_callback = nullptr;
+  void *create_editor_userdata = nullptr;
+  qt6cr_delegate_set_editor_data_callback_t set_editor_data_callback = nullptr;
+  void *set_editor_data_userdata = nullptr;
+  qt6cr_delegate_set_model_data_callback_t set_model_data_callback = nullptr;
+  void *set_model_data_userdata = nullptr;
+  qt6cr_delegate_paint_callback_t paint_callback = nullptr;
+  void *paint_userdata = nullptr;
+  qt6cr_delegate_size_hint_callback_t size_hint_callback = nullptr;
+  void *size_hint_userdata = nullptr;
+  qt6cr_delegate_update_editor_geometry_callback_t update_editor_geometry_callback = nullptr;
+  void *update_editor_geometry_userdata = nullptr;
+  qt6cr_delegate_editor_event_callback_t editor_event_callback = nullptr;
+  void *editor_event_userdata = nullptr;
+  qt6cr_delegate_event_filter_callback_t event_filter_callback = nullptr;
+  void *event_filter_userdata = nullptr;
+
+  QString displayText(const QVariant &value, const QLocale &locale) const {
+    Q_UNUSED(locale);
+    const auto default_text = value.toString();
+
+    if (display_text_callback == nullptr) {
+      return default_text;
+    }
+
+    const auto utf8 = default_text.toUtf8();
+    char *transformed = display_text_callback(display_text_userdata, utf8.constData());
+
+    if (transformed == nullptr) {
+      return default_text;
+    }
+
+    const auto result = QString::fromUtf8(transformed);
+    std::free(transformed);
+    return result;
+  }
+
+  void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (paint_callback == nullptr) {
+      QItemDelegate::paint(painter, option, index);
+      return;
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    QModelIndex index_copy(index);
+    const bool handled = paint_callback(paint_userdata, painter, &option_copy, &index_copy);
+    if (!handled) {
+      QItemDelegate::paint(painter, option, index);
+    }
+  }
+
+  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (size_hint_callback == nullptr) {
+      return QItemDelegate::sizeHint(option, index);
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    QModelIndex index_copy(index);
+    const auto size = size_hint_callback(size_hint_userdata, &option_copy, &index_copy);
+    if (size.width < 0 || size.height < 0) {
+      return QItemDelegate::sizeHint(option, index);
+    }
+    return QSize(size.width, size.height);
+  }
+
+  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (create_editor_callback == nullptr) {
+      return QItemDelegate::createEditor(parent, option, index);
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    QModelIndex index_copy(index);
+    auto *editor = as_widget(create_editor_callback(create_editor_userdata, parent, &option_copy, &index_copy));
+    return editor == nullptr ? QItemDelegate::createEditor(parent, option, index) : editor;
+  }
+
+  void setEditorData(QWidget *editor, const QModelIndex &index) const override {
+    if (set_editor_data_callback == nullptr) {
+      QItemDelegate::setEditorData(editor, index);
+      return;
+    }
+
+    QModelIndex index_copy(index);
+    set_editor_data_callback(set_editor_data_userdata, editor, to_variant_value(index.data(Qt::EditRole)), &index_copy);
+  }
+
+  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override {
+    if (set_model_data_callback == nullptr) {
+      QItemDelegate::setModelData(editor, model, index);
+      return;
+    }
+
+    QModelIndex index_copy(index);
+    set_model_data_callback(set_model_data_userdata, editor, model, &index_copy);
+  }
+
+  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+    if (update_editor_geometry_callback == nullptr) {
+      QItemDelegate::updateEditorGeometry(editor, option, index);
+      return;
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    QModelIndex index_copy(index);
+    update_editor_geometry_callback(update_editor_geometry_userdata, editor, &option_copy, &index_copy);
+  }
+
+  bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override {
+    if (editor_event_callback == nullptr) {
+      return QItemDelegate::editorEvent(event, model, option, index);
+    }
+
+    QStyleOptionViewItem option_copy(option);
+    QModelIndex index_copy(index);
+    return editor_event_callback(editor_event_userdata, event, model, &option_copy, &index_copy);
+  }
+
+  bool eventFilter(QObject *object, QEvent *event) override {
+    if (event_filter_callback == nullptr) {
+      return QItemDelegate::eventFilter(object, event);
+    }
+
+    return event_filter_callback(event_filter_userdata, object, event);
+  }
+
+  bool callEditorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) {
+    return editorEvent(event, model, option, index);
+  }
+
+  bool callEventFilter(QObject *object, QEvent *event) {
+    return eventFilter(object, event);
+  }
+};
+
 class CrystalStyledItemDelegate final : public QStyledItemDelegate {
  public:
   explicit CrystalStyledItemDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) {}
@@ -1767,8 +1908,17 @@ QSortFilterProxyModel *as_sort_filter_proxy_model(qt6cr_handle_t handle) {
   return static_cast<QSortFilterProxyModel *>(handle);
 }
 
+CrystalItemDelegate *as_item_delegate(qt6cr_handle_t handle) {
+  return static_cast<CrystalItemDelegate *>(handle);
+}
+
 CrystalStyledItemDelegate *as_styled_item_delegate(qt6cr_handle_t handle) {
   return static_cast<CrystalStyledItemDelegate *>(handle);
+}
+
+QAbstractItemDelegate *as_abstract_item_delegate(qt6cr_handle_t handle) {
+  auto *object = as_qobject(handle);
+  return object == nullptr ? nullptr : dynamic_cast<QAbstractItemDelegate *>(object);
 }
 
 QSvgGenerator *as_qsvg_generator(qt6cr_handle_t handle) {
@@ -8788,7 +8938,7 @@ void qt6cr_data_widget_mapper_set_item_delegate(qt6cr_handle_t handle, qt6cr_han
   auto *mapper = as_data_widget_mapper(handle);
 
   if (mapper != nullptr) {
-    mapper->setItemDelegate(as_styled_item_delegate(delegate));
+    mapper->setItemDelegate(as_abstract_item_delegate(delegate));
   }
 }
 
@@ -9622,6 +9772,249 @@ void qt6cr_file_system_model_on_file_renamed(qt6cr_handle_t handle, qt6cr_three_
   });
 }
 
+int qt6cr_abstract_item_delegate_kind(qt6cr_handle_t handle) {
+  auto *delegate = as_abstract_item_delegate(handle);
+  if (delegate == nullptr) {
+    return 0;
+  }
+
+  if (dynamic_cast<CrystalItemDelegate *>(delegate) != nullptr) {
+    return 1;
+  }
+
+  if (dynamic_cast<CrystalStyledItemDelegate *>(delegate) != nullptr) {
+    return 2;
+  }
+
+  return 0;
+}
+
+qt6cr_handle_t qt6cr_item_delegate_create(qt6cr_handle_t parent) {
+  return new CrystalItemDelegate(as_object(parent));
+}
+
+void qt6cr_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->display_text_callback = callback;
+  delegate->display_text_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->create_editor_callback = callback;
+  delegate->create_editor_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_set_editor_data(qt6cr_handle_t handle, qt6cr_delegate_set_editor_data_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->set_editor_data_callback = callback;
+  delegate->set_editor_data_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_set_model_data(qt6cr_handle_t handle, qt6cr_delegate_set_model_data_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->set_model_data_callback = callback;
+  delegate->set_model_data_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_paint(qt6cr_handle_t handle, qt6cr_delegate_paint_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->paint_callback = callback;
+  delegate->paint_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_size_hint(qt6cr_handle_t handle, qt6cr_delegate_size_hint_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->size_hint_callback = callback;
+  delegate->size_hint_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_update_editor_geometry(qt6cr_handle_t handle, qt6cr_delegate_update_editor_geometry_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->update_editor_geometry_callback = callback;
+  delegate->update_editor_geometry_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_editor_event(qt6cr_handle_t handle, qt6cr_delegate_editor_event_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->editor_event_callback = callback;
+  delegate->editor_event_userdata = userdata;
+}
+
+void qt6cr_item_delegate_on_event_filter(qt6cr_handle_t handle, qt6cr_delegate_event_filter_callback_t callback, void *userdata) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->event_filter_callback = callback;
+  delegate->event_filter_userdata = userdata;
+}
+
+char *qt6cr_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
+  auto *delegate = as_item_delegate(handle);
+  return delegate == nullptr ? duplicate_string("") : duplicate_string(delegate->displayText(from_variant_value(value), QLocale()));
+}
+
+qt6cr_handle_t qt6cr_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index) {
+  auto *delegate = as_item_delegate(handle);
+  auto *editor_parent = as_widget(parent);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_parent == nullptr || model_index == nullptr) {
+    return nullptr;
+  }
+
+  QStyleOptionViewItem option;
+  return delegate->createEditor(editor_parent, option, *model_index);
+}
+
+qt6cr_handle_t qt6cr_item_delegate_create_editor_with_option(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t option, qt6cr_handle_t index) {
+  auto *delegate = as_item_delegate(handle);
+  auto *editor_parent = as_widget(parent);
+  auto *style_option = static_cast<QStyleOptionViewItem *>(option);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_parent == nullptr || style_option == nullptr || model_index == nullptr) {
+    return nullptr;
+  }
+
+  return delegate->createEditor(editor_parent, *style_option, *model_index);
+}
+
+void qt6cr_item_delegate_set_editor_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t index) {
+  auto *delegate = as_item_delegate(handle);
+  auto *editor_widget = as_widget(editor);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_widget == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  delegate->setEditorData(editor_widget, *model_index);
+}
+
+void qt6cr_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index) {
+  auto *delegate = as_item_delegate(handle);
+  auto *editor_widget = as_widget(editor);
+  auto *abstract_item_model = as_abstract_item_model(model);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_widget == nullptr || abstract_item_model == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  delegate->setModelData(editor_widget, abstract_item_model, *model_index);
+}
+
+void qt6cr_item_delegate_update_editor_geometry(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t option, qt6cr_handle_t index) {
+  auto *delegate = as_item_delegate(handle);
+  auto *editor_widget = as_widget(editor);
+  auto *style_option = static_cast<QStyleOptionViewItem *>(option);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || editor_widget == nullptr || style_option == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  delegate->updateEditorGeometry(editor_widget, *style_option, *model_index);
+}
+
+bool qt6cr_item_delegate_editor_event(qt6cr_handle_t handle, qt6cr_handle_t event, qt6cr_handle_t model, qt6cr_handle_t option, qt6cr_handle_t index) {
+  auto *delegate = as_item_delegate(handle);
+  auto *qt_event = static_cast<QEvent *>(event);
+  auto *abstract_item_model = as_abstract_item_model(model);
+  auto *style_option = static_cast<QStyleOptionViewItem *>(option);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || qt_event == nullptr || abstract_item_model == nullptr || style_option == nullptr || model_index == nullptr) {
+    return false;
+  }
+
+  return delegate->callEditorEvent(qt_event, abstract_item_model, *style_option, *model_index);
+}
+
+bool qt6cr_item_delegate_event_filter(qt6cr_handle_t handle, qt6cr_handle_t object, qt6cr_handle_t event) {
+  auto *delegate = as_item_delegate(handle);
+  auto *watched = as_object(object);
+  auto *qt_event = static_cast<QEvent *>(event);
+
+  if (delegate == nullptr || watched == nullptr || qt_event == nullptr) {
+    return false;
+  }
+
+  return delegate->callEventFilter(watched, qt_event);
+}
+
+qt6cr_handle_t qt6cr_item_delegate_item_editor_factory(qt6cr_handle_t handle) {
+  auto *delegate = as_item_delegate(handle);
+  return delegate == nullptr ? nullptr : delegate->itemEditorFactory();
+}
+
+void qt6cr_item_delegate_set_item_editor_factory(qt6cr_handle_t handle, qt6cr_handle_t factory) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate == nullptr) {
+    return;
+  }
+
+  delegate->setItemEditorFactory(static_cast<QItemEditorFactory *>(factory));
+}
+
+bool qt6cr_item_delegate_clipping(qt6cr_handle_t handle) {
+  auto *delegate = as_item_delegate(handle);
+  return delegate != nullptr && delegate->hasClipping();
+}
+
+void qt6cr_item_delegate_set_clipping(qt6cr_handle_t handle, bool value) {
+  auto *delegate = as_item_delegate(handle);
+
+  if (delegate != nullptr) {
+    delegate->setClipping(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent) {
   return new CrystalStyledItemDelegate(as_object(parent));
 }
@@ -9952,14 +10345,14 @@ qt6cr_handle_t qt6cr_abstract_item_view_item_delegate(qt6cr_handle_t handle) {
     return nullptr;
   }
 
-  return dynamic_cast<CrystalStyledItemDelegate *>(view->itemDelegate());
+  return view->itemDelegate();
 }
 
 void qt6cr_abstract_item_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t delegate) {
   auto *view = as_abstract_item_view(handle);
 
   if (view != nullptr) {
-    view->setItemDelegate(as_styled_item_delegate(delegate));
+    view->setItemDelegate(as_abstract_item_delegate(delegate));
   }
 }
 
@@ -10280,7 +10673,7 @@ void qt6cr_list_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t del
   auto *view = as_list_view(handle);
 
   if (view != nullptr) {
-    view->setItemDelegate(as_styled_item_delegate(delegate));
+    view->setItemDelegate(as_abstract_item_delegate(delegate));
   }
 }
 
@@ -10454,7 +10847,7 @@ void qt6cr_tree_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t del
   auto *view = as_tree_view(handle);
 
   if (view != nullptr) {
-    view->setItemDelegate(as_styled_item_delegate(delegate));
+    view->setItemDelegate(as_abstract_item_delegate(delegate));
   }
 }
 
@@ -11009,7 +11402,7 @@ void qt6cr_table_view_set_item_delegate(qt6cr_handle_t handle, qt6cr_handle_t de
   auto *view = as_table_view(handle);
 
   if (view != nullptr) {
-    view->setItemDelegate(as_styled_item_delegate(delegate));
+    view->setItemDelegate(as_abstract_item_delegate(delegate));
   }
 }
 

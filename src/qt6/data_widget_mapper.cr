@@ -35,15 +35,14 @@ module Qt6
     end
 
     # Assigns the item delegate and returns it.
-    def item_delegate=(delegate : StyledItemDelegate) : StyledItemDelegate
+    def item_delegate=(delegate : ItemDelegate | StyledItemDelegate) : ItemDelegate | StyledItemDelegate
       LibQt6.qt6cr_data_widget_mapper_set_item_delegate(to_unsafe, delegate.to_unsafe)
       delegate
     end
 
     # Returns the current item delegate, if any.
-    def item_delegate : StyledItemDelegate?
-      handle = LibQt6.qt6cr_data_widget_mapper_item_delegate(to_unsafe)
-      handle.null? ? nil : StyledItemDelegate.wrap(handle)
+    def item_delegate : ItemDelegate | StyledItemDelegate | Nil
+      Qt6.wrap_item_delegate(LibQt6.qt6cr_data_widget_mapper_item_delegate(to_unsafe))
     end
 
     # Sets the root model index used by the mapper and returns it.

@@ -12,13 +12,12 @@ module Qt6
     end
 
     # Returns the current Crystal-backed item delegate, if one is installed.
-    def item_delegate : StyledItemDelegate?
-      handle = LibQt6.qt6cr_abstract_item_view_item_delegate(to_unsafe)
-      handle.null? ? nil : StyledItemDelegate.wrap(handle)
+    def item_delegate : ItemDelegate | StyledItemDelegate | Nil
+      Qt6.wrap_item_delegate(LibQt6.qt6cr_abstract_item_view_item_delegate(to_unsafe))
     end
 
     # Assigns the item delegate used for display/edit behavior.
-    def item_delegate=(delegate : StyledItemDelegate) : StyledItemDelegate
+    def item_delegate=(delegate : ItemDelegate | StyledItemDelegate) : ItemDelegate | StyledItemDelegate
       LibQt6.qt6cr_abstract_item_view_set_item_delegate(to_unsafe, delegate.to_unsafe)
       delegate
     end

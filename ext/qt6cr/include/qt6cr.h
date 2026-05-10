@@ -1235,6 +1235,30 @@ void qt6cr_file_system_model_on_root_path_changed(qt6cr_handle_t handle, qt6cr_s
 void qt6cr_file_system_model_on_directory_loaded(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 void qt6cr_file_system_model_on_file_renamed(qt6cr_handle_t handle, qt6cr_three_string_callback_t callback, void *userdata);
 
+int qt6cr_abstract_item_delegate_kind(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_item_delegate_create(qt6cr_handle_t parent);
+void qt6cr_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_set_editor_data(qt6cr_handle_t handle, qt6cr_delegate_set_editor_data_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_set_model_data(qt6cr_handle_t handle, qt6cr_delegate_set_model_data_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_paint(qt6cr_handle_t handle, qt6cr_delegate_paint_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_size_hint(qt6cr_handle_t handle, qt6cr_delegate_size_hint_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_update_editor_geometry(qt6cr_handle_t handle, qt6cr_delegate_update_editor_geometry_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_editor_event(qt6cr_handle_t handle, qt6cr_delegate_editor_event_callback_t callback, void *userdata);
+void qt6cr_item_delegate_on_event_filter(qt6cr_handle_t handle, qt6cr_delegate_event_filter_callback_t callback, void *userdata);
+char *qt6cr_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value);
+qt6cr_handle_t qt6cr_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index);
+qt6cr_handle_t qt6cr_item_delegate_create_editor_with_option(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t option, qt6cr_handle_t index);
+void qt6cr_item_delegate_set_editor_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t index);
+void qt6cr_item_delegate_set_model_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t model, qt6cr_handle_t index);
+void qt6cr_item_delegate_update_editor_geometry(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t option, qt6cr_handle_t index);
+bool qt6cr_item_delegate_editor_event(qt6cr_handle_t handle, qt6cr_handle_t event, qt6cr_handle_t model, qt6cr_handle_t option, qt6cr_handle_t index);
+bool qt6cr_item_delegate_event_filter(qt6cr_handle_t handle, qt6cr_handle_t object, qt6cr_handle_t event);
+qt6cr_handle_t qt6cr_item_delegate_item_editor_factory(qt6cr_handle_t handle);
+void qt6cr_item_delegate_set_item_editor_factory(qt6cr_handle_t handle, qt6cr_handle_t factory);
+bool qt6cr_item_delegate_clipping(qt6cr_handle_t handle);
+void qt6cr_item_delegate_set_clipping(qt6cr_handle_t handle, bool value);
+
 qt6cr_handle_t qt6cr_styled_item_delegate_create(qt6cr_handle_t parent);
 void qt6cr_styled_item_delegate_on_display_text(qt6cr_handle_t handle, qt6cr_string_transform_callback_t callback, void *userdata);
 void qt6cr_styled_item_delegate_on_create_editor(qt6cr_handle_t handle, qt6cr_delegate_create_editor_callback_t callback, void *userdata);

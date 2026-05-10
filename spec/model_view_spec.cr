@@ -304,6 +304,55 @@ describe Qt6 do
     list_view.release
   end
 
+  it "supports item delegate paint and size hint hooks" do
+    application = app
+    list_view = Qt6::ListView.new
+    model = Qt6::StandardItemModel.new(list_view)
+    delegate = Qt6::ItemDelegate.new(list_view)
+    item = Qt6::StandardItem.new("Terrain\n2 tracks")
+    paint_calls = 0
+    size_hint_calls = 0
+    paint_index_rows = [] of Int32
+    option_widths = [] of Float64
+
+    delegate.clipping = false
+
+    delegate.on_size_hint do |option, index|
+      size_hint_calls += 1
+      option_widths << option.rect.width
+      index.valid?.should be_true
+      Qt6::Size.new(0, 40)
+    end
+
+    delegate.on_paint do |painter, option, index|
+      paint_calls += 1
+      painter.active?.should be_true
+      paint_index_rows << index.row
+      option_widths << option.rect.width
+      false
+    end
+
+    model << item
+    list_view.model = model
+    list_view.item_delegate = delegate
+    list_view.resize(240, 120)
+    list_view.show
+    5.times { application.process_events }
+    snapshot = list_view.grab
+    application.process_events
+
+    delegate.clipping?.should be_false
+    list_view.item_delegate.not_nil!.to_unsafe.should eq(delegate.to_unsafe)
+    snapshot.null?.should be_false
+    size_hint_calls.should be > 0
+    paint_calls.should be > 0
+    paint_index_rows.should contain(0)
+    option_widths.max.should be >= 0
+
+    snapshot.release
+    list_view.release
+  end
+
   it "supports model-view panels with roles, delegates, and proxy sorting/filtering" do
     application = app
     list_view = Qt6::ListView.new
@@ -1004,6 +1053,88 @@ describe Qt6 do
     created_indexes.should eq([0])
     geometry_indexes.should eq([0])
     option_widths.all? { |width| width >= 0 }.should be_true
+
+    delegate.item_editor_factory = nil
+    delegate.item_editor_factory.should be_nil
+
+    option.release
+    factory.release
+    index.release
+    host.release
+  end
+
+  it "supports item delegate editor hooks, factories, and mapper/view assignment" do
+    app
+    host = Qt6::Widget.new
+    model = Qt6::StandardItemModel.new(host)
+    item = Qt6::StandardItem.new("terrain")
+    model << item
+    index = model.index(0)
+    option = Qt6::StyleOptionViewItem.new
+    delegate = Qt6::ItemDelegate.new(host)
+    factory = Qt6::QItemEditorFactory.new
+    mapper = Qt6::DataWidgetMapper.new(host)
+    list_view = Qt6::ListView.new(host)
+    created_indexes = [] of Int32
+    geometry_indexes = [] of Int32
+    populated_values = [] of Qt6::ModelData
+    committed_values = [] of String
+    option_widths = [] of Float64
+
+    delegate.item_editor_factory.should be_nil
+    delegate.item_editor_factory = factory
+    delegate.item_editor_factory.not_nil!.to_unsafe.should eq(factory.to_unsafe)
+
+    delegate.on_display_text do |text|
+      "<< #{text.upcase}"
+    end
+
+    delegate.on_create_editor_with_option do |parent, style_option, editor_index|
+      created_indexes << editor_index.row
+      option_widths << style_option.rect.width
+      Qt6::LineEdit.new(parent: parent)
+    end
+
+    delegate.on_set_editor_data do |editor, value, _editor_index|
+      populated_values << value
+      editor.as(Qt6::LineEdit).text = "#{value}-editor"
+    end
+
+    delegate.on_set_model_data do |editor, target_model, editor_index|
+      line_edit = editor.as(Qt6::LineEdit)
+      committed_values << line_edit.text
+      target_model.set_data(editor_index, line_edit.text.upcase)
+    end
+
+    delegate.on_update_editor_geometry do |editor, style_option, editor_index|
+      geometry_indexes << editor_index.row
+      option_widths << style_option.rect.width
+      editor.resize(84, 24)
+    end
+
+    list_view.model = model
+    list_view.item_delegate = delegate
+    mapper.model = model
+    mapper.item_delegate = delegate
+
+    editor = delegate.create_editor(host, option, index)
+    editor.should be_a(Qt6::LineEdit)
+    line_edit = editor.as(Qt6::LineEdit)
+    delegate.set_editor_data(line_edit, index)
+    line_edit.text.should eq("terrain-editor")
+    line_edit.text = "contours"
+    delegate.update_editor_geometry(line_edit, option, index)
+    delegate.set_model_data(line_edit, model, index)
+
+    delegate.display_text("terrain").should eq("<< TERRAIN")
+    list_view.item_delegate.not_nil!.to_unsafe.should eq(delegate.to_unsafe)
+    mapper.item_delegate.not_nil!.to_unsafe.should eq(delegate.to_unsafe)
+    created_indexes.should eq([0])
+    geometry_indexes.should eq([0])
+    populated_values.should eq(["terrain"])
+    committed_values.should eq(["contours"])
+    option_widths.all? { |width| width >= 0 }.should be_true
+    model.data(index).should eq("CONTOURS")
 
     delegate.item_editor_factory = nil
     delegate.item_editor_factory.should be_nil
