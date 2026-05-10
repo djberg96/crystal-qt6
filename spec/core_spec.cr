@@ -738,7 +738,7 @@ describe Qt6 do
   end
 
   it "supports hbox, form, and grid layouts" do
-    app
+    application = app
     window = Qt6::Widget.new
     name_field = Qt6::LineEdit.new("Terrain")
     kind_field = Qt6::ComboBox.new
@@ -749,6 +749,7 @@ describe Qt6 do
     secondary = Qt6::PushButton.new("Secondary")
     top_left = Qt6::Label.new("A")
     top_right = Qt6::Label.new("B")
+    detail_status = Qt6::Label.new("Ready")
     footer = Qt6::Label.new("Footer")
     kind_label = Qt6::Label.new("Kind")
     map_name_label = Qt6::Label.new("Map Name")
@@ -756,9 +757,13 @@ describe Qt6 do
     advanced_toggle = Qt6::CheckBox.new("Advanced")
     advanced_mode = Qt6::ComboBox.new
     advanced_mode << "Fog" << "LOS"
+    detail_grid = Qt6::GridLayout.new
+    detail_grid.add(top_right, 0, 0)
+    detail_grid.add(detail_status, 0, 1)
     notes_layout = Qt6::HBoxLayout.new
     notes_label = Qt6::Label.new("Notes")
     notes_value = Qt6::Label.new("Ready")
+    grid_layout = nil.as(Qt6::GridLayout?)
 
     form = window.form do |form|
       form.field_growth_policy = Qt6::FormLayoutFieldGrowthPolicy::ExpandingFieldsGrow
@@ -787,9 +792,17 @@ describe Qt6 do
       end)
       form.add_row(Qt6::Widget.new.tap do |grid_host|
         grid_host.grid do |grid|
-          grid.add(top_left, 0, 0)
-          grid.add(top_right, 0, 1)
-          grid.add(footer, 1, 0, 1, 2)
+          grid_layout = grid
+          grid.horizontal_spacing = 6
+          grid.vertical_spacing = 4
+          grid.origin_corner = Qt6::Corner::BottomLeftCorner
+          grid.set_row_stretch(2, 2)
+          grid.set_column_stretch(1, 3)
+          grid.set_row_minimum_height(0, 18)
+          grid.set_column_minimum_width(0, 24)
+          grid.add(top_left, 0, 0, 1, 1, Qt6::AlignmentFlag::Right)
+          grid.add(detail_grid, 1, 0, 1, 2, Qt6::AlignmentFlag::Center)
+          grid.add(footer, 2, 0, 1, 2, Qt6::AlignmentFlag::HCenter)
         end
       end)
       form.add_row("Temporary", temporary_field)
@@ -806,7 +819,10 @@ describe Qt6 do
     advanced_mode.count.should eq(2)
     top_left.text.should eq("A")
     top_right.text.should eq("B")
+    detail_status.text.should eq("Ready")
     footer.text.should eq("Footer")
+    detail_grid.row_count.should eq(1)
+    detail_grid.column_count.should eq(2)
     form.field_growth_policy.should eq(Qt6::FormLayoutFieldGrowthPolicy::ExpandingFieldsGrow)
     form.row_wrap_policy.should eq(Qt6::FormLayoutRowWrapPolicy::WrapLongRows)
     form.label_alignment.should eq(Qt6::AlignmentFlag::Right)
@@ -819,6 +835,25 @@ describe Qt6 do
     form.label_for_field(advanced_row).should_not be_nil
     form.row_visible?(advanced_row).should be_true
     form.row_visible?(notes_layout).should be_true
+    grid = grid_layout.not_nil!
+    grid.horizontal_spacing.should eq(6)
+    grid.vertical_spacing.should eq(4)
+    grid.origin_corner.should eq(Qt6::Corner::BottomLeftCorner)
+    grid.row_stretch(2).should eq(2)
+    grid.column_stretch(1).should eq(3)
+    grid.row_minimum_height(0).should eq(18)
+    grid.column_minimum_width(0).should eq(24)
+    grid.row_count.should eq(3)
+    grid.column_count.should eq(2)
+    top_left_item = grid.item_at_position(0, 0).not_nil!
+    top_left_item.widget.not_nil!.to_unsafe.should eq(top_left.to_unsafe)
+    detail_item = grid.item_at_position(1, 0).not_nil!
+    detail_item.layout.not_nil!.to_unsafe.should eq(detail_grid.to_unsafe)
+    window.show
+    application.process_events
+    footer_cell = grid.cell_rect(2, 0)
+    footer_cell.width.should be > 0
+    footer_cell.height.should be > 0
     temporary_result = form.take_row(temporary_field)
     advanced_result = form.take_row(advanced_row)
     form.row_count.should eq(6)
@@ -829,6 +864,8 @@ describe Qt6 do
     advanced_result.label_item.not_nil!.widget.should_not be_nil
     advanced_result.field_item.not_nil!.layout.not_nil!.to_unsafe.should eq(advanced_row.to_unsafe)
     notes_value.text.should eq("Ready")
+    top_left_item.release
+    detail_item.release
     temporary_result.release
     advanced_result.release
     window.release

@@ -24716,12 +24716,125 @@ qt6cr_handle_t qt6cr_grid_layout_create(qt6cr_handle_t parent_widget) {
   return new QGridLayout(as_widget(parent_widget));
 }
 
-void qt6cr_grid_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int row, int column, int row_span, int column_span) {
+void qt6cr_grid_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int row, int column, int row_span, int column_span, int alignment) {
   auto *layout = as_grid_layout(handle);
   auto *child = as_widget(widget);
 
   if (layout != nullptr && child != nullptr) {
-    layout->addWidget(child, row, column, row_span, column_span);
+    layout->addWidget(child, row, column, row_span, column_span, static_cast<Qt::Alignment>(alignment));
+  }
+}
+
+void qt6cr_grid_layout_add_layout(qt6cr_handle_t handle, qt6cr_handle_t child_layout_handle, int row, int column, int row_span, int column_span, int alignment) {
+  auto *layout = as_grid_layout(handle);
+  auto *child_layout = as_layout(child_layout_handle);
+
+  if (layout != nullptr && child_layout != nullptr) {
+    layout->addLayout(child_layout, row, column, row_span, column_span, static_cast<Qt::Alignment>(alignment));
+  }
+}
+
+int qt6cr_grid_layout_horizontal_spacing(qt6cr_handle_t handle) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? -1 : layout->horizontalSpacing();
+}
+
+void qt6cr_grid_layout_set_horizontal_spacing(qt6cr_handle_t handle, int value) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setHorizontalSpacing(value);
+  }
+}
+
+int qt6cr_grid_layout_vertical_spacing(qt6cr_handle_t handle) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? -1 : layout->verticalSpacing();
+}
+
+void qt6cr_grid_layout_set_vertical_spacing(qt6cr_handle_t handle, int value) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setVerticalSpacing(value);
+  }
+}
+
+void qt6cr_grid_layout_set_row_stretch(qt6cr_handle_t handle, int row, int stretch) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setRowStretch(row, stretch);
+  }
+}
+
+int qt6cr_grid_layout_row_stretch(qt6cr_handle_t handle, int row) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : layout->rowStretch(row);
+}
+
+void qt6cr_grid_layout_set_row_minimum_height(qt6cr_handle_t handle, int row, int height) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setRowMinimumHeight(row, height);
+  }
+}
+
+int qt6cr_grid_layout_row_minimum_height(qt6cr_handle_t handle, int row) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : layout->rowMinimumHeight(row);
+}
+
+void qt6cr_grid_layout_set_column_stretch(qt6cr_handle_t handle, int column, int stretch) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setColumnStretch(column, stretch);
+  }
+}
+
+int qt6cr_grid_layout_column_stretch(qt6cr_handle_t handle, int column) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : layout->columnStretch(column);
+}
+
+void qt6cr_grid_layout_set_column_minimum_width(qt6cr_handle_t handle, int column, int width) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setColumnMinimumWidth(column, width);
+  }
+}
+
+int qt6cr_grid_layout_column_minimum_width(qt6cr_handle_t handle, int column) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : layout->columnMinimumWidth(column);
+}
+
+int qt6cr_grid_layout_row_count(qt6cr_handle_t handle) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : layout->rowCount();
+}
+
+int qt6cr_grid_layout_column_count(qt6cr_handle_t handle) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : layout->columnCount();
+}
+
+qt6cr_rect_t qt6cr_grid_layout_cell_rect(qt6cr_handle_t handle, int row, int column) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? to_rect(QRect()) : to_rect(layout->cellRect(row, column));
+}
+
+qt6cr_handle_t qt6cr_grid_layout_item_at_position(qt6cr_handle_t handle, int row, int column) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? nullptr : layout->itemAtPosition(row, column);
+}
+
+int qt6cr_grid_layout_origin_corner(qt6cr_handle_t handle) {
+  auto *layout = as_grid_layout(handle);
+  return layout == nullptr ? 0 : static_cast<int>(layout->originCorner());
+}
+
+void qt6cr_grid_layout_set_origin_corner(qt6cr_handle_t handle, int value) {
+  auto *layout = as_grid_layout(handle);
+  if (layout != nullptr) {
+    layout->setOriginCorner(static_cast<Qt::Corner>(value));
   }
 }
 

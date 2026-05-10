@@ -3493,7 +3493,26 @@ module Qt6
     fun qt6cr_h_box_layout_create = qt6cr_h_box_layout_create(parent_widget : Handle) : Handle
 
     fun qt6cr_grid_layout_create = qt6cr_grid_layout_create(parent_widget : Handle) : Handle
-    fun qt6cr_grid_layout_add_widget = qt6cr_grid_layout_add_widget(handle : Handle, widget : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int)
+    fun qt6cr_grid_layout_add_widget = qt6cr_grid_layout_add_widget(handle : Handle, widget : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int, alignment : LibC::Int)
+    fun qt6cr_grid_layout_add_layout = qt6cr_grid_layout_add_layout(handle : Handle, layout : Handle, row : LibC::Int, column : LibC::Int, row_span : LibC::Int, column_span : LibC::Int, alignment : LibC::Int)
+    fun qt6cr_grid_layout_horizontal_spacing = qt6cr_grid_layout_horizontal_spacing(handle : Handle) : LibC::Int
+    fun qt6cr_grid_layout_set_horizontal_spacing = qt6cr_grid_layout_set_horizontal_spacing(handle : Handle, value : LibC::Int)
+    fun qt6cr_grid_layout_vertical_spacing = qt6cr_grid_layout_vertical_spacing(handle : Handle) : LibC::Int
+    fun qt6cr_grid_layout_set_vertical_spacing = qt6cr_grid_layout_set_vertical_spacing(handle : Handle, value : LibC::Int)
+    fun qt6cr_grid_layout_set_row_stretch = qt6cr_grid_layout_set_row_stretch(handle : Handle, row : LibC::Int, stretch : LibC::Int)
+    fun qt6cr_grid_layout_row_stretch = qt6cr_grid_layout_row_stretch(handle : Handle, row : LibC::Int) : LibC::Int
+    fun qt6cr_grid_layout_set_row_minimum_height = qt6cr_grid_layout_set_row_minimum_height(handle : Handle, row : LibC::Int, height : LibC::Int)
+    fun qt6cr_grid_layout_row_minimum_height = qt6cr_grid_layout_row_minimum_height(handle : Handle, row : LibC::Int) : LibC::Int
+    fun qt6cr_grid_layout_set_column_stretch = qt6cr_grid_layout_set_column_stretch(handle : Handle, column : LibC::Int, stretch : LibC::Int)
+    fun qt6cr_grid_layout_column_stretch = qt6cr_grid_layout_column_stretch(handle : Handle, column : LibC::Int) : LibC::Int
+    fun qt6cr_grid_layout_set_column_minimum_width = qt6cr_grid_layout_set_column_minimum_width(handle : Handle, column : LibC::Int, width : LibC::Int)
+    fun qt6cr_grid_layout_column_minimum_width = qt6cr_grid_layout_column_minimum_width(handle : Handle, column : LibC::Int) : LibC::Int
+    fun qt6cr_grid_layout_row_count = qt6cr_grid_layout_row_count(handle : Handle) : LibC::Int
+    fun qt6cr_grid_layout_column_count = qt6cr_grid_layout_column_count(handle : Handle) : LibC::Int
+    fun qt6cr_grid_layout_cell_rect = qt6cr_grid_layout_cell_rect(handle : Handle, row : LibC::Int, column : LibC::Int) : RectValue
+    fun qt6cr_grid_layout_item_at_position = qt6cr_grid_layout_item_at_position(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
+    fun qt6cr_grid_layout_origin_corner = qt6cr_grid_layout_origin_corner(handle : Handle) : LibC::Int
+    fun qt6cr_grid_layout_set_origin_corner = qt6cr_grid_layout_set_origin_corner(handle : Handle, value : LibC::Int)
 
     fun qt6cr_form_layout_create = qt6cr_form_layout_create(parent_widget : Handle) : Handle
     fun qt6cr_form_layout_set_field_growth_policy = qt6cr_form_layout_set_field_growth_policy(handle : Handle, policy : LibC::Int)
