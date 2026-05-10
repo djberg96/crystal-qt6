@@ -13,6 +13,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.
 - Expanded `QHeaderView` with orientation/length/offset introspection, hidden-section counts, minimum/maximum/default alignment controls, highlight and cascading resize toggles, and visual/logical section mapping helpers.
 - Expanded `QKeySequenceEdit` with string-based construction and a Qt-style clear-button setter alias.
+- Expanded `QLCDNumber` with Qt-style mode/property setter aliases and `overflow` signal support.
 
 ## [0.10.0] - 2026-05-10
 

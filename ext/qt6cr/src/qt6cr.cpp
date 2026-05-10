@@ -23546,6 +23546,18 @@ void qt6cr_lcd_number_display_string(qt6cr_handle_t handle, const char *value) {
   }
 }
 
+void qt6cr_lcd_number_on_overflow(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *lcd = as_lcd_number(handle);
+
+  if (lcd == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(lcd, &QLCDNumber::overflow, lcd, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
 qt6cr_handle_t qt6cr_command_link_button_create(qt6cr_handle_t parent, const char *text, const char *description) {
   return new QCommandLinkButton(
       QString::fromUtf8(text == nullptr ? "" : text),

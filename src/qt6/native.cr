@@ -3266,6 +3266,7 @@ module Qt6
     fun qt6cr_lcd_number_display_int = qt6cr_lcd_number_display_int(handle : Handle, value : LibC::Int)
     fun qt6cr_lcd_number_display_double = qt6cr_lcd_number_display_double(handle : Handle, value : Float64)
     fun qt6cr_lcd_number_display_string = qt6cr_lcd_number_display_string(handle : Handle, value : UInt8*)
+    fun qt6cr_lcd_number_on_overflow = qt6cr_lcd_number_on_overflow(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_command_link_button_create = qt6cr_command_link_button_create(parent : Handle, text : UInt8*, description : UInt8*) : Handle
     fun qt6cr_command_link_button_description = qt6cr_command_link_button_description(handle : Handle) : UInt8*

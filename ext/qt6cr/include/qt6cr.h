@@ -3306,6 +3306,7 @@ bool qt6cr_lcd_number_check_overflow_double(qt6cr_handle_t handle, double value)
 void qt6cr_lcd_number_display_int(qt6cr_handle_t handle, int value);
 void qt6cr_lcd_number_display_double(qt6cr_handle_t handle, double value);
 void qt6cr_lcd_number_display_string(qt6cr_handle_t handle, const char *value);
+void qt6cr_lcd_number_on_overflow(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_command_link_button_create(qt6cr_handle_t parent, const char *text, const char *description);
 char *qt6cr_command_link_button_description(qt6cr_handle_t handle);

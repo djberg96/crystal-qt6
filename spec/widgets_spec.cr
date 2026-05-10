@@ -38,6 +38,7 @@ describe Qt6 do
     calendar_clicked = [] of String
     calendar_activated = [] of String
     calendar_pages = [] of Tuple(Int32, Int32)
+    lcd_overflows = 0
     tab_indices = [] of Int32
     stacked_indices = [] of Int32
 
@@ -91,6 +92,9 @@ describe Qt6 do
     end
     calendar.on_current_page_changed do |year, month|
       calendar_pages << {year, month}
+    end
+    lcd.on_overflow do
+      lcd_overflows += 1
     end
     tab_bar.on_current_index_changed do |value|
       tab_indices << value
@@ -166,11 +170,17 @@ describe Qt6 do
     calendar.clicked.emit(date)
     calendar.activated.emit(date)
 
-    lcd.digit_count = 6
-    lcd.mode = Qt6::LcdNumberMode::Hex
-    lcd.segment_style = Qt6::LcdNumberSegmentStyle::Flat
-    lcd.small_decimal_point = true
+    lcd.set_digit_count(6)
+    lcd.set_hex_mode
+    lcd.set_segment_style(Qt6::LcdNumberSegmentStyle::Flat)
+    lcd.set_small_decimal_point(true)
     lcd.display(255)
+    lcd.set_dec_mode
+    lcd.set_oct_mode
+    lcd.set_bin_mode
+    lcd.set_hex_mode
+    lcd.int_value.should eq(255)
+    lcd.display(16_777_216)
 
     command_link.description = "Save the current map as an image"
     command_link.default = true
@@ -275,9 +285,9 @@ describe Qt6 do
     lcd.mode.should eq(Qt6::LcdNumberMode::Hex)
     lcd.segment_style.should eq(Qt6::LcdNumberSegmentStyle::Flat)
     lcd.small_decimal_point?.should be_true
-    lcd.int_value.should eq(255)
     lcd.overflow?(16_777_216).should be_true
     lcd.overflow?(255).should be_false
+    lcd_overflows.should be >= 1
 
     command_link.text.should eq("Export")
     command_link.description.should eq("Save the current map as an image")
