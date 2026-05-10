@@ -1,6 +1,6 @@
 # crystal-qt6 Roadmap
 
-This document describes a practical path for growing `crystal-qt6` from its current `0.9.0` state into a library capable of supporting large desktop applications.
+This document describes a practical path for growing `crystal-qt6` from its current `0.10.0` state into a library capable of supporting large desktop applications.
 
 The current motivating example is `WargameMapTool`, a substantial Python/PySide6 application, but the roadmap is intentionally broader than a single downstream project. The goal is not API or naming compatibility with PySide6. The goal is practical Qt6 feature and widget parity, expressed in idiomatic Crystal wrappers.
 
@@ -23,12 +23,13 @@ Larger editor-style applications still typically need:
 
 The right strategy is to grow `crystal-qt6` in layers until one substantial subsystem can be ported safely and validated in isolation.
 
-## Current State At 0.9.0
+## Current State At 0.10.0
 
 Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core areas needed for editor-style applications:
 
 - `QtCore`-style foundations through `QObject`, Crystal-side `Signal`, `QTimer`, and geometry/event value types
 - `QtGui` rendering through `QPainter`, `QImage`, `QImageReader`, `QImageWriter`, `QPixmap`, `QPainterPath`, `QTransform`, `QPen`, `QBrush`, `QFont`, `QFontMetrics`, and `QFontMetricsF`, including raw `QImage` byte-buffer construction and readback, richer path inspection, configured image encoding, and image/pixmap transforms
+- `QtWidgets`/Graphics View scene composition through `QGraphicsScene`, `QGraphicsView`, shared `QGraphicsItem` state, shape/text/pixmap/group items, `QGraphicsWidget`, `QGraphicsProxyWidget`, graphics layouts, transforms, effects, and scene-event wrappers
 - `QtSvg` support through `QSvgGenerator`, `QSvgRenderer`, and `QSvgWidget`, including file-backed and in-memory loading plus named-element rendering
 - `QtPrintSupport`-style export through `QPdfWriter`
 - `QtWidgets` shell support through `QMainWindow`, `QDialog`, `QDockWidget`, `QStatusBar`, `QToolBar`, `QMenuBar`, `QMenu`, `QAction`, `QActionGroup`, `QUndoStack`, `QUndoGroup`, Crystal-backed `QUndoCommand`, and standard dialogs including font dialogs

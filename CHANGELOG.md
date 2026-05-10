@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-10
+
 ### Added
 
 - Added `QGraphicsWidget`, `QGraphicsAnchorLayout`, and `QGraphicsAnchor` bindings with anchor spacing, size-policy, and layout-installation helpers for graphics-view layout composition.
@@ -43,6 +45,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QGraphicsColorizeEffect` with color/strength change callbacks and Qt-style setter aliases for richer live effect updates.
 - Expanded `QGraphicsDropShadowEffect` with blur/color/offset change callbacks and Qt-style setter aliases for richer shadow effect control.
 - Expanded `QGraphicsOpacityEffect` with opacity-mask support, change callbacks, and Qt-style setter aliases for richer live effect updates.
+
+### Changed
+
+- Expanded the LaTeX guide with a dedicated Graphics View chapter, appendix reference coverage for the graphics stack, refreshed Chapter 3 widgets/layouts screenshots, and reproducible screenshot capture scripts for the new documentation assets.
 
 ## [0.9.0] - 2026-05-07
 
