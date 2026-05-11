@@ -1081,8 +1081,10 @@ describe Qt6 do
     mdi_area.set_option(Qt6::MdiAreaOption::DontMaximizeSubWindowOnActivation, true)
     mdi_area.view_mode = Qt6::MdiViewMode::TabbedView
     mdi_area.document_mode = true
+    mdi_area.set_tab_position(Qt6::TabPosition::South)
+    mdi_area.set_tab_shape(Qt6::TabShape::Triangular)
     mdi_area.tabs_closable = true
-    mdi_area.tabs_movable = true
+    mdi_area.set_tabs_movable(true)
 
     first_editor = Qt6::TextEdit.new(parent: host)
     first_editor.plain_text = "Alpha"
@@ -1136,8 +1138,12 @@ describe Qt6 do
     mdi_area.document_mode?.should be_true
     mdi_area.tabs_closable?.should be_true
     mdi_area.tabs_movable?.should be_true
+    mdi_area.tab_position.should eq(Qt6::TabPosition::South)
+    mdi_area.tab_shape.should eq(Qt6::TabShape::Triangular)
     mdi_area.current_sub_window.not_nil!.window_title.should eq("Bravo.map")
     mdi_area.active_sub_window.not_nil!.window_title.should eq("Bravo.map")
+    mdi_area.sub_windows.map(&.window_title).should eq(["Alpha.map", "Bravo.map"])
+    mdi_area.sub_windows(Qt6::MdiWindowOrder::ActivationHistoryOrder).map(&.window_title).should contain("Bravo.map")
     activated_titles.should contain("Alpha.map")
     activated_titles.should contain("Bravo.map")
     second_activation_count.should be > 0

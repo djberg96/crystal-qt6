@@ -622,12 +622,17 @@ module Qt6
     fun qt6cr_mdi_area_set_background = qt6cr_mdi_area_set_background(handle : Handle, brush : Handle)
     fun qt6cr_mdi_area_activation_order = qt6cr_mdi_area_activation_order(handle : Handle) : LibC::Int
     fun qt6cr_mdi_area_set_activation_order = qt6cr_mdi_area_set_activation_order(handle : Handle, order : LibC::Int)
+    fun qt6cr_mdi_area_sub_window_list = qt6cr_mdi_area_sub_window_list(handle : Handle, order : LibC::Int) : HandleArrayValue
     fun qt6cr_mdi_area_set_option = qt6cr_mdi_area_set_option(handle : Handle, option : LibC::Int, value : Bool)
     fun qt6cr_mdi_area_test_option = qt6cr_mdi_area_test_option(handle : Handle, option : LibC::Int) : Bool
     fun qt6cr_mdi_area_view_mode = qt6cr_mdi_area_view_mode(handle : Handle) : LibC::Int
     fun qt6cr_mdi_area_set_view_mode = qt6cr_mdi_area_set_view_mode(handle : Handle, mode : LibC::Int)
     fun qt6cr_mdi_area_document_mode = qt6cr_mdi_area_document_mode(handle : Handle) : Bool
     fun qt6cr_mdi_area_set_document_mode = qt6cr_mdi_area_set_document_mode(handle : Handle, value : Bool)
+    fun qt6cr_mdi_area_tab_position = qt6cr_mdi_area_tab_position(handle : Handle) : LibC::Int
+    fun qt6cr_mdi_area_set_tab_position = qt6cr_mdi_area_set_tab_position(handle : Handle, value : LibC::Int)
+    fun qt6cr_mdi_area_tab_shape = qt6cr_mdi_area_tab_shape(handle : Handle) : LibC::Int
+    fun qt6cr_mdi_area_set_tab_shape = qt6cr_mdi_area_set_tab_shape(handle : Handle, value : LibC::Int)
     fun qt6cr_mdi_area_tabs_closable = qt6cr_mdi_area_tabs_closable(handle : Handle) : Bool
     fun qt6cr_mdi_area_set_tabs_closable = qt6cr_mdi_area_set_tabs_closable(handle : Handle, value : Bool)
     fun qt6cr_mdi_area_tabs_movable = qt6cr_mdi_area_tabs_movable(handle : Handle) : Bool

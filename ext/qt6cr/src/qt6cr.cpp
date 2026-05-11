@@ -276,6 +276,7 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsView *> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QMdiSubWindow *> &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1695,6 +1696,22 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values)
 }
 
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsView *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
+qt6cr_handle_array_t to_handle_array_value(const QList<QMdiSubWindow *> &values) {
   const auto size = static_cast<int>(values.size());
 
   if (size <= 0) {
@@ -5894,6 +5911,11 @@ void qt6cr_mdi_area_set_activation_order(qt6cr_handle_t handle, int order) {
   }
 }
 
+qt6cr_handle_array_t qt6cr_mdi_area_sub_window_list(qt6cr_handle_t handle, int order) {
+  auto *mdi_area = as_mdi_area(handle);
+  return mdi_area == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(mdi_area->subWindowList(static_cast<QMdiArea::WindowOrder>(order)));
+}
+
 void qt6cr_mdi_area_set_option(qt6cr_handle_t handle, int option, bool value) {
   auto *mdi_area = as_mdi_area(handle);
 
@@ -5930,6 +5952,32 @@ void qt6cr_mdi_area_set_document_mode(qt6cr_handle_t handle, bool value) {
 
   if (mdi_area != nullptr) {
     mdi_area->setDocumentMode(value);
+  }
+}
+
+int qt6cr_mdi_area_tab_position(qt6cr_handle_t handle) {
+  auto *mdi_area = as_mdi_area(handle);
+  return mdi_area == nullptr ? static_cast<int>(QTabWidget::North) : static_cast<int>(mdi_area->tabPosition());
+}
+
+void qt6cr_mdi_area_set_tab_position(qt6cr_handle_t handle, int value) {
+  auto *mdi_area = as_mdi_area(handle);
+
+  if (mdi_area != nullptr) {
+    mdi_area->setTabPosition(static_cast<QTabWidget::TabPosition>(value));
+  }
+}
+
+int qt6cr_mdi_area_tab_shape(qt6cr_handle_t handle) {
+  auto *mdi_area = as_mdi_area(handle);
+  return mdi_area == nullptr ? static_cast<int>(QTabWidget::Rounded) : static_cast<int>(mdi_area->tabShape());
+}
+
+void qt6cr_mdi_area_set_tab_shape(qt6cr_handle_t handle, int value) {
+  auto *mdi_area = as_mdi_area(handle);
+
+  if (mdi_area != nullptr) {
+    mdi_area->setTabShape(static_cast<QTabWidget::TabShape>(value));
   }
 }
 

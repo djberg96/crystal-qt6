@@ -68,6 +68,13 @@ module Qt6
       value
     end
 
+    # Returns the current subwindows in the requested order.
+    def sub_windows(order : MdiWindowOrder = MdiWindowOrder::CreationOrder) : Array(MdiSubWindow)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_mdi_area_sub_window_list(to_unsafe, order.value)).map do |handle|
+        MdiSubWindow.wrap(handle)
+      end
+    end
+
     # Enables or disables a single area option.
     def set_option(option : MdiAreaOption, value : Bool = true) : Bool
       LibQt6.qt6cr_mdi_area_set_option(to_unsafe, option.value, value)
@@ -98,6 +105,28 @@ module Qt6
     # Enables or disables document mode.
     def document_mode=(value : Bool) : Bool
       LibQt6.qt6cr_mdi_area_set_document_mode(to_unsafe, value)
+      value
+    end
+
+    # Returns the tab position used in tabbed view mode.
+    def tab_position : TabPosition
+      TabPosition.from_value(LibQt6.qt6cr_mdi_area_tab_position(to_unsafe))
+    end
+
+    # Sets the tab position used in tabbed view mode.
+    def tab_position=(value : TabPosition) : TabPosition
+      LibQt6.qt6cr_mdi_area_set_tab_position(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the tab shape used in tabbed view mode.
+    def tab_shape : TabShape
+      TabShape.from_value(LibQt6.qt6cr_mdi_area_tab_shape(to_unsafe))
+    end
+
+    # Sets the tab shape used in tabbed view mode.
+    def tab_shape=(value : TabShape) : TabShape
+      LibQt6.qt6cr_mdi_area_set_tab_shape(to_unsafe, value.value)
       value
     end
 
@@ -168,6 +197,54 @@ module Qt6
     # Registers a block to run when the active subwindow changes.
     def on_sub_window_activated(&block : MdiSubWindow? ->) : self
       @sub_window_activated.connect { |sub_window| block.call(sub_window) }
+      self
+    end
+
+    # Qt-style alias for `background=`.
+    def set_background(value : QBrush) : self
+      self.background = value
+      self
+    end
+
+    # Qt-style alias for `activation_order=`.
+    def set_activation_order(value : MdiWindowOrder) : self
+      self.activation_order = value
+      self
+    end
+
+    # Qt-style alias for `view_mode=`.
+    def set_view_mode(value : MdiViewMode) : self
+      self.view_mode = value
+      self
+    end
+
+    # Qt-style alias for `document_mode=`.
+    def set_document_mode(value : Bool) : self
+      self.document_mode = value
+      self
+    end
+
+    # Qt-style alias for `tab_position=`.
+    def set_tab_position(value : TabPosition) : self
+      self.tab_position = value
+      self
+    end
+
+    # Qt-style alias for `tab_shape=`.
+    def set_tab_shape(value : TabShape) : self
+      self.tab_shape = value
+      self
+    end
+
+    # Qt-style alias for `tabs_closable=`.
+    def set_tabs_closable(value : Bool) : self
+      self.tabs_closable = value
+      self
+    end
+
+    # Qt-style alias for `tabs_movable=`.
+    def set_tabs_movable(value : Bool) : self
+      self.tabs_movable = value
       self
     end
 
