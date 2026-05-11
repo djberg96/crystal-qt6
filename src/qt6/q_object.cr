@@ -40,6 +40,17 @@ module Qt6
       @destroyed_signal
     end
 
+    # Returns the Qt object name used for lookup and persisted main-window state.
+    def object_name : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_object_object_name(@to_unsafe))
+    end
+
+    # Sets the Qt object name and returns the assigned value.
+    def object_name=(value : String) : String
+      LibQt6.qt6cr_object_set_object_name(@to_unsafe, value.to_unsafe)
+      value
+    end
+
     # Blocks or unblocks this object's signal emissions.
     def block_signals=(value : Bool) : Bool
       LibQt6.qt6cr_object_block_signals(@to_unsafe, value)
@@ -60,6 +71,12 @@ module Qt6
     def remove_event_filter(filter : EventFilter) : EventFilter
       LibQt6.qt6cr_object_remove_event_filter(@to_unsafe, filter.to_unsafe)
       filter
+    end
+
+    # Qt-style alias for `object_name=`.
+    def set_object_name(value : String) : self
+      self.object_name = value
+      self
     end
 
     # Marks this object as owned by a native parent so the wrapper stops trying

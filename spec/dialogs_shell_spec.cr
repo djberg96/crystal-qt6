@@ -422,7 +422,8 @@ describe Qt6 do
 
     main.window_title = "Editor Shell"
     main.resize(960, 640)
-    main.central_widget = Qt6::Label.new("Canvas")
+    canvas = Qt6::Label.new("Canvas")
+    main.central_widget = canvas
 
     file_menu = main.menu_bar.add_menu("File")
     recent_menu = file_menu.add_menu("Recent")
@@ -433,9 +434,24 @@ describe Qt6 do
     file_menu << open_action
     file_menu.add_separator
 
+    custom_status = Qt6::StatusBar.new(main)
+    main.status_bar = custom_status
     tool_bar = Qt6::ToolBar.new("Primary", main)
+    secondary_toolbar = Qt6::ToolBar.new("Secondary", main)
+    inserted_toolbar = Qt6::ToolBar.new("Inserted", main)
+    tool_bar.object_name = "primary-toolbar"
+    secondary_toolbar.object_name = "secondary-toolbar"
+    inserted_toolbar.object_name = "inserted-toolbar"
     main.add_tool_bar(tool_bar)
+    main.add_tool_bar(Qt6::ToolBarArea::Bottom, secondary_toolbar)
+    main.insert_tool_bar(secondary_toolbar, inserted_toolbar)
     tool_bar << open_action
+    main.icon_size = Qt6::Size.new(18, 16)
+    main.tool_button_style = Qt6::ToolButtonStyle::TextBesideIcon
+    main.animated = true
+    main.document_mode = true
+    main.dock_nesting_enabled = true
+    main.set_corner(Qt6::Corner::TopLeftCorner, Qt6::DockArea::Left)
 
     dock = Qt6::DockWidget.new("Inspector", main)
     inspector = Qt6::Widget.new
@@ -475,8 +491,10 @@ describe Qt6 do
     end
 
     dock.widget = inspector
+    dock.object_name = "inspector-dock"
     main.add_dock_widget(dock, Qt6::DockArea::Left)
     main.status_bar.show_message("Ready")
+    saved_state = main.save_state
 
     dialog = Qt6::Dialog.new(main)
     finished = [] of Qt6::DialogCode
@@ -522,7 +540,23 @@ describe Qt6 do
     application.process_events
 
     recent_menu.title.should eq("Recent")
+    main.central_widget.not_nil!.to_unsafe.should eq(canvas.to_unsafe)
+    main.status_bar.to_unsafe.should eq(custom_status.to_unsafe)
     main.status_bar.current_message.should eq("Ready")
+    main.icon_size.should eq(Qt6::Size.new(18, 16))
+    main.tool_button_style.should eq(Qt6::ToolButtonStyle::TextBesideIcon)
+    main.animated?.should be_true
+    main.document_mode?.should be_true
+    main.dock_nesting_enabled?.should be_true
+    main.corner(Qt6::Corner::TopLeftCorner).should eq(Qt6::DockArea::Left)
+    tool_bar.object_name.should eq("primary-toolbar")
+    secondary_toolbar.object_name.should eq("secondary-toolbar")
+    inserted_toolbar.object_name.should eq("inserted-toolbar")
+    dock.object_name.should eq("inspector-dock")
+    secondary_toolbar.toggle_view_action.text.should eq("Secondary")
+    inserted_toolbar.toggle_view_action.text.should eq("Inserted")
+    saved_state.empty?.should be_false
+    main.restore_state(saved_state).should be_true
     line_edit.text = "Terrain"
     line_edit.text.should eq("Terrain")
     check_box.text.should eq("Snap")
@@ -558,8 +592,13 @@ describe Qt6 do
     accepted.should eq(1)
     rejected.should eq(0)
     finished.should contain(Qt6::DialogCode::Accepted)
+    main.remove_dock_widget(dock)
+    application.process_events
+    dock.visible?.should be_false
+    main.add_dock_widget(dock, Qt6::DockArea::Left)
     combo_box.clear
     combo_box.count.should eq(0)
+    saved_state.release
     main.release
   end
 

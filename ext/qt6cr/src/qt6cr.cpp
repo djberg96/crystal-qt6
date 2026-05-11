@@ -2758,6 +2758,19 @@ void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t call
   });
 }
 
+char *qt6cr_object_object_name(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object == nullptr ? duplicate_string("") : duplicate_string(object->objectName());
+}
+
+void qt6cr_object_set_object_name(qt6cr_handle_t handle, const char *name) {
+  auto *object = as_object(handle);
+
+  if (object != nullptr) {
+    object->setObjectName(QString::fromUtf8(name == nullptr ? "" : name));
+  }
+}
+
 bool qt6cr_object_block_signals(qt6cr_handle_t handle, bool block) {
   auto *object = as_object(handle);
   return object != nullptr && object->blockSignals(block);
@@ -6363,6 +6376,11 @@ qt6cr_handle_t qt6cr_main_window_create(qt6cr_handle_t parent) {
   return new QMainWindow(as_widget(parent));
 }
 
+qt6cr_handle_t qt6cr_main_window_central_widget(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window == nullptr ? nullptr : window->centralWidget();
+}
+
 void qt6cr_main_window_set_central_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   auto *window = as_main_window(handle);
   auto *central_widget = as_widget(widget);
@@ -6377,9 +6395,27 @@ qt6cr_handle_t qt6cr_main_window_menu_bar(qt6cr_handle_t handle) {
   return window == nullptr ? nullptr : window->menuBar();
 }
 
+void qt6cr_main_window_set_menu_bar(qt6cr_handle_t handle, qt6cr_handle_t menu_bar) {
+  auto *window = as_main_window(handle);
+  auto *value = as_menu_bar(menu_bar);
+
+  if (window != nullptr && value != nullptr) {
+    window->setMenuBar(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_main_window_status_bar(qt6cr_handle_t handle) {
   auto *window = as_main_window(handle);
   return window == nullptr ? nullptr : window->statusBar();
+}
+
+void qt6cr_main_window_set_status_bar(qt6cr_handle_t handle, qt6cr_handle_t status_bar) {
+  auto *window = as_main_window(handle);
+  auto *value = as_status_bar(status_bar);
+
+  if (window != nullptr && value != nullptr) {
+    window->setStatusBar(value);
+  }
 }
 
 void qt6cr_main_window_add_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t toolbar) {
@@ -6388,6 +6424,25 @@ void qt6cr_main_window_add_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t toolba
 
   if (window != nullptr && tool_bar != nullptr) {
     window->addToolBar(tool_bar);
+  }
+}
+
+void qt6cr_main_window_add_tool_bar_in_area(qt6cr_handle_t handle, int area, qt6cr_handle_t toolbar) {
+  auto *window = as_main_window(handle);
+  auto *tool_bar = as_tool_bar(toolbar);
+
+  if (window != nullptr && tool_bar != nullptr) {
+    window->addToolBar(static_cast<Qt::ToolBarArea>(area), tool_bar);
+  }
+}
+
+void qt6cr_main_window_insert_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t before, qt6cr_handle_t toolbar) {
+  auto *window = as_main_window(handle);
+  auto *before_tool_bar = as_tool_bar(before);
+  auto *tool_bar = as_tool_bar(toolbar);
+
+  if (window != nullptr && before_tool_bar != nullptr && tool_bar != nullptr) {
+    window->insertToolBar(before_tool_bar, tool_bar);
   }
 }
 
@@ -6400,6 +6455,85 @@ void qt6cr_main_window_remove_tool_bar(qt6cr_handle_t handle, qt6cr_handle_t too
   }
 }
 
+qt6cr_size_t qt6cr_main_window_icon_size(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  auto size = window == nullptr ? QSize() : window->iconSize();
+  return qt6cr_size_t{size.width(), size.height()};
+}
+
+void qt6cr_main_window_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *window = as_main_window(handle);
+
+  if (window != nullptr) {
+    window->setIconSize(QSize(size.width, size.height));
+  }
+}
+
+int qt6cr_main_window_tool_button_style(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window == nullptr ? static_cast<int>(Qt::ToolButtonIconOnly) : static_cast<int>(window->toolButtonStyle());
+}
+
+void qt6cr_main_window_set_tool_button_style(qt6cr_handle_t handle, int style) {
+  auto *window = as_main_window(handle);
+
+  if (window != nullptr) {
+    window->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(style));
+  }
+}
+
+bool qt6cr_main_window_animated(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window != nullptr && window->isAnimated();
+}
+
+void qt6cr_main_window_set_animated(qt6cr_handle_t handle, bool value) {
+  auto *window = as_main_window(handle);
+
+  if (window != nullptr) {
+    window->setAnimated(value);
+  }
+}
+
+bool qt6cr_main_window_document_mode(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window != nullptr && window->documentMode();
+}
+
+void qt6cr_main_window_set_document_mode(qt6cr_handle_t handle, bool value) {
+  auto *window = as_main_window(handle);
+
+  if (window != nullptr) {
+    window->setDocumentMode(value);
+  }
+}
+
+bool qt6cr_main_window_dock_nesting_enabled(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window != nullptr && window->isDockNestingEnabled();
+}
+
+void qt6cr_main_window_set_dock_nesting_enabled(qt6cr_handle_t handle, bool value) {
+  auto *window = as_main_window(handle);
+
+  if (window != nullptr) {
+    window->setDockNestingEnabled(value);
+  }
+}
+
+int qt6cr_main_window_corner(qt6cr_handle_t handle, int corner) {
+  auto *window = as_main_window(handle);
+  return window == nullptr ? static_cast<int>(Qt::LeftDockWidgetArea) : static_cast<int>(window->corner(static_cast<Qt::Corner>(corner)));
+}
+
+void qt6cr_main_window_set_corner(qt6cr_handle_t handle, int corner, int area) {
+  auto *window = as_main_window(handle);
+
+  if (window != nullptr) {
+    window->setCorner(static_cast<Qt::Corner>(corner), static_cast<Qt::DockWidgetArea>(area));
+  }
+}
+
 void qt6cr_main_window_add_dock_widget(qt6cr_handle_t handle, int area, qt6cr_handle_t dock_widget) {
   auto *window = as_main_window(handle);
   auto *dock = as_dock_widget(dock_widget);
@@ -6407,6 +6541,26 @@ void qt6cr_main_window_add_dock_widget(qt6cr_handle_t handle, int area, qt6cr_ha
   if (window != nullptr && dock != nullptr) {
     window->addDockWidget(static_cast<Qt::DockWidgetArea>(area), dock);
   }
+}
+
+void qt6cr_main_window_remove_dock_widget(qt6cr_handle_t handle, qt6cr_handle_t dock_widget) {
+  auto *window = as_main_window(handle);
+  auto *dock = as_dock_widget(dock_widget);
+
+  if (window != nullptr && dock != nullptr) {
+    window->removeDockWidget(dock);
+  }
+}
+
+qt6cr_handle_t qt6cr_main_window_save_state(qt6cr_handle_t handle) {
+  auto *window = as_main_window(handle);
+  return window == nullptr ? new QByteArray() : new QByteArray(window->saveState());
+}
+
+bool qt6cr_main_window_restore_state(qt6cr_handle_t handle, qt6cr_handle_t state) {
+  auto *window = as_main_window(handle);
+  auto *value = as_qbyte_array(state);
+  return window != nullptr && value != nullptr && window->restoreState(*value);
 }
 
 qt6cr_handle_t qt6cr_dialog_create(qt6cr_handle_t parent) {

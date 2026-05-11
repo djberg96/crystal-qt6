@@ -179,6 +179,8 @@ module Qt6
 
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_object_object_name = qt6cr_object_object_name(handle : Handle) : UInt8*
+    fun qt6cr_object_set_object_name = qt6cr_object_set_object_name(handle : Handle, name : UInt8*)
     fun qt6cr_object_block_signals = qt6cr_object_block_signals(handle : Handle, block : Bool) : Bool
     fun qt6cr_object_signals_blocked = qt6cr_object_signals_blocked(handle : Handle) : Bool
     fun qt6cr_object_install_event_filter = qt6cr_object_install_event_filter(handle : Handle, filter : Handle)
@@ -691,12 +693,32 @@ module Qt6
     fun qt6cr_widget_set_attribute = qt6cr_widget_set_attribute(handle : Handle, attribute : LibC::Int, value : Bool)
 
     fun qt6cr_main_window_create = qt6cr_main_window_create(parent : Handle) : Handle
+    fun qt6cr_main_window_central_widget = qt6cr_main_window_central_widget(handle : Handle) : Handle
     fun qt6cr_main_window_set_central_widget = qt6cr_main_window_set_central_widget(handle : Handle, widget : Handle)
     fun qt6cr_main_window_menu_bar = qt6cr_main_window_menu_bar(handle : Handle) : Handle
+    fun qt6cr_main_window_set_menu_bar = qt6cr_main_window_set_menu_bar(handle : Handle, menu_bar : Handle)
     fun qt6cr_main_window_status_bar = qt6cr_main_window_status_bar(handle : Handle) : Handle
+    fun qt6cr_main_window_set_status_bar = qt6cr_main_window_set_status_bar(handle : Handle, status_bar : Handle)
     fun qt6cr_main_window_add_tool_bar = qt6cr_main_window_add_tool_bar(handle : Handle, toolbar : Handle)
+    fun qt6cr_main_window_add_tool_bar_in_area = qt6cr_main_window_add_tool_bar_in_area(handle : Handle, area : LibC::Int, toolbar : Handle)
+    fun qt6cr_main_window_insert_tool_bar = qt6cr_main_window_insert_tool_bar(handle : Handle, before : Handle, toolbar : Handle)
     fun qt6cr_main_window_remove_tool_bar = qt6cr_main_window_remove_tool_bar(handle : Handle, toolbar : Handle)
+    fun qt6cr_main_window_icon_size = qt6cr_main_window_icon_size(handle : Handle) : SizeValue
+    fun qt6cr_main_window_set_icon_size = qt6cr_main_window_set_icon_size(handle : Handle, size : SizeValue)
+    fun qt6cr_main_window_tool_button_style = qt6cr_main_window_tool_button_style(handle : Handle) : LibC::Int
+    fun qt6cr_main_window_set_tool_button_style = qt6cr_main_window_set_tool_button_style(handle : Handle, style : LibC::Int)
+    fun qt6cr_main_window_animated = qt6cr_main_window_animated(handle : Handle) : Bool
+    fun qt6cr_main_window_set_animated = qt6cr_main_window_set_animated(handle : Handle, value : Bool)
+    fun qt6cr_main_window_document_mode = qt6cr_main_window_document_mode(handle : Handle) : Bool
+    fun qt6cr_main_window_set_document_mode = qt6cr_main_window_set_document_mode(handle : Handle, value : Bool)
+    fun qt6cr_main_window_dock_nesting_enabled = qt6cr_main_window_dock_nesting_enabled(handle : Handle) : Bool
+    fun qt6cr_main_window_set_dock_nesting_enabled = qt6cr_main_window_set_dock_nesting_enabled(handle : Handle, value : Bool)
+    fun qt6cr_main_window_corner = qt6cr_main_window_corner(handle : Handle, corner : LibC::Int) : LibC::Int
+    fun qt6cr_main_window_set_corner = qt6cr_main_window_set_corner(handle : Handle, corner : LibC::Int, area : LibC::Int)
     fun qt6cr_main_window_add_dock_widget = qt6cr_main_window_add_dock_widget(handle : Handle, area : LibC::Int, dock_widget : Handle)
+    fun qt6cr_main_window_remove_dock_widget = qt6cr_main_window_remove_dock_widget(handle : Handle, dock_widget : Handle)
+    fun qt6cr_main_window_save_state = qt6cr_main_window_save_state(handle : Handle) : Handle
+    fun qt6cr_main_window_restore_state = qt6cr_main_window_restore_state(handle : Handle, state : Handle) : Bool
 
     fun qt6cr_dialog_create = qt6cr_dialog_create(parent : Handle) : Handle
     fun qt6cr_dialog_exec = qt6cr_dialog_exec(handle : Handle) : LibC::Int
