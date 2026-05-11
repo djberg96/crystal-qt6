@@ -2606,12 +2606,25 @@ void qt6cr_system_tray_icon_on_activated(qt6cr_handle_t handle, qt6cr_int_callba
 void qt6cr_system_tray_icon_on_message_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_menu_create(qt6cr_handle_t parent, const char *title);
+qt6cr_handle_t qt6cr_menu_bar_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title);
+void qt6cr_menu_bar_add_existing_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
+qt6cr_handle_t qt6cr_menu_bar_add_text_action(qt6cr_handle_t handle, const char *text);
+void qt6cr_menu_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+qt6cr_handle_array_t qt6cr_menu_bar_actions(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_menu_bar_active_action(qt6cr_handle_t handle);
+void qt6cr_menu_bar_set_active_action(qt6cr_handle_t handle, qt6cr_handle_t action);
 void qt6cr_menu_bar_clear(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_menu_add_menu(qt6cr_handle_t handle, const char *title);
+void qt6cr_menu_add_existing_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
 qt6cr_handle_t qt6cr_menu_add_text_action(qt6cr_handle_t handle, const char *text);
 void qt6cr_menu_add_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+qt6cr_handle_array_t qt6cr_menu_actions(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_menu_active_action(qt6cr_handle_t handle);
+void qt6cr_menu_set_active_action(qt6cr_handle_t handle, qt6cr_handle_t action);
+qt6cr_handle_t qt6cr_menu_default_action(qt6cr_handle_t handle);
+void qt6cr_menu_set_default_action(qt6cr_handle_t handle, qt6cr_handle_t action);
 void qt6cr_menu_add_separator(qt6cr_handle_t handle);
 void qt6cr_menu_set_title(qt6cr_handle_t handle, const char *title);
 char *qt6cr_menu_title(qt6cr_handle_t handle);

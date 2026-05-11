@@ -272,6 +272,7 @@ qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values);
+qt6cr_handle_array_t to_handle_array_value(const QList<QAction *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values);
@@ -1632,6 +1633,22 @@ qt6cr_int_array_t to_int_array_value(const QList<int> &values) {
 }
 
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
+qt6cr_handle_array_t to_handle_array_value(const QList<QAction *> &values) {
   const auto size = static_cast<int>(values.size());
 
   if (size <= 0) {
@@ -19032,9 +19049,54 @@ qt6cr_handle_t qt6cr_menu_create(qt6cr_handle_t parent, const char *title) {
   return new QMenu(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
 
+qt6cr_handle_t qt6cr_menu_bar_create(qt6cr_handle_t parent) {
+  return new QMenuBar(as_widget(parent));
+}
+
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title) {
   auto *menu_bar = as_menu_bar(handle);
   return menu_bar == nullptr ? nullptr : menu_bar->addMenu(QString::fromUtf8(title == nullptr ? "" : title));
+}
+
+void qt6cr_menu_bar_add_existing_menu(qt6cr_handle_t handle, qt6cr_handle_t menu) {
+  auto *menu_bar = as_menu_bar(handle);
+  auto *value = as_menu(menu);
+
+  if (menu_bar != nullptr && value != nullptr) {
+    menu_bar->addMenu(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_menu_bar_add_text_action(qt6cr_handle_t handle, const char *text) {
+  auto *menu_bar = as_menu_bar(handle);
+  return menu_bar == nullptr ? nullptr : menu_bar->addAction(QString::fromUtf8(text == nullptr ? "" : text));
+}
+
+void qt6cr_menu_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *menu_bar = as_menu_bar(handle);
+  auto *menu_action = as_action(action);
+
+  if (menu_bar != nullptr && menu_action != nullptr) {
+    menu_bar->addAction(menu_action);
+  }
+}
+
+qt6cr_handle_array_t qt6cr_menu_bar_actions(qt6cr_handle_t handle) {
+  auto *menu_bar = as_menu_bar(handle);
+  return menu_bar == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(menu_bar->actions());
+}
+
+qt6cr_handle_t qt6cr_menu_bar_active_action(qt6cr_handle_t handle) {
+  auto *menu_bar = as_menu_bar(handle);
+  return menu_bar == nullptr ? nullptr : menu_bar->activeAction();
+}
+
+void qt6cr_menu_bar_set_active_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *menu_bar = as_menu_bar(handle);
+
+  if (menu_bar != nullptr) {
+    menu_bar->setActiveAction(as_action(action));
+  }
 }
 
 void qt6cr_menu_bar_clear(qt6cr_handle_t handle) {
@@ -19050,6 +19112,15 @@ qt6cr_handle_t qt6cr_menu_add_menu(qt6cr_handle_t handle, const char *title) {
   return menu == nullptr ? nullptr : menu->addMenu(QString::fromUtf8(title == nullptr ? "" : title));
 }
 
+void qt6cr_menu_add_existing_menu(qt6cr_handle_t handle, qt6cr_handle_t menu_handle) {
+  auto *menu = as_menu(handle);
+  auto *value = as_menu(menu_handle);
+
+  if (menu != nullptr && value != nullptr) {
+    menu->addMenu(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_menu_add_text_action(qt6cr_handle_t handle, const char *text) {
   auto *menu = as_menu(handle);
   return menu == nullptr ? nullptr : menu->addAction(QString::fromUtf8(text == nullptr ? "" : text));
@@ -19061,6 +19132,37 @@ void qt6cr_menu_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
 
   if (menu != nullptr && menu_action != nullptr) {
     menu->addAction(menu_action);
+  }
+}
+
+qt6cr_handle_array_t qt6cr_menu_actions(qt6cr_handle_t handle) {
+  auto *menu = as_menu(handle);
+  return menu == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(menu->actions());
+}
+
+qt6cr_handle_t qt6cr_menu_active_action(qt6cr_handle_t handle) {
+  auto *menu = as_menu(handle);
+  return menu == nullptr ? nullptr : menu->activeAction();
+}
+
+void qt6cr_menu_set_active_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *menu = as_menu(handle);
+
+  if (menu != nullptr) {
+    menu->setActiveAction(as_action(action));
+  }
+}
+
+qt6cr_handle_t qt6cr_menu_default_action(qt6cr_handle_t handle) {
+  auto *menu = as_menu(handle);
+  return menu == nullptr ? nullptr : menu->defaultAction();
+}
+
+void qt6cr_menu_set_default_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *menu = as_menu(handle);
+
+  if (menu != nullptr) {
+    menu->setDefaultAction(as_action(action));
   }
 }
 

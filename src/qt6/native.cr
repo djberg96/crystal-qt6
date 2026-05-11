@@ -2564,12 +2564,25 @@ module Qt6
     fun qt6cr_system_tray_icon_on_message_clicked = qt6cr_system_tray_icon_on_message_clicked(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_menu_create = qt6cr_menu_create(parent : Handle, title : UInt8*) : Handle
+    fun qt6cr_menu_bar_create = qt6cr_menu_bar_create(parent : Handle) : Handle
     fun qt6cr_menu_bar_add_menu = qt6cr_menu_bar_add_menu(handle : Handle, title : UInt8*) : Handle
+    fun qt6cr_menu_bar_add_existing_menu = qt6cr_menu_bar_add_existing_menu(handle : Handle, menu : Handle)
+    fun qt6cr_menu_bar_add_text_action = qt6cr_menu_bar_add_text_action(handle : Handle, text : UInt8*) : Handle
+    fun qt6cr_menu_bar_add_action = qt6cr_menu_bar_add_action(handle : Handle, action : Handle)
+    fun qt6cr_menu_bar_actions = qt6cr_menu_bar_actions(handle : Handle) : HandleArrayValue
+    fun qt6cr_menu_bar_active_action = qt6cr_menu_bar_active_action(handle : Handle) : Handle
+    fun qt6cr_menu_bar_set_active_action = qt6cr_menu_bar_set_active_action(handle : Handle, action : Handle)
     fun qt6cr_menu_bar_clear = qt6cr_menu_bar_clear(handle : Handle)
 
     fun qt6cr_menu_add_menu = qt6cr_menu_add_menu(handle : Handle, title : UInt8*) : Handle
+    fun qt6cr_menu_add_existing_menu = qt6cr_menu_add_existing_menu(handle : Handle, menu : Handle)
     fun qt6cr_menu_add_text_action = qt6cr_menu_add_text_action(handle : Handle, text : UInt8*) : Handle
     fun qt6cr_menu_add_action = qt6cr_menu_add_action(handle : Handle, action : Handle)
+    fun qt6cr_menu_actions = qt6cr_menu_actions(handle : Handle) : HandleArrayValue
+    fun qt6cr_menu_active_action = qt6cr_menu_active_action(handle : Handle) : Handle
+    fun qt6cr_menu_set_active_action = qt6cr_menu_set_active_action(handle : Handle, action : Handle)
+    fun qt6cr_menu_default_action = qt6cr_menu_default_action(handle : Handle) : Handle
+    fun qt6cr_menu_set_default_action = qt6cr_menu_set_default_action(handle : Handle, action : Handle)
     fun qt6cr_menu_add_separator = qt6cr_menu_add_separator(handle : Handle)
     fun qt6cr_menu_set_title = qt6cr_menu_set_title(handle : Handle, title : UInt8*)
     fun qt6cr_menu_title = qt6cr_menu_title(handle : Handle) : UInt8*

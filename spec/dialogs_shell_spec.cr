@@ -958,9 +958,17 @@ describe Qt6 do
 
     window.window_title = "Shell Polish"
     file_menu = window.menu_bar.add_menu("File")
-    view_menu = window.menu_bar.add_menu("View")
+    view_menu = Qt6::Menu.new("View", window)
+    tools_menu = Qt6::Menu.new("Tools", window)
+    window.menu_bar.add_menu(view_menu).to_unsafe.should eq(view_menu.to_unsafe)
+    window.menu_bar.add_menu(tools_menu).to_unsafe.should eq(tools_menu.to_unsafe)
+    help_action = window.menu_bar.add_action("Help")
     quick_open = file_menu.add_action("Quick Open")
     separator_action = file_menu.add_action("Separator Marker")
+    advanced_menu = Qt6::Menu.new("Advanced", window)
+    tools_menu.add_menu(advanced_menu)
+    preferences_action = Qt6::Action.new("Preferences", window)
+    tools_menu.add_action(preferences_action)
     toolbar = Qt6::ToolBar.new("Inspector", window)
     search = Qt6::LineEdit.new(parent: window)
 
@@ -981,6 +989,7 @@ describe Qt6 do
     view_menu.title = "Panels"
     menu_action = view_menu.menu_action
     menu_action.text.should eq("Panels")
+    tools_menu.default_action = preferences_action
 
     window.add_tool_bar(toolbar)
     toolbar.movable = false
@@ -1009,6 +1018,8 @@ describe Qt6 do
     toggled.should eq([true, false])
     separator_action.separator?.should be_true
     file_menu.add_action(Qt6::Action.new("Manual", window)).text.should eq("Manual")
+    help_action.text.should eq("Help")
+    tools_menu.default_action.not_nil!.text.should eq("Preferences")
     file_menu.clear
     toolbar.movable?.should be_false
     toolbar.floatable?.should be_false
