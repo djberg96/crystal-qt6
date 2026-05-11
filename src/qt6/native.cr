@@ -648,6 +648,8 @@ module Qt6
     fun qt6cr_mdi_sub_window_create = qt6cr_mdi_sub_window_create(parent : Handle) : Handle
     fun qt6cr_mdi_sub_window_widget = qt6cr_mdi_sub_window_widget(handle : Handle) : Handle
     fun qt6cr_mdi_sub_window_set_widget = qt6cr_mdi_sub_window_set_widget(handle : Handle, widget : Handle)
+    fun qt6cr_mdi_sub_window_system_menu = qt6cr_mdi_sub_window_system_menu(handle : Handle) : Handle
+    fun qt6cr_mdi_sub_window_set_system_menu = qt6cr_mdi_sub_window_set_system_menu(handle : Handle, menu : Handle)
     fun qt6cr_mdi_sub_window_mdi_area = qt6cr_mdi_sub_window_mdi_area(handle : Handle) : Handle
     fun qt6cr_mdi_sub_window_is_shaded = qt6cr_mdi_sub_window_is_shaded(handle : Handle) : Bool
     fun qt6cr_mdi_sub_window_set_option = qt6cr_mdi_sub_window_set_option(handle : Handle, option : LibC::Int, value : Bool)
@@ -657,7 +659,9 @@ module Qt6
     fun qt6cr_mdi_sub_window_keyboard_page_step = qt6cr_mdi_sub_window_keyboard_page_step(handle : Handle) : LibC::Int
     fun qt6cr_mdi_sub_window_set_keyboard_page_step = qt6cr_mdi_sub_window_set_keyboard_page_step(handle : Handle, value : LibC::Int)
     fun qt6cr_mdi_sub_window_show_shaded = qt6cr_mdi_sub_window_show_shaded(handle : Handle)
+    fun qt6cr_mdi_sub_window_show_system_menu = qt6cr_mdi_sub_window_show_system_menu(handle : Handle)
     fun qt6cr_mdi_sub_window_on_about_to_activate = qt6cr_mdi_sub_window_on_about_to_activate(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_mdi_sub_window_on_window_state_changed = qt6cr_mdi_sub_window_on_window_state_changed(handle : Handle, callback : (Handle, LibC::Int, LibC::Int ->), userdata : Handle)
     fun qt6cr_widget_focus_policy = qt6cr_widget_focus_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_focus_policy = qt6cr_widget_set_focus_policy(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_set_focus = qt6cr_widget_set_focus(handle : Handle)

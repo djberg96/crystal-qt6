@@ -1096,28 +1096,39 @@ describe Qt6 do
     second_sub_window = mdi_area.add_sub_window(second_editor)
     first_sub_window.window_title = "Alpha.map"
     second_sub_window.window_title = "Bravo.map"
-    first_sub_window.keyboard_single_step = 6
-    first_sub_window.keyboard_page_step = 32
+    first_sub_window.set_keyboard_single_step(6)
+    first_sub_window.set_keyboard_page_step(32)
     first_sub_window.set_option(Qt6::MdiSubWindowOption::RubberBandMove, true)
     second_sub_window.set_option(Qt6::MdiSubWindowOption::RubberBandResize, true)
+    system_menu = Qt6::Menu.new("Window", host)
+    system_menu.add_action("Close")
+    first_sub_window.set_system_menu(system_menu)
 
     activated_titles = [] of String
     second_activation_count = 0
+    state_changes = [] of Tuple(Qt6::WindowState, Qt6::WindowState)
     mdi_area.on_sub_window_activated do |sub_window|
       activated_titles << (sub_window.try(&.window_title) || "")
     end
     second_sub_window.on_about_to_activate do
       second_activation_count += 1
     end
+    first_sub_window.on_window_state_changed do |old_state, new_state|
+      state_changes << {old_state, new_state}
+    end
 
     detached_sub_window = Qt6::MdiSubWindow.new(host)
-    detached_sub_window.widget = detached_label
+    detached_sub_window.set_widget(detached_label)
     detached_sub_window.window_title = "Detached"
 
     host.show
     first_sub_window.show
     second_sub_window.show
     detached_sub_window.show
+    application.process_events
+    first_sub_window.show_maximized
+    application.process_events
+    mdi_area.set_active_sub_window(second_sub_window)
     application.process_events
 
     mdi_area.set_active_sub_window(first_sub_window)
@@ -1130,6 +1141,8 @@ describe Qt6 do
     application.process_events
     mdi_area.tile_sub_windows
     mdi_area.cascade_sub_windows
+    mdi_area.set_active_sub_window(second_sub_window)
+    application.process_events
 
     mdi_area.background.color.should eq(Qt6::Color.new(232, 238, 244))
     mdi_area.activation_order.should eq(Qt6::MdiWindowOrder::ActivationHistoryOrder)
@@ -1149,10 +1162,12 @@ describe Qt6 do
     second_activation_count.should be > 0
 
     first_sub_window.widget.not_nil!.to_unsafe.should eq(first_editor.to_unsafe)
+    first_sub_window.system_menu.not_nil!.title.should eq("Window")
     first_sub_window.mdi_area.not_nil!.to_unsafe.should eq(mdi_area.to_unsafe)
     first_sub_window.keyboard_single_step.should eq(6)
     first_sub_window.keyboard_page_step.should eq(32)
     first_sub_window.option?(Qt6::MdiSubWindowOption::RubberBandMove).should be_true
+    state_changes.any? { |(_, new_state)| new_state.includes?(Qt6::WindowState::Maximized) }.should be_true
     second_sub_window.option?(Qt6::MdiSubWindowOption::RubberBandResize).should be_true
     detached_sub_window.widget.not_nil!.to_unsafe.should eq(detached_label.to_unsafe)
     detached_sub_window.widget = nil
@@ -1162,6 +1177,7 @@ describe Qt6 do
     detached_sub_window.mdi_area.should be_nil
     detached_sub_window.shaded?.should be_false
     detached_sub_window.show_shaded
+    detached_sub_window.show_system_menu
 
     mdi_area.remove_sub_window(first_editor).to_unsafe.should eq(first_editor.to_unsafe)
 

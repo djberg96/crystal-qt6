@@ -6092,6 +6092,19 @@ void qt6cr_mdi_sub_window_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widge
   }
 }
 
+qt6cr_handle_t qt6cr_mdi_sub_window_system_menu(qt6cr_handle_t handle) {
+  auto *sub_window = as_mdi_sub_window(handle);
+  return sub_window == nullptr ? nullptr : sub_window->systemMenu();
+}
+
+void qt6cr_mdi_sub_window_set_system_menu(qt6cr_handle_t handle, qt6cr_handle_t menu) {
+  auto *sub_window = as_mdi_sub_window(handle);
+
+  if (sub_window != nullptr) {
+    sub_window->setSystemMenu(as_menu(menu));
+  }
+}
+
 qt6cr_handle_t qt6cr_mdi_sub_window_mdi_area(qt6cr_handle_t handle) {
   auto *sub_window = as_mdi_sub_window(handle);
   return sub_window == nullptr ? nullptr : sub_window->mdiArea();
@@ -6149,6 +6162,14 @@ void qt6cr_mdi_sub_window_show_shaded(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_mdi_sub_window_show_system_menu(qt6cr_handle_t handle) {
+  auto *sub_window = as_mdi_sub_window(handle);
+
+  if (sub_window != nullptr) {
+    sub_window->showSystemMenu();
+  }
+}
+
 void qt6cr_mdi_sub_window_on_about_to_activate(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *sub_window = as_mdi_sub_window(handle);
 
@@ -6158,6 +6179,18 @@ void qt6cr_mdi_sub_window_on_about_to_activate(qt6cr_handle_t handle, qt6cr_void
 
   QObject::connect(sub_window, &QMdiSubWindow::aboutToActivate, sub_window, [callback, userdata]() {
     callback(userdata);
+  });
+}
+
+void qt6cr_mdi_sub_window_on_window_state_changed(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *sub_window = as_mdi_sub_window(handle);
+
+  if (sub_window == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(sub_window, &QMdiSubWindow::windowStateChanged, sub_window, [callback, userdata](Qt::WindowStates old_state, Qt::WindowStates new_state) {
+    callback(userdata, static_cast<int>(old_state), static_cast<int>(new_state));
   });
 }
 

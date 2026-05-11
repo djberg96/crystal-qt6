@@ -21,6 +21,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QLineEdit` with display-text, read-only/modified/max-length, clear-button and drag toggles, acceptable-input checks, and editing-finished / return-pressed signal coverage for fuller text-entry control.
 - Expanded `QMainWindow` with central-widget readback, menu/status-bar replacement, toolbar area/insertion helpers, icon-size and tool-button-style controls, animation/document/dock-nesting toggles, corner assignment, dock removal, and state save/restore support, plus shared `QObject#object_name` helpers for persisted window layouts.
 - Expanded `QMdiArea` with ordered subwindow enumeration, tab position and shape controls for tabbed MDI mode, and Qt-style setter aliases for fuller multi-document desktop shell configuration.
+- Expanded `QMdiSubWindow` with system-menu access, `windowStateChanged` signal support, and Qt-style setter aliases for fuller MDI document-window control.
 
 ## [0.10.0] - 2026-05-10
 

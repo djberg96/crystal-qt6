@@ -691,6 +691,8 @@ void qt6cr_mdi_area_on_sub_window_activated(qt6cr_handle_t handle, qt6cr_handle_
 qt6cr_handle_t qt6cr_mdi_sub_window_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_mdi_sub_window_widget(qt6cr_handle_t handle);
 void qt6cr_mdi_sub_window_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_mdi_sub_window_system_menu(qt6cr_handle_t handle);
+void qt6cr_mdi_sub_window_set_system_menu(qt6cr_handle_t handle, qt6cr_handle_t menu);
 qt6cr_handle_t qt6cr_mdi_sub_window_mdi_area(qt6cr_handle_t handle);
 bool qt6cr_mdi_sub_window_is_shaded(qt6cr_handle_t handle);
 void qt6cr_mdi_sub_window_set_option(qt6cr_handle_t handle, int option, bool value);
@@ -700,7 +702,9 @@ void qt6cr_mdi_sub_window_set_keyboard_single_step(qt6cr_handle_t handle, int va
 int qt6cr_mdi_sub_window_keyboard_page_step(qt6cr_handle_t handle);
 void qt6cr_mdi_sub_window_set_keyboard_page_step(qt6cr_handle_t handle, int value);
 void qt6cr_mdi_sub_window_show_shaded(qt6cr_handle_t handle);
+void qt6cr_mdi_sub_window_show_system_menu(qt6cr_handle_t handle);
 void qt6cr_mdi_sub_window_on_about_to_activate(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_mdi_sub_window_on_window_state_changed(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata);
 int qt6cr_widget_focus_policy(qt6cr_handle_t handle);
 void qt6cr_widget_set_focus_policy(qt6cr_handle_t handle, int value);
 void qt6cr_widget_set_focus(qt6cr_handle_t handle);
