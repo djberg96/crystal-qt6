@@ -6825,6 +6825,107 @@ char *qt6cr_message_box_informative_text(qt6cr_handle_t handle) {
   return message_box == nullptr ? duplicate_string("") : duplicate_string(message_box->informativeText());
 }
 
+void qt6cr_message_box_set_detailed_text(qt6cr_handle_t handle, const char *text) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setDetailedText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+char *qt6cr_message_box_detailed_text(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? duplicate_string("") : duplicate_string(message_box->detailedText());
+}
+
+void qt6cr_message_box_add_button(qt6cr_handle_t handle, qt6cr_handle_t button_handle, int role) {
+  auto *message_box = as_message_box(handle);
+  auto *button = as_abstract_button(button_handle);
+
+  if (message_box != nullptr && button != nullptr) {
+    message_box->addButton(button, static_cast<QMessageBox::ButtonRole>(role));
+  }
+}
+
+qt6cr_handle_t qt6cr_message_box_add_text_button(qt6cr_handle_t handle, const char *text, int role) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box == nullptr) {
+    return nullptr;
+  }
+
+  return message_box->addButton(QString::fromUtf8(text == nullptr ? "" : text), static_cast<QMessageBox::ButtonRole>(role));
+}
+
+qt6cr_handle_t qt6cr_message_box_add_standard_button(qt6cr_handle_t handle, int button) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box == nullptr) {
+    return nullptr;
+  }
+
+  return message_box->addButton(static_cast<QMessageBox::StandardButton>(button));
+}
+
+qt6cr_handle_t qt6cr_message_box_button(qt6cr_handle_t handle, int button) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? nullptr : message_box->button(static_cast<QMessageBox::StandardButton>(button));
+}
+
+int qt6cr_message_box_button_role(qt6cr_handle_t handle, qt6cr_handle_t button_handle) {
+  auto *message_box = as_message_box(handle);
+  auto *button = as_abstract_button(button_handle);
+  return message_box == nullptr || button == nullptr ? 0 : static_cast<int>(message_box->buttonRole(button));
+}
+
+int qt6cr_message_box_standard_button(qt6cr_handle_t handle, qt6cr_handle_t button_handle) {
+  auto *message_box = as_message_box(handle);
+  auto *button = as_abstract_button(button_handle);
+  return message_box == nullptr || button == nullptr ? 0 : static_cast<int>(message_box->standardButton(button));
+}
+
+qt6cr_handle_t qt6cr_message_box_default_button(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? nullptr : message_box->defaultButton();
+}
+
+void qt6cr_message_box_set_default_button(qt6cr_handle_t handle, qt6cr_handle_t button_handle) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setDefaultButton(as_push_button(button_handle));
+  }
+}
+
+void qt6cr_message_box_set_default_standard_button(qt6cr_handle_t handle, int button) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setDefaultButton(static_cast<QMessageBox::StandardButton>(button));
+  }
+}
+
+qt6cr_handle_t qt6cr_message_box_escape_button(qt6cr_handle_t handle) {
+  auto *message_box = as_message_box(handle);
+  return message_box == nullptr ? nullptr : message_box->escapeButton();
+}
+
+void qt6cr_message_box_set_escape_button(qt6cr_handle_t handle, qt6cr_handle_t button_handle) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setEscapeButton(as_abstract_button(button_handle));
+  }
+}
+
+void qt6cr_message_box_set_escape_standard_button(qt6cr_handle_t handle, int button) {
+  auto *message_box = as_message_box(handle);
+
+  if (message_box != nullptr) {
+    message_box->setEscapeButton(static_cast<QMessageBox::StandardButton>(button));
+  }
+}
+
 void qt6cr_message_box_set_standard_buttons(qt6cr_handle_t handle, int buttons) {
   auto *message_box = as_message_box(handle);
 

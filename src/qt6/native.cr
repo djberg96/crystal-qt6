@@ -753,6 +753,20 @@ module Qt6
     fun qt6cr_message_box_text = qt6cr_message_box_text(handle : Handle) : UInt8*
     fun qt6cr_message_box_set_informative_text = qt6cr_message_box_set_informative_text(handle : Handle, text : UInt8*)
     fun qt6cr_message_box_informative_text = qt6cr_message_box_informative_text(handle : Handle) : UInt8*
+    fun qt6cr_message_box_set_detailed_text = qt6cr_message_box_set_detailed_text(handle : Handle, text : UInt8*)
+    fun qt6cr_message_box_detailed_text = qt6cr_message_box_detailed_text(handle : Handle) : UInt8*
+    fun qt6cr_message_box_add_button = qt6cr_message_box_add_button(handle : Handle, button : Handle, role : LibC::Int)
+    fun qt6cr_message_box_add_text_button = qt6cr_message_box_add_text_button(handle : Handle, text : UInt8*, role : LibC::Int) : Handle
+    fun qt6cr_message_box_add_standard_button = qt6cr_message_box_add_standard_button(handle : Handle, button : LibC::Int) : Handle
+    fun qt6cr_message_box_button = qt6cr_message_box_button(handle : Handle, button : LibC::Int) : Handle
+    fun qt6cr_message_box_button_role = qt6cr_message_box_button_role(handle : Handle, button : Handle) : LibC::Int
+    fun qt6cr_message_box_standard_button = qt6cr_message_box_standard_button(handle : Handle, button : Handle) : LibC::Int
+    fun qt6cr_message_box_default_button = qt6cr_message_box_default_button(handle : Handle) : Handle
+    fun qt6cr_message_box_set_default_button = qt6cr_message_box_set_default_button(handle : Handle, button : Handle)
+    fun qt6cr_message_box_set_default_standard_button = qt6cr_message_box_set_default_standard_button(handle : Handle, button : LibC::Int)
+    fun qt6cr_message_box_escape_button = qt6cr_message_box_escape_button(handle : Handle) : Handle
+    fun qt6cr_message_box_set_escape_button = qt6cr_message_box_set_escape_button(handle : Handle, button : Handle)
+    fun qt6cr_message_box_set_escape_standard_button = qt6cr_message_box_set_escape_standard_button(handle : Handle, button : LibC::Int)
     fun qt6cr_message_box_set_standard_buttons = qt6cr_message_box_set_standard_buttons(handle : Handle, buttons : LibC::Int)
     fun qt6cr_message_box_standard_buttons = qt6cr_message_box_standard_buttons(handle : Handle) : LibC::Int
 

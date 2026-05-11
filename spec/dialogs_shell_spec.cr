@@ -270,7 +270,13 @@ describe Qt6 do
     message_box.icon = Qt6::MessageBoxIcon::Warning
     message_box.text = "This map has unsaved changes."
     message_box.informative_text = "Save before closing?"
+    message_box.detailed_text = "Terrain and unit placements will be lost."
     message_box.standard_buttons = Qt6::MessageBoxButton::Save | Qt6::MessageBoxButton::Discard | Qt6::MessageBoxButton::Cancel
+    explain_button = message_box.add_button("Explain", Qt6::DialogButtonBoxButtonRole::HelpRole)
+    apply_button = message_box.add_button(Qt6::MessageBoxButton::Apply)
+    save_button = message_box.button(Qt6::MessageBoxButton::Save).not_nil!
+    message_box.default_button = save_button
+    message_box.set_escape_button(Qt6::MessageBoxButton::Cancel)
     message_box.accept
 
     file_dialog.accept_mode = Qt6::FileDialogAcceptMode::Save
@@ -294,9 +300,14 @@ describe Qt6 do
     message_box.icon.should eq(Qt6::MessageBoxIcon::Warning)
     message_box.text.should eq("This map has unsaved changes.")
     message_box.informative_text.should eq("Save before closing?")
+    message_box.detailed_text.should eq("Terrain and unit placements will be lost.")
     message_box.standard_buttons.includes?(Qt6::MessageBoxButton::Save).should be_true
     message_box.standard_buttons.includes?(Qt6::MessageBoxButton::Discard).should be_true
     message_box.standard_buttons.includes?(Qt6::MessageBoxButton::Cancel).should be_true
+    message_box.button_role(explain_button).should eq(Qt6::DialogButtonBoxButtonRole::HelpRole)
+    message_box.standard_button(apply_button).should eq(Qt6::MessageBoxButton::Apply)
+    message_box.default_button.not_nil!.to_unsafe.should eq(save_button.to_unsafe)
+    message_box.escape_button.not_nil!.to_unsafe.should eq(message_box.button(Qt6::MessageBoxButton::Cancel).not_nil!.to_unsafe)
     message_box.result.should eq(Qt6::DialogCode::Accepted)
 
     file_dialog.accept_mode.should eq(Qt6::FileDialogAcceptMode::Save)
