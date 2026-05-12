@@ -7656,6 +7656,33 @@ void qt6cr_progress_dialog_set_cancel_button_text(qt6cr_handle_t handle, const c
   }
 }
 
+void qt6cr_progress_dialog_set_label(qt6cr_handle_t handle, qt6cr_handle_t label) {
+  auto *dialog = as_progress_dialog(handle);
+  auto *progress_label = as_label(label);
+
+  if (dialog != nullptr) {
+    dialog->setLabel(progress_label);
+  }
+}
+
+void qt6cr_progress_dialog_set_cancel_button(qt6cr_handle_t handle, qt6cr_handle_t button) {
+  auto *dialog = as_progress_dialog(handle);
+  auto *cancel_button = as_push_button(button);
+
+  if (dialog != nullptr) {
+    dialog->setCancelButton(cancel_button);
+  }
+}
+
+void qt6cr_progress_dialog_set_bar(qt6cr_handle_t handle, qt6cr_handle_t bar) {
+  auto *dialog = as_progress_dialog(handle);
+  auto *progress_bar = as_progress_bar(bar);
+
+  if (dialog != nullptr) {
+    dialog->setBar(progress_bar);
+  }
+}
+
 int qt6cr_progress_dialog_minimum(qt6cr_handle_t handle) {
   auto *dialog = as_progress_dialog(handle);
   return dialog == nullptr ? 0 : dialog->minimum();
@@ -7701,6 +7728,11 @@ void qt6cr_progress_dialog_set_value(qt6cr_handle_t handle, int value) {
   if (dialog != nullptr) {
     dialog->setValue(value);
   }
+}
+
+qt6cr_size_t qt6cr_progress_dialog_size_hint(qt6cr_handle_t handle) {
+  auto *dialog = as_progress_dialog(handle);
+  return dialog == nullptr ? qt6cr_size_t{0, 0} : to_size(dialog->sizeHint());
 }
 
 bool qt6cr_progress_dialog_auto_close(qt6cr_handle_t handle) {

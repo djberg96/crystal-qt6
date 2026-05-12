@@ -875,6 +875,9 @@ module Qt6
     fun qt6cr_progress_dialog_label_text = qt6cr_progress_dialog_label_text(handle : Handle) : UInt8*
     fun qt6cr_progress_dialog_set_label_text = qt6cr_progress_dialog_set_label_text(handle : Handle, label_text : UInt8*)
     fun qt6cr_progress_dialog_set_cancel_button_text = qt6cr_progress_dialog_set_cancel_button_text(handle : Handle, cancel_button_text : UInt8*)
+    fun qt6cr_progress_dialog_set_label = qt6cr_progress_dialog_set_label(handle : Handle, label : Handle)
+    fun qt6cr_progress_dialog_set_cancel_button = qt6cr_progress_dialog_set_cancel_button(handle : Handle, button : Handle)
+    fun qt6cr_progress_dialog_set_bar = qt6cr_progress_dialog_set_bar(handle : Handle, bar : Handle)
     fun qt6cr_progress_dialog_minimum = qt6cr_progress_dialog_minimum(handle : Handle) : LibC::Int
     fun qt6cr_progress_dialog_set_minimum = qt6cr_progress_dialog_set_minimum(handle : Handle, value : LibC::Int)
     fun qt6cr_progress_dialog_maximum = qt6cr_progress_dialog_maximum(handle : Handle) : LibC::Int
@@ -882,6 +885,7 @@ module Qt6
     fun qt6cr_progress_dialog_set_range = qt6cr_progress_dialog_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
     fun qt6cr_progress_dialog_value = qt6cr_progress_dialog_value(handle : Handle) : LibC::Int
     fun qt6cr_progress_dialog_set_value = qt6cr_progress_dialog_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_dialog_size_hint = qt6cr_progress_dialog_size_hint(handle : Handle) : SizeValue
     fun qt6cr_progress_dialog_auto_close = qt6cr_progress_dialog_auto_close(handle : Handle) : Bool
     fun qt6cr_progress_dialog_set_auto_close = qt6cr_progress_dialog_set_auto_close(handle : Handle, value : Bool)
     fun qt6cr_progress_dialog_auto_reset = qt6cr_progress_dialog_auto_reset(handle : Handle) : Bool

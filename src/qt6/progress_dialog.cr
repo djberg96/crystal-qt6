@@ -45,6 +45,27 @@ module Qt6
       value
     end
 
+    # Replaces the progress label widget.
+    def label=(value : Label?) : Label?
+      LibQt6.qt6cr_progress_dialog_set_label(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value.adopt_by_parent! unless value.nil?
+      value
+    end
+
+    # Replaces the cancel button widget.
+    def cancel_button=(value : PushButton?) : PushButton?
+      LibQt6.qt6cr_progress_dialog_set_cancel_button(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value.adopt_by_parent! unless value.nil?
+      value
+    end
+
+    # Replaces the embedded progress bar widget.
+    def bar=(value : ProgressBar?) : ProgressBar?
+      LibQt6.qt6cr_progress_dialog_set_bar(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value.adopt_by_parent! unless value.nil?
+      value
+    end
+
     # Returns the minimum progress value.
     def minimum : Int32
       LibQt6.qt6cr_progress_dialog_minimum(to_unsafe)
@@ -82,6 +103,11 @@ module Qt6
     def value=(value : Int) : Int32
       LibQt6.qt6cr_progress_dialog_set_value(to_unsafe, value)
       value.to_i32
+    end
+
+    # Returns the preferred dialog size for the current label and controls.
+    def size_hint : Size
+      Size.from_native(LibQt6.qt6cr_progress_dialog_size_hint(to_unsafe))
     end
 
     # Returns whether the dialog closes automatically at completion.
@@ -131,6 +157,78 @@ module Qt6
     # Resets the dialog state.
     def reset : self
       LibQt6.qt6cr_progress_dialog_reset(to_unsafe)
+      self
+    end
+
+    # Qt-style alias for `label_text=`.
+    def set_label_text(value : String) : self
+      self.label_text = value
+      self
+    end
+
+    # Qt-style alias for `cancel_button_text=`.
+    def set_cancel_button_text(value : String) : self
+      self.cancel_button_text = value
+      self
+    end
+
+    # Qt-style alias for `label=`.
+    def set_label(value : Label?) : self
+      self.label = value
+      self
+    end
+
+    # Qt-style alias for `cancel_button=`.
+    def set_cancel_button(value : PushButton?) : self
+      self.cancel_button = value
+      self
+    end
+
+    # Qt-style alias for `bar=`.
+    def set_bar(value : ProgressBar?) : self
+      self.bar = value
+      self
+    end
+
+    # Qt-style alias for `minimum=`.
+    def set_minimum(value : Int) : self
+      self.minimum = value
+      self
+    end
+
+    # Qt-style alias for `maximum=`.
+    def set_maximum(value : Int) : self
+      self.maximum = value
+      self
+    end
+
+    # Qt-style alias for `range=`.
+    def set_range(minimum : Int, maximum : Int) : self
+      self.range = minimum..maximum
+      self
+    end
+
+    # Qt-style alias for `value=`.
+    def set_value(value : Int) : self
+      self.value = value
+      self
+    end
+
+    # Qt-style alias for `auto_close=`.
+    def set_auto_close(value : Bool) : self
+      self.auto_close = value
+      self
+    end
+
+    # Qt-style alias for `auto_reset=`.
+    def set_auto_reset(value : Bool) : self
+      self.auto_reset = value
+      self
+    end
+
+    # Qt-style alias for `minimum_duration=`.
+    def set_minimum_duration(value : Int) : self
+      self.minimum_duration = value
       self
     end
 

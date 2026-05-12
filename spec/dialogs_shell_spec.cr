@@ -333,27 +333,43 @@ describe Qt6 do
     application = app
     window = Qt6::MainWindow.new
     progress = Qt6::ProgressDialog.new(window, label_text: "Loading tiles", cancel_button_text: "Stop", minimum: 0, maximum: 10)
+    custom_label = Qt6::Label.new("Preparing layers")
+    custom_bar = Qt6::ProgressBar.new
+    custom_cancel = Qt6::PushButton.new("Abort")
+    canceled = false
+
+    progress.on_canceled do
+      canceled = true
+    end
 
     progress.label_text.should eq("Loading tiles")
     progress.minimum.should eq(0)
     progress.maximum.should eq(10)
-    progress.minimum_duration = 0
+    progress.set_label(custom_label)
+    progress.set_bar(custom_bar)
+    progress.set_cancel_button(custom_cancel)
+    progress.set_label_text("Loading tiles")
+    progress.set_minimum_duration(0)
     progress.minimum_duration.should eq(0)
-    progress.auto_close = false
-    progress.auto_reset = false
+    progress.set_auto_close(false)
+    progress.set_auto_reset(false)
     progress.auto_close?.should be_false
     progress.auto_reset?.should be_false
-    progress.range = 1..5
+    progress.set_range(1, 5)
     progress.minimum.should eq(1)
     progress.maximum.should eq(5)
-    progress.value = 2
+    progress.set_value(2)
     progress.value.should eq(2)
+    custom_bar.value.should eq(2)
+    custom_label.text.should eq("Loading tiles")
+    progress.size_hint.width.should be > 0
+    progress.size_hint.height.should be > 0
     progress.was_canceled?.should be_false
 
     cancel_timer = Qt6::QTimer.new(progress)
     cancel_timer.single_shot = true
     cancel_timer.on_timeout do
-      progress.cancel
+      custom_cancel.click
     end
     progress.show
     cancel_timer.start(0)
@@ -363,6 +379,7 @@ describe Qt6 do
     end
 
     progress.was_canceled?.should be_true
+    canceled.should be_true
     progress.reset
 
     splash_image = Qt6::QImage.new(24, 16)

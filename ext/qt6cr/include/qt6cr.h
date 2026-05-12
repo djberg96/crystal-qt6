@@ -918,6 +918,9 @@ qt6cr_handle_t qt6cr_progress_dialog_create(qt6cr_handle_t parent, const char *l
 char *qt6cr_progress_dialog_label_text(qt6cr_handle_t handle);
 void qt6cr_progress_dialog_set_label_text(qt6cr_handle_t handle, const char *label_text);
 void qt6cr_progress_dialog_set_cancel_button_text(qt6cr_handle_t handle, const char *cancel_button_text);
+void qt6cr_progress_dialog_set_label(qt6cr_handle_t handle, qt6cr_handle_t label);
+void qt6cr_progress_dialog_set_cancel_button(qt6cr_handle_t handle, qt6cr_handle_t button);
+void qt6cr_progress_dialog_set_bar(qt6cr_handle_t handle, qt6cr_handle_t bar);
 int qt6cr_progress_dialog_minimum(qt6cr_handle_t handle);
 void qt6cr_progress_dialog_set_minimum(qt6cr_handle_t handle, int value);
 int qt6cr_progress_dialog_maximum(qt6cr_handle_t handle);
@@ -925,6 +928,7 @@ void qt6cr_progress_dialog_set_maximum(qt6cr_handle_t handle, int value);
 void qt6cr_progress_dialog_set_range(qt6cr_handle_t handle, int minimum, int maximum);
 int qt6cr_progress_dialog_value(qt6cr_handle_t handle);
 void qt6cr_progress_dialog_set_value(qt6cr_handle_t handle, int value);
+qt6cr_size_t qt6cr_progress_dialog_size_hint(qt6cr_handle_t handle);
 bool qt6cr_progress_dialog_auto_close(qt6cr_handle_t handle);
 void qt6cr_progress_dialog_set_auto_close(qt6cr_handle_t handle, bool value);
 bool qt6cr_progress_dialog_auto_reset(qt6cr_handle_t handle);
