@@ -2805,6 +2805,7 @@ qt6cr_size_t qt6cr_abstract_button_icon_size(qt6cr_handle_t handle);
 void qt6cr_abstract_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size);
 
 qt6cr_handle_t qt6cr_push_button_create(qt6cr_handle_t parent, const char *text);
+qt6cr_handle_t qt6cr_push_button_create_with_icon(qt6cr_handle_t parent, qt6cr_handle_t icon, const char *text);
 void qt6cr_push_button_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_push_button_text(qt6cr_handle_t handle);
 void qt6cr_push_button_on_clicked(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -2817,6 +2818,9 @@ bool qt6cr_push_button_auto_default(qt6cr_handle_t handle);
 void qt6cr_push_button_set_auto_default(qt6cr_handle_t handle, bool value);
 bool qt6cr_push_button_is_flat(qt6cr_handle_t handle);
 void qt6cr_push_button_set_flat(qt6cr_handle_t handle, bool value);
+qt6cr_size_t qt6cr_push_button_size_hint(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_push_button_minimum_size_hint(qt6cr_handle_t handle);
+void qt6cr_push_button_show_menu(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_line_edit_create(qt6cr_handle_t parent, const char *text);
 void qt6cr_line_edit_set_text(qt6cr_handle_t handle, const char *text);

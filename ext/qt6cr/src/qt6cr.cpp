@@ -20459,6 +20459,13 @@ qt6cr_handle_t qt6cr_push_button_create(qt6cr_handle_t parent, const char *text)
   return new QPushButton(QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent));
 }
 
+qt6cr_handle_t qt6cr_push_button_create_with_icon(qt6cr_handle_t parent, qt6cr_handle_t icon, const char *text) {
+  auto *button_icon = as_qicon(icon);
+  return button_icon == nullptr
+             ? new QPushButton(QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent))
+             : new QPushButton(*button_icon, QString::fromUtf8(text == nullptr ? "" : text), as_widget(parent));
+}
+
 void qt6cr_push_button_set_text(qt6cr_handle_t handle, const char *text) {
   auto *button = as_push_button(handle);
 
@@ -20543,6 +20550,24 @@ void qt6cr_push_button_set_flat(qt6cr_handle_t handle, bool value) {
 
   if (button != nullptr) {
     button->setFlat(value);
+  }
+}
+
+qt6cr_size_t qt6cr_push_button_size_hint(qt6cr_handle_t handle) {
+  auto *button = as_push_button(handle);
+  return button == nullptr ? qt6cr_size_t{0, 0} : to_size(button->sizeHint());
+}
+
+qt6cr_size_t qt6cr_push_button_minimum_size_hint(qt6cr_handle_t handle) {
+  auto *button = as_push_button(handle);
+  return button == nullptr ? qt6cr_size_t{0, 0} : to_size(button->minimumSizeHint());
+}
+
+void qt6cr_push_button_show_menu(qt6cr_handle_t handle) {
+  auto *button = as_push_button(handle);
+
+  if (button != nullptr) {
+    button->showMenu();
   }
 }
 

@@ -2763,6 +2763,7 @@ module Qt6
     fun qt6cr_abstract_button_set_icon_size = qt6cr_abstract_button_set_icon_size(handle : Handle, size : SizeValue)
 
     fun qt6cr_push_button_create = qt6cr_push_button_create(parent : Handle, text : UInt8*) : Handle
+    fun qt6cr_push_button_create_with_icon = qt6cr_push_button_create_with_icon(parent : Handle, icon : Handle, text : UInt8*) : Handle
     fun qt6cr_push_button_set_text = qt6cr_push_button_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_push_button_text = qt6cr_push_button_text(handle : Handle) : UInt8*
     fun qt6cr_push_button_on_clicked = qt6cr_push_button_on_clicked(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -2775,6 +2776,9 @@ module Qt6
     fun qt6cr_push_button_set_auto_default = qt6cr_push_button_set_auto_default(handle : Handle, value : Bool)
     fun qt6cr_push_button_is_flat = qt6cr_push_button_is_flat(handle : Handle) : Bool
     fun qt6cr_push_button_set_flat = qt6cr_push_button_set_flat(handle : Handle, value : Bool)
+    fun qt6cr_push_button_size_hint = qt6cr_push_button_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_push_button_minimum_size_hint = qt6cr_push_button_minimum_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_push_button_show_menu = qt6cr_push_button_show_menu(handle : Handle)
 
     fun qt6cr_line_edit_create = qt6cr_line_edit_create(parent : Handle, text : UInt8*) : Handle
     fun qt6cr_line_edit_set_text = qt6cr_line_edit_set_text(handle : Handle, text : UInt8*)

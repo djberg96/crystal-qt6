@@ -1089,30 +1089,44 @@ describe Qt6 do
   end
 
   it "supports push button menus" do
-    app
+    application = app
     window = Qt6::MainWindow.new
-    button = Qt6::PushButton.new("Volume", window)
-    menu = Qt6::Menu.new("Volume Menu", button)
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-push-button-icon-#{Process.pid}.png")
+    image = Qt6::QImage.new(12, 12)
+    image.fill(Qt6::Color.new(40, 80, 160))
+    image.save(icon_path).should be_true
+    icon = Qt6::QIcon.new(icon_path)
+    button = Qt6::PushButton.new(icon, "Volume", window)
+    menu = Qt6::Menu.new("Volume Menu")
 
     button.menu.should be_nil
     button.default?.should be_false
     button.auto_default?.should be_false
     button.flat?.should be_false
-    button.default = true
-    button.auto_default = true
-    button.flat = true
-    button.menu = menu
+    button.set_default(true)
+    button.set_auto_default(true)
+    button.set_flat(true)
+    button.set_menu(menu)
 
     button.default?.should be_true
     button.auto_default?.should be_true
     button.flat?.should be_true
+    button.icon.null?.should be_false
+    button.size_hint.width.should be > 0
+    button.minimum_size_hint.height.should be > 0
     button.menu.not_nil!.to_unsafe.should eq(menu.to_unsafe)
     button.menu.not_nil!.title.should eq("Volume Menu")
+
+    button.show
+    application.process_events
+    button.show_menu
+    application.process_events
 
     button.menu = nil
     button.menu.should be_nil
 
     window.release
+    File.delete?(icon_path)
   end
 
   it "can execute menus at widget-local positions" do

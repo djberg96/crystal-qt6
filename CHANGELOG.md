@@ -30,6 +30,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QProgressBar` with formatted text readback, text-direction control, format reset, size hints, `valueChanged` signal support, and Qt-style setter aliases for fuller progress-display control.
 - Expanded `QProgressDialog` with custom label/bar/cancel-button installation, size-hint access, and Qt-style setter aliases for richer long-running task feedback dialogs.
 - Added `QProxyStyle` with base-style construction, keyed construction, and base-style swapping helpers for application and widget style proxying.
+- Expanded `QPushButton` with icon-and-text construction, size-hint helpers, menu display, and Qt-style setter aliases for fuller desktop push-button behavior.
 
 ## [0.10.0] - 2026-05-10
 
