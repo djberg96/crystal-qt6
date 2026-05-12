@@ -1346,12 +1346,31 @@ describe Qt6 do
 
     plain_edit = Qt6::PlainTextEdit.new(parent: host)
     plain_text_changes = 0
+    plain_block_counts = [] of Int32
+    plain_modification_changes = [] of Bool
+    plain_cursor_moves = 0
     plain_edit.on_text_changed do
       plain_text_changes += 1
+    end
+    plain_edit.on_block_count_changed do |value|
+      plain_block_counts << value
+    end
+    plain_edit.on_modification_changed do |value|
+      plain_modification_changes << value
+    end
+    plain_edit.on_cursor_position_changed do
+      plain_cursor_moves += 1
     end
     plain_edit.placeholder_text = "Notes"
     plain_edit.undo_redo_enabled = true
     plain_edit.read_only = false
+    plain_edit.line_wrap_mode = Qt6::PlainTextEditLineWrapMode::WidgetWidth
+    plain_edit.word_wrap_mode = Qt6::TextOptionWrapMode::WrapAnywhere
+    plain_edit.tab_changes_focus = true
+    plain_edit.overwrite_mode = true
+    plain_edit.tab_stop_distance = 32.0
+    plain_edit.background_visible = true
+    plain_edit.center_on_scroll = true
     plain_edit.plain_text = "Terrain"
     plain_document = plain_edit.document
     plain_layout = plain_document.document_layout.not_nil!
@@ -1428,6 +1447,14 @@ describe Qt6 do
     plain_document.plain_text.should contain("Units")
     plain_document.plain_text.should contain("Roads")
     plain_document.plain_text.should contain("Supply")
+    plain_edit.line_wrap_mode.should eq(Qt6::PlainTextEditLineWrapMode::WidgetWidth)
+    plain_edit.word_wrap_mode.should eq(Qt6::TextOptionWrapMode::WrapAnywhere)
+    plain_edit.tab_changes_focus?.should be_true
+    plain_edit.overwrite_mode?.should be_true
+    plain_edit.tab_stop_distance.should eq(32.0)
+    plain_edit.background_visible?.should be_true
+    plain_edit.center_on_scroll?.should be_true
+    plain_edit.block_count.should eq(4)
     plain_layout.document.to_unsafe.should eq(plain_document.to_unsafe)
     plain_layout.cursor_width = 3
     plain_layout.cursor_width.should eq(3)
@@ -1456,6 +1483,10 @@ describe Qt6 do
     plain_edit.can_undo?.should be_true
     plain_edit.document.plain_text.should eq(plain_edit.plain_text)
     plain_text_changes.should be >= 1
+    plain_block_counts.should contain(2)
+    plain_block_counts.should contain(4)
+    plain_modification_changes.should contain(true)
+    plain_cursor_moves.should be >= 1
 
     missing_text.release
     found_units.release

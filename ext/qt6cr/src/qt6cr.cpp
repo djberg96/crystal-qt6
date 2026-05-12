@@ -25368,6 +25368,32 @@ void qt6cr_plain_text_edit_insert_plain_text(qt6cr_handle_t handle, const char *
   }
 }
 
+int qt6cr_plain_text_edit_line_wrap_mode(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? 0 : static_cast<int>(plain_text_edit->lineWrapMode());
+}
+
+void qt6cr_plain_text_edit_set_line_wrap_mode(qt6cr_handle_t handle, int mode) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setLineWrapMode(static_cast<QPlainTextEdit::LineWrapMode>(mode));
+  }
+}
+
+int qt6cr_plain_text_edit_word_wrap_mode(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? 0 : static_cast<int>(plain_text_edit->wordWrapMode());
+}
+
+void qt6cr_plain_text_edit_set_word_wrap_mode(qt6cr_handle_t handle, int mode) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setWordWrapMode(static_cast<QTextOption::WrapMode>(mode));
+  }
+}
+
 bool qt6cr_plain_text_edit_is_read_only(qt6cr_handle_t handle) {
   auto *plain_text_edit = as_plain_text_edit(handle);
   return plain_text_edit != nullptr && plain_text_edit->isReadOnly();
@@ -25407,6 +25433,71 @@ void qt6cr_plain_text_edit_set_placeholder_text(qt6cr_handle_t handle, const cha
   }
 }
 
+bool qt6cr_plain_text_edit_tab_changes_focus(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit != nullptr && plain_text_edit->tabChangesFocus();
+}
+
+void qt6cr_plain_text_edit_set_tab_changes_focus(qt6cr_handle_t handle, bool value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setTabChangesFocus(value);
+  }
+}
+
+bool qt6cr_plain_text_edit_overwrite_mode(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit != nullptr && plain_text_edit->overwriteMode();
+}
+
+void qt6cr_plain_text_edit_set_overwrite_mode(qt6cr_handle_t handle, bool value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setOverwriteMode(value);
+  }
+}
+
+double qt6cr_plain_text_edit_tab_stop_distance(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? 0.0 : plain_text_edit->tabStopDistance();
+}
+
+void qt6cr_plain_text_edit_set_tab_stop_distance(qt6cr_handle_t handle, double value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setTabStopDistance(value);
+  }
+}
+
+bool qt6cr_plain_text_edit_background_visible(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit != nullptr && plain_text_edit->backgroundVisible();
+}
+
+void qt6cr_plain_text_edit_set_background_visible(qt6cr_handle_t handle, bool value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setBackgroundVisible(value);
+  }
+}
+
+bool qt6cr_plain_text_edit_center_on_scroll(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit != nullptr && plain_text_edit->centerOnScroll();
+}
+
+void qt6cr_plain_text_edit_set_center_on_scroll(qt6cr_handle_t handle, bool value) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit != nullptr) {
+    plain_text_edit->setCenterOnScroll(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_plain_text_edit_document(qt6cr_handle_t handle) {
   auto *plain_text_edit = as_plain_text_edit(handle);
   return plain_text_edit == nullptr ? nullptr : static_cast<qt6cr_handle_t>(plain_text_edit->document());
@@ -25441,6 +25532,11 @@ void qt6cr_plain_text_edit_clear(qt6cr_handle_t handle) {
   if (plain_text_edit != nullptr) {
     plain_text_edit->clear();
   }
+}
+
+int qt6cr_plain_text_edit_block_count(qt6cr_handle_t handle) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+  return plain_text_edit == nullptr ? 0 : plain_text_edit->blockCount();
 }
 
 bool qt6cr_plain_text_edit_can_undo(qt6cr_handle_t handle) {
@@ -25509,6 +25605,42 @@ void qt6cr_plain_text_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_void_cal
   }
 
   QObject::connect(plain_text_edit, &QPlainTextEdit::textChanged, plain_text_edit, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_plain_text_edit_on_block_count_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(plain_text_edit, &QPlainTextEdit::blockCountChanged, plain_text_edit, [callback, userdata](int block_count) {
+    callback(userdata, block_count);
+  });
+}
+
+void qt6cr_plain_text_edit_on_modification_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(plain_text_edit, &QPlainTextEdit::modificationChanged, plain_text_edit, [callback, userdata](bool modified) {
+    callback(userdata, modified);
+  });
+}
+
+void qt6cr_plain_text_edit_on_cursor_position_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *plain_text_edit = as_plain_text_edit(handle);
+
+  if (plain_text_edit == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(plain_text_edit, &QPlainTextEdit::cursorPositionChanged, plain_text_edit, [callback, userdata]() {
     callback(userdata);
   });
 }
