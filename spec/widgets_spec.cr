@@ -1354,6 +1354,8 @@ describe Qt6 do
     plain_edit.read_only = false
     plain_edit.plain_text = "Terrain"
     plain_document = plain_edit.document
+    plain_layout = plain_document.document_layout.not_nil!
+    first_block = plain_document.first_block
     plain_cursor = plain_edit.text_cursor
     plain_cursor.move_position(Qt6::TextCursorMoveOperation::End)
     plain_cursor.insert_text("\nUnits")
@@ -1426,6 +1428,26 @@ describe Qt6 do
     plain_document.plain_text.should contain("Units")
     plain_document.plain_text.should contain("Roads")
     plain_document.plain_text.should contain("Supply")
+    plain_layout.document.to_unsafe.should eq(plain_document.to_unsafe)
+    plain_layout.cursor_width = 3
+    plain_layout.cursor_width.should eq(3)
+    plain_layout.ensure_block_layout(first_block)
+    plain_layout.request_update
+    plain_layout.document_size.width.should be >= 0.0
+    plain_layout.document_size.height.should be > 0.0
+    plain_layout.page_count.should be >= 1
+    first_block.valid?.should be_true
+    first_block.block_number.should eq(0)
+    first_block.position.should eq(0)
+    first_block.length.should be > 0
+    first_block.text.should eq("Terrain")
+    second_block = plain_document.find_block_by_number(1)
+    second_block.valid?.should be_true
+    second_block.block_number.should eq(1)
+    second_block.text.should eq("Units")
+    plain_layout.block_bounding_rect(second_block).height.should be > 0.0
+    found_plain_block = plain_document.find_block(plain_document.plain_text.index("Units").not_nil!)
+    found_plain_block.text.should eq("Units")
     plain_edit.undo_redo_enabled?.should be_true
     plain_edit.read_only?.should be_false
     plain_edit.placeholder_text.should eq("Notes")
@@ -1438,6 +1460,9 @@ describe Qt6 do
     missing_text.release
     found_units.release
     found_omega.release
+    found_plain_block.release
+    second_block.release
+    first_block.release
     editor_cursor.release
     plain_cursor.release
     document_cursor.release

@@ -94,6 +94,11 @@ module Qt6
       value
     end
 
+    # Returns the plain-text layout backing the current document.
+    def document_layout : PlainTextDocumentLayout
+      document.document_layout.not_nil!
+    end
+
     # Returns a copy of the current text cursor.
     def text_cursor : TextCursor
       TextCursor.wrap(LibQt6.qt6cr_plain_text_edit_text_cursor(to_unsafe), true)

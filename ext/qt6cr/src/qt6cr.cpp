@@ -162,9 +162,11 @@
 #include <QToolBox>
 #include <QTextCursor>
 #include <QTextBrowser>
+#include <QTextBlock>
 #include <QTextDocument>
 #include <QTextEdit>
 #include <QPlainTextEdit>
+#include <QPlainTextDocumentLayout>
 #include <QTime>
 #include <QTimeEdit>
 #include <QGroupBox>
@@ -2363,6 +2365,14 @@ QFileSystemModel *as_file_system_model(qt6cr_handle_t handle) {
 
 QTextDocument *as_text_document(qt6cr_handle_t handle) {
   return static_cast<QTextDocument *>(handle);
+}
+
+QPlainTextDocumentLayout *as_plain_text_document_layout(qt6cr_handle_t handle) {
+  return static_cast<QPlainTextDocumentLayout *>(handle);
+}
+
+QTextBlock *as_text_block(qt6cr_handle_t handle) {
+  return static_cast<QTextBlock *>(handle);
 }
 
 QTextCursor *as_text_cursor(qt6cr_handle_t handle) {
@@ -24803,6 +24813,31 @@ void qt6cr_text_document_set_html(qt6cr_handle_t handle, const char *html) {
   }
 }
 
+qt6cr_handle_t qt6cr_text_document_plain_text_document_layout(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+
+  if (document == nullptr) {
+    return nullptr;
+  }
+
+  return dynamic_cast<QPlainTextDocumentLayout *>(document->documentLayout());
+}
+
+qt6cr_handle_t qt6cr_text_document_first_block(qt6cr_handle_t handle) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? nullptr : new QTextBlock(document->firstBlock());
+}
+
+qt6cr_handle_t qt6cr_text_document_find_block(qt6cr_handle_t handle, int position) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? nullptr : new QTextBlock(document->findBlock(position));
+}
+
+qt6cr_handle_t qt6cr_text_document_find_block_by_number(qt6cr_handle_t handle, int block_number) {
+  auto *document = as_text_document(handle);
+  return document == nullptr ? nullptr : new QTextBlock(document->findBlockByNumber(block_number));
+}
+
 char *qt6cr_text_document_default_style_sheet(qt6cr_handle_t handle) {
   auto *document = as_text_document(handle);
   return document == nullptr ? duplicate_string("") : duplicate_string(document->defaultStyleSheet());
@@ -24881,6 +24916,96 @@ qt6cr_handle_t qt6cr_text_document_find(qt6cr_handle_t handle, const char *text,
   const auto needle = QString::fromUtf8(text == nullptr ? "" : text);
   const auto found = cursor == nullptr ? document->find(needle) : document->find(needle, *cursor);
   return new QTextCursor(found);
+}
+
+qt6cr_handle_t qt6cr_plain_text_document_layout_create(qt6cr_handle_t document_handle) {
+  auto *document = as_text_document(document_handle);
+  return document == nullptr ? nullptr : new QPlainTextDocumentLayout(document);
+}
+
+qt6cr_handle_t qt6cr_plain_text_document_layout_document(qt6cr_handle_t handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+  return layout == nullptr ? nullptr : layout->document();
+}
+
+qt6cr_rectf_t qt6cr_plain_text_document_layout_block_bounding_rect(qt6cr_handle_t handle, qt6cr_handle_t block_handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+  auto *block = as_text_block(block_handle);
+  return layout == nullptr || block == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(layout->blockBoundingRect(*block));
+}
+
+void qt6cr_plain_text_document_layout_ensure_block_layout(qt6cr_handle_t handle, qt6cr_handle_t block_handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+  auto *block = as_text_block(block_handle);
+
+  if (layout != nullptr && block != nullptr) {
+    layout->ensureBlockLayout(*block);
+  }
+}
+
+int qt6cr_plain_text_document_layout_cursor_width(qt6cr_handle_t handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+  return layout == nullptr ? 0 : layout->cursorWidth();
+}
+
+void qt6cr_plain_text_document_layout_set_cursor_width(qt6cr_handle_t handle, int value) {
+  auto *layout = as_plain_text_document_layout(handle);
+
+  if (layout != nullptr) {
+    layout->setCursorWidth(value);
+  }
+}
+
+qt6cr_sizef_t qt6cr_plain_text_document_layout_document_size(qt6cr_handle_t handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+  return layout == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(layout->documentSize());
+}
+
+int qt6cr_plain_text_document_layout_page_count(qt6cr_handle_t handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+  return layout == nullptr ? 0 : layout->pageCount();
+}
+
+void qt6cr_plain_text_document_layout_request_update(qt6cr_handle_t handle) {
+  auto *layout = as_plain_text_document_layout(handle);
+
+  if (layout != nullptr) {
+    layout->requestUpdate();
+  }
+}
+
+qt6cr_handle_t qt6cr_text_block_copy(qt6cr_handle_t handle) {
+  auto *block = as_text_block(handle);
+  return block == nullptr ? nullptr : new QTextBlock(*block);
+}
+
+void qt6cr_text_block_destroy(qt6cr_handle_t handle) {
+  delete as_text_block(handle);
+}
+
+bool qt6cr_text_block_is_valid(qt6cr_handle_t handle) {
+  auto *block = as_text_block(handle);
+  return block != nullptr && block->isValid();
+}
+
+char *qt6cr_text_block_text(qt6cr_handle_t handle) {
+  auto *block = as_text_block(handle);
+  return block == nullptr ? duplicate_string("") : duplicate_string(block->text());
+}
+
+int qt6cr_text_block_block_number(qt6cr_handle_t handle) {
+  auto *block = as_text_block(handle);
+  return block == nullptr ? -1 : block->blockNumber();
+}
+
+int qt6cr_text_block_position(qt6cr_handle_t handle) {
+  auto *block = as_text_block(handle);
+  return block == nullptr ? -1 : block->position();
+}
+
+int qt6cr_text_block_length(qt6cr_handle_t handle) {
+  auto *block = as_text_block(handle);
+  return block == nullptr ? 0 : block->length();
 }
 
 qt6cr_handle_t qt6cr_text_cursor_create(qt6cr_handle_t document) {

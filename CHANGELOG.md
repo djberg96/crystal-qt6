@@ -25,6 +25,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QMenu` and `QMenuBar` with standalone menu-bar construction, existing menu/action insertion, action enumeration, and active/default-action helpers for fuller desktop-shell menu composition.
 - Expanded `QMessageBox` with detailed-text, custom and standard button management, default and escape button helpers, and role/standard-button lookup support for richer alert and confirmation workflows.
 - Added `QPanGesture` and `QPinchGesture` bindings with typed pan-offset, acceleration, pinch center/scale/rotation, and change-flag helpers, plus gesture-event dispatch to the concrete gesture wrappers.
+- Added `QPlainTextDocumentLayout` and `QTextBlock` support, plus `QTextDocument` and `QPlainTextEdit` helpers for plain-text document layout inspection, block lookup, cursor width, and block bounding rect queries.
 
 ## [0.10.0] - 2026-05-10
 

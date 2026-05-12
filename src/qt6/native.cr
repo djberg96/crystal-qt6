@@ -3453,6 +3453,10 @@ module Qt6
     fun qt6cr_text_document_set_plain_text = qt6cr_text_document_set_plain_text(handle : Handle, text : UInt8*)
     fun qt6cr_text_document_html = qt6cr_text_document_html(handle : Handle) : UInt8*
     fun qt6cr_text_document_set_html = qt6cr_text_document_set_html(handle : Handle, html : UInt8*)
+    fun qt6cr_text_document_plain_text_document_layout = qt6cr_text_document_plain_text_document_layout(handle : Handle) : Handle
+    fun qt6cr_text_document_first_block = qt6cr_text_document_first_block(handle : Handle) : Handle
+    fun qt6cr_text_document_find_block = qt6cr_text_document_find_block(handle : Handle, position : LibC::Int) : Handle
+    fun qt6cr_text_document_find_block_by_number = qt6cr_text_document_find_block_by_number(handle : Handle, block_number : LibC::Int) : Handle
     fun qt6cr_text_document_default_style_sheet = qt6cr_text_document_default_style_sheet(handle : Handle) : UInt8*
     fun qt6cr_text_document_set_default_style_sheet = qt6cr_text_document_set_default_style_sheet(handle : Handle, css : UInt8*)
     fun qt6cr_text_document_title = qt6cr_text_document_title(handle : Handle) : UInt8*
@@ -3465,6 +3469,22 @@ module Qt6
     fun qt6cr_text_document_block_count = qt6cr_text_document_block_count(handle : Handle) : LibC::Int
     fun qt6cr_text_document_character_count = qt6cr_text_document_character_count(handle : Handle) : LibC::Int
     fun qt6cr_text_document_find = qt6cr_text_document_find(handle : Handle, text : UInt8*, from_cursor : Handle) : Handle
+    fun qt6cr_plain_text_document_layout_create = qt6cr_plain_text_document_layout_create(document : Handle) : Handle
+    fun qt6cr_plain_text_document_layout_document = qt6cr_plain_text_document_layout_document(handle : Handle) : Handle
+    fun qt6cr_plain_text_document_layout_block_bounding_rect = qt6cr_plain_text_document_layout_block_bounding_rect(handle : Handle, block : Handle) : RectFValue
+    fun qt6cr_plain_text_document_layout_ensure_block_layout = qt6cr_plain_text_document_layout_ensure_block_layout(handle : Handle, block : Handle)
+    fun qt6cr_plain_text_document_layout_cursor_width = qt6cr_plain_text_document_layout_cursor_width(handle : Handle) : LibC::Int
+    fun qt6cr_plain_text_document_layout_set_cursor_width = qt6cr_plain_text_document_layout_set_cursor_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_plain_text_document_layout_document_size = qt6cr_plain_text_document_layout_document_size(handle : Handle) : SizeFValue
+    fun qt6cr_plain_text_document_layout_page_count = qt6cr_plain_text_document_layout_page_count(handle : Handle) : LibC::Int
+    fun qt6cr_plain_text_document_layout_request_update = qt6cr_plain_text_document_layout_request_update(handle : Handle)
+    fun qt6cr_text_block_copy = qt6cr_text_block_copy(handle : Handle) : Handle
+    fun qt6cr_text_block_destroy = qt6cr_text_block_destroy(handle : Handle)
+    fun qt6cr_text_block_is_valid = qt6cr_text_block_is_valid(handle : Handle) : Bool
+    fun qt6cr_text_block_text = qt6cr_text_block_text(handle : Handle) : UInt8*
+    fun qt6cr_text_block_block_number = qt6cr_text_block_block_number(handle : Handle) : LibC::Int
+    fun qt6cr_text_block_position = qt6cr_text_block_position(handle : Handle) : LibC::Int
+    fun qt6cr_text_block_length = qt6cr_text_block_length(handle : Handle) : LibC::Int
 
     fun qt6cr_text_cursor_create = qt6cr_text_cursor_create(document : Handle) : Handle
     fun qt6cr_text_cursor_destroy = qt6cr_text_cursor_destroy(handle : Handle)

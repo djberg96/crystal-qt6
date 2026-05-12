@@ -36,6 +36,28 @@ module Qt6
       value
     end
 
+    # Returns the active plain-text document layout when this document is using
+    # `QPlainTextDocumentLayout`.
+    def document_layout : PlainTextDocumentLayout?
+      handle = LibQt6.qt6cr_text_document_plain_text_document_layout(to_unsafe)
+      handle.null? ? nil : PlainTextDocumentLayout.wrap(handle)
+    end
+
+    # Returns a copied wrapper for the first text block in the document.
+    def first_block : TextBlock
+      TextBlock.wrap(LibQt6.qt6cr_text_document_first_block(to_unsafe), true)
+    end
+
+    # Finds the block containing the given character position.
+    def find_block(position : Int) : TextBlock
+      TextBlock.wrap(LibQt6.qt6cr_text_document_find_block(to_unsafe, position.to_i32), true)
+    end
+
+    # Finds the block with the given zero-based block number.
+    def find_block_by_number(block_number : Int) : TextBlock
+      TextBlock.wrap(LibQt6.qt6cr_text_document_find_block_by_number(to_unsafe, block_number.to_i32), true)
+    end
+
     # Returns the default style sheet applied to the document.
     def default_style_sheet : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_text_document_default_style_sheet(to_unsafe))
