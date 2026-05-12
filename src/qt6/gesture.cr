@@ -1,8 +1,15 @@
 module Qt6
   # Wraps `QGesture`.
   class Gesture < QObject
-    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
-      new(handle, owned)
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : Gesture
+      case LibQt6.qt6cr_gesture_type(handle)
+      when GestureType::PanGesture.value
+        PanGesture.wrap(handle, owned)
+      when GestureType::PinchGesture.value
+        PinchGesture.wrap(handle, owned)
+      else
+        new(handle, owned)
+      end
     end
 
     # Creates a gesture with an optional parent object.

@@ -709,6 +709,61 @@ describe Qt6 do
     gesture.release
   end
 
+  it "supports pan and pinch gesture state helpers" do
+    app
+    pan = Qt6::PanGesture.new
+    pinch = Qt6::PinchGesture.new
+    pan_offset = Qt6::PointF.new(18.0, 24.5)
+    pan_last_offset = Qt6::PointF.new(5.0, 11.0)
+    start_center = Qt6::PointF.new(10.0, 12.0)
+    last_center = Qt6::PointF.new(14.5, 17.0)
+    center = Qt6::PointF.new(19.0, 21.5)
+    event = Qt6::GestureEvent.new([pan, pinch])
+
+    pan.set_offset(pan_offset)
+    pan.set_last_offset(pan_last_offset)
+    pan.set_acceleration(1.75)
+
+    pinch.set_change_flags(Qt6::PinchGestureChangeFlag::ScaleFactorChanged | Qt6::PinchGestureChangeFlag::CenterPointChanged)
+    pinch.set_total_change_flags(Qt6::PinchGestureChangeFlag::ScaleFactorChanged | Qt6::PinchGestureChangeFlag::RotationAngleChanged | Qt6::PinchGestureChangeFlag::CenterPointChanged)
+    pinch.set_start_center_point(start_center)
+    pinch.set_last_center_point(last_center)
+    pinch.set_center_point(center)
+    pinch.set_total_scale_factor(1.8)
+    pinch.set_last_scale_factor(1.2)
+    pinch.set_scale_factor(1.5)
+    pinch.set_total_rotation_angle(45.0)
+    pinch.set_last_rotation_angle(12.5)
+    pinch.set_rotation_angle(30.0)
+
+    pan.gesture_type.should eq(Qt6::GestureType::PanGesture)
+    pan.offset.should eq(pan_offset)
+    pan.last_offset.should eq(pan_last_offset)
+    pan.delta.should eq(Qt6::PointF.new(13.0, 13.5))
+    pan.acceleration.should eq(1.75)
+
+    pinch.gesture_type.should eq(Qt6::GestureType::PinchGesture)
+    pinch.change_flags.should eq(Qt6::PinchGestureChangeFlag::ScaleFactorChanged | Qt6::PinchGestureChangeFlag::CenterPointChanged)
+    pinch.total_change_flags.should eq(Qt6::PinchGestureChangeFlag::ScaleFactorChanged | Qt6::PinchGestureChangeFlag::RotationAngleChanged | Qt6::PinchGestureChangeFlag::CenterPointChanged)
+    pinch.start_center_point.should eq(start_center)
+    pinch.last_center_point.should eq(last_center)
+    pinch.center_point.should eq(center)
+    pinch.total_scale_factor.should eq(1.8)
+    pinch.last_scale_factor.should eq(1.2)
+    pinch.scale_factor.should eq(1.5)
+    pinch.total_rotation_angle.should eq(45.0)
+    pinch.last_rotation_angle.should eq(12.5)
+    pinch.rotation_angle.should eq(30.0)
+
+    event.gesture(Qt6::GestureType::PanGesture).should be_a(Qt6::PanGesture)
+    event.gesture(Qt6::GestureType::PinchGesture).should be_a(Qt6::PinchGesture)
+    event.gestures.map(&.gesture_type).should eq([Qt6::GestureType::PanGesture, Qt6::GestureType::PinchGesture])
+
+    event.release
+    pinch.release
+    pan.release
+  end
+
   it "supports gesture events and widget gesture registration" do
     app
     host = Qt6::Widget.new

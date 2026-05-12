@@ -53,6 +53,8 @@
 #include <QFrame>
 #include <QGesture>
 #include <QGestureRecognizer>
+#include <QPanGesture>
+#include <QPinchGesture>
 #include <QFont>
 #include <QFontMetrics>
 #include <QFocusEvent>
@@ -2171,6 +2173,14 @@ QGesture *as_gesture(qt6cr_handle_t handle) {
   return static_cast<QGesture *>(handle);
 }
 
+QPanGesture *as_pan_gesture(qt6cr_handle_t handle) {
+  return static_cast<QPanGesture *>(handle);
+}
+
+QPinchGesture *as_pinch_gesture(qt6cr_handle_t handle) {
+  return static_cast<QPinchGesture *>(handle);
+}
+
 CrystalGestureRecognizer *as_gesture_recognizer(qt6cr_handle_t handle) {
   return static_cast<CrystalGestureRecognizer *>(handle);
 }
@@ -3772,6 +3782,201 @@ void qt6cr_gesture_unset_hot_spot(qt6cr_handle_t handle) {
 
   if (gesture != nullptr) {
     gesture->unsetHotSpot();
+  }
+}
+
+qt6cr_handle_t qt6cr_pan_gesture_create(qt6cr_handle_t parent) {
+  return new QPanGesture(as_object(parent));
+}
+
+qt6cr_pointf_t qt6cr_pan_gesture_offset(qt6cr_handle_t handle) {
+  auto *gesture = as_pan_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->offset());
+}
+
+void qt6cr_pan_gesture_set_offset(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_pan_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setOffset(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_pan_gesture_last_offset(qt6cr_handle_t handle) {
+  auto *gesture = as_pan_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->lastOffset());
+}
+
+void qt6cr_pan_gesture_set_last_offset(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_pan_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setLastOffset(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_pan_gesture_delta(qt6cr_handle_t handle) {
+  auto *gesture = as_pan_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->delta());
+}
+
+double qt6cr_pan_gesture_acceleration(qt6cr_handle_t handle) {
+  auto *gesture = as_pan_gesture(handle);
+  return gesture == nullptr ? 0.0 : gesture->acceleration();
+}
+
+void qt6cr_pan_gesture_set_acceleration(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pan_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setAcceleration(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_pinch_gesture_create(qt6cr_handle_t parent) {
+  return new QPinchGesture(as_object(parent));
+}
+
+int qt6cr_pinch_gesture_change_flags(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 0 : static_cast<int>(gesture->changeFlags());
+}
+
+void qt6cr_pinch_gesture_set_change_flags(qt6cr_handle_t handle, int value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setChangeFlags(static_cast<QPinchGesture::ChangeFlags>(value));
+  }
+}
+
+int qt6cr_pinch_gesture_total_change_flags(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 0 : static_cast<int>(gesture->totalChangeFlags());
+}
+
+void qt6cr_pinch_gesture_set_total_change_flags(qt6cr_handle_t handle, int value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setTotalChangeFlags(static_cast<QPinchGesture::ChangeFlags>(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_pinch_gesture_start_center_point(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->startCenterPoint());
+}
+
+void qt6cr_pinch_gesture_set_start_center_point(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setStartCenterPoint(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_pinch_gesture_last_center_point(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->lastCenterPoint());
+}
+
+void qt6cr_pinch_gesture_set_last_center_point(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setLastCenterPoint(from_pointf(value));
+  }
+}
+
+qt6cr_pointf_t qt6cr_pinch_gesture_center_point(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->centerPoint());
+}
+
+void qt6cr_pinch_gesture_set_center_point(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setCenterPoint(from_pointf(value));
+  }
+}
+
+double qt6cr_pinch_gesture_total_scale_factor(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 1.0 : gesture->totalScaleFactor();
+}
+
+void qt6cr_pinch_gesture_set_total_scale_factor(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setTotalScaleFactor(value);
+  }
+}
+
+double qt6cr_pinch_gesture_last_scale_factor(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 1.0 : gesture->lastScaleFactor();
+}
+
+void qt6cr_pinch_gesture_set_last_scale_factor(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setLastScaleFactor(value);
+  }
+}
+
+double qt6cr_pinch_gesture_scale_factor(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 1.0 : gesture->scaleFactor();
+}
+
+void qt6cr_pinch_gesture_set_scale_factor(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setScaleFactor(value);
+  }
+}
+
+double qt6cr_pinch_gesture_total_rotation_angle(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 0.0 : gesture->totalRotationAngle();
+}
+
+void qt6cr_pinch_gesture_set_total_rotation_angle(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setTotalRotationAngle(value);
+  }
+}
+
+double qt6cr_pinch_gesture_last_rotation_angle(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 0.0 : gesture->lastRotationAngle();
+}
+
+void qt6cr_pinch_gesture_set_last_rotation_angle(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setLastRotationAngle(value);
+  }
+}
+
+double qt6cr_pinch_gesture_rotation_angle(qt6cr_handle_t handle) {
+  auto *gesture = as_pinch_gesture(handle);
+  return gesture == nullptr ? 0.0 : gesture->rotationAngle();
+}
+
+void qt6cr_pinch_gesture_set_rotation_angle(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_pinch_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setRotationAngle(value);
   }
 }
 
