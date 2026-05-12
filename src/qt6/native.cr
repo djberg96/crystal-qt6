@@ -3329,17 +3329,24 @@ module Qt6
     fun qt6cr_progress_bar_set_range = qt6cr_progress_bar_set_range(handle : Handle, minimum : LibC::Int, maximum : LibC::Int)
     fun qt6cr_progress_bar_value = qt6cr_progress_bar_value(handle : Handle) : LibC::Int
     fun qt6cr_progress_bar_set_value = qt6cr_progress_bar_set_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_bar_text = qt6cr_progress_bar_text(handle : Handle) : UInt8*
     fun qt6cr_progress_bar_reset = qt6cr_progress_bar_reset(handle : Handle)
     fun qt6cr_progress_bar_text_visible = qt6cr_progress_bar_text_visible(handle : Handle) : Bool
     fun qt6cr_progress_bar_set_text_visible = qt6cr_progress_bar_set_text_visible(handle : Handle, value : Bool)
     fun qt6cr_progress_bar_inverted_appearance = qt6cr_progress_bar_inverted_appearance(handle : Handle) : Bool
     fun qt6cr_progress_bar_set_inverted_appearance = qt6cr_progress_bar_set_inverted_appearance(handle : Handle, value : Bool)
+    fun qt6cr_progress_bar_text_direction = qt6cr_progress_bar_text_direction(handle : Handle) : LibC::Int
+    fun qt6cr_progress_bar_set_text_direction = qt6cr_progress_bar_set_text_direction(handle : Handle, value : LibC::Int)
     fun qt6cr_progress_bar_format = qt6cr_progress_bar_format(handle : Handle) : UInt8*
     fun qt6cr_progress_bar_set_format = qt6cr_progress_bar_set_format(handle : Handle, value : UInt8*)
+    fun qt6cr_progress_bar_reset_format = qt6cr_progress_bar_reset_format(handle : Handle)
     fun qt6cr_progress_bar_alignment = qt6cr_progress_bar_alignment(handle : Handle) : LibC::Int
     fun qt6cr_progress_bar_set_alignment = qt6cr_progress_bar_set_alignment(handle : Handle, value : LibC::Int)
     fun qt6cr_progress_bar_orientation = qt6cr_progress_bar_orientation(handle : Handle) : LibC::Int
     fun qt6cr_progress_bar_set_orientation = qt6cr_progress_bar_set_orientation(handle : Handle, value : LibC::Int)
+    fun qt6cr_progress_bar_size_hint = qt6cr_progress_bar_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_progress_bar_minimum_size_hint = qt6cr_progress_bar_minimum_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_progress_bar_on_value_changed = qt6cr_progress_bar_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_date_time_edit_create = qt6cr_date_time_edit_create(parent : Handle) : Handle
     fun qt6cr_date_time_edit_display_format = qt6cr_date_time_edit_display_format(handle : Handle) : UInt8*

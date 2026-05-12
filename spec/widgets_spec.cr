@@ -28,6 +28,7 @@ describe Qt6 do
     scroll_values = [] of Int32
     scroll_actions = [] of Qt6::AbstractSliderAction
     scroll_pressed = 0
+    progress_values = [] of Int32
     dial_values = [] of Int32
     dial_ranges = [] of Tuple(Int32, Int32)
     dial_released = 0
@@ -102,11 +103,15 @@ describe Qt6 do
     stacked_layout.on_current_index_changed do |value|
       stacked_indices << value
     end
+    progress_bar.on_value_changed do |value|
+      progress_values << value
+    end
 
     progress_bar.set_range(0, 12)
     progress_bar.value = 7
     progress_bar.text_visible = false
     progress_bar.inverted_appearance = true
+    progress_bar.text_direction = Qt6::ProgressBarDirection::BottomToTop
     progress_bar.format = "%v/%m"
     progress_bar.alignment = Qt6::AlignmentFlag::Center
     progress_bar.orientation = Qt6::Orientation::Vertical
@@ -210,9 +215,15 @@ describe Qt6 do
     progress_bar.value.should eq(7)
     progress_bar.text_visible?.should be_false
     progress_bar.inverted_appearance?.should be_true
+    progress_bar.text_direction.should eq(Qt6::ProgressBarDirection::BottomToTop)
     progress_bar.format.should eq("%v/%m")
+    progress_bar.text.should eq("7/12")
     progress_bar.alignment.should eq(Qt6::AlignmentFlag::Center)
     progress_bar.orientation.should eq(Qt6::Orientation::Vertical)
+    progress_bar.size_hint.width.should be > 0
+    progress_bar.minimum_size_hint.height.should be > 0
+    progress_values.should contain(7)
+    progress_bar.reset_format.format.should eq("%p%")
     progress_bar.reset.value.should eq(-1)
 
     slider.orientation.should eq(Qt6::Orientation::Horizontal)
