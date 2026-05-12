@@ -604,6 +604,10 @@ void qt6cr_clipboard_clear(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_style_standard_palette(qt6cr_handle_t handle);
 char *qt6cr_style_name(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_common_style_create(void);
+qt6cr_handle_t qt6cr_proxy_style_create(qt6cr_handle_t base_style);
+qt6cr_handle_t qt6cr_proxy_style_create_with_key(const char *key);
+qt6cr_handle_t qt6cr_proxy_style_base_style(qt6cr_handle_t handle);
+void qt6cr_proxy_style_set_base_style(qt6cr_handle_t handle, qt6cr_handle_t style);
 
 qt6cr_handle_t qt6cr_mime_data_create(void);
 bool qt6cr_mime_data_has_text(qt6cr_handle_t handle);

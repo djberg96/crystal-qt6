@@ -520,10 +520,12 @@ describe Qt6 do
     window = Qt6::Widget.new
     application_style = Qt6::CommonStyle.new
     widget_style = Qt6::CommonStyle.new
+    proxy_style = Qt6::ProxyStyle.new(widget_style)
+    replacement_base_style = Qt6::CommonStyle.new
 
     begin
       application.style = application_style
-      window.style = widget_style
+      window.style = proxy_style
 
       active_application_style = application.style
       active_widget_style = window.style
@@ -533,9 +535,21 @@ describe Qt6 do
       active_widget_style = active_widget_style.not_nil!
 
       active_application_style.name.should eq(application_style.name)
-      active_widget_style.name.should eq(widget_style.name)
+      active_widget_style.name.should eq(proxy_style.name)
       active_application_style.standard_palette.color(Qt6::ColorRole::Window).should be_a(Qt6::Color)
       active_widget_style.standard_palette.color(Qt6::ColorRole::WindowText).should be_a(Qt6::Color)
+      proxy_style.base_style.should_not be_nil
+      proxy_style.base_style.not_nil!.name.should eq(widget_style.name)
+      proxy_style.set_base_style(replacement_base_style)
+      proxy_style.base_style.should_not be_nil
+      proxy_style.base_style.not_nil!.name.should eq(replacement_base_style.name)
+
+      if previous_style_name
+        keyed_proxy_style = Qt6::ProxyStyle.new(previous_style_name)
+        keyed_proxy_style.base_style.should_not be_nil
+        keyed_proxy_style.base_style.not_nil!.name.should eq(previous_style_name)
+        keyed_proxy_style.release
+      end
     ensure
       window.release
       application.set_style(previous_style_name.not_nil!) if previous_style_name

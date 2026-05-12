@@ -134,6 +134,7 @@
 #include <QPolygon>
 #include <QPolygonF>
 #include <QProgressDialog>
+#include <QProxyStyle>
 #include <QPushButton>
 #include <QShortcut>
 #include <QSettings>
@@ -5548,6 +5549,27 @@ char *qt6cr_style_name(qt6cr_handle_t handle) {
 
 qt6cr_handle_t qt6cr_common_style_create(void) {
   return new QCommonStyle();
+}
+
+qt6cr_handle_t qt6cr_proxy_style_create(qt6cr_handle_t base_style) {
+  return new QProxyStyle(as_style(base_style));
+}
+
+qt6cr_handle_t qt6cr_proxy_style_create_with_key(const char *key) {
+  return new QProxyStyle(QString::fromUtf8(key == nullptr ? "" : key));
+}
+
+qt6cr_handle_t qt6cr_proxy_style_base_style(qt6cr_handle_t handle) {
+  auto *style = dynamic_cast<QProxyStyle *>(as_style(handle));
+  return style == nullptr ? nullptr : style->baseStyle();
+}
+
+void qt6cr_proxy_style_set_base_style(qt6cr_handle_t handle, qt6cr_handle_t style) {
+  auto *proxy_style = dynamic_cast<QProxyStyle *>(as_style(handle));
+
+  if (proxy_style != nullptr) {
+    proxy_style->setBaseStyle(as_style(style));
+  }
 }
 
 qt6cr_handle_t qt6cr_mime_data_create(void) {
