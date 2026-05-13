@@ -5,6 +5,10 @@ module Qt6
       new(handle, owned)
     end
 
+    def self.standard_context_menu_available? : Bool
+      LibQt6.qt6cr_scroll_bar_standard_context_menu_available
+    end
+
     def initialize(orientation : Orientation = Orientation::Vertical, parent : Widget? = nil)
       super(LibQt6.qt6cr_scroll_bar_create(parent.try(&.to_unsafe) || Pointer(Void).null, orientation.value), parent.nil?)
     end

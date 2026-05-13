@@ -254,8 +254,12 @@ describe Qt6 do
     scroll_bar.value.should eq(16)
     scroll_bar.size_hint.width.should be > 0
     scroll_bar.size_hint.height.should be > 0
-    scroll_menu.should_not be_nil
-    scroll_menu.not_nil!.actions.size.should be > 0
+    if Qt6::ScrollBar.standard_context_menu_available?
+      scroll_menu.should_not be_nil
+      scroll_menu.not_nil!.actions.size.should be > 0
+    else
+      scroll_menu.should be_nil
+    end
     scroll_values.last.should eq(16)
     scroll_actions.should contain(Qt6::AbstractSliderAction::SliderPageStepAdd)
     scroll_pressed.should eq(1)

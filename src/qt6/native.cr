@@ -3188,6 +3188,7 @@ module Qt6
 
     fun qt6cr_scroll_bar_create = qt6cr_scroll_bar_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_scroll_bar_size_hint = qt6cr_scroll_bar_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_scroll_bar_standard_context_menu_available = qt6cr_scroll_bar_standard_context_menu_available : Bool
     fun qt6cr_scroll_bar_create_standard_context_menu = qt6cr_scroll_bar_create_standard_context_menu(handle : Handle, position : PointValue) : Handle
     fun qt6cr_scroll_bar_on_value_changed = qt6cr_scroll_bar_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 

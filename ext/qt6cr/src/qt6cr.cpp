@@ -23553,9 +23553,23 @@ qt6cr_size_t qt6cr_scroll_bar_size_hint(qt6cr_handle_t handle) {
   return scroll_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(scroll_bar->sizeHint());
 }
 
+bool qt6cr_scroll_bar_standard_context_menu_available(void) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  return true;
+#else
+  return false;
+#endif
+}
+
 qt6cr_handle_t qt6cr_scroll_bar_create_standard_context_menu(qt6cr_handle_t handle, qt6cr_point_t position) {
   auto *scroll_bar = as_scroll_bar(handle);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
   return scroll_bar == nullptr ? nullptr : scroll_bar->createStandardContextMenu(from_point(position));
+#else
+  (void)position;
+  return scroll_bar == nullptr ? nullptr : nullptr;
+#endif
 }
 
 void qt6cr_scroll_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
