@@ -1132,8 +1132,11 @@ describe Qt6 do
     button.menu.not_nil!.to_unsafe.should eq(menu.to_unsafe)
     button.menu.not_nil!.title.should eq("Volume Menu")
 
-    button.show
+    window.show
     application.process_events
+    Qt6::QTimer.single_shot(0) do
+      button.menu.try(&.hide)
+    end
     button.show_menu
     application.process_events
 
