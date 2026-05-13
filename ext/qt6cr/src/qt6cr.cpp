@@ -24293,6 +24293,11 @@ int qt6cr_rubber_band_shape(qt6cr_handle_t handle) {
   return rubber_band == nullptr ? 0 : static_cast<int>(rubber_band->shape());
 }
 
+qt6cr_rect_t qt6cr_rubber_band_geometry(qt6cr_handle_t handle) {
+  auto *rubber_band = as_rubber_band(handle);
+  return rubber_band == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(rubber_band->geometry());
+}
+
 void qt6cr_rubber_band_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect) {
   auto *rubber_band = as_rubber_band(handle);
 

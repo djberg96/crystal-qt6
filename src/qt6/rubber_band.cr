@@ -19,6 +19,11 @@ module Qt6
       RubberBandShape.from_value(LibQt6.qt6cr_rubber_band_shape(to_unsafe))
     end
 
+    # Returns the rubber band's current geometry in parent coordinates.
+    def geometry : Rect
+      Rect.from_native(LibQt6.qt6cr_rubber_band_geometry(to_unsafe))
+    end
+
     # Sets the rubber band's geometry and returns the assigned rect.
     def geometry=(value : Rect) : Rect
       LibQt6.qt6cr_rubber_band_set_geometry(to_unsafe, value.to_native)
@@ -28,6 +33,12 @@ module Qt6
     # Qt-style alias for assigning the geometry.
     def set_geometry(value : Rect) : self
       self.geometry = value
+      self
+    end
+
+    # Qt-style overload for assigning geometry from coordinates.
+    def set_geometry(x : Int, y : Int, width : Int, height : Int) : self
+      self.geometry = Rect.new(x, y, width, height)
       self
     end
   end

@@ -3354,6 +3354,7 @@ module Qt6
     fun qt6cr_focus_frame_set_widget = qt6cr_focus_frame_set_widget(handle : Handle, widget : Handle)
     fun qt6cr_rubber_band_create = qt6cr_rubber_band_create(shape : LibC::Int, parent : Handle) : Handle
     fun qt6cr_rubber_band_shape = qt6cr_rubber_band_shape(handle : Handle) : LibC::Int
+    fun qt6cr_rubber_band_geometry = qt6cr_rubber_band_geometry(handle : Handle) : RectValue
     fun qt6cr_rubber_band_set_geometry = qt6cr_rubber_band_set_geometry(handle : Handle, rect : RectValue)
 
     fun qt6cr_progress_bar_create = qt6cr_progress_bar_create(parent : Handle) : Handle

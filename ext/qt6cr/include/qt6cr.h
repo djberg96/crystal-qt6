@@ -3423,6 +3423,7 @@ qt6cr_handle_t qt6cr_focus_frame_widget(qt6cr_handle_t handle);
 void qt6cr_focus_frame_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 qt6cr_handle_t qt6cr_rubber_band_create(int shape, qt6cr_handle_t parent);
 int qt6cr_rubber_band_shape(qt6cr_handle_t handle);
+qt6cr_rect_t qt6cr_rubber_band_geometry(qt6cr_handle_t handle);
 void qt6cr_rubber_band_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect);
 
 qt6cr_handle_t qt6cr_date_time_edit_create(qt6cr_handle_t parent);

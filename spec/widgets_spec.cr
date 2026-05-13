@@ -634,7 +634,10 @@ describe Qt6 do
 
     rubber_band = Qt6::RubberBand.new(Qt6::RubberBandShape::Rectangle, host)
     rubber_band.set_geometry(Qt6::Rect.new(10, 12, 64, 48))
+    line_band = Qt6::RubberBand.new(Qt6::RubberBandShape::Line, host)
+    line_band.set_geometry(6, 8, 90, 2)
     rubber_band.show
+    line_band.show
 
     error_message = Qt6::ErrorMessage.new(host)
     error_message.show_message("Network timeout", "network")
@@ -649,11 +652,17 @@ describe Qt6 do
     sequence_changes.last.should eq("")
 
     rubber_band.shape.should eq(Qt6::RubberBandShape::Rectangle)
+    rubber_band.geometry.should eq(Qt6::Rect.new(10, 12, 64, 48))
     rubber_band.visible?.should be_true
     rubber_band.size.should eq(Qt6::Size.new(64, 48))
+    line_band.shape.should eq(Qt6::RubberBandShape::Line)
+    line_band.geometry.should eq(Qt6::Rect.new(6, 8, 90, 2))
+    line_band.visible?.should be_true
     rubber_band.hide
+    line_band.hide
     application.process_events
     rubber_band.visible?.should be_false
+    line_band.visible?.should be_false
 
     error_message.visible?.should be_true
     error_message.hide
