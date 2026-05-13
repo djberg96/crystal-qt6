@@ -9,13 +9,13 @@ module Qt6
     # Adds a widget at the given grid position.
     #
     # `row_span` and `column_span` default to `1`.
-    def add(widget : Widget, row : Int, column : Int, row_span : Int = 1, column_span : Int = 1, alignment : AlignmentFlag = AlignmentFlag::Left) : Widget
+    def add(widget : Widget, row : Int, column : Int, row_span : Int = 1, column_span : Int = 1, alignment : AlignmentFlag = AlignmentFlag::None) : Widget
       LibQt6.qt6cr_grid_layout_add_widget(@to_unsafe, widget.to_unsafe, row, column, row_span, column_span, alignment.value)
       adopt(widget)
     end
 
     # Adds a child layout at the given grid position.
-    def add(layout : Layout, row : Int, column : Int, row_span : Int = 1, column_span : Int = 1, alignment : AlignmentFlag = AlignmentFlag::Left) : Layout
+    def add(layout : Layout, row : Int, column : Int, row_span : Int = 1, column_span : Int = 1, alignment : AlignmentFlag = AlignmentFlag::None) : Layout
       LibQt6.qt6cr_grid_layout_add_layout(@to_unsafe, layout.to_unsafe, row, column, row_span, column_span, alignment.value)
       layout.adopt_by_parent!
       layout

@@ -1,6 +1,7 @@
 module Qt6
   @[Flags]
   enum AlignmentFlag
+    None    = 0x0000
     Left    = 0x0001
     Right   = 0x0002
     HCenter = 0x0004
