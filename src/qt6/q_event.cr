@@ -40,6 +40,11 @@ module Qt6
       MouseEvent.from_native(LibQt6.qt6cr_event_mouse_event(to_unsafe))
     end
 
+    # Returns wheel-event details when this event is a wheel event.
+    def wheel_event : WheelEvent
+      WheelEvent.from_native(LibQt6.qt6cr_event_wheel_event(to_unsafe))
+    end
+
     # Returns this event reinterpreted as a live `QGestureEvent`.
     def gesture_event : GestureEvent
       GestureEvent.wrap(to_unsafe)

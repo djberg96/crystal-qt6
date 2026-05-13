@@ -408,6 +408,7 @@ module Qt6
     fun qt6cr_event_ignore = qt6cr_event_ignore(handle : Handle)
     fun qt6cr_event_is_accepted = qt6cr_event_is_accepted(handle : Handle) : Bool
     fun qt6cr_event_mouse_event = qt6cr_event_mouse_event(handle : Handle) : MouseEventValue
+    fun qt6cr_event_wheel_event = qt6cr_event_wheel_event(handle : Handle) : WheelEventValue
     fun qt6cr_graphics_scene_event_create = qt6cr_graphics_scene_event_create(type : LibC::Int) : Handle
     fun qt6cr_graphics_scene_event_destroy = qt6cr_graphics_scene_event_destroy(handle : Handle)
     fun qt6cr_graphics_scene_event_widget = qt6cr_graphics_scene_event_widget(handle : Handle) : Handle
