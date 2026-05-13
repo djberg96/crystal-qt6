@@ -19,10 +19,16 @@ module Qt6
       widget
     end
 
+    # Qt-style alias for `widget=`.
+    def set_widget(widget : Widget) : self
+      self.widget = widget
+      self
+    end
+
     # Removes and returns the current child widget, if present.
     def take_widget : Widget?
       handle = LibQt6.qt6cr_scroll_area_take_widget(to_unsafe)
-      handle.null? ? nil : Widget.wrap(handle)
+      handle.null? ? nil : Widget.wrap(handle, true)
     end
 
     # Returns `true` when the child widget is resized with the viewport.
@@ -36,6 +42,12 @@ module Qt6
       value
     end
 
+    # Qt-style alias for `widget_resizable=`.
+    def set_widget_resizable(value : Bool) : self
+      self.widget_resizable = value
+      self
+    end
+
     # Returns the alignment used for the child widget inside the viewport.
     def alignment : AlignmentFlag
       AlignmentFlag.from_value(LibQt6.qt6cr_scroll_area_alignment(to_unsafe))
@@ -45,6 +57,17 @@ module Qt6
     def alignment=(value : AlignmentFlag) : AlignmentFlag
       LibQt6.qt6cr_scroll_area_set_alignment(to_unsafe, value.value)
       value
+    end
+
+    # Qt-style alias for `alignment=`.
+    def set_alignment(value : AlignmentFlag) : self
+      self.alignment = value
+      self
+    end
+
+    # Returns the preferred size for the scroll area and its current child widget.
+    def size_hint : Size
+      Size.from_native(LibQt6.qt6cr_scroll_area_size_hint(to_unsafe))
     end
 
     # Scrolls until the given content point is visible.

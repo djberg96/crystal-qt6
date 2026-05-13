@@ -26733,6 +26733,11 @@ void qt6cr_scroll_area_set_alignment(qt6cr_handle_t handle, int alignment) {
   }
 }
 
+qt6cr_size_t qt6cr_scroll_area_size_hint(qt6cr_handle_t handle) {
+  auto *scroll_area = as_scroll_area(handle);
+  return scroll_area == nullptr ? qt6cr_size_t{0, 0} : to_size(scroll_area->sizeHint());
+}
+
 int qt6cr_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle) {
   return qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(handle);
 }

@@ -1627,6 +1627,8 @@ describe Qt6 do
 
     scroll_area.widget.should_not be_nil
     scroll_area.widget.not_nil!.size.should eq(Qt6::Size.new(900, 900))
+    scroll_area.size_hint.width.should be > 0
+    scroll_area.size_hint.height.should be > 0
     scroll_area.vertical_scroll_bar.value.should eq(0)
     scroll_area.horizontal_scroll_bar.value.should eq(0)
 
@@ -1646,6 +1648,7 @@ describe Qt6 do
     taken.should_not be_nil
     scroll_area.widget.should be_nil
     taken.not_nil!.size.should eq(Qt6::Size.new(900, 900))
+    taken.not_nil!.release
 
     main.release
   end

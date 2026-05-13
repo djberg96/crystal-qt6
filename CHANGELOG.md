@@ -34,6 +34,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QRadioButton` to inherit the shared `QAbstractButton` surface, and added size-hint helpers plus Qt-style text/checked/auto-exclusive setters for fuller radio-button control.
 - Added `QRhiWidget` bindings with API/debug-layer/sample-count/color-format/fixed-buffer/mirroring control, framebuffer capture, and typed change signals for RHI-backed widget configuration.
 - Expanded `QRubberBand` with geometry readback and coordinate-based `set_geometry` overloads, plus stronger coverage for both rectangle and line rubber-band shapes.
+- Expanded `QScrollArea` with `size_hint`, Qt-style widget/alignment/resizable setter aliases, and correct ownership transfer for `take_widget`.
 
 ## [0.10.0] - 2026-05-10
 

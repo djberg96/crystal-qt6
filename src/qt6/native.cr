@@ -3714,6 +3714,7 @@ module Qt6
     fun qt6cr_scroll_area_widget_resizable = qt6cr_scroll_area_widget_resizable(handle : Handle) : Bool
     fun qt6cr_scroll_area_alignment = qt6cr_scroll_area_alignment(handle : Handle) : LibC::Int
     fun qt6cr_scroll_area_set_alignment = qt6cr_scroll_area_set_alignment(handle : Handle, alignment : LibC::Int)
+    fun qt6cr_scroll_area_size_hint = qt6cr_scroll_area_size_hint(handle : Handle) : SizeValue
     fun qt6cr_scroll_area_vertical_scroll_bar_policy = qt6cr_scroll_area_vertical_scroll_bar_policy(handle : Handle) : LibC::Int
     fun qt6cr_scroll_area_set_vertical_scroll_bar_policy = qt6cr_scroll_area_set_vertical_scroll_bar_policy(handle : Handle, policy : LibC::Int)
     fun qt6cr_scroll_area_horizontal_scroll_bar_policy = qt6cr_scroll_area_horizontal_scroll_bar_policy(handle : Handle) : LibC::Int
