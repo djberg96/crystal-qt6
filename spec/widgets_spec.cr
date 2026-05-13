@@ -889,6 +889,83 @@ describe Qt6 do
     recognizer.release
   end
 
+  it "supports kinetic scrollers and scroller properties" do
+    application = app
+    scroll_area = Qt6::ScrollArea.new
+    content = Qt6::Widget.new
+    property_changes = [] of Qt6::ScrollerFrameRate
+
+    scroll_area.resize(160, 120)
+    content.resize(640, 480)
+    scroll_area.set_widget(content)
+    scroll_area.set_widget_resizable(false)
+    application.process_events
+
+    viewport = scroll_area.viewport
+    Qt6::Scroller.has_scroller?(viewport).should be_false
+
+    scroller = Qt6::Scroller.scroller(viewport)
+    Qt6::Scroller.has_scroller?(viewport).should be_true
+
+    scroller.on_scroller_properties_changed do |value|
+      property_changes << value.scroll_metric(Qt6::ScrollerMetric::FrameRate).as(Qt6::ScrollerFrameRate)
+      value.release
+    end
+
+    scroller.target.not_nil!.to_unsafe.should eq(viewport.to_unsafe)
+    scroller.state.should eq(Qt6::ScrollerState::Inactive)
+
+    original_default = Qt6::ScrollerProperties.default
+    temporary_default = original_default.dup
+    temporary_default.set_scroll_metric(Qt6::ScrollerMetric::FrameRate, Qt6::ScrollerFrameRate::Fps20)
+    Qt6::ScrollerProperties.default = temporary_default
+    Qt6::ScrollerProperties.default.scroll_metric(Qt6::ScrollerMetric::FrameRate).should eq(Qt6::ScrollerFrameRate::Fps20)
+    Qt6::ScrollerProperties.default = original_default
+
+    props = scroller.scroller_properties
+    props.set_scroll_metric(Qt6::ScrollerMetric::DragStartDistance, 0.003)
+    props.set_scroll_metric(Qt6::ScrollerMetric::HorizontalOvershootPolicy, Qt6::ScrollerOvershootPolicy::OvershootAlwaysOff)
+    props.set_scroll_metric(Qt6::ScrollerMetric::VerticalOvershootPolicy, Qt6::ScrollerOvershootPolicy::OvershootAlwaysOn)
+    props.set_scroll_metric(Qt6::ScrollerMetric::FrameRate, Qt6::ScrollerFrameRate::Fps30)
+    scroller.set_scroller_properties(props)
+    application.process_events
+
+    current_props = scroller.scroller_properties
+    current_props.scroll_metric(Qt6::ScrollerMetric::DragStartDistance).should eq(0.003)
+    current_props.scroll_metric(Qt6::ScrollerMetric::HorizontalOvershootPolicy).should eq(Qt6::ScrollerOvershootPolicy::OvershootAlwaysOff)
+    current_props.scroll_metric(Qt6::ScrollerMetric::VerticalOvershootPolicy).should eq(Qt6::ScrollerOvershootPolicy::OvershootAlwaysOn)
+    current_props.scroll_metric(Qt6::ScrollerMetric::FrameRate).should eq(Qt6::ScrollerFrameRate::Fps30)
+    property_changes.should contain(Qt6::ScrollerFrameRate::Fps30)
+
+    gesture_type = Qt6::Scroller.grab_gesture(viewport, Qt6::ScrollerGestureType::LeftMouseButtonGesture)
+    gesture_type.should be >= Qt6::GestureType::CustomGesture.value
+    Qt6::Scroller.grabbed_gesture(viewport).should eq(gesture_type)
+    Qt6::Scroller.ungrab_gesture(viewport)
+
+    scroller.set_snap_positions_x([0.0, 64.0, 128.0])
+    scroller.set_snap_positions_y(0.0, 32.0)
+    scroller.scroll_to(Qt6::PointF.new(48.0, 72.0))
+    scroller.scroll_to(Qt6::PointF.new(64.0, 96.0), 120)
+    scroller.ensure_visible(Qt6::RectF.new(0.0, 0.0, 40.0, 30.0), 4.0, 5.0)
+    scroller.ensure_visible(Qt6::RectF.new(12.0, 16.0, 48.0, 36.0), 6.0, 7.0, 150)
+    scroller.resend_prepare_event
+    scroller.stop
+
+    active_scrollers = Qt6::Scroller.active_scrollers
+    active_scrollers.map(&.to_unsafe).should contain(scroller.to_unsafe) if active_scrollers.any?
+
+    scroller.velocity.should be_a(Qt6::PointF)
+    scroller.final_position.should be_a(Qt6::PointF)
+    scroller.pixel_per_meter.should be_a(Qt6::PointF)
+    scroller.handle_input(Qt6::ScrollerInput::InputPress, Qt6::PointF.new(8.0, 8.0), 1_i64).should be_a(Bool)
+
+    current_props.release
+    props.release
+    temporary_default.release
+    original_default.release
+    scroll_area.release
+  end
+
   it "supports widget graphics effects" do
     application = app
     host = Qt6::Widget.new

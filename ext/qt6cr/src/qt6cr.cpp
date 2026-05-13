@@ -153,6 +153,7 @@
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QScroller>
 #include <QSlider>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -2266,6 +2267,14 @@ QScrollBar *as_scroll_bar(qt6cr_handle_t handle) {
   return static_cast<QScrollBar *>(handle);
 }
 
+QScroller *as_scroller(qt6cr_handle_t handle) {
+  return static_cast<QScroller *>(handle);
+}
+
+QScrollerProperties *as_scroller_properties(qt6cr_handle_t handle) {
+  return static_cast<QScrollerProperties *>(handle);
+}
+
 QDial *as_dial(qt6cr_handle_t handle) {
   return static_cast<QDial *>(handle);
 }
@@ -3995,6 +4004,306 @@ void qt6cr_pinch_gesture_set_rotation_angle(qt6cr_handle_t handle, double value)
   if (gesture != nullptr) {
     gesture->setRotationAngle(value);
   }
+}
+
+qt6cr_handle_t qt6cr_scroller_properties_create() {
+  return new QScrollerProperties();
+}
+
+qt6cr_handle_t qt6cr_scroller_properties_copy(qt6cr_handle_t handle) {
+  auto *properties = as_scroller_properties(handle);
+  return properties == nullptr ? new QScrollerProperties() : new QScrollerProperties(*properties);
+}
+
+void qt6cr_scroller_properties_destroy(qt6cr_handle_t handle) {
+  delete as_scroller_properties(handle);
+}
+
+bool qt6cr_scroller_properties_equal(qt6cr_handle_t first, qt6cr_handle_t second) {
+  auto *left = as_scroller_properties(first);
+  auto *right = as_scroller_properties(second);
+
+  if (left == nullptr || right == nullptr) {
+    return left == right;
+  }
+
+  return *left == *right;
+}
+
+qt6cr_handle_t qt6cr_scroller_properties_default() {
+  return new QScrollerProperties(QScrollerProperties());
+}
+
+void qt6cr_scroller_properties_set_default(qt6cr_handle_t handle) {
+  auto *properties = as_scroller_properties(handle);
+
+  if (properties != nullptr) {
+    QScrollerProperties::setDefaultScrollerProperties(*properties);
+  }
+}
+
+void qt6cr_scroller_properties_unset_default() {
+  QScrollerProperties::unsetDefaultScrollerProperties();
+}
+
+double qt6cr_scroller_properties_scroll_metric_real(qt6cr_handle_t handle, int metric) {
+  auto *properties = as_scroller_properties(handle);
+  return properties == nullptr ? 0.0 : properties->scrollMetric(static_cast<QScrollerProperties::ScrollMetric>(metric)).toReal();
+}
+
+void qt6cr_scroller_properties_set_scroll_metric_real(qt6cr_handle_t handle, int metric, double value) {
+  auto *properties = as_scroller_properties(handle);
+
+  if (properties != nullptr) {
+    properties->setScrollMetric(static_cast<QScrollerProperties::ScrollMetric>(metric), QVariant::fromValue(value));
+  }
+}
+
+int qt6cr_scroller_properties_scroll_metric_overshoot_policy(qt6cr_handle_t handle, int metric) {
+  auto *properties = as_scroller_properties(handle);
+
+  if (properties == nullptr) {
+    return static_cast<int>(QScrollerProperties::OvershootWhenScrollable);
+  }
+
+  return properties->scrollMetric(static_cast<QScrollerProperties::ScrollMetric>(metric)).value<QScrollerProperties::OvershootPolicy>();
+}
+
+void qt6cr_scroller_properties_set_scroll_metric_overshoot_policy(qt6cr_handle_t handle, int metric, int value) {
+  auto *properties = as_scroller_properties(handle);
+
+  if (properties != nullptr) {
+    properties->setScrollMetric(
+      static_cast<QScrollerProperties::ScrollMetric>(metric),
+      QVariant::fromValue(static_cast<QScrollerProperties::OvershootPolicy>(value))
+    );
+  }
+}
+
+int qt6cr_scroller_properties_scroll_metric_frame_rate(qt6cr_handle_t handle) {
+  auto *properties = as_scroller_properties(handle);
+
+  if (properties == nullptr) {
+    return static_cast<int>(QScrollerProperties::Standard);
+  }
+
+  return properties->scrollMetric(QScrollerProperties::FrameRate).value<QScrollerProperties::FrameRates>();
+}
+
+void qt6cr_scroller_properties_set_scroll_metric_frame_rate(qt6cr_handle_t handle, int value) {
+  auto *properties = as_scroller_properties(handle);
+
+  if (properties != nullptr) {
+    properties->setScrollMetric(
+      QScrollerProperties::FrameRate,
+      QVariant::fromValue(static_cast<QScrollerProperties::FrameRates>(value))
+    );
+  }
+}
+
+bool qt6cr_scroller_has_scroller(qt6cr_handle_t target) {
+  auto *object = as_qobject(target);
+  return object != nullptr && QScroller::hasScroller(object);
+}
+
+qt6cr_handle_t qt6cr_scroller_for_target(qt6cr_handle_t target) {
+  auto *object = as_qobject(target);
+  return object == nullptr ? nullptr : QScroller::scroller(object);
+}
+
+int qt6cr_scroller_grab_gesture(qt6cr_handle_t target, int gesture_type) {
+  auto *object = as_qobject(target);
+  return object == nullptr ? 0 : static_cast<int>(QScroller::grabGesture(object, static_cast<QScroller::ScrollerGestureType>(gesture_type)));
+}
+
+int qt6cr_scroller_grabbed_gesture(qt6cr_handle_t target) {
+  auto *object = as_qobject(target);
+  return object == nullptr ? 0 : static_cast<int>(QScroller::grabbedGesture(object));
+}
+
+void qt6cr_scroller_ungrab_gesture(qt6cr_handle_t target) {
+  auto *object = as_qobject(target);
+
+  if (object != nullptr) {
+    QScroller::ungrabGesture(object);
+  }
+}
+
+qt6cr_handle_array_t qt6cr_scroller_active_scrollers() {
+  const auto scrollers = QScroller::activeScrollers();
+  qt6cr_handle_array_t array{};
+  array.size = static_cast<int>(scrollers.size());
+
+  if (array.size <= 0) {
+    array.data = nullptr;
+    return array;
+  }
+
+  array.data = static_cast<qt6cr_handle_t *>(std::malloc(sizeof(qt6cr_handle_t) * array.size));
+  for (int index = 0; index < array.size; ++index) {
+    array.data[index] = scrollers.at(index);
+  }
+  return array;
+}
+
+qt6cr_handle_t qt6cr_scroller_target(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+  return scroller == nullptr ? nullptr : scroller->target();
+}
+
+int qt6cr_scroller_state(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+  return scroller == nullptr ? static_cast<int>(QScroller::Inactive) : static_cast<int>(scroller->state());
+}
+
+bool qt6cr_scroller_handle_input(qt6cr_handle_t handle, int input, qt6cr_pointf_t position, int64_t timestamp) {
+  auto *scroller = as_scroller(handle);
+  return scroller != nullptr && scroller->handleInput(static_cast<QScroller::Input>(input), from_pointf(position), timestamp);
+}
+
+void qt6cr_scroller_stop(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->stop();
+  }
+}
+
+qt6cr_pointf_t qt6cr_scroller_velocity(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+  return scroller == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(scroller->velocity());
+}
+
+qt6cr_pointf_t qt6cr_scroller_final_position(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+  return scroller == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(scroller->finalPosition());
+}
+
+qt6cr_pointf_t qt6cr_scroller_pixel_per_meter(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+  return scroller == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(scroller->pixelPerMeter());
+}
+
+qt6cr_handle_t qt6cr_scroller_scroller_properties(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+  return scroller == nullptr ? new QScrollerProperties() : new QScrollerProperties(scroller->scrollerProperties());
+}
+
+void qt6cr_scroller_set_scroller_properties(qt6cr_handle_t handle, qt6cr_handle_t properties) {
+  auto *scroller = as_scroller(handle);
+  auto *value = as_scroller_properties(properties);
+
+  if (scroller != nullptr && value != nullptr) {
+    scroller->setScrollerProperties(*value);
+  }
+}
+
+void qt6cr_scroller_set_snap_positions_x_list(qt6cr_handle_t handle, const double *positions, int count) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller == nullptr) {
+    return;
+  }
+
+  QList<qreal> values;
+  for (int index = 0; index < count; ++index) {
+    values.append(positions[index]);
+  }
+  scroller->setSnapPositionsX(values);
+}
+
+void qt6cr_scroller_set_snap_positions_x_range(qt6cr_handle_t handle, double first, double interval) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->setSnapPositionsX(first, interval);
+  }
+}
+
+void qt6cr_scroller_set_snap_positions_y_list(qt6cr_handle_t handle, const double *positions, int count) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller == nullptr) {
+    return;
+  }
+
+  QList<qreal> values;
+  for (int index = 0; index < count; ++index) {
+    values.append(positions[index]);
+  }
+  scroller->setSnapPositionsY(values);
+}
+
+void qt6cr_scroller_set_snap_positions_y_range(qt6cr_handle_t handle, double first, double interval) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->setSnapPositionsY(first, interval);
+  }
+}
+
+void qt6cr_scroller_scroll_to(qt6cr_handle_t handle, qt6cr_pointf_t position) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->scrollTo(from_pointf(position));
+  }
+}
+
+void qt6cr_scroller_scroll_to_with_time(qt6cr_handle_t handle, qt6cr_pointf_t position, int scroll_time) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->scrollTo(from_pointf(position), scroll_time);
+  }
+}
+
+void qt6cr_scroller_ensure_visible(qt6cr_handle_t handle, qt6cr_rectf_t rect, double xmargin, double ymargin) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->ensureVisible(from_rectf(rect), xmargin, ymargin);
+  }
+}
+
+void qt6cr_scroller_ensure_visible_with_time(qt6cr_handle_t handle, qt6cr_rectf_t rect, double xmargin, double ymargin, int scroll_time) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->ensureVisible(from_rectf(rect), xmargin, ymargin, scroll_time);
+  }
+}
+
+void qt6cr_scroller_resend_prepare_event(qt6cr_handle_t handle) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller != nullptr) {
+    scroller->resendPrepareEvent();
+  }
+}
+
+void qt6cr_scroller_on_state_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scroller, &QScroller::stateChanged, scroller, [callback, userdata](QScroller::State value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_scroller_on_scroller_properties_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *scroller = as_scroller(handle);
+
+  if (scroller == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(scroller, &QScroller::scrollerPropertiesChanged, scroller, [callback, userdata](const QScrollerProperties &value) {
+    callback(userdata, new QScrollerProperties(value));
+  });
 }
 
 qt6cr_handle_t qt6cr_gesture_recognizer_create() {
