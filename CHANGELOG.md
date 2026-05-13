@@ -35,7 +35,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QRhiWidget` bindings with API/debug-layer/sample-count/color-format/fixed-buffer/mirroring control, framebuffer capture, and typed change signals for RHI-backed widget configuration.
 - Expanded `QRubberBand` with geometry readback and coordinate-based `set_geometry` overloads, plus stronger coverage for both rectangle and line rubber-band shapes.
 - Expanded `QScrollArea` with `size_hint`, Qt-style widget/alignment/resizable setter aliases, and correct ownership transfer for `take_widget`.
-- Added `QScroller` and `QScrollerProperties` bindings with kinetic-scroller lookup, gesture grabbing, input/motion helpers, snap-position and ensure-visible control, typed scroller-state signals, and configurable scroll metrics including overshoot policies and frame rate.
+- Added `QScroller` and `QScrollerProperties` bindings with kinetic-scroller lookup, gesture grabbing, input/motion helpers, snap-position and ensure-visible control, typed scroller-state signals, and configurable scroll metrics including easing curves, overshoot policies, and frame rate.
 
 ## [0.10.0] - 2026-05-10
 

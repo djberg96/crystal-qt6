@@ -923,7 +923,12 @@ describe Qt6 do
     Qt6::ScrollerProperties.default = original_default
 
     props = scroller.scroller_properties
+    curve = Qt6::EasingCurve.new(Qt6::EasingCurveType::OutCubic)
+    curve.set_amplitude(1.25)
+    curve.set_period(0.45)
+    curve.set_overshoot(1.8)
     props.set_scroll_metric(Qt6::ScrollerMetric::DragStartDistance, 0.003)
+    props.set_scroll_metric(Qt6::ScrollerMetric::ScrollingCurve, curve)
     props.set_scroll_metric(Qt6::ScrollerMetric::HorizontalOvershootPolicy, Qt6::ScrollerOvershootPolicy::OvershootAlwaysOff)
     props.set_scroll_metric(Qt6::ScrollerMetric::VerticalOvershootPolicy, Qt6::ScrollerOvershootPolicy::OvershootAlwaysOn)
     props.set_scroll_metric(Qt6::ScrollerMetric::FrameRate, Qt6::ScrollerFrameRate::Fps30)
@@ -931,7 +936,13 @@ describe Qt6 do
     application.process_events
 
     current_props = scroller.scroller_properties
+    current_curve = current_props.scroll_metric(Qt6::ScrollerMetric::ScrollingCurve).as(Qt6::EasingCurve)
     current_props.scroll_metric(Qt6::ScrollerMetric::DragStartDistance).should eq(0.003)
+    current_curve.type.should eq(Qt6::EasingCurveType::OutCubic)
+    current_curve.amplitude.should eq(1.25)
+    current_curve.period.should eq(0.45)
+    current_curve.overshoot.should eq(1.8)
+    current_curve.value_for_progress(0.5).should be > 0.0
     current_props.scroll_metric(Qt6::ScrollerMetric::HorizontalOvershootPolicy).should eq(Qt6::ScrollerOvershootPolicy::OvershootAlwaysOff)
     current_props.scroll_metric(Qt6::ScrollerMetric::VerticalOvershootPolicy).should eq(Qt6::ScrollerOvershootPolicy::OvershootAlwaysOn)
     current_props.scroll_metric(Qt6::ScrollerMetric::FrameRate).should eq(Qt6::ScrollerFrameRate::Fps30)
@@ -959,7 +970,9 @@ describe Qt6 do
     scroller.pixel_per_meter.should be_a(Qt6::PointF)
     scroller.handle_input(Qt6::ScrollerInput::InputPress, Qt6::PointF.new(8.0, 8.0), 1_i64).should be_a(Bool)
 
+    current_curve.release
     current_props.release
+    curve.release
     props.release
     temporary_default.release
     original_default.release

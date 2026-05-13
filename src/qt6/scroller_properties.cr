@@ -1,5 +1,5 @@
 module Qt6
-  alias ScrollerMetricValue = Float64 | ScrollerOvershootPolicy | ScrollerFrameRate
+  alias ScrollerMetricValue = Float64 | EasingCurve | ScrollerOvershootPolicy | ScrollerFrameRate
 
   # Wraps `QScrollerProperties`.
   class ScrollerProperties < NativeResource
@@ -39,6 +39,11 @@ module Qt6
     # Returns the current value for the given scroll metric.
     def scroll_metric(metric : ScrollerMetric) : ScrollerMetricValue
       case metric
+      when .scrolling_curve?
+        EasingCurve.wrap(
+          LibQt6.qt6cr_scroller_properties_scroll_metric_easing_curve(to_unsafe),
+          true
+        )
       when .horizontal_overshoot_policy?, .vertical_overshoot_policy?
         ScrollerOvershootPolicy.from_value(
           LibQt6.qt6cr_scroller_properties_scroll_metric_overshoot_policy(to_unsafe, metric.value)
@@ -50,6 +55,17 @@ module Qt6
       else
         LibQt6.qt6cr_scroller_properties_scroll_metric_real(to_unsafe, metric.value)
       end
+    end
+
+    # Sets the given scroll metric and returns the assigned value.
+    def set_scroll_metric(metric : ScrollerMetric, value : EasingCurve) : EasingCurve
+      case metric
+      when .scrolling_curve?
+        LibQt6.qt6cr_scroller_properties_set_scroll_metric_easing_curve(to_unsafe, value.to_unsafe)
+      else
+        raise ArgumentError.new("#{metric} does not accept an EasingCurve")
+      end
+      value
     end
 
     # Sets the given scroll metric and returns the assigned value.
@@ -77,10 +93,10 @@ module Qt6
     # Sets the given scroll metric and returns the assigned value.
     def set_scroll_metric(metric : ScrollerMetric, value : Number) : Float64
       case metric
+      when .scrolling_curve?
+        raise ArgumentError.new("#{metric} requires an EasingCurve")
       when .horizontal_overshoot_policy?, .vertical_overshoot_policy?, .frame_rate?
         raise ArgumentError.new("#{metric} requires an enum value")
-      when .scrolling_curve?
-        raise ArgumentError.new("ScrollingCurve is not exposed by this wrapper")
       else
         real = value.to_f64
         LibQt6.qt6cr_scroller_properties_set_scroll_metric_real(to_unsafe, metric.value, real)

@@ -38,6 +38,7 @@
 #include <QDockWidget>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
+#include <QEasingCurve>
 #include <QEnterEvent>
 #include <QEvent>
 #include <QEventLoop>
@@ -1798,6 +1799,10 @@ QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle) {
   return static_cast<QGraphicsRotation *>(handle);
 }
 
+QEasingCurve *as_easing_curve(qt6cr_handle_t handle) {
+  return static_cast<QEasingCurve *>(handle);
+}
+
 QGraphicsScene *as_graphics_scene(qt6cr_handle_t handle) {
   return static_cast<QGraphicsScene *>(handle);
 }
@@ -2912,6 +2917,87 @@ void qt6cr_graphics_transform_update(qt6cr_handle_t handle) {
   if (transform != nullptr) {
     QMetaObject::invokeMethod(transform, "update", Qt::DirectConnection);
   }
+}
+
+qt6cr_handle_t qt6cr_easing_curve_create(int type) {
+  return new QEasingCurve(static_cast<QEasingCurve::Type>(type));
+}
+
+qt6cr_handle_t qt6cr_easing_curve_copy(qt6cr_handle_t handle) {
+  auto *curve = as_easing_curve(handle);
+  return curve == nullptr ? new QEasingCurve() : new QEasingCurve(*curve);
+}
+
+void qt6cr_easing_curve_destroy(qt6cr_handle_t handle) {
+  delete as_easing_curve(handle);
+}
+
+bool qt6cr_easing_curve_equal(qt6cr_handle_t first, qt6cr_handle_t second) {
+  auto *left = as_easing_curve(first);
+  auto *right = as_easing_curve(second);
+
+  if (left == nullptr || right == nullptr) {
+    return left == right;
+  }
+
+  return *left == *right;
+}
+
+int qt6cr_easing_curve_type(qt6cr_handle_t handle) {
+  auto *curve = as_easing_curve(handle);
+  return curve == nullptr ? static_cast<int>(QEasingCurve::Linear) : static_cast<int>(curve->type());
+}
+
+void qt6cr_easing_curve_set_type(qt6cr_handle_t handle, int type) {
+  auto *curve = as_easing_curve(handle);
+
+  if (curve != nullptr) {
+    curve->setType(static_cast<QEasingCurve::Type>(type));
+  }
+}
+
+double qt6cr_easing_curve_amplitude(qt6cr_handle_t handle) {
+  auto *curve = as_easing_curve(handle);
+  return curve == nullptr ? 1.0 : curve->amplitude();
+}
+
+void qt6cr_easing_curve_set_amplitude(qt6cr_handle_t handle, double value) {
+  auto *curve = as_easing_curve(handle);
+
+  if (curve != nullptr) {
+    curve->setAmplitude(value);
+  }
+}
+
+double qt6cr_easing_curve_period(qt6cr_handle_t handle) {
+  auto *curve = as_easing_curve(handle);
+  return curve == nullptr ? 0.3 : curve->period();
+}
+
+void qt6cr_easing_curve_set_period(qt6cr_handle_t handle, double value) {
+  auto *curve = as_easing_curve(handle);
+
+  if (curve != nullptr) {
+    curve->setPeriod(value);
+  }
+}
+
+double qt6cr_easing_curve_overshoot(qt6cr_handle_t handle) {
+  auto *curve = as_easing_curve(handle);
+  return curve == nullptr ? 1.70158 : curve->overshoot();
+}
+
+void qt6cr_easing_curve_set_overshoot(qt6cr_handle_t handle, double value) {
+  auto *curve = as_easing_curve(handle);
+
+  if (curve != nullptr) {
+    curve->setOvershoot(value);
+  }
+}
+
+double qt6cr_easing_curve_value_for_progress(qt6cr_handle_t handle, double progress) {
+  auto *curve = as_easing_curve(handle);
+  return curve == nullptr ? progress : curve->valueForProgress(progress);
 }
 
 qt6cr_handle_t qt6cr_graphics_scale_create(qt6cr_handle_t parent) {
@@ -4056,6 +4142,20 @@ void qt6cr_scroller_properties_set_scroll_metric_real(qt6cr_handle_t handle, int
 
   if (properties != nullptr) {
     properties->setScrollMetric(static_cast<QScrollerProperties::ScrollMetric>(metric), QVariant::fromValue(value));
+  }
+}
+
+qt6cr_handle_t qt6cr_scroller_properties_scroll_metric_easing_curve(qt6cr_handle_t handle) {
+  auto *properties = as_scroller_properties(handle);
+  return properties == nullptr ? new QEasingCurve() : new QEasingCurve(properties->scrollMetric(QScrollerProperties::ScrollingCurve).toEasingCurve());
+}
+
+void qt6cr_scroller_properties_set_scroll_metric_easing_curve(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *properties = as_scroller_properties(handle);
+  auto *curve = as_easing_curve(value);
+
+  if (properties != nullptr && curve != nullptr) {
+    properties->setScrollMetric(QScrollerProperties::ScrollingCurve, QVariant::fromValue(*curve));
   }
 }
 
