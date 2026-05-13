@@ -136,6 +136,7 @@
 #include <QProgressDialog>
 #include <QProxyStyle>
 #include <QPushButton>
+#include <QRhiWidget>
 #include <QShortcut>
 #include <QSettings>
 #include <QSortFilterProxyModel>
@@ -17523,6 +17524,165 @@ qt6cr_handle_t qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(qt6cr_h
   auto *proxy = as_graphics_proxy_widget(handle);
   auto *value = as_widget(child);
   return (proxy == nullptr || value == nullptr) ? nullptr : proxy->createProxyForChildWidget(value);
+}
+
+qt6cr_handle_t qt6cr_rhi_widget_create(qt6cr_handle_t parent) {
+  return new QRhiWidget(as_widget(parent));
+}
+
+int qt6cr_rhi_widget_api(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget == nullptr ? static_cast<int>(QRhiWidget::Api::Null) : static_cast<int>(widget->api());
+}
+
+void qt6cr_rhi_widget_set_api(qt6cr_handle_t handle, int api) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget != nullptr) {
+    widget->setApi(static_cast<QRhiWidget::Api>(api));
+  }
+}
+
+bool qt6cr_rhi_widget_debug_layer_enabled(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget != nullptr && widget->isDebugLayerEnabled();
+}
+
+void qt6cr_rhi_widget_set_debug_layer_enabled(qt6cr_handle_t handle, bool enable) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget != nullptr) {
+    widget->setDebugLayerEnabled(enable);
+  }
+}
+
+int qt6cr_rhi_widget_sample_count(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget == nullptr ? 1 : widget->sampleCount();
+}
+
+void qt6cr_rhi_widget_set_sample_count(qt6cr_handle_t handle, int samples) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget != nullptr) {
+    widget->setSampleCount(samples);
+  }
+}
+
+int qt6cr_rhi_widget_color_buffer_format(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget == nullptr ? static_cast<int>(QRhiWidget::TextureFormat::RGBA8) : static_cast<int>(widget->colorBufferFormat());
+}
+
+void qt6cr_rhi_widget_set_color_buffer_format(qt6cr_handle_t handle, int format) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget != nullptr) {
+    widget->setColorBufferFormat(static_cast<QRhiWidget::TextureFormat>(format));
+  }
+}
+
+qt6cr_size_t qt6cr_rhi_widget_fixed_color_buffer_size(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->fixedColorBufferSize());
+}
+
+void qt6cr_rhi_widget_set_fixed_color_buffer_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget != nullptr) {
+    widget->setFixedColorBufferSize(QSize(size.width, size.height));
+  }
+}
+
+bool qt6cr_rhi_widget_is_mirror_vertically_enabled(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget != nullptr && widget->isMirrorVerticallyEnabled();
+}
+
+void qt6cr_rhi_widget_set_mirror_vertically(qt6cr_handle_t handle, bool enabled) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget != nullptr) {
+    widget->setMirrorVertically(enabled);
+  }
+}
+
+qt6cr_handle_t qt6cr_rhi_widget_grab_framebuffer(qt6cr_handle_t handle) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+  return widget == nullptr ? new QImage() : new QImage(widget->grabFramebuffer());
+}
+
+void qt6cr_rhi_widget_on_frame_submitted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(widget, &QRhiWidget::frameSubmitted, widget, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_rhi_widget_on_render_failed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(widget, &QRhiWidget::renderFailed, widget, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_rhi_widget_on_sample_count_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(widget, &QRhiWidget::sampleCountChanged, widget, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_rhi_widget_on_color_buffer_format_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(widget, &QRhiWidget::colorBufferFormatChanged, widget, [callback, userdata](QRhiWidget::TextureFormat value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_rhi_widget_on_fixed_color_buffer_size_changed(qt6cr_handle_t handle, qt6cr_size_callback_t callback, void *userdata) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(widget, &QRhiWidget::fixedColorBufferSizeChanged, widget, [callback, userdata](const QSize &value) {
+    callback(userdata, to_size(value));
+  });
+}
+
+void qt6cr_rhi_widget_on_mirror_vertically_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
+
+  if (widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(widget, &QRhiWidget::mirrorVerticallyChanged, widget, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

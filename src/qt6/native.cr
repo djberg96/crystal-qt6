@@ -2378,6 +2378,26 @@ module Qt6
     fun qt6cr_graphics_proxy_widget_set_widget = qt6cr_graphics_proxy_widget_set_widget(handle : Handle, widget : Handle)
     fun qt6cr_graphics_proxy_widget_sub_widget_rect = qt6cr_graphics_proxy_widget_sub_widget_rect(handle : Handle, widget : Handle) : RectFValue
     fun qt6cr_graphics_proxy_widget_create_proxy_for_child_widget = qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(handle : Handle, child : Handle) : Handle
+    fun qt6cr_rhi_widget_create = qt6cr_rhi_widget_create(parent : Handle) : Handle
+    fun qt6cr_rhi_widget_api = qt6cr_rhi_widget_api(handle : Handle) : LibC::Int
+    fun qt6cr_rhi_widget_set_api = qt6cr_rhi_widget_set_api(handle : Handle, api : LibC::Int)
+    fun qt6cr_rhi_widget_debug_layer_enabled = qt6cr_rhi_widget_debug_layer_enabled(handle : Handle) : Bool
+    fun qt6cr_rhi_widget_set_debug_layer_enabled = qt6cr_rhi_widget_set_debug_layer_enabled(handle : Handle, enable : Bool)
+    fun qt6cr_rhi_widget_sample_count = qt6cr_rhi_widget_sample_count(handle : Handle) : LibC::Int
+    fun qt6cr_rhi_widget_set_sample_count = qt6cr_rhi_widget_set_sample_count(handle : Handle, samples : LibC::Int)
+    fun qt6cr_rhi_widget_color_buffer_format = qt6cr_rhi_widget_color_buffer_format(handle : Handle) : LibC::Int
+    fun qt6cr_rhi_widget_set_color_buffer_format = qt6cr_rhi_widget_set_color_buffer_format(handle : Handle, format : LibC::Int)
+    fun qt6cr_rhi_widget_fixed_color_buffer_size = qt6cr_rhi_widget_fixed_color_buffer_size(handle : Handle) : SizeValue
+    fun qt6cr_rhi_widget_set_fixed_color_buffer_size = qt6cr_rhi_widget_set_fixed_color_buffer_size(handle : Handle, size : SizeValue)
+    fun qt6cr_rhi_widget_is_mirror_vertically_enabled = qt6cr_rhi_widget_is_mirror_vertically_enabled(handle : Handle) : Bool
+    fun qt6cr_rhi_widget_set_mirror_vertically = qt6cr_rhi_widget_set_mirror_vertically(handle : Handle, enabled : Bool)
+    fun qt6cr_rhi_widget_grab_framebuffer = qt6cr_rhi_widget_grab_framebuffer(handle : Handle) : Handle
+    fun qt6cr_rhi_widget_on_frame_submitted = qt6cr_rhi_widget_on_frame_submitted(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_rhi_widget_on_render_failed = qt6cr_rhi_widget_on_render_failed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_rhi_widget_on_sample_count_changed = qt6cr_rhi_widget_on_sample_count_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_rhi_widget_on_color_buffer_format_changed = qt6cr_rhi_widget_on_color_buffer_format_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_rhi_widget_on_fixed_color_buffer_size_changed = qt6cr_rhi_widget_on_fixed_color_buffer_size_changed(handle : Handle, callback : (Handle, SizeValue ->), userdata : Handle)
+    fun qt6cr_rhi_widget_on_mirror_vertically_changed = qt6cr_rhi_widget_on_mirror_vertically_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
     fun qt6cr_qpainter_path_stroker_create = qt6cr_qpainter_path_stroker_create : Handle
     fun qt6cr_qpainter_path_stroker_destroy = qt6cr_qpainter_path_stroker_destroy(handle : Handle)

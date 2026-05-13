@@ -1818,6 +1818,54 @@ describe Qt6 do
     layout_destroyed.should eq(1)
   end
 
+  it "supports QRhiWidget configuration and change signals" do
+    application = app
+    widget = Qt6::RhiWidget.new
+    sample_counts = [] of Int32
+    color_formats = [] of Qt6::RhiWidgetTextureFormat
+    buffer_sizes = [] of Qt6::Size
+    mirrored = [] of Bool
+
+    widget.on_sample_count_changed do |value|
+      sample_counts << value
+    end
+    widget.on_color_buffer_format_changed do |value|
+      color_formats << value
+    end
+    widget.on_fixed_color_buffer_size_changed do |value|
+      buffer_sizes << value
+    end
+    widget.on_mirror_vertically_changed do |value|
+      mirrored << value
+    end
+
+    widget.set_api(Qt6::RhiWidgetApi::Null)
+    widget.set_debug_layer_enabled(true)
+    widget.set_sample_count(4)
+    widget.set_color_buffer_format(Qt6::RhiWidgetTextureFormat::RGBA16F)
+    widget.set_fixed_color_buffer_size(48, 24)
+    widget.set_mirror_vertically(true)
+    widget.resize(64, 32)
+    widget.show
+    application.process_events
+
+    widget.api.should eq(Qt6::RhiWidgetApi::Null)
+    widget.debug_layer_enabled?.should be_true
+    widget.sample_count.should eq(4)
+    widget.color_buffer_format.should eq(Qt6::RhiWidgetTextureFormat::RGBA16F)
+    widget.fixed_color_buffer_size.should eq(Qt6::Size.new(48, 24))
+    widget.mirror_vertically?.should be_true
+    sample_counts.last.should eq(4)
+    color_formats.last.should eq(Qt6::RhiWidgetTextureFormat::RGBA16F)
+    buffer_sizes.last.should eq(Qt6::Size.new(48, 24))
+    mirrored.last.should be_true
+
+    framebuffer = widget.grab_framebuffer
+    framebuffer.should be_a(Qt6::QImage)
+
+    widget.release
+  end
+
   it "supports nested event loops driven by timers" do
     app
     exit_loop = Qt6::QEventLoop.new
