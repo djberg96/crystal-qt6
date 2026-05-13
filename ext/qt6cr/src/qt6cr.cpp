@@ -136,7 +136,12 @@
 #include <QProgressDialog>
 #include <QProxyStyle>
 #include <QPushButton>
+#if __has_include(<QRhiWidget>)
 #include <QRhiWidget>
+#define QT6CR_HAS_RHI_WIDGET 1
+#else
+#define QT6CR_HAS_RHI_WIDGET 0
+#endif
 #include <QShortcut>
 #include <QSettings>
 #include <QSortFilterProxyModel>
@@ -17527,93 +17532,172 @@ qt6cr_handle_t qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(qt6cr_h
 }
 
 qt6cr_handle_t qt6cr_rhi_widget_create(qt6cr_handle_t parent) {
+#if QT6CR_HAS_RHI_WIDGET
   return new QRhiWidget(as_widget(parent));
+#else
+  (void)parent;
+  return nullptr;
+#endif
+}
+
+bool qt6cr_rhi_widget_is_available(void) {
+#if QT6CR_HAS_RHI_WIDGET
+  return true;
+#else
+  return false;
+#endif
 }
 
 int qt6cr_rhi_widget_api(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget == nullptr ? static_cast<int>(QRhiWidget::Api::Null) : static_cast<int>(widget->api());
+#else
+  (void)handle;
+  return 0;
+#endif
 }
 
 void qt6cr_rhi_widget_set_api(qt6cr_handle_t handle, int api) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget != nullptr) {
     widget->setApi(static_cast<QRhiWidget::Api>(api));
   }
+#else
+  (void)handle;
+  (void)api;
+#endif
 }
 
 bool qt6cr_rhi_widget_debug_layer_enabled(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget != nullptr && widget->isDebugLayerEnabled();
+#else
+  (void)handle;
+  return false;
+#endif
 }
 
 void qt6cr_rhi_widget_set_debug_layer_enabled(qt6cr_handle_t handle, bool enable) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget != nullptr) {
     widget->setDebugLayerEnabled(enable);
   }
+#else
+  (void)handle;
+  (void)enable;
+#endif
 }
 
 int qt6cr_rhi_widget_sample_count(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget == nullptr ? 1 : widget->sampleCount();
+#else
+  (void)handle;
+  return 1;
+#endif
 }
 
 void qt6cr_rhi_widget_set_sample_count(qt6cr_handle_t handle, int samples) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget != nullptr) {
     widget->setSampleCount(samples);
   }
+#else
+  (void)handle;
+  (void)samples;
+#endif
 }
 
 int qt6cr_rhi_widget_color_buffer_format(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget == nullptr ? static_cast<int>(QRhiWidget::TextureFormat::RGBA8) : static_cast<int>(widget->colorBufferFormat());
+#else
+  (void)handle;
+  return 0;
+#endif
 }
 
 void qt6cr_rhi_widget_set_color_buffer_format(qt6cr_handle_t handle, int format) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget != nullptr) {
     widget->setColorBufferFormat(static_cast<QRhiWidget::TextureFormat>(format));
   }
+#else
+  (void)handle;
+  (void)format;
+#endif
 }
 
 qt6cr_size_t qt6cr_rhi_widget_fixed_color_buffer_size(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->fixedColorBufferSize());
+#else
+  (void)handle;
+  return qt6cr_size_t{0, 0};
+#endif
 }
 
 void qt6cr_rhi_widget_set_fixed_color_buffer_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget != nullptr) {
     widget->setFixedColorBufferSize(QSize(size.width, size.height));
   }
+#else
+  (void)handle;
+  (void)size;
+#endif
 }
 
 bool qt6cr_rhi_widget_is_mirror_vertically_enabled(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget != nullptr && widget->isMirrorVerticallyEnabled();
+#else
+  (void)handle;
+  return false;
+#endif
 }
 
 void qt6cr_rhi_widget_set_mirror_vertically(qt6cr_handle_t handle, bool enabled) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget != nullptr) {
     widget->setMirrorVertically(enabled);
   }
+#else
+  (void)handle;
+  (void)enabled;
+#endif
 }
 
 qt6cr_handle_t qt6cr_rhi_widget_grab_framebuffer(qt6cr_handle_t handle) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
   return widget == nullptr ? new QImage() : new QImage(widget->grabFramebuffer());
+#else
+  (void)handle;
+  return new QImage();
+#endif
 }
 
 void qt6cr_rhi_widget_on_frame_submitted(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget == nullptr || callback == nullptr) {
@@ -17623,9 +17707,15 @@ void qt6cr_rhi_widget_on_frame_submitted(qt6cr_handle_t handle, qt6cr_void_callb
   QObject::connect(widget, &QRhiWidget::frameSubmitted, widget, [callback, userdata]() {
     callback(userdata);
   });
+#else
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 void qt6cr_rhi_widget_on_render_failed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget == nullptr || callback == nullptr) {
@@ -17635,9 +17725,15 @@ void qt6cr_rhi_widget_on_render_failed(qt6cr_handle_t handle, qt6cr_void_callbac
   QObject::connect(widget, &QRhiWidget::renderFailed, widget, [callback, userdata]() {
     callback(userdata);
   });
+#else
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 void qt6cr_rhi_widget_on_sample_count_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget == nullptr || callback == nullptr) {
@@ -17647,9 +17743,15 @@ void qt6cr_rhi_widget_on_sample_count_changed(qt6cr_handle_t handle, qt6cr_int_c
   QObject::connect(widget, &QRhiWidget::sampleCountChanged, widget, [callback, userdata](int value) {
     callback(userdata, value);
   });
+#else
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 void qt6cr_rhi_widget_on_color_buffer_format_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget == nullptr || callback == nullptr) {
@@ -17659,9 +17761,15 @@ void qt6cr_rhi_widget_on_color_buffer_format_changed(qt6cr_handle_t handle, qt6c
   QObject::connect(widget, &QRhiWidget::colorBufferFormatChanged, widget, [callback, userdata](QRhiWidget::TextureFormat value) {
     callback(userdata, static_cast<int>(value));
   });
+#else
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 void qt6cr_rhi_widget_on_fixed_color_buffer_size_changed(qt6cr_handle_t handle, qt6cr_size_callback_t callback, void *userdata) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget == nullptr || callback == nullptr) {
@@ -17671,9 +17779,15 @@ void qt6cr_rhi_widget_on_fixed_color_buffer_size_changed(qt6cr_handle_t handle, 
   QObject::connect(widget, &QRhiWidget::fixedColorBufferSizeChanged, widget, [callback, userdata](const QSize &value) {
     callback(userdata, to_size(value));
   });
+#else
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 void qt6cr_rhi_widget_on_mirror_vertically_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+#if QT6CR_HAS_RHI_WIDGET
   auto *widget = static_cast<QRhiWidget *>(as_widget(handle));
 
   if (widget == nullptr || callback == nullptr) {
@@ -17683,6 +17797,11 @@ void qt6cr_rhi_widget_on_mirror_vertically_changed(qt6cr_handle_t handle, qt6cr_
   QObject::connect(widget, &QRhiWidget::mirrorVerticallyChanged, widget, [callback, userdata](bool value) {
     callback(userdata, value);
   });
+#else
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 void qt6cr_qpainter_path_clear(qt6cr_handle_t handle) {

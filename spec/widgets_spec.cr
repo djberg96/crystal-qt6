@@ -1820,6 +1820,7 @@ describe Qt6 do
 
   it "supports QRhiWidget configuration and change signals" do
     next if {"offscreen", "minimal"}.includes?(ENV["QT_QPA_PLATFORM"]? || "")
+    next unless Qt6::RhiWidget.available?
 
     app
     widget = Qt6::RhiWidget.new

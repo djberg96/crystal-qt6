@@ -25,8 +25,16 @@ module Qt6
       new(handle, owned)
     end
 
+    def self.available? : Bool
+      LibQt6.qt6cr_rhi_widget_is_available
+    end
+
     # Creates an RHI-backed widget with an optional parent.
     def initialize(parent : Widget? = nil)
+      unless self.class.available?
+        raise Error.new("QRhiWidget is not available in this Qt build")
+      end
+
       super(LibQt6.qt6cr_rhi_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
       register_rhi_widget_callbacks
     end

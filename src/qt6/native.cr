@@ -2379,6 +2379,7 @@ module Qt6
     fun qt6cr_graphics_proxy_widget_sub_widget_rect = qt6cr_graphics_proxy_widget_sub_widget_rect(handle : Handle, widget : Handle) : RectFValue
     fun qt6cr_graphics_proxy_widget_create_proxy_for_child_widget = qt6cr_graphics_proxy_widget_create_proxy_for_child_widget(handle : Handle, child : Handle) : Handle
     fun qt6cr_rhi_widget_create = qt6cr_rhi_widget_create(parent : Handle) : Handle
+    fun qt6cr_rhi_widget_is_available = qt6cr_rhi_widget_is_available : Bool
     fun qt6cr_rhi_widget_api = qt6cr_rhi_widget_api(handle : Handle) : LibC::Int
     fun qt6cr_rhi_widget_set_api = qt6cr_rhi_widget_set_api(handle : Handle, api : LibC::Int)
     fun qt6cr_rhi_widget_debug_layer_enabled = qt6cr_rhi_widget_debug_layer_enabled(handle : Handle) : Bool
