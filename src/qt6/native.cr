@@ -2887,6 +2887,8 @@ module Qt6
     fun qt6cr_radio_button_set_auto_exclusive = qt6cr_radio_button_set_auto_exclusive(handle : Handle, value : Bool)
     fun qt6cr_radio_button_click = qt6cr_radio_button_click(handle : Handle)
     fun qt6cr_radio_button_on_toggled = qt6cr_radio_button_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
+    fun qt6cr_radio_button_size_hint = qt6cr_radio_button_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_radio_button_minimum_size_hint = qt6cr_radio_button_minimum_size_hint(handle : Handle) : SizeValue
 
     fun qt6cr_tool_button_create = qt6cr_tool_button_create(parent : Handle) : Handle
     fun qt6cr_tool_button_style = qt6cr_tool_button_style(handle : Handle) : LibC::Int

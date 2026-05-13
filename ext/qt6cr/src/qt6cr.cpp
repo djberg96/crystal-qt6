@@ -21290,6 +21290,16 @@ void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t 
   });
 }
 
+qt6cr_size_t qt6cr_radio_button_size_hint(qt6cr_handle_t handle) {
+  auto *radio_button = as_radio_button(handle);
+  return radio_button == nullptr ? qt6cr_size_t{0, 0} : to_size(radio_button->sizeHint());
+}
+
+qt6cr_size_t qt6cr_radio_button_minimum_size_hint(qt6cr_handle_t handle) {
+  auto *radio_button = as_radio_button(handle);
+  return radio_button == nullptr ? qt6cr_size_t{0, 0} : to_size(radio_button->minimumSizeHint());
+}
+
 qt6cr_handle_t qt6cr_tool_button_create(qt6cr_handle_t parent) {
   return new QToolButton(as_widget(parent));
 }

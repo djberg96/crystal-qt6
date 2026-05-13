@@ -786,6 +786,10 @@ describe Qt6 do
     slider = Qt6::Slider.new
     spin_box = Qt6::SpinBox.new
     double_spin_box = Qt6::DoubleSpinBox.new
+    radio_icon_path = File.join(Dir.tempdir, "crystal-qt6-radio-button-icon-#{Process.pid}.png")
+    radio_icon_image = Qt6::QImage.new(12, 12)
+    radio_icon_image.fill(Qt6::Color.new(24, 96, 160))
+    radio_icon_image.save(radio_icon_path).should be_true
 
     manual_mode.on_toggled do |value|
       radio_states << value
@@ -816,6 +820,13 @@ describe Qt6 do
     options_group.set_checkable(true)
     options_group.set_alignment(Qt6::AlignmentFlag::HCenter)
     options_group.set_flat(true)
+    auto_mode.set_text("Automatic")
+    auto_mode.set_checked(true)
+    auto_mode.set_auto_exclusive(false)
+    auto_mode.auto_exclusive?.should be_false
+    auto_mode.set_auto_exclusive(true)
+    manual_mode.set_auto_exclusive(false)
+    manual_mode.icon = Qt6::QIcon.new(radio_icon_path)
     options_group.vbox do |column|
       column << auto_mode
       column << manual_mode
@@ -850,8 +861,6 @@ describe Qt6 do
     double_spin_box.set_range(0.5, 4.0)
     double_spin_box.single_step = 0.25
     double_spin_box.value = 1.75
-    auto_mode.auto_exclusive?.should be_true
-    manual_mode.auto_exclusive = false
     manual_mode.click
     options_group.set_checked(false)
     application.process_events
@@ -905,8 +914,13 @@ describe Qt6 do
     slider.enabled?.should be_true
     spin_box.enabled?.should be_true
     double_spin_box.enabled?.should be_true
-    auto_mode.checked?.should be_false
+    auto_mode.text.should eq("Automatic")
+    auto_mode.checked?.should be_true
+    auto_mode.auto_exclusive?.should be_true
     manual_mode.auto_exclusive?.should be_false
+    manual_mode.icon.null?.should be_false
+    manual_mode.size_hint.width.should be > 0
+    manual_mode.minimum_size_hint.height.should be > 0
     manual_mode.checked?.should be_true
     slider.orientation.should eq(Qt6::Orientation::Horizontal)
     slider.minimum.should eq(0)
@@ -931,6 +945,7 @@ describe Qt6 do
     tab_widget.clear
     tab_widget.count.should eq(0)
     window.release
+    File.delete?(radio_icon_path)
   end
 
   it "supports app-shell helpers for actions, toolbars, timers, and file dialogs" do

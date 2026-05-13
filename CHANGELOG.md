@@ -31,6 +31,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QProgressDialog` with custom label/bar/cancel-button installation, size-hint access, and Qt-style setter aliases for richer long-running task feedback dialogs.
 - Added `QProxyStyle` with base-style construction, keyed construction, and base-style swapping helpers for application and widget style proxying.
 - Expanded `QPushButton` with icon-and-text construction, size-hint helpers, menu display, and Qt-style setter aliases for fuller desktop push-button behavior.
+- Expanded `QRadioButton` to inherit the shared `QAbstractButton` surface, and added size-hint helpers plus Qt-style text/checked/auto-exclusive setters for fuller radio-button control.
 
 ## [0.10.0] - 2026-05-10
 

@@ -2933,6 +2933,8 @@ bool qt6cr_radio_button_auto_exclusive(qt6cr_handle_t handle);
 void qt6cr_radio_button_set_auto_exclusive(qt6cr_handle_t handle, bool value);
 void qt6cr_radio_button_click(qt6cr_handle_t handle);
 void qt6cr_radio_button_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata);
+qt6cr_size_t qt6cr_radio_button_size_hint(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_radio_button_minimum_size_hint(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_tool_button_create(qt6cr_handle_t parent);
 int qt6cr_tool_button_style(qt6cr_handle_t handle);
