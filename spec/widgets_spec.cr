@@ -20,6 +20,7 @@ describe Qt6 do
     stacked_layout = Qt6::StackedLayout.new(stacked_host)
     first_page = Qt6::Label.new("General")
     second_page = Qt6::Label.new("Preview")
+    scroll_menu = nil.as(Qt6::Menu?)
 
     slider_values = [] of Int32
     slider_ranges = [] of Tuple(Int32, Int32)
@@ -129,10 +130,12 @@ describe Qt6 do
     Qt6::LibQt6.qt6cr_abstract_slider_emit_pressed(slider.to_unsafe)
     Qt6::LibQt6.qt6cr_abstract_slider_emit_released(slider.to_unsafe)
 
+    scroll_bar.set_orientation(Qt6::Orientation::Vertical)
+    scroll_bar.set_orientation(Qt6::Orientation::Horizontal)
     scroll_bar.set_range(5, 20)
     scroll_bar.single_step = 2
     scroll_bar.page_step = 5
-    scroll_bar.value = 11
+    scroll_bar.set_value(11)
     scroll_bar.trigger_action(Qt6::AbstractSliderAction::SliderPageStepAdd)
     Qt6::LibQt6.qt6cr_abstract_slider_emit_pressed(scroll_bar.to_unsafe)
 
@@ -209,6 +212,7 @@ describe Qt6 do
     stacked_layout.current_index = 1
 
     application.process_events
+    scroll_menu = scroll_bar.create_standard_context_menu(Qt6::Point.new(4, 4))
 
     progress_bar.minimum.should eq(0)
     progress_bar.maximum.should eq(12)
@@ -248,6 +252,10 @@ describe Qt6 do
     scroll_bar.single_step.should eq(2)
     scroll_bar.page_step.should eq(5)
     scroll_bar.value.should eq(16)
+    scroll_bar.size_hint.width.should be > 0
+    scroll_bar.size_hint.height.should be > 0
+    scroll_menu.should_not be_nil
+    scroll_menu.not_nil!.actions.size.should be > 0
     scroll_values.last.should eq(16)
     scroll_actions.should contain(Qt6::AbstractSliderAction::SliderPageStepAdd)
     scroll_pressed.should eq(1)
@@ -325,6 +333,7 @@ describe Qt6 do
     stacked_indices.last.should eq(1)
 
     progress_bar.release
+    scroll_menu.try(&.release)
     scroll_bar.release
     dial.release
     date_time_edit.release

@@ -3187,6 +3187,8 @@ module Qt6
     fun qt6cr_slider_on_released = qt6cr_slider_on_released(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_scroll_bar_create = qt6cr_scroll_bar_create(parent : Handle, orientation : LibC::Int) : Handle
+    fun qt6cr_scroll_bar_size_hint = qt6cr_scroll_bar_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_scroll_bar_create_standard_context_menu = qt6cr_scroll_bar_create_standard_context_menu(handle : Handle, position : PointValue) : Handle
     fun qt6cr_scroll_bar_on_value_changed = qt6cr_scroll_bar_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_dial_create = qt6cr_dial_create(parent : Handle) : Handle

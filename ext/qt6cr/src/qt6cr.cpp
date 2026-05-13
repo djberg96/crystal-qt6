@@ -23548,6 +23548,16 @@ qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation) {
   return new QScrollBar(static_cast<Qt::Orientation>(orientation), as_widget(parent));
 }
 
+qt6cr_size_t qt6cr_scroll_bar_size_hint(qt6cr_handle_t handle) {
+  auto *scroll_bar = as_scroll_bar(handle);
+  return scroll_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(scroll_bar->sizeHint());
+}
+
+qt6cr_handle_t qt6cr_scroll_bar_create_standard_context_menu(qt6cr_handle_t handle, qt6cr_point_t position) {
+  auto *scroll_bar = as_scroll_bar(handle);
+  return scroll_bar == nullptr ? nullptr : scroll_bar->createStandardContextMenu(from_point(position));
+}
+
 void qt6cr_scroll_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   qt6cr_abstract_slider_on_value_changed(handle, callback, userdata);
 }

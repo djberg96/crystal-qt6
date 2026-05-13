@@ -3258,6 +3258,8 @@ bool qt6cr_slider_click_to_position(qt6cr_handle_t handle);
 void qt6cr_slider_set_click_to_position(qt6cr_handle_t handle, bool value);
 
 qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation);
+qt6cr_size_t qt6cr_scroll_bar_size_hint(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_scroll_bar_create_standard_context_menu(qt6cr_handle_t handle, qt6cr_point_t position);
 
 qt6cr_handle_t qt6cr_dial_create(qt6cr_handle_t parent);
 bool qt6cr_dial_wrapping(qt6cr_handle_t handle);
