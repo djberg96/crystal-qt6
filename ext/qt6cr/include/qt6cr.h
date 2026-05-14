@@ -360,6 +360,7 @@ void qt6cr_event_accept(qt6cr_handle_t handle);
 void qt6cr_event_ignore(qt6cr_handle_t handle);
 bool qt6cr_event_is_accepted(qt6cr_handle_t handle);
 qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle);
+qt6cr_wheel_event_t qt6cr_event_wheel_event(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_graphics_scene_event_create(int type);
 void qt6cr_graphics_scene_event_destroy(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_graphics_scene_event_widget(qt6cr_handle_t handle);

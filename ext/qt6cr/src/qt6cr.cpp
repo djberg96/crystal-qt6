@@ -4634,6 +4634,17 @@ qt6cr_mouse_event_t qt6cr_event_mouse_event(qt6cr_handle_t handle) {
   return result;
 }
 
+qt6cr_wheel_event_t qt6cr_event_wheel_event(qt6cr_handle_t handle) {
+  auto *event = static_cast<QWheelEvent *>(handle);
+  qt6cr_wheel_event_t result{{0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}, 0, 0};
+
+  if (event == nullptr) {
+    return result;
+  }
+
+  return to_wheel_event(event);
+}
+
 qt6cr_handle_t qt6cr_graphics_scene_event_create(int type) {
   return new QGraphicsSceneEvent(static_cast<QEvent::Type>(type));
 }
