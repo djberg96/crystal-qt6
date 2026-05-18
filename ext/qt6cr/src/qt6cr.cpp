@@ -248,6 +248,8 @@ qt6cr_key_event_t to_key_event(QKeyEvent *event);
 qt6cr_color_t to_color(const QColor &color);
 qt6cr_variant_value_t to_variant_value(const QVariant &value);
 QVariant from_variant_value(const qt6cr_variant_value_t &value);
+qt6cr_size_policy_value_t to_size_policy_value(const QSizePolicy &policy);
+QSizePolicy from_size_policy_value(qt6cr_size_policy_value_t value);
 QLineF from_linef(qt6cr_linef_t line);
 QVector3D from_vector3d(qt6cr_vector3d_t vector);
 QObject *as_qobject(qt6cr_handle_t handle);
@@ -2681,6 +2683,33 @@ QVariant from_variant_value(const qt6cr_variant_value_t &value) {
     default:
       return QVariant();
   }
+}
+
+qt6cr_size_policy_value_t to_size_policy_value(const QSizePolicy &policy) {
+  return qt6cr_size_policy_value_t{
+    static_cast<int>(policy.horizontalPolicy()),
+    static_cast<int>(policy.verticalPolicy()),
+    static_cast<int>(policy.controlType()),
+    policy.hasHeightForWidth(),
+    policy.hasWidthForHeight(),
+    policy.horizontalStretch(),
+    policy.verticalStretch(),
+    policy.retainSizeWhenHidden()
+  };
+}
+
+QSizePolicy from_size_policy_value(qt6cr_size_policy_value_t value) {
+  QSizePolicy policy(
+    static_cast<QSizePolicy::Policy>(value.horizontal_policy),
+    static_cast<QSizePolicy::Policy>(value.vertical_policy),
+    static_cast<QSizePolicy::ControlType>(value.control_type)
+  );
+  policy.setHeightForWidth(value.height_for_width);
+  policy.setWidthForHeight(value.width_for_height);
+  policy.setHorizontalStretch(value.horizontal_stretch);
+  policy.setVerticalStretch(value.vertical_stretch);
+  policy.setRetainSizeWhenHidden(value.retain_size_when_hidden);
+  return policy;
 }
 
 int variant_user_type(const qt6cr_variant_value_t &value) {
@@ -7039,6 +7068,19 @@ void qt6cr_widget_set_size_policy(qt6cr_handle_t handle, int horizontal, int ver
 
   if (widget != nullptr) {
     widget->setSizePolicy(static_cast<QSizePolicy::Policy>(horizontal), static_cast<QSizePolicy::Policy>(vertical));
+  }
+}
+
+qt6cr_size_policy_value_t qt6cr_widget_size_policy(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? to_size_policy_value(QSizePolicy()) : to_size_policy_value(widget->sizePolicy());
+}
+
+void qt6cr_widget_set_size_policy_value(qt6cr_handle_t handle, qt6cr_size_policy_value_t value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setSizePolicy(from_size_policy_value(value));
   }
 }
 
@@ -16045,6 +16087,19 @@ void qt6cr_graphics_widget_set_size_policy(qt6cr_handle_t handle, int horizontal
   }
 }
 
+qt6cr_size_policy_value_t qt6cr_graphics_widget_size_policy(qt6cr_handle_t handle) {
+  auto *widget = as_graphics_widget(handle);
+  return widget == nullptr ? to_size_policy_value(QSizePolicy()) : to_size_policy_value(widget->sizePolicy());
+}
+
+void qt6cr_graphics_widget_set_size_policy_value(qt6cr_handle_t handle, qt6cr_size_policy_value_t value) {
+  auto *widget = as_graphics_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setSizePolicy(from_size_policy_value(value));
+  }
+}
+
 qt6cr_sizef_t qt6cr_graphics_widget_minimum_size(qt6cr_handle_t handle) {
   auto *widget = as_graphics_widget(handle);
   return widget == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(widget->minimumSize());
@@ -16724,6 +16779,19 @@ void qt6cr_graphics_layout_item_set_size_policy(qt6cr_handle_t handle, int horiz
 
   if (item != nullptr) {
     item->setSizePolicy(static_cast<QSizePolicy::Policy>(horizontal), static_cast<QSizePolicy::Policy>(vertical));
+  }
+}
+
+qt6cr_size_policy_value_t qt6cr_graphics_layout_item_size_policy(qt6cr_handle_t handle) {
+  auto *item = as_graphics_layout_item(handle);
+  return item == nullptr ? to_size_policy_value(QSizePolicy()) : to_size_policy_value(item->sizePolicy());
+}
+
+void qt6cr_graphics_layout_item_set_size_policy_value(qt6cr_handle_t handle, qt6cr_size_policy_value_t value) {
+  auto *item = as_graphics_layout_item(handle);
+
+  if (item != nullptr) {
+    item->setSizePolicy(from_size_policy_value(value));
   }
 }
 

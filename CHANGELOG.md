@@ -37,6 +37,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QScrollArea` with `size_hint`, Qt-style widget/alignment/resizable setter aliases, and correct ownership transfer for `take_widget`.
 - Added `QScroller` and `QScrollerProperties` bindings with kinetic-scroller lookup, gesture grabbing, input/motion helpers, snap-position and ensure-visible control, typed scroller-state signals, and configurable scroll metrics including easing curves, overshoot policies, and frame rate.
 - Expanded `QSizeGrip` with a Qt-style `set_visible` alias and stronger live coverage for dialog-hosted visibility behavior.
+- Expanded `QSizePolicy` beyond the basic policy enum with control-type flags, a full value wrapper for stretch/retain-size/transposition state, and whole-policy get/set support on widgets and graphics layout objects.
 
 ## [0.10.0] - 2026-05-10
 

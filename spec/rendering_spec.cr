@@ -1594,8 +1594,24 @@ describe Qt6 do
     first.attribute?(Qt6::WidgetAttribute::SetPalette).should be_true
 
     first.set_size_policy(Qt6::SizePolicy::MinimumExpanding, Qt6::SizePolicy::Fixed)
+    first_policy = Qt6::SizePolicyValue.new(
+      Qt6::SizePolicy::MinimumExpanding,
+      Qt6::SizePolicy::Fixed,
+      Qt6::SizePolicyControlType::DefaultType,
+      false,
+      false,
+      2,
+      1,
+      true
+    )
+    first.size_policy = first_policy
     first.horizontal_size_policy.should eq(Qt6::SizePolicy::MinimumExpanding)
     first.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    first.size_policy.should eq(first_policy)
+    first.size_policy.horizontal_expanding?.should be_true
+    first.size_policy.vertical_expanding?.should be_false
+    first.size_policy.transpose.horizontal_policy.should eq(Qt6::SizePolicy::Fixed)
+    first.size_policy.transpose.vertical_policy.should eq(Qt6::SizePolicy::MinimumExpanding)
 
     first.set_minimum_size(20, 10)
     first.set_preferred_size(40, 20)
@@ -1655,6 +1671,17 @@ describe Qt6 do
     parent.geometry = Qt6::RectF.new(0.0, 0.0, 120.0, 60.0)
     first.set_preferred_size(26, 27)
     layout.set_size_policy(Qt6::SizePolicy::Expanding, Qt6::SizePolicy::Fixed)
+    layout_policy = Qt6::SizePolicyValue.new(
+      Qt6::SizePolicy::Expanding,
+      Qt6::SizePolicy::Fixed,
+      Qt6::SizePolicyControlType::DefaultType,
+      false,
+      false,
+      4,
+      0,
+      true
+    )
+    layout.size_policy = layout_policy
     layout.set_minimum_size(10, 11)
     layout.set_preferred_size(30, 31)
     layout.set_maximum_size(50, 51)
@@ -1689,6 +1716,10 @@ describe Qt6 do
     layout.contents_margins.should eq(Qt6::MarginsF.new(1.0, 2.0, 3.0, 4.0))
     layout.horizontal_size_policy.should eq(Qt6::SizePolicy::Expanding)
     layout.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    layout.size_policy.should eq(layout_policy)
+    layout.size_policy.horizontal_stretch.should eq(4)
+    layout.size_policy.vertical_stretch.should eq(0)
+    layout.size_policy.retain_size_when_hidden.should be_true
     layout.minimum_size.should eq(Qt6::SizeF.new(10.0, 11.0))
     layout.preferred_size.should eq(Qt6::SizeF.new(30.0, 31.0))
     layout.maximum_size.should eq(Qt6::SizeF.new(50.0, 51.0))

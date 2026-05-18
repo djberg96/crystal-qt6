@@ -170,6 +170,17 @@ module Qt6
       string_value : UInt8*
     end
 
+    struct SizePolicyStructValue
+      horizontal_policy : LibC::Int
+      vertical_policy : LibC::Int
+      control_type : LibC::Int
+      height_for_width : Bool
+      width_for_height : Bool
+      horizontal_stretch : LibC::Int
+      vertical_stretch : LibC::Int
+      retain_size_when_hidden : Bool
+    end
+
     struct ModelIndexSpecValue
       valid : Bool
       row : LibC::Int
@@ -776,6 +787,8 @@ module Qt6
     fun qt6cr_widget_horizontal_size_policy = qt6cr_widget_horizontal_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_vertical_size_policy = qt6cr_widget_vertical_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_size_policy = qt6cr_widget_set_size_policy(handle : Handle, horizontal : LibC::Int, vertical : LibC::Int)
+    fun qt6cr_widget_size_policy = qt6cr_widget_size_policy(handle : Handle) : SizePolicyStructValue
+    fun qt6cr_widget_set_size_policy_value = qt6cr_widget_set_size_policy_value(handle : Handle, value : SizePolicyStructValue)
     fun qt6cr_widget_minimum_width = qt6cr_widget_minimum_width(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_minimum_width = qt6cr_widget_set_minimum_width(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_minimum_height = qt6cr_widget_minimum_height(handle : Handle) : LibC::Int
@@ -2138,6 +2151,8 @@ module Qt6
     fun qt6cr_graphics_widget_horizontal_size_policy = qt6cr_graphics_widget_horizontal_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_graphics_widget_vertical_size_policy = qt6cr_graphics_widget_vertical_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_graphics_widget_set_size_policy = qt6cr_graphics_widget_set_size_policy(handle : Handle, horizontal : LibC::Int, vertical : LibC::Int)
+    fun qt6cr_graphics_widget_size_policy = qt6cr_graphics_widget_size_policy(handle : Handle) : SizePolicyStructValue
+    fun qt6cr_graphics_widget_set_size_policy_value = qt6cr_graphics_widget_set_size_policy_value(handle : Handle, value : SizePolicyStructValue)
     fun qt6cr_graphics_widget_minimum_size = qt6cr_graphics_widget_minimum_size(handle : Handle) : SizeFValue
     fun qt6cr_graphics_widget_set_minimum_size = qt6cr_graphics_widget_set_minimum_size(handle : Handle, width : Float64, height : Float64)
     fun qt6cr_graphics_widget_set_preferred_size = qt6cr_graphics_widget_set_preferred_size(handle : Handle, width : Float64, height : Float64)
@@ -2238,6 +2253,8 @@ module Qt6
     fun qt6cr_graphics_layout_item_horizontal_size_policy = qt6cr_graphics_layout_item_horizontal_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_graphics_layout_item_vertical_size_policy = qt6cr_graphics_layout_item_vertical_size_policy(handle : Handle) : LibC::Int
     fun qt6cr_graphics_layout_item_set_size_policy = qt6cr_graphics_layout_item_set_size_policy(handle : Handle, horizontal : LibC::Int, vertical : LibC::Int)
+    fun qt6cr_graphics_layout_item_size_policy = qt6cr_graphics_layout_item_size_policy(handle : Handle) : SizePolicyStructValue
+    fun qt6cr_graphics_layout_item_set_size_policy_value = qt6cr_graphics_layout_item_set_size_policy_value(handle : Handle, value : SizePolicyStructValue)
     fun qt6cr_graphics_layout_item_minimum_size = qt6cr_graphics_layout_item_minimum_size(handle : Handle) : SizeFValue
     fun qt6cr_graphics_layout_item_set_minimum_size = qt6cr_graphics_layout_item_set_minimum_size(handle : Handle, width : Float64, height : Float64)
     fun qt6cr_graphics_layout_item_preferred_size = qt6cr_graphics_layout_item_preferred_size(handle : Handle) : SizeFValue

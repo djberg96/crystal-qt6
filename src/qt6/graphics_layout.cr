@@ -90,6 +90,23 @@ module Qt6
       self
     end
 
+    # Returns the layout item's complete size policy value.
+    def size_policy : SizePolicyValue
+      SizePolicyValue.from_native(LibQt6.qt6cr_graphics_layout_item_size_policy(to_unsafe))
+    end
+
+    # Sets the layout item's complete size policy and returns it.
+    def size_policy=(value : SizePolicyValue) : SizePolicyValue
+      LibQt6.qt6cr_graphics_layout_item_set_size_policy_value(to_unsafe, value.to_native)
+      value
+    end
+
+    # Qt-style overload for assigning a full size-policy value.
+    def set_size_policy(value : SizePolicyValue) : self
+      self.size_policy = value
+      self
+    end
+
     # Returns the minimum size constraint.
     def minimum_size : SizeF
       SizeF.from_native(LibQt6.qt6cr_graphics_layout_item_minimum_size(to_unsafe))

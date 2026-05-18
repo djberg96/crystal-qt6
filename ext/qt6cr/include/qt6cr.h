@@ -168,6 +168,17 @@ typedef struct {
 } qt6cr_variant_value_t;
 
 typedef struct {
+	int horizontal_policy;
+	int vertical_policy;
+	int control_type;
+	bool height_for_width;
+	bool width_for_height;
+	int horizontal_stretch;
+	int vertical_stretch;
+	bool retain_size_when_hidden;
+} qt6cr_size_policy_value_t;
+
+typedef struct {
 	bool valid;
 	int row;
 	int column;
@@ -820,6 +831,8 @@ void qt6cr_widget_simulate_wheel(qt6cr_handle_t handle, qt6cr_pointf_t position,
 int qt6cr_widget_horizontal_size_policy(qt6cr_handle_t handle);
 int qt6cr_widget_vertical_size_policy(qt6cr_handle_t handle);
 void qt6cr_widget_set_size_policy(qt6cr_handle_t handle, int horizontal, int vertical);
+qt6cr_size_policy_value_t qt6cr_widget_size_policy(qt6cr_handle_t handle);
+void qt6cr_widget_set_size_policy_value(qt6cr_handle_t handle, qt6cr_size_policy_value_t value);
 int qt6cr_widget_minimum_width(qt6cr_handle_t handle);
 void qt6cr_widget_set_minimum_width(qt6cr_handle_t handle, int value);
 int qt6cr_widget_minimum_height(qt6cr_handle_t handle);
@@ -2182,6 +2195,8 @@ qt6cr_rectf_t qt6cr_graphics_widget_rect(qt6cr_handle_t handle);
 int qt6cr_graphics_widget_horizontal_size_policy(qt6cr_handle_t handle);
 int qt6cr_graphics_widget_vertical_size_policy(qt6cr_handle_t handle);
 void qt6cr_graphics_widget_set_size_policy(qt6cr_handle_t handle, int horizontal, int vertical);
+qt6cr_size_policy_value_t qt6cr_graphics_widget_size_policy(qt6cr_handle_t handle);
+void qt6cr_graphics_widget_set_size_policy_value(qt6cr_handle_t handle, qt6cr_size_policy_value_t value);
 qt6cr_sizef_t qt6cr_graphics_widget_minimum_size(qt6cr_handle_t handle);
 void qt6cr_graphics_widget_set_minimum_size(qt6cr_handle_t handle, double width, double height);
 void qt6cr_graphics_widget_set_preferred_size(qt6cr_handle_t handle, double width, double height);
@@ -2282,6 +2297,8 @@ qt6cr_handle_t qt6cr_graphics_layout_item_to_graphics_widget(qt6cr_handle_t hand
 int qt6cr_graphics_layout_item_horizontal_size_policy(qt6cr_handle_t handle);
 int qt6cr_graphics_layout_item_vertical_size_policy(qt6cr_handle_t handle);
 void qt6cr_graphics_layout_item_set_size_policy(qt6cr_handle_t handle, int horizontal, int vertical);
+qt6cr_size_policy_value_t qt6cr_graphics_layout_item_size_policy(qt6cr_handle_t handle);
+void qt6cr_graphics_layout_item_set_size_policy_value(qt6cr_handle_t handle, qt6cr_size_policy_value_t value);
 qt6cr_sizef_t qt6cr_graphics_layout_item_minimum_size(qt6cr_handle_t handle);
 void qt6cr_graphics_layout_item_set_minimum_size(qt6cr_handle_t handle, double width, double height);
 qt6cr_sizef_t qt6cr_graphics_layout_item_preferred_size(qt6cr_handle_t handle);

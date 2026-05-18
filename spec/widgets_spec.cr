@@ -1376,6 +1376,17 @@ describe Qt6 do
 
     font_combo = Qt6::FontComboBox.new(host)
     font_combo.set_size_policy(Qt6::SizePolicy::Ignored, Qt6::SizePolicy::Fixed)
+    font_policy = Qt6::SizePolicyValue.new(
+      Qt6::SizePolicy::Ignored,
+      Qt6::SizePolicy::Fixed,
+      Qt6::SizePolicyControlType::ComboBox,
+      true,
+      false,
+      3,
+      1,
+      true
+    )
+    font_combo.size_policy = font_policy
     font_combo.writing_system = Qt6::FontWritingSystem::Latin
     font_combo.font_filters = Qt6::FontComboBoxFontFilter::ScalableFonts | Qt6::FontComboBoxFontFilter::ProportionalFonts
 
@@ -1418,6 +1429,17 @@ describe Qt6 do
 
     font_combo.horizontal_size_policy.should eq(Qt6::SizePolicy::Ignored)
     font_combo.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    font_combo.size_policy.should eq(font_policy)
+    font_combo.size_policy.horizontal_expanding?.should be_false
+    font_combo.size_policy.vertical_expanding?.should be_false
+    font_combo.size_policy.transpose.horizontal_policy.should eq(Qt6::SizePolicy::Fixed)
+    font_combo.size_policy.transpose.vertical_policy.should eq(Qt6::SizePolicy::Ignored)
+    font_combo.size_policy.control_type.should eq(Qt6::SizePolicyControlType::ComboBox)
+    font_combo.size_policy.height_for_width.should be_true
+    font_combo.size_policy.width_for_height.should be_false
+    font_combo.size_policy.horizontal_stretch.should eq(3)
+    font_combo.size_policy.vertical_stretch.should eq(1)
+    font_combo.size_policy.retain_size_when_hidden.should be_true
     font_combo.writing_system.should eq(Qt6::FontWritingSystem::Latin)
     font_combo.font_filters.includes?(Qt6::FontComboBoxFontFilter::ScalableFonts).should be_true
     font_combo.font_filters.includes?(Qt6::FontComboBoxFontFilter::ProportionalFonts).should be_true
