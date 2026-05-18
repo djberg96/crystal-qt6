@@ -20553,6 +20553,7 @@ void qt6cr_status_bar_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget
 
   if (status_bar != nullptr && child != nullptr) {
     status_bar->removeWidget(child);
+    child->hide();
   }
 }
 
