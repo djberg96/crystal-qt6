@@ -21,6 +21,13 @@ module Qt6
       layout
     end
 
+    # Adds a spacer item at the given grid position.
+    def add(item : SpacerItem, row : Int, column : Int, row_span : Int = 1, column_span : Int = 1, alignment : AlignmentFlag = AlignmentFlag::None) : SpacerItem
+      LibQt6.qt6cr_grid_layout_add_spacer_item(@to_unsafe, item.to_unsafe, row, column, row_span, column_span, alignment.value)
+      item.adopt_by_owner!
+      item
+    end
+
     # Returns the horizontal spacing override between columns.
     def horizontal_spacing : Int32
       LibQt6.qt6cr_grid_layout_horizontal_spacing(@to_unsafe)

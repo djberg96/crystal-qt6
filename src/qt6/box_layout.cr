@@ -34,6 +34,13 @@ module Qt6
       layout
     end
 
+    # Adds a spacer item to the layout and returns it.
+    def add(item : SpacerItem) : SpacerItem
+      LibQt6.qt6cr_box_layout_add_spacer_item(@to_unsafe, item.to_unsafe)
+      item.adopt_by_owner!
+      item
+    end
+
     # Inserts a widget at the given layout index and returns it.
     def insert(index : Int, widget : Widget, stretch : Int = 0) : Widget
       LibQt6.qt6cr_box_layout_insert_widget(@to_unsafe, index.to_i32, widget.to_unsafe, stretch.to_i32)
@@ -45,6 +52,13 @@ module Qt6
       LibQt6.qt6cr_box_layout_insert_layout(@to_unsafe, index.to_i32, layout.to_unsafe, stretch.to_i32)
       layout.adopt_by_parent!
       layout
+    end
+
+    # Inserts a spacer item at the given layout index and returns it.
+    def insert(index : Int, item : SpacerItem) : SpacerItem
+      LibQt6.qt6cr_box_layout_insert_spacer_item(@to_unsafe, index.to_i32, item.to_unsafe)
+      item.adopt_by_owner!
+      item
     end
 
     # Adds fixed spacing to the layout and returns `self`.

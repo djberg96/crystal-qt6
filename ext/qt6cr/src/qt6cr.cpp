@@ -101,6 +101,7 @@
 #include <QListView>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QLayoutItem>
 #include <QLineEdit>
 #include <QLCDNumber>
 #include <QMainWindow>
@@ -2508,6 +2509,10 @@ QFormLayout *as_form_layout(qt6cr_handle_t handle) {
 
 QLayoutItem *as_layout_item(qt6cr_handle_t handle) {
   return static_cast<QLayoutItem *>(handle);
+}
+
+QSpacerItem *as_spacer_item(qt6cr_handle_t handle) {
+  return static_cast<QSpacerItem *>(handle);
 }
 
 QVBoxLayout *as_v_box_layout(qt6cr_handle_t handle) {
@@ -27858,6 +27863,15 @@ void qt6cr_box_layout_add_layout(qt6cr_handle_t handle, qt6cr_handle_t child_lay
   }
 }
 
+void qt6cr_box_layout_add_spacer_item(qt6cr_handle_t handle, qt6cr_handle_t spacer_item) {
+  auto *layout = as_box_layout(handle);
+  auto *item = as_spacer_item(spacer_item);
+
+  if (layout != nullptr && item != nullptr) {
+    layout->addSpacerItem(item);
+  }
+}
+
 void qt6cr_box_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, int stretch) {
   auto *layout = as_box_layout(handle);
   auto *child = as_widget(widget);
@@ -27873,6 +27887,15 @@ void qt6cr_box_layout_insert_layout(qt6cr_handle_t handle, int index, qt6cr_hand
 
   if (layout != nullptr && child != nullptr) {
     layout->insertLayout(index, child, stretch);
+  }
+}
+
+void qt6cr_box_layout_insert_spacer_item(qt6cr_handle_t handle, int index, qt6cr_handle_t spacer_item) {
+  auto *layout = as_box_layout(handle);
+  auto *item = as_spacer_item(spacer_item);
+
+  if (layout != nullptr && item != nullptr) {
+    layout->insertSpacerItem(index, item);
   }
 }
 
@@ -27964,6 +27987,15 @@ void qt6cr_grid_layout_add_layout(qt6cr_handle_t handle, qt6cr_handle_t child_la
 
   if (layout != nullptr && child_layout != nullptr) {
     layout->addLayout(child_layout, row, column, row_span, column_span, static_cast<Qt::Alignment>(alignment));
+  }
+}
+
+void qt6cr_grid_layout_add_spacer_item(qt6cr_handle_t handle, qt6cr_handle_t spacer_item, int row, int column, int row_span, int column_span, int alignment) {
+  auto *layout = as_grid_layout(handle);
+  auto *item = as_spacer_item(spacer_item);
+
+  if (layout != nullptr && item != nullptr) {
+    layout->addItem(item, row, column, row_span, column_span, static_cast<Qt::Alignment>(alignment));
   }
 }
 
@@ -28401,6 +28433,33 @@ int qt6cr_form_layout_row_count(qt6cr_handle_t handle) {
   return layout == nullptr ? 0 : layout->rowCount();
 }
 
+qt6cr_handle_t qt6cr_spacer_item_create(int width, int height, int horizontal_policy, int vertical_policy) {
+  return new QSpacerItem(
+    width,
+    height,
+    static_cast<QSizePolicy::Policy>(horizontal_policy),
+    static_cast<QSizePolicy::Policy>(vertical_policy)
+  );
+}
+
+void qt6cr_spacer_item_change_size(qt6cr_handle_t handle, int width, int height, int horizontal_policy, int vertical_policy) {
+  auto *item = as_spacer_item(handle);
+
+  if (item != nullptr) {
+    item->changeSize(
+      width,
+      height,
+      static_cast<QSizePolicy::Policy>(horizontal_policy),
+      static_cast<QSizePolicy::Policy>(vertical_policy)
+    );
+  }
+}
+
+qt6cr_size_policy_value_t qt6cr_spacer_item_size_policy(qt6cr_handle_t handle) {
+  auto *item = as_spacer_item(handle);
+  return item == nullptr ? to_size_policy_value(QSizePolicy()) : to_size_policy_value(item->sizePolicy());
+}
+
 void qt6cr_layout_item_destroy(qt6cr_handle_t handle) {
   delete as_layout_item(handle);
 }
@@ -28425,6 +28484,14 @@ qt6cr_rect_t qt6cr_layout_item_geometry(qt6cr_handle_t handle) {
   return item == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(item->geometry());
 }
 
+void qt6cr_layout_item_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t value) {
+  auto *item = as_layout_item(handle);
+
+  if (item != nullptr) {
+    item->setGeometry(from_rect(value));
+  }
+}
+
 int qt6cr_layout_item_alignment(qt6cr_handle_t handle) {
   auto *item = as_layout_item(handle);
   return item == nullptr ? 0 : static_cast<int>(item->alignment());
@@ -28443,6 +28510,11 @@ qt6cr_handle_t qt6cr_layout_item_widget(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_layout_item_layout(qt6cr_handle_t handle) {
   auto *item = as_layout_item(handle);
   return item == nullptr ? nullptr : item->layout();
+}
+
+qt6cr_handle_t qt6cr_layout_item_spacer_item(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? nullptr : item->spacerItem();
 }
 
 int qt6cr_layout_count(qt6cr_handle_t handle) {

@@ -1001,6 +1001,65 @@ describe Qt6 do
     window.release
   end
 
+  it "supports spacer items through shared layout item wrappers" do
+    application = app
+    window = Qt6::Widget.new
+    left = Qt6::Label.new("Left")
+    right = Qt6::Label.new("Right")
+    footer = Qt6::Label.new("Footer")
+    spacer = Qt6::SpacerItem.new(12, 18, Qt6::SizePolicy::Expanding, Qt6::SizePolicy::Minimum)
+    grid_spacer = Qt6::SpacerItem.new(8, 6, Qt6::SizePolicy::Minimum, Qt6::SizePolicy::Expanding)
+    grid = Qt6::GridLayout.new
+
+    spacer.set_geometry(1, 2, 12, 18)
+    spacer.geometry.should eq(Qt6::Rect.new(1, 2, 12, 18))
+    spacer.change_size(14, 20, Qt6::SizePolicy::MinimumExpanding, Qt6::SizePolicy::Fixed)
+
+    grid.add(Qt6::Label.new("Top"), 0, 0)
+    grid.add(grid_spacer, 1, 0)
+    grid.add(footer, 2, 0)
+
+    layout = Qt6::HBoxLayout.new(window)
+    layout << left
+    layout.add(spacer)
+    layout << right
+    layout.add(grid)
+
+    window.resize(220, 80)
+    window.show
+    application.process_events
+
+    spacer.size_hint.should eq(Qt6::Size.new(14, 20))
+    spacer.minimum_size.should eq(Qt6::Size.new(14, 20))
+    spacer.horizontal_size_policy.should eq(Qt6::SizePolicy::MinimumExpanding)
+    spacer.vertical_size_policy.should eq(Qt6::SizePolicy::Fixed)
+    spacer.size_policy.horizontal_policy.should eq(Qt6::SizePolicy::MinimumExpanding)
+    spacer.size_policy.vertical_policy.should eq(Qt6::SizePolicy::Fixed)
+    layout.count.should eq(4)
+    layout.index_of(right).should eq(2)
+
+    spacer_item = layout.item_at(1).not_nil!
+    spacer_item.should be_a(Qt6::SpacerItem)
+    spacer_item.spacer_item.not_nil!.to_unsafe.should eq(spacer.to_unsafe)
+    spacer_item.geometry.width.should be >= 0
+
+    grid_item = grid.item_at_position(1, 0).not_nil!
+    grid_item.should be_a(Qt6::SpacerItem)
+    grid_item.spacer_item.not_nil!.to_unsafe.should eq(grid_spacer.to_unsafe)
+
+    removed_spacer = layout.take_at(1).not_nil!
+    removed_spacer.should be_a(Qt6::SpacerItem)
+    removed_spacer.to_unsafe.should eq(spacer.to_unsafe)
+    layout.count.should eq(3)
+
+    left.text.should eq("Left")
+    right.text.should eq("Right")
+    footer.text.should eq("Footer")
+
+    removed_spacer.release
+    window.release
+  end
+
   it "supports label alignment and pixmap display settings" do
     application = app
     window = Qt6::Widget.new
