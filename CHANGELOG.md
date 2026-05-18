@@ -47,6 +47,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStandardItemEditorCreator` with callback-backed editor creation and automatic Qt user-property discovery for cleaner `QItemEditorFactory` registration of standard editor widgets.
 - Expanded `QStatusBar` with inserted transient and permanent widgets, `message_changed`, and Qt-style message/size-grip aliases for fuller desktop-shell status workflows.
 - Expanded `QStyle` with shared widget/application/palette polish helpers and added `QStyleFactory` for available-style discovery and keyed style creation.
+- Added a shared `QStyleOption` wrapper with typed option/state enums, geometry, palette, font-metrics, direction, style-object, and `init_from` helpers, and moved `QStyleOptionViewItem` onto that shared base.
 - Added `QStyleHintReturn`, `QStyleHintReturnMask`, and `QStyleHintReturnVariant` wrappers with typed base, region, and variant payload helpers for style-hint result plumbing.
 
 ## [0.10.0] - 2026-05-10

@@ -602,6 +602,59 @@ describe Qt6 do
     end
   end
 
+  it "supports shared style options" do
+    application = app
+    host = Qt6::Widget.new
+    option = Qt6::StyleOption.new
+    view_option = Qt6::StyleOptionViewItem.new
+    palette = Qt6::QPalette.new
+
+    begin
+      host.resize(140, 48)
+      host.show
+      application.process_events
+
+      palette.set_color(Qt6::ColorRole::Window, Qt6::Color.new(35, 45, 55))
+      option.version.should eq(1)
+      option.type.should eq(Qt6::StyleOptionType::Default)
+      option.set_version(2).to_unsafe.should eq(option.to_unsafe)
+      option.version.should eq(2)
+      option.state = Qt6::StyleStateFlag::Enabled | Qt6::StyleStateFlag::Selected
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.state.includes?(Qt6::StyleStateFlag::Selected).should be_true
+      option.direction = Qt6::LayoutDirection::LeftToRight
+      option.direction.should eq(Qt6::LayoutDirection::LeftToRight)
+      option.rect = Qt6::Rect.new(2, 3, 25, 11)
+      option.rect.should eq(Qt6::RectF.new(2.0, 3.0, 25.0, 11.0))
+      option.palette = palette
+      option.palette.color(Qt6::ColorRole::Window).should eq(Qt6::Color.new(35, 45, 55, 255))
+      option.style_object = host
+      option.style_object.should_not be_nil
+      option.style_object.not_nil!.to_unsafe.should eq(host.to_unsafe)
+      option.init_from(host).to_unsafe.should eq(option.to_unsafe)
+      option.direction.should be_a(Qt6::LayoutDirection)
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 140.0, 48.0))
+      option.font_metrics.height.should be > 0
+      option.style_object.should_not be_nil
+      option.style_object.not_nil!.to_unsafe.should eq(host.to_unsafe)
+
+      view_option.init_from(host)
+      view_option.type.should eq(Qt6::StyleOptionType::ViewItem)
+      view_option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 140.0, 48.0))
+      view_option.font_metrics.height.should be > 0
+      view_option.state = Qt6::StyleStateFlag::Enabled | Qt6::StyleStateFlag::Selected
+      view_option.selected?.should be_true
+      view_option.enabled?.should be_true
+      view_option.text_rect.width.should be >= 0
+    ensure
+      palette.release
+      view_option.release
+      option.release
+      host.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

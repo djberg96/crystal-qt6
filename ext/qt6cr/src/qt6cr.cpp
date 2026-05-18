@@ -259,6 +259,7 @@ QVector3D from_vector3d(qt6cr_vector3d_t vector);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
+QStyleOption *as_style_option(qt6cr_handle_t handle);
 QStyleHintReturn *as_style_hint_return(qt6cr_handle_t handle);
 QStyleHintReturnMask *as_style_hint_return_mask(qt6cr_handle_t handle);
 QStyleHintReturnVariant *as_style_hint_return_variant(qt6cr_handle_t handle);
@@ -1794,6 +1795,10 @@ QWidget *as_widget(qt6cr_handle_t handle) {
 
 QStyle *as_style(qt6cr_handle_t handle) {
   return static_cast<QStyle *>(handle);
+}
+
+QStyleOption *as_style_option(qt6cr_handle_t handle) {
+  return static_cast<QStyleOption *>(handle);
 }
 
 QStyleHintReturn *as_style_hint_return(qt6cr_handle_t handle) {
@@ -6071,6 +6076,129 @@ void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
 
   if (style != nullptr && value != nullptr) {
     style->polish(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_create(void) {
+  return new QStyleOption();
+}
+
+void qt6cr_style_option_destroy(qt6cr_handle_t handle) {
+  delete as_style_option(handle);
+}
+
+int qt6cr_style_option_version(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? 0 : option->version;
+}
+
+void qt6cr_style_option_set_version(qt6cr_handle_t handle, int version) {
+  auto *option = as_style_option(handle);
+
+  if (option != nullptr) {
+    option->version = version;
+  }
+}
+
+int qt6cr_style_option_type(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? 0 : option->type;
+}
+
+void qt6cr_style_option_set_type(qt6cr_handle_t handle, int type) {
+  auto *option = as_style_option(handle);
+
+  if (option != nullptr) {
+    option->type = type;
+  }
+}
+
+int qt6cr_style_option_state(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->state);
+}
+
+void qt6cr_style_option_set_state(qt6cr_handle_t handle, int state) {
+  auto *option = as_style_option(handle);
+
+  if (option != nullptr) {
+    option->state = QStyle::State(static_cast<QStyle::StateFlag>(state));
+  }
+}
+
+int qt6cr_style_option_direction(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->direction);
+}
+
+void qt6cr_style_option_set_direction(qt6cr_handle_t handle, int direction) {
+  auto *option = as_style_option(handle);
+
+  if (option != nullptr) {
+    option->direction = static_cast<Qt::LayoutDirection>(direction);
+  }
+}
+
+qt6cr_rectf_t qt6cr_style_option_rect(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->rect);
+}
+
+void qt6cr_style_option_set_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *option = as_style_option(handle);
+
+  if (option != nullptr) {
+    option->rect = from_rect(rect);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_font_metrics(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? nullptr : new QFontMetrics(option->fontMetrics);
+}
+
+void qt6cr_style_option_set_font_metrics(qt6cr_handle_t handle, qt6cr_handle_t metrics) {
+  auto *option = as_style_option(handle);
+  auto *value = as_qfont_metrics(metrics);
+
+  if (option != nullptr && value != nullptr) {
+    option->fontMetrics = *value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_palette(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? new QPalette() : new QPalette(option->palette);
+}
+
+void qt6cr_style_option_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
+  auto *option = as_style_option(handle);
+  auto *value = static_cast<QPalette *>(palette);
+
+  if (option != nullptr && value != nullptr) {
+    option->palette = *value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_style_object(qt6cr_handle_t handle) {
+  auto *option = as_style_option(handle);
+  return option == nullptr ? nullptr : option->styleObject;
+}
+
+void qt6cr_style_option_set_style_object(qt6cr_handle_t handle, qt6cr_handle_t object) {
+  auto *option = as_style_option(handle);
+
+  if (option != nullptr) {
+    option->styleObject = as_qobject(object);
+  }
+}
+
+void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *option = as_style_option(handle);
+  auto *value = as_widget(widget);
+
+  if (option != nullptr && value != nullptr) {
+    option->initFrom(value);
   }
 }
 

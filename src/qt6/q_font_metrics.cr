@@ -1,6 +1,10 @@
 module Qt6
   # Wraps `QFontMetrics` for text measurement.
   class QFontMetrics < NativeResource
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates metrics for the given font.
     def initialize(font : QFont)
       super(LibQt6.qt6cr_qfont_metrics_create(font.to_unsafe))
