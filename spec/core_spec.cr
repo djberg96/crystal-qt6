@@ -696,6 +696,50 @@ describe Qt6 do
     end
   end
 
+  it "supports combo-box style options" do
+    application = app
+    combo_box = Qt6::ComboBox.new
+    option = Qt6::StyleOptionComboBox.new
+    icon = Qt6::QIcon.new
+
+    begin
+      combo_box.add_item("Terrain")
+      combo_box.add_item("Units")
+      combo_box.current_index = 1
+      combo_box.editable = true
+      combo_box.frame = false
+      combo_box.resize(156, 32)
+      combo_box.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::ComboBox)
+      option.editable?.should be_false
+      option.set_editable(combo_box.editable?).to_unsafe.should eq(option.to_unsafe)
+      option.editable?.should be_true
+      option.set_frame(combo_box.frame?).to_unsafe.should eq(option.to_unsafe)
+      option.frame?.should be_false
+      option.set_current_text(combo_box.current_text).to_unsafe.should eq(option.to_unsafe)
+      option.current_text.should eq("Units")
+      option.set_current_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.current_icon.null?.should be_true
+      option.set_icon_size(Qt6::Size.new(16, 18)).to_unsafe.should eq(option.to_unsafe)
+      option.icon_size.should eq(Qt6::Size.new(16, 18))
+      option.set_text_alignment(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter).to_unsafe.should eq(option.to_unsafe)
+      option.text_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+      option.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+      option.set_popup_rect(Qt6::Rect.new(3, 4, 70, 22)).to_unsafe.should eq(option.to_unsafe)
+      option.popup_rect.should eq(Qt6::RectF.new(3.0, 4.0, 70.0, 22.0))
+
+      option.init_from(combo_box)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 156.0, 32.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      icon.release
+      option.release
+      combo_box.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

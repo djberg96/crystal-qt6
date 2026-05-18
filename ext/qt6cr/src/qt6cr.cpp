@@ -6263,6 +6263,106 @@ void qt6cr_style_option_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_combo_box_create(void) {
+  return new QStyleOptionComboBox();
+}
+
+void qt6cr_style_option_combo_box_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionComboBox *>(handle);
+}
+
+bool qt6cr_style_option_combo_box_editable(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option != nullptr && option->editable;
+}
+
+void qt6cr_style_option_combo_box_set_editable(qt6cr_handle_t handle, bool editable) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+
+  if (option != nullptr) {
+    option->editable = editable;
+  }
+}
+
+qt6cr_rectf_t qt6cr_style_option_combo_box_popup_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->popupRect);
+}
+
+void qt6cr_style_option_combo_box_set_popup_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+
+  if (option != nullptr) {
+    option->popupRect = from_rect(rect);
+  }
+}
+
+bool qt6cr_style_option_combo_box_frame(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option != nullptr && option->frame;
+}
+
+void qt6cr_style_option_combo_box_set_frame(qt6cr_handle_t handle, bool frame) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+
+  if (option != nullptr) {
+    option->frame = frame;
+  }
+}
+
+char *qt6cr_style_option_combo_box_current_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->currentText);
+}
+
+void qt6cr_style_option_combo_box_set_current_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+
+  if (option != nullptr) {
+    option->currentText = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_combo_box_current_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->currentIcon);
+}
+
+void qt6cr_style_option_combo_box_set_current_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  auto *value = static_cast<QIcon *>(icon);
+
+  if (option != nullptr && value != nullptr) {
+    option->currentIcon = *value;
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_combo_box_icon_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->iconSize);
+}
+
+void qt6cr_style_option_combo_box_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+
+  if (option != nullptr) {
+    option->iconSize = QSize(size.width, size.height);
+  }
+}
+
+int qt6cr_style_option_combo_box_text_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->textAlignment);
+}
+
+void qt6cr_style_option_combo_box_set_text_alignment(qt6cr_handle_t handle, int alignment) {
+  auto *option = static_cast<QStyleOptionComboBox *>(handle);
+
+  if (option != nullptr) {
+    option->textAlignment = Qt::Alignment(alignment);
+  }
+}
+
 qt6cr_handle_t qt6cr_style_hint_return_create(int version, int type) {
   return new QStyleHintReturn(version, type);
 }
