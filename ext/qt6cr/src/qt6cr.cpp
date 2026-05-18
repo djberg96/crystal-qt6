@@ -218,6 +218,7 @@
 #include <QLocale>
 #include <QDropEvent>
 #include <QStringListModel>
+#include <QStyleOption>
 
 #include <QPoint>
 
@@ -258,6 +259,9 @@ QVector3D from_vector3d(qt6cr_vector3d_t vector);
 QObject *as_qobject(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
+QStyleHintReturn *as_style_hint_return(qt6cr_handle_t handle);
+QStyleHintReturnMask *as_style_hint_return_mask(qt6cr_handle_t handle);
+QStyleHintReturnVariant *as_style_hint_return_variant(qt6cr_handle_t handle);
 QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle);
 QGraphicsScale *as_graphics_scale(qt6cr_handle_t handle);
 QGraphicsRotation *as_graphics_rotation(qt6cr_handle_t handle);
@@ -1790,6 +1794,18 @@ QWidget *as_widget(qt6cr_handle_t handle) {
 
 QStyle *as_style(qt6cr_handle_t handle) {
   return static_cast<QStyle *>(handle);
+}
+
+QStyleHintReturn *as_style_hint_return(qt6cr_handle_t handle) {
+  return static_cast<QStyleHintReturn *>(handle);
+}
+
+QStyleHintReturnMask *as_style_hint_return_mask(qt6cr_handle_t handle) {
+  return static_cast<QStyleHintReturnMask *>(handle);
+}
+
+QStyleHintReturnVariant *as_style_hint_return_variant(qt6cr_handle_t handle) {
+  return static_cast<QStyleHintReturnVariant *>(handle);
 }
 
 QGraphicsTransform *as_graphics_transform(qt6cr_handle_t handle) {
@@ -6055,6 +6071,83 @@ void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
 
   if (style != nullptr && value != nullptr) {
     style->polish(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_hint_return_create(int version, int type) {
+  return new QStyleHintReturn(version, type);
+}
+
+void qt6cr_style_hint_return_destroy(qt6cr_handle_t handle) {
+  delete as_style_hint_return(handle);
+}
+
+int qt6cr_style_hint_return_version(qt6cr_handle_t handle) {
+  auto *value = as_style_hint_return(handle);
+  return value == nullptr ? 0 : value->version;
+}
+
+void qt6cr_style_hint_return_set_version(qt6cr_handle_t handle, int version) {
+  auto *value = as_style_hint_return(handle);
+
+  if (value != nullptr) {
+    value->version = version;
+  }
+}
+
+int qt6cr_style_hint_return_type(qt6cr_handle_t handle) {
+  auto *value = as_style_hint_return(handle);
+  return value == nullptr ? 0 : value->type;
+}
+
+void qt6cr_style_hint_return_set_type(qt6cr_handle_t handle, int type) {
+  auto *value = as_style_hint_return(handle);
+
+  if (value != nullptr) {
+    value->type = type;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_hint_return_mask_create(void) {
+  return new QStyleHintReturnMask();
+}
+
+void qt6cr_style_hint_return_mask_destroy(qt6cr_handle_t handle) {
+  delete as_style_hint_return_mask(handle);
+}
+
+qt6cr_handle_t qt6cr_style_hint_return_mask_region(qt6cr_handle_t handle) {
+  auto *value = as_style_hint_return_mask(handle);
+  return value == nullptr ? new QRegion() : new QRegion(value->region);
+}
+
+void qt6cr_style_hint_return_mask_set_region(qt6cr_handle_t handle, qt6cr_handle_t region) {
+  auto *value = as_style_hint_return_mask(handle);
+  auto *mask_region = as_qregion(region);
+
+  if (value != nullptr && mask_region != nullptr) {
+    value->region = *mask_region;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_hint_return_variant_create(void) {
+  return new QStyleHintReturnVariant();
+}
+
+void qt6cr_style_hint_return_variant_destroy(qt6cr_handle_t handle) {
+  delete as_style_hint_return_variant(handle);
+}
+
+qt6cr_variant_value_t qt6cr_style_hint_return_variant_variant(qt6cr_handle_t handle) {
+  auto *value = as_style_hint_return_variant(handle);
+  return value == nullptr ? to_variant_value(QVariant()) : to_variant_value(value->variant);
+}
+
+void qt6cr_style_hint_return_variant_set_variant(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
+  auto *result = as_style_hint_return_variant(handle);
+
+  if (result != nullptr) {
+    result->variant = from_variant_value(value);
   }
 }
 

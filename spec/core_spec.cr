@@ -570,6 +570,38 @@ describe Qt6 do
     end
   end
 
+  it "supports style hint return helpers" do
+    base = Qt6::StyleHintReturn.new
+    region = Qt6::QRegion.new(4, 6, 20, 12)
+    mask = Qt6::StyleHintReturnMask.new
+    variant = Qt6::StyleHintReturnVariant.new
+
+    begin
+      base.version.should eq(1)
+      base.type.should eq(Qt6::StyleHintReturnType::Default)
+      base.set_version(3).to_unsafe.should eq(base.to_unsafe)
+      base.version.should eq(3)
+      base.set_type(Qt6::StyleHintReturnType::Default).to_unsafe.should eq(base.to_unsafe)
+
+      mask.type.should eq(Qt6::StyleHintReturnType::Mask)
+      mask.set_region(region).to_unsafe.should eq(mask.to_unsafe)
+      mask_region = mask.region
+      mask_region.bounding_rect.should eq(Qt6::Rect.new(4, 6, 20, 12))
+      mask_region.release
+
+      variant.type.should eq(Qt6::StyleHintReturnType::Variant)
+      variant.set_variant("Fusion").to_unsafe.should eq(variant.to_unsafe)
+      variant.variant.should eq("Fusion")
+      variant.variant = true
+      variant.variant.should eq(true)
+    ensure
+      variant.release
+      mask.release
+      region.release
+      base.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time
