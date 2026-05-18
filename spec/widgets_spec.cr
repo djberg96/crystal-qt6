@@ -43,6 +43,8 @@ describe Qt6 do
     lcd_overflows = 0
     tab_indices = [] of Int32
     stacked_indices = [] of Int32
+    stacked_added = [] of Int32
+    stacked_removed = [] of Int32
 
     slider.on_value_changed do |value|
       slider_values << value
@@ -103,6 +105,12 @@ describe Qt6 do
     end
     stacked_layout.on_current_index_changed do |value|
       stacked_indices << value
+    end
+    stacked_layout.on_widget_added do |value|
+      stacked_added << value
+    end
+    stacked_layout.on_widget_removed do |value|
+      stacked_removed << value
     end
     progress_bar.on_value_changed do |value|
       progress_values << value
@@ -209,10 +217,15 @@ describe Qt6 do
 
     stacked_layout << first_page
     stacked_layout << second_page
-    stacked_layout.current_index = 1
+    inserted_page = Qt6::Label.new("Layers")
+    stacked_layout.insert(1, inserted_page)
+    stacked_layout.set_stacking_mode(Qt6::StackedLayoutStackingMode::StackAll)
+    stacked_layout.set_current_widget(second_page)
 
     application.process_events
     scroll_menu = scroll_bar.create_standard_context_menu(Qt6::Point.new(4, 4))
+    stacked_layout.remove(inserted_page)
+    application.process_events
 
     progress_bar.minimum.should eq(0)
     progress_bar.maximum.should eq(12)
@@ -334,7 +347,13 @@ describe Qt6 do
 
     stacked_layout.count.should eq(2)
     stacked_layout.current_index.should eq(1)
-    stacked_indices.last.should eq(1)
+    stacked_layout.current_widget.not_nil!.to_unsafe.should eq(second_page.to_unsafe)
+    stacked_layout.widget(0).not_nil!.to_unsafe.should eq(first_page.to_unsafe)
+    stacked_layout.widget(1).not_nil!.to_unsafe.should eq(second_page.to_unsafe)
+    stacked_layout.stacking_mode.should eq(Qt6::StackedLayoutStackingMode::StackAll)
+    stacked_indices.should contain(2)
+    stacked_added.should eq([0, 1, 1])
+    stacked_removed.should eq([1])
 
     progress_bar.release
     scroll_menu.try(&.release)
@@ -1418,13 +1437,28 @@ describe Qt6 do
     end
 
     stack = Qt6::StackedWidget.new(host)
+    stack_indices = [] of Int32
+    stack_added = [] of Int32
+    stack_removed = [] of Int32
+    stack.on_current_index_changed do |value|
+      stack_indices << value
+    end
+    stack.on_widget_added do |value|
+      stack_added << value
+    end
+    stack.on_widget_removed do |value|
+      stack_removed << value
+    end
     info_page = Qt6::Label.new("Info")
-    stack.add_widget(info_page)
+    stack.add(info_page)
     stack.add_widget(browser)
+    details_page = Qt6::Label.new("Details")
+    stack.insert_widget(1, details_page)
     stack.widget(0).not_nil!.to_unsafe.should eq(info_page.to_unsafe)
     stack.current_widget.not_nil!.to_unsafe.should eq(info_page.to_unsafe)
-    stack.index_of(browser).should eq(1)
-    stack.current_widget = browser
+    stack.widget(1).not_nil!.to_unsafe.should eq(details_page.to_unsafe)
+    stack.index_of(browser).should eq(2)
+    stack.set_current_index(2)
     application.process_events
 
     font_combo.horizontal_size_policy.should eq(Qt6::SizePolicy::Ignored)
@@ -1453,9 +1487,13 @@ describe Qt6 do
     browser.html.should contain("page:intro")
     browser.vertical_scroll_value.should eq(0)
     clicked_links.should be_empty
-    stack.count.should eq(2)
-    stack.current_index.should eq(1)
+    stack.count.should eq(3)
+    stack.current_index.should eq(2)
     stack.current_widget.not_nil!.to_unsafe.should eq(browser.to_unsafe)
+    stack_indices.last.should eq(2)
+    stack_added.should eq([0, 1, 1])
+    stack.remove_widget(details_page)
+    stack_removed.should eq([1])
     stack.remove_widget(info_page)
     stack.count.should eq(1)
     stack.index_of(info_page).should eq(-1)

@@ -27122,6 +27122,17 @@ int qt6cr_stacked_widget_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget
   return stacked_widget->addWidget(page);
 }
 
+int qt6cr_stacked_widget_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
+  auto *stacked_widget = as_stacked_widget(handle);
+  auto *page = as_widget(widget);
+
+  if (stacked_widget == nullptr || page == nullptr) {
+    return -1;
+  }
+
+  return stacked_widget->insertWidget(index, page);
+}
+
 qt6cr_handle_t qt6cr_stacked_widget_widget(qt6cr_handle_t handle, int index) {
   auto *stacked_widget = as_stacked_widget(handle);
   return stacked_widget == nullptr ? nullptr : stacked_widget->widget(index);
@@ -27174,6 +27185,42 @@ void qt6cr_stacked_widget_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t wi
   }
 }
 
+void qt6cr_stacked_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *stacked_widget = as_stacked_widget(handle);
+
+  if (stacked_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stacked_widget, &QStackedWidget::currentChanged, stacked_widget, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_stacked_widget_on_widget_removed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *stacked_widget = as_stacked_widget(handle);
+
+  if (stacked_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stacked_widget, &QStackedWidget::widgetRemoved, stacked_widget, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_stacked_widget_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *stacked_widget = as_stacked_widget(handle);
+
+  if (stacked_widget == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stacked_widget, &QStackedWidget::widgetAdded, stacked_widget, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
 qt6cr_handle_t qt6cr_stacked_layout_create(qt6cr_handle_t parent) {
   return new QStackedLayout(as_widget(parent));
 }
@@ -27189,9 +27236,30 @@ int qt6cr_stacked_layout_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget
   return stacked_layout->addWidget(page);
 }
 
+int qt6cr_stacked_layout_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
+  auto *stacked_layout = as_stacked_layout(handle);
+  auto *page = as_widget(widget);
+
+  if (stacked_layout == nullptr || page == nullptr) {
+    return -1;
+  }
+
+  return stacked_layout->insertWidget(index, page);
+}
+
 int qt6cr_stacked_layout_count(qt6cr_handle_t handle) {
   auto *stacked_layout = as_stacked_layout(handle);
   return stacked_layout == nullptr ? 0 : stacked_layout->count();
+}
+
+qt6cr_handle_t qt6cr_stacked_layout_widget(qt6cr_handle_t handle, int index) {
+  auto *stacked_layout = as_stacked_layout(handle);
+  return stacked_layout == nullptr ? nullptr : stacked_layout->widget(index);
+}
+
+qt6cr_handle_t qt6cr_stacked_layout_current_widget(qt6cr_handle_t handle) {
+  auto *stacked_layout = as_stacked_layout(handle);
+  return stacked_layout == nullptr ? nullptr : stacked_layout->currentWidget();
 }
 
 int qt6cr_stacked_layout_current_index(qt6cr_handle_t handle) {
@@ -27207,6 +27275,28 @@ void qt6cr_stacked_layout_set_current_index(qt6cr_handle_t handle, int index) {
   }
 }
 
+void qt6cr_stacked_layout_set_current_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *stacked_layout = as_stacked_layout(handle);
+  auto *page = as_widget(widget);
+
+  if (stacked_layout != nullptr && page != nullptr) {
+    stacked_layout->setCurrentWidget(page);
+  }
+}
+
+int qt6cr_stacked_layout_stacking_mode(qt6cr_handle_t handle) {
+  auto *stacked_layout = as_stacked_layout(handle);
+  return stacked_layout == nullptr ? static_cast<int>(QStackedLayout::StackOne) : static_cast<int>(stacked_layout->stackingMode());
+}
+
+void qt6cr_stacked_layout_set_stacking_mode(qt6cr_handle_t handle, int value) {
+  auto *stacked_layout = as_stacked_layout(handle);
+
+  if (stacked_layout != nullptr) {
+    stacked_layout->setStackingMode(static_cast<QStackedLayout::StackingMode>(value));
+  }
+}
+
 void qt6cr_stacked_layout_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   auto *stacked_layout = as_stacked_layout(handle);
 
@@ -27215,6 +27305,30 @@ void qt6cr_stacked_layout_on_current_index_changed(qt6cr_handle_t handle, qt6cr_
   }
 
   QObject::connect(stacked_layout, &QStackedLayout::currentChanged, stacked_layout, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_stacked_layout_on_widget_removed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *stacked_layout = as_stacked_layout(handle);
+
+  if (stacked_layout == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stacked_layout, &QStackedLayout::widgetRemoved, stacked_layout, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_stacked_layout_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *stacked_layout = as_stacked_layout(handle);
+
+  if (stacked_layout == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(stacked_layout, &QStackedLayout::widgetAdded, stacked_layout, [callback, userdata](int value) {
     callback(userdata, value);
   });
 }

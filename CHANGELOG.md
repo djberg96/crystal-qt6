@@ -43,6 +43,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QSplashScreen` with `message_changed`, concrete handle wrapping, optional empty construction, and a Qt-style pixmap setter alias for fuller startup-splash workflows.
 - Expanded `QSpinBox` with `text_changed`, `step_type`, `display_integer_base`, and concrete handle wrapping for fuller integer spin-box parity with Qt.
 - Expanded `QSlider` with tick-position/tick-interval control, size-hint helpers, concrete handle wrapping, and Qt-style setter aliases on top of the shared abstract-slider surface.
+- Expanded `QStackedLayout` and `QStackedWidget` with page insertion, current-widget helpers, stacking-mode and widget-added/widget-removed signals, plus stronger live coverage for stacked inspector and browser workflows.
 
 ## [0.10.0] - 2026-05-10
 
