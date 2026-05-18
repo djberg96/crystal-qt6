@@ -14,6 +14,10 @@ module Qt6
       new(handle, owned)
     end
 
+    def self.widget_added_available? : Bool
+      LibQt6.qt6cr_stacked_widget_widget_added_available
+    end
+
     # Creates a stacked widget with an optional parent.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_stacked_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)

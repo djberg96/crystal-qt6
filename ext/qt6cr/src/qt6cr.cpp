@@ -27256,9 +27256,18 @@ void qt6cr_stacked_widget_on_widget_removed(qt6cr_handle_t handle, qt6cr_int_cal
   });
 }
 
+bool qt6cr_stacked_widget_widget_added_available(void) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  return true;
+#else
+  return false;
+#endif
+}
+
 void qt6cr_stacked_widget_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   auto *stacked_widget = as_stacked_widget(handle);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
   if (stacked_widget == nullptr || callback == nullptr) {
     return;
   }
@@ -27266,6 +27275,11 @@ void qt6cr_stacked_widget_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callb
   QObject::connect(stacked_widget, &QStackedWidget::widgetAdded, stacked_widget, [callback, userdata](int value) {
     callback(userdata, value);
   });
+#else
+  (void)stacked_widget;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 qt6cr_handle_t qt6cr_stacked_layout_create(qt6cr_handle_t parent) {
@@ -27368,9 +27382,18 @@ void qt6cr_stacked_layout_on_widget_removed(qt6cr_handle_t handle, qt6cr_int_cal
   });
 }
 
+bool qt6cr_stacked_layout_widget_added_available(void) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  return true;
+#else
+  return false;
+#endif
+}
+
 void qt6cr_stacked_layout_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   auto *stacked_layout = as_stacked_layout(handle);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
   if (stacked_layout == nullptr || callback == nullptr) {
     return;
   }
@@ -27378,6 +27401,11 @@ void qt6cr_stacked_layout_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callb
   QObject::connect(stacked_layout, &QStackedLayout::widgetAdded, stacked_layout, [callback, userdata](int value) {
     callback(userdata, value);
   });
+#else
+  (void)stacked_layout;
+  (void)callback;
+  (void)userdata;
+#endif
 }
 
 int qt6cr_abstract_scroll_area_vertical_scroll_bar_policy(qt6cr_handle_t handle) {

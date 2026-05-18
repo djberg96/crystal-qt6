@@ -3831,6 +3831,7 @@ int qt6cr_stacked_widget_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_stacked_widget_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_stacked_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 void qt6cr_stacked_widget_on_widget_removed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+bool qt6cr_stacked_widget_widget_added_available(void);
 void qt6cr_stacked_widget_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_stacked_layout_create(qt6cr_handle_t parent);
@@ -3846,6 +3847,7 @@ int qt6cr_stacked_layout_stacking_mode(qt6cr_handle_t handle);
 void qt6cr_stacked_layout_set_stacking_mode(qt6cr_handle_t handle, int value);
 void qt6cr_stacked_layout_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 void qt6cr_stacked_layout_on_widget_removed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+bool qt6cr_stacked_layout_widget_added_available(void);
 void qt6cr_stacked_layout_on_widget_added(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_scroll_area_create(qt6cr_handle_t parent);

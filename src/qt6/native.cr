@@ -3797,6 +3797,7 @@ module Qt6
     fun qt6cr_stacked_widget_remove_widget = qt6cr_stacked_widget_remove_widget(handle : Handle, widget : Handle)
     fun qt6cr_stacked_widget_on_current_index_changed = qt6cr_stacked_widget_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_stacked_widget_on_widget_removed = qt6cr_stacked_widget_on_widget_removed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_stacked_widget_widget_added_available = qt6cr_stacked_widget_widget_added_available : Bool
     fun qt6cr_stacked_widget_on_widget_added = qt6cr_stacked_widget_on_widget_added(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_stacked_layout_create = qt6cr_stacked_layout_create(parent : Handle) : Handle
@@ -3812,6 +3813,7 @@ module Qt6
     fun qt6cr_stacked_layout_set_stacking_mode = qt6cr_stacked_layout_set_stacking_mode(handle : Handle, value : LibC::Int)
     fun qt6cr_stacked_layout_on_current_index_changed = qt6cr_stacked_layout_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_stacked_layout_on_widget_removed = qt6cr_stacked_layout_on_widget_removed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_stacked_layout_widget_added_available = qt6cr_stacked_layout_widget_added_available : Bool
     fun qt6cr_stacked_layout_on_widget_added = qt6cr_stacked_layout_on_widget_added(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_scroll_area_create = qt6cr_scroll_area_create(parent : Handle) : Handle

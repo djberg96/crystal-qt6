@@ -352,7 +352,11 @@ describe Qt6 do
     stacked_layout.widget(1).not_nil!.to_unsafe.should eq(second_page.to_unsafe)
     stacked_layout.stacking_mode.should eq(Qt6::StackedLayoutStackingMode::StackAll)
     stacked_indices.should contain(2)
-    stacked_added.should eq([0, 1, 1])
+    if Qt6::StackedLayout.widget_added_available?
+      stacked_added.should eq([0, 1, 1])
+    else
+      stacked_added.should be_empty
+    end
     stacked_removed.should eq([1])
 
     progress_bar.release
@@ -1491,7 +1495,11 @@ describe Qt6 do
     stack.current_index.should eq(2)
     stack.current_widget.not_nil!.to_unsafe.should eq(browser.to_unsafe)
     stack_indices.last.should eq(2)
-    stack_added.should eq([0, 1, 1])
+    if Qt6::StackedWidget.widget_added_available?
+      stack_added.should eq([0, 1, 1])
+    else
+      stack_added.should be_empty
+    end
     stack.remove_widget(details_page)
     stack_removed.should eq([1])
     stack.remove_widget(info_page)
