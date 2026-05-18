@@ -1,9 +1,31 @@
 module Qt6
   # Wraps `QSplashScreen`.
   class SplashScreen < Widget
-    # Creates a splash screen from a pixmap.
-    def initialize(pixmap : QPixmap)
-      super(LibQt6.qt6cr_splash_screen_create(pixmap.to_unsafe), true)
+    @message_changed : Signal(String) = Signal(String).new
+    @message_changed_userdata : LibQt6::Handle = Pointer(Void).null
+
+    # Signal emitted whenever the displayed splash message changes.
+    getter message_changed : Signal(String)
+
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
+    # Creates a splash screen from an optional pixmap.
+    def initialize(pixmap : QPixmap? = nil)
+      super(LibQt6.qt6cr_splash_screen_create(pixmap.try(&.to_unsafe) || Pointer(Void).null), true)
+      register_callbacks
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
+      register_callbacks
+    end
+
+    private def register_callbacks : Nil
+      @message_changed = Signal(String).new
+      @message_changed_userdata = Box.box(self)
+      LibQt6.qt6cr_splash_screen_on_message_changed(to_unsafe, MESSAGE_CHANGED_TRAMPOLINE, @message_changed_userdata)
     end
 
     # Returns the current splash pixmap.
@@ -15,6 +37,12 @@ module Qt6
     def pixmap=(value : QPixmap) : QPixmap
       LibQt6.qt6cr_splash_screen_set_pixmap(to_unsafe, value.to_unsafe)
       value
+    end
+
+    # Qt-style alias for `pixmap=`.
+    def set_pixmap(value : QPixmap) : self
+      self.pixmap = value
+      self
     end
 
     # Returns the currently displayed message text.
@@ -33,6 +61,12 @@ module Qt6
       message
     end
 
+    # Registers a block to run when the displayed message changes.
+    def on_message_changed(&block : String ->) : self
+      @message_changed.connect { |value| block.call(value) }
+      self
+    end
+
     # Clears the current splash message.
     def clear_message : self
       LibQt6.qt6cr_splash_screen_clear_message(to_unsafe)
@@ -43,6 +77,14 @@ module Qt6
     def finish(widget : Widget) : Widget
       LibQt6.qt6cr_splash_screen_finish(to_unsafe, widget.to_unsafe)
       widget
+    end
+
+    protected def emit_message_changed(message : UInt8*) : Nil
+      @message_changed.emit(Qt6.copy_string(message))
+    end
+
+    private MESSAGE_CHANGED_TRAMPOLINE = ->(userdata : Void*, message : UInt8*) do
+      Box(SplashScreen).unbox(userdata).emit_message_changed(message)
     end
   end
 end

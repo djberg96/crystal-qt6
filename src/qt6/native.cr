@@ -1140,6 +1140,7 @@ module Qt6
     fun qt6cr_splash_screen_show_message = qt6cr_splash_screen_show_message(handle : Handle, message : UInt8*, alignment : LibC::Int, color : ColorValue)
     fun qt6cr_splash_screen_clear_message = qt6cr_splash_screen_clear_message(handle : Handle)
     fun qt6cr_splash_screen_finish = qt6cr_splash_screen_finish(handle : Handle, widget : Handle)
+    fun qt6cr_splash_screen_on_message_changed = qt6cr_splash_screen_on_message_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
 
     fun qt6cr_model_index_create = qt6cr_model_index_create : Handle
     fun qt6cr_model_index_destroy = qt6cr_model_index_destroy(handle : Handle)

@@ -1184,6 +1184,7 @@ char *qt6cr_splash_screen_message(qt6cr_handle_t handle);
 void qt6cr_splash_screen_show_message(qt6cr_handle_t handle, const char *message, int alignment, qt6cr_color_t color);
 void qt6cr_splash_screen_clear_message(qt6cr_handle_t handle);
 void qt6cr_splash_screen_finish(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_splash_screen_on_message_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_model_index_create(void);
 void qt6cr_model_index_destroy(qt6cr_handle_t handle);

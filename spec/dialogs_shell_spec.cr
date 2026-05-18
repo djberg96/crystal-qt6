@@ -386,15 +386,20 @@ describe Qt6 do
     splash_image.fill(Qt6::Color.new(250, 240, 220))
     splash_image.set_pixel_color(2, 2, Qt6::Color.new(30, 90, 180))
     splash = Qt6::SplashScreen.new(splash_image.to_pixmap)
+    mirrored_splash = Qt6::SplashScreen.wrap(splash.to_unsafe)
     replacement_pixmap = Qt6::QPixmap.new(12, 12)
     replacement_pixmap.fill(Qt6::Color.new(18, 36, 72))
+    splash_messages = [] of String
 
     splash.pixmap.null?.should be_false
+    mirrored_splash.pixmap.null?.should be_false
+    splash.on_message_changed { |message| splash_messages << message }
     splash.show
     splash.show_message("Booting", Qt6::AlignmentFlag::Center, Qt6::Color.new(12, 34, 56))
     application.process_events
     splash.message.should eq("Booting")
-    splash.pixmap = replacement_pixmap
+    splash_messages.last.should eq("Booting")
+    splash.set_pixmap(replacement_pixmap).to_unsafe.should eq(splash.to_unsafe)
     splash.pixmap.size.should eq(Qt6::Size.new(12, 12))
     window.show
     application.process_events
@@ -403,6 +408,7 @@ describe Qt6 do
     splash.visible?.should be_false
     splash.clear_message
     splash.message.should eq("")
+    splash_messages.last.should eq("")
 
     splash.release
     window.release

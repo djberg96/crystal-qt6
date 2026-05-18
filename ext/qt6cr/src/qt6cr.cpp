@@ -9360,6 +9360,18 @@ void qt6cr_splash_screen_finish(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   }
 }
 
+void qt6cr_splash_screen_on_message_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *splash = as_splash_screen(handle);
+
+  if (splash == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(splash, &QSplashScreen::messageChanged, splash, [callback, userdata](const QString &message) {
+    callback(userdata, duplicate_string(message));
+  });
+}
+
 qt6cr_handle_t qt6cr_model_index_create(void) {
   return new QModelIndex();
 }
