@@ -1888,21 +1888,36 @@ describe Qt6 do
     main = Qt6::MainWindow.new
     status_bar = main.status_bar
     transient = Qt6::Label.new("Selection: 0")
+    inserted = Qt6::Label.new("Mode: Paint")
     permanent = Qt6::Label.new("Ready")
+    inserted_permanent = Qt6::Label.new("Caps")
+    messages = [] of String
+
+    status_bar.on_message_changed do |value|
+      messages << value
+    end
 
     status_bar.add_widget(transient)
+    status_bar.insert_widget(0, inserted).should eq(0)
     status_bar.add_permanent_widget(permanent)
+    status_bar.add_permanent_widget(inserted_permanent)
     status_bar.show_message("Working")
 
     main.show
     application.process_events
 
     transient.visible?.should be_true
+    inserted.visible?.should be_true
     permanent.visible?.should be_true
+    inserted_permanent.visible?.should be_true
     status_bar.current_message.should eq("Working")
     status_bar.size_grip_enabled?.should be_true
+    messages.should contain("Working")
 
-    status_bar.size_grip_enabled = false
+    status_bar.set_message("Ready", 150)
+    status_bar.current_message.should eq("Ready")
+
+    status_bar.set_size_grip_enabled(false)
     status_bar.size_grip_enabled?.should be_false
 
     status_bar.remove_widget(transient)
@@ -1910,6 +1925,12 @@ describe Qt6 do
     transient.visible?.should be_false
 
     permanent.text.should eq("Ready")
+    inserted.text.should eq("Mode: Paint")
+    inserted_permanent.text.should eq("Caps")
+
+    status_bar.clear_message
+    status_bar.current_message.should eq("")
+    messages.last?.should eq("")
 
     main.release
   end

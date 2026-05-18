@@ -20516,6 +20516,17 @@ void qt6cr_status_bar_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, i
   }
 }
 
+int qt6cr_status_bar_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, int stretch) {
+  auto *status_bar = as_status_bar(handle);
+  auto *child = as_widget(widget);
+
+  if (status_bar == nullptr || child == nullptr) {
+    return -1;
+  }
+
+  return status_bar->insertWidget(index, child, stretch);
+}
+
 void qt6cr_status_bar_add_permanent_widget(qt6cr_handle_t handle, qt6cr_handle_t widget, int stretch) {
   auto *status_bar = as_status_bar(handle);
   auto *child = as_widget(widget);
@@ -20523,6 +20534,17 @@ void qt6cr_status_bar_add_permanent_widget(qt6cr_handle_t handle, qt6cr_handle_t
   if (status_bar != nullptr && child != nullptr) {
     status_bar->addPermanentWidget(child, stretch);
   }
+}
+
+int qt6cr_status_bar_insert_permanent_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget, int stretch) {
+  auto *status_bar = as_status_bar(handle);
+  auto *child = as_widget(widget);
+
+  if (status_bar == nullptr || child == nullptr) {
+    return -1;
+  }
+
+  return status_bar->insertPermanentWidget(index, child, stretch);
 }
 
 void qt6cr_status_bar_remove_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
@@ -20545,6 +20567,19 @@ void qt6cr_status_bar_set_size_grip_enabled(qt6cr_handle_t handle, bool value) {
   if (status_bar != nullptr) {
     status_bar->setSizeGripEnabled(value);
   }
+}
+
+void qt6cr_status_bar_on_message_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *status_bar = as_status_bar(handle);
+
+  if (status_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(status_bar, &QStatusBar::messageChanged, status_bar, [callback, userdata](const QString &message) {
+    const auto utf8 = message.toUtf8();
+    callback(userdata, utf8.constData());
+  });
 }
 
 qt6cr_handle_t qt6cr_event_widget_create(qt6cr_handle_t parent) {
