@@ -51,6 +51,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added a shared `QStyleOptionComplex` wrapper with typed `sub_controls` and `active_sub_controls`, plus a `StyleSubControl` flags enum for complex control style options.
 - Added `QStyleOptionButton` with typed button-feature flags plus text, icon, and icon-size helpers on top of the shared `QStyleOption` base.
 - Added `QStyleOptionComboBox` with editable, popup-rect, frame, current-text/icon, icon-size, and text-alignment helpers on top of the shared `QStyleOption` base.
+- Added `QStyleOptionDockWidget` with title and closable/movable/floatable/vertical-title-bar helpers, plus dock-widget-specific style-option initialization from a live `QDockWidget`.
 - Added `QStyleHintReturn`, `QStyleHintReturnMask`, and `QStyleHintReturnVariant` wrappers with typed base, region, and variant payload helpers for style-hint result plumbing.
 
 ## [0.10.0] - 2026-05-10

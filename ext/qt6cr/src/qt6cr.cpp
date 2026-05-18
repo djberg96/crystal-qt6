@@ -488,6 +488,16 @@ class EventWidget final : public QWidget {
   }
 };
 
+class CrystalDockWidget final : public QDockWidget {
+ public:
+  explicit CrystalDockWidget(const QString &title, QWidget *parent = nullptr)
+      : QDockWidget(title, parent) {}
+
+  void initStyleOptionBridge(QStyleOptionDockWidget *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalAbstractGraphicsShapeItem final : public QAbstractGraphicsShapeItem {
  public:
   explicit CrystalAbstractGraphicsShapeItem(QGraphicsItem *parent = nullptr)
@@ -6394,6 +6404,79 @@ void qt6cr_style_option_combo_box_set_text_alignment(qt6cr_handle_t handle, int 
 
   if (option != nullptr) {
     option->textAlignment = Qt::Alignment(alignment);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_dock_widget_create(void) {
+  return new QStyleOptionDockWidget();
+}
+
+void qt6cr_style_option_dock_widget_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionDockWidget *>(handle);
+}
+
+char *qt6cr_style_option_dock_widget_title(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->title);
+}
+
+void qt6cr_style_option_dock_widget_set_title(qt6cr_handle_t handle, const char *title) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+
+  if (option != nullptr) {
+    option->title = QString::fromUtf8(title == nullptr ? "" : title);
+  }
+}
+
+bool qt6cr_style_option_dock_widget_closable(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+  return option != nullptr && option->closable;
+}
+
+void qt6cr_style_option_dock_widget_set_closable(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+
+  if (option != nullptr) {
+    option->closable = value;
+  }
+}
+
+bool qt6cr_style_option_dock_widget_movable(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+  return option != nullptr && option->movable;
+}
+
+void qt6cr_style_option_dock_widget_set_movable(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+
+  if (option != nullptr) {
+    option->movable = value;
+  }
+}
+
+bool qt6cr_style_option_dock_widget_floatable(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+  return option != nullptr && option->floatable;
+}
+
+void qt6cr_style_option_dock_widget_set_floatable(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+
+  if (option != nullptr) {
+    option->floatable = value;
+  }
+}
+
+bool qt6cr_style_option_dock_widget_vertical_title_bar(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+  return option != nullptr && option->verticalTitleBar;
+}
+
+void qt6cr_style_option_dock_widget_set_vertical_title_bar(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionDockWidget *>(handle);
+
+  if (option != nullptr) {
+    option->verticalTitleBar = value;
   }
 }
 
@@ -19785,7 +19868,7 @@ void qt6cr_input_dialog_on_double_value_selected(qt6cr_handle_t handle, qt6cr_do
 }
 
 qt6cr_handle_t qt6cr_dock_widget_create(qt6cr_handle_t parent, const char *title) {
-  return new QDockWidget(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+  return new CrystalDockWidget(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
 
 qt6cr_handle_t qt6cr_dock_widget_widget(qt6cr_handle_t handle) {
@@ -19863,6 +19946,15 @@ bool qt6cr_dock_widget_is_area_allowed(qt6cr_handle_t handle, int area) {
 qt6cr_handle_t qt6cr_dock_widget_toggle_view_action(qt6cr_handle_t handle) {
   auto *dock = as_dock_widget(handle);
   return dock == nullptr ? nullptr : static_cast<qt6cr_handle_t>(dock->toggleViewAction());
+}
+
+void qt6cr_dock_widget_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *dock = static_cast<CrystalDockWidget *>(handle);
+  auto *option = static_cast<QStyleOptionDockWidget *>(option_handle);
+
+  if (dock != nullptr && option != nullptr) {
+    dock->initStyleOptionBridge(option);
+  }
 }
 
 void qt6cr_dock_widget_on_features_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {

@@ -770,6 +770,45 @@ describe Qt6 do
     end
   end
 
+  it "supports dock-widget style options" do
+    application = app
+    dock = Qt6::DockWidget.new("Layers")
+    option = Qt6::StyleOptionDockWidget.new
+
+    begin
+      dock.features = Qt6::DockWidgetFeature::DockWidgetClosable |
+                      Qt6::DockWidgetFeature::DockWidgetMovable |
+                      Qt6::DockWidgetFeature::DockWidgetFloatable |
+                      Qt6::DockWidgetFeature::DockWidgetVerticalTitleBar
+      dock.resize(164, 34)
+      dock.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::DockWidget)
+      option.set_title("Inspector").to_unsafe.should eq(option.to_unsafe)
+      option.title.should eq("Inspector")
+      option.set_closable(true).to_unsafe.should eq(option.to_unsafe)
+      option.set_movable(true).to_unsafe.should eq(option.to_unsafe)
+      option.set_floatable(true).to_unsafe.should eq(option.to_unsafe)
+      option.set_vertical_title_bar(true).to_unsafe.should eq(option.to_unsafe)
+      option.closable?.should be_true
+      option.movable?.should be_true
+      option.floatable?.should be_true
+      option.vertical_title_bar?.should be_true
+
+      option.init_from(dock)
+      option.title.should eq("Layers")
+      option.closable?.should be_true
+      option.movable?.should be_true
+      option.floatable?.should be_true
+      option.vertical_title_bar?.should be_true
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      option.release
+      dock.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

@@ -687,6 +687,18 @@ module Qt6
     fun qt6cr_style_option_combo_box_set_icon_size = qt6cr_style_option_combo_box_set_icon_size(handle : Handle, size : SizeValue)
     fun qt6cr_style_option_combo_box_text_alignment = qt6cr_style_option_combo_box_text_alignment(handle : Handle) : LibC::Int
     fun qt6cr_style_option_combo_box_set_text_alignment = qt6cr_style_option_combo_box_set_text_alignment(handle : Handle, alignment : LibC::Int)
+    fun qt6cr_style_option_dock_widget_create = qt6cr_style_option_dock_widget_create : Handle
+    fun qt6cr_style_option_dock_widget_destroy = qt6cr_style_option_dock_widget_destroy(handle : Handle)
+    fun qt6cr_style_option_dock_widget_title = qt6cr_style_option_dock_widget_title(handle : Handle) : UInt8*
+    fun qt6cr_style_option_dock_widget_set_title = qt6cr_style_option_dock_widget_set_title(handle : Handle, title : UInt8*)
+    fun qt6cr_style_option_dock_widget_closable = qt6cr_style_option_dock_widget_closable(handle : Handle) : Bool
+    fun qt6cr_style_option_dock_widget_set_closable = qt6cr_style_option_dock_widget_set_closable(handle : Handle, value : Bool)
+    fun qt6cr_style_option_dock_widget_movable = qt6cr_style_option_dock_widget_movable(handle : Handle) : Bool
+    fun qt6cr_style_option_dock_widget_set_movable = qt6cr_style_option_dock_widget_set_movable(handle : Handle, value : Bool)
+    fun qt6cr_style_option_dock_widget_floatable = qt6cr_style_option_dock_widget_floatable(handle : Handle) : Bool
+    fun qt6cr_style_option_dock_widget_set_floatable = qt6cr_style_option_dock_widget_set_floatable(handle : Handle, value : Bool)
+    fun qt6cr_style_option_dock_widget_vertical_title_bar = qt6cr_style_option_dock_widget_vertical_title_bar(handle : Handle) : Bool
+    fun qt6cr_style_option_dock_widget_set_vertical_title_bar = qt6cr_style_option_dock_widget_set_vertical_title_bar(handle : Handle, value : Bool)
     fun qt6cr_style_hint_return_create = qt6cr_style_hint_return_create(version : LibC::Int, type : LibC::Int) : Handle
     fun qt6cr_style_hint_return_destroy = qt6cr_style_hint_return_destroy(handle : Handle)
     fun qt6cr_style_hint_return_version = qt6cr_style_hint_return_version(handle : Handle) : LibC::Int
@@ -2672,6 +2684,7 @@ module Qt6
     fun qt6cr_dock_widget_set_allowed_areas = qt6cr_dock_widget_set_allowed_areas(handle : Handle, value : LibC::Int)
     fun qt6cr_dock_widget_is_area_allowed = qt6cr_dock_widget_is_area_allowed(handle : Handle, area : LibC::Int) : Bool
     fun qt6cr_dock_widget_toggle_view_action = qt6cr_dock_widget_toggle_view_action(handle : Handle) : Handle
+    fun qt6cr_dock_widget_init_style_option = qt6cr_dock_widget_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_dock_widget_on_features_changed = qt6cr_dock_widget_on_features_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_dock_widget_on_top_level_changed = qt6cr_dock_widget_on_top_level_changed(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
     fun qt6cr_dock_widget_on_allowed_areas_changed = qt6cr_dock_widget_on_allowed_areas_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
