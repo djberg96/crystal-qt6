@@ -1188,6 +1188,45 @@ describe Qt6 do
     delegate_editor.try(&.release)
     string_editor.try(&.release)
     int_editor.try(&.release)
+
+    standard_factory = Qt6::QItemEditorFactory.new
+    standard_string_creator = Qt6::QStandardItemEditorCreator.new
+    standard_bool_creator = Qt6::QStandardItemEditorCreator.new
+
+    standard_string_creator.value_property_name.should eq("")
+    standard_bool_creator.value_property_name.should eq("")
+
+    standard_string_creator.on_create_widget do |parent|
+      Qt6::LineEdit.new(parent: parent)
+    end
+
+    standard_bool_creator.on_create_widget do |parent|
+      Qt6::CheckBox.new(parent: parent)
+    end
+
+    standard_line_edit = standard_string_creator.create_widget(host)
+    standard_line_edit.should be_a(Qt6::LineEdit)
+    standard_string_creator.value_property_name.should eq("text")
+
+    standard_check_box = standard_bool_creator.create_widget(host)
+    standard_check_box.should be_a(Qt6::CheckBox)
+    standard_bool_creator.value_property_name.should eq("checked")
+
+    standard_factory.register_editor_for("terrain", standard_string_creator)
+    standard_factory.register_editor_for(true, standard_bool_creator)
+    standard_factory.value_property_name_for("terrain").should eq("text")
+    standard_factory.value_property_name_for(true).should eq("checked")
+
+    standard_string_editor = standard_factory.create_editor_for("terrain", host)
+    standard_string_editor.should be_a(Qt6::LineEdit)
+    standard_bool_editor = standard_factory.create_editor_for(true, host)
+    standard_bool_editor.should be_a(Qt6::CheckBox)
+
+    standard_string_editor.try(&.release)
+    standard_bool_editor.try(&.release)
+    standard_line_edit.try(&.release)
+    standard_check_box.try(&.release)
+    standard_factory.release
     index.release
     host.release
   end

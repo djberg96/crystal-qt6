@@ -1419,6 +1419,7 @@ module Qt6
     fun qt6cr_item_editor_creator_create_widget = qt6cr_item_editor_creator_create_widget(handle : Handle, parent : Handle) : Handle
     fun qt6cr_item_editor_creator_value_property_name = qt6cr_item_editor_creator_value_property_name(handle : Handle) : UInt8*
     fun qt6cr_item_editor_creator_set_value_property_name = qt6cr_item_editor_creator_set_value_property_name(handle : Handle, value_property_name : UInt8*)
+    fun qt6cr_widget_user_property_name = qt6cr_widget_user_property_name(handle : Handle) : UInt8*
     fun qt6cr_item_editor_factory_create_editor = qt6cr_item_editor_factory_create_editor(handle : Handle, user_type : LibC::Int, parent : Handle) : Handle
     fun qt6cr_item_editor_factory_value_property_name = qt6cr_item_editor_factory_value_property_name(handle : Handle, user_type : LibC::Int) : UInt8*
     fun qt6cr_item_editor_factory_register_editor = qt6cr_item_editor_factory_register_editor(handle : Handle, user_type : LibC::Int, creator : Handle)

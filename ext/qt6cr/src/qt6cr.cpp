@@ -110,6 +110,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMetaObject>
+#include <QMetaProperty>
 #include <QMimeData>
 #include <QMdiArea>
 #include <QMdiSubWindow>
@@ -11499,6 +11500,17 @@ void qt6cr_item_editor_creator_set_value_property_name(qt6cr_handle_t handle, co
   if (creator != nullptr) {
     creator->property_name = QByteArray(value_property_name == nullptr ? "" : value_property_name);
   }
+}
+
+char *qt6cr_widget_user_property_name(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget == nullptr) {
+    return duplicate_string("");
+  }
+
+  const auto property = widget->metaObject()->userProperty();
+  return duplicate_string(property.isValid() ? QString::fromUtf8(property.name()) : QString());
 }
 
 qt6cr_handle_t qt6cr_item_editor_factory_create_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t parent) {

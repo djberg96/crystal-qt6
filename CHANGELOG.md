@@ -44,6 +44,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QSpinBox` with `text_changed`, `step_type`, `display_integer_base`, and concrete handle wrapping for fuller integer spin-box parity with Qt.
 - Expanded `QSlider` with tick-position/tick-interval control, size-hint helpers, concrete handle wrapping, and Qt-style setter aliases on top of the shared abstract-slider surface.
 - Expanded `QStackedLayout` and `QStackedWidget` with page insertion, current-widget helpers, stacking-mode and widget-added/widget-removed signals, plus stronger live coverage for stacked inspector and browser workflows.
+- Added `QStandardItemEditorCreator` with callback-backed editor creation and automatic Qt user-property discovery for cleaner `QItemEditorFactory` registration of standard editor widgets.
 
 ## [0.10.0] - 2026-05-10
 

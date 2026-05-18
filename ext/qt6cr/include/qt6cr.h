@@ -1464,6 +1464,7 @@ void qt6cr_item_editor_creator_set_create_widget_callback(qt6cr_handle_t handle,
 qt6cr_handle_t qt6cr_item_editor_creator_create_widget(qt6cr_handle_t handle, qt6cr_handle_t parent);
 char *qt6cr_item_editor_creator_value_property_name(qt6cr_handle_t handle);
 void qt6cr_item_editor_creator_set_value_property_name(qt6cr_handle_t handle, const char *value_property_name);
+char *qt6cr_widget_user_property_name(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_item_editor_factory_create_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t parent);
 char *qt6cr_item_editor_factory_value_property_name(qt6cr_handle_t handle, int user_type);
 void qt6cr_item_editor_factory_register_editor(qt6cr_handle_t handle, int user_type, qt6cr_handle_t creator);
