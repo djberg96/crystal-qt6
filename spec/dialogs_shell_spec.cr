@@ -639,8 +639,10 @@ describe Qt6 do
     pixmap = Qt6::QPixmap.new(12, 7)
     editing_finished = 0
     return_pressed = 0
+    spin_text_changes = [] of String
     double_text_changes = [] of String
 
+    spin_box.on_text_changed { |value| spin_text_changes << value }
     double_spin_box.on_text_changed { |value| double_text_changes << value }
     spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::NoButtons
     spin_box.read_only = true
@@ -654,6 +656,7 @@ describe Qt6 do
     spin_box.prefix = "Zoom "
     spin_box.suffix = "%"
     spin_box.special_value_text = "Auto"
+    spin_box.step_type = Qt6::AbstractSpinBoxStepType::AdaptiveDecimalStepType
     spin_box.set_range(0, 100)
     spin_box.value = 25
     double_spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::PlusMinus
@@ -708,10 +711,12 @@ describe Qt6 do
     spin_box.prefix.should eq("Zoom ")
     spin_box.suffix.should eq("%")
     spin_box.special_value_text.should eq("Auto")
+    spin_box.step_type.should eq(Qt6::AbstractSpinBoxStepType::AdaptiveDecimalStepType)
     spin_box.text.should eq("Zoom 25%")
     spin_box.clean_text.should eq("25")
     spin_box.line_edit.should be_a(Qt6::LineEdit)
     spin_box.line_edit.text.should eq("Zoom 25%")
+    spin_text_changes.last.should eq("Zoom 25%")
     editing_finished.should eq(1)
     return_pressed.should eq(1)
     double_spin_box.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::PlusMinus)
@@ -730,6 +735,14 @@ describe Qt6 do
     date_time_edit.line_edit.should be_a(Qt6::LineEdit)
     date_time_edit.text.should eq("2026/04/14 09:30:15")
     date_time_edit.line_edit.text.should eq(date_time_edit.text)
+
+    spin_box.prefix = ""
+    spin_box.suffix = ""
+    spin_box.display_integer_base = 16
+    spin_box.value = 31
+    spin_box.display_integer_base.should eq(16)
+    spin_box.text.downcase.should eq("1f")
+    spin_box.clean_text.downcase.should eq("1f")
 
     rect_f.should eq(Qt6::RectF.new(1.0, 2.0, 30.0, 40.0))
     rect_f.to_rect.should eq(rect)

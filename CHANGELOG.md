@@ -39,6 +39,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QSizeGrip` with a Qt-style `set_visible` alias and stronger live coverage for dialog-hosted visibility behavior.
 - Expanded `QSizePolicy` beyond the basic policy enum with control-type flags, a full value wrapper for stretch/retain-size/transposition state, and whole-policy get/set support on widgets and graphics layout objects.
 - Added `QSpacerItem` bindings with size-policy access, `change_size`, shared layout-item geometry helpers, spacer detection from `QLayoutItem`, and first-class spacer insertion support in `QBoxLayout` and `QGridLayout`.
+- Expanded `QSpinBox` with `text_changed`, `step_type`, `display_integer_base`, and concrete handle wrapping for fuller integer spin-box parity with Qt.
 - Expanded `QSlider` with tick-position/tick-interval control, size-hint helpers, concrete handle wrapping, and Qt-style setter aliases on top of the shared abstract-slider surface.
 
 ## [0.10.0] - 2026-05-10
