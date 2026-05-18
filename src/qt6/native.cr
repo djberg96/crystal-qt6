@@ -151,6 +151,11 @@ module Qt6
       field_item : Handle
     end
 
+    struct SplitterRangeValue
+      minimum : LibC::Int
+      maximum : LibC::Int
+    end
+
     struct GradientStopValue
       position : Float64
       color : ColorValue
@@ -3825,6 +3830,8 @@ module Qt6
 
     fun qt6cr_splitter_create = qt6cr_splitter_create(parent : Handle, orientation : LibC::Int) : Handle
     fun qt6cr_splitter_add_widget = qt6cr_splitter_add_widget(handle : Handle, widget : Handle)
+    fun qt6cr_splitter_insert_widget = qt6cr_splitter_insert_widget(handle : Handle, index : LibC::Int, widget : Handle)
+    fun qt6cr_splitter_replace_widget = qt6cr_splitter_replace_widget(handle : Handle, index : LibC::Int, widget : Handle) : Handle
     fun qt6cr_splitter_widget = qt6cr_splitter_widget(handle : Handle, index : LibC::Int) : Handle
     fun qt6cr_splitter_count = qt6cr_splitter_count(handle : Handle) : LibC::Int
     fun qt6cr_splitter_orientation = qt6cr_splitter_orientation(handle : Handle) : LibC::Int
@@ -3833,10 +3840,28 @@ module Qt6
     fun qt6cr_splitter_set_opaque_resize = qt6cr_splitter_set_opaque_resize(handle : Handle, value : Bool)
     fun qt6cr_splitter_children_collapsible = qt6cr_splitter_children_collapsible(handle : Handle) : Bool
     fun qt6cr_splitter_set_children_collapsible = qt6cr_splitter_set_children_collapsible(handle : Handle, value : Bool)
+    fun qt6cr_splitter_set_collapsible = qt6cr_splitter_set_collapsible(handle : Handle, index : LibC::Int, value : Bool)
+    fun qt6cr_splitter_is_collapsible = qt6cr_splitter_is_collapsible(handle : Handle, index : LibC::Int) : Bool
+    fun qt6cr_splitter_refresh = qt6cr_splitter_refresh(handle : Handle)
+    fun qt6cr_splitter_size_hint = qt6cr_splitter_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_splitter_minimum_size_hint = qt6cr_splitter_minimum_size_hint(handle : Handle) : SizeValue
     fun qt6cr_splitter_handle_width = qt6cr_splitter_handle_width(handle : Handle) : LibC::Int
     fun qt6cr_splitter_set_handle_width = qt6cr_splitter_set_handle_width(handle : Handle, value : LibC::Int)
     fun qt6cr_splitter_sizes = qt6cr_splitter_sizes(handle : Handle) : IntArrayValue
     fun qt6cr_splitter_set_sizes = qt6cr_splitter_set_sizes(handle : Handle, sizes : Int32*, size : LibC::Int)
+    fun qt6cr_splitter_save_state = qt6cr_splitter_save_state(handle : Handle) : Handle
+    fun qt6cr_splitter_restore_state = qt6cr_splitter_restore_state(handle : Handle, state : Handle) : Bool
+    fun qt6cr_splitter_index_of = qt6cr_splitter_index_of(handle : Handle, widget : Handle) : LibC::Int
+    fun qt6cr_splitter_get_range = qt6cr_splitter_get_range(handle : Handle, index : LibC::Int) : SplitterRangeValue
+    fun qt6cr_splitter_handle = qt6cr_splitter_handle(handle : Handle, index : LibC::Int) : Handle
+    fun qt6cr_splitter_set_stretch_factor = qt6cr_splitter_set_stretch_factor(handle : Handle, index : LibC::Int, stretch : LibC::Int)
+    fun qt6cr_splitter_on_splitter_moved = qt6cr_splitter_on_splitter_moved(handle : Handle, callback : (Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_splitter_emit_splitter_moved = qt6cr_splitter_emit_splitter_moved(handle : Handle, pos : LibC::Int, index : LibC::Int)
+    fun qt6cr_splitter_handle_orientation = qt6cr_splitter_handle_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_splitter_handle_set_orientation = qt6cr_splitter_handle_set_orientation(handle : Handle, orientation : LibC::Int)
+    fun qt6cr_splitter_handle_opaque_resize = qt6cr_splitter_handle_opaque_resize(handle : Handle) : Bool
+    fun qt6cr_splitter_handle_splitter = qt6cr_splitter_handle_splitter(handle : Handle) : Handle
+    fun qt6cr_splitter_handle_size_hint = qt6cr_splitter_handle_size_hint(handle : Handle) : SizeValue
 
     fun qt6cr_dialog_button_box_create = qt6cr_dialog_button_box_create(parent : Handle) : Handle
     fun qt6cr_dialog_button_box_create_with_orientation = qt6cr_dialog_button_box_create_with_orientation(parent : Handle, orientation : LibC::Int) : Handle

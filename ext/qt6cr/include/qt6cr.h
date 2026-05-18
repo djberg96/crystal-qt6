@@ -149,6 +149,11 @@ typedef struct {
 } qt6cr_form_layout_take_row_result_t;
 
 typedef struct {
+	int minimum;
+	int maximum;
+} qt6cr_splitter_range_t;
+
+typedef struct {
 	double position;
 	qt6cr_color_t color;
 } qt6cr_gradient_stop_t;
@@ -3861,6 +3866,8 @@ void qt6cr_abstract_scroll_area_set_size_adjust_policy(qt6cr_handle_t handle, in
 
 qt6cr_handle_t qt6cr_splitter_create(qt6cr_handle_t parent, int orientation);
 void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_splitter_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_splitter_replace_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget);
 qt6cr_handle_t qt6cr_splitter_widget(qt6cr_handle_t handle, int index);
 int qt6cr_splitter_count(qt6cr_handle_t handle);
 int qt6cr_splitter_orientation(qt6cr_handle_t handle);
@@ -3869,10 +3876,28 @@ bool qt6cr_splitter_opaque_resize(qt6cr_handle_t handle);
 void qt6cr_splitter_set_opaque_resize(qt6cr_handle_t handle, bool value);
 bool qt6cr_splitter_children_collapsible(qt6cr_handle_t handle);
 void qt6cr_splitter_set_children_collapsible(qt6cr_handle_t handle, bool value);
+void qt6cr_splitter_set_collapsible(qt6cr_handle_t handle, int index, bool value);
+bool qt6cr_splitter_is_collapsible(qt6cr_handle_t handle, int index);
+void qt6cr_splitter_refresh(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_splitter_size_hint(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_splitter_minimum_size_hint(qt6cr_handle_t handle);
 int qt6cr_splitter_handle_width(qt6cr_handle_t handle);
 void qt6cr_splitter_set_handle_width(qt6cr_handle_t handle, int value);
 qt6cr_int_array_t qt6cr_splitter_sizes(qt6cr_handle_t handle);
 void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size);
+qt6cr_handle_t qt6cr_splitter_save_state(qt6cr_handle_t handle);
+bool qt6cr_splitter_restore_state(qt6cr_handle_t handle, qt6cr_handle_t state);
+int qt6cr_splitter_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_splitter_range_t qt6cr_splitter_get_range(qt6cr_handle_t handle, int index);
+qt6cr_handle_t qt6cr_splitter_handle(qt6cr_handle_t handle, int index);
+void qt6cr_splitter_set_stretch_factor(qt6cr_handle_t handle, int index, int stretch);
+void qt6cr_splitter_on_splitter_moved(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata);
+void qt6cr_splitter_emit_splitter_moved(qt6cr_handle_t handle, int pos, int index);
+int qt6cr_splitter_handle_orientation(qt6cr_handle_t handle);
+void qt6cr_splitter_handle_set_orientation(qt6cr_handle_t handle, int orientation);
+bool qt6cr_splitter_handle_opaque_resize(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_splitter_handle_splitter(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_splitter_handle_size_hint(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_dialog_button_box_create_with_orientation(qt6cr_handle_t parent, int orientation);

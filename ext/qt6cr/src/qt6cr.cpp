@@ -2451,6 +2451,10 @@ QSplitter *as_splitter(qt6cr_handle_t handle) {
   return static_cast<QSplitter *>(handle);
 }
 
+QSplitterHandle *as_splitter_handle(qt6cr_handle_t handle) {
+  return static_cast<QSplitterHandle *>(handle);
+}
+
 QLayout *as_layout(qt6cr_handle_t handle) {
   return static_cast<QLayout *>(handle);
 }
@@ -27396,6 +27400,21 @@ void qt6cr_splitter_add_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
   }
 }
 
+void qt6cr_splitter_insert_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
+  auto *splitter = as_splitter(handle);
+  auto *child = as_widget(widget);
+
+  if (splitter != nullptr && child != nullptr) {
+    splitter->insertWidget(index, child);
+  }
+}
+
+qt6cr_handle_t qt6cr_splitter_replace_widget(qt6cr_handle_t handle, int index, qt6cr_handle_t widget) {
+  auto *splitter = as_splitter(handle);
+  auto *child = as_widget(widget);
+  return splitter == nullptr || child == nullptr ? nullptr : splitter->replaceWidget(index, child);
+}
+
 qt6cr_handle_t qt6cr_splitter_widget(qt6cr_handle_t handle, int index) {
   auto *splitter = as_splitter(handle);
   return splitter == nullptr ? nullptr : splitter->widget(index);
@@ -27445,6 +27464,37 @@ void qt6cr_splitter_set_children_collapsible(qt6cr_handle_t handle, bool value) 
   }
 }
 
+void qt6cr_splitter_set_collapsible(qt6cr_handle_t handle, int index, bool value) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->setCollapsible(index, value);
+  }
+}
+
+bool qt6cr_splitter_is_collapsible(qt6cr_handle_t handle, int index) {
+  auto *splitter = as_splitter(handle);
+  return splitter != nullptr && splitter->isCollapsible(index);
+}
+
+void qt6cr_splitter_refresh(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->refresh();
+  }
+}
+
+qt6cr_size_t qt6cr_splitter_size_hint(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? qt6cr_size_t{0, 0} : to_size(splitter->sizeHint());
+}
+
+qt6cr_size_t qt6cr_splitter_minimum_size_hint(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? qt6cr_size_t{0, 0} : to_size(splitter->minimumSizeHint());
+}
+
 int qt6cr_splitter_handle_width(qt6cr_handle_t handle) {
   auto *splitter = as_splitter(handle);
   return splitter == nullptr ? 0 : splitter->handleWidth();
@@ -27478,6 +27528,96 @@ void qt6cr_splitter_set_sizes(qt6cr_handle_t handle, const int *sizes, int size)
   }
 
   splitter->setSizes(values);
+}
+
+qt6cr_handle_t qt6cr_splitter_save_state(qt6cr_handle_t handle) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? new QByteArray() : new QByteArray(splitter->saveState());
+}
+
+bool qt6cr_splitter_restore_state(qt6cr_handle_t handle, qt6cr_handle_t state) {
+  auto *splitter = as_splitter(handle);
+  auto *value = as_qbyte_array(state);
+  return splitter != nullptr && value != nullptr && splitter->restoreState(*value);
+}
+
+int qt6cr_splitter_index_of(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *splitter = as_splitter(handle);
+  auto *child = as_widget(widget);
+  return splitter == nullptr || child == nullptr ? -1 : splitter->indexOf(child);
+}
+
+qt6cr_splitter_range_t qt6cr_splitter_get_range(qt6cr_handle_t handle, int index) {
+  auto *splitter = as_splitter(handle);
+  if (splitter == nullptr) {
+    return qt6cr_splitter_range_t{0, 0};
+  }
+
+  int minimum = 0;
+  int maximum = 0;
+  splitter->getRange(index, &minimum, &maximum);
+  return qt6cr_splitter_range_t{minimum, maximum};
+}
+
+qt6cr_handle_t qt6cr_splitter_handle(qt6cr_handle_t handle, int index) {
+  auto *splitter = as_splitter(handle);
+  return splitter == nullptr ? nullptr : splitter->handle(index);
+}
+
+void qt6cr_splitter_set_stretch_factor(qt6cr_handle_t handle, int index, int stretch) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    splitter->setStretchFactor(index, stretch);
+  }
+}
+
+void qt6cr_splitter_on_splitter_moved(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(splitter, &QSplitter::splitterMoved, splitter, [callback, userdata](int pos, int index) {
+    callback(userdata, pos, index);
+  });
+}
+
+void qt6cr_splitter_emit_splitter_moved(qt6cr_handle_t handle, int pos, int index) {
+  auto *splitter = as_splitter(handle);
+
+  if (splitter != nullptr) {
+    emit splitter->splitterMoved(pos, index);
+  }
+}
+
+int qt6cr_splitter_handle_orientation(qt6cr_handle_t handle) {
+  auto *splitter_handle = as_splitter_handle(handle);
+  return splitter_handle == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(splitter_handle->orientation());
+}
+
+void qt6cr_splitter_handle_set_orientation(qt6cr_handle_t handle, int orientation) {
+  auto *splitter_handle = as_splitter_handle(handle);
+
+  if (splitter_handle != nullptr) {
+    splitter_handle->setOrientation(static_cast<Qt::Orientation>(orientation));
+  }
+}
+
+bool qt6cr_splitter_handle_opaque_resize(qt6cr_handle_t handle) {
+  auto *splitter_handle = as_splitter_handle(handle);
+  return splitter_handle != nullptr && splitter_handle->opaqueResize();
+}
+
+qt6cr_handle_t qt6cr_splitter_handle_splitter(qt6cr_handle_t handle) {
+  auto *splitter_handle = as_splitter_handle(handle);
+  return splitter_handle == nullptr ? nullptr : splitter_handle->splitter();
+}
+
+qt6cr_size_t qt6cr_splitter_handle_size_hint(qt6cr_handle_t handle) {
+  auto *splitter_handle = as_splitter_handle(handle);
+  return splitter_handle == nullptr ? qt6cr_size_t{0, 0} : to_size(splitter_handle->sizeHint());
 }
 
 qt6cr_handle_t qt6cr_dialog_button_box_create(qt6cr_handle_t parent) {

@@ -791,10 +791,13 @@ describe Qt6 do
     double_values = [] of Float64
     group_states = [] of Bool
     tab_indices = [] of Int32
+    splitter_moves = [] of Tuple(Int32, Int32)
 
     splitter = Qt6::Splitter.new(Qt6::Orientation::Horizontal)
     scroll_area = Qt6::ScrollArea.new
     tab_widget = Qt6::TabWidget.new
+    outline_page = Qt6::Label.new("Outline")
+    replacement_page = Qt6::Label.new("Replacement")
     inspector = Qt6::Widget.new
     layers_page = Qt6::Label.new("Layers")
     export_page = Qt6::Label.new("Export")
@@ -834,6 +837,9 @@ describe Qt6 do
     tab_widget.on_current_index_changed do |value|
       tab_indices << value
     end
+    splitter.on_splitter_moved do |pos, index|
+      splitter_moves << {pos, index}
+    end
 
     options_group.set_title("Inspector Options")
     options_group.set_checkable(true)
@@ -865,6 +871,7 @@ describe Qt6 do
     tab_widget.add_tab(export_page, "Export")
     tab_widget.add_tab(preview_page, "Preview")
     splitter << scroll_area
+    splitter.insert(1, outline_page)
     splitter << tab_widget
     window.central_widget = splitter
     window.resize(420, 260)
@@ -893,11 +900,18 @@ describe Qt6 do
     options_group.set_checked(true)
     application.process_events
     splitter.widget(0).not_nil!.to_unsafe.should eq(scroll_area.to_unsafe)
-    splitter.widget(1).not_nil!.to_unsafe.should eq(tab_widget.to_unsafe)
+    splitter.widget(1).not_nil!.to_unsafe.should eq(outline_page.to_unsafe)
+    splitter.widget(2).not_nil!.to_unsafe.should eq(tab_widget.to_unsafe)
+    splitter.index_of(tab_widget).should eq(2)
     splitter.opaque_resize = false
     splitter.children_collapsible = false
+    splitter.set_collapsible(1, true)
+    splitter.set_stretch_factor(2, 3)
     splitter.handle_width = 9
-    splitter.set_sizes([120, 240]).should eq([120, 240])
+    splitter.set_sizes([120, 80, 240]).should eq([120, 80, 240])
+    replaced_outline = splitter.replace(1, replacement_page).not_nil!
+    saved_splitter_state = splitter.save_state
+    splitter.refresh
     tab_widget.widget(0).not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
     tab_widget.current_widget.not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
     tab_widget.index_of(export_page).should eq(1)
@@ -905,20 +919,37 @@ describe Qt6 do
     tab_widget.set_tab_text(2, "Inspect")
     tab_widget.current_widget = preview_page
     tab_widget.remove_tab(1)
-    splitter.orientation = Qt6::Orientation::Vertical
+    splitter.set_orientation(Qt6::Orientation::Vertical)
     application.process_events
+    splitter.restore_state(saved_splitter_state.bytes).should be_true
+    splitter.handle_width = 11
+    splitter.restore_state(saved_splitter_state).should be_true
+    splitter_range = splitter.get_range(1)
+    splitter_handle = splitter.handle(1).not_nil!
+    splitter_handle.orientation.should eq(splitter.orientation)
+    splitter_handle.set_orientation(splitter.orientation).to_unsafe.should eq(splitter_handle.to_unsafe)
+    splitter_handle.opaque_resize?.should be_false
+    splitter_handle.splitter.not_nil!.to_unsafe.should eq(splitter.to_unsafe)
+    Qt6::LibQt6.qt6cr_splitter_emit_splitter_moved(splitter.to_unsafe, 123, 1)
     Qt6::LibQt6.qt6cr_slider_emit_pressed(slider.to_unsafe)
     Qt6::LibQt6.qt6cr_slider_emit_released(slider.to_unsafe)
     application.process_events
 
     scroll_area.widget_resizable?.should be_true
     scroll_area.alignment.should eq(Qt6::AlignmentFlag::Center)
-    splitter.count.should eq(2)
-    splitter.orientation.should eq(Qt6::Orientation::Vertical)
+    splitter.count.should eq(3)
+    splitter.orientation.should eq(Qt6::Orientation::Horizontal)
     splitter.opaque_resize?.should be_false
     splitter.children_collapsible?.should be_false
+    splitter.collapsible?(1).should be_true
     splitter.handle_width.should eq(9)
-    splitter.sizes.size.should eq(2)
+    splitter.sizes.size.should eq(3)
+    splitter.size_hint.width.should be > 0
+    splitter.minimum_size_hint.width.should be >= 0
+    splitter_range[0].should be <= splitter_range[1]
+    splitter_handle.size_hint.width.should be >= 0
+    splitter_moves.last.should eq({123, 1})
+    saved_splitter_state.empty?.should be_false
     tab_widget.count.should eq(2)
     tab_widget.current_index.should eq(1)
     tab_widget.current_widget.not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
@@ -967,8 +998,11 @@ describe Qt6 do
     double_values.last.should eq(1.75)
     group_states.last.should be_true
     tab_indices.last.should eq(1)
+    replaced_outline.to_unsafe.should eq(outline_page.to_unsafe)
     tab_widget.clear
     tab_widget.count.should eq(0)
+    saved_splitter_state.release
+    replaced_outline.release
     window.release
     File.delete?(radio_icon_path)
   end
