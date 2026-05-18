@@ -655,6 +655,47 @@ describe Qt6 do
     end
   end
 
+  it "supports button style options" do
+    application = app
+    button = Qt6::PushButton.new("Deploy")
+    option = Qt6::StyleOptionButton.new
+    icon = Qt6::QIcon.new
+
+    begin
+      button.resize(132, 36)
+      button.icon = icon
+      button.icon_size = Qt6::Size.new(18, 18)
+      button.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::Button)
+      option.features.should eq(Qt6::StyleOptionButtonFeature::None)
+      option.set_features(
+        Qt6::StyleOptionButtonFeature::Flat |
+        Qt6::StyleOptionButtonFeature::DefaultButton |
+        Qt6::StyleOptionButtonFeature::HasMenu
+      ).to_unsafe.should eq(option.to_unsafe)
+      option.features.includes?(Qt6::StyleOptionButtonFeature::Flat).should be_true
+      option.features.includes?(Qt6::StyleOptionButtonFeature::DefaultButton).should be_true
+      option.features.includes?(Qt6::StyleOptionButtonFeature::HasMenu).should be_true
+
+      option.set_text(button.text).to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Deploy")
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_true
+      option.set_icon_size(Qt6::Size.new(18, 18)).to_unsafe.should eq(option.to_unsafe)
+      option.icon_size.should eq(Qt6::Size.new(18, 18))
+
+      option.init_from(button)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 132.0, 36.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      icon.release
+      option.release
+      button.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

@@ -6202,6 +6202,67 @@ void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_button_create(void) {
+  return new QStyleOptionButton();
+}
+
+void qt6cr_style_option_button_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionButton *>(handle);
+}
+
+int qt6cr_style_option_button_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_button_set_features(qt6cr_handle_t handle, int features) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+
+  if (option != nullptr) {
+    option->features = QStyleOptionButton::ButtonFeatures(static_cast<QStyleOptionButton::ButtonFeature>(features));
+  }
+}
+
+char *qt6cr_style_option_button_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_button_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_button_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_button_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+  auto *value = static_cast<QIcon *>(icon);
+
+  if (option != nullptr && value != nullptr) {
+    option->icon = *value;
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_button_icon_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->iconSize);
+}
+
+void qt6cr_style_option_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size) {
+  auto *option = static_cast<QStyleOptionButton *>(handle);
+
+  if (option != nullptr) {
+    option->iconSize = QSize(size.width, size.height);
+  }
+}
+
 qt6cr_handle_t qt6cr_style_hint_return_create(int version, int type) {
   return new QStyleHintReturn(version, type);
 }

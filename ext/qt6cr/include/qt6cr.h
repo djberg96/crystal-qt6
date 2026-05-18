@@ -699,6 +699,16 @@ void qt6cr_style_option_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palett
 qt6cr_handle_t qt6cr_style_option_style_object(qt6cr_handle_t handle);
 void qt6cr_style_option_set_style_object(qt6cr_handle_t handle, qt6cr_handle_t object);
 void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_style_option_button_create(void);
+void qt6cr_style_option_button_destroy(qt6cr_handle_t handle);
+int qt6cr_style_option_button_features(qt6cr_handle_t handle);
+void qt6cr_style_option_button_set_features(qt6cr_handle_t handle, int features);
+char *qt6cr_style_option_button_text(qt6cr_handle_t handle);
+void qt6cr_style_option_button_set_text(qt6cr_handle_t handle, const char *text);
+qt6cr_handle_t qt6cr_style_option_button_icon(qt6cr_handle_t handle);
+void qt6cr_style_option_button_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+qt6cr_size_t qt6cr_style_option_button_icon_size(qt6cr_handle_t handle);
+void qt6cr_style_option_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t size);
 qt6cr_handle_t qt6cr_style_hint_return_create(int version, int type);
 void qt6cr_style_hint_return_destroy(qt6cr_handle_t handle);
 int qt6cr_style_hint_return_version(qt6cr_handle_t handle);

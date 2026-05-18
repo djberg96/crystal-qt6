@@ -3,6 +3,8 @@ module Qt6
   class StyleOption < NativeResource
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : StyleOption
       case LibQt6.qt6cr_style_option_type(handle)
+      when StyleOptionType::Button.value
+        StyleOptionButton.wrap(handle, owned)
       when StyleOptionType::ViewItem.value
         StyleOptionViewItem.wrap(handle, owned)
       else

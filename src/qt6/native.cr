@@ -655,6 +655,16 @@ module Qt6
     fun qt6cr_style_option_style_object = qt6cr_style_option_style_object(handle : Handle) : Handle
     fun qt6cr_style_option_set_style_object = qt6cr_style_option_set_style_object(handle : Handle, object : Handle)
     fun qt6cr_style_option_init_from = qt6cr_style_option_init_from(handle : Handle, widget : Handle)
+    fun qt6cr_style_option_button_create = qt6cr_style_option_button_create : Handle
+    fun qt6cr_style_option_button_destroy = qt6cr_style_option_button_destroy(handle : Handle)
+    fun qt6cr_style_option_button_features = qt6cr_style_option_button_features(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_button_set_features = qt6cr_style_option_button_set_features(handle : Handle, features : LibC::Int)
+    fun qt6cr_style_option_button_text = qt6cr_style_option_button_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_button_set_text = qt6cr_style_option_button_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_style_option_button_icon = qt6cr_style_option_button_icon(handle : Handle) : Handle
+    fun qt6cr_style_option_button_set_icon = qt6cr_style_option_button_set_icon(handle : Handle, icon : Handle)
+    fun qt6cr_style_option_button_icon_size = qt6cr_style_option_button_icon_size(handle : Handle) : SizeValue
+    fun qt6cr_style_option_button_set_icon_size = qt6cr_style_option_button_set_icon_size(handle : Handle, size : SizeValue)
     fun qt6cr_style_hint_return_create = qt6cr_style_hint_return_create(version : LibC::Int, type : LibC::Int) : Handle
     fun qt6cr_style_hint_return_destroy = qt6cr_style_hint_return_destroy(handle : Handle)
     fun qt6cr_style_hint_return_version = qt6cr_style_hint_return_version(handle : Handle) : LibC::Int
