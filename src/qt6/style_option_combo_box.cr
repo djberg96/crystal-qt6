@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QStyleOptionComboBox` for combo-box paint and layout state.
-  class StyleOptionComboBox < StyleOption
+  class StyleOptionComboBox < StyleOptionComplex
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
       new(handle, owned)
     end

@@ -655,6 +655,12 @@ module Qt6
     fun qt6cr_style_option_style_object = qt6cr_style_option_style_object(handle : Handle) : Handle
     fun qt6cr_style_option_set_style_object = qt6cr_style_option_set_style_object(handle : Handle, object : Handle)
     fun qt6cr_style_option_init_from = qt6cr_style_option_init_from(handle : Handle, widget : Handle)
+    fun qt6cr_style_option_complex_create = qt6cr_style_option_complex_create : Handle
+    fun qt6cr_style_option_complex_destroy = qt6cr_style_option_complex_destroy(handle : Handle)
+    fun qt6cr_style_option_complex_sub_controls = qt6cr_style_option_complex_sub_controls(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_complex_set_sub_controls = qt6cr_style_option_complex_set_sub_controls(handle : Handle, controls : LibC::Int)
+    fun qt6cr_style_option_complex_active_sub_controls = qt6cr_style_option_complex_active_sub_controls(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_complex_set_active_sub_controls = qt6cr_style_option_complex_set_active_sub_controls(handle : Handle, controls : LibC::Int)
     fun qt6cr_style_option_button_create = qt6cr_style_option_button_create : Handle
     fun qt6cr_style_option_button_destroy = qt6cr_style_option_button_destroy(handle : Handle)
     fun qt6cr_style_option_button_features = qt6cr_style_option_button_features(handle : Handle) : LibC::Int

@@ -740,6 +740,36 @@ describe Qt6 do
     end
   end
 
+  it "supports complex style options" do
+    option = Qt6::StyleOptionComplex.new
+    combo_option = Qt6::StyleOptionComboBox.new
+
+    begin
+      option.type.should eq(Qt6::StyleOptionType::Complex)
+      option.sub_controls.should eq(Qt6::StyleSubControl::All)
+      option.active_sub_controls.should eq(Qt6::StyleSubControl::None)
+
+      option.set_sub_controls(
+        Qt6::StyleSubControl::ComboBoxFrame |
+        Qt6::StyleSubControl::ComboBoxArrow
+      ).to_unsafe.should eq(option.to_unsafe)
+      option.sub_controls.includes?(Qt6::StyleSubControl::ComboBoxFrame).should be_true
+      option.sub_controls.includes?(Qt6::StyleSubControl::ComboBoxArrow).should be_true
+
+      option.set_active_sub_controls(Qt6::StyleSubControl::ComboBoxArrow).to_unsafe.should eq(option.to_unsafe)
+      option.active_sub_controls.should eq(Qt6::StyleSubControl::ComboBoxArrow)
+
+      combo_option.sub_controls = Qt6::StyleSubControl::ComboBoxFrame | Qt6::StyleSubControl::ComboBoxListBoxPopup
+      combo_option.active_sub_controls = Qt6::StyleSubControl::ComboBoxListBoxPopup
+      combo_option.sub_controls.includes?(Qt6::StyleSubControl::ComboBoxFrame).should be_true
+      combo_option.sub_controls.includes?(Qt6::StyleSubControl::ComboBoxListBoxPopup).should be_true
+      combo_option.active_sub_controls.should eq(Qt6::StyleSubControl::ComboBoxListBoxPopup)
+    ensure
+      combo_option.release
+      option.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

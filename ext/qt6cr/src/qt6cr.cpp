@@ -6202,6 +6202,40 @@ void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_complex_create(void) {
+  return new QStyleOptionComplex();
+}
+
+void qt6cr_style_option_complex_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionComplex *>(handle);
+}
+
+int qt6cr_style_option_complex_sub_controls(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComplex *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->subControls);
+}
+
+void qt6cr_style_option_complex_set_sub_controls(qt6cr_handle_t handle, int controls) {
+  auto *option = static_cast<QStyleOptionComplex *>(handle);
+
+  if (option != nullptr) {
+    option->subControls = QStyle::SubControls(static_cast<QStyle::SubControl>(controls));
+  }
+}
+
+int qt6cr_style_option_complex_active_sub_controls(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionComplex *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->activeSubControls);
+}
+
+void qt6cr_style_option_complex_set_active_sub_controls(qt6cr_handle_t handle, int controls) {
+  auto *option = static_cast<QStyleOptionComplex *>(handle);
+
+  if (option != nullptr) {
+    option->activeSubControls = QStyle::SubControls(static_cast<QStyle::SubControl>(controls));
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_button_create(void) {
   return new QStyleOptionButton();
 }
