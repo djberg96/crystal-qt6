@@ -631,6 +631,13 @@ module Qt6
     fun qt6cr_clipboard_clear = qt6cr_clipboard_clear(handle : Handle)
     fun qt6cr_style_standard_palette = qt6cr_style_standard_palette(handle : Handle) : Handle
     fun qt6cr_style_name = qt6cr_style_name(handle : Handle) : UInt8*
+    fun qt6cr_style_polish_widget = qt6cr_style_polish_widget(handle : Handle, widget : Handle)
+    fun qt6cr_style_unpolish_widget = qt6cr_style_unpolish_widget(handle : Handle, widget : Handle)
+    fun qt6cr_style_polish_application = qt6cr_style_polish_application(handle : Handle, application : Handle)
+    fun qt6cr_style_unpolish_application = qt6cr_style_unpolish_application(handle : Handle, application : Handle)
+    fun qt6cr_style_polish_palette = qt6cr_style_polish_palette(handle : Handle, palette : Handle)
+    fun qt6cr_style_factory_keys = qt6cr_style_factory_keys : StringArrayValue
+    fun qt6cr_style_factory_create = qt6cr_style_factory_create(key : UInt8*) : Handle
     fun qt6cr_common_style_create = qt6cr_common_style_create : Handle
     fun qt6cr_proxy_style_create = qt6cr_proxy_style_create(base_style : Handle) : Handle
     fun qt6cr_proxy_style_create_with_key = qt6cr_proxy_style_create_with_key(key : UInt8*) : Handle

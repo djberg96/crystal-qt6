@@ -8,6 +8,8 @@ module Qt6
     @pending_invocations_lock : Mutex
     @destroyed = false
 
+    getter to_unsafe : LibQt6::Handle
+
     # Creates a new Qt application wrapper using the provided command-line
     # arguments.
     def initialize(args : Array(String))
@@ -17,6 +19,7 @@ module Qt6
       @pending_invocations = [] of DeferredInvocation
       @pending_invocations_lock = Mutex.new
       @handle = LibQt6.qt6cr_application_create(@argv_storage.size, @argv.to_unsafe)
+      @to_unsafe = @handle
     end
 
     # Enters the Qt event loop and blocks until the application exits.

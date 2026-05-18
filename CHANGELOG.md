@@ -46,6 +46,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QStackedLayout` and `QStackedWidget` with page insertion, current-widget helpers, stacking-mode and widget-added/widget-removed signals, plus stronger live coverage for stacked inspector and browser workflows.
 - Added `QStandardItemEditorCreator` with callback-backed editor creation and automatic Qt user-property discovery for cleaner `QItemEditorFactory` registration of standard editor widgets.
 - Expanded `QStatusBar` with inserted transient and permanent widgets, `message_changed`, and Qt-style message/size-grip aliases for fuller desktop-shell status workflows.
+- Expanded `QStyle` with shared widget/application/palette polish helpers and added `QStyleFactory` for available-style discovery and keyed style creation.
 
 ## [0.10.0] - 2026-05-10
 

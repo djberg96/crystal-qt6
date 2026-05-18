@@ -675,6 +675,13 @@ void qt6cr_clipboard_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_da
 void qt6cr_clipboard_clear(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_style_standard_palette(qt6cr_handle_t handle);
 char *qt6cr_style_name(qt6cr_handle_t handle);
+void qt6cr_style_polish_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_style_unpolish_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
+void qt6cr_style_polish_application(qt6cr_handle_t handle, qt6cr_handle_t application);
+void qt6cr_style_unpolish_application(qt6cr_handle_t handle, qt6cr_handle_t application);
+void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette);
+qt6cr_string_array_t qt6cr_style_factory_keys(void);
+qt6cr_handle_t qt6cr_style_factory_create(const char *key);
 qt6cr_handle_t qt6cr_common_style_create(void);
 qt6cr_handle_t qt6cr_proxy_style_create(qt6cr_handle_t base_style);
 qt6cr_handle_t qt6cr_proxy_style_create_with_key(const char *key);

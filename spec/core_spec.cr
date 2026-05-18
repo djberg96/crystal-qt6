@@ -522,6 +522,9 @@ describe Qt6 do
     widget_style = Qt6::CommonStyle.new
     proxy_style = Qt6::ProxyStyle.new(widget_style)
     replacement_base_style = Qt6::CommonStyle.new
+    style_keys = Qt6::StyleFactory.keys
+    factory_style = previous_style_name ? Qt6::StyleFactory.create(previous_style_name.not_nil!) : style_keys.first?.try { |key| Qt6::StyleFactory.create(key) }
+    polished_palette = Qt6::QPalette.new
 
     begin
       application.style = application_style
@@ -538,11 +541,20 @@ describe Qt6 do
       active_widget_style.name.should eq(proxy_style.name)
       active_application_style.standard_palette.color(Qt6::ColorRole::Window).should be_a(Qt6::Color)
       active_widget_style.standard_palette.color(Qt6::ColorRole::WindowText).should be_a(Qt6::Color)
+      style_keys.should_not be_empty
+      factory_style.should_not be_nil
+      factory_style.not_nil!.name.should_not be_empty
       proxy_style.base_style.should_not be_nil
       proxy_style.base_style.not_nil!.name.should eq(widget_style.name)
       proxy_style.set_base_style(replacement_base_style)
       proxy_style.base_style.should_not be_nil
       proxy_style.base_style.not_nil!.name.should eq(replacement_base_style.name)
+      active_application_style.polish(window).to_unsafe.should eq(window.to_unsafe)
+      active_application_style.unpolish(window).to_unsafe.should eq(window.to_unsafe)
+      active_application_style.polish(application).to_unsafe.should eq(application.to_unsafe)
+      active_application_style.unpolish(application).to_unsafe.should eq(application.to_unsafe)
+      active_application_style.polish(polished_palette).to_unsafe.should eq(polished_palette.to_unsafe)
+      polished_palette.color(Qt6::ColorRole::Window).should be_a(Qt6::Color)
 
       if previous_style_name
         keyed_proxy_style = Qt6::ProxyStyle.new(previous_style_name)
@@ -551,6 +563,8 @@ describe Qt6 do
         keyed_proxy_style.release
       end
     ensure
+      factory_style.try(&.release)
+      polished_palette.release
       window.release
       application.set_style(previous_style_name.not_nil!) if previous_style_name
     end

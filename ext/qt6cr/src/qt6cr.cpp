@@ -162,6 +162,7 @@
 #include <QDoubleSpinBox>
 #include <QSizePolicy>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QStackedWidget>
 #include <QStackedLayout>
 #include <QStatusBar>
@@ -6010,6 +6011,59 @@ qt6cr_handle_t qt6cr_style_standard_palette(qt6cr_handle_t handle) {
 char *qt6cr_style_name(qt6cr_handle_t handle) {
   auto *style = as_style(handle);
   return style == nullptr ? duplicate_string("") : duplicate_string(style->name());
+}
+
+void qt6cr_style_polish_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *style = as_style(handle);
+  auto *value = as_widget(widget);
+
+  if (style != nullptr && value != nullptr) {
+    style->polish(value);
+  }
+}
+
+void qt6cr_style_unpolish_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *style = as_style(handle);
+  auto *value = as_widget(widget);
+
+  if (style != nullptr && value != nullptr) {
+    style->unpolish(value);
+  }
+}
+
+void qt6cr_style_polish_application(qt6cr_handle_t handle, qt6cr_handle_t application) {
+  auto *style = as_style(handle);
+  auto *state = as_application_state(application);
+
+  if (style != nullptr && state != nullptr && state->application != nullptr) {
+    style->polish(state->application);
+  }
+}
+
+void qt6cr_style_unpolish_application(qt6cr_handle_t handle, qt6cr_handle_t application) {
+  auto *style = as_style(handle);
+  auto *state = as_application_state(application);
+
+  if (style != nullptr && state != nullptr && state->application != nullptr) {
+    style->unpolish(state->application);
+  }
+}
+
+void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
+  auto *style = as_style(handle);
+  auto *value = static_cast<QPalette *>(palette);
+
+  if (style != nullptr && value != nullptr) {
+    style->polish(*value);
+  }
+}
+
+qt6cr_string_array_t qt6cr_style_factory_keys(void) {
+  return to_string_array_value(QStyleFactory::keys());
+}
+
+qt6cr_handle_t qt6cr_style_factory_create(const char *key) {
+  return QStyleFactory::create(QString::fromUtf8(key == nullptr ? "" : key));
 }
 
 qt6cr_handle_t qt6cr_common_style_create(void) {
