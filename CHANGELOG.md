@@ -36,6 +36,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QRubberBand` with geometry readback and coordinate-based `set_geometry` overloads, plus stronger coverage for both rectangle and line rubber-band shapes.
 - Expanded `QScrollArea` with `size_hint`, Qt-style widget/alignment/resizable setter aliases, and correct ownership transfer for `take_widget`.
 - Added `QScroller` and `QScrollerProperties` bindings with kinetic-scroller lookup, gesture grabbing, input/motion helpers, snap-position and ensure-visible control, typed scroller-state signals, and configurable scroll metrics including easing curves, overshoot policies, and frame rate.
+- Expanded `QSizeGrip` with a Qt-style `set_visible` alias and stronger live coverage for dialog-hosted visibility behavior.
 
 ## [0.10.0] - 2026-05-10
 

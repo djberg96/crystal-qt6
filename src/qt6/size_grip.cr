@@ -18,5 +18,11 @@ module Qt6
     def size_hint : Size
       Size.from_native(LibQt6.qt6cr_size_grip_size_hint(to_unsafe))
     end
+
+    # Qt-style alias for `visible=`.
+    def set_visible(value : Bool) : self
+      self.visible = value
+      self
+    end
   end
 end

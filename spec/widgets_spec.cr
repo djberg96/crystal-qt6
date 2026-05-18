@@ -591,6 +591,13 @@ describe Qt6 do
     dialog.resize(320, 240)
     dialog.show
     application.process_events
+    size_grip.visible?.should be_true
+    size_grip.set_visible(false).to_unsafe.should eq(size_grip.to_unsafe)
+    application.process_events
+    size_grip.visible?.should be_false
+    size_grip.set_visible(true)
+    application.process_events
+    size_grip.visible?.should be_true
     size_grip.size_hint.width.should be >= 0
     size_grip.size_hint.height.should be >= 0
     button_box.center_buttons?.should be_true
