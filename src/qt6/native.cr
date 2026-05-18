@@ -655,6 +655,10 @@ module Qt6
     fun qt6cr_style_option_style_object = qt6cr_style_option_style_object(handle : Handle) : Handle
     fun qt6cr_style_option_set_style_object = qt6cr_style_option_set_style_object(handle : Handle, object : Handle)
     fun qt6cr_style_option_init_from = qt6cr_style_option_init_from(handle : Handle, widget : Handle)
+    fun qt6cr_style_option_focus_rect_create = qt6cr_style_option_focus_rect_create : Handle
+    fun qt6cr_style_option_focus_rect_destroy = qt6cr_style_option_focus_rect_destroy(handle : Handle)
+    fun qt6cr_style_option_focus_rect_background_color = qt6cr_style_option_focus_rect_background_color(handle : Handle) : ColorValue
+    fun qt6cr_style_option_focus_rect_set_background_color = qt6cr_style_option_focus_rect_set_background_color(handle : Handle, color : ColorValue)
     fun qt6cr_style_option_complex_create = qt6cr_style_option_complex_create : Handle
     fun qt6cr_style_option_complex_destroy = qt6cr_style_option_complex_destroy(handle : Handle)
     fun qt6cr_style_option_complex_sub_controls = qt6cr_style_option_complex_sub_controls(handle : Handle) : LibC::Int

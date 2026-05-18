@@ -48,6 +48,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QStatusBar` with inserted transient and permanent widgets, `message_changed`, and Qt-style message/size-grip aliases for fuller desktop-shell status workflows.
 - Expanded `QStyle` with shared widget/application/palette polish helpers and added `QStyleFactory` for available-style discovery and keyed style creation.
 - Added a shared `QStyleOption` wrapper with typed option/state enums, geometry, palette, font-metrics, direction, style-object, and `init_from` helpers, and moved `QStyleOptionViewItem` onto that shared base.
+- Added `QStyleOptionFocusRect` with `background_color` on top of the shared `QStyleOption` base.
 - Added a shared `QStyleOptionComplex` wrapper with typed `sub_controls` and `active_sub_controls`, plus a `StyleSubControl` flags enum for complex control style options.
 - Added `QStyleOptionButton` with typed button-feature flags plus text, icon, and icon-size helpers on top of the shared `QStyleOption` base.
 - Added `QStyleOptionComboBox` with editable, popup-rect, frame, current-text/icon, icon-size, and text-alignment helpers on top of the shared `QStyleOption` base.

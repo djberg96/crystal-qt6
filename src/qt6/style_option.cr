@@ -7,6 +7,8 @@ module Qt6
         StyleOptionButton.wrap(handle, owned)
       when StyleOptionType::DockWidget.value
         StyleOptionDockWidget.wrap(handle, owned)
+      when StyleOptionType::FocusRect.value
+        StyleOptionFocusRect.wrap(handle, owned)
       when StyleOptionType::Complex.value
         StyleOptionComplex.wrap(handle, owned)
       when StyleOptionType::ComboBox.value

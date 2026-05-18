@@ -699,6 +699,10 @@ void qt6cr_style_option_set_palette(qt6cr_handle_t handle, qt6cr_handle_t palett
 qt6cr_handle_t qt6cr_style_option_style_object(qt6cr_handle_t handle);
 void qt6cr_style_option_set_style_object(qt6cr_handle_t handle, qt6cr_handle_t object);
 void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget);
+qt6cr_handle_t qt6cr_style_option_focus_rect_create(void);
+void qt6cr_style_option_focus_rect_destroy(qt6cr_handle_t handle);
+qt6cr_color_t qt6cr_style_option_focus_rect_background_color(qt6cr_handle_t handle);
+void qt6cr_style_option_focus_rect_set_background_color(qt6cr_handle_t handle, qt6cr_color_t color);
 qt6cr_handle_t qt6cr_style_option_complex_create(void);
 void qt6cr_style_option_complex_destroy(qt6cr_handle_t handle);
 int qt6cr_style_option_complex_sub_controls(qt6cr_handle_t handle);

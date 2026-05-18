@@ -6212,6 +6212,27 @@ void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget) 
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_focus_rect_create(void) {
+  return new QStyleOptionFocusRect();
+}
+
+void qt6cr_style_option_focus_rect_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionFocusRect *>(handle);
+}
+
+qt6cr_color_t qt6cr_style_option_focus_rect_background_color(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionFocusRect *>(handle);
+  return option == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(option->backgroundColor);
+}
+
+void qt6cr_style_option_focus_rect_set_background_color(qt6cr_handle_t handle, qt6cr_color_t color) {
+  auto *option = static_cast<QStyleOptionFocusRect *>(handle);
+
+  if (option != nullptr) {
+    option->backgroundColor = QColor(color.red, color.green, color.blue, color.alpha);
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_complex_create(void) {
   return new QStyleOptionComplex();
 }

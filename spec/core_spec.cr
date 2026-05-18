@@ -809,6 +809,30 @@ describe Qt6 do
     end
   end
 
+  it "supports focus-rect style options" do
+    application = app
+    host = Qt6::Widget.new
+    option = Qt6::StyleOptionFocusRect.new
+
+    begin
+      host.resize(88, 24)
+      host.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::FocusRect)
+      option.set_background_color(Qt6::Color.new(12, 34, 56, 200)).to_unsafe.should eq(option.to_unsafe)
+      option.background_color.should eq(Qt6::Color.new(12, 34, 56, 200))
+
+      option.init_from(host)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 88.0, 24.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.background_color.should be_a(Qt6::Color)
+    ensure
+      option.release
+      host.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time
