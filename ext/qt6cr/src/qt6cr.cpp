@@ -24012,6 +24012,42 @@ void qt6cr_slider_set_click_to_position(qt6cr_handle_t handle, bool value) {
   }
 }
 
+int qt6cr_slider_tick_position(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? static_cast<int>(QSlider::NoTicks) : static_cast<int>(slider->tickPosition());
+}
+
+void qt6cr_slider_set_tick_position(qt6cr_handle_t handle, int value) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setTickPosition(static_cast<QSlider::TickPosition>(value));
+  }
+}
+
+int qt6cr_slider_tick_interval(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? 0 : slider->tickInterval();
+}
+
+void qt6cr_slider_set_tick_interval(qt6cr_handle_t handle, int value) {
+  auto *slider = as_slider(handle);
+
+  if (slider != nullptr) {
+    slider->setTickInterval(value);
+  }
+}
+
+qt6cr_size_t qt6cr_slider_size_hint(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? qt6cr_size_t{0, 0} : to_size(slider->sizeHint());
+}
+
+qt6cr_size_t qt6cr_slider_minimum_size_hint(qt6cr_handle_t handle) {
+  auto *slider = as_slider(handle);
+  return slider == nullptr ? qt6cr_size_t{0, 0} : to_size(slider->minimumSizeHint());
+}
+
 void qt6cr_slider_emit_pressed(qt6cr_handle_t handle) {
   qt6cr_abstract_slider_emit_pressed(handle);
 }

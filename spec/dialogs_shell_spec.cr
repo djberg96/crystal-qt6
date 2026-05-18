@@ -853,7 +853,9 @@ describe Qt6 do
 
     slider.set_range(0, 100)
     slider.click_to_position?.should be_false
-    slider.click_to_position = true
+    slider.set_click_to_position(true)
+    slider.set_tick_position(Qt6::SliderTickPosition::TicksBelow)
+    slider.set_tick_interval(10)
     slider.value = 42
     spin_box.set_range(1, 9)
     spin_box.single_step = 2
@@ -926,7 +928,11 @@ describe Qt6 do
     slider.minimum.should eq(0)
     slider.maximum.should eq(100)
     slider.click_to_position?.should be_true
+    slider.tick_position.should eq(Qt6::SliderTickPosition::TicksBelow)
+    slider.tick_interval.should eq(10)
     slider.value.should eq(42)
+    slider.size_hint.width.should be > 0
+    slider.minimum_size_hint.height.should be > 0
     spin_box.minimum.should eq(1)
     spin_box.maximum.should eq(9)
     spin_box.single_step.should eq(2)

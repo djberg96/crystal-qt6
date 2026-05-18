@@ -3328,6 +3328,12 @@ void qt6cr_abstract_slider_on_released(qt6cr_handle_t handle, qt6cr_void_callbac
 qt6cr_handle_t qt6cr_slider_create(qt6cr_handle_t parent, int orientation);
 bool qt6cr_slider_click_to_position(qt6cr_handle_t handle);
 void qt6cr_slider_set_click_to_position(qt6cr_handle_t handle, bool value);
+int qt6cr_slider_tick_position(qt6cr_handle_t handle);
+void qt6cr_slider_set_tick_position(qt6cr_handle_t handle, int value);
+int qt6cr_slider_tick_interval(qt6cr_handle_t handle);
+void qt6cr_slider_set_tick_interval(qt6cr_handle_t handle, int value);
+qt6cr_size_t qt6cr_slider_size_hint(qt6cr_handle_t handle);
+qt6cr_size_t qt6cr_slider_minimum_size_hint(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation);
 qt6cr_size_t qt6cr_scroll_bar_size_hint(qt6cr_handle_t handle);
