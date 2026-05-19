@@ -526,6 +526,20 @@ class CrystalGroupBox final : public QGroupBox {
   }
 };
 
+class CrystalHeaderView final : public QHeaderView {
+ public:
+  explicit CrystalHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr)
+      : QHeaderView(orientation, parent) {}
+
+  void initStyleOptionBridge(QStyleOptionHeader *option) const {
+    initStyleOption(option);
+  }
+
+  void initStyleOptionForIndexBridge(QStyleOptionHeader *option, int logical_index) const {
+    initStyleOptionForIndex(option, logical_index);
+  }
+};
+
 class CrystalAbstractGraphicsShapeItem final : public QAbstractGraphicsShapeItem {
  public:
   explicit CrystalAbstractGraphicsShapeItem(QGraphicsItem *parent = nullptr)
@@ -683,7 +697,9 @@ class ModelListView final : public QListView {
 
 class ModelTreeView final : public QTreeView {
  public:
-  explicit ModelTreeView(QWidget *parent = nullptr) : QTreeView(parent) {}
+  explicit ModelTreeView(QWidget *parent = nullptr) : QTreeView(parent) {
+    setHeader(new CrystalHeaderView(Qt::Horizontal, this));
+  }
 
   qt6cr_void_callback_t current_index_changed_callback = nullptr;
   void *current_index_changed_userdata = nullptr;
@@ -824,7 +840,10 @@ class ModelColumnView final : public QColumnView {
 
 class ModelTableView final : public QTableView {
  public:
-  explicit ModelTableView(QWidget *parent = nullptr) : QTableView(parent) {}
+  explicit ModelTableView(QWidget *parent = nullptr) : QTableView(parent) {
+    setHorizontalHeader(new CrystalHeaderView(Qt::Horizontal, this));
+    setVerticalHeader(new CrystalHeaderView(Qt::Vertical, this));
+  }
 
   qt6cr_void_callback_t current_index_changed_callback = nullptr;
   void *current_index_changed_userdata = nullptr;
@@ -6525,6 +6544,132 @@ void qt6cr_style_option_group_box_set_mid_line_width(qt6cr_handle_t handle, int 
 
   if (option != nullptr) {
     option->midLineWidth = value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_header_create(void) {
+  return new QStyleOptionHeader();
+}
+
+void qt6cr_style_option_header_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionHeader *>(handle);
+}
+
+int qt6cr_style_option_header_section(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? 0 : option->section;
+}
+
+void qt6cr_style_option_header_set_section(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->section = value;
+  }
+}
+
+char *qt6cr_style_option_header_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_header_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+int qt6cr_style_option_header_text_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->textAlignment);
+}
+
+void qt6cr_style_option_header_set_text_alignment(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->textAlignment = Qt::Alignment(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_header_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_header_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  auto *value = static_cast<QIcon *>(icon);
+
+  if (option != nullptr && value != nullptr) {
+    option->icon = *value;
+  }
+}
+
+int qt6cr_style_option_header_icon_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->iconAlignment);
+}
+
+void qt6cr_style_option_header_set_icon_alignment(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->iconAlignment = Qt::Alignment(value);
+  }
+}
+
+int qt6cr_style_option_header_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionHeader::Beginning) : static_cast<int>(option->position);
+}
+
+void qt6cr_style_option_header_set_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->position = static_cast<QStyleOptionHeader::SectionPosition>(value);
+  }
+}
+
+int qt6cr_style_option_header_selected_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionHeader::NotAdjacent) : static_cast<int>(option->selectedPosition);
+}
+
+void qt6cr_style_option_header_set_selected_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->selectedPosition = static_cast<QStyleOptionHeader::SelectedPosition>(value);
+  }
+}
+
+int qt6cr_style_option_header_sort_indicator(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionHeader::None) : static_cast<int>(option->sortIndicator);
+}
+
+void qt6cr_style_option_header_set_sort_indicator(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->sortIndicator = static_cast<QStyleOptionHeader::SortIndicator>(value);
+  }
+}
+
+int qt6cr_style_option_header_orientation(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(option->orientation);
+}
+
+void qt6cr_style_option_header_set_orientation(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeader *>(handle);
+
+  if (option != nullptr) {
+    option->orientation = static_cast<Qt::Orientation>(value);
   }
 }
 
@@ -13626,6 +13771,24 @@ void qt6cr_header_view_move_section(qt6cr_handle_t handle, int from, int to) {
 
   if (header != nullptr && from >= 0 && to >= 0) {
     header->moveSection(from, to);
+  }
+}
+
+void qt6cr_header_view_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *header = dynamic_cast<CrystalHeaderView *>(as_header_view(handle));
+  auto *option = static_cast<QStyleOptionHeader *>(option_handle);
+
+  if (header != nullptr && option != nullptr) {
+    header->initStyleOptionBridge(option);
+  }
+}
+
+void qt6cr_header_view_init_style_option_for_index(qt6cr_handle_t handle, int logical_index, qt6cr_handle_t option_handle) {
+  auto *header = dynamic_cast<CrystalHeaderView *>(as_header_view(handle));
+  auto *option = static_cast<QStyleOptionHeader *>(option_handle);
+
+  if (header != nullptr && logical_index >= 0 && option != nullptr) {
+    header->initStyleOptionForIndexBridge(option, logical_index);
   }
 }
 

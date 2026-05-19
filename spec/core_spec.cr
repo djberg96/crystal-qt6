@@ -931,6 +931,67 @@ describe Qt6 do
     end
   end
 
+  it "supports header style options" do
+    application = app
+    table_view = Qt6::TableView.new
+    model = Qt6::StandardItemModel.new(table_view)
+    option = Qt6::StyleOptionHeader.new
+    icon = Qt6::QIcon.new
+
+    begin
+      model.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+      model.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+      model.set_horizontal_header_label(0, "Layer")
+      model.set_horizontal_header_label(1, "State")
+      table_view.model = model
+
+      header = table_view.horizontal_header
+      header.default_alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+      table_view.resize(220, 80)
+      table_view.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::Header)
+      option.set_section(1).to_unsafe.should eq(option.to_unsafe)
+      option.section.should eq(1)
+      option.set_text("Inspector").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Inspector")
+      option.set_text_alignment(Qt6::AlignmentFlag::Left | Qt6::AlignmentFlag::VCenter).to_unsafe.should eq(option.to_unsafe)
+      option.text_alignment.includes?(Qt6::AlignmentFlag::Left).should be_true
+      option.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_true
+      option.set_icon_alignment(Qt6::AlignmentFlag::HCenter | Qt6::AlignmentFlag::Bottom).to_unsafe.should eq(option.to_unsafe)
+      option.icon_alignment.includes?(Qt6::AlignmentFlag::HCenter).should be_true
+      option.icon_alignment.includes?(Qt6::AlignmentFlag::Bottom).should be_true
+      option.set_position(Qt6::StyleOptionHeaderSectionPosition::End).to_unsafe.should eq(option.to_unsafe)
+      option.position.should eq(Qt6::StyleOptionHeaderSectionPosition::End)
+      option.set_selected_position(Qt6::StyleOptionHeaderSelectedPosition::NextIsSelected).to_unsafe.should eq(option.to_unsafe)
+      option.selected_position.should eq(Qt6::StyleOptionHeaderSelectedPosition::NextIsSelected)
+      option.set_sort_indicator(Qt6::StyleOptionHeaderSortIndicator::SortDown).to_unsafe.should eq(option.to_unsafe)
+      option.sort_indicator.should eq(Qt6::StyleOptionHeaderSortIndicator::SortDown)
+      option.set_orientation(Qt6::Orientation::Vertical).to_unsafe.should eq(option.to_unsafe)
+      option.orientation.should eq(Qt6::Orientation::Vertical)
+
+      option.init_from(header)
+      option.orientation.should eq(Qt6::Orientation::Horizontal)
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.rect.width.should be >= 0.0
+      option.rect.height.should be >= 0.0
+
+      option.init_from_index(header, 0)
+      option.section.should eq(0)
+      option.text.should eq("Layer")
+      option.orientation.should eq(Qt6::Orientation::Horizontal)
+      option.position.should eq(Qt6::StyleOptionHeaderSectionPosition::Beginning)
+      option.selected_position.should eq(Qt6::StyleOptionHeaderSelectedPosition::NotAdjacent)
+    ensure
+      icon.release
+      option.release
+      table_view.release
+    end
+  end
+
   it "supports focus-rect style options" do
     application = app
     host = Qt6::Widget.new

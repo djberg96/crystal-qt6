@@ -704,6 +704,26 @@ module Qt6
     fun qt6cr_style_option_group_box_set_line_width = qt6cr_style_option_group_box_set_line_width(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_group_box_mid_line_width = qt6cr_style_option_group_box_mid_line_width(handle : Handle) : LibC::Int
     fun qt6cr_style_option_group_box_set_mid_line_width = qt6cr_style_option_group_box_set_mid_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_create = qt6cr_style_option_header_create : Handle
+    fun qt6cr_style_option_header_destroy = qt6cr_style_option_header_destroy(handle : Handle)
+    fun qt6cr_style_option_header_section = qt6cr_style_option_header_section(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_section = qt6cr_style_option_header_set_section(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_text = qt6cr_style_option_header_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_header_set_text = qt6cr_style_option_header_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_style_option_header_text_alignment = qt6cr_style_option_header_text_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_text_alignment = qt6cr_style_option_header_set_text_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_icon = qt6cr_style_option_header_icon(handle : Handle) : Handle
+    fun qt6cr_style_option_header_set_icon = qt6cr_style_option_header_set_icon(handle : Handle, icon : Handle)
+    fun qt6cr_style_option_header_icon_alignment = qt6cr_style_option_header_icon_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_icon_alignment = qt6cr_style_option_header_set_icon_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_position = qt6cr_style_option_header_position(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_position = qt6cr_style_option_header_set_position(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_selected_position = qt6cr_style_option_header_selected_position(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_selected_position = qt6cr_style_option_header_set_selected_position(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_sort_indicator = qt6cr_style_option_header_sort_indicator(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_sort_indicator = qt6cr_style_option_header_set_sort_indicator(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_orientation = qt6cr_style_option_header_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_set_orientation = qt6cr_style_option_header_set_orientation(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_combo_box_create = qt6cr_style_option_combo_box_create : Handle
     fun qt6cr_style_option_combo_box_destroy = qt6cr_style_option_combo_box_destroy(handle : Handle)
     fun qt6cr_style_option_combo_box_editable = qt6cr_style_option_combo_box_editable(handle : Handle) : Bool
@@ -1692,6 +1712,8 @@ module Qt6
     fun qt6cr_header_view_visual_index = qt6cr_header_view_visual_index(handle : Handle, logical_index : LibC::Int) : LibC::Int
     fun qt6cr_header_view_logical_index = qt6cr_header_view_logical_index(handle : Handle, visual_index : LibC::Int) : LibC::Int
     fun qt6cr_header_view_move_section = qt6cr_header_view_move_section(handle : Handle, from : LibC::Int, to : LibC::Int)
+    fun qt6cr_header_view_init_style_option = qt6cr_header_view_init_style_option(handle : Handle, option : Handle)
+    fun qt6cr_header_view_init_style_option_for_index = qt6cr_header_view_init_style_option_for_index(handle : Handle, logical_index : LibC::Int, option : Handle)
 
     fun qt6cr_table_view_create = qt6cr_table_view_create(parent : Handle) : Handle
     fun qt6cr_table_view_set_model = qt6cr_table_view_set_model(handle : Handle, model : Handle)
