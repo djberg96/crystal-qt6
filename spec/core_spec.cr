@@ -859,6 +859,32 @@ describe Qt6 do
     end
   end
 
+  it "supports graphics-item style options" do
+    option = Qt6::StyleOptionGraphicsItem.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+    identity = Qt6::QTransform.new
+    scaled = Qt6::QTransform.new
+
+    begin
+      option.type.should eq(Qt6::StyleOptionType::GraphicsItem)
+      wrapped.should be_a(Qt6::StyleOptionGraphicsItem)
+
+      option.exposed_rect.should eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+      option.set_exposed_rect(Qt6::RectF.new(2.5, 3.5, 10.0, 6.0)).to_unsafe.should eq(option.to_unsafe)
+      option.exposed_rect.should eq(Qt6::RectF.new(2.5, 3.5, 10.0, 6.0))
+      option.exposed_rect = Qt6::Rect.new(1, 2, 7, 9)
+      option.exposed_rect.should eq(Qt6::RectF.new(1.0, 2.0, 7.0, 9.0))
+
+      Qt6::StyleOptionGraphicsItem.level_of_detail_from_transform(identity).should be_close(1.0, 1e-6)
+      scaled.scale(2.0, 2.0)
+      Qt6::StyleOptionGraphicsItem.level_of_detail_from_transform(scaled).should be_close(2.0, 1e-6)
+    ensure
+      scaled.release
+      identity.release
+      option.release
+    end
+  end
+
   it "supports focus-rect style options" do
     application = app
     host = Qt6::Widget.new

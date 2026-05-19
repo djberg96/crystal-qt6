@@ -11,6 +11,8 @@ module Qt6
         StyleOptionFrame.wrap(handle, owned)
       when StyleOptionType::FocusRect.value
         StyleOptionFocusRect.wrap(handle, owned)
+      when StyleOptionType::GraphicsItem.value
+        StyleOptionGraphicsItem.wrap(handle, owned)
       when StyleOptionType::Complex.value
         StyleOptionComplex.wrap(handle, owned)
       when StyleOptionType::ComboBox.value

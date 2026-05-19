@@ -6406,6 +6406,32 @@ void qt6cr_style_option_frame_set_shape(qt6cr_handle_t handle, int value) {
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_graphics_item_create(void) {
+  return new QStyleOptionGraphicsItem();
+}
+
+void qt6cr_style_option_graphics_item_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionGraphicsItem *>(handle);
+}
+
+qt6cr_rectf_t qt6cr_style_option_graphics_item_exposed_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGraphicsItem *>(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->exposedRect);
+}
+
+void qt6cr_style_option_graphics_item_set_exposed_rect(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *option = static_cast<QStyleOptionGraphicsItem *>(handle);
+
+  if (option != nullptr) {
+    option->exposedRect = from_rectf(rect);
+  }
+}
+
+double qt6cr_style_option_graphics_item_level_of_detail_from_transform(qt6cr_handle_t transform) {
+  auto *value = static_cast<QTransform *>(transform);
+  return value == nullptr ? 0.0 : QStyleOptionGraphicsItem::levelOfDetailFromTransform(*value);
+}
+
 qt6cr_handle_t qt6cr_style_option_combo_box_create(void) {
   return new QStyleOptionComboBox();
 }

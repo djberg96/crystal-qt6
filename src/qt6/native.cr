@@ -685,6 +685,11 @@ module Qt6
     fun qt6cr_style_option_frame_set_features = qt6cr_style_option_frame_set_features(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_frame_shape = qt6cr_style_option_frame_shape(handle : Handle) : LibC::Int
     fun qt6cr_style_option_frame_set_shape = qt6cr_style_option_frame_set_shape(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_graphics_item_create = qt6cr_style_option_graphics_item_create : Handle
+    fun qt6cr_style_option_graphics_item_destroy = qt6cr_style_option_graphics_item_destroy(handle : Handle)
+    fun qt6cr_style_option_graphics_item_exposed_rect = qt6cr_style_option_graphics_item_exposed_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_graphics_item_set_exposed_rect = qt6cr_style_option_graphics_item_set_exposed_rect(handle : Handle, rect : RectFValue)
+    fun qt6cr_style_option_graphics_item_level_of_detail_from_transform = qt6cr_style_option_graphics_item_level_of_detail_from_transform(transform : Handle) : Float64
     fun qt6cr_style_option_combo_box_create = qt6cr_style_option_combo_box_create : Handle
     fun qt6cr_style_option_combo_box_destroy = qt6cr_style_option_combo_box_destroy(handle : Handle)
     fun qt6cr_style_option_combo_box_editable = qt6cr_style_option_combo_box_editable(handle : Handle) : Bool
