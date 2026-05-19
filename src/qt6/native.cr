@@ -690,6 +690,20 @@ module Qt6
     fun qt6cr_style_option_graphics_item_exposed_rect = qt6cr_style_option_graphics_item_exposed_rect(handle : Handle) : RectFValue
     fun qt6cr_style_option_graphics_item_set_exposed_rect = qt6cr_style_option_graphics_item_set_exposed_rect(handle : Handle, rect : RectFValue)
     fun qt6cr_style_option_graphics_item_level_of_detail_from_transform = qt6cr_style_option_graphics_item_level_of_detail_from_transform(transform : Handle) : Float64
+    fun qt6cr_style_option_group_box_create = qt6cr_style_option_group_box_create : Handle
+    fun qt6cr_style_option_group_box_destroy = qt6cr_style_option_group_box_destroy(handle : Handle)
+    fun qt6cr_style_option_group_box_features = qt6cr_style_option_group_box_features(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_group_box_set_features = qt6cr_style_option_group_box_set_features(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_group_box_text = qt6cr_style_option_group_box_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_group_box_set_text = qt6cr_style_option_group_box_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_style_option_group_box_text_alignment = qt6cr_style_option_group_box_text_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_group_box_set_text_alignment = qt6cr_style_option_group_box_set_text_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_group_box_text_color = qt6cr_style_option_group_box_text_color(handle : Handle) : ColorValue
+    fun qt6cr_style_option_group_box_set_text_color = qt6cr_style_option_group_box_set_text_color(handle : Handle, value : ColorValue)
+    fun qt6cr_style_option_group_box_line_width = qt6cr_style_option_group_box_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_group_box_set_line_width = qt6cr_style_option_group_box_set_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_group_box_mid_line_width = qt6cr_style_option_group_box_mid_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_group_box_set_mid_line_width = qt6cr_style_option_group_box_set_mid_line_width(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_combo_box_create = qt6cr_style_option_combo_box_create : Handle
     fun qt6cr_style_option_combo_box_destroy = qt6cr_style_option_combo_box_destroy(handle : Handle)
     fun qt6cr_style_option_combo_box_editable = qt6cr_style_option_combo_box_editable(handle : Handle) : Bool
@@ -3534,6 +3548,7 @@ module Qt6
     fun qt6cr_group_box_is_checked = qt6cr_group_box_is_checked(handle : Handle) : Bool
     fun qt6cr_group_box_is_flat = qt6cr_group_box_is_flat(handle : Handle) : Bool
     fun qt6cr_group_box_set_flat = qt6cr_group_box_set_flat(handle : Handle, value : Bool)
+    fun qt6cr_group_box_init_style_option = qt6cr_group_box_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_group_box_on_toggled = qt6cr_group_box_on_toggled(handle : Handle, callback : (Handle, Bool ->), userdata : Handle)
 
     fun qt6cr_frame_create = qt6cr_frame_create(parent : Handle) : Handle

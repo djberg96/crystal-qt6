@@ -516,6 +516,16 @@ class CrystalLineEdit final : public QLineEdit {
   }
 };
 
+class CrystalGroupBox final : public QGroupBox {
+ public:
+  explicit CrystalGroupBox(const QString &title = QString(), QWidget *parent = nullptr)
+      : QGroupBox(title, parent) {}
+
+  void initStyleOptionBridge(QStyleOptionGroupBox *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalAbstractGraphicsShapeItem final : public QAbstractGraphicsShapeItem {
  public:
   explicit CrystalAbstractGraphicsShapeItem(QGraphicsItem *parent = nullptr)
@@ -6430,6 +6440,92 @@ void qt6cr_style_option_graphics_item_set_exposed_rect(qt6cr_handle_t handle, qt
 double qt6cr_style_option_graphics_item_level_of_detail_from_transform(qt6cr_handle_t transform) {
   auto *value = static_cast<QTransform *>(transform);
   return value == nullptr ? 0.0 : QStyleOptionGraphicsItem::levelOfDetailFromTransform(*value);
+}
+
+qt6cr_handle_t qt6cr_style_option_group_box_create(void) {
+  return new QStyleOptionGroupBox();
+}
+
+void qt6cr_style_option_group_box_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionGroupBox *>(handle);
+}
+
+int qt6cr_style_option_group_box_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_group_box_set_features(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+
+  if (option != nullptr) {
+    option->features = QStyleOptionFrame::FrameFeatures(static_cast<QStyleOptionFrame::FrameFeature>(value));
+  }
+}
+
+char *qt6cr_style_option_group_box_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_group_box_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+int qt6cr_style_option_group_box_text_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->textAlignment);
+}
+
+void qt6cr_style_option_group_box_set_text_alignment(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+
+  if (option != nullptr) {
+    option->textAlignment = Qt::Alignment(value);
+  }
+}
+
+qt6cr_color_t qt6cr_style_option_group_box_text_color(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+  return option == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(option->textColor);
+}
+
+void qt6cr_style_option_group_box_set_text_color(qt6cr_handle_t handle, qt6cr_color_t value) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+
+  if (option != nullptr) {
+    option->textColor = QColor(value.red, value.green, value.blue, value.alpha);
+  }
+}
+
+int qt6cr_style_option_group_box_line_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+  return option == nullptr ? 0 : option->lineWidth;
+}
+
+void qt6cr_style_option_group_box_set_line_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+
+  if (option != nullptr) {
+    option->lineWidth = value;
+  }
+}
+
+int qt6cr_style_option_group_box_mid_line_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+  return option == nullptr ? 0 : option->midLineWidth;
+}
+
+void qt6cr_style_option_group_box_set_mid_line_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionGroupBox *>(handle);
+
+  if (option != nullptr) {
+    option->midLineWidth = value;
+  }
 }
 
 qt6cr_handle_t qt6cr_style_option_combo_box_create(void) {
@@ -25451,7 +25547,7 @@ void qt6cr_double_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_double_
 }
 
 qt6cr_handle_t qt6cr_group_box_create(qt6cr_handle_t parent, const char *title) {
-  return new QGroupBox(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+  return new CrystalGroupBox(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
 
 void qt6cr_group_box_set_title(qt6cr_handle_t handle, const char *title) {
@@ -25516,6 +25612,15 @@ void qt6cr_group_box_set_flat(qt6cr_handle_t handle, bool value) {
 
   if (group_box != nullptr) {
     group_box->setFlat(value);
+  }
+}
+
+void qt6cr_group_box_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *group_box = dynamic_cast<CrystalGroupBox *>(as_group_box(handle));
+  auto *option = static_cast<QStyleOptionGroupBox *>(option_handle);
+
+  if (group_box != nullptr && option != nullptr) {
+    group_box->initStyleOptionBridge(option);
   }
 }
 

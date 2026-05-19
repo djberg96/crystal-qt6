@@ -885,6 +885,52 @@ describe Qt6 do
     end
   end
 
+  it "supports group-box style options" do
+    application = app
+    group_box = Qt6::GroupBox.new("Terrain")
+    option = Qt6::StyleOptionGroupBox.new
+
+    begin
+      group_box.alignment = Qt6::AlignmentFlag::HCenter
+      group_box.checkable = true
+      group_box.checked = true
+      group_box.flat = true
+      group_box.resize(168, 52)
+      group_box.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::GroupBox)
+      option.set_features(Qt6::StyleOptionFrameFeature::Flat | Qt6::StyleOptionFrameFeature::Rounded).to_unsafe.should eq(option.to_unsafe)
+      option.features.includes?(Qt6::StyleOptionFrameFeature::Flat).should be_true
+      option.features.includes?(Qt6::StyleOptionFrameFeature::Rounded).should be_true
+      option.set_text("Inspector").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Inspector")
+      option.set_text_alignment(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter).to_unsafe.should eq(option.to_unsafe)
+      option.text_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+      option.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+      option.set_text_color(Qt6::Color.new(12, 34, 56, 200)).to_unsafe.should eq(option.to_unsafe)
+      option.text_color.should eq(Qt6::Color.new(12, 34, 56, 200))
+      option.set_line_width(3).to_unsafe.should eq(option.to_unsafe)
+      option.line_width.should eq(3)
+      option.set_mid_line_width(1).to_unsafe.should eq(option.to_unsafe)
+      option.mid_line_width.should eq(1)
+
+      option.init_from(group_box)
+      option.text.should eq("Terrain")
+      option.text_alignment.includes?(Qt6::AlignmentFlag::HCenter).should be_true
+      option.features.includes?(Qt6::StyleOptionFrameFeature::Flat).should be_true
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.sub_controls.includes?(Qt6::StyleSubControl::GroupBoxLabel).should be_true
+      option.sub_controls.includes?(Qt6::StyleSubControl::GroupBoxFrame).should be_true
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 168.0, 52.0))
+      option.line_width.should be >= 0
+      option.mid_line_width.should be >= 0
+    ensure
+      option.release
+      group_box.release
+    end
+  end
+
   it "supports focus-rect style options" do
     application = app
     host = Qt6::Widget.new
