@@ -809,6 +809,56 @@ describe Qt6 do
     end
   end
 
+  it "supports frame style options" do
+    application = app
+    frame = Qt6::Frame.new
+    line_edit = Qt6::LineEdit.new
+    option = Qt6::StyleOptionFrame.new
+
+    begin
+      frame.frame_shape = Qt6::FrameShape::Box
+      frame.line_width = 3
+      frame.mid_line_width = 1
+      frame.resize(120, 32)
+      frame.show
+
+      line_edit.resize(100, 28)
+      line_edit.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::Frame)
+      option.features.should eq(Qt6::StyleOptionFrameFeature::None)
+      option.set_line_width(4).to_unsafe.should eq(option.to_unsafe)
+      option.line_width.should eq(4)
+      option.set_mid_line_width(2).to_unsafe.should eq(option.to_unsafe)
+      option.mid_line_width.should eq(2)
+      option.set_features(
+        Qt6::StyleOptionFrameFeature::Flat |
+        Qt6::StyleOptionFrameFeature::Rounded
+      ).to_unsafe.should eq(option.to_unsafe)
+      option.features.includes?(Qt6::StyleOptionFrameFeature::Flat).should be_true
+      option.features.includes?(Qt6::StyleOptionFrameFeature::Rounded).should be_true
+      option.set_frame_shape(Qt6::FrameShape::WinPanel).to_unsafe.should eq(option.to_unsafe)
+      option.frame_shape.should eq(Qt6::FrameShape::WinPanel)
+
+      option.init_from(frame)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 120.0, 32.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.line_width.should eq(frame.line_width)
+      option.mid_line_width.should eq(frame.mid_line_width)
+
+      option.init_from(line_edit)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 100.0, 28.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.line_width.should be >= 0
+      option.mid_line_width.should be >= 0
+    ensure
+      option.release
+      line_edit.release
+      frame.release
+    end
+  end
+
   it "supports focus-rect style options" do
     application = app
     host = Qt6::Widget.new

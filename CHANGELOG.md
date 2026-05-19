@@ -8,6 +8,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Added
 
+- Added `QStyleOptionFrame` with line-width, mid-line-width, frame-feature, and frame-shape helpers, plus live initialization from `QFrame` and `QLineEdit`.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.

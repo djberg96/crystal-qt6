@@ -675,6 +675,16 @@ module Qt6
     fun qt6cr_style_option_button_set_icon = qt6cr_style_option_button_set_icon(handle : Handle, icon : Handle)
     fun qt6cr_style_option_button_icon_size = qt6cr_style_option_button_icon_size(handle : Handle) : SizeValue
     fun qt6cr_style_option_button_set_icon_size = qt6cr_style_option_button_set_icon_size(handle : Handle, size : SizeValue)
+    fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
+    fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
+    fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_frame_set_line_width = qt6cr_style_option_frame_set_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_frame_mid_line_width = qt6cr_style_option_frame_mid_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_frame_set_mid_line_width = qt6cr_style_option_frame_set_mid_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_frame_features = qt6cr_style_option_frame_features(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_frame_set_features = qt6cr_style_option_frame_set_features(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_frame_shape = qt6cr_style_option_frame_shape(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_frame_set_shape = qt6cr_style_option_frame_set_shape(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_combo_box_create = qt6cr_style_option_combo_box_create : Handle
     fun qt6cr_style_option_combo_box_destroy = qt6cr_style_option_combo_box_destroy(handle : Handle)
     fun qt6cr_style_option_combo_box_editable = qt6cr_style_option_combo_box_editable(handle : Handle) : Bool
@@ -3010,6 +3020,7 @@ module Qt6
     fun qt6cr_line_edit_has_acceptable_input = qt6cr_line_edit_has_acceptable_input(handle : Handle) : Bool
     fun qt6cr_line_edit_emit_editing_finished = qt6cr_line_edit_emit_editing_finished(handle : Handle)
     fun qt6cr_line_edit_emit_return_pressed = qt6cr_line_edit_emit_return_pressed(handle : Handle)
+    fun qt6cr_line_edit_init_style_option = qt6cr_line_edit_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_line_edit_on_editing_finished = qt6cr_line_edit_on_editing_finished(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_line_edit_on_return_pressed = qt6cr_line_edit_on_return_pressed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_line_edit_on_text_changed = qt6cr_line_edit_on_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
@@ -3534,6 +3545,7 @@ module Qt6
     fun qt6cr_frame_frame_width = qt6cr_frame_frame_width(handle : Handle) : LibC::Int
     fun qt6cr_frame_frame_rect = qt6cr_frame_frame_rect(handle : Handle) : RectValue
     fun qt6cr_frame_set_frame_rect = qt6cr_frame_set_frame_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_frame_init_style_option = qt6cr_frame_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_focus_frame_create = qt6cr_focus_frame_create(parent : Handle) : Handle
     fun qt6cr_focus_frame_widget = qt6cr_focus_frame_widget(handle : Handle) : Handle
     fun qt6cr_focus_frame_set_widget = qt6cr_focus_frame_set_widget(handle : Handle, widget : Handle)

@@ -498,6 +498,24 @@ class CrystalDockWidget final : public QDockWidget {
   }
 };
 
+class CrystalFrame final : public QFrame {
+ public:
+  explicit CrystalFrame(QWidget *parent = nullptr) : QFrame(parent) {}
+
+  void initStyleOptionBridge(QStyleOptionFrame *option) const {
+    initStyleOption(option);
+  }
+};
+
+class CrystalLineEdit final : public QLineEdit {
+ public:
+  explicit CrystalLineEdit(QWidget *parent = nullptr) : QLineEdit(parent) {}
+
+  void initStyleOptionBridge(QStyleOptionFrame *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalAbstractGraphicsShapeItem final : public QAbstractGraphicsShapeItem {
  public:
   explicit CrystalAbstractGraphicsShapeItem(QGraphicsItem *parent = nullptr)
@@ -6325,6 +6343,66 @@ void qt6cr_style_option_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t
 
   if (option != nullptr) {
     option->iconSize = QSize(size.width, size.height);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_frame_create(void) {
+  return new QStyleOptionFrame();
+}
+
+void qt6cr_style_option_frame_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionFrame *>(handle);
+}
+
+int qt6cr_style_option_frame_line_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+  return option == nullptr ? 0 : option->lineWidth;
+}
+
+void qt6cr_style_option_frame_set_line_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+
+  if (option != nullptr) {
+    option->lineWidth = value;
+  }
+}
+
+int qt6cr_style_option_frame_mid_line_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+  return option == nullptr ? 0 : option->midLineWidth;
+}
+
+void qt6cr_style_option_frame_set_mid_line_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+
+  if (option != nullptr) {
+    option->midLineWidth = value;
+  }
+}
+
+int qt6cr_style_option_frame_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_frame_set_features(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+
+  if (option != nullptr) {
+    option->features = QStyleOptionFrame::FrameFeatures(static_cast<QStyleOptionFrame::FrameFeature>(value));
+  }
+}
+
+int qt6cr_style_option_frame_shape(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+  return option == nullptr ? static_cast<int>(QFrame::NoFrame) : static_cast<int>(option->frameShape);
+}
+
+void qt6cr_style_option_frame_set_shape(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionFrame *>(handle);
+
+  if (option != nullptr) {
+    option->frameShape = static_cast<QFrame::Shape>(value);
   }
 }
 
@@ -21991,7 +22069,7 @@ void qt6cr_push_button_show_menu(qt6cr_handle_t handle) {
 }
 
 qt6cr_handle_t qt6cr_line_edit_create(qt6cr_handle_t parent, const char *text) {
-  auto *line_edit = new QLineEdit(as_widget(parent));
+  auto *line_edit = new CrystalLineEdit(as_widget(parent));
   line_edit->setText(QString::fromUtf8(text == nullptr ? "" : text));
   return line_edit;
 }
@@ -22037,6 +22115,15 @@ void qt6cr_line_edit_set_echo_mode(qt6cr_handle_t handle, int value) {
 
   if (line_edit != nullptr) {
     line_edit->setEchoMode(static_cast<QLineEdit::EchoMode>(value));
+  }
+}
+
+void qt6cr_line_edit_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *line_edit = dynamic_cast<CrystalLineEdit *>(as_line_edit(handle));
+  auto *option = static_cast<QStyleOptionFrame *>(option_handle);
+
+  if (line_edit != nullptr && option != nullptr) {
+    line_edit->initStyleOptionBridge(option);
   }
 }
 
@@ -25419,7 +25506,7 @@ void qt6cr_group_box_on_toggled(qt6cr_handle_t handle, qt6cr_bool_callback_t cal
 }
 
 qt6cr_handle_t qt6cr_frame_create(qt6cr_handle_t parent) {
-  return new QFrame(as_widget(parent));
+  return new CrystalFrame(as_widget(parent));
 }
 
 int qt6cr_frame_shape(qt6cr_handle_t handle) {
@@ -25502,6 +25589,15 @@ void qt6cr_frame_set_frame_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
 
   if (frame != nullptr) {
     frame->setFrameRect(QRect(rect.x, rect.y, rect.width, rect.height));
+  }
+}
+
+void qt6cr_frame_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *frame = dynamic_cast<CrystalFrame *>(as_frame(handle));
+  auto *option = static_cast<QStyleOptionFrame *>(option_handle);
+
+  if (frame != nullptr && option != nullptr) {
+    frame->initStyleOptionBridge(option);
   }
 }
 
