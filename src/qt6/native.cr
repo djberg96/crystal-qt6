@@ -675,6 +675,28 @@ module Qt6
     fun qt6cr_style_option_button_set_icon = qt6cr_style_option_button_set_icon(handle : Handle, icon : Handle)
     fun qt6cr_style_option_button_icon_size = qt6cr_style_option_button_icon_size(handle : Handle) : SizeValue
     fun qt6cr_style_option_button_set_icon_size = qt6cr_style_option_button_set_icon_size(handle : Handle, size : SizeValue)
+    fun qt6cr_style_option_menu_item_create = qt6cr_style_option_menu_item_create : Handle
+    fun qt6cr_style_option_menu_item_destroy = qt6cr_style_option_menu_item_destroy(handle : Handle)
+    fun qt6cr_style_option_menu_item_menu_item_type = qt6cr_style_option_menu_item_menu_item_type(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_menu_item_set_menu_item_type = qt6cr_style_option_menu_item_set_menu_item_type(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_menu_item_check_type = qt6cr_style_option_menu_item_check_type(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_menu_item_set_check_type = qt6cr_style_option_menu_item_set_check_type(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_menu_item_is_checked = qt6cr_style_option_menu_item_is_checked(handle : Handle) : Bool
+    fun qt6cr_style_option_menu_item_set_checked = qt6cr_style_option_menu_item_set_checked(handle : Handle, value : Bool)
+    fun qt6cr_style_option_menu_item_menu_has_checkable_items = qt6cr_style_option_menu_item_menu_has_checkable_items(handle : Handle) : Bool
+    fun qt6cr_style_option_menu_item_set_menu_has_checkable_items = qt6cr_style_option_menu_item_set_menu_has_checkable_items(handle : Handle, value : Bool)
+    fun qt6cr_style_option_menu_item_menu_rect = qt6cr_style_option_menu_item_menu_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_menu_item_set_menu_rect = qt6cr_style_option_menu_item_set_menu_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_style_option_menu_item_text = qt6cr_style_option_menu_item_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_menu_item_set_text = qt6cr_style_option_menu_item_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_style_option_menu_item_icon = qt6cr_style_option_menu_item_icon(handle : Handle) : Handle
+    fun qt6cr_style_option_menu_item_set_icon = qt6cr_style_option_menu_item_set_icon(handle : Handle, icon : Handle)
+    fun qt6cr_style_option_menu_item_max_icon_width = qt6cr_style_option_menu_item_max_icon_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_menu_item_set_max_icon_width = qt6cr_style_option_menu_item_set_max_icon_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_menu_item_reserved_shortcut_width = qt6cr_style_option_menu_item_reserved_shortcut_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_menu_item_set_reserved_shortcut_width = qt6cr_style_option_menu_item_set_reserved_shortcut_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_menu_item_font = qt6cr_style_option_menu_item_font(handle : Handle) : Handle
+    fun qt6cr_style_option_menu_item_set_font = qt6cr_style_option_menu_item_set_font(handle : Handle, font : Handle)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
@@ -2888,6 +2910,7 @@ module Qt6
     fun qt6cr_menu_clear = qt6cr_menu_clear(handle : Handle)
     fun qt6cr_menu_menu_action = qt6cr_menu_menu_action(handle : Handle) : Handle
     fun qt6cr_menu_exec_at = qt6cr_menu_exec_at(handle : Handle, widget : Handle, position : PointFValue)
+    fun qt6cr_menu_init_style_option = qt6cr_menu_init_style_option(handle : Handle, action : Handle, option : Handle)
 
     fun qt6cr_tool_bar_create = qt6cr_tool_bar_create(parent : Handle, title : UInt8*) : Handle
     fun qt6cr_tool_bar_add_text_action = qt6cr_tool_bar_add_text_action(handle : Handle, text : UInt8*) : Handle

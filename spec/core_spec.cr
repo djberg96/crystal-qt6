@@ -1056,6 +1056,67 @@ describe Qt6 do
     end
   end
 
+  it "supports menu-item style options" do
+    application = app
+    menu = Qt6::Menu.new("Terrain")
+    action = menu.add_action("&Forest\tCtrl+F")
+    option = Qt6::StyleOptionMenuItem.new
+    icon = Qt6::QIcon.new
+    font = Qt6::QFont.new("Helvetica", 13, bold: true)
+
+    begin
+      menu.resize(180, 40)
+      menu.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::MenuItem)
+      option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::Normal)
+      option.check_type.should eq(Qt6::StyleOptionMenuItemCheckType::NotCheckable)
+      option.checked?.should be_false
+      option.menu_has_checkable_items?.should be_true
+
+      option.set_menu_item_type(Qt6::StyleOptionMenuItemType::DefaultItem).to_unsafe.should eq(option.to_unsafe)
+      option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::DefaultItem)
+      option.set_check_type(Qt6::StyleOptionMenuItemCheckType::NonExclusive).to_unsafe.should eq(option.to_unsafe)
+      option.check_type.should eq(Qt6::StyleOptionMenuItemCheckType::NonExclusive)
+      option.set_checked(true).to_unsafe.should eq(option.to_unsafe)
+      option.checked?.should be_true
+      option.set_menu_has_checkable_items(true).to_unsafe.should eq(option.to_unsafe)
+      option.menu_has_checkable_items?.should be_true
+      option.set_menu_rect(Qt6::Rect.new(4, 6, 120, 24)).to_unsafe.should eq(option.to_unsafe)
+      option.menu_rect.should eq(Qt6::RectF.new(4.0, 6.0, 120.0, 24.0))
+      option.set_text("Forest\tCtrl+F").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Forest\tCtrl+F")
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_true
+      option.set_max_icon_width(18).to_unsafe.should eq(option.to_unsafe)
+      option.max_icon_width.should eq(18)
+      option.set_reserved_shortcut_width(44).to_unsafe.should eq(option.to_unsafe)
+      option.reserved_shortcut_width.should eq(44)
+      option.set_font(font).to_unsafe.should eq(option.to_unsafe)
+      option.font.family.should eq(font.family)
+      option.font.point_size.should eq(font.point_size)
+      option.font.bold?.should eq(font.bold?)
+
+      action.checkable = true
+      action.checked = true
+      option.init_from(menu, action)
+      option.text.should eq(action.text)
+      option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::Normal)
+      option.check_type.should eq(Qt6::StyleOptionMenuItemCheckType::NonExclusive)
+      option.checked?.should be_true
+      option.menu_has_checkable_items?.should be_true
+      option.rect.width.should be > 0.0
+      option.menu_rect.width.should be > 0.0
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      font.release
+      icon.release
+      option.release
+      menu.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

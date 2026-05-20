@@ -5,6 +5,8 @@ module Qt6
       case LibQt6.qt6cr_style_option_type(handle)
       when StyleOptionType::Button.value
         StyleOptionButton.wrap(handle, owned)
+      when StyleOptionType::MenuItem.value
+        StyleOptionMenuItem.wrap(handle, owned)
       when StyleOptionType::DockWidget.value
         StyleOptionDockWidget.wrap(handle, owned)
       when StyleOptionType::Frame.value

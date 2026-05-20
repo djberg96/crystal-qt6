@@ -526,6 +526,16 @@ class CrystalGroupBox final : public QGroupBox {
   }
 };
 
+class CrystalMenu final : public QMenu {
+ public:
+  explicit CrystalMenu(const QString &title = QString(), QWidget *parent = nullptr)
+      : QMenu(title, parent) {}
+
+  void initStyleOptionBridge(QStyleOptionMenuItem *option, const QAction *action) const {
+    initStyleOption(option, action);
+  }
+};
+
 class CrystalHeaderView final : public QHeaderView {
  public:
   explicit CrystalHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr)
@@ -6372,6 +6382,146 @@ void qt6cr_style_option_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t
 
   if (option != nullptr) {
     option->iconSize = QSize(size.width, size.height);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_menu_item_create(void) {
+  return new QStyleOptionMenuItem();
+}
+
+void qt6cr_style_option_menu_item_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionMenuItem *>(handle);
+}
+
+int qt6cr_style_option_menu_item_menu_item_type(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionMenuItem::Normal) : static_cast<int>(option->menuItemType);
+}
+
+void qt6cr_style_option_menu_item_set_menu_item_type(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->menuItemType = static_cast<QStyleOptionMenuItem::MenuItemType>(value);
+  }
+}
+
+int qt6cr_style_option_menu_item_check_type(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionMenuItem::NotCheckable) : static_cast<int>(option->checkType);
+}
+
+void qt6cr_style_option_menu_item_set_check_type(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->checkType = static_cast<QStyleOptionMenuItem::CheckType>(value);
+  }
+}
+
+bool qt6cr_style_option_menu_item_is_checked(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option != nullptr && option->checked;
+}
+
+void qt6cr_style_option_menu_item_set_checked(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->checked = value;
+  }
+}
+
+bool qt6cr_style_option_menu_item_menu_has_checkable_items(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option != nullptr && option->menuHasCheckableItems;
+}
+
+void qt6cr_style_option_menu_item_set_menu_has_checkable_items(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->menuHasCheckableItems = value;
+  }
+}
+
+qt6cr_rectf_t qt6cr_style_option_menu_item_menu_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->menuRect);
+}
+
+void qt6cr_style_option_menu_item_set_menu_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->menuRect = from_rect(rect);
+  }
+}
+
+char *qt6cr_style_option_menu_item_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_menu_item_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_menu_item_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_menu_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  auto *value = static_cast<QIcon *>(icon);
+
+  if (option != nullptr && value != nullptr) {
+    option->icon = *value;
+  }
+}
+
+int qt6cr_style_option_menu_item_max_icon_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? 0 : option->maxIconWidth;
+}
+
+void qt6cr_style_option_menu_item_set_max_icon_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->maxIconWidth = value;
+  }
+}
+
+int qt6cr_style_option_menu_item_reserved_shortcut_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? 0 : option->reservedShortcutWidth;
+}
+
+void qt6cr_style_option_menu_item_set_reserved_shortcut_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+
+  if (option != nullptr) {
+    option->reservedShortcutWidth = value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_menu_item_font(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  return option == nullptr ? new QFont() : new QFont(option->font);
+}
+
+void qt6cr_style_option_menu_item_set_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *option = static_cast<QStyleOptionMenuItem *>(handle);
+  auto *value = static_cast<QFont *>(font);
+
+  if (option != nullptr && value != nullptr) {
+    option->font = *value;
   }
 }
 
@@ -21196,7 +21346,7 @@ void qt6cr_system_tray_icon_on_message_clicked(qt6cr_handle_t handle, qt6cr_void
 }
 
 qt6cr_handle_t qt6cr_menu_create(qt6cr_handle_t parent, const char *title) {
-  return new QMenu(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+  return new CrystalMenu(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
 
 qt6cr_handle_t qt6cr_menu_bar_create(qt6cr_handle_t parent) {
@@ -21205,7 +21355,14 @@ qt6cr_handle_t qt6cr_menu_bar_create(qt6cr_handle_t parent) {
 
 qt6cr_handle_t qt6cr_menu_bar_add_menu(qt6cr_handle_t handle, const char *title) {
   auto *menu_bar = as_menu_bar(handle);
-  return menu_bar == nullptr ? nullptr : menu_bar->addMenu(QString::fromUtf8(title == nullptr ? "" : title));
+
+  if (menu_bar == nullptr) {
+    return nullptr;
+  }
+
+  auto *menu = new CrystalMenu(QString::fromUtf8(title == nullptr ? "" : title), menu_bar);
+  menu_bar->addMenu(menu);
+  return menu;
 }
 
 void qt6cr_menu_bar_add_existing_menu(qt6cr_handle_t handle, qt6cr_handle_t menu) {
@@ -21259,7 +21416,14 @@ void qt6cr_menu_bar_clear(qt6cr_handle_t handle) {
 
 qt6cr_handle_t qt6cr_menu_add_menu(qt6cr_handle_t handle, const char *title) {
   auto *menu = as_menu(handle);
-  return menu == nullptr ? nullptr : menu->addMenu(QString::fromUtf8(title == nullptr ? "" : title));
+
+  if (menu == nullptr) {
+    return nullptr;
+  }
+
+  auto *submenu = new CrystalMenu(QString::fromUtf8(title == nullptr ? "" : title), menu);
+  menu->addMenu(submenu);
+  return submenu;
 }
 
 void qt6cr_menu_add_existing_menu(qt6cr_handle_t handle, qt6cr_handle_t menu_handle) {
@@ -21360,6 +21524,15 @@ void qt6cr_menu_exec_at(qt6cr_handle_t handle, qt6cr_handle_t widget, qt6cr_poin
 
   QPoint global_position = parent_widget->mapToGlobal(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)));
   menu->exec(global_position);
+}
+
+void qt6cr_menu_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t action, qt6cr_handle_t option_handle) {
+  auto *menu = dynamic_cast<CrystalMenu *>(as_menu(handle));
+  auto *option = static_cast<QStyleOptionMenuItem *>(option_handle);
+
+  if (menu != nullptr && option != nullptr) {
+    menu->initStyleOptionBridge(option, as_action(action));
+  }
 }
 
 qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title) {

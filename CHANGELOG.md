@@ -13,6 +13,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyleOptionGroupBox` with frame-feature, title text/alignment/color, line-width, and live initialization helpers for group-box paint state.
 - Added `QStyleOptionHeader` with typed section-position, selected-position, and sort-indicator enums, plus live `QHeaderView` and per-section initialization helpers.
 - Added `QStyleOptionHeaderV2` with text-elide and section-drag-target helpers on top of the shared header style-option surface.
+- Added `QStyleOptionMenuItem` with typed menu-item and check-type enums, menu-rect/text/icon/font helpers, and live `QMenu` action initialization support for menu paint state.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.
