@@ -724,6 +724,12 @@ module Qt6
     fun qt6cr_style_option_header_set_sort_indicator = qt6cr_style_option_header_set_sort_indicator(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_header_orientation = qt6cr_style_option_header_orientation(handle : Handle) : LibC::Int
     fun qt6cr_style_option_header_set_orientation = qt6cr_style_option_header_set_orientation(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_v2_create = qt6cr_style_option_header_v2_create : Handle
+    fun qt6cr_style_option_header_v2_destroy = qt6cr_style_option_header_v2_destroy(handle : Handle)
+    fun qt6cr_style_option_header_v2_text_elide_mode = qt6cr_style_option_header_v2_text_elide_mode(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_header_v2_set_text_elide_mode = qt6cr_style_option_header_v2_set_text_elide_mode(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_header_v2_is_section_drag_target = qt6cr_style_option_header_v2_is_section_drag_target(handle : Handle) : Bool
+    fun qt6cr_style_option_header_v2_set_section_drag_target = qt6cr_style_option_header_v2_set_section_drag_target(handle : Handle, value : Bool)
     fun qt6cr_style_option_combo_box_create = qt6cr_style_option_combo_box_create : Handle
     fun qt6cr_style_option_combo_box_destroy = qt6cr_style_option_combo_box_destroy(handle : Handle)
     fun qt6cr_style_option_combo_box_editable = qt6cr_style_option_combo_box_editable(handle : Handle) : Bool

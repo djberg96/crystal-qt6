@@ -6673,6 +6673,40 @@ void qt6cr_style_option_header_set_orientation(qt6cr_handle_t handle, int value)
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_header_v2_create(void) {
+  return new QStyleOptionHeaderV2();
+}
+
+void qt6cr_style_option_header_v2_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionHeaderV2 *>(handle);
+}
+
+int qt6cr_style_option_header_v2_text_elide_mode(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeaderV2 *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::ElideNone) : static_cast<int>(option->textElideMode);
+}
+
+void qt6cr_style_option_header_v2_set_text_elide_mode(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionHeaderV2 *>(handle);
+
+  if (option != nullptr) {
+    option->textElideMode = static_cast<Qt::TextElideMode>(value);
+  }
+}
+
+bool qt6cr_style_option_header_v2_is_section_drag_target(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionHeaderV2 *>(handle);
+  return option != nullptr && option->isSectionDragTarget;
+}
+
+void qt6cr_style_option_header_v2_set_section_drag_target(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionHeaderV2 *>(handle);
+
+  if (option != nullptr) {
+    option->isSectionDragTarget = value;
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_combo_box_create(void) {
   return new QStyleOptionComboBox();
 }

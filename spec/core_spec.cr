@@ -992,6 +992,46 @@ describe Qt6 do
     end
   end
 
+  it "supports header v2 style options" do
+    application = app
+    table_view = Qt6::TableView.new
+    model = Qt6::StandardItemModel.new(table_view)
+    option = Qt6::StyleOptionHeaderV2.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      model.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+      model.set_horizontal_header_label(0, "Layer")
+      table_view.model = model
+      table_view.resize(180, 60)
+      table_view.show
+      application.process_events
+
+      option.version.should eq(2)
+      option.type.should eq(Qt6::StyleOptionType::Header)
+      wrapped.should be_a(Qt6::StyleOptionHeaderV2)
+
+      option.set_text_elide_mode(Qt6::TextElideMode::ElideMiddle).to_unsafe.should eq(option.to_unsafe)
+      option.text_elide_mode.should eq(Qt6::TextElideMode::ElideMiddle)
+      option.set_section_drag_target(true).to_unsafe.should eq(option.to_unsafe)
+      option.section_drag_target?.should be_true
+
+      header = table_view.horizontal_header
+      option.init_from(header)
+      option.version.should eq(2)
+      option.orientation.should eq(Qt6::Orientation::Horizontal)
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+
+      option.init_from_index(header, 0)
+      option.version.should eq(2)
+      option.section.should eq(0)
+      option.text.should eq("Layer")
+    ensure
+      option.release
+      table_view.release
+    end
+  end
+
   it "supports focus-rect style options" do
     application = app
     host = Qt6::Widget.new

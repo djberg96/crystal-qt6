@@ -16,7 +16,11 @@ module Qt6
       when StyleOptionType::GroupBox.value
         StyleOptionGroupBox.wrap(handle, owned)
       when StyleOptionType::Header.value
-        StyleOptionHeader.wrap(handle, owned)
+        if LibQt6.qt6cr_style_option_version(handle) >= 2
+          StyleOptionHeaderV2.wrap(handle, owned)
+        else
+          StyleOptionHeader.wrap(handle, owned)
+        end
       when StyleOptionType::Complex.value
         StyleOptionComplex.wrap(handle, owned)
       when StyleOptionType::ComboBox.value
