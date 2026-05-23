@@ -16,6 +16,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyleOptionMenuItem` with typed menu-item and check-type enums, menu-rect/text/icon/font helpers, and live `QMenu` action initialization support for menu paint state.
 - Added `QStyleOptionMenuItemV2` with `mouseDown` helpers and version-aware `SO_MenuItem` dispatch on top of the shared menu-item style-option surface.
 - Added `QStyleOptionProgressBar` with range/progress/text/alignment/visibility/inversion helpers and live `QProgressBar` initialization support for progress-bar paint state.
+- Added `QStyleOptionRubberBand` with shape and opacity helpers plus live `QRubberBand` initialization support for rubber-band paint state.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.

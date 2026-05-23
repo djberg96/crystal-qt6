@@ -545,6 +545,16 @@ class CrystalProgressBar final : public QProgressBar {
   }
 };
 
+class CrystalRubberBand final : public QRubberBand {
+ public:
+  explicit CrystalRubberBand(QRubberBand::Shape shape, QWidget *parent = nullptr)
+      : QRubberBand(shape, parent) {}
+
+  void initStyleOptionBridge(QStyleOptionRubberBand *option) const {
+    initStyleOption(option);
+  }
+};
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
 class CrystalStyleOptionMenuItemV2Compat final : public QStyleOptionMenuItem {
  public:
@@ -6677,6 +6687,40 @@ void qt6cr_style_option_progress_bar_set_bottom_to_top(qt6cr_handle_t handle, bo
 
   if (option != nullptr) {
     option->bottomToTop = value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_rubber_band_create(void) {
+  return new QStyleOptionRubberBand();
+}
+
+void qt6cr_style_option_rubber_band_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionRubberBand *>(handle);
+}
+
+int qt6cr_style_option_rubber_band_shape(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionRubberBand *>(handle);
+  return option == nullptr ? static_cast<int>(QRubberBand::Line) : static_cast<int>(option->shape);
+}
+
+void qt6cr_style_option_rubber_band_set_shape(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionRubberBand *>(handle);
+
+  if (option != nullptr) {
+    option->shape = static_cast<QRubberBand::Shape>(value);
+  }
+}
+
+bool qt6cr_style_option_rubber_band_opaque(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionRubberBand *>(handle);
+  return option != nullptr && option->opaque;
+}
+
+void qt6cr_style_option_rubber_band_set_opaque(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionRubberBand *>(handle);
+
+  if (option != nullptr) {
+    option->opaque = value;
   }
 }
 
@@ -26275,7 +26319,7 @@ void qt6cr_focus_frame_set_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) 
 }
 
 qt6cr_handle_t qt6cr_rubber_band_create(int shape, qt6cr_handle_t parent) {
-  return new QRubberBand(static_cast<QRubberBand::Shape>(shape), as_widget(parent));
+  return new CrystalRubberBand(static_cast<QRubberBand::Shape>(shape), as_widget(parent));
 }
 
 int qt6cr_rubber_band_shape(qt6cr_handle_t handle) {
@@ -26293,6 +26337,15 @@ void qt6cr_rubber_band_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect) {
 
   if (rubber_band != nullptr) {
     rubber_band->setGeometry(from_rect(rect));
+  }
+}
+
+void qt6cr_rubber_band_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *rubber_band = dynamic_cast<CrystalRubberBand *>(as_rubber_band(handle));
+  auto *option = static_cast<QStyleOptionRubberBand *>(option_handle);
+
+  if (rubber_band != nullptr && option != nullptr) {
+    rubber_band->initStyleOptionBridge(option);
   }
 }
 

@@ -1213,6 +1213,42 @@ describe Qt6 do
     end
   end
 
+  it "supports rubber-band style options" do
+    application = app
+    host = Qt6::Widget.new
+    rubber_band = Qt6::RubberBand.new(Qt6::RubberBandShape::Rectangle, host)
+    option = Qt6::StyleOptionRubberBand.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      host.resize(200, 120)
+      host.show
+      rubber_band.set_geometry(10, 12, 80, 26)
+      rubber_band.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::RubberBand)
+      wrapped.should be_a(Qt6::StyleOptionRubberBand)
+      option.shape.should eq(Qt6::RubberBandShape::Line)
+      option.opaque?.should be_false
+
+      option.set_shape(Qt6::RubberBandShape::Rectangle).to_unsafe.should eq(option.to_unsafe)
+      option.shape.should eq(Qt6::RubberBandShape::Rectangle)
+      option.set_opaque(true).to_unsafe.should eq(option.to_unsafe)
+      option.opaque?.should be_true
+
+      option.init_from(rubber_band)
+      option.shape.should eq(Qt6::RubberBandShape::Rectangle)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 80.0, 26.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.opaque?.should be_a(Bool)
+    ensure
+      option.release
+      rubber_band.release
+      host.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

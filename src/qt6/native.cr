@@ -719,6 +719,12 @@ module Qt6
     fun qt6cr_style_option_progress_bar_set_inverted_appearance = qt6cr_style_option_progress_bar_set_inverted_appearance(handle : Handle, value : Bool)
     fun qt6cr_style_option_progress_bar_bottom_to_top = qt6cr_style_option_progress_bar_bottom_to_top(handle : Handle) : Bool
     fun qt6cr_style_option_progress_bar_set_bottom_to_top = qt6cr_style_option_progress_bar_set_bottom_to_top(handle : Handle, value : Bool)
+    fun qt6cr_style_option_rubber_band_create = qt6cr_style_option_rubber_band_create : Handle
+    fun qt6cr_style_option_rubber_band_destroy = qt6cr_style_option_rubber_band_destroy(handle : Handle)
+    fun qt6cr_style_option_rubber_band_shape = qt6cr_style_option_rubber_band_shape(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_rubber_band_set_shape = qt6cr_style_option_rubber_band_set_shape(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_rubber_band_opaque = qt6cr_style_option_rubber_band_opaque(handle : Handle) : Bool
+    fun qt6cr_style_option_rubber_band_set_opaque = qt6cr_style_option_rubber_band_set_opaque(handle : Handle, value : Bool)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
@@ -3646,6 +3652,7 @@ module Qt6
     fun qt6cr_rubber_band_shape = qt6cr_rubber_band_shape(handle : Handle) : LibC::Int
     fun qt6cr_rubber_band_geometry = qt6cr_rubber_band_geometry(handle : Handle) : RectValue
     fun qt6cr_rubber_band_set_geometry = qt6cr_rubber_band_set_geometry(handle : Handle, rect : RectValue)
+    fun qt6cr_rubber_band_init_style_option = qt6cr_rubber_band_init_style_option(handle : Handle, option : Handle)
 
     fun qt6cr_progress_bar_create = qt6cr_progress_bar_create(parent : Handle) : Handle
     fun qt6cr_progress_bar_minimum = qt6cr_progress_bar_minimum(handle : Handle) : LibC::Int

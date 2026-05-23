@@ -13,6 +13,8 @@ module Qt6
         end
       when StyleOptionType::ProgressBar.value
         StyleOptionProgressBar.wrap(handle, owned)
+      when StyleOptionType::RubberBand.value
+        StyleOptionRubberBand.wrap(handle, owned)
       when StyleOptionType::DockWidget.value
         StyleOptionDockWidget.wrap(handle, owned)
       when StyleOptionType::Frame.value
