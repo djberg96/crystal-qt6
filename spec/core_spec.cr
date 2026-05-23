@@ -1775,6 +1775,91 @@ describe Qt6 do
     end
   end
 
+  it "supports tool-button style options" do
+    application = app
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-tool-button-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(16, 16)
+    icon_image.fill(Qt6::Color.new(0, 0, 0, 0))
+    icon_image.set_pixel_color(6, 6, Qt6::Color.new(48, 120, 196, 255))
+    icon_image.save(icon_path).should be_true
+
+    host = Qt6::Widget.new
+    layout = Qt6::VBoxLayout.new(host)
+    tool_button = Qt6::ToolButton.new
+    tool_menu = Qt6::Menu.new("Brush Modes", host)
+    icon = Qt6::QIcon.from_file(icon_path)
+    font = Qt6::QFont.new("Courier New", 11, true, false)
+    option = Qt6::StyleOptionToolButton.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      icon.null?.should be_false
+
+      tool_button.text = "Brush"
+      tool_button.icon = icon
+      tool_button.icon_size = Qt6::Size.new(24, 24)
+      tool_button.tool_button_style = Qt6::ToolButtonStyle::TextUnderIcon
+      tool_button.menu = tool_menu
+      tool_button.auto_raise = true
+      tool_button.set_fixed_size(72, 88)
+      layout.add(tool_button)
+      host.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::ToolButton)
+      wrapped.should be_a(Qt6::StyleOptionToolButton)
+      option.features.should eq(Qt6::StyleOptionToolButtonFeature::None)
+      option.icon.null?.should be_true
+      option.icon_size.should eq(Qt6::Size.new(-1, -1))
+      option.text.should eq("")
+      option.tool_button_style.should eq(Qt6::ToolButtonStyle::IconOnly)
+      option.pos.should eq(Qt6::Point.new(0, 0))
+      option.sub_controls.should eq(Qt6::StyleSubControl::All)
+      option.active_sub_controls.should eq(Qt6::StyleSubControl::None)
+      option.font.family.should_not eq("")
+
+      option.set_features(Qt6::StyleOptionToolButtonFeature::Arrow | Qt6::StyleOptionToolButtonFeature::HasMenu).to_unsafe.should eq(option.to_unsafe)
+      option.features.includes?(Qt6::StyleOptionToolButtonFeature::Arrow).should be_true
+      option.features.includes?(Qt6::StyleOptionToolButtonFeature::HasMenu).should be_true
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_false
+      option.set_icon_size(Qt6::Size.new(18, 18)).to_unsafe.should eq(option.to_unsafe)
+      option.icon_size.should eq(Qt6::Size.new(18, 18))
+      option.set_text("Deploy").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Deploy")
+      option.set_arrow_type(Qt6::ArrowType::RightArrow).to_unsafe.should eq(option.to_unsafe)
+      option.arrow_type.should eq(Qt6::ArrowType::RightArrow)
+      option.set_tool_button_style(Qt6::ToolButtonStyle::TextBesideIcon).to_unsafe.should eq(option.to_unsafe)
+      option.tool_button_style.should eq(Qt6::ToolButtonStyle::TextBesideIcon)
+      option.set_pos(Qt6::Point.new(7, 9)).to_unsafe.should eq(option.to_unsafe)
+      option.pos.should eq(Qt6::Point.new(7, 9))
+      option.set_font(font).to_unsafe.should eq(option.to_unsafe)
+      option.font.family.should eq(font.family)
+      option.font.point_size.should eq(font.point_size)
+
+      option.init_from(tool_button)
+      option.text.should eq("Brush")
+      option.icon.null?.should be_false
+      option.icon_size.should eq(Qt6::Size.new(24, 24))
+      option.tool_button_style.should eq(Qt6::ToolButtonStyle::TextUnderIcon)
+      option.features.includes?(Qt6::StyleOptionToolButtonFeature::HasMenu).should be_true
+      option.rect.width.should eq(72.0)
+      option.rect.height.should eq(88.0)
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+      option.font.family.should_not eq("")
+    ensure
+      option.release
+      font.release
+      icon.release
+      tool_menu.release
+      tool_button.release
+      layout.release
+      host.release
+      File.delete(icon_path) if File.exists?(icon_path)
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

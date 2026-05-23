@@ -835,6 +835,24 @@ module Qt6
     fun qt6cr_style_option_spin_box_set_step_enabled = qt6cr_style_option_spin_box_set_step_enabled(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_spin_box_has_frame = qt6cr_style_option_spin_box_has_frame(handle : Handle) : Bool
     fun qt6cr_style_option_spin_box_set_frame = qt6cr_style_option_spin_box_set_frame(handle : Handle, value : Bool)
+    fun qt6cr_style_option_tool_button_create = qt6cr_style_option_tool_button_create : Handle
+    fun qt6cr_style_option_tool_button_destroy = qt6cr_style_option_tool_button_destroy(handle : Handle)
+    fun qt6cr_style_option_tool_button_features = qt6cr_style_option_tool_button_features(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_button_set_features = qt6cr_style_option_tool_button_set_features(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_button_icon = qt6cr_style_option_tool_button_icon(handle : Handle) : Handle
+    fun qt6cr_style_option_tool_button_set_icon = qt6cr_style_option_tool_button_set_icon(handle : Handle, value : Handle)
+    fun qt6cr_style_option_tool_button_icon_size = qt6cr_style_option_tool_button_icon_size(handle : Handle) : SizeValue
+    fun qt6cr_style_option_tool_button_set_icon_size = qt6cr_style_option_tool_button_set_icon_size(handle : Handle, value : SizeValue)
+    fun qt6cr_style_option_tool_button_text = qt6cr_style_option_tool_button_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_tool_button_set_text = qt6cr_style_option_tool_button_set_text(handle : Handle, value : UInt8*)
+    fun qt6cr_style_option_tool_button_arrow_type = qt6cr_style_option_tool_button_arrow_type(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_button_set_arrow_type = qt6cr_style_option_tool_button_set_arrow_type(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_button_style = qt6cr_style_option_tool_button_style(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_button_set_style = qt6cr_style_option_tool_button_set_style(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_button_pos = qt6cr_style_option_tool_button_pos(handle : Handle) : PointValue
+    fun qt6cr_style_option_tool_button_set_pos = qt6cr_style_option_tool_button_set_pos(handle : Handle, value : PointValue)
+    fun qt6cr_style_option_tool_button_font = qt6cr_style_option_tool_button_font(handle : Handle) : Handle
+    fun qt6cr_style_option_tool_button_set_font = qt6cr_style_option_tool_button_set_font(handle : Handle, value : Handle)
     fun qt6cr_style_option_title_bar_create = qt6cr_style_option_title_bar_create : Handle
     fun qt6cr_style_option_title_bar_destroy = qt6cr_style_option_title_bar_destroy(handle : Handle)
     fun qt6cr_style_option_title_bar_text = qt6cr_style_option_title_bar_text(handle : Handle) : UInt8*
@@ -3322,6 +3340,7 @@ module Qt6
     fun qt6cr_tool_button_set_default_action = qt6cr_tool_button_set_default_action(handle : Handle, action : Handle)
     fun qt6cr_tool_button_auto_raise = qt6cr_tool_button_auto_raise(handle : Handle) : Bool
     fun qt6cr_tool_button_set_auto_raise = qt6cr_tool_button_set_auto_raise(handle : Handle, value : Bool)
+    fun qt6cr_tool_button_init_style_option = qt6cr_tool_button_init_style_option(handle : Handle, option : Handle)
 
     fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle
     fun qt6cr_combo_box_add_item = qt6cr_combo_box_add_item(handle : Handle, text : UInt8*)

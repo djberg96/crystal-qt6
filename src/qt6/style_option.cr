@@ -47,6 +47,8 @@ module Qt6
         StyleOptionSlider.wrap(handle, owned)
       when StyleOptionType::SpinBox.value
         StyleOptionSpinBox.wrap(handle, owned)
+      when StyleOptionType::ToolButton.value
+        StyleOptionToolButton.wrap(handle, owned)
       when StyleOptionType::TitleBar.value
         StyleOptionTitleBar.wrap(handle, owned)
       when StyleOptionType::ComboBox.value

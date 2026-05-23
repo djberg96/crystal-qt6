@@ -780,6 +780,15 @@ class CrystalToolBar final : public QToolBar {
   }
 };
 
+class CrystalToolButton final : public QToolButton {
+ public:
+  explicit CrystalToolButton(QWidget *parent = nullptr) : QToolButton(parent) {}
+
+  void initStyleOptionBridge(QStyleOptionToolButton *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalWizardPage final : public QWizardPage {
  public:
   using QWizardPage::QWizardPage;
@@ -7279,6 +7288,120 @@ void qt6cr_style_option_tool_bar_set_mid_line_width(qt6cr_handle_t handle, int v
 
   if (option != nullptr) {
     option->midLineWidth = value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_tool_button_create(void) {
+  return new QStyleOptionToolButton();
+}
+
+void qt6cr_style_option_tool_button_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionToolButton *>(handle);
+}
+
+int qt6cr_style_option_tool_button_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionToolButton::None) : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_tool_button_set_features(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+
+  if (option != nullptr) {
+    option->features = QStyleOptionToolButton::ToolButtonFeatures(static_cast<QStyleOptionToolButton::ToolButtonFeature>(value));
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_tool_button_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_tool_button_set_icon(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  auto *icon = static_cast<QIcon *>(value);
+
+  if (option != nullptr && icon != nullptr) {
+    option->icon = *icon;
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_tool_button_icon_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->iconSize);
+}
+
+void qt6cr_style_option_tool_button_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+
+  if (option != nullptr) {
+    option->iconSize = QSize(value.width, value.height);
+  }
+}
+
+char *qt6cr_style_option_tool_button_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_tool_button_set_text(qt6cr_handle_t handle, const char *value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(value == nullptr ? "" : value);
+  }
+}
+
+int qt6cr_style_option_tool_button_arrow_type(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::NoArrow) : static_cast<int>(option->arrowType);
+}
+
+void qt6cr_style_option_tool_button_set_arrow_type(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+
+  if (option != nullptr) {
+    option->arrowType = static_cast<Qt::ArrowType>(value);
+  }
+}
+
+int qt6cr_style_option_tool_button_style(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::ToolButtonIconOnly) : static_cast<int>(option->toolButtonStyle);
+}
+
+void qt6cr_style_option_tool_button_set_style(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+
+  if (option != nullptr) {
+    option->toolButtonStyle = static_cast<Qt::ToolButtonStyle>(value);
+  }
+}
+
+qt6cr_point_t qt6cr_style_option_tool_button_pos(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? qt6cr_point_t{0, 0} : to_point(option->pos);
+}
+
+void qt6cr_style_option_tool_button_set_pos(qt6cr_handle_t handle, qt6cr_point_t value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+
+  if (option != nullptr) {
+    option->pos = QPoint(value.x, value.y);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_tool_button_font(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  return option == nullptr ? new QFont() : new QFont(option->font);
+}
+
+void qt6cr_style_option_tool_button_set_font(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionToolButton *>(handle);
+  auto *font = as_qfont(value);
+
+  if (option != nullptr && font != nullptr) {
+    option->font = *font;
   }
 }
 
@@ -24356,7 +24479,7 @@ qt6cr_size_t qt6cr_radio_button_minimum_size_hint(qt6cr_handle_t handle) {
 }
 
 qt6cr_handle_t qt6cr_tool_button_create(qt6cr_handle_t parent) {
-  return new QToolButton(as_widget(parent));
+  return new CrystalToolButton(as_widget(parent));
 }
 
 int qt6cr_tool_button_style(qt6cr_handle_t handle) {
@@ -24412,6 +24535,15 @@ void qt6cr_tool_button_set_auto_raise(qt6cr_handle_t handle, bool value) {
 
   if (tool_button != nullptr) {
     tool_button->setAutoRaise(value);
+  }
+}
+
+void qt6cr_tool_button_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *tool_button = dynamic_cast<CrystalToolButton *>(as_tool_button(handle));
+  auto *option = static_cast<QStyleOptionToolButton *>(option_handle);
+
+  if (tool_button != nullptr && option != nullptr) {
+    tool_button->initStyleOptionBridge(option);
   }
 }
 
