@@ -5,6 +5,8 @@ module Qt6
       case LibQt6.qt6cr_style_option_type(handle)
       when StyleOptionType::Button.value
         StyleOptionButton.wrap(handle, owned)
+      when StyleOptionType::Tab.value
+        StyleOptionTab.wrap(handle, owned)
       when StyleOptionType::MenuItem.value
         if LibQt6.qt6cr_style_option_version(handle) >= 2
           StyleOptionMenuItemV2.wrap(handle, owned)

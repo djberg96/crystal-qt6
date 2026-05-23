@@ -1453,6 +1453,91 @@ describe Qt6 do
     end
   end
 
+  it "supports tab style options" do
+    application = app
+    tab_bar = Qt6::TabBar.new
+    option = Qt6::StyleOptionTab.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+    icon = Qt6::QIcon.new
+
+    begin
+      tab_bar.add_tab("Alpha")
+      tab_bar.add_tab("Beta")
+      tab_bar.add_tab("Gamma")
+      tab_bar.current_index = 1
+      tab_bar.resize(180, 28)
+      tab_bar.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::Tab)
+      wrapped.should be_a(Qt6::StyleOptionTab)
+      option.shape.should eq(Qt6::TabBarShape::RoundedNorth)
+      option.text.should eq("")
+      option.icon.null?.should be_true
+      option.row.should eq(0)
+      option.position.should eq(Qt6::StyleOptionTabPosition::Beginning)
+      option.selected_position.should eq(Qt6::StyleOptionTabSelectedPosition::NotAdjacent)
+      option.corner_widgets.should eq(Qt6::StyleOptionTabCornerWidget::NoCornerWidgets)
+      option.icon_size.should eq(Qt6::Size.new(-1, -1))
+      option.document_mode?.should be_false
+      option.left_button_size.should eq(Qt6::Size.new(-1, -1))
+      option.right_button_size.should eq(Qt6::Size.new(-1, -1))
+      option.features.should eq(Qt6::StyleOptionTabFeature::None)
+      option.tab_index.should eq(-1)
+
+      option.set_shape(Qt6::TabBarShape::TriangularSouth).to_unsafe.should eq(option.to_unsafe)
+      option.shape.should eq(Qt6::TabBarShape::TriangularSouth)
+      option.set_text("Operations").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Operations")
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_true
+      option.set_row(2).to_unsafe.should eq(option.to_unsafe)
+      option.row.should eq(2)
+      option.set_position(Qt6::StyleOptionTabPosition::Middle).to_unsafe.should eq(option.to_unsafe)
+      option.position.should eq(Qt6::StyleOptionTabPosition::Middle)
+      option.set_selected_position(Qt6::StyleOptionTabSelectedPosition::PreviousIsSelected).to_unsafe.should eq(option.to_unsafe)
+      option.selected_position.should eq(Qt6::StyleOptionTabSelectedPosition::PreviousIsSelected)
+      option.set_corner_widgets(Qt6::StyleOptionTabCornerWidget::LeftCornerWidget | Qt6::StyleOptionTabCornerWidget::RightCornerWidget).to_unsafe.should eq(option.to_unsafe)
+      option.corner_widgets.includes?(Qt6::StyleOptionTabCornerWidget::LeftCornerWidget).should be_true
+      option.corner_widgets.includes?(Qt6::StyleOptionTabCornerWidget::RightCornerWidget).should be_true
+      option.set_icon_size(Qt6::Size.new(18, 12)).to_unsafe.should eq(option.to_unsafe)
+      option.icon_size.should eq(Qt6::Size.new(18, 12))
+      option.set_document_mode(true).to_unsafe.should eq(option.to_unsafe)
+      option.document_mode?.should be_true
+      option.set_left_button_size(Qt6::Size.new(9, 7)).to_unsafe.should eq(option.to_unsafe)
+      option.left_button_size.should eq(Qt6::Size.new(9, 7))
+      option.set_right_button_size(Qt6::Size.new(11, 8)).to_unsafe.should eq(option.to_unsafe)
+      option.right_button_size.should eq(Qt6::Size.new(11, 8))
+      option.set_features(Qt6::StyleOptionTabFeature::HasFrame | Qt6::StyleOptionTabFeature::MinimumSizeHint).to_unsafe.should eq(option.to_unsafe)
+      option.features.includes?(Qt6::StyleOptionTabFeature::HasFrame).should be_true
+      option.features.includes?(Qt6::StyleOptionTabFeature::MinimumSizeHint).should be_true
+      option.set_tab_index(6).to_unsafe.should eq(option.to_unsafe)
+      option.tab_index.should eq(6)
+
+      option.init_from(tab_bar, 0)
+      option.text.should eq("Alpha")
+      option.tab_index.should eq(0)
+      option.position.should eq(Qt6::StyleOptionTabPosition::Beginning)
+      option.selected_position.should eq(Qt6::StyleOptionTabSelectedPosition::NextIsSelected)
+      option.row.should eq(0)
+      option.rect.height.should be > 0
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+
+      option.init_from(tab_bar, 2)
+      option.text.should eq("Gamma")
+      option.tab_index.should eq(2)
+      option.position.should eq(Qt6::StyleOptionTabPosition::End)
+      option.selected_position.should eq(Qt6::StyleOptionTabSelectedPosition::PreviousIsSelected)
+      option.row.should eq(0)
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      icon.release
+      option.release
+      tab_bar.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

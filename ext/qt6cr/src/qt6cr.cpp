@@ -752,6 +752,15 @@ class CrystalTimeEdit final : public QTimeEdit {
   }
 };
 
+class CrystalTabBar final : public QTabBar {
+ public:
+  using QTabBar::QTabBar;
+
+  void initStyleOptionBridge(QStyleOptionTab *option, int tab_index) const {
+    initStyleOption(option, tab_index);
+  }
+};
+
 class CrystalWizardPage final : public QWizardPage {
  public:
   using QWizardPage::QWizardPage;
@@ -6365,6 +6374,184 @@ void qt6cr_style_option_init_from(qt6cr_handle_t handle, qt6cr_handle_t widget) 
 
   if (option != nullptr && value != nullptr) {
     option->initFrom(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_tab_create(void) {
+  return new QStyleOptionTab();
+}
+
+void qt6cr_style_option_tab_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionTab *>(handle);
+}
+
+int qt6cr_style_option_tab_shape(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? static_cast<int>(QTabBar::RoundedNorth) : static_cast<int>(option->shape);
+}
+
+void qt6cr_style_option_tab_set_shape(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->shape = static_cast<QTabBar::Shape>(value);
+  }
+}
+
+char *qt6cr_style_option_tab_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_tab_set_text(qt6cr_handle_t handle, const char *value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(value == nullptr ? "" : value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_tab_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_tab_set_icon(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  auto *icon = static_cast<QIcon *>(value);
+
+  if (option != nullptr && icon != nullptr) {
+    option->icon = *icon;
+  }
+}
+
+int qt6cr_style_option_tab_row(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? 0 : option->row;
+}
+
+void qt6cr_style_option_tab_set_row(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->row = value;
+  }
+}
+
+int qt6cr_style_option_tab_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionTab::Beginning) : static_cast<int>(option->position);
+}
+
+void qt6cr_style_option_tab_set_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->position = static_cast<QStyleOptionTab::TabPosition>(value);
+  }
+}
+
+int qt6cr_style_option_tab_selected_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionTab::NotAdjacent) : static_cast<int>(option->selectedPosition);
+}
+
+void qt6cr_style_option_tab_set_selected_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->selectedPosition = static_cast<QStyleOptionTab::SelectedPosition>(value);
+  }
+}
+
+int qt6cr_style_option_tab_corner_widgets(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionTab::NoCornerWidgets) : static_cast<int>(option->cornerWidgets);
+}
+
+void qt6cr_style_option_tab_set_corner_widgets(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->cornerWidgets = static_cast<QStyleOptionTab::CornerWidgets>(value);
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_tab_icon_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->iconSize);
+}
+
+void qt6cr_style_option_tab_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->iconSize = QSize(value.width, value.height);
+  }
+}
+
+bool qt6cr_style_option_tab_document_mode(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option != nullptr && option->documentMode;
+}
+
+void qt6cr_style_option_tab_set_document_mode(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->documentMode = value;
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_tab_left_button_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->leftButtonSize);
+}
+
+void qt6cr_style_option_tab_set_left_button_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->leftButtonSize = QSize(value.width, value.height);
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_tab_right_button_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->rightButtonSize);
+}
+
+void qt6cr_style_option_tab_set_right_button_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->rightButtonSize = QSize(value.width, value.height);
+  }
+}
+
+int qt6cr_style_option_tab_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionTab::None) : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_tab_set_features(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->features = static_cast<QStyleOptionTab::TabFeatures>(value);
+  }
+}
+
+int qt6cr_style_option_tab_index(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+  return option == nullptr ? -1 : option->tabIndex;
+}
+
+void qt6cr_style_option_tab_set_tab_index(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTab *>(handle);
+
+  if (option != nullptr) {
+    option->tabIndex = value;
   }
 }
 
@@ -28808,7 +28995,7 @@ void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_
 }
 
 qt6cr_handle_t qt6cr_tab_bar_create(qt6cr_handle_t parent) {
-  return new QTabBar(as_widget(parent));
+  return new CrystalTabBar(as_widget(parent));
 }
 
 int qt6cr_tab_bar_add_tab(qt6cr_handle_t handle, const char *label) {
@@ -28909,6 +29096,15 @@ void qt6cr_tab_bar_set_tabs_closable(qt6cr_handle_t handle, bool value) {
 
   if (tab_bar != nullptr) {
     tab_bar->setTabsClosable(value);
+  }
+}
+
+void qt6cr_tab_bar_init_style_option(qt6cr_handle_t handle, int index, qt6cr_handle_t option_handle) {
+  auto *tab_bar = dynamic_cast<CrystalTabBar *>(as_tab_bar(handle));
+  auto *option = static_cast<QStyleOptionTab *>(option_handle);
+
+  if (tab_bar != nullptr && option != nullptr && index >= 0 && index < tab_bar->count()) {
+    tab_bar->initStyleOptionBridge(option, index);
   }
 }
 
