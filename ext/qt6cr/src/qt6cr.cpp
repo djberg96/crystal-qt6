@@ -13844,9 +13844,188 @@ qt6cr_rectf_t qt6cr_style_option_view_item_text_rect(qt6cr_handle_t handle) {
   return to_rectf(style->subElementRect(QStyle::SE_ItemViewItemText, option, widget));
 }
 
+int qt6cr_style_option_view_item_display_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::Alignment()) : static_cast<int>(option->displayAlignment);
+}
+
+void qt6cr_style_option_view_item_set_display_alignment(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->displayAlignment = Qt::Alignment(value);
+  }
+}
+
+int qt6cr_style_option_view_item_decoration_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::Alignment()) : static_cast<int>(option->decorationAlignment);
+}
+
+void qt6cr_style_option_view_item_set_decoration_alignment(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->decorationAlignment = Qt::Alignment(value);
+  }
+}
+
+int qt6cr_style_option_view_item_text_elide_mode(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::ElideNone) : static_cast<int>(option->textElideMode);
+}
+
+void qt6cr_style_option_view_item_set_text_elide_mode(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->textElideMode = static_cast<Qt::TextElideMode>(value);
+  }
+}
+
+int qt6cr_style_option_view_item_decoration_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionViewItem::Left) : static_cast<int>(option->decorationPosition);
+}
+
+void qt6cr_style_option_view_item_set_decoration_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->decorationPosition = static_cast<QStyleOptionViewItem::Position>(value);
+  }
+}
+
+qt6cr_size_t qt6cr_style_option_view_item_decoration_size(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? qt6cr_size_t{0, 0} : to_size(option->decorationSize);
+}
+
+void qt6cr_style_option_view_item_set_decoration_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->decorationSize = QSize(value.width, value.height);
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_view_item_font(qt6cr_handle_t handle) {
   auto *option = static_cast<QStyleOptionViewItem *>(handle);
   return option == nullptr ? new QFont() : new QFont(option->font);
+}
+
+void qt6cr_style_option_view_item_set_font(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  auto *font = as_qfont(value);
+  if (option != nullptr && font != nullptr) {
+    option->font = *font;
+  }
+}
+
+bool qt6cr_style_option_view_item_show_decoration_selected(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option != nullptr && option->showDecorationSelected;
+}
+
+void qt6cr_style_option_view_item_set_show_decoration_selected(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->showDecorationSelected = value;
+  }
+}
+
+int qt6cr_style_option_view_item_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionViewItem::None) : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_view_item_set_features(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->features = static_cast<QStyleOptionViewItem::ViewItemFeatures>(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_view_item_widget(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? nullptr : const_cast<QWidget *>(option->widget);
+}
+
+void qt6cr_style_option_view_item_set_widget(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->widget = as_widget(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_view_item_index(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? new QModelIndex() : new QModelIndex(option->index);
+}
+
+void qt6cr_style_option_view_item_set_index(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  auto *index = as_model_index(value);
+  if (option != nullptr) {
+    option->index = index == nullptr ? QModelIndex() : *index;
+  }
+}
+
+int qt6cr_style_option_view_item_check_state(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::Unchecked) : static_cast<int>(option->checkState);
+}
+
+void qt6cr_style_option_view_item_set_check_state(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->checkState = static_cast<Qt::CheckState>(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_view_item_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_view_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  auto *icon = as_qicon(value);
+  if (option != nullptr && icon != nullptr) {
+    option->icon = *icon;
+  }
+}
+
+char *qt6cr_style_option_view_item_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_view_item_set_text(qt6cr_handle_t handle, const char *value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(value == nullptr ? "" : value);
+  }
+}
+
+int qt6cr_style_option_view_item_view_item_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionViewItem::Invalid) : static_cast<int>(option->viewItemPosition);
+}
+
+void qt6cr_style_option_view_item_set_view_item_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  if (option != nullptr) {
+    option->viewItemPosition = static_cast<QStyleOptionViewItem::ViewItemPosition>(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_view_item_background_brush(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  return option == nullptr ? new QBrush() : new QBrush(option->backgroundBrush);
+}
+
+void qt6cr_style_option_view_item_set_background_brush(qt6cr_handle_t handle, qt6cr_handle_t value) {
+  auto *option = static_cast<QStyleOptionViewItem *>(handle);
+  auto *brush = as_qbrush(value);
+  if (option != nullptr && brush != nullptr) {
+    option->backgroundBrush = *brush;
+  }
 }
 
 qt6cr_handle_t qt6cr_style_option_view_item_palette(qt6cr_handle_t handle) {

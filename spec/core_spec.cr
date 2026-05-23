@@ -655,6 +655,107 @@ describe Qt6 do
     end
   end
 
+  it "supports view-item style options" do
+    app
+    host = Qt6::Widget.new
+    model = Qt6::StandardItemModel.new(host)
+    item = Qt6::StandardItem.new("Terrain")
+    delegate = Qt6::StyledItemDelegate.new(host)
+    option = Qt6::StyleOptionViewItem.new
+    brush = Qt6::QBrush.new(Qt6::Color.new(228, 236, 248))
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-style-option-view-item-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(8, 8)
+
+    begin
+      icon_image.fill(Qt6::Color.new(32, 96, 192))
+      icon_image.save(icon_path).should be_true
+      icon = Qt6::QIcon.from_file(icon_path)
+
+      item.icon = icon
+      item.flags = item.flags | Qt6::ItemFlag::UserCheckable
+      item.set_data(Qt6::CheckState::Checked.value, Qt6::ItemDataRole::CheckState)
+      model << item
+
+      index = model.index(0)
+
+      option.set_display_alignment(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter).to_unsafe.should eq(option.to_unsafe)
+      option.display_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+      option.display_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+
+      option.set_decoration_alignment(Qt6::AlignmentFlag::HCenter | Qt6::AlignmentFlag::Bottom).to_unsafe.should eq(option.to_unsafe)
+      option.decoration_alignment.includes?(Qt6::AlignmentFlag::HCenter).should be_true
+      option.decoration_alignment.includes?(Qt6::AlignmentFlag::Bottom).should be_true
+
+      option.set_text_elide_mode(Qt6::TextElideMode::ElideMiddle).to_unsafe.should eq(option.to_unsafe)
+      option.text_elide_mode.should eq(Qt6::TextElideMode::ElideMiddle)
+      option.set_decoration_position(Qt6::StyleOptionViewItemPosition::Bottom).to_unsafe.should eq(option.to_unsafe)
+      option.decoration_position.should eq(Qt6::StyleOptionViewItemPosition::Bottom)
+      option.set_decoration_size(Qt6::Size.new(18, 12)).to_unsafe.should eq(option.to_unsafe)
+      option.decoration_size.should eq(Qt6::Size.new(18, 12))
+
+      option_font = option.font
+      option_font.bold = true
+      option.set_font(option_font).to_unsafe.should eq(option.to_unsafe)
+      option.font.bold?.should be_true
+
+      option.set_show_decoration_selected(true).to_unsafe.should eq(option.to_unsafe)
+      option.show_decoration_selected?.should be_true
+      option.set_features(
+        Qt6::StyleOptionViewItemFeature::WrapText |
+        Qt6::StyleOptionViewItemFeature::HasDisplay |
+        Qt6::StyleOptionViewItemFeature::HasDecoration
+      ).to_unsafe.should eq(option.to_unsafe)
+      option.features.includes?(Qt6::StyleOptionViewItemFeature::WrapText).should be_true
+      option.features.includes?(Qt6::StyleOptionViewItemFeature::HasDisplay).should be_true
+      option.features.includes?(Qt6::StyleOptionViewItemFeature::HasDecoration).should be_true
+
+      option.set_widget(host).to_unsafe.should eq(option.to_unsafe)
+      option.widget.should_not be_nil
+      option.widget.not_nil!.to_unsafe.should eq(host.to_unsafe)
+
+      option.set_index(index).to_unsafe.should eq(option.to_unsafe)
+      option_index = option.index
+      option_index.valid?.should be_true
+      option_index.row.should eq(0)
+      option_index.release
+
+      option.set_check_state(Qt6::CheckState::PartiallyChecked).to_unsafe.should eq(option.to_unsafe)
+      option.check_state.should eq(Qt6::CheckState::PartiallyChecked)
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_false
+      option.set_text("Terrain").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Terrain")
+      option.set_view_item_position(Qt6::StyleOptionViewItemViewPosition::OnlyOne).to_unsafe.should eq(option.to_unsafe)
+      option.view_item_position.should eq(Qt6::StyleOptionViewItemViewPosition::OnlyOne)
+      option.set_background_brush(brush).to_unsafe.should eq(option.to_unsafe)
+      option.background_brush.color.should eq(Qt6::Color.new(228, 236, 248, 255))
+
+      live_option = delegate.init_style_option(index)
+      live_option.type.should eq(Qt6::StyleOptionType::ViewItem)
+      live_option.text.should eq("Terrain")
+      live_option.check_state.should eq(Qt6::CheckState::Checked)
+      live_option.icon.null?.should be_false
+      live_option.features.includes?(Qt6::StyleOptionViewItemFeature::HasDisplay).should be_true
+      live_option.features.includes?(Qt6::StyleOptionViewItemFeature::HasCheckIndicator).should be_true
+      live_option.features.includes?(Qt6::StyleOptionViewItemFeature::HasDecoration).should be_true
+      live_index = live_option.index
+      live_index.valid?.should be_true
+      live_index.row.should eq(0)
+      live_index.release
+      live_option.release
+
+      index.release
+      icon.release
+    ensure
+      icon_image.release
+      brush.release
+      option.release
+      delegate.release
+      model.release
+      host.release
+    end
+  end
+
   it "supports button style options" do
     application = app
     button = Qt6::PushButton.new("Deploy")
