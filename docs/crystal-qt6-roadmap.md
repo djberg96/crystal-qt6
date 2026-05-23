@@ -67,6 +67,14 @@ The highest-value parity areas still missing are:
 - the remaining long tail of export, document, image-reader, and print-adjacent helpers exposed by real editor-style workflows
 - a practical strategy for higher-throughput image and data-processing work beyond UI bindings
 
+## Deferred / Exploratory Work
+
+These are promising directions, but they should not begin until the current widget, model/view, graphics-view, and style layers are more settled.
+
+- Add a `QML` / `QtQuick` wrapper layer as a separate future milestone, rather than mixing it into the current widgets-first parity work.
+- When that work starts, prefer a transition story that feels familiar to Crystal users coming from the earlier Qt5 binding ecosystem, especially `Papierkorb/qt5.cr`, so existing Crystal + Qt5/QML projects have a gentler path into the Qt6 surface.
+- Treat exact API compatibility as optional, but keep naming, module boundaries, and engine-loading workflows close enough that migration does not feel like learning an unrelated library from scratch.
+
 ## Architectural Recommendation
 
 Do not keep expanding the bindings one widget at a time in an ad hoc way.
