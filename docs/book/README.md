@@ -18,10 +18,12 @@ make docs-book
 
 The guide is intentionally written with screenshot placeholders so it can compile before every image has been captured. Store screenshots in `docs/book/images/` using the filenames named by the chapter figures and placeholders.
 
-The guide now includes a dedicated Graphics View chapter alongside the existing dialog, model/view, painting, and worked-example material.
+The guide now includes dedicated Graphics View and Styles chapters alongside the existing dialog, model/view, painting, and worked-example material.
 
 Recommended screenshot refresh set:
 
+- `styles-workbench.png`
+- `styles-style-painter.png`
 - `graphics-view-overview.png`
 - `graphics-view-floating-panel.png`
 - `graphics-view-transforms.png`
@@ -46,6 +48,12 @@ Refresh the graphics-view captures with:
 
 ```sh
 CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_graphics_view_screenshots.cr
+```
+
+Refresh the styles captures with:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_style_screenshots.cr
 ```
 
 Refresh the dialog gallery captures with:

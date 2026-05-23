@@ -7,6 +7,7 @@ This appendix summarizes the current \api{crystal-qt6} API shape at a high level
 Area & Representative APIs \\
 \midrule
 Application & \api{Application}, \api{Qt6.application}, metadata, style sheets, clipboard, local event loops \\
+Styles & \api{Style}, \api{CommonStyle}, \api{StyleFactory}, \api{ProxyStyle}, \api{StylePainter}, \api{StyledItemDelegate}, item editor factories, and the shared \api{StyleOption*} and \api{StyleHintReturn*} families \\
 Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget}, \api{SystemTrayIcon}, action icons, dock toggle/title-bar helpers, tray activation and notification flows, and status-bar size-grip control \\
 Dialogs & \api{Dialog}, \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox}, aligned splash messages, and button-box layout helpers \\
 Widgets & Labels, buttons, line edits, completers, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, tool boxes, splitters, stacked widgets, scroll areas, group boxes, progress bars, frames, focus frames, LCD numbers, size grips, date/time controls, calendar widgets, and text editors \\
@@ -21,6 +22,28 @@ Model/View & Item widgets, abstract list/tree models, standard item models, stan
 
 \noindent
 For the narrative overview of the scene/view stack, item model, transforms, and scene-local panels, see Chapter 8. The appendix material below is meant to be the compact lookup companion to that chapter.
+
+\section{Styles and Delegates Reference}
+
+Use Chapter 12 for the conceptual walkthrough. This section is the shorter lookup map for the style-facing wrappers that now sit underneath application polish, offscreen control rendering, and item-view customization.
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.64\textwidth}@{}}
+\toprule
+Type & Summary \\
+\midrule
+\api{Style} & Base wrapper for an active Qt style, including name lookup, standard palette access, and widget/application/palette polish hooks. \\
+\api{CommonStyle} & Standalone common style instance when you need a concrete style object rather than just the application's current one. \\
+\api{StyleFactory} & Static helper for listing available style keys and creating style instances such as Fusion. \\
+\api{ProxyStyle} & Base-style wrapper and replacement surface for advanced style composition. It is useful infrastructure even though full proxy override hooks are not exposed yet. \\
+\api{StylePainter} & Style-aware painter for drawing standard controls, primitives, complex controls, item text, and pixmaps onto widgets or offscreen paint devices. \\
+\api{StyleOption} & Shared base packet for control geometry, state, palette, layout direction, and widget association. \\
+\api{StyleOptionButton}, \api{StyleOptionProgressBar}, \api{StyleOptionSlider}, \api{StyleOptionTab}, \api{StyleOptionToolButton} & Control-specific option wrappers for low-level, style-aware paint and size state. \\
+\api{StyleOptionViewItem} & Item-view row and cell paint state used by delegates and style-aware view rendering. \\
+\api{StyledItemDelegate} & Style-aware model/view delegate for display formatting, paint hooks, size hints, editor creation, and editor commit flows. \\
+\api{QItemEditorFactory}, \api{QItemEditorCreator}, \api{QStandardItemEditorCreator} & Shared editor registration surface for delegates that should create the same widgets for the same kinds of values. \\
+\api{StyleHintReturn}, \api{StyleHintReturnMask}, \api{StyleHintReturnVariant} & Low-level style-hint result payloads used when a style query needs to return more than a simple integer or boolean. \\
+\bottomrule
+\end{longtable}
 
 \section{Widget Reference}
 

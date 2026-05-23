@@ -1,0 +1,241 @@
+\chapter{Styles, Style Options, and Delegates}
+
+Qt styles are the part of Qt that decide how standard controls look and how much space they need. A push button, combo box, progress bar, tab, toolbar button, focus rect, or item-view row is not painted by hand every time you use one. Qt asks the active style to do that work.
+
+That matters for two reasons:
+
+\begin{enumerate}
+  \item Most applications should let the current style do as much work as possible so controls continue to look native or at least coherent.
+  \item When you do need to customize presentation, the style APIs give you a lower-level way to stay inside Qt's layout and paint rules instead of replacing everything with manual drawing.
+\end{enumerate}
+
+The style surface in \api{crystal-qt6} now covers three different levels:
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Type & Use it for \\
+\midrule
+\api{Style}, \api{CommonStyle}, \api{StyleFactory} & Selecting the application or widget look-and-feel and working with standard palettes. \\
+\api{StyleOption*} and \api{StylePainter} & Low-level, style-aware drawing when you need Qt to render a control, title bar, tab, progress bar, or item-view row into a custom target. \\
+\api{StyledItemDelegate} and item editor factories & Customizing how model/view data is displayed, sized, painted, and edited without abandoning the view's style behavior. \\
+\bottomrule
+\end{longtable}
+
+\section{Choosing The Right Tool}
+
+There are several ways to influence a Qt interface, and they solve different problems.
+
+\begin{longtable}{@{}p{0.24\textwidth}p{0.24\textwidth}p{0.42\textwidth}@{}}
+\toprule
+Tool & Best for & Notes \\
+\midrule
+\api{StyleFactory} or \api{Application#style=} & Picking an overall application look, such as the current platform style or Fusion. & This affects standard widget drawing, spacing, metrics, and many default colors. It is the first lever to reach for. \\
+\api{QPalette} & Adjusting theme-aware colors without replacing the control chrome. & Good for custom dark/light palettes, warning accents, or project color systems that should still feel native. \\
+\api{style\_sheet} & Targeted visual overrides for a small number of widgets. & Useful, but easy to overuse. Large style sheets can pull the UI away from the active style and make behavior less predictable across platforms. \\
+\api{StylePainter} and \api{StyleOption*} & Rendering a style-controlled control into an image, export target, or custom widget paint path. & Use this when you want Qt to draw a control for you, but not as a live widget. \\
+\api{StyledItemDelegate} & Custom list, tree, and table presentation and editing. & This keeps item views style-aware while still letting you format text, size rows, paint cells, or choose editors. \\
+\bottomrule
+\end{longtable}
+
+If the question is ``how do I make the whole application feel different?'' use a style or palette first. If the question is ``how do I draw one control-shaped thing correctly?'' use a style option plus \api{StylePainter}. If the question is ``how do I customize rows in a view?'' use \api{StyledItemDelegate}.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/styles-workbench.png}{width=0.92\textwidth,height=0.58\textheight,keepaspectratio}%
+  \caption{A small styles workbench: standard controls under the Fusion style, a styled painter preview, and a delegate-backed editor row.}
+\end{figure}
+
+\section{Selecting A Style}
+
+The simplest style change is to ask Qt for the styles available on the current platform, then pick one. Fusion is the most predictable cross-platform choice when you want screenshots, tutorials, or tests to look reasonably consistent.
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+
+if Qt6::StyleFactory.keys.includes?("Fusion")
+  app.set_style("Fusion")
+end
+\end{lstlisting}
+
+You can also create a style instance directly and assign it:
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+fusion = Qt6::StyleFactory.create("Fusion")
+
+unless fusion.nil?
+  app.style = fusion
+end
+\end{lstlisting}
+
+Assigning a style to the application is the normal path. Assigning one to a specific widget is possible, but should usually be the exception:
+
+\begin{lstlisting}[style=crystal]
+inspector = Qt6::Widget.new
+local_style = Qt6::StyleFactory.create("Fusion")
+
+unless local_style.nil?
+  inspector.style = local_style
+end
+\end{lstlisting}
+
+Widget-local styles are most useful when one panel needs an intentionally different presentation, or when you are experimenting. For production applications, a single application style plus palette adjustments is usually easier to keep coherent.
+
+\section{Styles Versus Style Sheets}
+
+Qt style sheets are still useful, but they solve a different problem than \api{QStyle}. A style picks the platform-aware drawing logic and metrics. A style sheet overrides widget appearance using a CSS-like layer.
+
+That means:
+
+\begin{itemize}
+  \item A style decides how a button, tab, or progress bar is normally drawn.
+  \item A palette adjusts the colors the style uses.
+  \item A style sheet can override those decisions for a specific widget or subtree.
+\end{itemize}
+
+For broad desktop polish, prefer style plus palette. Reach for style sheets when you want a clearly intentional local treatment, such as a warning banner, a canvas-side inspector, or a branded splash screen. The more of the application you restyle with CSS, the less helpful the active Qt style becomes.
+
+\section{Style-Aware Painting}
+
+Sometimes you want a control to be drawn by Qt, but not as a live widget in a layout. This is what \api{StylePainter} and \api{StyleOption*} are for.
+
+A style option is a structured packet of state: geometry, enabled or selected flags, text, icon, orientation, focus state, and so on. A style painter uses that packet to ask the current style to draw the control.
+
+\begin{lstlisting}[style=crystal]
+app = Qt6.application
+button = Qt6::PushButton.new("Deploy")
+button.resize(140, 36)
+button.show
+app.process_events
+
+option = Qt6::StyleOptionButton.new
+option.init_from(button)
+option.rect = Qt6::Rect.new(0, 0, 140, 36)
+
+image = Qt6::QImage.new(180, 52)
+image.fill(Qt6::Color.new(250, 250, 250))
+
+painter = Qt6::StylePainter.new
+if painter.begin(image, button)
+  painter.draw_control(Qt6::StyleControlElement::PushButton, option)
+  painter.end
+end
+
+image.save("deploy-button.png")
+\end{lstlisting}
+
+This is the same pattern you use for other controls:
+
+\begin{longtable}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\toprule
+Option type & Common use \\
+\midrule
+\api{StyleOptionButton} & Paint a standard push button or inspect button state. \\
+\api{StyleOptionProgressBar} & Render a progress bar into an offscreen image or export target. \\
+\api{StyleOptionSlider} & Paint slider-like controls or inspect their ranges and handle state. \\
+\api{StyleOptionTab} and \api{StyleOptionTabBarBase} & Style-aware tab drawing and tab geometry. \\
+\api{StyleOptionToolButton} and \api{StyleOptionToolBar} & Tool palettes, toolbars, and menu-button chrome. \\
+\api{StyleOptionViewItem} & Item-view rows, cells, and delegate paint state. \\
+\bottomrule
+\end{longtable}
+
+Most applications do not create every option family directly. Treat them as low-level interoperability types: use the narrowest one that matches the control you need to paint.
+
+\begin{figure}[htbp]
+  \centering
+  \screenshotimage{docs/book/images/styles-style-painter.png}{width=0.82\textwidth,height=0.30\textheight,keepaspectratio}%
+  \caption{One offscreen image rendered with \api{StylePainter}: a button, combo box, progress bar, focus rect, text, and a status badge, all drawn by the active style.}
+\end{figure}
+
+\section{Delegates And Editors}
+
+In model/view code, styles matter most through delegates. \api{StyledItemDelegate} gives you a style-aware way to customize display text, item paint behavior, size hints, and editor creation without replacing the view itself.
+
+\begin{lstlisting}[style=crystal]
+delegate = Qt6::StyledItemDelegate.new(table)
+
+delegate.on_display_text do |text|
+  "#{text}  [reviewed]"
+end
+
+delegate.on_create_editor do |parent, _index|
+  Qt6::LineEdit.new(parent: parent)
+end
+
+delegate.on_set_editor_data do |editor, value, _index|
+  editor.as(Qt6::LineEdit).text = value.to_s
+end
+
+delegate.on_set_model_data do |editor, model, index|
+  model.set_data(index, editor.as(Qt6::LineEdit).text)
+end
+
+table.item_delegate = delegate
+\end{lstlisting}
+
+This is the main delegate progression:
+
+\begin{enumerate}
+  \item Use model roles when you only need different text, icons, check state, colors, or tooltips.
+  \item Add \api{StyledItemDelegate#on\_display\_text} when the presentation is mostly text formatting.
+  \item Add editor hooks when the default editor choice is not enough.
+  \item Reach for \api{on\_paint}, \api{on\_size\_hint}, or direct \api{paint} and \api{size\_hint} helpers when row layout or painting itself needs to change.
+\end{enumerate}
+
+The wrapper now also exposes the delegate's direct public helpers, which are useful for tests, previews, and export flows:
+
+\begin{lstlisting}[style=crystal]
+option = delegate.init_style_option(index)
+size = delegate.size_hint(option, index)
+
+Qt6::QPainter.paint(image) do |painter|
+  delegate.paint(painter, option, index)
+end
+\end{lstlisting}
+
+\section{Editor Factories}
+
+Qt can also centralize editor selection through \api{QItemEditorFactory}. This is most useful when several delegates or several views should create the same editor type for the same kind of value.
+
+\begin{lstlisting}[style=crystal]
+factory = Qt6::QItemEditorFactory.new
+creator = Qt6::QStandardItemEditorCreator.new
+
+creator.on_create_widget do |parent|
+  Qt6::LineEdit.new(parent: parent)
+end
+
+factory.register_editor_for("terrain", creator)
+delegate.set_item_editor_factory(factory)
+\end{lstlisting}
+
+In practice, the item editor factory is an optional refinement. Many applications do perfectly well with explicit delegate hooks and never need a shared factory layer.
+
+\section{Proxy Styles And Plugin Hooks}
+
+\api{ProxyStyle} and \api{StylePlugin} are advanced tools, and it is worth setting expectations clearly.
+
+\api{ProxyStyle} currently gives you a way to wrap or replace a base style object:
+
+\begin{lstlisting}[style=crystal]
+base_style = Qt6::StyleFactory.create("Fusion")
+proxy = Qt6::ProxyStyle.new(base_style)
+\end{lstlisting}
+
+That is useful for lifetime management and for keeping a style object attached to a widget or application boundary, but the Crystal wrapper does not yet expose Qt's full virtual override surface for custom proxy-style behavior. Think of it today as style composition infrastructure, not yet as a full style-subclassing API.
+
+\api{StylePlugin} is similarly an advanced hook. It is useful when you want a callback-backed style factory inside Crystal, but it is not the first tool to reach for when the real goal is just ``make the app look different.'' Most readers can safely ignore it until they are already comfortable with regular styles, palettes, and delegates.
+
+\section{Practical Guidance}
+
+When in doubt:
+
+\begin{itemize}
+  \item Start with the active platform style or Fusion.
+  \item Use palettes before broad style sheets.
+  \item Use style-aware drawing when exporting or previewing controls offscreen.
+  \item Use delegates for view customization instead of painting directly into the viewport.
+  \item Treat the large \api{StyleOption*} family as a low-level toolbox, not as a surface you must learn all at once.
+\end{itemize}
+
+That approach keeps your application easier to reason about and lets Qt keep doing the hard work of spacing, metrics, state handling, and platform-appropriate control drawing.

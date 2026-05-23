@@ -19,7 +19,8 @@ Use a chapter-oriented prefix when adding images:
 - `graphics-view-*` for Chapter 8 graphics-view screenshots.
 - `images-*` for Chapter 9 image workflow figures.
 - `model-view-*` for Chapter 11 model/view figures and screenshots.
-- `putting-together-*` for Chapter 12 worked-example screenshots.
+- `styles-*` for Chapter 12 styles figures and screenshots.
+- `putting-together-*` for Chapter 13 worked-example screenshots.
 
 Keep names descriptive and stable, since the `.tex` files reference them
 directly.
@@ -94,6 +95,15 @@ CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_model_view_widg
 - `model-view-workbench.png`
 
 Chapter 12:
+
+```sh
+CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_style_screenshots.cr
+```
+
+- `styles-style-painter.png`
+- `styles-workbench.png`
+
+Chapter 13:
 
 ```sh
 CRYSTAL_CACHE_DIR=/tmp/crystal-cache crystal run scripts/capture_worked_example_screenshots.cr
