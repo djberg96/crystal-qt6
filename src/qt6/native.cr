@@ -757,6 +757,14 @@ module Qt6
     fun qt6cr_style_option_slider_set_dial_wrapping = qt6cr_style_option_slider_set_dial_wrapping(handle : Handle, value : Bool)
     fun qt6cr_style_option_slider_keyboard_modifiers = qt6cr_style_option_slider_keyboard_modifiers(handle : Handle) : LibC::Int
     fun qt6cr_style_option_slider_set_keyboard_modifiers = qt6cr_style_option_slider_set_keyboard_modifiers(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_spin_box_create = qt6cr_style_option_spin_box_create : Handle
+    fun qt6cr_style_option_spin_box_destroy = qt6cr_style_option_spin_box_destroy(handle : Handle)
+    fun qt6cr_style_option_spin_box_button_symbols = qt6cr_style_option_spin_box_button_symbols(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_spin_box_set_button_symbols = qt6cr_style_option_spin_box_set_button_symbols(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_spin_box_step_enabled = qt6cr_style_option_spin_box_step_enabled(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_spin_box_set_step_enabled = qt6cr_style_option_spin_box_set_step_enabled(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_spin_box_has_frame = qt6cr_style_option_spin_box_has_frame(handle : Handle) : Bool
+    fun qt6cr_style_option_spin_box_set_frame = qt6cr_style_option_spin_box_set_frame(handle : Handle, value : Bool)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
@@ -3523,6 +3531,7 @@ module Qt6
     fun qt6cr_dial_init_style_option = qt6cr_dial_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_dial_on_value_changed = qt6cr_dial_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
+    fun qt6cr_abstract_spin_box_init_style_option = qt6cr_abstract_spin_box_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_abstract_spin_box_button_symbols = qt6cr_abstract_spin_box_button_symbols(handle : Handle) : LibC::Int
     fun qt6cr_abstract_spin_box_set_button_symbols = qt6cr_abstract_spin_box_set_button_symbols(handle : Handle, value : LibC::Int)
     fun qt6cr_abstract_spin_box_text = qt6cr_abstract_spin_box_text(handle : Handle) : UInt8*

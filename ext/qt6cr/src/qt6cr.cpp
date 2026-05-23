@@ -707,6 +707,51 @@ class CrystalDial final : public QDial {
   }
 };
 
+class CrystalSpinBox final : public QSpinBox {
+ public:
+  using QSpinBox::QSpinBox;
+
+  void initStyleOptionBridge(QStyleOptionSpinBox *option) const {
+    initStyleOption(option);
+  }
+};
+
+class CrystalDoubleSpinBox final : public QDoubleSpinBox {
+ public:
+  using QDoubleSpinBox::QDoubleSpinBox;
+
+  void initStyleOptionBridge(QStyleOptionSpinBox *option) const {
+    initStyleOption(option);
+  }
+};
+
+class CrystalDateTimeEdit final : public QDateTimeEdit {
+ public:
+  using QDateTimeEdit::QDateTimeEdit;
+
+  void initStyleOptionBridge(QStyleOptionSpinBox *option) const {
+    initStyleOption(option);
+  }
+};
+
+class CrystalDateEdit final : public QDateEdit {
+ public:
+  using QDateEdit::QDateEdit;
+
+  void initStyleOptionBridge(QStyleOptionSpinBox *option) const {
+    initStyleOption(option);
+  }
+};
+
+class CrystalTimeEdit final : public QTimeEdit {
+ public:
+  using QTimeEdit::QTimeEdit;
+
+  void initStyleOptionBridge(QStyleOptionSpinBox *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalWizardPage final : public QWizardPage {
  public:
   using QWizardPage::QWizardPage;
@@ -6941,6 +6986,53 @@ void qt6cr_style_option_slider_set_keyboard_modifiers(qt6cr_handle_t handle, int
 
   if (option != nullptr) {
     option->keyboardModifiers = static_cast<Qt::KeyboardModifiers>(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_spin_box_create(void) {
+  return new QStyleOptionSpinBox();
+}
+
+void qt6cr_style_option_spin_box_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionSpinBox *>(handle);
+}
+
+int qt6cr_style_option_spin_box_button_symbols(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSpinBox *>(handle);
+  return option == nullptr ? static_cast<int>(QAbstractSpinBox::UpDownArrows) : static_cast<int>(option->buttonSymbols);
+}
+
+void qt6cr_style_option_spin_box_set_button_symbols(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSpinBox *>(handle);
+
+  if (option != nullptr) {
+    option->buttonSymbols = static_cast<QAbstractSpinBox::ButtonSymbols>(value);
+  }
+}
+
+int qt6cr_style_option_spin_box_step_enabled(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSpinBox *>(handle);
+  return option == nullptr ? static_cast<int>(QAbstractSpinBox::StepNone) : static_cast<int>(option->stepEnabled);
+}
+
+void qt6cr_style_option_spin_box_set_step_enabled(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSpinBox *>(handle);
+
+  if (option != nullptr) {
+    option->stepEnabled = static_cast<QAbstractSpinBox::StepEnabled>(value);
+  }
+}
+
+bool qt6cr_style_option_spin_box_has_frame(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSpinBox *>(handle);
+  return option == nullptr || option->frame;
+}
+
+void qt6cr_style_option_spin_box_set_frame(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionSpinBox *>(handle);
+
+  if (option != nullptr) {
+    option->frame = value;
   }
 }
 
@@ -25829,6 +25921,39 @@ void qt6cr_dial_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t cal
   qt6cr_abstract_slider_on_value_changed(handle, callback, userdata);
 }
 
+void qt6cr_abstract_spin_box_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *spin_box = as_abstract_spin_box(handle);
+  auto *option = static_cast<QStyleOptionSpinBox *>(option_handle);
+
+  if (spin_box == nullptr || option == nullptr) {
+    return;
+  }
+
+  if (auto *typed_spin_box = dynamic_cast<CrystalSpinBox *>(spin_box)) {
+    typed_spin_box->initStyleOptionBridge(option);
+    return;
+  }
+
+  if (auto *typed_double_spin_box = dynamic_cast<CrystalDoubleSpinBox *>(spin_box)) {
+    typed_double_spin_box->initStyleOptionBridge(option);
+    return;
+  }
+
+  if (auto *typed_date_time_edit = dynamic_cast<CrystalDateTimeEdit *>(spin_box)) {
+    typed_date_time_edit->initStyleOptionBridge(option);
+    return;
+  }
+
+  if (auto *typed_date_edit = dynamic_cast<CrystalDateEdit *>(spin_box)) {
+    typed_date_edit->initStyleOptionBridge(option);
+    return;
+  }
+
+  if (auto *typed_time_edit = dynamic_cast<CrystalTimeEdit *>(spin_box)) {
+    typed_time_edit->initStyleOptionBridge(option);
+  }
+}
+
 int qt6cr_abstract_spin_box_button_symbols(qt6cr_handle_t handle) {
   auto *spin_box = as_abstract_spin_box(handle);
   return spin_box == nullptr ? static_cast<int>(QAbstractSpinBox::UpDownArrows) : static_cast<int>(spin_box->buttonSymbols());
@@ -26057,7 +26182,7 @@ void qt6cr_abstract_spin_box_on_return_pressed(qt6cr_handle_t handle, qt6cr_void
 }
 
 qt6cr_handle_t qt6cr_spin_box_create(qt6cr_handle_t parent) {
-  return new QSpinBox(as_widget(parent));
+  return new CrystalSpinBox(as_widget(parent));
 }
 
 void qt6cr_spin_box_set_minimum(qt6cr_handle_t handle, int value) {
@@ -26210,7 +26335,7 @@ void qt6cr_spin_box_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t
 }
 
 qt6cr_handle_t qt6cr_double_spin_box_create(qt6cr_handle_t parent) {
-  return new QDoubleSpinBox(as_widget(parent));
+  return new CrystalDoubleSpinBox(as_widget(parent));
 }
 
 void qt6cr_double_spin_box_set_minimum(qt6cr_handle_t handle, double value) {
@@ -26778,7 +26903,7 @@ void qt6cr_progress_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callba
 }
 
 qt6cr_handle_t qt6cr_date_time_edit_create(qt6cr_handle_t parent) {
-  return new QDateTimeEdit(as_widget(parent));
+  return new CrystalDateTimeEdit(as_widget(parent));
 }
 
 char *qt6cr_date_time_edit_display_format(qt6cr_handle_t handle) {
@@ -27091,7 +27216,7 @@ void qt6cr_date_time_edit_on_date_time_changed(qt6cr_handle_t handle, qt6cr_hand
 }
 
 qt6cr_handle_t qt6cr_date_edit_create(qt6cr_handle_t parent) {
-  return new QDateEdit(as_widget(parent));
+  return new CrystalDateEdit(as_widget(parent));
 }
 
 void qt6cr_date_edit_on_date_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
@@ -27107,7 +27232,7 @@ void qt6cr_date_edit_on_date_changed(qt6cr_handle_t handle, qt6cr_handle_callbac
 }
 
 qt6cr_handle_t qt6cr_time_edit_create(qt6cr_handle_t parent) {
-  return new QTimeEdit(as_widget(parent));
+  return new CrystalTimeEdit(as_widget(parent));
 }
 
 void qt6cr_time_edit_on_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {

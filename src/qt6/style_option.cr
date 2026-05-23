@@ -37,6 +37,8 @@ module Qt6
         StyleOptionComplex.wrap(handle, owned)
       when StyleOptionType::Slider.value
         StyleOptionSlider.wrap(handle, owned)
+      when StyleOptionType::SpinBox.value
+        StyleOptionSpinBox.wrap(handle, owned)
       when StyleOptionType::ComboBox.value
         StyleOptionComboBox.wrap(handle, owned)
       when StyleOptionType::ViewItem.value

@@ -19,6 +19,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyleOptionRubberBand` with shape and opacity helpers plus live `QRubberBand` initialization support for rubber-band paint state.
 - Added `QStyleOptionSizeGrip` with typed corner helpers on top of the shared `QStyleOptionComplex` surface.
 - Added `QStyleOptionSlider` with orientation, range, tick, step, position, notch, wrapping, and keyboard-modifier helpers plus live `QSlider`, `QScrollBar`, and `QDial` initialization support for slider-style paint state.
+- Added `QStyleOptionSpinBox` with button-symbol, step-enabled, and frame helpers plus live `QAbstractSpinBox` family initialization support for spin-box paint state.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.

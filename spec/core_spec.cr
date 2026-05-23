@@ -1384,6 +1384,75 @@ describe Qt6 do
     end
   end
 
+  it "supports spin-box style options" do
+    application = app
+    spin_box = Qt6::SpinBox.new
+    double_spin_box = Qt6::DoubleSpinBox.new
+    date_edit = Qt6::DateEdit.new
+    option = Qt6::StyleOptionSpinBox.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      spin_box.button_symbols = Qt6::AbstractSpinBoxButtonSymbol::PlusMinus
+      spin_box.frame = false
+      spin_box.set_range(10, 90)
+      spin_box.value = 42
+      spin_box.resize(80, 28)
+      spin_box.show
+
+      double_spin_box.set_range(0.0, 10.0)
+      double_spin_box.value = 10.0
+      double_spin_box.resize(96, 28)
+      double_spin_box.show
+
+      date_edit.date = Qt6::QDate.new(2026, 5, 23)
+      date_edit.resize(110, 28)
+      date_edit.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::SpinBox)
+      wrapped.should be_a(Qt6::StyleOptionSpinBox)
+      option.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::UpDownArrows)
+      option.step_enabled.should eq(Qt6::AbstractSpinBoxStepEnabled::StepNone)
+      option.frame?.should be_false
+      option.sub_controls.should eq(Qt6::StyleSubControl::All)
+
+      option.set_button_symbols(Qt6::AbstractSpinBoxButtonSymbol::NoButtons).to_unsafe.should eq(option.to_unsafe)
+      option.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::NoButtons)
+      option.set_step_enabled(Qt6::AbstractSpinBoxStepEnabled::StepUpEnabled | Qt6::AbstractSpinBoxStepEnabled::StepDownEnabled).to_unsafe.should eq(option.to_unsafe)
+      option.step_enabled.includes?(Qt6::AbstractSpinBoxStepEnabled::StepUpEnabled).should be_true
+      option.step_enabled.includes?(Qt6::AbstractSpinBoxStepEnabled::StepDownEnabled).should be_true
+      option.set_frame(false).to_unsafe.should eq(option.to_unsafe)
+      option.frame?.should be_false
+
+      option.init_from(spin_box)
+      option.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::PlusMinus)
+      option.frame?.should be_false
+      option.step_enabled.includes?(Qt6::AbstractSpinBoxStepEnabled::StepUpEnabled).should be_true
+      option.step_enabled.includes?(Qt6::AbstractSpinBoxStepEnabled::StepDownEnabled).should be_true
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 80.0, 28.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+
+      option.init_from(double_spin_box)
+      option.frame?.should be_true
+      option.step_enabled.includes?(Qt6::AbstractSpinBoxStepEnabled::StepDownEnabled).should be_true
+      option.step_enabled.includes?(Qt6::AbstractSpinBoxStepEnabled::StepUpEnabled).should be_false
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 96.0, 28.0))
+
+      option.init_from(date_edit)
+      option.button_symbols.should eq(Qt6::AbstractSpinBoxButtonSymbol::UpDownArrows)
+      option.frame?.should be_true
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 110.0, 28.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      option.release
+      date_edit.release
+      double_spin_box.release
+      spin_box.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time
