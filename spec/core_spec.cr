@@ -1292,10 +1292,10 @@ describe Qt6 do
       application.auto_sip_enabled?.should eq(!previous_auto_sip_enabled)
       if active_window = application.active_window
         active_window.to_unsafe.should eq(window.to_unsafe)
+        line_edit.has_focus?.should be_true
+        application.focus_widget.should_not be_nil
+        application.focus_widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
       end
-      line_edit.has_focus?.should be_true
-      application.focus_widget.should_not be_nil
-      application.focus_widget.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
 
       application.close_all_windows
       5.times { application.process_events }
