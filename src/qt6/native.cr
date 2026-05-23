@@ -821,6 +821,16 @@ module Qt6
     fun qt6cr_style_option_spin_box_set_step_enabled = qt6cr_style_option_spin_box_set_step_enabled(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_spin_box_has_frame = qt6cr_style_option_spin_box_has_frame(handle : Handle) : Bool
     fun qt6cr_style_option_spin_box_set_frame = qt6cr_style_option_spin_box_set_frame(handle : Handle, value : Bool)
+    fun qt6cr_style_option_title_bar_create = qt6cr_style_option_title_bar_create : Handle
+    fun qt6cr_style_option_title_bar_destroy = qt6cr_style_option_title_bar_destroy(handle : Handle)
+    fun qt6cr_style_option_title_bar_text = qt6cr_style_option_title_bar_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_title_bar_set_text = qt6cr_style_option_title_bar_set_text(handle : Handle, value : UInt8*)
+    fun qt6cr_style_option_title_bar_icon = qt6cr_style_option_title_bar_icon(handle : Handle) : Handle
+    fun qt6cr_style_option_title_bar_set_icon = qt6cr_style_option_title_bar_set_icon(handle : Handle, value : Handle)
+    fun qt6cr_style_option_title_bar_state = qt6cr_style_option_title_bar_state(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_title_bar_set_state = qt6cr_style_option_title_bar_set_state(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_title_bar_flags = qt6cr_style_option_title_bar_flags(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_title_bar_set_flags = qt6cr_style_option_title_bar_set_flags(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
@@ -951,6 +961,7 @@ module Qt6
     fun qt6cr_widget_resize = qt6cr_widget_resize(handle : Handle, width : LibC::Int, height : LibC::Int)
     fun qt6cr_widget_set_window_title = qt6cr_widget_set_window_title(handle : Handle, title : UInt8*)
     fun qt6cr_widget_window_title = qt6cr_widget_window_title(handle : Handle) : UInt8*
+    fun qt6cr_widget_init_title_bar_style_option = qt6cr_widget_init_title_bar_style_option(handle : Handle, option : Handle)
     fun qt6cr_widget_is_visible = qt6cr_widget_is_visible(handle : Handle) : Bool
     fun qt6cr_widget_size = qt6cr_widget_size(handle : Handle) : SizeValue
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue

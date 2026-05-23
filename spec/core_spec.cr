@@ -1653,6 +1653,68 @@ describe Qt6 do
     end
   end
 
+  it "supports title-bar style options" do
+    application = app
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-title-bar-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(16, 16)
+    icon_image.fill(Qt6::Color.new(0, 0, 0, 0))
+    icon_image.set_pixel_color(5, 5, Qt6::Color.new(196, 64, 48, 255))
+    icon_image.save(icon_path).should be_true
+
+    window = Qt6::Widget.new
+    icon = Qt6::QIcon.from_file(icon_path)
+    option = Qt6::StyleOptionTitleBar.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      icon.null?.should be_false
+
+      window.window_title = "Operations"
+      window.window_icon = icon
+      window.resize(160, 90)
+      window.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::TitleBar)
+      wrapped.should be_a(Qt6::StyleOptionTitleBar)
+      option.text.should eq("")
+      option.icon.null?.should be_true
+      option.title_bar_state.should eq(Qt6::WindowState::NoState)
+      option.title_bar_flags.should eq(0)
+      option.sub_controls.should eq(Qt6::StyleSubControl::All)
+      option.active_sub_controls.should eq(Qt6::StyleSubControl::None)
+
+      option.set_text("Mission Control").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("Mission Control")
+      option.set_icon(icon).to_unsafe.should eq(option.to_unsafe)
+      option.icon.null?.should be_false
+      option.set_title_bar_state(Qt6::WindowState::Minimized | Qt6::WindowState::Active).to_unsafe.should eq(option.to_unsafe)
+      option.title_bar_state.includes?(Qt6::WindowState::Minimized).should be_true
+      option.title_bar_state.includes?(Qt6::WindowState::Active).should be_true
+      option.set_title_bar_flags(1234).to_unsafe.should eq(option.to_unsafe)
+      option.title_bar_flags.should eq(1234)
+      option.set_sub_controls(Qt6::StyleSubControl::TitleBarLabel | Qt6::StyleSubControl::TitleBarCloseButton).to_unsafe.should eq(option.to_unsafe)
+      option.sub_controls.includes?(Qt6::StyleSubControl::TitleBarLabel).should be_true
+      option.sub_controls.includes?(Qt6::StyleSubControl::TitleBarCloseButton).should be_true
+      option.set_active_sub_controls(Qt6::StyleSubControl::TitleBarCloseButton).to_unsafe.should eq(option.to_unsafe)
+      option.active_sub_controls.should eq(Qt6::StyleSubControl::TitleBarCloseButton)
+
+      option.init_from(window)
+      option.text.should eq("Operations")
+      option.icon.null?.should be_false
+      option.title_bar_state.should eq(Qt6::WindowState::NoState)
+      option.title_bar_flags.should_not eq(1234)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 160.0, 90.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      option.release
+      icon.release
+      window.release
+      File.delete(icon_path) if File.exists?(icon_path)
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

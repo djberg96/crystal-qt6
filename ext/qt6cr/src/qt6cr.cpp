@@ -6736,6 +6736,67 @@ void qt6cr_style_option_tab_widget_frame_set_selected_tab_rect(qt6cr_handle_t ha
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_title_bar_create(void) {
+  return new QStyleOptionTitleBar();
+}
+
+void qt6cr_style_option_title_bar_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionTitleBar *>(handle);
+}
+
+char *qt6cr_style_option_title_bar_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_title_bar_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_title_bar_icon(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+  return option == nullptr ? new QIcon() : new QIcon(option->icon);
+}
+
+void qt6cr_style_option_title_bar_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+  auto *value = static_cast<QIcon *>(icon);
+
+  if (option != nullptr && value != nullptr) {
+    option->icon = *value;
+  }
+}
+
+int qt6cr_style_option_title_bar_state(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::WindowNoState) : option->titleBarState;
+}
+
+void qt6cr_style_option_title_bar_set_state(qt6cr_handle_t handle, int state) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+
+  if (option != nullptr) {
+    option->titleBarState = state;
+  }
+}
+
+int qt6cr_style_option_title_bar_flags(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+  return option == nullptr ? 0 : static_cast<int>(option->titleBarFlags);
+}
+
+void qt6cr_style_option_title_bar_set_flags(qt6cr_handle_t handle, int flags) {
+  auto *option = static_cast<QStyleOptionTitleBar *>(handle);
+
+  if (option != nullptr) {
+    option->titleBarFlags = Qt::WindowFlags(flags);
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_focus_rect_create(void) {
   return new QStyleOptionFocusRect();
 }
@@ -8441,6 +8502,18 @@ void qt6cr_widget_set_window_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
 
   if (widget != nullptr && window_icon != nullptr) {
     widget->setWindowIcon(*window_icon);
+  }
+}
+
+void qt6cr_widget_init_title_bar_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *widget = as_widget(handle);
+  auto *option = static_cast<QStyleOptionTitleBar *>(option_handle);
+
+  if (widget != nullptr && option != nullptr) {
+    option->text = widget->windowTitle();
+    option->icon = widget->windowIcon();
+    option->titleBarState = static_cast<int>(widget->windowState());
+    option->titleBarFlags = widget->windowFlags();
   }
 }
 
