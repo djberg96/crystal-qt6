@@ -235,6 +235,7 @@ typedef void (*qt6cr_delegate_init_style_option_callback_t)(void *userdata, qt6c
 typedef qt6cr_handle_t (*qt6cr_gesture_recognizer_create_callback_t)(void *userdata, qt6cr_handle_t target);
 typedef int (*qt6cr_gesture_recognizer_recognize_callback_t)(void *userdata, qt6cr_handle_t state, qt6cr_handle_t watched, qt6cr_handle_t event);
 typedef void (*qt6cr_gesture_recognizer_reset_callback_t)(void *userdata, qt6cr_handle_t state);
+typedef qt6cr_handle_t (*qt6cr_style_plugin_create_callback_t)(void *userdata, const char *key);
 
 void qt6cr_object_destroy(qt6cr_handle_t handle);
 void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
@@ -680,6 +681,9 @@ void qt6cr_style_unpolish_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);
 void qt6cr_style_polish_application(qt6cr_handle_t handle, qt6cr_handle_t application);
 void qt6cr_style_unpolish_application(qt6cr_handle_t handle, qt6cr_handle_t application);
 void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette);
+qt6cr_handle_t qt6cr_style_plugin_create(qt6cr_handle_t parent);
+void qt6cr_style_plugin_on_create(qt6cr_handle_t handle, qt6cr_style_plugin_create_callback_t callback, void *userdata);
+qt6cr_handle_t qt6cr_style_plugin_create_style(qt6cr_handle_t handle, const char *key);
 qt6cr_handle_t qt6cr_style_painter_create(void);
 void qt6cr_style_painter_destroy(qt6cr_handle_t handle);
 bool qt6cr_style_painter_begin_widget(qt6cr_handle_t handle, qt6cr_handle_t widget);

@@ -164,6 +164,7 @@
 #include <QStyle>
 #include <QStylePainter>
 #include <QStyleFactory>
+#include <QStylePlugin>
 #include <QStackedWidget>
 #include <QStackedLayout>
 #include <QStatusBar>
@@ -1085,6 +1086,22 @@ public:
     }
 
     QGestureRecognizer::reset(state);
+  }
+};
+
+class CrystalStylePlugin final : public QStylePlugin {
+public:
+  qt6cr_style_plugin_create_callback_t create_callback = nullptr;
+  void *create_userdata = nullptr;
+
+  using QStylePlugin::QStylePlugin;
+
+  QStyle *create(const QString &key) override {
+    if (create_callback == nullptr) {
+      return nullptr;
+    }
+
+    return as_style(create_callback(create_userdata, key.toUtf8().constData()));
   }
 };
 
@@ -6281,6 +6298,24 @@ void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
   if (style != nullptr && value != nullptr) {
     style->polish(*value);
   }
+}
+
+qt6cr_handle_t qt6cr_style_plugin_create(qt6cr_handle_t parent) {
+  return new CrystalStylePlugin(as_qobject(parent));
+}
+
+void qt6cr_style_plugin_on_create(qt6cr_handle_t handle, qt6cr_style_plugin_create_callback_t callback, void *userdata) {
+  auto *plugin = static_cast<CrystalStylePlugin *>(handle);
+
+  if (plugin != nullptr) {
+    plugin->create_callback = callback;
+    plugin->create_userdata = userdata;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_plugin_create_style(qt6cr_handle_t handle, const char *key) {
+  auto *plugin = static_cast<QStylePlugin *>(handle);
+  return plugin == nullptr ? nullptr : plugin->create(QString::fromUtf8(key == nullptr ? "" : key));
 }
 
 qt6cr_handle_t qt6cr_style_painter_create(void) {

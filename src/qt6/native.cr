@@ -636,6 +636,9 @@ module Qt6
     fun qt6cr_style_polish_application = qt6cr_style_polish_application(handle : Handle, application : Handle)
     fun qt6cr_style_unpolish_application = qt6cr_style_unpolish_application(handle : Handle, application : Handle)
     fun qt6cr_style_polish_palette = qt6cr_style_polish_palette(handle : Handle, palette : Handle)
+    fun qt6cr_style_plugin_create = qt6cr_style_plugin_create(parent : Handle) : Handle
+    fun qt6cr_style_plugin_on_create = qt6cr_style_plugin_on_create(handle : Handle, callback : (Handle, UInt8* -> Handle), userdata : Handle)
+    fun qt6cr_style_plugin_create_style = qt6cr_style_plugin_create_style(handle : Handle, key : UInt8*) : Handle
     fun qt6cr_style_painter_create = qt6cr_style_painter_create : Handle
     fun qt6cr_style_painter_destroy = qt6cr_style_painter_destroy(handle : Handle)
     fun qt6cr_style_painter_begin_widget = qt6cr_style_painter_begin_widget(handle : Handle, widget : Handle) : Bool

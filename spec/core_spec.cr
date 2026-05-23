@@ -570,6 +570,30 @@ describe Qt6 do
     end
   end
 
+  it "supports style plugins" do
+    plugin = Qt6::StylePlugin.new
+    created_keys = [] of String
+
+    begin
+      plugin.on_create do |key|
+        created_keys << key
+        key == "campaign" ? Qt6::CommonStyle.new : nil
+      end
+
+      campaign_style = plugin.create("campaign")
+      campaign_style.should_not be_nil
+      campaign_style.should be_a(Qt6::CommonStyle)
+      campaign_style.not_nil!.standard_palette.color(Qt6::ColorRole::Window).should be_a(Qt6::Color)
+
+      plugin.create("missing").should be_nil
+      created_keys.should eq(["campaign", "missing"])
+
+      campaign_style.not_nil!.release
+    ensure
+      plugin.release
+    end
+  end
+
   it "supports style painters" do
     application = app
     button = Qt6::PushButton.new("Deploy")

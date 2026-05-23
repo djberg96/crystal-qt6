@@ -65,6 +65,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStandardItemEditorCreator` with callback-backed editor creation and automatic Qt user-property discovery for cleaner `QItemEditorFactory` registration of standard editor widgets.
 - Expanded `QStatusBar` with inserted transient and permanent widgets, `message_changed`, and Qt-style message/size-grip aliases for fuller desktop-shell status workflows.
 - Expanded `QStyle` with shared widget/application/palette polish helpers and added `QStyleFactory` for available-style discovery and keyed style creation.
+- Added `QStylePlugin` as a callback-backed abstract factory wrapper so Crystal code can vend typed `QStyle` instances for requested style keys.
 - Added `QStylePainter` with typed primitive/control/complex-control enums, widget-aware begin helpers, borrowed style access, and item text/pixmap drawing support for style-driven custom painting.
 - Added a shared `QStyleOption` wrapper with typed option/state enums, geometry, palette, font-metrics, direction, style-object, and `init_from` helpers, and moved `QStyleOptionViewItem` onto that shared base.
 - Added `QStyleOptionFocusRect` with `background_color` on top of the shared `QStyleOption` base.
