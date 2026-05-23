@@ -11,6 +11,8 @@ module Qt6
         else
           StyleOptionMenuItem.wrap(handle, owned)
         end
+      when StyleOptionType::ProgressBar.value
+        StyleOptionProgressBar.wrap(handle, owned)
       when StyleOptionType::DockWidget.value
         StyleOptionDockWidget.wrap(handle, owned)
       when StyleOptionType::Frame.value

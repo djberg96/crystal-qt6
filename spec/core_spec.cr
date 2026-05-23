@@ -1149,6 +1149,70 @@ describe Qt6 do
     end
   end
 
+  it "supports progress-bar style options" do
+    application = app
+    progress_bar = Qt6::ProgressBar.new
+    option = Qt6::StyleOptionProgressBar.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      progress_bar.set_range(5, 25)
+      progress_bar.value = 12
+      progress_bar.format = "%p% ready"
+      progress_bar.alignment = Qt6::AlignmentFlag::HCenter | Qt6::AlignmentFlag::VCenter
+      progress_bar.text_visible = true
+      progress_bar.inverted_appearance = true
+      progress_bar.text_direction = Qt6::ProgressBarDirection::BottomToTop
+      progress_bar.resize(180, 28)
+      progress_bar.show
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::ProgressBar)
+      wrapped.should be_a(Qt6::StyleOptionProgressBar)
+      option.minimum.should eq(0)
+      option.maximum.should eq(0)
+      option.progress.should eq(0)
+      option.text.should eq("")
+      option.text_visible?.should be_false
+      option.inverted_appearance?.should be_false
+      option.bottom_to_top?.should be_false
+
+      option.set_minimum(5).to_unsafe.should eq(option.to_unsafe)
+      option.minimum.should eq(5)
+      option.set_maximum(25).to_unsafe.should eq(option.to_unsafe)
+      option.maximum.should eq(25)
+      option.set_progress(12).to_unsafe.should eq(option.to_unsafe)
+      option.progress.should eq(12)
+      option.set_text("12 / 25").to_unsafe.should eq(option.to_unsafe)
+      option.text.should eq("12 / 25")
+      option.set_text_alignment(Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter).to_unsafe.should eq(option.to_unsafe)
+      option.text_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+      option.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+      option.set_text_visible(true).to_unsafe.should eq(option.to_unsafe)
+      option.text_visible?.should be_true
+      option.set_inverted_appearance(true).to_unsafe.should eq(option.to_unsafe)
+      option.inverted_appearance?.should be_true
+      option.set_bottom_to_top(true).to_unsafe.should eq(option.to_unsafe)
+      option.bottom_to_top?.should be_true
+
+      option.init_from(progress_bar)
+      option.minimum.should eq(5)
+      option.maximum.should eq(25)
+      option.progress.should eq(12)
+      option.text.should eq("35% ready")
+      option.text_alignment.includes?(Qt6::AlignmentFlag::HCenter).should be_true
+      option.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+      option.text_visible?.should be_true
+      option.inverted_appearance?.should be_true
+      option.bottom_to_top?.should be_true
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 180.0, 28.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      option.release
+      progress_bar.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

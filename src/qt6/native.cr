@@ -701,6 +701,24 @@ module Qt6
     fun qt6cr_style_option_menu_item_v2_destroy = qt6cr_style_option_menu_item_v2_destroy(handle : Handle)
     fun qt6cr_style_option_menu_item_v2_is_mouse_down = qt6cr_style_option_menu_item_v2_is_mouse_down(handle : Handle) : Bool
     fun qt6cr_style_option_menu_item_v2_set_mouse_down = qt6cr_style_option_menu_item_v2_set_mouse_down(handle : Handle, value : Bool)
+    fun qt6cr_style_option_progress_bar_create = qt6cr_style_option_progress_bar_create : Handle
+    fun qt6cr_style_option_progress_bar_destroy = qt6cr_style_option_progress_bar_destroy(handle : Handle)
+    fun qt6cr_style_option_progress_bar_minimum = qt6cr_style_option_progress_bar_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_progress_bar_set_minimum = qt6cr_style_option_progress_bar_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_progress_bar_maximum = qt6cr_style_option_progress_bar_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_progress_bar_set_maximum = qt6cr_style_option_progress_bar_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_progress_bar_progress = qt6cr_style_option_progress_bar_progress(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_progress_bar_set_progress = qt6cr_style_option_progress_bar_set_progress(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_progress_bar_text = qt6cr_style_option_progress_bar_text(handle : Handle) : UInt8*
+    fun qt6cr_style_option_progress_bar_set_text = qt6cr_style_option_progress_bar_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_style_option_progress_bar_text_alignment = qt6cr_style_option_progress_bar_text_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_progress_bar_set_text_alignment = qt6cr_style_option_progress_bar_set_text_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_progress_bar_text_visible = qt6cr_style_option_progress_bar_text_visible(handle : Handle) : Bool
+    fun qt6cr_style_option_progress_bar_set_text_visible = qt6cr_style_option_progress_bar_set_text_visible(handle : Handle, value : Bool)
+    fun qt6cr_style_option_progress_bar_inverted_appearance = qt6cr_style_option_progress_bar_inverted_appearance(handle : Handle) : Bool
+    fun qt6cr_style_option_progress_bar_set_inverted_appearance = qt6cr_style_option_progress_bar_set_inverted_appearance(handle : Handle, value : Bool)
+    fun qt6cr_style_option_progress_bar_bottom_to_top = qt6cr_style_option_progress_bar_bottom_to_top(handle : Handle) : Bool
+    fun qt6cr_style_option_progress_bar_set_bottom_to_top = qt6cr_style_option_progress_bar_set_bottom_to_top(handle : Handle, value : Bool)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
@@ -3654,6 +3672,7 @@ module Qt6
     fun qt6cr_progress_bar_set_orientation = qt6cr_progress_bar_set_orientation(handle : Handle, value : LibC::Int)
     fun qt6cr_progress_bar_size_hint = qt6cr_progress_bar_size_hint(handle : Handle) : SizeValue
     fun qt6cr_progress_bar_minimum_size_hint = qt6cr_progress_bar_minimum_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_progress_bar_init_style_option = qt6cr_progress_bar_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_progress_bar_on_value_changed = qt6cr_progress_bar_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_date_time_edit_create = qt6cr_date_time_edit_create(parent : Handle) : Handle

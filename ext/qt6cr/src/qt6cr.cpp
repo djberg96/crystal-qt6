@@ -536,6 +536,15 @@ class CrystalMenu final : public QMenu {
   }
 };
 
+class CrystalProgressBar final : public QProgressBar {
+ public:
+  explicit CrystalProgressBar(QWidget *parent = nullptr) : QProgressBar(parent) {}
+
+  void initStyleOptionBridge(QStyleOptionProgressBar *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalHeaderView final : public QHeaderView {
  public:
   explicit CrystalHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr)
@@ -6543,6 +6552,118 @@ void qt6cr_style_option_menu_item_v2_set_mouse_down(qt6cr_handle_t handle, bool 
 
   if (option != nullptr) {
     option->mouseDown = value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_progress_bar_create(void) {
+  return new QStyleOptionProgressBar();
+}
+
+void qt6cr_style_option_progress_bar_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionProgressBar *>(handle);
+}
+
+int qt6cr_style_option_progress_bar_minimum(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option == nullptr ? 0 : option->minimum;
+}
+
+void qt6cr_style_option_progress_bar_set_minimum(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->minimum = value;
+  }
+}
+
+int qt6cr_style_option_progress_bar_maximum(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option == nullptr ? 100 : option->maximum;
+}
+
+void qt6cr_style_option_progress_bar_set_maximum(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->maximum = value;
+  }
+}
+
+int qt6cr_style_option_progress_bar_progress(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option == nullptr ? -1 : option->progress;
+}
+
+void qt6cr_style_option_progress_bar_set_progress(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->progress = value;
+  }
+}
+
+char *qt6cr_style_option_progress_bar_text(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option == nullptr ? duplicate_string("") : duplicate_string(option->text);
+}
+
+void qt6cr_style_option_progress_bar_set_text(qt6cr_handle_t handle, const char *text) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->text = QString::fromUtf8(text == nullptr ? "" : text);
+  }
+}
+
+int qt6cr_style_option_progress_bar_text_alignment(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::AlignLeft) : static_cast<int>(option->textAlignment);
+}
+
+void qt6cr_style_option_progress_bar_set_text_alignment(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->textAlignment = static_cast<Qt::Alignment>(value);
+  }
+}
+
+bool qt6cr_style_option_progress_bar_text_visible(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option != nullptr && option->textVisible;
+}
+
+void qt6cr_style_option_progress_bar_set_text_visible(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->textVisible = value;
+  }
+}
+
+bool qt6cr_style_option_progress_bar_inverted_appearance(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option != nullptr && option->invertedAppearance;
+}
+
+void qt6cr_style_option_progress_bar_set_inverted_appearance(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->invertedAppearance = value;
+  }
+}
+
+bool qt6cr_style_option_progress_bar_bottom_to_top(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+  return option != nullptr && option->bottomToTop;
+}
+
+void qt6cr_style_option_progress_bar_set_bottom_to_top(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionProgressBar *>(handle);
+
+  if (option != nullptr) {
+    option->bottomToTop = value;
   }
 }
 
@@ -26163,7 +26284,7 @@ void qt6cr_rubber_band_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect) {
 }
 
 qt6cr_handle_t qt6cr_progress_bar_create(qt6cr_handle_t parent) {
-  return new QProgressBar(as_widget(parent));
+  return new CrystalProgressBar(as_widget(parent));
 }
 
 int qt6cr_progress_bar_minimum(qt6cr_handle_t handle) {
@@ -26320,6 +26441,15 @@ qt6cr_size_t qt6cr_progress_bar_size_hint(qt6cr_handle_t handle) {
 qt6cr_size_t qt6cr_progress_bar_minimum_size_hint(qt6cr_handle_t handle) {
   auto *progress_bar = as_progress_bar(handle);
   return progress_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(progress_bar->minimumSizeHint());
+}
+
+void qt6cr_progress_bar_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *progress_bar = dynamic_cast<CrystalProgressBar *>(as_progress_bar(handle));
+  auto *option = static_cast<QStyleOptionProgressBar *>(option_handle);
+
+  if (progress_bar != nullptr && option != nullptr) {
+    progress_bar->initStyleOptionBridge(option);
+  }
 }
 
 void qt6cr_progress_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
