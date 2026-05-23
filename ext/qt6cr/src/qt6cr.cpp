@@ -6555,6 +6555,66 @@ void qt6cr_style_option_tab_set_tab_index(qt6cr_handle_t handle, int value) {
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_tab_bar_base_create(void) {
+  return new QStyleOptionTabBarBase();
+}
+
+void qt6cr_style_option_tab_bar_base_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionTabBarBase *>(handle);
+}
+
+int qt6cr_style_option_tab_bar_base_shape(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+  return option == nullptr ? static_cast<int>(QTabBar::RoundedNorth) : static_cast<int>(option->shape);
+}
+
+void qt6cr_style_option_tab_bar_base_set_shape(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+
+  if (option != nullptr) {
+    option->shape = static_cast<QTabBar::Shape>(value);
+  }
+}
+
+qt6cr_rectf_t qt6cr_style_option_tab_bar_base_tab_bar_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->tabBarRect);
+}
+
+void qt6cr_style_option_tab_bar_base_set_tab_bar_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+
+  if (option != nullptr) {
+    option->tabBarRect = from_rect(rect);
+  }
+}
+
+qt6cr_rectf_t qt6cr_style_option_tab_bar_base_selected_tab_rect(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+  return option == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(option->selectedTabRect);
+}
+
+void qt6cr_style_option_tab_bar_base_set_selected_tab_rect(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+
+  if (option != nullptr) {
+    option->selectedTabRect = from_rect(rect);
+  }
+}
+
+bool qt6cr_style_option_tab_bar_base_document_mode(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+  return option != nullptr && option->documentMode;
+}
+
+void qt6cr_style_option_tab_bar_base_set_document_mode(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionTabBarBase *>(handle);
+
+  if (option != nullptr) {
+    option->documentMode = value;
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_focus_rect_create(void) {
   return new QStyleOptionFocusRect();
 }
@@ -29106,6 +29166,20 @@ void qt6cr_tab_bar_init_style_option(qt6cr_handle_t handle, int index, qt6cr_han
   if (tab_bar != nullptr && option != nullptr && index >= 0 && index < tab_bar->count()) {
     tab_bar->initStyleOptionBridge(option, index);
   }
+}
+
+void qt6cr_tab_bar_init_style_option_base(qt6cr_handle_t handle, int index, qt6cr_handle_t option_handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  auto *option = static_cast<QStyleOptionTabBarBase *>(option_handle);
+
+  if (tab_bar == nullptr || option == nullptr) {
+    return;
+  }
+
+  option->shape = tab_bar->shape();
+  option->tabBarRect = tab_bar->rect();
+  option->selectedTabRect = (index >= 0 && index < tab_bar->count()) ? tab_bar->tabRect(index) : QRect();
+  option->documentMode = tab_bar->documentMode();
 }
 
 void qt6cr_tab_bar_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {

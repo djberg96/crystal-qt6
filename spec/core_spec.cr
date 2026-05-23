@@ -1538,6 +1538,59 @@ describe Qt6 do
     end
   end
 
+  it "supports tab-bar-base style options" do
+    application = app
+    tab_bar = Qt6::TabBar.new
+    option = Qt6::StyleOptionTabBarBase.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      tab_bar.add_tab("North")
+      tab_bar.add_tab("Center")
+      tab_bar.add_tab("South")
+      tab_bar.current_index = 1
+      tab_bar.resize(180, 28)
+      tab_bar.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::TabBarBase)
+      wrapped.should be_a(Qt6::StyleOptionTabBarBase)
+      option.shape.should eq(Qt6::TabBarShape::RoundedNorth)
+      option.tab_bar_rect.should eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+      option.selected_tab_rect.should eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+      option.document_mode?.should be_false
+
+      option.set_shape(Qt6::TabBarShape::TriangularWest).to_unsafe.should eq(option.to_unsafe)
+      option.shape.should eq(Qt6::TabBarShape::TriangularWest)
+      option.set_tab_bar_rect(Qt6::Rect.new(1, 2, 120, 24)).to_unsafe.should eq(option.to_unsafe)
+      option.tab_bar_rect.should eq(Qt6::RectF.new(1.0, 2.0, 120.0, 24.0))
+      option.set_selected_tab_rect(Qt6::Rect.new(3, 4, 40, 20)).to_unsafe.should eq(option.to_unsafe)
+      option.selected_tab_rect.should eq(Qt6::RectF.new(3.0, 4.0, 40.0, 20.0))
+      option.set_document_mode(true).to_unsafe.should eq(option.to_unsafe)
+      option.document_mode?.should be_true
+
+      option.init_from(tab_bar)
+      option.shape.should eq(Qt6::TabBarShape::RoundedNorth)
+      option.tab_bar_rect.should eq(Qt6::RectF.new(0.0, 0.0, 180.0, 28.0))
+      option.selected_tab_rect.height.should be > 0
+      option.selected_tab_rect.width.should be > 0
+      option.document_mode?.should be_false
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+
+      option.init_from(tab_bar, 0)
+      option.selected_tab_rect.height.should be > 0
+      option.selected_tab_rect.width.should be > 0
+      option.selected_tab_rect.should_not eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+
+      option.init_from(tab_bar, -1)
+      option.selected_tab_rect.should eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+    ensure
+      option.release
+      tab_bar.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

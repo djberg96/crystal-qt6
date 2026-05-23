@@ -683,6 +683,16 @@ module Qt6
     fun qt6cr_style_option_tab_set_features = qt6cr_style_option_tab_set_features(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_tab_index = qt6cr_style_option_tab_index(handle : Handle) : LibC::Int
     fun qt6cr_style_option_tab_set_tab_index = qt6cr_style_option_tab_set_tab_index(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tab_bar_base_create = qt6cr_style_option_tab_bar_base_create : Handle
+    fun qt6cr_style_option_tab_bar_base_destroy = qt6cr_style_option_tab_bar_base_destroy(handle : Handle)
+    fun qt6cr_style_option_tab_bar_base_shape = qt6cr_style_option_tab_bar_base_shape(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tab_bar_base_set_shape = qt6cr_style_option_tab_bar_base_set_shape(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tab_bar_base_tab_bar_rect = qt6cr_style_option_tab_bar_base_tab_bar_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_tab_bar_base_set_tab_bar_rect = qt6cr_style_option_tab_bar_base_set_tab_bar_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_style_option_tab_bar_base_selected_tab_rect = qt6cr_style_option_tab_bar_base_selected_tab_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_tab_bar_base_set_selected_tab_rect = qt6cr_style_option_tab_bar_base_set_selected_tab_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_style_option_tab_bar_base_document_mode = qt6cr_style_option_tab_bar_base_document_mode(handle : Handle) : Bool
+    fun qt6cr_style_option_tab_bar_base_set_document_mode = qt6cr_style_option_tab_bar_base_set_document_mode(handle : Handle, value : Bool)
     fun qt6cr_style_option_focus_rect_create = qt6cr_style_option_focus_rect_create : Handle
     fun qt6cr_style_option_focus_rect_destroy = qt6cr_style_option_focus_rect_destroy(handle : Handle)
     fun qt6cr_style_option_focus_rect_background_color = qt6cr_style_option_focus_rect_background_color(handle : Handle) : ColorValue
@@ -4057,6 +4067,7 @@ module Qt6
     fun qt6cr_tab_bar_tabs_closable = qt6cr_tab_bar_tabs_closable(handle : Handle) : Bool
     fun qt6cr_tab_bar_set_tabs_closable = qt6cr_tab_bar_set_tabs_closable(handle : Handle, value : Bool)
     fun qt6cr_tab_bar_init_style_option = qt6cr_tab_bar_init_style_option(handle : Handle, index : LibC::Int, option : Handle)
+    fun qt6cr_tab_bar_init_style_option_base = qt6cr_tab_bar_init_style_option_base(handle : Handle, index : LibC::Int, option : Handle)
     fun qt6cr_tab_bar_on_current_index_changed = qt6cr_tab_bar_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_stacked_widget_create = qt6cr_stacked_widget_create(parent : Handle) : Handle
