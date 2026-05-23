@@ -570,6 +570,89 @@ describe Qt6 do
     end
   end
 
+  it "supports style painters" do
+    application = app
+    button = Qt6::PushButton.new("Deploy")
+    combo_box = Qt6::ComboBox.new
+    canvas = Qt6::QPixmap.new(160, 80)
+    badge = Qt6::QPixmap.new(10, 10)
+    palette = Qt6::QPalette.new
+    button_option = Qt6::StyleOptionButton.new
+    focus_option = Qt6::StyleOptionFocusRect.new
+    combo_option = Qt6::StyleOptionComboBox.new
+    painter = Qt6::StylePainter.new
+
+    begin
+      button.resize(120, 36)
+      button.show
+      combo_box.add_item("Terrain")
+      combo_box.resize(140, 28)
+      combo_box.show
+      application.process_events
+
+      canvas.fill(Qt6::Color.new(255, 255, 255))
+      badge.fill(Qt6::Color.new(220, 40, 40))
+      palette.set_color(Qt6::ColorRole::Text, Qt6::Color.new(0, 0, 0))
+
+      painter.begin(canvas, button).should be_true
+      painter.active?.should be_true
+      painter.style.should_not be_nil
+      painter.style.not_nil!.name.should eq(button.style.not_nil!.name)
+
+      button_option.init_from(button)
+      button_option.rect = Qt6::Rect.new(0, 0, 120, 36)
+      painter.draw_control(Qt6::StyleControlElement::PushButton, button_option).to_unsafe.should eq(painter.to_unsafe)
+
+      focus_option.init_from(button)
+      focus_option.rect = Qt6::Rect.new(124, 0, 20, 20)
+      painter.draw_primitive(Qt6::StylePrimitiveElement::FrameFocusRect, focus_option).to_unsafe.should eq(painter.to_unsafe)
+
+      combo_option.init_from(combo_box)
+      combo_option.rect = Qt6::Rect.new(0, 40, 140, 28)
+      painter.draw_complex_control(Qt6::StyleComplexControl::ComboBox, combo_option).to_unsafe.should eq(painter.to_unsafe)
+
+      painter.draw_item_text(
+        Qt6::Rect.new(0, 68, 60, 12),
+        Qt6::AlignmentFlag::Left | Qt6::AlignmentFlag::VCenter,
+        palette,
+        true,
+        "TXT"
+      ).to_unsafe.should eq(painter.to_unsafe)
+
+      painter.draw_item_pixmap(
+        Qt6::Rect.new(145, 5, 10, 10),
+        Qt6::AlignmentFlag::Center,
+        badge
+      ).to_unsafe.should eq(painter.to_unsafe)
+
+      painter.end.should be_true
+      painter.active?.should be_false
+
+      image = canvas.to_image
+      image.pixel_color(149, 9).should eq(Qt6::Color.new(220, 40, 40, 255))
+      image.release
+
+      widget_painter = Qt6::StylePainter.new
+      unless {"offscreen", "minimal"}.includes?(ENV["QT_QPA_PLATFORM"]?.try(&.downcase) || "")
+        if widget_painter.begin(button)
+          widget_painter.active?.should be_true
+          widget_painter.end.should be_true
+        end
+      end
+      widget_painter.release
+    ensure
+      painter.release
+      combo_option.release
+      focus_option.release
+      button_option.release
+      palette.release
+      badge.release
+      canvas.release
+      combo_box.release
+      button.release
+    end
+  end
+
   it "supports style hint return helpers" do
     base = Qt6::StyleHintReturn.new
     region = Qt6::QRegion.new(4, 6, 20, 12)

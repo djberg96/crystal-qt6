@@ -162,6 +162,7 @@
 #include <QDoubleSpinBox>
 #include <QSizePolicy>
 #include <QStyle>
+#include <QStylePainter>
 #include <QStyleFactory>
 #include <QStackedWidget>
 #include <QStackedLayout>
@@ -6279,6 +6280,98 @@ void qt6cr_style_polish_palette(qt6cr_handle_t handle, qt6cr_handle_t palette) {
 
   if (style != nullptr && value != nullptr) {
     style->polish(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_painter_create(void) {
+  return new QStylePainter();
+}
+
+void qt6cr_style_painter_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStylePainter *>(handle);
+}
+
+bool qt6cr_style_painter_begin_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *value = as_widget(widget);
+  return painter != nullptr && value != nullptr && painter->begin(value);
+}
+
+bool qt6cr_style_painter_begin_image(qt6cr_handle_t handle, qt6cr_handle_t image, qt6cr_handle_t widget) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *target = static_cast<QImage *>(image);
+  auto *value = as_widget(widget);
+  return painter != nullptr && target != nullptr && value != nullptr && painter->begin(target, value);
+}
+
+bool qt6cr_style_painter_begin_pixmap(qt6cr_handle_t handle, qt6cr_handle_t pixmap, qt6cr_handle_t widget) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *target = static_cast<QPixmap *>(pixmap);
+  auto *value = as_widget(widget);
+  return painter != nullptr && target != nullptr && value != nullptr && painter->begin(target, value);
+}
+
+bool qt6cr_style_painter_begin_svg_generator(qt6cr_handle_t handle, qt6cr_handle_t generator, qt6cr_handle_t widget) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *target = static_cast<QSvgGenerator *>(generator);
+  auto *value = as_widget(widget);
+  return painter != nullptr && target != nullptr && value != nullptr && painter->begin(target, value);
+}
+
+bool qt6cr_style_painter_begin_pdf_writer(qt6cr_handle_t handle, qt6cr_handle_t writer, qt6cr_handle_t widget) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *target = static_cast<QPdfWriter *>(writer);
+  auto *value = as_widget(widget);
+  return painter != nullptr && target != nullptr && value != nullptr && painter->begin(target, value);
+}
+
+qt6cr_handle_t qt6cr_style_painter_style(qt6cr_handle_t handle) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  return painter == nullptr ? nullptr : painter->style();
+}
+
+void qt6cr_style_painter_draw_primitive(qt6cr_handle_t handle, int element, qt6cr_handle_t option) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *value = as_style_option(option);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->drawPrimitive(static_cast<QStyle::PrimitiveElement>(element), *value);
+  }
+}
+
+void qt6cr_style_painter_draw_control(qt6cr_handle_t handle, int element, qt6cr_handle_t option) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *value = as_style_option(option);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->drawControl(static_cast<QStyle::ControlElement>(element), *value);
+  }
+}
+
+void qt6cr_style_painter_draw_complex_control(qt6cr_handle_t handle, int control, qt6cr_handle_t option) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *value = static_cast<QStyleOptionComplex *>(option);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->drawComplexControl(static_cast<QStyle::ComplexControl>(control), *value);
+  }
+}
+
+void qt6cr_style_painter_draw_item_text(qt6cr_handle_t handle, qt6cr_rectf_t rect, int flags, qt6cr_handle_t palette, bool enabled, const char *text, int text_role) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *value = static_cast<QPalette *>(palette);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->drawItemText(from_rect(rect), flags, *value, enabled, QString::fromUtf8(text == nullptr ? "" : text), static_cast<QPalette::ColorRole>(text_role));
+  }
+}
+
+void qt6cr_style_painter_draw_item_pixmap(qt6cr_handle_t handle, qt6cr_rectf_t rect, int flags, qt6cr_handle_t pixmap) {
+  auto *painter = static_cast<QStylePainter *>(handle);
+  auto *value = static_cast<QPixmap *>(pixmap);
+
+  if (painter != nullptr && value != nullptr) {
+    painter->drawItemPixmap(from_rect(rect), flags, *value);
   }
 }
 
