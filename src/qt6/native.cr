@@ -725,6 +725,10 @@ module Qt6
     fun qt6cr_style_option_rubber_band_set_shape = qt6cr_style_option_rubber_band_set_shape(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_rubber_band_opaque = qt6cr_style_option_rubber_band_opaque(handle : Handle) : Bool
     fun qt6cr_style_option_rubber_band_set_opaque = qt6cr_style_option_rubber_band_set_opaque(handle : Handle, value : Bool)
+    fun qt6cr_style_option_size_grip_create = qt6cr_style_option_size_grip_create : Handle
+    fun qt6cr_style_option_size_grip_destroy = qt6cr_style_option_size_grip_destroy(handle : Handle)
+    fun qt6cr_style_option_size_grip_corner = qt6cr_style_option_size_grip_corner(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_size_grip_set_corner = qt6cr_style_option_size_grip_set_corner(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int

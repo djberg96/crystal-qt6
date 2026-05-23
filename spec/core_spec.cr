@@ -1249,6 +1249,27 @@ describe Qt6 do
     end
   end
 
+  it "supports size-grip style options" do
+    option = Qt6::StyleOptionSizeGrip.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      option.type.should eq(Qt6::StyleOptionType::SizeGrip)
+      wrapped.should be_a(Qt6::StyleOptionSizeGrip)
+      option.corner.should eq(Qt6::Corner::BottomRightCorner)
+      option.sub_controls.should eq(Qt6::StyleSubControl::All)
+
+      option.set_corner(Qt6::Corner::BottomRightCorner).to_unsafe.should eq(option.to_unsafe)
+      option.corner.should eq(Qt6::Corner::BottomRightCorner)
+      option.set_sub_controls(Qt6::StyleSubControl::None).to_unsafe.should eq(option.to_unsafe)
+      option.sub_controls.should eq(Qt6::StyleSubControl::None)
+      option.set_active_sub_controls(Qt6::StyleSubControl::None).to_unsafe.should eq(option.to_unsafe)
+      option.active_sub_controls.should eq(Qt6::StyleSubControl::None)
+    ensure
+      option.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

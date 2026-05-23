@@ -6724,6 +6724,27 @@ void qt6cr_style_option_rubber_band_set_opaque(qt6cr_handle_t handle, bool value
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_size_grip_create(void) {
+  return new QStyleOptionSizeGrip();
+}
+
+void qt6cr_style_option_size_grip_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionSizeGrip *>(handle);
+}
+
+int qt6cr_style_option_size_grip_corner(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSizeGrip *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::TopLeftCorner) : static_cast<int>(option->corner);
+}
+
+void qt6cr_style_option_size_grip_set_corner(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSizeGrip *>(handle);
+
+  if (option != nullptr) {
+    option->corner = static_cast<Qt::Corner>(value);
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_frame_create(void) {
   return new QStyleOptionFrame();
 }
