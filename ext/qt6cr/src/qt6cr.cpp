@@ -545,6 +545,19 @@ class CrystalProgressBar final : public QProgressBar {
   }
 };
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
+class CrystalStyleOptionMenuItemV2Compat final : public QStyleOptionMenuItem {
+ public:
+  CrystalStyleOptionMenuItemV2Compat() : QStyleOptionMenuItem(2), mouseDown(false) {}
+
+  bool mouseDown;
+};
+
+using Qt6CrStyleOptionMenuItemV2 = CrystalStyleOptionMenuItemV2Compat;
+#else
+using Qt6CrStyleOptionMenuItemV2 = QStyleOptionMenuItemV2;
+#endif
+
 class CrystalHeaderView final : public QHeaderView {
  public:
   explicit CrystalHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr)
@@ -6535,20 +6548,20 @@ void qt6cr_style_option_menu_item_set_font(qt6cr_handle_t handle, qt6cr_handle_t
 }
 
 qt6cr_handle_t qt6cr_style_option_menu_item_v2_create(void) {
-  return new QStyleOptionMenuItemV2();
+  return new Qt6CrStyleOptionMenuItemV2();
 }
 
 void qt6cr_style_option_menu_item_v2_destroy(qt6cr_handle_t handle) {
-  delete static_cast<QStyleOptionMenuItemV2 *>(handle);
+  delete static_cast<Qt6CrStyleOptionMenuItemV2 *>(handle);
 }
 
 bool qt6cr_style_option_menu_item_v2_is_mouse_down(qt6cr_handle_t handle) {
-  auto *option = static_cast<QStyleOptionMenuItemV2 *>(handle);
+  auto *option = static_cast<Qt6CrStyleOptionMenuItemV2 *>(handle);
   return option != nullptr && option->mouseDown;
 }
 
 void qt6cr_style_option_menu_item_v2_set_mouse_down(qt6cr_handle_t handle, bool value) {
-  auto *option = static_cast<QStyleOptionMenuItemV2 *>(handle);
+  auto *option = static_cast<Qt6CrStyleOptionMenuItemV2 *>(handle);
 
   if (option != nullptr) {
     option->mouseDown = value;
