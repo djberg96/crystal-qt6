@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-05-23
+
 ### Added
 
 - Added `QStyleOptionFrame` with line-width, mid-line-width, frame-feature, and frame-shape helpers, plus live initialization from `QFrame` and `QLineEdit`.
