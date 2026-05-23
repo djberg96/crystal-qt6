@@ -26,6 +26,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyleOptionToolBar` with typed toolbar-position and movable-feature helpers plus live `QToolBar` initialization support for toolbar paint state.
 - Added `QStyleOptionToolButton` with typed tool-button feature, icon, text, arrow, style, position, and font helpers plus live `QToolButton` initialization support for tool-button paint state.
 - Added `QStyleOptionTitleBar` with text, icon, title-bar state, and title-bar flag helpers plus live widget initialization support for title-bar paint state.
+- Expanded `QStyledItemDelegate` with direct `paint` and `size_hint` invocation helpers plus a Qt-style `set_item_editor_factory` alias, rounding out its public delegate surface beyond callback registration alone.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.

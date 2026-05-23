@@ -13688,6 +13688,31 @@ char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_varia
   return delegate == nullptr ? duplicate_string("") : duplicate_string(delegate->displayText(from_variant_value(value), QLocale()));
 }
 
+void qt6cr_styled_item_delegate_paint(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_handle_t option, qt6cr_handle_t index) {
+  auto *delegate = as_styled_item_delegate(handle);
+  auto *value = as_qpainter(painter);
+  auto *style_option = static_cast<QStyleOptionViewItem *>(option);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || value == nullptr || style_option == nullptr || model_index == nullptr) {
+    return;
+  }
+
+  delegate->paint(value, *style_option, *model_index);
+}
+
+qt6cr_size_t qt6cr_styled_item_delegate_size_hint(qt6cr_handle_t handle, qt6cr_handle_t option, qt6cr_handle_t index) {
+  auto *delegate = as_styled_item_delegate(handle);
+  auto *style_option = static_cast<QStyleOptionViewItem *>(option);
+  auto *model_index = as_model_index(index);
+
+  if (delegate == nullptr || style_option == nullptr || model_index == nullptr) {
+    return qt6cr_size_t{0, 0};
+  }
+
+  return to_size(delegate->sizeHint(*style_option, *model_index));
+}
+
 qt6cr_handle_t qt6cr_styled_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index) {
   auto *delegate = as_styled_item_delegate(handle);
   auto *editor_parent = as_widget(parent);

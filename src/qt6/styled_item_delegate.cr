@@ -127,6 +127,17 @@ module Qt6
       Qt6.copy_and_release_string(LibQt6.qt6cr_styled_item_delegate_display_text(to_unsafe, Qt6.model_data_to_native(value)))
     end
 
+    # Invokes the delegate's paint path for a painter/option/index triple.
+    def paint(painter : QPainter, option : StyleOptionViewItem, index : ModelIndex) : self
+      LibQt6.qt6cr_styled_item_delegate_paint(to_unsafe, painter.to_unsafe, option.to_unsafe, index.to_unsafe)
+      self
+    end
+
+    # Returns the delegate's size hint for the style option and model index.
+    def size_hint(option : StyleOptionViewItem, index : ModelIndex) : Size
+      Size.from_native(LibQt6.qt6cr_styled_item_delegate_size_hint(to_unsafe, option.to_unsafe, index.to_unsafe))
+    end
+
     # Invokes the delegate's editor factory for a parent/index pair.
     def create_editor(parent : Widget, index : ModelIndex) : Widget?
       handle = LibQt6.qt6cr_styled_item_delegate_create_editor(to_unsafe, parent.to_unsafe, index.to_unsafe)
@@ -182,6 +193,12 @@ module Qt6
     def item_editor_factory=(factory : QItemEditorFactory?) : QItemEditorFactory?
       LibQt6.qt6cr_styled_item_delegate_set_item_editor_factory(to_unsafe, factory.try(&.to_unsafe) || Pointer(Void).null)
       factory
+    end
+
+    # Qt-style alias for `item_editor_factory=`.
+    def set_item_editor_factory(factory : QItemEditorFactory?) : self
+      self.item_editor_factory = factory
+      self
     end
 
     protected def format_display_text(text : String) : String

@@ -1787,6 +1787,8 @@ void qt6cr_styled_item_delegate_on_editor_event(qt6cr_handle_t handle, qt6cr_del
 void qt6cr_styled_item_delegate_on_event_filter(qt6cr_handle_t handle, qt6cr_delegate_event_filter_callback_t callback, void *userdata);
 void qt6cr_styled_item_delegate_on_init_style_option(qt6cr_handle_t handle, qt6cr_delegate_init_style_option_callback_t callback, void *userdata);
 char *qt6cr_styled_item_delegate_display_text(qt6cr_handle_t handle, qt6cr_variant_value_t value);
+void qt6cr_styled_item_delegate_paint(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_handle_t option, qt6cr_handle_t index);
+qt6cr_size_t qt6cr_styled_item_delegate_size_hint(qt6cr_handle_t handle, qt6cr_handle_t option, qt6cr_handle_t index);
 qt6cr_handle_t qt6cr_styled_item_delegate_create_editor(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t index);
 qt6cr_handle_t qt6cr_styled_item_delegate_create_editor_with_option(qt6cr_handle_t handle, qt6cr_handle_t parent, qt6cr_handle_t option, qt6cr_handle_t index);
 void qt6cr_styled_item_delegate_set_editor_data(qt6cr_handle_t handle, qt6cr_handle_t editor, qt6cr_handle_t index);

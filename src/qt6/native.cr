@@ -1741,6 +1741,8 @@ module Qt6
     fun qt6cr_styled_item_delegate_on_event_filter = qt6cr_styled_item_delegate_on_event_filter(handle : Handle, callback : (Handle, Handle, Handle -> Bool), userdata : Handle)
     fun qt6cr_styled_item_delegate_on_init_style_option = qt6cr_styled_item_delegate_on_init_style_option(handle : Handle, callback : (Handle, Handle, Handle ->), userdata : Handle)
     fun qt6cr_styled_item_delegate_display_text = qt6cr_styled_item_delegate_display_text(handle : Handle, value : VariantValue) : UInt8*
+    fun qt6cr_styled_item_delegate_paint = qt6cr_styled_item_delegate_paint(handle : Handle, painter : Handle, option : Handle, index : Handle)
+    fun qt6cr_styled_item_delegate_size_hint = qt6cr_styled_item_delegate_size_hint(handle : Handle, option : Handle, index : Handle) : SizeValue
     fun qt6cr_styled_item_delegate_create_editor = qt6cr_styled_item_delegate_create_editor(handle : Handle, parent : Handle, index : Handle) : Handle
     fun qt6cr_styled_item_delegate_create_editor_with_option = qt6cr_styled_item_delegate_create_editor_with_option(handle : Handle, parent : Handle, option : Handle, index : Handle) : Handle
     fun qt6cr_styled_item_delegate_set_editor_data = qt6cr_styled_item_delegate_set_editor_data(handle : Handle, editor : Handle, index : Handle)

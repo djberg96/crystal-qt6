@@ -302,6 +302,9 @@ describe Qt6 do
     model = Qt6::StandardItemModel.new(list_view)
     delegate = Qt6::StyledItemDelegate.new(list_view)
     item = Qt6::StandardItem.new("Terrain\n2 tracks")
+    option = Qt6::StyleOptionViewItem.new
+    canvas = Qt6::QImage.new(80, 30)
+    direct_index = nil.as(Qt6::ModelIndex?)
     paint_calls = 0
     size_hint_calls = 0
     size_hint_index_valid_values = [] of Bool
@@ -349,7 +352,14 @@ describe Qt6 do
     list_view.icon_size = Qt6::Size.new(24, 26)
     list_view.resize(240, 120)
     list_view.show
+    option.init_from(list_view)
+    option.rect = Qt6::Rect.new(0, 0, 80, 30)
+    direct_index = model.index(0)
     5.times { application.process_events }
+    delegate.size_hint(option, direct_index.not_nil!).should eq(Qt6::Size.new(0, 44))
+    Qt6::QPainter.paint(canvas) do |painter|
+      delegate.paint(painter, option, direct_index.not_nil!)
+    end
     snapshot = list_view.grab
     application.process_events
 
@@ -368,6 +378,9 @@ describe Qt6 do
     font_handles_seen.should eq(paint_calls)
     palette_handles_seen.should eq(paint_calls)
 
+    direct_index.try(&.release)
+    canvas.release
+    option.release
     snapshot.release
     list_view.release
   end
@@ -1092,7 +1105,7 @@ describe Qt6 do
     option_widths = [] of Float64
 
     delegate.item_editor_factory.should be_nil
-    delegate.item_editor_factory = factory
+    delegate.set_item_editor_factory(factory).to_unsafe.should eq(delegate.to_unsafe)
     delegate.item_editor_factory.not_nil!.to_unsafe.should eq(factory.to_unsafe)
 
     delegate.on_init_style_option do |option, option_index|
@@ -1122,7 +1135,7 @@ describe Qt6 do
     geometry_indexes.should eq([0])
     option_widths.all? { |width| width >= 0 }.should be_true
 
-    delegate.item_editor_factory = nil
+    delegate.set_item_editor_factory(nil).to_unsafe.should eq(delegate.to_unsafe)
     delegate.item_editor_factory.should be_nil
 
     option.release
@@ -2459,5 +2472,4 @@ describe Qt6 do
     Dir.delete(maps_path) if Dir.exists?(maps_path)
     Dir.delete(root_path) if Dir.exists?(root_path)
   end
-
 end
