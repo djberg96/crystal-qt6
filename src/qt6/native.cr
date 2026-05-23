@@ -1003,6 +1003,8 @@ module Qt6
     fun qt6cr_widget_destroy = qt6cr_widget_destroy(handle : Handle)
     fun qt6cr_widget_show = qt6cr_widget_show(handle : Handle)
     fun qt6cr_widget_show_maximized = qt6cr_widget_show_maximized(handle : Handle)
+    fun qt6cr_widget_is_maximized = qt6cr_widget_is_maximized(handle : Handle) : Bool
+    fun qt6cr_widget_normal_geometry = qt6cr_widget_normal_geometry(handle : Handle) : RectValue
     fun qt6cr_widget_hide = qt6cr_widget_hide(handle : Handle)
     fun qt6cr_widget_set_visible = qt6cr_widget_set_visible(handle : Handle, value : Bool)
     fun qt6cr_widget_close = qt6cr_widget_close(handle : Handle)

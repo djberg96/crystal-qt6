@@ -43,6 +43,16 @@ module Qt6
       self
     end
 
+    # Returns `true` when the widget is currently maximized.
+    def maximized? : Bool
+      LibQt6.qt6cr_widget_is_maximized(@to_unsafe)
+    end
+
+    # Returns the geometry used when restoring a maximized or fullscreen widget.
+    def normal_geometry : Rect
+      Rect.from_native(LibQt6.qt6cr_widget_normal_geometry(@to_unsafe))
+    end
+
     # Hides the widget and returns `self` for chaining.
     def hide : self
       LibQt6.qt6cr_widget_hide(@to_unsafe)

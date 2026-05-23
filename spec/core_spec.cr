@@ -311,6 +311,8 @@ describe Qt6 do
     label.attribute?(Qt6::WidgetAttribute::ShowWithoutActivating).should be_false
     label.size.width.should be > 0
     label.size.height.should be > 0
+    label.maximized?.should be_false
+    label.normal_geometry.should be_a(Qt6::Rect)
     line_edit.placeholder_text.should eq("Enter a layer name")
 
     label.fixed_width = 200
