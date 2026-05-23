@@ -729,6 +729,34 @@ module Qt6
     fun qt6cr_style_option_size_grip_destroy = qt6cr_style_option_size_grip_destroy(handle : Handle)
     fun qt6cr_style_option_size_grip_corner = qt6cr_style_option_size_grip_corner(handle : Handle) : LibC::Int
     fun qt6cr_style_option_size_grip_set_corner = qt6cr_style_option_size_grip_set_corner(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_create = qt6cr_style_option_slider_create : Handle
+    fun qt6cr_style_option_slider_destroy = qt6cr_style_option_slider_destroy(handle : Handle)
+    fun qt6cr_style_option_slider_orientation = qt6cr_style_option_slider_orientation(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_orientation = qt6cr_style_option_slider_set_orientation(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_minimum = qt6cr_style_option_slider_minimum(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_minimum = qt6cr_style_option_slider_set_minimum(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_maximum = qt6cr_style_option_slider_maximum(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_maximum = qt6cr_style_option_slider_set_maximum(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_tick_position = qt6cr_style_option_slider_tick_position(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_tick_position = qt6cr_style_option_slider_set_tick_position(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_tick_interval = qt6cr_style_option_slider_tick_interval(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_tick_interval = qt6cr_style_option_slider_set_tick_interval(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_upside_down = qt6cr_style_option_slider_upside_down(handle : Handle) : Bool
+    fun qt6cr_style_option_slider_set_upside_down = qt6cr_style_option_slider_set_upside_down(handle : Handle, value : Bool)
+    fun qt6cr_style_option_slider_slider_position = qt6cr_style_option_slider_slider_position(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_slider_position = qt6cr_style_option_slider_set_slider_position(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_slider_value = qt6cr_style_option_slider_slider_value(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_slider_value = qt6cr_style_option_slider_set_slider_value(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_single_step = qt6cr_style_option_slider_single_step(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_single_step = qt6cr_style_option_slider_set_single_step(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_page_step = qt6cr_style_option_slider_page_step(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_page_step = qt6cr_style_option_slider_set_page_step(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_slider_notch_target = qt6cr_style_option_slider_notch_target(handle : Handle) : Float64
+    fun qt6cr_style_option_slider_set_notch_target = qt6cr_style_option_slider_set_notch_target(handle : Handle, value : Float64)
+    fun qt6cr_style_option_slider_dial_wrapping = qt6cr_style_option_slider_dial_wrapping(handle : Handle) : Bool
+    fun qt6cr_style_option_slider_set_dial_wrapping = qt6cr_style_option_slider_set_dial_wrapping(handle : Handle, value : Bool)
+    fun qt6cr_style_option_slider_keyboard_modifiers = qt6cr_style_option_slider_keyboard_modifiers(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_slider_set_keyboard_modifiers = qt6cr_style_option_slider_set_keyboard_modifiers(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int
@@ -3470,6 +3498,7 @@ module Qt6
     fun qt6cr_slider_set_tick_interval = qt6cr_slider_set_tick_interval(handle : Handle, value : LibC::Int)
     fun qt6cr_slider_size_hint = qt6cr_slider_size_hint(handle : Handle) : SizeValue
     fun qt6cr_slider_minimum_size_hint = qt6cr_slider_minimum_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_slider_init_style_option = qt6cr_slider_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_slider_emit_pressed = qt6cr_slider_emit_pressed(handle : Handle)
     fun qt6cr_slider_emit_released = qt6cr_slider_emit_released(handle : Handle)
     fun qt6cr_slider_on_value_changed = qt6cr_slider_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
@@ -3480,6 +3509,7 @@ module Qt6
     fun qt6cr_scroll_bar_size_hint = qt6cr_scroll_bar_size_hint(handle : Handle) : SizeValue
     fun qt6cr_scroll_bar_standard_context_menu_available = qt6cr_scroll_bar_standard_context_menu_available : Bool
     fun qt6cr_scroll_bar_create_standard_context_menu = qt6cr_scroll_bar_create_standard_context_menu(handle : Handle, position : PointValue) : Handle
+    fun qt6cr_scroll_bar_init_style_option = qt6cr_scroll_bar_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_scroll_bar_on_value_changed = qt6cr_scroll_bar_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_dial_create = qt6cr_dial_create(parent : Handle) : Handle
@@ -3490,6 +3520,7 @@ module Qt6
     fun qt6cr_dial_set_notch_target = qt6cr_dial_set_notch_target(handle : Handle, value : Float64)
     fun qt6cr_dial_notches_visible = qt6cr_dial_notches_visible(handle : Handle) : Bool
     fun qt6cr_dial_set_notches_visible = qt6cr_dial_set_notches_visible(handle : Handle, value : Bool)
+    fun qt6cr_dial_init_style_option = qt6cr_dial_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_dial_on_value_changed = qt6cr_dial_on_value_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_abstract_spin_box_button_symbols = qt6cr_abstract_spin_box_button_symbols(handle : Handle) : LibC::Int

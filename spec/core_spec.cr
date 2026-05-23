@@ -1270,6 +1270,120 @@ describe Qt6 do
     end
   end
 
+  it "supports slider style options" do
+    application = app
+    slider = Qt6::Slider.new(Qt6::Orientation::Horizontal)
+    scroll_bar = Qt6::ScrollBar.new(Qt6::Orientation::Vertical)
+    dial = Qt6::Dial.new
+    option = Qt6::StyleOptionSlider.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      slider.set_range(10, 90)
+      slider.value = 42
+      slider.tick_position = Qt6::SliderTickPosition::TicksBelow
+      slider.tick_interval = 5
+      slider.single_step = 2
+      slider.page_step = 12
+      slider.inverted_appearance = true
+      slider.resize(160, 24)
+      slider.show
+
+      scroll_bar.set_range(0, 100)
+      scroll_bar.value = 30
+      scroll_bar.resize(18, 120)
+      scroll_bar.show
+
+      dial.set_range(0, 40)
+      dial.value = 14
+      dial.wrapping = true
+      dial.notch_target = 6.5
+      dial.resize(60, 60)
+      dial.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::Slider)
+      wrapped.should be_a(Qt6::StyleOptionSlider)
+      option.orientation.should eq(Qt6::Orientation::Horizontal)
+      option.minimum.should eq(0)
+      option.maximum.should eq(0)
+      option.tick_position.should eq(Qt6::SliderTickPosition::NoTicks)
+      option.tick_interval.should eq(0)
+      option.upside_down?.should be_false
+      option.slider_position.should eq(0)
+      option.slider_value.should eq(0)
+      option.single_step.should eq(0)
+      option.page_step.should eq(0)
+      option.notch_target.should eq(0.0)
+      option.dial_wrapping?.should be_false
+      option.keyboard_modifiers.should eq(Qt6::KeyboardModifier::NoModifier)
+
+      option.set_orientation(Qt6::Orientation::Vertical).to_unsafe.should eq(option.to_unsafe)
+      option.orientation.should eq(Qt6::Orientation::Vertical)
+      option.set_minimum(10).to_unsafe.should eq(option.to_unsafe)
+      option.minimum.should eq(10)
+      option.set_maximum(90).to_unsafe.should eq(option.to_unsafe)
+      option.maximum.should eq(90)
+      option.set_tick_position(Qt6::SliderTickPosition::TicksBothSides).to_unsafe.should eq(option.to_unsafe)
+      option.tick_position.should eq(Qt6::SliderTickPosition::TicksBothSides)
+      option.set_tick_interval(4).to_unsafe.should eq(option.to_unsafe)
+      option.tick_interval.should eq(4)
+      option.set_upside_down(true).to_unsafe.should eq(option.to_unsafe)
+      option.upside_down?.should be_true
+      option.set_slider_position(28).to_unsafe.should eq(option.to_unsafe)
+      option.slider_position.should eq(28)
+      option.set_slider_value(26).to_unsafe.should eq(option.to_unsafe)
+      option.slider_value.should eq(26)
+      option.set_single_step(3).to_unsafe.should eq(option.to_unsafe)
+      option.single_step.should eq(3)
+      option.set_page_step(11).to_unsafe.should eq(option.to_unsafe)
+      option.page_step.should eq(11)
+      option.set_notch_target(7.25).to_unsafe.should eq(option.to_unsafe)
+      option.notch_target.should eq(7.25)
+      option.set_dial_wrapping(true).to_unsafe.should eq(option.to_unsafe)
+      option.dial_wrapping?.should be_true
+      option.set_keyboard_modifiers(Qt6::KeyboardModifier::ShiftModifier | Qt6::KeyboardModifier::ControlModifier).to_unsafe.should eq(option.to_unsafe)
+      option.keyboard_modifiers.includes?(Qt6::KeyboardModifier::ShiftModifier).should be_true
+      option.keyboard_modifiers.includes?(Qt6::KeyboardModifier::ControlModifier).should be_true
+
+      option.init_from(slider)
+      option.orientation.should eq(Qt6::Orientation::Horizontal)
+      option.minimum.should eq(10)
+      option.maximum.should eq(90)
+      option.tick_position.should eq(Qt6::SliderTickPosition::TicksBelow)
+      option.tick_interval.should eq(5)
+      option.slider_position.should eq(42)
+      option.slider_value.should eq(42)
+      option.single_step.should eq(2)
+      option.page_step.should eq(12)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 160.0, 24.0))
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+
+      option.init_from(scroll_bar)
+      option.orientation.should eq(Qt6::Orientation::Vertical)
+      option.minimum.should eq(0)
+      option.maximum.should eq(100)
+      option.slider_position.should eq(30)
+      option.slider_value.should eq(30)
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 18.0, 120.0))
+
+      option.init_from(dial)
+      option.minimum.should eq(0)
+      option.maximum.should eq(40)
+      option.slider_position.should eq(14)
+      option.slider_value.should eq(14)
+      option.notch_target.should be_close(6.5, 0.001)
+      option.dial_wrapping?.should be_true
+      option.rect.should eq(Qt6::RectF.new(0.0, 0.0, 60.0, 60.0))
+    ensure
+      option.release
+      dial.release
+      scroll_bar.release
+      slider.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

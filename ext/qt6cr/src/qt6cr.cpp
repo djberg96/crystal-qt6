@@ -669,6 +669,10 @@ class CrystalSlider final : public QSlider {
 
   bool click_to_position = false;
 
+  void initStyleOptionBridge(QStyleOptionSlider *option) const {
+    initStyleOption(option);
+  }
+
  protected:
   void mousePressEvent(QMouseEvent *event) override {
     if (click_to_position && event != nullptr && event->button() == Qt::LeftButton) {
@@ -682,6 +686,24 @@ class CrystalSlider final : public QSlider {
     }
 
     QSlider::mousePressEvent(event);
+  }
+};
+
+class CrystalScrollBar final : public QScrollBar {
+ public:
+  using QScrollBar::QScrollBar;
+
+  void initStyleOptionBridge(QStyleOptionSlider *option) const {
+    initStyleOption(option);
+  }
+};
+
+class CrystalDial final : public QDial {
+ public:
+  using QDial::QDial;
+
+  void initStyleOptionBridge(QStyleOptionSlider *option) const {
+    initStyleOption(option);
   }
 };
 
@@ -6742,6 +6764,183 @@ void qt6cr_style_option_size_grip_set_corner(qt6cr_handle_t handle, int value) {
 
   if (option != nullptr) {
     option->corner = static_cast<Qt::Corner>(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_slider_create(void) {
+  return new QStyleOptionSlider();
+}
+
+void qt6cr_style_option_slider_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionSlider *>(handle);
+}
+
+int qt6cr_style_option_slider_orientation(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(option->orientation);
+}
+
+void qt6cr_style_option_slider_set_orientation(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->orientation = static_cast<Qt::Orientation>(value);
+  }
+}
+
+int qt6cr_style_option_slider_minimum(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->minimum;
+}
+
+void qt6cr_style_option_slider_set_minimum(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->minimum = value;
+  }
+}
+
+int qt6cr_style_option_slider_maximum(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->maximum;
+}
+
+void qt6cr_style_option_slider_set_maximum(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->maximum = value;
+  }
+}
+
+int qt6cr_style_option_slider_tick_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? static_cast<int>(QSlider::NoTicks) : static_cast<int>(option->tickPosition);
+}
+
+void qt6cr_style_option_slider_set_tick_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->tickPosition = static_cast<QSlider::TickPosition>(value);
+  }
+}
+
+int qt6cr_style_option_slider_tick_interval(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->tickInterval;
+}
+
+void qt6cr_style_option_slider_set_tick_interval(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->tickInterval = value;
+  }
+}
+
+bool qt6cr_style_option_slider_upside_down(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option != nullptr && option->upsideDown;
+}
+
+void qt6cr_style_option_slider_set_upside_down(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->upsideDown = value;
+  }
+}
+
+int qt6cr_style_option_slider_slider_position(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->sliderPosition;
+}
+
+void qt6cr_style_option_slider_set_slider_position(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->sliderPosition = value;
+  }
+}
+
+int qt6cr_style_option_slider_slider_value(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->sliderValue;
+}
+
+void qt6cr_style_option_slider_set_slider_value(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->sliderValue = value;
+  }
+}
+
+int qt6cr_style_option_slider_single_step(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->singleStep;
+}
+
+void qt6cr_style_option_slider_set_single_step(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->singleStep = value;
+  }
+}
+
+int qt6cr_style_option_slider_page_step(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0 : option->pageStep;
+}
+
+void qt6cr_style_option_slider_set_page_step(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->pageStep = value;
+  }
+}
+
+double qt6cr_style_option_slider_notch_target(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? 0.0 : option->notchTarget;
+}
+
+void qt6cr_style_option_slider_set_notch_target(qt6cr_handle_t handle, double value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->notchTarget = value;
+  }
+}
+
+bool qt6cr_style_option_slider_dial_wrapping(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option != nullptr && option->dialWrapping;
+}
+
+void qt6cr_style_option_slider_set_dial_wrapping(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->dialWrapping = value;
+  }
+}
+
+int qt6cr_style_option_slider_keyboard_modifiers(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::NoModifier) : static_cast<int>(option->keyboardModifiers);
+}
+
+void qt6cr_style_option_slider_set_keyboard_modifiers(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionSlider *>(handle);
+
+  if (option != nullptr) {
+    option->keyboardModifiers = static_cast<Qt::KeyboardModifiers>(value);
   }
 }
 
@@ -25499,6 +25698,15 @@ qt6cr_size_t qt6cr_slider_minimum_size_hint(qt6cr_handle_t handle) {
   return slider == nullptr ? qt6cr_size_t{0, 0} : to_size(slider->minimumSizeHint());
 }
 
+void qt6cr_slider_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *slider = dynamic_cast<CrystalSlider *>(as_slider(handle));
+  auto *option = static_cast<QStyleOptionSlider *>(option_handle);
+
+  if (slider != nullptr && option != nullptr) {
+    slider->initStyleOptionBridge(option);
+  }
+}
+
 void qt6cr_slider_emit_pressed(qt6cr_handle_t handle) {
   qt6cr_abstract_slider_emit_pressed(handle);
 }
@@ -25520,7 +25728,7 @@ void qt6cr_slider_on_released(qt6cr_handle_t handle, qt6cr_void_callback_t callb
 }
 
 qt6cr_handle_t qt6cr_scroll_bar_create(qt6cr_handle_t parent, int orientation) {
-  return new QScrollBar(static_cast<Qt::Orientation>(orientation), as_widget(parent));
+  return new CrystalScrollBar(static_cast<Qt::Orientation>(orientation), as_widget(parent));
 }
 
 qt6cr_size_t qt6cr_scroll_bar_size_hint(qt6cr_handle_t handle) {
@@ -25547,12 +25755,21 @@ qt6cr_handle_t qt6cr_scroll_bar_create_standard_context_menu(qt6cr_handle_t hand
 #endif
 }
 
+void qt6cr_scroll_bar_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *scroll_bar = dynamic_cast<CrystalScrollBar *>(as_scroll_bar(handle));
+  auto *option = static_cast<QStyleOptionSlider *>(option_handle);
+
+  if (scroll_bar != nullptr && option != nullptr) {
+    scroll_bar->initStyleOptionBridge(option);
+  }
+}
+
 void qt6cr_scroll_bar_on_value_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
   qt6cr_abstract_slider_on_value_changed(handle, callback, userdata);
 }
 
 qt6cr_handle_t qt6cr_dial_create(qt6cr_handle_t parent) {
-  return new QDial(as_widget(parent));
+  return new CrystalDial(as_widget(parent));
 }
 
 bool qt6cr_dial_wrapping(qt6cr_handle_t handle) {
@@ -25596,6 +25813,15 @@ void qt6cr_dial_set_notches_visible(qt6cr_handle_t handle, bool value) {
 
   if (dial != nullptr) {
     dial->setNotchesVisible(value);
+  }
+}
+
+void qt6cr_dial_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *dial = dynamic_cast<CrystalDial *>(as_dial(handle));
+  auto *option = static_cast<QStyleOptionSlider *>(option_handle);
+
+  if (dial != nullptr && option != nullptr) {
+    dial->initStyleOptionBridge(option);
   }
 }
 
