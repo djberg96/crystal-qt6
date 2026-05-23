@@ -6,7 +6,11 @@ module Qt6
       when StyleOptionType::Button.value
         StyleOptionButton.wrap(handle, owned)
       when StyleOptionType::MenuItem.value
-        StyleOptionMenuItem.wrap(handle, owned)
+        if LibQt6.qt6cr_style_option_version(handle) >= 2
+          StyleOptionMenuItemV2.wrap(handle, owned)
+        else
+          StyleOptionMenuItem.wrap(handle, owned)
+        end
       when StyleOptionType::DockWidget.value
         StyleOptionDockWidget.wrap(handle, owned)
       when StyleOptionType::Frame.value

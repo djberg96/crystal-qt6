@@ -1117,6 +1117,38 @@ describe Qt6 do
     end
   end
 
+  it "supports menu-item v2 style options" do
+    application = app
+    menu = Qt6::Menu.new("Terrain")
+    action = menu.add_action("&Forest\tCtrl+F")
+    option = Qt6::StyleOptionMenuItemV2.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      menu.resize(180, 40)
+      menu.show
+      application.process_events
+
+      option.version.should eq(2)
+      option.type.should eq(Qt6::StyleOptionType::MenuItem)
+      wrapped.should be_a(Qt6::StyleOptionMenuItemV2)
+
+      option.mouse_down?.should be_false
+      option.set_mouse_down(true).to_unsafe.should eq(option.to_unsafe)
+      option.mouse_down?.should be_true
+
+      option.init_from(menu, action)
+      option.version.should eq(2)
+      option.text.should eq(action.text)
+      option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::Normal)
+      option.rect.width.should be > 0.0
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      option.release
+      menu.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

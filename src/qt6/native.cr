@@ -697,6 +697,10 @@ module Qt6
     fun qt6cr_style_option_menu_item_set_reserved_shortcut_width = qt6cr_style_option_menu_item_set_reserved_shortcut_width(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_menu_item_font = qt6cr_style_option_menu_item_font(handle : Handle) : Handle
     fun qt6cr_style_option_menu_item_set_font = qt6cr_style_option_menu_item_set_font(handle : Handle, font : Handle)
+    fun qt6cr_style_option_menu_item_v2_create = qt6cr_style_option_menu_item_v2_create : Handle
+    fun qt6cr_style_option_menu_item_v2_destroy = qt6cr_style_option_menu_item_v2_destroy(handle : Handle)
+    fun qt6cr_style_option_menu_item_v2_is_mouse_down = qt6cr_style_option_menu_item_v2_is_mouse_down(handle : Handle) : Bool
+    fun qt6cr_style_option_menu_item_v2_set_mouse_down = qt6cr_style_option_menu_item_v2_set_mouse_down(handle : Handle, value : Bool)
     fun qt6cr_style_option_frame_create = qt6cr_style_option_frame_create : Handle
     fun qt6cr_style_option_frame_destroy = qt6cr_style_option_frame_destroy(handle : Handle)
     fun qt6cr_style_option_frame_line_width = qt6cr_style_option_frame_line_width(handle : Handle) : LibC::Int

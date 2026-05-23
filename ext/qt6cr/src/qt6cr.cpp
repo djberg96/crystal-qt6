@@ -6525,6 +6525,27 @@ void qt6cr_style_option_menu_item_set_font(qt6cr_handle_t handle, qt6cr_handle_t
   }
 }
 
+qt6cr_handle_t qt6cr_style_option_menu_item_v2_create(void) {
+  return new QStyleOptionMenuItemV2();
+}
+
+void qt6cr_style_option_menu_item_v2_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionMenuItemV2 *>(handle);
+}
+
+bool qt6cr_style_option_menu_item_v2_is_mouse_down(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionMenuItemV2 *>(handle);
+  return option != nullptr && option->mouseDown;
+}
+
+void qt6cr_style_option_menu_item_v2_set_mouse_down(qt6cr_handle_t handle, bool value) {
+  auto *option = static_cast<QStyleOptionMenuItemV2 *>(handle);
+
+  if (option != nullptr) {
+    option->mouseDown = value;
+  }
+}
+
 qt6cr_handle_t qt6cr_style_option_frame_create(void) {
   return new QStyleOptionFrame();
 }
