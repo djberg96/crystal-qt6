@@ -693,6 +693,24 @@ module Qt6
     fun qt6cr_style_option_tab_bar_base_set_selected_tab_rect = qt6cr_style_option_tab_bar_base_set_selected_tab_rect(handle : Handle, rect : RectValue)
     fun qt6cr_style_option_tab_bar_base_document_mode = qt6cr_style_option_tab_bar_base_document_mode(handle : Handle) : Bool
     fun qt6cr_style_option_tab_bar_base_set_document_mode = qt6cr_style_option_tab_bar_base_set_document_mode(handle : Handle, value : Bool)
+    fun qt6cr_style_option_tab_widget_frame_create = qt6cr_style_option_tab_widget_frame_create : Handle
+    fun qt6cr_style_option_tab_widget_frame_destroy = qt6cr_style_option_tab_widget_frame_destroy(handle : Handle)
+    fun qt6cr_style_option_tab_widget_frame_line_width = qt6cr_style_option_tab_widget_frame_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tab_widget_frame_set_line_width = qt6cr_style_option_tab_widget_frame_set_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tab_widget_frame_mid_line_width = qt6cr_style_option_tab_widget_frame_mid_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tab_widget_frame_set_mid_line_width = qt6cr_style_option_tab_widget_frame_set_mid_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tab_widget_frame_shape = qt6cr_style_option_tab_widget_frame_shape(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tab_widget_frame_set_shape = qt6cr_style_option_tab_widget_frame_set_shape(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tab_widget_frame_tab_bar_size = qt6cr_style_option_tab_widget_frame_tab_bar_size(handle : Handle) : SizeValue
+    fun qt6cr_style_option_tab_widget_frame_set_tab_bar_size = qt6cr_style_option_tab_widget_frame_set_tab_bar_size(handle : Handle, value : SizeValue)
+    fun qt6cr_style_option_tab_widget_frame_right_corner_widget_size = qt6cr_style_option_tab_widget_frame_right_corner_widget_size(handle : Handle) : SizeValue
+    fun qt6cr_style_option_tab_widget_frame_set_right_corner_widget_size = qt6cr_style_option_tab_widget_frame_set_right_corner_widget_size(handle : Handle, value : SizeValue)
+    fun qt6cr_style_option_tab_widget_frame_left_corner_widget_size = qt6cr_style_option_tab_widget_frame_left_corner_widget_size(handle : Handle) : SizeValue
+    fun qt6cr_style_option_tab_widget_frame_set_left_corner_widget_size = qt6cr_style_option_tab_widget_frame_set_left_corner_widget_size(handle : Handle, value : SizeValue)
+    fun qt6cr_style_option_tab_widget_frame_tab_bar_rect = qt6cr_style_option_tab_widget_frame_tab_bar_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_tab_widget_frame_set_tab_bar_rect = qt6cr_style_option_tab_widget_frame_set_tab_bar_rect(handle : Handle, rect : RectValue)
+    fun qt6cr_style_option_tab_widget_frame_selected_tab_rect = qt6cr_style_option_tab_widget_frame_selected_tab_rect(handle : Handle) : RectFValue
+    fun qt6cr_style_option_tab_widget_frame_set_selected_tab_rect = qt6cr_style_option_tab_widget_frame_set_selected_tab_rect(handle : Handle, rect : RectValue)
     fun qt6cr_style_option_focus_rect_create = qt6cr_style_option_focus_rect_create : Handle
     fun qt6cr_style_option_focus_rect_destroy = qt6cr_style_option_focus_rect_destroy(handle : Handle)
     fun qt6cr_style_option_focus_rect_background_color = qt6cr_style_option_focus_rect_background_color(handle : Handle) : ColorValue
@@ -4047,6 +4065,7 @@ module Qt6
     fun qt6cr_tab_widget_set_tab_text = qt6cr_tab_widget_set_tab_text(handle : Handle, index : LibC::Int, label : UInt8*)
     fun qt6cr_tab_widget_remove_tab = qt6cr_tab_widget_remove_tab(handle : Handle, index : LibC::Int)
     fun qt6cr_tab_widget_clear = qt6cr_tab_widget_clear(handle : Handle)
+    fun qt6cr_tab_widget_init_style_option = qt6cr_tab_widget_init_style_option(handle : Handle, option : Handle)
     fun qt6cr_tab_widget_on_current_index_changed = qt6cr_tab_widget_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_tab_bar_create = qt6cr_tab_bar_create(parent : Handle) : Handle

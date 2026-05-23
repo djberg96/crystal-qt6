@@ -1591,6 +1591,68 @@ describe Qt6 do
     end
   end
 
+  it "supports tab-widget-frame style options" do
+    application = app
+    tab_widget = Qt6::TabWidget.new
+    first_page = Qt6::Widget.new
+    second_page = Qt6::Widget.new
+    option = Qt6::StyleOptionTabWidgetFrame.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      tab_widget.add_tab(first_page, "Overview")
+      tab_widget.add_tab(second_page, "Details")
+      tab_widget.current_index = 1
+      tab_widget.resize(220, 120)
+      tab_widget.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::TabWidgetFrame)
+      wrapped.should be_a(Qt6::StyleOptionTabWidgetFrame)
+      option.line_width.should eq(0)
+      option.mid_line_width.should eq(0)
+      option.shape.should eq(Qt6::TabBarShape::RoundedNorth)
+      option.tab_bar_size.should eq(Qt6::Size.new(-1, -1))
+      option.right_corner_widget_size.should eq(Qt6::Size.new(-1, -1))
+      option.left_corner_widget_size.should eq(Qt6::Size.new(-1, -1))
+      option.tab_bar_rect.should eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+      option.selected_tab_rect.should eq(Qt6::RectF.new(0.0, 0.0, 0.0, 0.0))
+
+      option.set_line_width(2).to_unsafe.should eq(option.to_unsafe)
+      option.line_width.should eq(2)
+      option.set_mid_line_width(1).to_unsafe.should eq(option.to_unsafe)
+      option.mid_line_width.should eq(1)
+      option.set_shape(Qt6::TabBarShape::TriangularSouth).to_unsafe.should eq(option.to_unsafe)
+      option.shape.should eq(Qt6::TabBarShape::TriangularSouth)
+      option.set_tab_bar_size(Qt6::Size.new(80, 24)).to_unsafe.should eq(option.to_unsafe)
+      option.tab_bar_size.should eq(Qt6::Size.new(80, 24))
+      option.set_right_corner_widget_size(Qt6::Size.new(14, 11)).to_unsafe.should eq(option.to_unsafe)
+      option.right_corner_widget_size.should eq(Qt6::Size.new(14, 11))
+      option.set_left_corner_widget_size(Qt6::Size.new(12, 9)).to_unsafe.should eq(option.to_unsafe)
+      option.left_corner_widget_size.should eq(Qt6::Size.new(12, 9))
+      option.set_tab_bar_rect(Qt6::Rect.new(1, 2, 120, 28)).to_unsafe.should eq(option.to_unsafe)
+      option.tab_bar_rect.should eq(Qt6::RectF.new(1.0, 2.0, 120.0, 28.0))
+      option.set_selected_tab_rect(Qt6::Rect.new(3, 4, 50, 18)).to_unsafe.should eq(option.to_unsafe)
+      option.selected_tab_rect.should eq(Qt6::RectF.new(3.0, 4.0, 50.0, 18.0))
+
+      option.init_from(tab_widget)
+      option.shape.should eq(Qt6::TabBarShape::RoundedNorth)
+      option.tab_bar_size.width.should be > 0
+      option.tab_bar_size.height.should be > 0
+      option.tab_bar_rect.width.should be > 0
+      option.tab_bar_rect.height.should be > 0
+      option.selected_tab_rect.width.should be > 0
+      option.selected_tab_rect.height.should be > 0
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+    ensure
+      option.release
+      second_page.release
+      first_page.release
+      tab_widget.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

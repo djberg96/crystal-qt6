@@ -7,6 +7,8 @@ module Qt6
         StyleOptionButton.wrap(handle, owned)
       when StyleOptionType::Tab.value
         StyleOptionTab.wrap(handle, owned)
+      when StyleOptionType::TabWidgetFrame.value
+        StyleOptionTabWidgetFrame.wrap(handle, owned)
       when StyleOptionType::TabBarBase.value
         StyleOptionTabBarBase.wrap(handle, owned)
       when StyleOptionType::MenuItem.value

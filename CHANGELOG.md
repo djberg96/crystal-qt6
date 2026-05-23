@@ -22,6 +22,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyleOptionSpinBox` with button-symbol, step-enabled, and frame helpers plus live `QAbstractSpinBox` family initialization support for spin-box paint state.
 - Added `QStyleOptionTab` with shape, text/icon, row, tab-position, selected-position, corner-widget, size, feature, and tab-index helpers plus live `QTabBar` initialization support for tab paint state.
 - Added `QStyleOptionTabBarBase` with shape, tab-bar rect, selected-tab rect, and document-mode helpers plus live `QTabBar` initialization support for tab-bar base paint state.
+- Added `QStyleOptionTabWidgetFrame` with line-width, shape, tab-bar and corner-widget sizes, and frame/tab geometry helpers plus live `QTabWidget` initialization support for tab-widget frame paint state.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.
 - Expanded `QHBoxLayout` with concrete handle wrapping support and stronger detached-row coverage alongside the shared `QBoxLayout` API.

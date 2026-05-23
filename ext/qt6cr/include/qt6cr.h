@@ -737,6 +737,24 @@ qt6cr_rectf_t qt6cr_style_option_tab_bar_base_selected_tab_rect(qt6cr_handle_t h
 void qt6cr_style_option_tab_bar_base_set_selected_tab_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
 bool qt6cr_style_option_tab_bar_base_document_mode(qt6cr_handle_t handle);
 void qt6cr_style_option_tab_bar_base_set_document_mode(qt6cr_handle_t handle, bool value);
+qt6cr_handle_t qt6cr_style_option_tab_widget_frame_create(void);
+void qt6cr_style_option_tab_widget_frame_destroy(qt6cr_handle_t handle);
+int qt6cr_style_option_tab_widget_frame_line_width(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_line_width(qt6cr_handle_t handle, int value);
+int qt6cr_style_option_tab_widget_frame_mid_line_width(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_mid_line_width(qt6cr_handle_t handle, int value);
+int qt6cr_style_option_tab_widget_frame_shape(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_shape(qt6cr_handle_t handle, int value);
+qt6cr_size_t qt6cr_style_option_tab_widget_frame_tab_bar_size(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_tab_bar_size(qt6cr_handle_t handle, qt6cr_size_t value);
+qt6cr_size_t qt6cr_style_option_tab_widget_frame_right_corner_widget_size(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_right_corner_widget_size(qt6cr_handle_t handle, qt6cr_size_t value);
+qt6cr_size_t qt6cr_style_option_tab_widget_frame_left_corner_widget_size(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_left_corner_widget_size(qt6cr_handle_t handle, qt6cr_size_t value);
+qt6cr_rectf_t qt6cr_style_option_tab_widget_frame_tab_bar_rect(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_tab_bar_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
+qt6cr_rectf_t qt6cr_style_option_tab_widget_frame_selected_tab_rect(qt6cr_handle_t handle);
+void qt6cr_style_option_tab_widget_frame_set_selected_tab_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
 qt6cr_handle_t qt6cr_style_option_focus_rect_create(void);
 void qt6cr_style_option_focus_rect_destroy(qt6cr_handle_t handle);
 qt6cr_color_t qt6cr_style_option_focus_rect_background_color(qt6cr_handle_t handle);
@@ -4081,6 +4099,7 @@ int qt6cr_tab_widget_add_tab(qt6cr_handle_t handle, qt6cr_handle_t widget, const
 int qt6cr_tab_widget_count(qt6cr_handle_t handle);
 int qt6cr_tab_widget_current_index(qt6cr_handle_t handle);
 void qt6cr_tab_widget_set_current_index(qt6cr_handle_t handle, int index);
+void qt6cr_tab_widget_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option);
 void qt6cr_tab_widget_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_tab_bar_create(qt6cr_handle_t parent);
