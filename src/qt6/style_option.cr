@@ -21,6 +21,8 @@ module Qt6
         StyleOptionProgressBar.wrap(handle, owned)
       when StyleOptionType::RubberBand.value
         StyleOptionRubberBand.wrap(handle, owned)
+      when StyleOptionType::ToolBar.value
+        StyleOptionToolBar.wrap(handle, owned)
       when StyleOptionType::SizeGrip.value
         StyleOptionSizeGrip.wrap(handle, owned)
       when StyleOptionType::DockWidget.value

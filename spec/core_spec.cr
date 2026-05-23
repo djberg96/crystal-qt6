@@ -1715,6 +1715,66 @@ describe Qt6 do
     end
   end
 
+  it "supports toolbar style options" do
+    application = app
+    window = Qt6::MainWindow.new
+    tool_bar = Qt6::ToolBar.new("Operations")
+    option = Qt6::StyleOptionToolBar.new
+    wrapped = Qt6::StyleOption.wrap(option.to_unsafe)
+
+    begin
+      tool_bar.movable = false
+      tool_bar.floatable = true
+      tool_bar.add_action("Open")
+      tool_bar.add_separator
+      tool_bar.add_action("Save")
+      window.add_tool_bar(Qt6::ToolBarArea::Top, tool_bar)
+      window.resize(220, 120)
+      window.show
+
+      application.process_events
+
+      option.type.should eq(Qt6::StyleOptionType::ToolBar)
+      wrapped.should be_a(Qt6::StyleOptionToolBar)
+      option.features.should eq(Qt6::StyleOptionToolBarFeature::None)
+      option.line_width.should eq(0)
+      option.mid_line_width.should eq(0)
+
+      option.set_position_of_line(Qt6::StyleOptionToolBarPosition::End).to_unsafe.should eq(option.to_unsafe)
+      option.position_of_line.should eq(Qt6::StyleOptionToolBarPosition::End)
+      option.set_position_within_line(Qt6::StyleOptionToolBarPosition::Middle).to_unsafe.should eq(option.to_unsafe)
+      option.position_within_line.should eq(Qt6::StyleOptionToolBarPosition::Middle)
+      option.set_tool_bar_area(Qt6::ToolBarArea::Bottom).to_unsafe.should eq(option.to_unsafe)
+      option.tool_bar_area.should eq(Qt6::ToolBarArea::Bottom)
+      option.set_features(Qt6::StyleOptionToolBarFeature::Movable).to_unsafe.should eq(option.to_unsafe)
+      option.features.should eq(Qt6::StyleOptionToolBarFeature::Movable)
+      option.set_line_width(3).to_unsafe.should eq(option.to_unsafe)
+      option.line_width.should eq(3)
+      option.set_mid_line_width(1).to_unsafe.should eq(option.to_unsafe)
+      option.mid_line_width.should eq(1)
+
+      option.init_from(tool_bar)
+      option.tool_bar_area.should eq(Qt6::ToolBarArea::Top)
+      option.position_of_line.should eq(Qt6::StyleOptionToolBarPosition::OnlyOne)
+      option.position_within_line.should eq(Qt6::StyleOptionToolBarPosition::OnlyOne)
+      option.features.should eq(Qt6::StyleOptionToolBarFeature::None)
+      option.line_width.should be >= 0
+      option.mid_line_width.should be >= 0
+      option.rect.width.should be > 0
+      option.rect.height.should be > 0
+      option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
+
+      tool_bar.movable = true
+      application.process_events
+      option.init_from(tool_bar)
+      option.features.includes?(Qt6::StyleOptionToolBarFeature::Movable).should be_true
+    ensure
+      option.release
+      tool_bar.release
+      window.release
+    end
+  end
+
   it "supports application timing, drag, and focus helpers" do
     application = app
     previous_cursor_flash_time = application.cursor_flash_time

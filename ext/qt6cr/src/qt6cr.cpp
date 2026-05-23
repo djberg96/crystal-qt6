@@ -770,6 +770,16 @@ class CrystalTabWidget final : public QTabWidget {
   }
 };
 
+class CrystalToolBar final : public QToolBar {
+ public:
+  explicit CrystalToolBar(const QString &title = QString(), QWidget *parent = nullptr)
+      : QToolBar(title, parent) {}
+
+  void initStyleOptionBridge(QStyleOptionToolBar *option) const {
+    initStyleOption(option);
+  }
+};
+
 class CrystalWizardPage final : public QWizardPage {
  public:
   using QWizardPage::QWizardPage;
@@ -7183,6 +7193,92 @@ void qt6cr_style_option_progress_bar_set_bottom_to_top(qt6cr_handle_t handle, bo
 
   if (option != nullptr) {
     option->bottomToTop = value;
+  }
+}
+
+qt6cr_handle_t qt6cr_style_option_tool_bar_create(void) {
+  return new QStyleOptionToolBar();
+}
+
+void qt6cr_style_option_tool_bar_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStyleOptionToolBar *>(handle);
+}
+
+int qt6cr_style_option_tool_bar_position_of_line(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionToolBar::Beginning) : static_cast<int>(option->positionOfLine);
+}
+
+void qt6cr_style_option_tool_bar_set_position_of_line(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+
+  if (option != nullptr) {
+    option->positionOfLine = static_cast<QStyleOptionToolBar::ToolBarPosition>(value);
+  }
+}
+
+int qt6cr_style_option_tool_bar_position_within_line(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionToolBar::Beginning) : static_cast<int>(option->positionWithinLine);
+}
+
+void qt6cr_style_option_tool_bar_set_position_within_line(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+
+  if (option != nullptr) {
+    option->positionWithinLine = static_cast<QStyleOptionToolBar::ToolBarPosition>(value);
+  }
+}
+
+int qt6cr_style_option_tool_bar_area(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+  return option == nullptr ? static_cast<int>(Qt::NoToolBarArea) : static_cast<int>(option->toolBarArea);
+}
+
+void qt6cr_style_option_tool_bar_set_area(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+
+  if (option != nullptr) {
+    option->toolBarArea = static_cast<Qt::ToolBarArea>(value);
+  }
+}
+
+int qt6cr_style_option_tool_bar_features(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+  return option == nullptr ? static_cast<int>(QStyleOptionToolBar::None) : static_cast<int>(option->features);
+}
+
+void qt6cr_style_option_tool_bar_set_features(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+
+  if (option != nullptr) {
+    option->features = QStyleOptionToolBar::ToolBarFeatures(static_cast<QStyleOptionToolBar::ToolBarFeature>(value));
+  }
+}
+
+int qt6cr_style_option_tool_bar_line_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+  return option == nullptr ? 0 : option->lineWidth;
+}
+
+void qt6cr_style_option_tool_bar_set_line_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+
+  if (option != nullptr) {
+    option->lineWidth = value;
+  }
+}
+
+int qt6cr_style_option_tool_bar_mid_line_width(qt6cr_handle_t handle) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+  return option == nullptr ? 0 : option->midLineWidth;
+}
+
+void qt6cr_style_option_tool_bar_set_mid_line_width(qt6cr_handle_t handle, int value) {
+  auto *option = static_cast<QStyleOptionToolBar *>(handle);
+
+  if (option != nullptr) {
+    option->midLineWidth = value;
   }
 }
 
@@ -22488,7 +22584,7 @@ void qt6cr_menu_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t action, 
 }
 
 qt6cr_handle_t qt6cr_tool_bar_create(qt6cr_handle_t parent, const char *title) {
-  return new QToolBar(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
+  return new CrystalToolBar(QString::fromUtf8(title == nullptr ? "" : title), as_widget(parent));
 }
 
 qt6cr_handle_t qt6cr_tool_bar_add_text_action(qt6cr_handle_t handle, const char *text) {
@@ -22585,6 +22681,15 @@ void qt6cr_tool_bar_set_tool_button_style(qt6cr_handle_t handle, int style) {
 qt6cr_handle_t qt6cr_tool_bar_toggle_view_action(qt6cr_handle_t handle) {
   auto *tool_bar = as_tool_bar(handle);
   return tool_bar == nullptr ? nullptr : static_cast<qt6cr_handle_t>(tool_bar->toggleViewAction());
+}
+
+void qt6cr_tool_bar_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {
+  auto *tool_bar = dynamic_cast<CrystalToolBar *>(as_tool_bar(handle));
+  auto *option = static_cast<QStyleOptionToolBar *>(option_handle);
+
+  if (tool_bar != nullptr && option != nullptr) {
+    tool_bar->initStyleOptionBridge(option);
+  }
 }
 
 qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent) {

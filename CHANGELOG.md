@@ -23,6 +23,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QStyleOptionTab` with shape, text/icon, row, tab-position, selected-position, corner-widget, size, feature, and tab-index helpers plus live `QTabBar` initialization support for tab paint state.
 - Added `QStyleOptionTabBarBase` with shape, tab-bar rect, selected-tab rect, and document-mode helpers plus live `QTabBar` initialization support for tab-bar base paint state.
 - Added `QStyleOptionTabWidgetFrame` with line-width, shape, tab-bar and corner-widget sizes, and frame/tab geometry helpers plus live `QTabWidget` initialization support for tab-widget frame paint state.
+- Added `QStyleOptionToolBar` with typed toolbar-position and movable-feature helpers plus live `QToolBar` initialization support for toolbar paint state.
 - Added `QStyleOptionTitleBar` with text, icon, title-bar state, and title-bar flag helpers plus live widget initialization support for title-bar paint state.
 - Expanded `QGridLayout` with optional unparented construction, child-layout insertion, per-axis spacing/stretch/min-size controls, row/column counts, cell-rect lookup, `item_at_position`, and origin-corner helpers for fuller grid-based widget composition.
 - Expanded `QGroupBox` with Qt-style setter aliases and stronger checkable-container coverage for inspector-style grouped controls.

@@ -775,6 +775,20 @@ module Qt6
     fun qt6cr_style_option_progress_bar_set_inverted_appearance = qt6cr_style_option_progress_bar_set_inverted_appearance(handle : Handle, value : Bool)
     fun qt6cr_style_option_progress_bar_bottom_to_top = qt6cr_style_option_progress_bar_bottom_to_top(handle : Handle) : Bool
     fun qt6cr_style_option_progress_bar_set_bottom_to_top = qt6cr_style_option_progress_bar_set_bottom_to_top(handle : Handle, value : Bool)
+    fun qt6cr_style_option_tool_bar_create = qt6cr_style_option_tool_bar_create : Handle
+    fun qt6cr_style_option_tool_bar_destroy = qt6cr_style_option_tool_bar_destroy(handle : Handle)
+    fun qt6cr_style_option_tool_bar_position_of_line = qt6cr_style_option_tool_bar_position_of_line(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_bar_set_position_of_line = qt6cr_style_option_tool_bar_set_position_of_line(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_bar_position_within_line = qt6cr_style_option_tool_bar_position_within_line(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_bar_set_position_within_line = qt6cr_style_option_tool_bar_set_position_within_line(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_bar_area = qt6cr_style_option_tool_bar_area(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_bar_set_area = qt6cr_style_option_tool_bar_set_area(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_bar_features = qt6cr_style_option_tool_bar_features(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_bar_set_features = qt6cr_style_option_tool_bar_set_features(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_bar_line_width = qt6cr_style_option_tool_bar_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_bar_set_line_width = qt6cr_style_option_tool_bar_set_line_width(handle : Handle, value : LibC::Int)
+    fun qt6cr_style_option_tool_bar_mid_line_width = qt6cr_style_option_tool_bar_mid_line_width(handle : Handle) : LibC::Int
+    fun qt6cr_style_option_tool_bar_set_mid_line_width = qt6cr_style_option_tool_bar_set_mid_line_width(handle : Handle, value : LibC::Int)
     fun qt6cr_style_option_rubber_band_create = qt6cr_style_option_rubber_band_create : Handle
     fun qt6cr_style_option_rubber_band_destroy = qt6cr_style_option_rubber_band_destroy(handle : Handle)
     fun qt6cr_style_option_rubber_band_shape = qt6cr_style_option_rubber_band_shape(handle : Handle) : LibC::Int
@@ -3062,6 +3076,7 @@ module Qt6
     fun qt6cr_tool_bar_tool_button_style = qt6cr_tool_bar_tool_button_style(handle : Handle) : LibC::Int
     fun qt6cr_tool_bar_set_tool_button_style = qt6cr_tool_bar_set_tool_button_style(handle : Handle, style : LibC::Int)
     fun qt6cr_tool_bar_toggle_view_action = qt6cr_tool_bar_toggle_view_action(handle : Handle) : Handle
+    fun qt6cr_tool_bar_init_style_option = qt6cr_tool_bar_init_style_option(handle : Handle, option : Handle)
 
     fun qt6cr_status_bar_create = qt6cr_status_bar_create(parent : Handle) : Handle
     fun qt6cr_status_bar_show_message = qt6cr_status_bar_show_message(handle : Handle, message : UInt8*, timeout_ms : LibC::Int)
