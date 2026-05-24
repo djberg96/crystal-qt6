@@ -576,6 +576,11 @@ module Qt6
     fun qt6cr_application_process_events = qt6cr_application_process_events(handle : Handle)
     fun qt6cr_application_invoke_later = qt6cr_application_invoke_later(handle : Handle, callback : (Handle ->), userdata : Handle) : Bool
     fun qt6cr_application_quit = qt6cr_application_quit(handle : Handle)
+    fun qt6cr_core_application_translate = qt6cr_core_application_translate(context : UInt8*, source_text : UInt8*, disambiguation : UInt8*, n : LibC::Int) : UInt8*
+    fun qt6cr_core_application_install_translator = qt6cr_core_application_install_translator(translator : Handle) : Bool
+    fun qt6cr_core_application_remove_translator = qt6cr_core_application_remove_translator(translator : Handle) : Bool
+    fun qt6cr_translator_create = qt6cr_translator_create(parent : Handle) : Handle
+    fun qt6cr_translator_load = qt6cr_translator_load(handle : Handle, filename : UInt8*, directory : UInt8*) : Bool
     fun qt6cr_application_clipboard = qt6cr_application_clipboard(handle : Handle) : Handle
     fun qt6cr_application_name = qt6cr_application_name(handle : Handle) : UInt8*
     fun qt6cr_application_set_name = qt6cr_application_set_name(handle : Handle, name : UInt8*)

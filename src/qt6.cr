@@ -270,6 +270,7 @@ require "./qt6/q_url"
 require "./qt6/q_dir"
 require "./qt6/q_file"
 require "./qt6/q_file_info"
+require "./qt6/q_translator"
 require "./qt6/settings_format"
 require "./qt6/q_settings"
 require "./qt6/standard_location"
@@ -483,6 +484,28 @@ module Qt6
   # Returns the shared application clipboard wrapper.
   def self.clipboard : Clipboard
     application.clipboard
+  end
+
+  # Translates a source string through Qt's installed translators.
+  #
+  # This mirrors `QCoreApplication::translate(context, source_text, disambiguation, n)`.
+  def self.translate(context : String, source_text : String, disambiguation : String? = nil, n : Int = -1) : String
+    Qt6.copy_and_release_string(LibQt6.qt6cr_core_application_translate(
+      context.to_unsafe,
+      source_text.to_unsafe,
+      disambiguation.try(&.to_unsafe) || Pointer(UInt8).null,
+      n.to_i32
+    ))
+  end
+
+  # Installs a translator for subsequent `translate` calls and Qt-owned text.
+  def self.install_translator(translator : QTranslator) : Bool
+    LibQt6.qt6cr_core_application_install_translator(translator.to_unsafe)
+  end
+
+  # Removes a previously installed translator.
+  def self.remove_translator(translator : QTranslator) : Bool
+    LibQt6.qt6cr_core_application_remove_translator(translator.to_unsafe)
   end
 
   # Releases tracked Qt objects and shuts down the shared application.

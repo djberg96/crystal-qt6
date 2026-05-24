@@ -643,6 +643,29 @@ describe Qt6 do
     application.window_icon = previous_window_icon
   end
 
+  it "supports application translators" do
+    app
+    fixture_dir = File.join(__DIR__, "fixtures")
+    translator = Qt6::QTranslator.new
+
+    Qt6.translate("TranslationSpec", "Hello, world!").should eq("Hello, world!")
+    translator.load("translation_spec_uk.qm", fixture_dir).should be_true
+    Qt6.install_translator(translator).should be_true
+    Qt6.translate("TranslationSpec", "Hello, world!").should eq("Привіт, світе!")
+    Qt6.translate("TranslationSpec", "%1 of %2 tracks")
+      .sub("%1", "3")
+      .sub("%2", "12")
+      .should eq("3 з 12 треків")
+    Qt6.translate("TranslationSpec", "%n track(s)", n: 1).should eq("1 трек")
+    Qt6.translate("TranslationSpec", "%n track(s)", n: 2).should eq("2 треки")
+    Qt6.translate("TranslationSpec", "%n track(s)", n: 5).should eq("5 треків")
+    Qt6.translate("TranslationSpec", "Missing translation").should eq("Missing translation")
+    Qt6.remove_translator(translator).should be_true
+    Qt6.translate("TranslationSpec", "Hello, world!").should eq("Hello, world!")
+
+    translator.release
+  end
+
   it "supports theme-aware palettes on applications and widgets" do
     application = app
     previous_palette = application.palette
