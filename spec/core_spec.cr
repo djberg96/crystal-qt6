@@ -401,6 +401,7 @@ describe Qt6 do
     label.accessible_identifier = "core-widget-controls-label"
     tool_tip_font = Qt6::QFont.new(point_size: 12, bold: true)
     tool_tip_palette = Qt6::QPalette.new
+    busy_cursor = Qt6::QCursor.new(Qt6::CursorShape::Busy)
     tool_tip_palette.set_color(Qt6::ColorRole::ToolTipBase, Qt6::Color.new(28, 34, 42))
     tool_tip_palette.set_color(Qt6::ColorRole::ToolTipText, Qt6::Color.new(232, 238, 244))
     Qt6::ToolTip.font = tool_tip_font
@@ -413,6 +414,11 @@ describe Qt6 do
     label.set_minimum_size(140, 40)
     label.set_maximum_size(420, 160)
     label.mouse_tracking = true
+    label.tablet_tracking = true
+    label.context_menu_policy = Qt6::ContextMenuPolicy::CustomContextMenu
+    label.input_method_hints = Qt6::InputMethodHint::PreferUppercase | Qt6::InputMethodHint::NoPredictiveText
+    label.cursor = busy_cursor
+    label.cursor.shape.should eq(Qt6::CursorShape::Busy)
     label.cursor_shape = Qt6::CursorShape::PointingHand
     label.transparent_for_mouse_events = true
     label.set_attribute(Qt6::WidgetAttribute::OpaquePaintEvent)
@@ -449,7 +455,11 @@ describe Qt6 do
     label.maximum_width.should eq(420)
     label.maximum_height.should eq(160)
     label.mouse_tracking?.should be_true
+    label.tablet_tracking?.should be_true
+    label.context_menu_policy.should eq(Qt6::ContextMenuPolicy::CustomContextMenu)
+    label.input_method_hints.should eq(Qt6::InputMethodHint::PreferUppercase | Qt6::InputMethodHint::NoPredictiveText)
     label.cursor_shape.should eq(Qt6::CursorShape::PointingHand)
+    label.cursor.shape.should eq(Qt6::CursorShape::PointingHand)
     label.transparent_for_mouse_events?.should be_true
     label.attribute?(Qt6::WidgetAttribute::TransparentForMouseEvents).should be_true
     label.attribute?(Qt6::WidgetAttribute::OpaquePaintEvent).should be_true
@@ -469,6 +479,8 @@ describe Qt6 do
 
     label.set_attribute(Qt6::WidgetAttribute::TransparentForMouseEvents, false)
     label.transparent_for_mouse_events?.should be_false
+    label.unset_cursor
+    label.cursor.shape.should eq(Qt6::CursorShape::Arrow)
 
     Qt6::ToolTip.font = previous_tool_tip_font
     Qt6::ToolTip.palette = previous_tool_tip_palette

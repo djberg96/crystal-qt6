@@ -9955,6 +9955,28 @@ void qt6cr_widget_set_mouse_tracking(qt6cr_handle_t handle, bool value) {
   }
 }
 
+qt6cr_handle_t qt6cr_widget_cursor(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? new QCursor() : new QCursor(widget->cursor());
+}
+
+void qt6cr_widget_set_cursor(qt6cr_handle_t handle, qt6cr_handle_t cursor_handle) {
+  auto *widget = as_widget(handle);
+  auto *cursor = static_cast<QCursor *>(cursor_handle);
+
+  if (widget != nullptr && cursor != nullptr) {
+    widget->setCursor(*cursor);
+  }
+}
+
+void qt6cr_widget_unset_cursor(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->unsetCursor();
+  }
+}
+
 int qt6cr_widget_cursor_shape(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? static_cast<int>(Qt::ArrowCursor) : static_cast<int>(widget->cursor().shape());
@@ -9965,6 +9987,45 @@ void qt6cr_widget_set_cursor_shape(qt6cr_handle_t handle, int value) {
 
   if (widget != nullptr) {
     widget->setCursor(static_cast<Qt::CursorShape>(value));
+  }
+}
+
+bool qt6cr_widget_tablet_tracking(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->hasTabletTracking();
+}
+
+void qt6cr_widget_set_tablet_tracking(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setTabletTracking(value);
+  }
+}
+
+int qt6cr_widget_context_menu_policy(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(Qt::DefaultContextMenu) : static_cast<int>(widget->contextMenuPolicy());
+}
+
+void qt6cr_widget_set_context_menu_policy(qt6cr_handle_t handle, int value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setContextMenuPolicy(static_cast<Qt::ContextMenuPolicy>(value));
+  }
+}
+
+int qt6cr_widget_input_method_hints(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(Qt::ImhNone) : static_cast<int>(widget->inputMethodHints());
+}
+
+void qt6cr_widget_set_input_method_hints(qt6cr_handle_t handle, int value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setInputMethodHints(static_cast<Qt::InputMethodHints>(value));
   }
 }
 
@@ -12123,6 +12184,27 @@ void qt6cr_qicon_destroy(qt6cr_handle_t handle) {
 bool qt6cr_qicon_is_null(qt6cr_handle_t handle) {
   auto *icon = as_qicon(handle);
   return icon == nullptr || icon->isNull();
+}
+
+qt6cr_handle_t qt6cr_qcursor_create(int shape) {
+  return new QCursor(static_cast<Qt::CursorShape>(shape));
+}
+
+void qt6cr_qcursor_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QCursor *>(handle);
+}
+
+int qt6cr_qcursor_shape(qt6cr_handle_t handle) {
+  auto *cursor = static_cast<QCursor *>(handle);
+  return cursor == nullptr ? static_cast<int>(Qt::ArrowCursor) : static_cast<int>(cursor->shape());
+}
+
+void qt6cr_qcursor_set_shape(qt6cr_handle_t handle, int shape) {
+  auto *cursor = static_cast<QCursor *>(handle);
+
+  if (cursor != nullptr) {
+    cursor->setShape(static_cast<Qt::CursorShape>(shape));
+  }
 }
 
 qt6cr_handle_t qt6cr_splash_screen_create(qt6cr_handle_t pixmap) {

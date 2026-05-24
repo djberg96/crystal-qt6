@@ -1213,8 +1213,17 @@ module Qt6
     fun qt6cr_widget_set_accept_drops = qt6cr_widget_set_accept_drops(handle : Handle, value : Bool)
     fun qt6cr_widget_mouse_tracking = qt6cr_widget_mouse_tracking(handle : Handle) : Bool
     fun qt6cr_widget_set_mouse_tracking = qt6cr_widget_set_mouse_tracking(handle : Handle, value : Bool)
+    fun qt6cr_widget_cursor = qt6cr_widget_cursor(handle : Handle) : Handle
+    fun qt6cr_widget_set_cursor = qt6cr_widget_set_cursor(handle : Handle, cursor : Handle)
+    fun qt6cr_widget_unset_cursor = qt6cr_widget_unset_cursor(handle : Handle)
     fun qt6cr_widget_cursor_shape = qt6cr_widget_cursor_shape(handle : Handle) : LibC::Int
     fun qt6cr_widget_set_cursor_shape = qt6cr_widget_set_cursor_shape(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_tablet_tracking = qt6cr_widget_tablet_tracking(handle : Handle) : Bool
+    fun qt6cr_widget_set_tablet_tracking = qt6cr_widget_set_tablet_tracking(handle : Handle, value : Bool)
+    fun qt6cr_widget_context_menu_policy = qt6cr_widget_context_menu_policy(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_context_menu_policy = qt6cr_widget_set_context_menu_policy(handle : Handle, value : LibC::Int)
+    fun qt6cr_widget_input_method_hints = qt6cr_widget_input_method_hints(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_input_method_hints = qt6cr_widget_set_input_method_hints(handle : Handle, value : LibC::Int)
     fun qt6cr_widget_transparent_for_mouse_events = qt6cr_widget_transparent_for_mouse_events(handle : Handle) : Bool
     fun qt6cr_widget_set_transparent_for_mouse_events = qt6cr_widget_set_transparent_for_mouse_events(handle : Handle, value : Bool)
     fun qt6cr_widget_test_attribute = qt6cr_widget_test_attribute(handle : Handle, attribute : LibC::Int) : Bool
@@ -1548,6 +1557,10 @@ module Qt6
     fun qt6cr_qicon_create_from_theme = qt6cr_qicon_create_from_theme(name : UInt8*) : Handle
     fun qt6cr_qicon_destroy = qt6cr_qicon_destroy(handle : Handle)
     fun qt6cr_qicon_is_null = qt6cr_qicon_is_null(handle : Handle) : Bool
+    fun qt6cr_qcursor_create = qt6cr_qcursor_create(shape : LibC::Int) : Handle
+    fun qt6cr_qcursor_destroy = qt6cr_qcursor_destroy(handle : Handle)
+    fun qt6cr_qcursor_shape = qt6cr_qcursor_shape(handle : Handle) : LibC::Int
+    fun qt6cr_qcursor_set_shape = qt6cr_qcursor_set_shape(handle : Handle, shape : LibC::Int)
 
     fun qt6cr_splash_screen_create = qt6cr_splash_screen_create(pixmap : Handle) : Handle
     fun qt6cr_splash_screen_pixmap = qt6cr_splash_screen_pixmap(handle : Handle) : Handle

@@ -876,6 +876,23 @@ module Qt6
       value
     end
 
+    # Returns the widget cursor.
+    def cursor : QCursor
+      QCursor.wrap(LibQt6.qt6cr_widget_cursor(@to_unsafe), true)
+    end
+
+    # Sets the widget cursor.
+    def cursor=(value : QCursor) : QCursor
+      LibQt6.qt6cr_widget_set_cursor(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Clears any widget-specific cursor override and returns `self`.
+    def unset_cursor : self
+      LibQt6.qt6cr_widget_unset_cursor(@to_unsafe)
+      self
+    end
+
     # Returns the widget's cursor shape.
     def cursor_shape : CursorShape
       CursorShape.from_value(LibQt6.qt6cr_widget_cursor_shape(@to_unsafe))
@@ -885,6 +902,51 @@ module Qt6
     def cursor_shape=(value : CursorShape) : CursorShape
       LibQt6.qt6cr_widget_set_cursor_shape(@to_unsafe, value.value)
       value
+    end
+
+    # Returns `true` when tablet events are delivered without mouse synthesis.
+    def tablet_tracking? : Bool
+      LibQt6.qt6cr_widget_tablet_tracking(@to_unsafe)
+    end
+
+    # Enables or disables tablet tracking.
+    def tablet_tracking=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_tablet_tracking(@to_unsafe, value)
+      value
+    end
+
+    # Returns the widget context-menu policy.
+    def context_menu_policy : ContextMenuPolicy
+      ContextMenuPolicy.from_value(LibQt6.qt6cr_widget_context_menu_policy(@to_unsafe))
+    end
+
+    # Sets the widget context-menu policy.
+    def context_menu_policy=(value : ContextMenuPolicy) : ContextMenuPolicy
+      LibQt6.qt6cr_widget_set_context_menu_policy(@to_unsafe, value.value)
+      value
+    end
+
+    # Qt-style alias for `context_menu_policy=`.
+    def set_context_menu_policy(value : ContextMenuPolicy) : self
+      self.context_menu_policy = value
+      self
+    end
+
+    # Returns the input-method hint flags.
+    def input_method_hints : InputMethodHint
+      InputMethodHint.from_value(LibQt6.qt6cr_widget_input_method_hints(@to_unsafe))
+    end
+
+    # Sets the input-method hint flags.
+    def input_method_hints=(value : InputMethodHint) : InputMethodHint
+      LibQt6.qt6cr_widget_set_input_method_hints(@to_unsafe, value.value)
+      value
+    end
+
+    # Qt-style alias for `input_method_hints=`.
+    def set_input_method_hints(value : InputMethodHint) : self
+      self.input_method_hints = value
+      self
     end
 
     # Returns `true` when mouse events pass through this widget to widgets below.
