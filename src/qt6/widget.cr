@@ -31,6 +31,11 @@ module Qt6
       self
     end
 
+    # Resizes the widget to the given size and returns `self` for chaining.
+    def resize(size : Size) : self
+      resize(size.width, size.height)
+    end
+
     # Sets the widget geometry and returns `self`.
     def set_geometry(rect : Rect) : self
       LibQt6.qt6cr_widget_set_geometry(@to_unsafe, rect.to_native)
@@ -127,6 +132,16 @@ module Qt6
       Size.from_native(LibQt6.qt6cr_widget_frame_size(@to_unsafe))
     end
 
+    # Returns the current widget width.
+    def width : Int32
+      LibQt6.qt6cr_widget_width(@to_unsafe)
+    end
+
+    # Returns the current widget height.
+    def height : Int32
+      LibQt6.qt6cr_widget_height(@to_unsafe)
+    end
+
     # Returns the bounding rectangle of visible child widgets.
     def children_rect : Rect
       Rect.from_native(LibQt6.qt6cr_widget_children_rect(@to_unsafe))
@@ -135,6 +150,38 @@ module Qt6
     # Returns the combined region occupied by child widgets.
     def children_region : QRegion
       QRegion.wrap(LibQt6.qt6cr_widget_children_region(@to_unsafe), true)
+    end
+
+    # Returns the current size increment used by some window managers.
+    def size_increment : Size
+      Size.from_native(LibQt6.qt6cr_widget_size_increment(@to_unsafe))
+    end
+
+    # Sets the size increment and returns `self`.
+    def set_size_increment(width : Int, height : Int) : self
+      LibQt6.qt6cr_widget_set_size_increment(@to_unsafe, width.to_i32, height.to_i32)
+      self
+    end
+
+    # Sets the size increment from a size value and returns `self`.
+    def set_size_increment(size : Size) : self
+      set_size_increment(size.width, size.height)
+    end
+
+    # Returns the base size used when size increments are active.
+    def base_size : Size
+      Size.from_native(LibQt6.qt6cr_widget_base_size(@to_unsafe))
+    end
+
+    # Sets the base size and returns `self`.
+    def set_base_size(width : Int, height : Int) : self
+      LibQt6.qt6cr_widget_set_base_size(@to_unsafe, width.to_i32, height.to_i32)
+      self
+    end
+
+    # Sets the base size from a size value and returns `self`.
+    def set_base_size(size : Size) : self
+      set_base_size(size.width, size.height)
     end
 
     # Hides the widget and returns `self` for chaining.
@@ -234,6 +281,32 @@ module Qt6
     def set_parent(parent : Widget?) : Widget?
       LibQt6.qt6cr_widget_set_parent_widget(@to_unsafe, parent.try(&.to_unsafe) || Pointer(Void).null)
       parent
+    end
+
+    # Returns the currently visible portion of the widget as a region.
+    def visible_region : QRegion
+      QRegion.wrap(LibQt6.qt6cr_widget_visible_region(@to_unsafe), true)
+    end
+
+    # Returns the child widget at the given local position, if any.
+    def child_at(point : Point) : Widget?
+      handle = LibQt6.qt6cr_widget_child_at(@to_unsafe, point.to_native)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Returns the child widget at the given local coordinates, if any.
+    def child_at(x : Int, y : Int) : Widget?
+      child_at(Point.new(x.to_i32, y.to_i32))
+    end
+
+    # Saves the current top-level geometry and state payload.
+    def save_geometry : QByteArray
+      QByteArray.wrap(LibQt6.qt6cr_widget_save_geometry(@to_unsafe), true)
+    end
+
+    # Restores a previously saved top-level geometry payload.
+    def restore_geometry(value : QByteArray) : Bool
+      LibQt6.qt6cr_widget_restore_geometry(@to_unsafe, value.to_unsafe)
     end
 
     # Maps a local point into global screen coordinates.
@@ -532,6 +605,11 @@ module Qt6
       self
     end
 
+    # Moves the widget to the given parent-relative position and returns `self`.
+    def move(point : Point) : self
+      move(point.x, point.y)
+    end
+
     # Recomputes the widget size from its contents and returns `self`.
     def adjust_size : self
       LibQt6.qt6cr_widget_adjust_size(@to_unsafe)
@@ -592,6 +670,11 @@ module Qt6
     def set_fixed_size(width : Int, height : Int) : self
       LibQt6.qt6cr_widget_set_fixed_size(@to_unsafe, width, height)
       self
+    end
+
+    # Locks the widget to a fixed size and returns `self`.
+    def set_fixed_size(size : Size) : self
+      set_fixed_size(size.width, size.height)
     end
 
     # Sends a synthetic wheel event to the widget.

@@ -8627,6 +8627,16 @@ qt6cr_size_t qt6cr_widget_frame_size(qt6cr_handle_t handle) {
   return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->frameSize());
 }
 
+int qt6cr_widget_width(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? 0 : widget->width();
+}
+
+int qt6cr_widget_height(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? 0 : widget->height();
+}
+
 qt6cr_rect_t qt6cr_widget_children_rect(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 
@@ -8640,6 +8650,32 @@ qt6cr_rect_t qt6cr_widget_children_rect(qt6cr_handle_t handle) {
 qt6cr_handle_t qt6cr_widget_children_region(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? nullptr : new QRegion(widget->childrenRegion());
+}
+
+qt6cr_size_t qt6cr_widget_size_increment(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->sizeIncrement());
+}
+
+void qt6cr_widget_set_size_increment(qt6cr_handle_t handle, int width, int height) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setSizeIncrement(width, height);
+  }
+}
+
+qt6cr_size_t qt6cr_widget_base_size(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->baseSize());
+}
+
+void qt6cr_widget_set_base_size(qt6cr_handle_t handle, int width, int height) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setBaseSize(width, height);
+  }
 }
 
 void qt6cr_widget_hide(qt6cr_handle_t handle) {
@@ -8842,6 +8878,27 @@ void qt6cr_widget_set_parent_widget(qt6cr_handle_t handle, qt6cr_handle_t parent
   if (widget != nullptr) {
     widget->setParent(as_widget(parent_handle));
   }
+}
+
+qt6cr_handle_t qt6cr_widget_visible_region(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QRegion(widget->visibleRegion());
+}
+
+qt6cr_handle_t qt6cr_widget_child_at(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : widget->childAt(from_point(point));
+}
+
+qt6cr_handle_t qt6cr_widget_save_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QByteArray(widget->saveGeometry());
+}
+
+bool qt6cr_widget_restore_geometry(qt6cr_handle_t handle, qt6cr_handle_t geometry_handle) {
+  auto *widget = as_widget(handle);
+  auto *geometry = as_qbyte_array(geometry_handle);
+  return widget != nullptr && geometry != nullptr && widget->restoreGeometry(*geometry);
 }
 
 void qt6cr_widget_update(qt6cr_handle_t handle) {

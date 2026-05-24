@@ -340,6 +340,52 @@ describe Qt6 do
     reparent_host.release
   end
 
+  it "supports widget sizing, hit testing, and geometry persistence helpers" do
+    application = app
+    window = Qt6::Widget.new
+    child = Qt6::Widget.new(window)
+
+    window.set_geometry(10, 20, 220, 140)
+    window.resize(Qt6::Size.new(240, 160))
+    window.move(Qt6::Point.new(14, 18))
+    window.width.should eq(240)
+    window.height.should eq(160)
+
+    window.set_size_increment(6, 8)
+    window.size_increment.should eq(Qt6::Size.new(6, 8))
+    window.set_base_size(Qt6::Size.new(100, 70))
+    window.base_size.should eq(Qt6::Size.new(100, 70))
+
+    child.set_geometry(20, 24, 80, 30)
+    child.set_fixed_size(Qt6::Size.new(90, 34))
+    child.minimum_size.should eq(Qt6::Size.new(90, 34))
+    child.maximum_size.should eq(Qt6::Size.new(90, 34))
+
+    window.show
+    application.process_events
+
+    window.child_at(30, 30).not_nil!.to_unsafe.should eq(child.to_unsafe)
+    window.child_at(Qt6::Point.new(30, 30)).not_nil!.to_unsafe.should eq(child.to_unsafe)
+    window.child_at(200, 120).should be_nil
+
+    visible_region = window.visible_region
+    visible_region.bounding_rect.width.should be > 0
+    visible_region.bounding_rect.height.should be > 0
+
+    saved = window.save_geometry
+    window.set_geometry(40, 50, 120, 100)
+    application.process_events
+    window.restore_geometry(saved).should be_true
+    application.process_events
+    window.width.should eq(240)
+    window.height.should eq(160)
+
+    visible_region.release
+    saved.release
+    child.release
+    window.release
+  end
+
   it "supports core widget sizing, help text, and accessibility metadata" do
     application = app
     previous_tool_tip_font = Qt6::ToolTip.font
