@@ -1048,6 +1048,8 @@ qt6cr_handle_t qt6cr_widget_create(qt6cr_handle_t parent);
 void qt6cr_widget_destroy(qt6cr_handle_t handle);
 void qt6cr_widget_show(qt6cr_handle_t handle);
 void qt6cr_widget_show_maximized(qt6cr_handle_t handle);
+bool qt6cr_widget_is_maximized(qt6cr_handle_t handle);
+qt6cr_rect_t qt6cr_widget_normal_geometry(qt6cr_handle_t handle);
 void qt6cr_widget_hide(qt6cr_handle_t handle);
 void qt6cr_widget_set_visible(qt6cr_handle_t handle, bool value);
 void qt6cr_widget_close(qt6cr_handle_t handle);

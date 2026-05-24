@@ -8533,6 +8533,21 @@ void qt6cr_widget_show_maximized(qt6cr_handle_t handle) {
   }
 }
 
+bool qt6cr_widget_is_maximized(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->isMaximized();
+}
+
+qt6cr_rect_t qt6cr_widget_normal_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget == nullptr) {
+    return {0, 0, 0, 0};
+  }
+
+  return to_rect(widget->normalGeometry());
+}
+
 void qt6cr_widget_hide(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 
