@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+- Expanded `QWidget` with shared frame/geometry, child-region, coordinate-mapping, tooltip-duration, window-file-path, opacity, repaint-state, and extra window-state helpers for fuller base-widget parity.
+
 ## [0.11.0] - 2026-05-23
 
 ### Added

@@ -241,6 +241,74 @@ describe Qt6 do
     window.release
   end
 
+  it "supports shared widget geometry, mapping, and window state helpers" do
+    application = app
+    window = Qt6::Widget.new
+    child = Qt6::Widget.new(window)
+    sibling = Qt6::Widget.new(window)
+
+    window.window_title = "Mapping Host"
+    window.set_geometry(30, 40, 260, 180)
+    child.set_geometry(12, 18, 80, 36)
+    sibling.set_geometry(120, 60, 70, 50)
+    child.tool_tip_duration = 1700
+    window.window_file_path = "/tmp/terrain.map"
+    window.window_opacity = 0.82
+    window.updates_enabled = false
+
+    window.show
+    application.process_events
+
+    window.window?.should be_true
+    child.window?.should be_false
+    child.geometry.should eq(Qt6::Rect.new(12, 18, 80, 36))
+    child.pos.should eq(Qt6::Point.new(12, 18))
+    child.x.should eq(12)
+    child.y.should eq(18)
+    child.frame_size.should eq(child.size)
+    window.frame_geometry.width.should be >= window.geometry.width
+    window.frame_geometry.height.should be >= window.geometry.height
+    window.normal_geometry.should be_a(Qt6::Rect)
+
+    window.children_rect.should eq(Qt6::Rect.new(12, 18, 178, 92))
+    children_region = window.children_region
+    children_region.bounding_rect.should eq(window.children_rect)
+
+    child.map_to_parent(Qt6::Point.new(4, 5)).should eq(Qt6::Point.new(16, 23))
+    child.map_from_parent(Qt6::Point.new(16, 23)).should eq(Qt6::Point.new(4, 5))
+    child.map_to(window, Qt6::Point.new(4, 5)).should eq(Qt6::Point.new(16, 23))
+    child.map_from(window, Qt6::Point.new(16, 23)).should eq(Qt6::Point.new(4, 5))
+    global = child.map_to_global(Qt6::Point.new(4, 5))
+    child.map_from_global(global).should eq(Qt6::Point.new(4, 5))
+
+    window.window_file_path.should eq("/tmp/terrain.map")
+    window.window_opacity.should be_close(0.82, 0.01)
+    child.tool_tip_duration.should eq(1700)
+    window.updates_enabled?.should be_false
+    window.active_window?.should be_a(Bool)
+    child.under_mouse?.should be_a(Bool)
+
+    window.updates_enabled = true
+    window.updates_enabled?.should be_true
+
+    child.stack_under(sibling)
+    window.show_minimized
+    application.process_events
+    window.minimized?.should be_a(Bool)
+    window.show_normal
+    application.process_events
+    window.show_full_screen
+    application.process_events
+    window.full_screen?.should be_a(Bool)
+    window.show_normal
+    application.process_events
+
+    children_region.release
+    sibling.release
+    child.release
+    window.release
+  end
+
   it "supports core widget sizing, help text, and accessibility metadata" do
     application = app
     previous_tool_tip_font = Qt6::ToolTip.font

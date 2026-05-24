@@ -31,9 +31,43 @@ module Qt6
       self
     end
 
+    # Sets the widget geometry and returns `self`.
+    def set_geometry(rect : Rect) : self
+      LibQt6.qt6cr_widget_set_geometry(@to_unsafe, rect.to_native)
+      self
+    end
+
+    # Sets the widget geometry from coordinates and returns `self`.
+    def set_geometry(x : Int, y : Int, width : Int, height : Int) : self
+      set_geometry(Rect.new(x, y, width, height))
+    end
+
     # Shows the widget and returns `self` for chaining.
     def show : self
       LibQt6.qt6cr_widget_show(@to_unsafe)
+      self
+    end
+
+    # Returns `true` when the widget is a top-level window.
+    def window? : Bool
+      LibQt6.qt6cr_widget_is_window(@to_unsafe)
+    end
+
+    # Shows the widget minimized and returns `self` for chaining.
+    def show_minimized : self
+      LibQt6.qt6cr_widget_show_minimized(@to_unsafe)
+      self
+    end
+
+    # Shows the widget fullscreen and returns `self` for chaining.
+    def show_full_screen : self
+      LibQt6.qt6cr_widget_show_full_screen(@to_unsafe)
+      self
+    end
+
+    # Restores the widget to its normal state and returns `self` for chaining.
+    def show_normal : self
+      LibQt6.qt6cr_widget_show_normal(@to_unsafe)
       self
     end
 
@@ -43,14 +77,64 @@ module Qt6
       self
     end
 
+    # Returns `true` when the widget is currently minimized.
+    def minimized? : Bool
+      LibQt6.qt6cr_widget_is_minimized(@to_unsafe)
+    end
+
+    # Returns `true` when the widget is currently fullscreen.
+    def full_screen? : Bool
+      LibQt6.qt6cr_widget_is_full_screen(@to_unsafe)
+    end
+
     # Returns `true` when the widget is currently maximized.
     def maximized? : Bool
       LibQt6.qt6cr_widget_is_maximized(@to_unsafe)
     end
 
+    # Returns the widget frame geometry in parent or screen coordinates.
+    def frame_geometry : Rect
+      Rect.from_native(LibQt6.qt6cr_widget_frame_geometry(@to_unsafe))
+    end
+
+    # Returns the widget geometry relative to its parent.
+    def geometry : Rect
+      Rect.from_native(LibQt6.qt6cr_widget_geometry(@to_unsafe))
+    end
+
     # Returns the geometry used when restoring a maximized or fullscreen widget.
     def normal_geometry : Rect
       Rect.from_native(LibQt6.qt6cr_widget_normal_geometry(@to_unsafe))
+    end
+
+    # Returns the widget's parent-relative position.
+    def pos : Point
+      Point.from_native(LibQt6.qt6cr_widget_pos(@to_unsafe))
+    end
+
+    # Returns the widget's x coordinate relative to its parent.
+    def x : Int32
+      LibQt6.qt6cr_widget_x(@to_unsafe)
+    end
+
+    # Returns the widget's y coordinate relative to its parent.
+    def y : Int32
+      LibQt6.qt6cr_widget_y(@to_unsafe)
+    end
+
+    # Returns the widget frame size including window decorations when present.
+    def frame_size : Size
+      Size.from_native(LibQt6.qt6cr_widget_frame_size(@to_unsafe))
+    end
+
+    # Returns the bounding rectangle of visible child widgets.
+    def children_rect : Rect
+      Rect.from_native(LibQt6.qt6cr_widget_children_rect(@to_unsafe))
+    end
+
+    # Returns the combined region occupied by child widgets.
+    def children_region : QRegion
+      QRegion.wrap(LibQt6.qt6cr_widget_children_region(@to_unsafe), true)
     end
 
     # Hides the widget and returns `self` for chaining.
@@ -62,6 +146,18 @@ module Qt6
     # Closes the widget and returns `self` for chaining.
     def close : self
       LibQt6.qt6cr_widget_close(@to_unsafe)
+      self
+    end
+
+    # Lowers the widget below overlapping siblings and returns `self`.
+    def lower : self
+      LibQt6.qt6cr_widget_lower(@to_unsafe)
+      self
+    end
+
+    # Moves the widget underneath the given sibling and returns `self`.
+    def stack_under(sibling : Widget) : self
+      LibQt6.qt6cr_widget_stack_under(@to_unsafe, sibling.to_unsafe)
       self
     end
 
@@ -84,6 +180,36 @@ module Qt6
     # Returns the widget's local rectangle.
     def rect : RectF
       RectF.from_native(LibQt6.qt6cr_widget_rect(@to_unsafe))
+    end
+
+    # Maps a local point into global screen coordinates.
+    def map_to_global(point : Point) : Point
+      Point.from_native(LibQt6.qt6cr_widget_map_to_global(@to_unsafe, point.to_native))
+    end
+
+    # Maps a global screen point into the widget's local coordinates.
+    def map_from_global(point : Point) : Point
+      Point.from_native(LibQt6.qt6cr_widget_map_from_global(@to_unsafe, point.to_native))
+    end
+
+    # Maps a local point into the parent widget's coordinates.
+    def map_to_parent(point : Point) : Point
+      Point.from_native(LibQt6.qt6cr_widget_map_to_parent(@to_unsafe, point.to_native))
+    end
+
+    # Maps a parent-relative point into the widget's local coordinates.
+    def map_from_parent(point : Point) : Point
+      Point.from_native(LibQt6.qt6cr_widget_map_from_parent(@to_unsafe, point.to_native))
+    end
+
+    # Maps a local point into another widget's coordinates.
+    def map_to(widget : Widget, point : Point) : Point
+      Point.from_native(LibQt6.qt6cr_widget_map_to(@to_unsafe, widget.to_unsafe, point.to_native))
+    end
+
+    # Maps a point from another widget's coordinates into this widget.
+    def map_from(widget : Widget, point : Point) : Point
+      Point.from_native(LibQt6.qt6cr_widget_map_from(@to_unsafe, widget.to_unsafe, point.to_native))
     end
 
     # Schedules the widget for repaint and returns `self`.
@@ -179,6 +305,18 @@ module Qt6
       value
     end
 
+    # Returns the tooltip display duration in milliseconds, or `-1` for the Qt default.
+    def tool_tip_duration : Int32
+      LibQt6.qt6cr_widget_tool_tip_duration(@to_unsafe)
+    end
+
+    # Sets the tooltip display duration in milliseconds.
+    def tool_tip_duration=(value : Int) : Int32
+      msec = value.to_i32
+      LibQt6.qt6cr_widget_set_tool_tip_duration(@to_unsafe, msec)
+      msec
+    end
+
     # Returns the widget's status-tip text.
     def status_tip : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_widget_status_tip(@to_unsafe))
@@ -245,6 +383,29 @@ module Qt6
       value
     end
 
+    # Returns the window-associated file path.
+    def window_file_path : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_window_file_path(@to_unsafe))
+    end
+
+    # Sets the window-associated file path.
+    def window_file_path=(value : String) : String
+      LibQt6.qt6cr_widget_set_window_file_path(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the current window opacity.
+    def window_opacity : Float64
+      LibQt6.qt6cr_widget_window_opacity(@to_unsafe)
+    end
+
+    # Sets the current window opacity.
+    def window_opacity=(value : Number) : Float64
+      opacity = value.to_f64
+      LibQt6.qt6cr_widget_set_window_opacity(@to_unsafe, opacity)
+      opacity
+    end
+
     # Returns `true` when the widget accepts input.
     def enabled? : Bool
       LibQt6.qt6cr_widget_is_enabled(@to_unsafe)
@@ -254,6 +415,27 @@ module Qt6
     def enabled=(value : Bool) : Bool
       LibQt6.qt6cr_widget_set_enabled(@to_unsafe, value)
       value
+    end
+
+    # Returns `true` when this widget belongs to the active window.
+    def active_window? : Bool
+      LibQt6.qt6cr_widget_is_active_window(@to_unsafe)
+    end
+
+    # Returns `true` when repaint updates are enabled.
+    def updates_enabled? : Bool
+      LibQt6.qt6cr_widget_updates_enabled(@to_unsafe)
+    end
+
+    # Enables or disables repaint updates.
+    def updates_enabled=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_updates_enabled(@to_unsafe, value)
+      value
+    end
+
+    # Returns `true` when the mouse cursor is currently over the widget.
+    def under_mouse? : Bool
+      LibQt6.qt6cr_widget_under_mouse(@to_unsafe)
     end
 
     # Returns `true` when the widget currently owns keyboard focus.

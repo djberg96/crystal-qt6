@@ -8525,6 +8525,35 @@ void qt6cr_widget_show(qt6cr_handle_t handle) {
   }
 }
 
+bool qt6cr_widget_is_window(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->isWindow();
+}
+
+void qt6cr_widget_show_minimized(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->showMinimized();
+  }
+}
+
+void qt6cr_widget_show_full_screen(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->showFullScreen();
+  }
+}
+
+void qt6cr_widget_show_normal(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->showNormal();
+  }
+}
+
 void qt6cr_widget_show_maximized(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 
@@ -8533,9 +8562,39 @@ void qt6cr_widget_show_maximized(qt6cr_handle_t handle) {
   }
 }
 
+bool qt6cr_widget_is_minimized(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->isMinimized();
+}
+
+bool qt6cr_widget_is_full_screen(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->isFullScreen();
+}
+
 bool qt6cr_widget_is_maximized(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget != nullptr && widget->isMaximized();
+}
+
+qt6cr_rect_t qt6cr_widget_frame_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget == nullptr) {
+    return {0, 0, 0, 0};
+  }
+
+  return to_rect(widget->frameGeometry());
+}
+
+qt6cr_rect_t qt6cr_widget_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget == nullptr) {
+    return {0, 0, 0, 0};
+  }
+
+  return to_rect(widget->geometry());
 }
 
 qt6cr_rect_t qt6cr_widget_normal_geometry(qt6cr_handle_t handle) {
@@ -8546,6 +8605,41 @@ qt6cr_rect_t qt6cr_widget_normal_geometry(qt6cr_handle_t handle) {
   }
 
   return to_rect(widget->normalGeometry());
+}
+
+qt6cr_point_t qt6cr_widget_pos(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->pos());
+}
+
+int qt6cr_widget_x(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? 0 : widget->x();
+}
+
+int qt6cr_widget_y(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? 0 : widget->y();
+}
+
+qt6cr_size_t qt6cr_widget_frame_size(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_size_t{0, 0} : to_size(widget->frameSize());
+}
+
+qt6cr_rect_t qt6cr_widget_children_rect(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget == nullptr) {
+    return {0, 0, 0, 0};
+  }
+
+  return to_rect(widget->childrenRect());
+}
+
+qt6cr_handle_t qt6cr_widget_children_region(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QRegion(widget->childrenRegion());
 }
 
 void qt6cr_widget_hide(qt6cr_handle_t handle) {
@@ -8572,12 +8666,69 @@ void qt6cr_widget_close(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_widget_lower(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->lower();
+  }
+}
+
+void qt6cr_widget_stack_under(qt6cr_handle_t handle, qt6cr_handle_t sibling_handle) {
+  auto *widget = as_widget(handle);
+  auto *sibling = as_widget(sibling_handle);
+
+  if (widget != nullptr && sibling != nullptr) {
+    widget->stackUnder(sibling);
+  }
+}
+
+void qt6cr_widget_set_geometry(qt6cr_handle_t handle, qt6cr_rect_t rect) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setGeometry(from_rect(rect));
+  }
+}
+
 void qt6cr_widget_resize(qt6cr_handle_t handle, int width, int height) {
   auto *widget = as_widget(handle);
 
   if (widget != nullptr) {
     widget->resize(width, height);
   }
+}
+
+qt6cr_point_t qt6cr_widget_map_to_global(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->mapToGlobal(from_point(point)));
+}
+
+qt6cr_point_t qt6cr_widget_map_from_global(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->mapFromGlobal(from_point(point)));
+}
+
+qt6cr_point_t qt6cr_widget_map_to_parent(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->mapToParent(from_point(point)));
+}
+
+qt6cr_point_t qt6cr_widget_map_from_parent(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->mapFromParent(from_point(point)));
+}
+
+qt6cr_point_t qt6cr_widget_map_to(qt6cr_handle_t handle, qt6cr_handle_t widget_handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  auto *target = as_widget(widget_handle);
+  return widget == nullptr || target == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->mapTo(target, from_point(point)));
+}
+
+qt6cr_point_t qt6cr_widget_map_from(qt6cr_handle_t handle, qt6cr_handle_t widget_handle, qt6cr_point_t point) {
+  auto *widget = as_widget(handle);
+  auto *target = as_widget(widget_handle);
+  return widget == nullptr || target == nullptr ? qt6cr_point_t{0, 0} : to_point(widget->mapFrom(target, from_point(point)));
 }
 
 void qt6cr_widget_set_window_title(qt6cr_handle_t handle, const char *title) {
@@ -8591,6 +8742,32 @@ void qt6cr_widget_set_window_title(qt6cr_handle_t handle, const char *title) {
 char *qt6cr_widget_window_title(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
   return widget == nullptr ? duplicate_string("") : duplicate_string(widget->windowTitle());
+}
+
+char *qt6cr_widget_window_file_path(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? duplicate_string("") : duplicate_string(widget->windowFilePath());
+}
+
+void qt6cr_widget_set_window_file_path(qt6cr_handle_t handle, const char *file_path) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setWindowFilePath(QString::fromUtf8(file_path == nullptr ? "" : file_path));
+  }
+}
+
+double qt6cr_widget_window_opacity(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? 1.0 : widget->windowOpacity();
+}
+
+void qt6cr_widget_set_window_opacity(qt6cr_handle_t handle, double value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setWindowOpacity(value);
+  }
 }
 
 bool qt6cr_widget_is_visible(qt6cr_handle_t handle) {
@@ -8720,6 +8897,19 @@ void qt6cr_widget_set_tool_tip(qt6cr_handle_t handle, const char *tool_tip) {
 
   if (widget != nullptr) {
     widget->setToolTip(QString::fromUtf8(tool_tip == nullptr ? "" : tool_tip));
+  }
+}
+
+int qt6cr_widget_tool_tip_duration(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? -1 : widget->toolTipDuration();
+}
+
+void qt6cr_widget_set_tool_tip_duration(qt6cr_handle_t handle, int msec) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setToolTipDuration(msec);
   }
 }
 
@@ -8890,6 +9080,29 @@ void qt6cr_widget_set_enabled(qt6cr_handle_t handle, bool value) {
   if (widget != nullptr) {
     widget->setEnabled(value);
   }
+}
+
+bool qt6cr_widget_is_active_window(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->isActiveWindow();
+}
+
+bool qt6cr_widget_updates_enabled(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->updatesEnabled();
+}
+
+void qt6cr_widget_set_updates_enabled(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setUpdatesEnabled(value);
+  }
+}
+
+bool qt6cr_widget_under_mouse(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->underMouse();
 }
 
 bool qt6cr_widget_has_focus(qt6cr_handle_t handle) {
