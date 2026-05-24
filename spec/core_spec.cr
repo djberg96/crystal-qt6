@@ -653,9 +653,31 @@ describe Qt6 do
 
     window = Qt6::Widget.new
     window.palette = palette
+    widget_font = Qt6::QFont.new("Courier New", 13, bold: true, italic: true)
+    window.font = widget_font
+    window.background_role = Qt6::ColorRole::Window
+    window.foreground_role = Qt6::ColorRole::WindowText
+    window.auto_fill_background = true
     window_palette = window.palette
     window_palette.color(Qt6::ColorRole::WindowText).should eq(Qt6::Color.new(210, 220, 230, 255))
     window_palette.color(Qt6::ColorRole::Window).should eq(Qt6::Color.new(24, 36, 48, 255))
+    window.font.family.should eq("Courier New")
+    window.font.point_size.should eq(13)
+    window.font.bold?.should be_true
+    window.font.italic?.should be_true
+    window.background_role.should eq(Qt6::ColorRole::Window)
+    window.foreground_role.should eq(Qt6::ColorRole::WindowText)
+    window.auto_fill_background?.should be_true
+
+    metrics = window.font_metrics
+    info = window.font_info
+    metrics.height.should be > 0
+    metrics.horizontal_advance("terrain").should be > 0
+    info.family.should_not be_empty
+    info.point_size.should be > 0
+    info.bold?.should be_a(Bool)
+    info.italic?.should be_a(Bool)
+    info.exact_match?.should be_a(Bool)
 
     window.release
     application.palette = previous_palette

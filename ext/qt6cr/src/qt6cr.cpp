@@ -8901,6 +8901,69 @@ bool qt6cr_widget_restore_geometry(qt6cr_handle_t handle, qt6cr_handle_t geometr
   return widget != nullptr && geometry != nullptr && widget->restoreGeometry(*geometry);
 }
 
+qt6cr_handle_t qt6cr_widget_font(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? new QFont() : new QFont(widget->font());
+}
+
+void qt6cr_widget_set_font(qt6cr_handle_t handle, qt6cr_handle_t font_handle) {
+  auto *widget = as_widget(handle);
+  auto *font = as_qfont(font_handle);
+
+  if (widget != nullptr && font != nullptr) {
+    widget->setFont(*font);
+  }
+}
+
+qt6cr_handle_t qt6cr_widget_font_metrics(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QFontMetrics(widget->fontMetrics());
+}
+
+qt6cr_handle_t qt6cr_widget_font_info(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : new QFontInfo(widget->fontInfo());
+}
+
+int qt6cr_widget_background_role(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(QPalette::NoRole) : static_cast<int>(widget->backgroundRole());
+}
+
+void qt6cr_widget_set_background_role(qt6cr_handle_t handle, int role) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setBackgroundRole(static_cast<QPalette::ColorRole>(role));
+  }
+}
+
+int qt6cr_widget_foreground_role(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? static_cast<int>(QPalette::NoRole) : static_cast<int>(widget->foregroundRole());
+}
+
+void qt6cr_widget_set_foreground_role(qt6cr_handle_t handle, int role) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setForegroundRole(static_cast<QPalette::ColorRole>(role));
+  }
+}
+
+bool qt6cr_widget_auto_fill_background(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget != nullptr && widget->autoFillBackground();
+}
+
+void qt6cr_widget_set_auto_fill_background(qt6cr_handle_t handle, bool value) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setAutoFillBackground(value);
+  }
+}
+
 void qt6cr_widget_update(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 
@@ -17534,6 +17597,55 @@ void qt6cr_qfont_set_italic(qt6cr_handle_t handle, bool value) {
   if (font != nullptr) {
     font->setItalic(value);
   }
+}
+
+void qt6cr_qfont_info_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QFontInfo *>(handle);
+}
+
+char *qt6cr_qfont_info_family(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->family());
+}
+
+char *qt6cr_qfont_info_style_name(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info == nullptr ? duplicate_string("") : duplicate_string(info->styleName());
+}
+
+int qt6cr_qfont_info_point_size(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info == nullptr ? -1 : info->pointSize();
+}
+
+double qt6cr_qfont_info_point_size_f(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info == nullptr ? -1.0 : info->pointSizeF();
+}
+
+bool qt6cr_qfont_info_italic(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info != nullptr && info->italic();
+}
+
+bool qt6cr_qfont_info_bold(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info != nullptr && info->bold();
+}
+
+int qt6cr_qfont_info_weight(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info == nullptr ? static_cast<int>(QFont::Normal) : info->weight();
+}
+
+bool qt6cr_qfont_info_fixed_pitch(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info != nullptr && info->fixedPitch();
+}
+
+bool qt6cr_qfont_info_exact_match(qt6cr_handle_t handle) {
+  auto *info = static_cast<QFontInfo *>(handle);
+  return info != nullptr && info->exactMatch();
 }
 
 qt6cr_handle_t qt6cr_qfont_metrics_create(qt6cr_handle_t font) {

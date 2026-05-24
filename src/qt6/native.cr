@@ -1060,6 +1060,16 @@ module Qt6
     fun qt6cr_widget_child_at = qt6cr_widget_child_at(handle : Handle, point : PointValue) : Handle
     fun qt6cr_widget_save_geometry = qt6cr_widget_save_geometry(handle : Handle) : Handle
     fun qt6cr_widget_restore_geometry = qt6cr_widget_restore_geometry(handle : Handle, geometry : Handle) : Bool
+    fun qt6cr_widget_font = qt6cr_widget_font(handle : Handle) : Handle
+    fun qt6cr_widget_set_font = qt6cr_widget_set_font(handle : Handle, font : Handle)
+    fun qt6cr_widget_font_metrics = qt6cr_widget_font_metrics(handle : Handle) : Handle
+    fun qt6cr_widget_font_info = qt6cr_widget_font_info(handle : Handle) : Handle
+    fun qt6cr_widget_background_role = qt6cr_widget_background_role(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_background_role = qt6cr_widget_set_background_role(handle : Handle, role : LibC::Int)
+    fun qt6cr_widget_foreground_role = qt6cr_widget_foreground_role(handle : Handle) : LibC::Int
+    fun qt6cr_widget_set_foreground_role = qt6cr_widget_set_foreground_role(handle : Handle, role : LibC::Int)
+    fun qt6cr_widget_auto_fill_background = qt6cr_widget_auto_fill_background(handle : Handle) : Bool
+    fun qt6cr_widget_set_auto_fill_background = qt6cr_widget_set_auto_fill_background(handle : Handle, value : Bool)
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
     fun qt6cr_widget_update_rect = qt6cr_widget_update_rect(handle : Handle, rect : RectValue)
     fun qt6cr_widget_update_region = qt6cr_widget_update_region(handle : Handle, region : Handle)
@@ -2291,6 +2301,16 @@ module Qt6
     fun qt6cr_qfont_set_bold = qt6cr_qfont_set_bold(handle : Handle, value : Bool)
     fun qt6cr_qfont_italic = qt6cr_qfont_italic(handle : Handle) : Bool
     fun qt6cr_qfont_set_italic = qt6cr_qfont_set_italic(handle : Handle, value : Bool)
+    fun qt6cr_qfont_info_destroy = qt6cr_qfont_info_destroy(handle : Handle)
+    fun qt6cr_qfont_info_family = qt6cr_qfont_info_family(handle : Handle) : UInt8*
+    fun qt6cr_qfont_info_style_name = qt6cr_qfont_info_style_name(handle : Handle) : UInt8*
+    fun qt6cr_qfont_info_point_size = qt6cr_qfont_info_point_size(handle : Handle) : LibC::Int
+    fun qt6cr_qfont_info_point_size_f = qt6cr_qfont_info_point_size_f(handle : Handle) : Float64
+    fun qt6cr_qfont_info_italic = qt6cr_qfont_info_italic(handle : Handle) : Bool
+    fun qt6cr_qfont_info_bold = qt6cr_qfont_info_bold(handle : Handle) : Bool
+    fun qt6cr_qfont_info_weight = qt6cr_qfont_info_weight(handle : Handle) : LibC::Int
+    fun qt6cr_qfont_info_fixed_pitch = qt6cr_qfont_info_fixed_pitch(handle : Handle) : Bool
+    fun qt6cr_qfont_info_exact_match = qt6cr_qfont_info_exact_match(handle : Handle) : Bool
 
     fun qt6cr_qfont_metrics_create = qt6cr_qfont_metrics_create(font : Handle) : Handle
     fun qt6cr_qfont_metrics_destroy = qt6cr_qfont_metrics_destroy(handle : Handle)

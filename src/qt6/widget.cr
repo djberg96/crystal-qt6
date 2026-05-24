@@ -379,6 +379,78 @@ module Qt6
       value
     end
 
+    # Returns the widget font.
+    def font : QFont
+      QFont.wrap(LibQt6.qt6cr_widget_font(@to_unsafe), true)
+    end
+
+    # Sets the widget font.
+    def font=(value : QFont) : QFont
+      LibQt6.qt6cr_widget_set_font(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Qt-style alias for `font=`.
+    def set_font(value : QFont) : self
+      self.font = value
+      self
+    end
+
+    # Returns metrics for the widget's resolved font.
+    def font_metrics : QFontMetrics
+      QFontMetrics.wrap(LibQt6.qt6cr_widget_font_metrics(@to_unsafe), true)
+    end
+
+    # Returns resolved information for the widget's font.
+    def font_info : QFontInfo
+      QFontInfo.wrap(LibQt6.qt6cr_widget_font_info(@to_unsafe), true)
+    end
+
+    # Returns the palette role used for the widget background.
+    def background_role : ColorRole
+      ColorRole.from_value(LibQt6.qt6cr_widget_background_role(@to_unsafe))
+    end
+
+    # Sets the palette role used for the widget background.
+    def background_role=(value : ColorRole) : ColorRole
+      LibQt6.qt6cr_widget_set_background_role(@to_unsafe, value.value)
+      value
+    end
+
+    # Qt-style alias for `background_role=`.
+    def set_background_role(value : ColorRole) : self
+      self.background_role = value
+      self
+    end
+
+    # Returns the palette role used for foreground content.
+    def foreground_role : ColorRole
+      ColorRole.from_value(LibQt6.qt6cr_widget_foreground_role(@to_unsafe))
+    end
+
+    # Sets the palette role used for foreground content.
+    def foreground_role=(value : ColorRole) : ColorRole
+      LibQt6.qt6cr_widget_set_foreground_role(@to_unsafe, value.value)
+      value
+    end
+
+    # Qt-style alias for `foreground_role=`.
+    def set_foreground_role(value : ColorRole) : self
+      self.foreground_role = value
+      self
+    end
+
+    # Returns `true` when the widget fills its background from the palette.
+    def auto_fill_background? : Bool
+      LibQt6.qt6cr_widget_auto_fill_background(@to_unsafe)
+    end
+
+    # Enables or disables automatic palette background filling.
+    def auto_fill_background=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_auto_fill_background(@to_unsafe, value)
+      value
+    end
+
     # Returns the widget's graphics effect, if one is installed.
     def graphics_effect : GraphicsEffect?
       handle = LibQt6.qt6cr_widget_graphics_effect(@to_unsafe)
