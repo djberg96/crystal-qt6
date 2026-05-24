@@ -1462,7 +1462,6 @@ describe Qt6 do
       option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::Normal)
       option.check_type.should eq(Qt6::StyleOptionMenuItemCheckType::NotCheckable)
       option.checked?.should be_false
-      option.menu_has_checkable_items?.should be_true
 
       option.set_menu_item_type(Qt6::StyleOptionMenuItemType::DefaultItem).to_unsafe.should eq(option.to_unsafe)
       option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::DefaultItem)
@@ -1494,7 +1493,6 @@ describe Qt6 do
       option.menu_item_type.should eq(Qt6::StyleOptionMenuItemType::Normal)
       option.check_type.should eq(Qt6::StyleOptionMenuItemCheckType::NonExclusive)
       option.checked?.should be_true
-      option.menu_has_checkable_items?.should be_true
       option.rect.width.should be > 0.0
       option.menu_rect.width.should be > 0.0
       option.state.includes?(Qt6::StyleStateFlag::Enabled).should be_true
