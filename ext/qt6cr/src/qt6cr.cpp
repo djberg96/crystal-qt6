@@ -196,6 +196,7 @@
 #include <QSizeGrip>
 #include <QTimer>
 #include <QTransform>
+#include <QTranslator>
 #include <QToolBar>
 #include <QToolButton>
 #include <QValidator>
@@ -5804,6 +5805,41 @@ void qt6cr_application_quit(qt6cr_handle_t handle) {
       }
     }, Qt::QueuedConnection);
   }
+}
+
+char *qt6cr_core_application_translate(const char *context, const char *source_text, const char *disambiguation, int n) {
+  const char *actual_disambiguation = disambiguation == nullptr || disambiguation[0] == '\0' ? nullptr : disambiguation;
+  return duplicate_string(QCoreApplication::translate(
+    context == nullptr ? "" : context,
+    source_text == nullptr ? "" : source_text,
+    actual_disambiguation,
+    n
+  ));
+}
+
+bool qt6cr_core_application_install_translator(qt6cr_handle_t translator) {
+  return QCoreApplication::installTranslator(static_cast<QTranslator *>(translator));
+}
+
+bool qt6cr_core_application_remove_translator(qt6cr_handle_t translator) {
+  return QCoreApplication::removeTranslator(static_cast<QTranslator *>(translator));
+}
+
+qt6cr_handle_t qt6cr_translator_create(qt6cr_handle_t parent) {
+  return new QTranslator(static_cast<QObject *>(parent));
+}
+
+bool qt6cr_translator_load(qt6cr_handle_t handle, const char *filename, const char *directory) {
+  auto *translator = static_cast<QTranslator *>(handle);
+
+  if (translator == nullptr) {
+    return false;
+  }
+
+  return translator->load(
+    QString::fromUtf8(filename == nullptr ? "" : filename),
+    QString::fromUtf8(directory == nullptr ? "" : directory)
+  );
 }
 
 qt6cr_handle_t qt6cr_application_clipboard(qt6cr_handle_t handle) {
