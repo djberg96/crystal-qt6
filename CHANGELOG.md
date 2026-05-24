@@ -7,6 +7,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ## [Unreleased]
 
 - Expanded `QWidget` with shared frame/geometry, child-region, coordinate-mapping, tooltip-duration, window-file-path, opacity, repaint-state, and extra window-state helpers for fuller base-widget parity.
+- Expanded `QWidget` with installed-layout access, widget contents-margins and contents-rect helpers, typed parent-widget reassignment, and `update_geometry` support for smoother embedded layout workflows.
 
 ## [0.11.0] - 2026-05-23
 

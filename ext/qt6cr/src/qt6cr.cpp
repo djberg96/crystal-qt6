@@ -8785,6 +8785,65 @@ qt6cr_rectf_t qt6cr_widget_rect(qt6cr_handle_t handle) {
   return widget == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(widget->rect());
 }
 
+qt6cr_rect_t qt6cr_widget_contents_rect(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(widget->contentsRect());
+}
+
+qt6cr_margins_t qt6cr_widget_contents_margins(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget == nullptr) {
+    return qt6cr_margins_t{0, 0, 0, 0};
+  }
+
+  const QMargins margins = widget->contentsMargins();
+  return qt6cr_margins_t{margins.left(), margins.top(), margins.right(), margins.bottom()};
+}
+
+void qt6cr_widget_set_contents_margins(qt6cr_handle_t handle, int left, int top, int right, int bottom) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setContentsMargins(left, top, right, bottom);
+  }
+}
+
+qt6cr_handle_t qt6cr_widget_layout(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : widget->layout();
+}
+
+void qt6cr_widget_set_layout(qt6cr_handle_t handle, qt6cr_handle_t layout_handle) {
+  auto *widget = as_widget(handle);
+  auto *layout = as_layout(layout_handle);
+
+  if (widget != nullptr && layout != nullptr) {
+    widget->setLayout(layout);
+  }
+}
+
+void qt6cr_widget_update_geometry(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->updateGeometry();
+  }
+}
+
+qt6cr_handle_t qt6cr_widget_parent_widget(qt6cr_handle_t handle) {
+  auto *widget = as_widget(handle);
+  return widget == nullptr ? nullptr : widget->parentWidget();
+}
+
+void qt6cr_widget_set_parent_widget(qt6cr_handle_t handle, qt6cr_handle_t parent_handle) {
+  auto *widget = as_widget(handle);
+
+  if (widget != nullptr) {
+    widget->setParent(as_widget(parent_handle));
+  }
+}
+
 void qt6cr_widget_update(qt6cr_handle_t handle) {
   auto *widget = as_widget(handle);
 

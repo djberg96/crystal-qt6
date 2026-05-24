@@ -1042,6 +1042,14 @@ module Qt6
     fun qt6cr_widget_is_visible = qt6cr_widget_is_visible(handle : Handle) : Bool
     fun qt6cr_widget_size = qt6cr_widget_size(handle : Handle) : SizeValue
     fun qt6cr_widget_rect = qt6cr_widget_rect(handle : Handle) : RectFValue
+    fun qt6cr_widget_contents_rect = qt6cr_widget_contents_rect(handle : Handle) : RectValue
+    fun qt6cr_widget_contents_margins = qt6cr_widget_contents_margins(handle : Handle) : MarginsValue
+    fun qt6cr_widget_set_contents_margins = qt6cr_widget_set_contents_margins(handle : Handle, left : LibC::Int, top : LibC::Int, right : LibC::Int, bottom : LibC::Int)
+    fun qt6cr_widget_layout = qt6cr_widget_layout(handle : Handle) : Handle
+    fun qt6cr_widget_set_layout = qt6cr_widget_set_layout(handle : Handle, layout : Handle)
+    fun qt6cr_widget_update_geometry = qt6cr_widget_update_geometry(handle : Handle)
+    fun qt6cr_widget_parent_widget = qt6cr_widget_parent_widget(handle : Handle) : Handle
+    fun qt6cr_widget_set_parent_widget = qt6cr_widget_set_parent_widget(handle : Handle, parent : Handle)
     fun qt6cr_widget_update = qt6cr_widget_update(handle : Handle)
     fun qt6cr_widget_update_rect = qt6cr_widget_update_rect(handle : Handle, rect : RectValue)
     fun qt6cr_widget_update_region = qt6cr_widget_update_region(handle : Handle, region : Handle)

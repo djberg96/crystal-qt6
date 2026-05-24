@@ -182,6 +182,60 @@ module Qt6
       RectF.from_native(LibQt6.qt6cr_widget_rect(@to_unsafe))
     end
 
+    # Returns the rectangle available after applying contents margins.
+    def contents_rect : Rect
+      Rect.from_native(LibQt6.qt6cr_widget_contents_rect(@to_unsafe))
+    end
+
+    # Returns the current widget contents margins.
+    def contents_margins : Margins
+      value = LibQt6.qt6cr_widget_contents_margins(@to_unsafe)
+      Margins.new(value.left, value.top, value.right, value.bottom)
+    end
+
+    # Sets widget contents margins in pixels and returns `self`.
+    def set_contents_margins(left : Int, top : Int, right : Int, bottom : Int) : self
+      LibQt6.qt6cr_widget_set_contents_margins(@to_unsafe, left.to_i32, top.to_i32, right.to_i32, bottom.to_i32)
+      self
+    end
+
+    # Returns the installed layout, if any.
+    def layout : Layout?
+      handle = LibQt6.qt6cr_widget_layout(@to_unsafe)
+      handle.null? ? nil : LayoutHandle.wrap(handle)
+    end
+
+    # Installs a layout on the widget and returns it.
+    def layout=(value : Layout) : Layout
+      LibQt6.qt6cr_widget_set_layout(@to_unsafe, value.to_unsafe)
+      value.adopt_by_parent!
+      value
+    end
+
+    # Qt-style alias for `layout=`.
+    def set_layout(value : Layout) : self
+      self.layout = value
+      self
+    end
+
+    # Notifies parent layouts that this widget's size hints changed.
+    def update_geometry : self
+      LibQt6.qt6cr_widget_update_geometry(@to_unsafe)
+      self
+    end
+
+    # Returns the parent widget, if any.
+    def parent_widget : Widget?
+      handle = LibQt6.qt6cr_widget_parent_widget(@to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Reparents the widget and returns it.
+    def set_parent(parent : Widget?) : Widget?
+      LibQt6.qt6cr_widget_set_parent_widget(@to_unsafe, parent.try(&.to_unsafe) || Pointer(Void).null)
+      parent
+    end
+
     # Maps a local point into global screen coordinates.
     def map_to_global(point : Point) : Point
       Point.from_native(LibQt6.qt6cr_widget_map_to_global(@to_unsafe, point.to_native))

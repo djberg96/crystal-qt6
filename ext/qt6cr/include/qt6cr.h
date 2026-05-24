@@ -1087,6 +1087,14 @@ void qt6cr_widget_init_title_bar_style_option(qt6cr_handle_t handle, qt6cr_handl
 bool qt6cr_widget_is_visible(qt6cr_handle_t handle);
 qt6cr_size_t qt6cr_widget_size(qt6cr_handle_t handle);
 qt6cr_rectf_t qt6cr_widget_rect(qt6cr_handle_t handle);
+qt6cr_rect_t qt6cr_widget_contents_rect(qt6cr_handle_t handle);
+qt6cr_margins_t qt6cr_widget_contents_margins(qt6cr_handle_t handle);
+void qt6cr_widget_set_contents_margins(qt6cr_handle_t handle, int left, int top, int right, int bottom);
+qt6cr_handle_t qt6cr_widget_layout(qt6cr_handle_t handle);
+void qt6cr_widget_set_layout(qt6cr_handle_t handle, qt6cr_handle_t layout);
+void qt6cr_widget_update_geometry(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_widget_parent_widget(qt6cr_handle_t handle);
+void qt6cr_widget_set_parent_widget(qt6cr_handle_t handle, qt6cr_handle_t parent);
 void qt6cr_widget_update(qt6cr_handle_t handle);
 void qt6cr_widget_update_rect(qt6cr_handle_t handle, qt6cr_rect_t rect);
 void qt6cr_widget_update_region(qt6cr_handle_t handle, qt6cr_handle_t region);

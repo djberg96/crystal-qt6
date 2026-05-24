@@ -309,6 +309,37 @@ describe Qt6 do
     window.release
   end
 
+  it "supports widget layout installation, contents margins, and parent helpers" do
+    application = app
+    host = Qt6::Widget.new
+    reparent_host = Qt6::Widget.new
+    child = Qt6::Widget.new(host)
+    layout = Qt6::VBoxLayout.new
+
+    host.set_geometry(0, 0, 240, 160)
+    host.contents_margins.should eq(Qt6::Margins.new(0, 0, 0, 0))
+    host.set_contents_margins(4, 6, 8, 10)
+    host.contents_margins.should eq(Qt6::Margins.new(4, 6, 8, 10))
+    host.contents_rect.should eq(Qt6::Rect.new(4, 6, 228, 144))
+    host.layout.should be_nil
+
+    host.set_layout(layout)
+    host.layout.not_nil!.to_unsafe.should eq(layout.to_unsafe)
+    child.parent_widget.not_nil!.to_unsafe.should eq(host.to_unsafe)
+
+    child.set_parent(reparent_host)
+    child.parent_widget.not_nil!.to_unsafe.should eq(reparent_host.to_unsafe)
+    child.set_parent(host)
+    child.parent_widget.not_nil!.to_unsafe.should eq(host.to_unsafe)
+
+    host.show
+    application.process_events
+    host.update_geometry
+
+    host.release
+    reparent_host.release
+  end
+
   it "supports core widget sizing, help text, and accessibility metadata" do
     application = app
     previous_tool_tip_font = Qt6::ToolTip.font
