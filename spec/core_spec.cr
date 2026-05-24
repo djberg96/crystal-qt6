@@ -499,6 +499,9 @@ describe Qt6 do
       .sub("%1", "3")
       .sub("%2", "12")
       .should eq("3 з 12 треків")
+    Qt6.translate("TranslationSpec", "%n track(s)", n: 1).should eq("1 трек")
+    Qt6.translate("TranslationSpec", "%n track(s)", n: 2).should eq("2 треки")
+    Qt6.translate("TranslationSpec", "%n track(s)", n: 5).should eq("5 треків")
     Qt6.translate("TranslationSpec", "Missing translation").should eq("Missing translation")
     Qt6.remove_translator(translator).should be_true
     Qt6.translate("TranslationSpec", "Hello, world!").should eq("Hello, world!")

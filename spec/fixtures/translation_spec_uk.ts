@@ -11,5 +11,13 @@
       <source>%1 of %2 tracks</source>
       <translation>%1 з %2 треків</translation>
     </message>
+    <message numerus="yes">
+      <source>%n track(s)</source>
+      <translation>
+        <numerusform>%n трек</numerusform>
+        <numerusform>%n треки</numerusform>
+        <numerusform>%n треків</numerusform>
+      </translation>
+    </message>
   </context>
 </TS>
