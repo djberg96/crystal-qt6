@@ -70,6 +70,28 @@ describe Qt6 do
     tree_widget.release
   end
 
+  it "supports expanding a specific tree view index" do
+    application = app
+    tree_view = Qt6::TreeView.new
+    model = Qt6::StandardItemModel.new(tree_view)
+
+    root_item = Qt6::StandardItem.new("Albums")
+    root_item.set_child(0, 0, Qt6::StandardItem.new("Track 01"))
+    model << root_item
+
+    tree_view.model = model
+    root_index = model.index_from_item(root_item)
+    application.process_events
+
+    tree_view.expanded?(root_index).should be_false
+    tree_view.expand(root_index)
+    application.process_events
+    tree_view.expanded?(root_index).should be_true
+
+    root_index.release
+    tree_view.release
+  end
+
   it "supports advanced list widget item hooks and reorder state" do
     application = app
     list_widget = Qt6::ListWidget.new
