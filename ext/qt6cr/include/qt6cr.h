@@ -3330,6 +3330,8 @@ qt6cr_pointf_t qt6cr_drop_event_position(qt6cr_handle_t handle);
 int qt6cr_drop_event_buttons(qt6cr_handle_t handle);
 int qt6cr_drop_event_modifiers(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_drop_event_mime_data(qt6cr_handle_t handle);
+int qt6cr_drop_event_drop_action(qt6cr_handle_t handle);
+void qt6cr_drop_event_set_drop_action(qt6cr_handle_t handle, int action);
 void qt6cr_drop_event_accept(qt6cr_handle_t handle);
 void qt6cr_drop_event_accept_proposed_action(qt6cr_handle_t handle);
 void qt6cr_drop_event_ignore(qt6cr_handle_t handle);

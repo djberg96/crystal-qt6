@@ -158,6 +158,7 @@ describe Qt6 do
     drag_move_positions = [] of Qt6::PointF
     dropped_payloads = [] of String
     acceptance_states = [] of Bool
+    drop_actions = [] of Qt6::DropAction
 
     widget.accept_drops = true
     widget.on_drag_enter do |event|
@@ -171,6 +172,11 @@ describe Qt6 do
     end
     widget.on_drop do |event|
       dropped_payloads << event.mime_data.not_nil!.text
+      drop_actions << event.drop_action
+      event.drop_action = Qt6::DropAction::CopyAction
+      drop_actions << event.drop_action
+      event.set_drop_action(Qt6::DropAction::CopyAction)
+      drop_actions << event.drop_action
       event.accept_proposed_action
       acceptance_states << event.accepted?
     end
@@ -189,6 +195,11 @@ describe Qt6 do
     drag_move_positions.should eq([Qt6::PointF.new(18.0, 24.0)])
     dropped_payloads.should eq(["terrain"])
     acceptance_states.should eq([true, true])
+    drop_actions.should eq([
+      Qt6::DropAction::CopyAction,
+      Qt6::DropAction::CopyAction,
+      Qt6::DropAction::CopyAction,
+    ])
     widget.release
   end
 
