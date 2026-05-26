@@ -15650,6 +15650,21 @@ bool qt6cr_tree_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_hand
   return view != nullptr && model_index != nullptr && view->isPersistentEditorOpen(*model_index);
 }
 
+void qt6cr_tree_view_expand(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->expand(*model_index);
+  }
+}
+
+bool qt6cr_tree_view_is_expanded(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+  return view != nullptr && model_index != nullptr && view->isExpanded(*model_index);
+}
+
 void qt6cr_tree_view_expand_all(qt6cr_handle_t handle) {
   auto *view = as_tree_view(handle);
 

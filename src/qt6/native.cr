@@ -1984,6 +1984,8 @@ module Qt6
     fun qt6cr_tree_view_open_persistent_editor = qt6cr_tree_view_open_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_tree_view_close_persistent_editor = qt6cr_tree_view_close_persistent_editor(handle : Handle, index : Handle)
     fun qt6cr_tree_view_is_persistent_editor_open = qt6cr_tree_view_is_persistent_editor_open(handle : Handle, index : Handle) : Bool
+    fun qt6cr_tree_view_expand = qt6cr_tree_view_expand(handle : Handle, index : Handle)
+    fun qt6cr_tree_view_is_expanded = qt6cr_tree_view_is_expanded(handle : Handle, index : Handle) : Bool
     fun qt6cr_tree_view_expand_all = qt6cr_tree_view_expand_all(handle : Handle)
     fun qt6cr_tree_view_collapse_all = qt6cr_tree_view_collapse_all(handle : Handle)
     fun qt6cr_tree_view_on_current_index_changed = qt6cr_tree_view_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)

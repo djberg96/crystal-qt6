@@ -2030,6 +2030,8 @@ void qt6cr_tree_view_set_drop_indicator_shown(qt6cr_handle_t handle, bool value)
 void qt6cr_tree_view_open_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_tree_view_close_persistent_editor(qt6cr_handle_t handle, qt6cr_handle_t index);
 bool qt6cr_tree_view_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_handle_t index);
+void qt6cr_tree_view_expand(qt6cr_handle_t handle, qt6cr_handle_t index);
+bool qt6cr_tree_view_is_expanded(qt6cr_handle_t handle, qt6cr_handle_t index);
 void qt6cr_tree_view_expand_all(qt6cr_handle_t handle);
 void qt6cr_tree_view_collapse_all(qt6cr_handle_t handle);
 void qt6cr_tree_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);

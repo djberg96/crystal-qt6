@@ -71,6 +71,17 @@ module Qt6
       int_value
     end
 
+    # Expands the branch at the given index.
+    def expand(index : ModelIndex) : self
+      LibQt6.qt6cr_tree_view_expand(to_unsafe, index.to_unsafe)
+      self
+    end
+
+    # Returns whether the branch at the given index is expanded.
+    def expanded?(index : ModelIndex) : Bool
+      LibQt6.qt6cr_tree_view_is_expanded(to_unsafe, index.to_unsafe)
+    end
+
     # Expands all visible branches.
     def expand_all : self
       LibQt6.qt6cr_tree_view_expand_all(to_unsafe)
