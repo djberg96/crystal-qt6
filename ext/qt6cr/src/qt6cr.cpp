@@ -24143,6 +24143,19 @@ qt6cr_handle_t qt6cr_drop_event_mime_data(qt6cr_handle_t handle) {
   return event == nullptr ? nullptr : const_cast<QMimeData *>(event->mimeData());
 }
 
+int qt6cr_drop_event_drop_action(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->dropAction());
+}
+
+void qt6cr_drop_event_set_drop_action(qt6cr_handle_t handle, int action) {
+  auto *event = as_drop_event(handle);
+
+  if (event != nullptr) {
+    event->setDropAction(static_cast<Qt::DropAction>(action));
+  }
+}
+
 void qt6cr_drop_event_accept(qt6cr_handle_t handle) {
   auto *event = as_drop_event(handle);
 

@@ -3285,6 +3285,8 @@ module Qt6
     fun qt6cr_drop_event_buttons = qt6cr_drop_event_buttons(handle : Handle) : LibC::Int
     fun qt6cr_drop_event_modifiers = qt6cr_drop_event_modifiers(handle : Handle) : LibC::Int
     fun qt6cr_drop_event_mime_data = qt6cr_drop_event_mime_data(handle : Handle) : Handle
+    fun qt6cr_drop_event_drop_action = qt6cr_drop_event_drop_action(handle : Handle) : LibC::Int
+    fun qt6cr_drop_event_set_drop_action = qt6cr_drop_event_set_drop_action(handle : Handle, action : LibC::Int)
     fun qt6cr_drop_event_accept = qt6cr_drop_event_accept(handle : Handle)
     fun qt6cr_drop_event_accept_proposed_action = qt6cr_drop_event_accept_proposed_action(handle : Handle)
     fun qt6cr_drop_event_ignore = qt6cr_drop_event_ignore(handle : Handle)

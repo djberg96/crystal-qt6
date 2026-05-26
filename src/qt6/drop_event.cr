@@ -29,6 +29,23 @@ module Qt6
       handle.null? ? nil : MimeData.wrap(handle)
     end
 
+    # Returns the action that will be performed if this event is accepted.
+    def drop_action : DropAction
+      DropAction.from_value(LibQt6.qt6cr_drop_event_drop_action(to_unsafe))
+    end
+
+    # Sets the action to perform before accepting the event.
+    def drop_action=(value : DropAction) : DropAction
+      LibQt6.qt6cr_drop_event_set_drop_action(to_unsafe, value.value)
+      value
+    end
+
+    # Sets the action to perform before accepting the event.
+    def set_drop_action(value : DropAction) : self
+      self.drop_action = value
+      self
+    end
+
     # Marks the event as accepted.
     def accept : self
       LibQt6.qt6cr_drop_event_accept(to_unsafe)
