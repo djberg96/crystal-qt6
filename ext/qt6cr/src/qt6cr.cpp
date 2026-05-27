@@ -23353,6 +23353,11 @@ qt6cr_handle_t qt6cr_system_tray_icon_create(qt6cr_handle_t parent) {
   return new QSystemTrayIcon(as_object(parent));
 }
 
+qt6cr_handle_t qt6cr_system_tray_icon_create_with_icon(qt6cr_handle_t parent, qt6cr_handle_t icon) {
+  auto *tray_icon = as_qicon(icon);
+  return new QSystemTrayIcon(tray_icon == nullptr ? QIcon() : *tray_icon, as_object(parent));
+}
+
 bool qt6cr_system_tray_icon_is_system_tray_available(void) {
   return QSystemTrayIcon::isSystemTrayAvailable();
 }
@@ -23386,6 +23391,11 @@ void qt6cr_system_tray_icon_set_tool_tip(qt6cr_handle_t handle, const char *tool
   if (tray != nullptr) {
     tray->setToolTip(QString::fromUtf8(tool_tip == nullptr ? "" : tool_tip));
   }
+}
+
+qt6cr_rect_t qt6cr_system_tray_icon_geometry(qt6cr_handle_t handle) {
+  auto *tray = as_system_tray_icon(handle);
+  return tray == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(tray->geometry());
 }
 
 bool qt6cr_system_tray_icon_is_visible(qt6cr_handle_t handle) {
@@ -23440,6 +23450,20 @@ void qt6cr_system_tray_icon_show_message(qt6cr_handle_t handle, const char *titl
       QString::fromUtf8(title == nullptr ? "" : title),
       QString::fromUtf8(message == nullptr ? "" : message),
       static_cast<QSystemTrayIcon::MessageIcon>(icon),
+      timeout_ms
+    );
+  }
+}
+
+void qt6cr_system_tray_icon_show_message_with_icon(qt6cr_handle_t handle, const char *title, const char *message, qt6cr_handle_t icon, int timeout_ms) {
+  auto *tray = as_system_tray_icon(handle);
+  auto *tray_icon = as_qicon(icon);
+
+  if (tray != nullptr) {
+    tray->showMessage(
+      QString::fromUtf8(title == nullptr ? "" : title),
+      QString::fromUtf8(message == nullptr ? "" : message),
+      tray_icon == nullptr ? QIcon() : *tray_icon,
       timeout_ms
     );
   }

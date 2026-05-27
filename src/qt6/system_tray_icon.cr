@@ -26,6 +26,11 @@ module Qt6
       register_callbacks
     end
 
+    def initialize(icon : QIcon, parent : QObject? = nil)
+      super(LibQt6.qt6cr_system_tray_icon_create_with_icon(parent.try(&.to_unsafe) || Pointer(Void).null, icon.to_unsafe), parent.nil?)
+      register_callbacks
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
       register_callbacks
@@ -67,6 +72,10 @@ module Qt6
       value
     end
 
+    def geometry : Rect
+      Rect.from_native(LibQt6.qt6cr_system_tray_icon_geometry(to_unsafe))
+    end
+
     def show : self
       LibQt6.qt6cr_system_tray_icon_show(to_unsafe)
       self
@@ -84,6 +93,7 @@ module Qt6
 
     def context_menu=(menu : Menu?) : Menu?
       LibQt6.qt6cr_system_tray_icon_set_context_menu(to_unsafe, menu.try(&.to_unsafe) || Pointer(Void).null)
+      menu.try(&.adopt_by_parent!)
       menu
     end
 
@@ -92,8 +102,33 @@ module Qt6
       self
     end
 
+    def show_message(title : String, message : String, icon : QIcon, timeout : Int = 10000) : self
+      LibQt6.qt6cr_system_tray_icon_show_message_with_icon(to_unsafe, title.to_unsafe, message.to_unsafe, icon.to_unsafe, timeout.to_i32)
+      self
+    end
+
     def supports_messages? : Bool
       self.class.supports_messages?
+    end
+
+    def set_icon(value : QIcon) : self
+      self.icon = value
+      self
+    end
+
+    def set_tool_tip(value : String) : self
+      self.tool_tip = value
+      self
+    end
+
+    def set_visible(value : Bool) : self
+      self.visible = value
+      self
+    end
+
+    def set_context_menu(value : Menu?) : self
+      self.context_menu = value
+      self
     end
 
     def on_activated(&block : SystemTrayActivationReason ->) : self

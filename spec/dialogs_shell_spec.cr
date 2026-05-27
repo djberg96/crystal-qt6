@@ -1241,9 +1241,13 @@ describe Qt6 do
 
     menu.add_action("Open")
     tray.icon.null?.should be_true
-    tray.icon = Qt6::QIcon.from_file(icon_path)
-    tray.tool_tip = "Tray test"
-    tray.context_menu = menu
+    tray_icon = Qt6::QIcon.from_file(icon_path)
+    second_tray = Qt6::SystemTrayIcon.new(tray_icon, window)
+    second_tray.icon.null?.should be_false
+    second_tray.geometry.should be_a(Qt6::Rect)
+    tray.set_icon(tray_icon)
+    tray.set_tool_tip("Tray test")
+    tray.set_context_menu(menu)
     tray.on_activated do |reason|
       activated << reason
     end
@@ -1262,16 +1266,18 @@ describe Qt6 do
     if Qt6::SystemTrayIcon.system_tray_available?
       tray.show
       tray.visible?.should be_true
-      tray.visible = false
+      tray.set_visible(false)
       tray.visible?.should be_false
 
       if tray.supports_messages?
         tray.show_message("Spec", "Tray message", icon: Qt6::SystemTrayMessageIcon::Information, timeout: 1)
+        tray.show_message("Spec", "Tray message", tray_icon, 1)
       end
     else
       tray.visible?.should be_false
     end
 
+    second_tray.release
     window.release
   end
 

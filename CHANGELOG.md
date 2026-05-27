@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QWidget` with shared font access, resolved `font_metrics` / `font_info`, background and foreground palette-role helpers, and `auto_fill_background` control for fuller visual-state parity.
 - Expanded `QWidget` with full cursor access and clearing, tablet-tracking, context-menu policy, and input-method-hint helpers for fuller shared input and interaction control.
 - Added `QSwipeGesture` bindings with typed swipe-direction and swipe-angle helpers, plus automatic gesture-event dispatch to the concrete swipe wrapper.
+- Expanded `QSystemTrayIcon` with icon-based construction, tray geometry access, custom-icon message display, Qt-style setter aliases, and correct native ownership handoff for assigned context menus.
 
 ## [0.11.0] - 2026-05-23
 
