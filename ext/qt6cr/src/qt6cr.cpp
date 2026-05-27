@@ -30493,9 +30493,21 @@ int qt6cr_tab_bar_add_tab(qt6cr_handle_t handle, const char *label) {
   return tab_bar == nullptr ? -1 : tab_bar->addTab(QString::fromUtf8(label == nullptr ? "" : label));
 }
 
+int qt6cr_tab_bar_add_tab_with_icon(qt6cr_handle_t handle, qt6cr_handle_t icon, const char *label) {
+  auto *tab_bar = as_tab_bar(handle);
+  auto *tab_icon = as_qicon(icon);
+  return tab_bar == nullptr ? -1 : tab_bar->addTab(tab_icon == nullptr ? QIcon() : *tab_icon, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
 int qt6cr_tab_bar_insert_tab(qt6cr_handle_t handle, int index, const char *label) {
   auto *tab_bar = as_tab_bar(handle);
   return tab_bar == nullptr ? -1 : tab_bar->insertTab(index, QString::fromUtf8(label == nullptr ? "" : label));
+}
+
+int qt6cr_tab_bar_insert_tab_with_icon(qt6cr_handle_t handle, int index, qt6cr_handle_t icon, const char *label) {
+  auto *tab_bar = as_tab_bar(handle);
+  auto *tab_icon = as_qicon(icon);
+  return tab_bar == nullptr ? -1 : tab_bar->insertTab(index, tab_icon == nullptr ? QIcon() : *tab_icon, QString::fromUtf8(label == nullptr ? "" : label));
 }
 
 void qt6cr_tab_bar_remove_tab(qt6cr_handle_t handle, int index) {
@@ -30503,6 +30515,27 @@ void qt6cr_tab_bar_remove_tab(qt6cr_handle_t handle, int index) {
 
   if (tab_bar != nullptr && index >= 0) {
     tab_bar->removeTab(index);
+  }
+}
+
+void qt6cr_tab_bar_move_tab(qt6cr_handle_t handle, int from, int to) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->moveTab(from, to);
+  }
+}
+
+int qt6cr_tab_bar_shape(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? static_cast<int>(QTabBar::RoundedNorth) : static_cast<int>(tab_bar->shape());
+}
+
+void qt6cr_tab_bar_set_shape(qt6cr_handle_t handle, int value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setShape(static_cast<QTabBar::Shape>(value));
   }
 }
 
@@ -30550,6 +30583,105 @@ void qt6cr_tab_bar_set_tab_enabled(qt6cr_handle_t handle, int index, bool value)
   }
 }
 
+bool qt6cr_tab_bar_tab_visible(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->isTabVisible(index);
+}
+
+void qt6cr_tab_bar_set_tab_visible(qt6cr_handle_t handle, int index, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->setTabVisible(index, value);
+  }
+}
+
+qt6cr_color_t qt6cr_tab_bar_tab_text_color(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(tab_bar->tabTextColor(index));
+}
+
+void qt6cr_tab_bar_set_tab_text_color(qt6cr_handle_t handle, int index, qt6cr_color_t color) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->setTabTextColor(index, from_color(color));
+  }
+}
+
+qt6cr_handle_t qt6cr_tab_bar_tab_icon(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? nullptr : new QIcon(tab_bar->tabIcon(index));
+}
+
+void qt6cr_tab_bar_set_tab_icon(qt6cr_handle_t handle, int index, qt6cr_handle_t icon) {
+  auto *tab_bar = as_tab_bar(handle);
+  auto *tab_icon = as_qicon(icon);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->setTabIcon(index, tab_icon == nullptr ? QIcon() : *tab_icon);
+  }
+}
+
+int qt6cr_tab_bar_elide_mode(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? static_cast<int>(Qt::ElideNone) : static_cast<int>(tab_bar->elideMode());
+}
+
+void qt6cr_tab_bar_set_elide_mode(qt6cr_handle_t handle, int value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setElideMode(static_cast<Qt::TextElideMode>(value));
+  }
+}
+
+char *qt6cr_tab_bar_tab_tool_tip(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? duplicate_string("") : duplicate_string(tab_bar->tabToolTip(index));
+}
+
+void qt6cr_tab_bar_set_tab_tool_tip(qt6cr_handle_t handle, int index, const char *value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->setTabToolTip(index, QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_tab_bar_tab_whats_this(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? duplicate_string("") : duplicate_string(tab_bar->tabWhatsThis(index));
+}
+
+void qt6cr_tab_bar_set_tab_whats_this(qt6cr_handle_t handle, int index, const char *value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr && index >= 0) {
+    tab_bar->setTabWhatsThis(index, QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+qt6cr_rect_t qt6cr_tab_bar_tab_rect(qt6cr_handle_t handle, int index) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(tab_bar->tabRect(index));
+}
+
+int qt6cr_tab_bar_tab_at(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? -1 : tab_bar->tabAt(from_point(point));
+}
+
+qt6cr_size_t qt6cr_tab_bar_size_hint(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(tab_bar->sizeHint());
+}
+
+qt6cr_size_t qt6cr_tab_bar_minimum_size_hint(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(tab_bar->minimumSizeHint());
+}
+
 bool qt6cr_tab_bar_draw_base(qt6cr_handle_t handle) {
   auto *tab_bar = as_tab_bar(handle);
   return tab_bar == nullptr || tab_bar->drawBase();
@@ -30560,6 +30692,32 @@ void qt6cr_tab_bar_set_draw_base(qt6cr_handle_t handle, bool value) {
 
   if (tab_bar != nullptr) {
     tab_bar->setDrawBase(value);
+  }
+}
+
+qt6cr_size_t qt6cr_tab_bar_icon_size(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? qt6cr_size_t{0, 0} : to_size(tab_bar->iconSize());
+}
+
+void qt6cr_tab_bar_set_icon_size(qt6cr_handle_t handle, qt6cr_size_t value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setIconSize(QSize(value.width, value.height));
+  }
+}
+
+bool qt6cr_tab_bar_uses_scroll_buttons(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->usesScrollButtons();
+}
+
+void qt6cr_tab_bar_set_uses_scroll_buttons(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setUsesScrollButtons(value);
   }
 }
 
@@ -30586,6 +30744,71 @@ void qt6cr_tab_bar_set_tabs_closable(qt6cr_handle_t handle, bool value) {
 
   if (tab_bar != nullptr) {
     tab_bar->setTabsClosable(value);
+  }
+}
+
+int qt6cr_tab_bar_selection_behavior_on_remove(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar == nullptr ? static_cast<int>(QTabBar::SelectRightTab) : static_cast<int>(tab_bar->selectionBehaviorOnRemove());
+}
+
+void qt6cr_tab_bar_set_selection_behavior_on_remove(qt6cr_handle_t handle, int value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setSelectionBehaviorOnRemove(static_cast<QTabBar::SelectionBehavior>(value));
+  }
+}
+
+bool qt6cr_tab_bar_expanding(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->expanding();
+}
+
+void qt6cr_tab_bar_set_expanding(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setExpanding(value);
+  }
+}
+
+bool qt6cr_tab_bar_document_mode(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->documentMode();
+}
+
+void qt6cr_tab_bar_set_document_mode(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setDocumentMode(value);
+  }
+}
+
+bool qt6cr_tab_bar_auto_hide(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->autoHide();
+}
+
+void qt6cr_tab_bar_set_auto_hide(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setAutoHide(value);
+  }
+}
+
+bool qt6cr_tab_bar_change_current_on_drag(qt6cr_handle_t handle) {
+  auto *tab_bar = as_tab_bar(handle);
+  return tab_bar != nullptr && tab_bar->changeCurrentOnDrag();
+}
+
+void qt6cr_tab_bar_set_change_current_on_drag(qt6cr_handle_t handle, bool value) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar != nullptr) {
+    tab_bar->setChangeCurrentOnDrag(value);
   }
 }
 
@@ -30620,6 +30843,54 @@ void qt6cr_tab_bar_on_current_index_changed(qt6cr_handle_t handle, qt6cr_int_cal
   }
 
   QObject::connect(tab_bar, &QTabBar::currentChanged, tab_bar, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_tab_bar_on_tab_close_requested(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tab_bar, &QTabBar::tabCloseRequested, tab_bar, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_tab_bar_on_tab_moved(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tab_bar, &QTabBar::tabMoved, tab_bar, [callback, userdata](int from, int to) {
+    callback(userdata, from, to);
+  });
+}
+
+void qt6cr_tab_bar_on_tab_bar_clicked(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tab_bar, &QTabBar::tabBarClicked, tab_bar, [callback, userdata](int value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_tab_bar_on_tab_bar_double_clicked(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tab_bar = as_tab_bar(handle);
+
+  if (tab_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tab_bar, &QTabBar::tabBarDoubleClicked, tab_bar, [callback, userdata](int value) {
     callback(userdata, value);
   });
 }

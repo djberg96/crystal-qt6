@@ -42,6 +42,7 @@ describe Qt6 do
     calendar_pages = [] of Tuple(Int32, Int32)
     lcd_overflows = 0
     tab_indices = [] of Int32
+    tab_moves = [] of Tuple(Int32, Int32)
     stacked_indices = [] of Int32
     stacked_added = [] of Int32
     stacked_removed = [] of Int32
@@ -102,6 +103,9 @@ describe Qt6 do
     end
     tab_bar.on_current_index_changed do |value|
       tab_indices << value
+    end
+    tab_bar.on_tab_moved do |from, to|
+      tab_moves << {from, to}
     end
     stacked_layout.on_current_index_changed do |value|
       stacked_indices << value
@@ -204,14 +208,35 @@ describe Qt6 do
     command_link.flat = true
     titled_command_link.set_description("Upload the current map package")
 
+    tab_icon_image = Qt6::QImage.new(12, 12)
+    tab_icon_image.fill(Qt6::Color.new(180, 70, 40, 255))
+    tab_icon_path = File.join(Dir.tempdir, "crystal-qt6-tab-icon-#{Process.pid}.png")
+    tab_icon_image.save(tab_icon_path).should be_true
+    tab_icon = Qt6::QIcon.from_file(tab_icon_path)
     tab_bar.add_tab("Layers")
-    tab_bar.add_tab("Export")
+    tab_bar.add_tab(tab_icon, "Export")
     tab_bar.insert_tab(1, "Search").should eq(1)
+    tab_bar.insert_tab(3, tab_icon, "Details").should eq(3)
     tab_bar.set_tab_text(2, "Preview")
     tab_bar.set_tab_enabled(1, false).should be_false
+    tab_bar.set_tab_visible(3, false).should be_false
+    tab_bar.set_tab_text_color(1, Qt6::Color.new(25, 80, 150, 255)).should eq(Qt6::Color.new(25, 80, 150, 255))
+    tab_bar.set_tab_icon(0, tab_icon).null?.should be_false
+    tab_bar.set_tab_tool_tip(1, "Find a layer").should eq("Find a layer")
+    tab_bar.set_tab_whats_this(2, "Preview output panel").should eq("Preview output panel")
+    tab_bar.set_shape(Qt6::TabBarShape::TriangularSouth)
+    tab_bar.set_elide_mode(Qt6::TextElideMode::ElideMiddle)
     tab_bar.draw_base = false
+    tab_bar.set_icon_size(Qt6::Size.new(18, 18))
+    tab_bar.set_uses_scroll_buttons(false)
     tab_bar.movable = true
     tab_bar.tabs_closable = true
+    tab_bar.set_selection_behavior_on_remove(Qt6::TabBarSelectionBehavior::SelectPreviousTab)
+    tab_bar.set_expanding(false)
+    tab_bar.set_document_mode(true)
+    tab_bar.set_auto_hide(true)
+    tab_bar.set_change_current_on_drag(true)
+    tab_bar.move_tab(3, 1)
     tab_bar.remove_tab(0)
     tab_bar.current_index = 1
 
@@ -335,15 +360,35 @@ describe Qt6 do
     titled_command_link.text.should eq("Publish")
     titled_command_link.description.should eq("Upload the current map package")
 
-    tab_bar.count.should eq(2)
+    tab_bar.count.should eq(3)
     tab_bar.current_index.should eq(1)
-    tab_bar.tab_text(1).should eq("Preview")
-    tab_bar.tab_text(0).should eq("Search")
-    tab_bar.tab_enabled?(0).should be_false
+    tab_bar.tab_text(0).should eq("Details")
+    tab_bar.tab_text(1).should eq("Search")
+    tab_bar.tab_text(2).should eq("Preview")
+    tab_bar.tab_enabled?(1).should be_false
+    tab_bar.tab_visible?(0).should be_false
+    tab_bar.tab_text_color(1).should eq(Qt6::Color.new(25, 80, 150, 255))
+    tab_bar.tab_icon(2).null?.should be_false
+    tab_bar.tab_tool_tip(1).should eq("Find a layer")
+    tab_bar.tab_whats_this(2).should eq("Preview output panel")
+    tab_bar.shape.should eq(Qt6::TabBarShape::TriangularSouth)
+    tab_bar.elide_mode.should eq(Qt6::TextElideMode::ElideMiddle)
+    tab_bar.tab_rect(1).width.should be > 0
+    tab_bar.tab_at(Qt6::Point.new(tab_bar.tab_rect(1).x + 2, tab_bar.tab_rect(1).y + 2)).should eq(1)
+    tab_bar.size_hint.width.should be > 0
+    tab_bar.minimum_size_hint.height.should be > 0
     tab_bar.draw_base?.should be_false
+    tab_bar.icon_size.should eq(Qt6::Size.new(18, 18))
+    tab_bar.uses_scroll_buttons?.should be_false
     tab_bar.movable?.should be_true
     tab_bar.tabs_closable?.should be_true
+    tab_bar.selection_behavior_on_remove.should eq(Qt6::TabBarSelectionBehavior::SelectPreviousTab)
+    tab_bar.expanding?.should be_false
+    tab_bar.document_mode?.should be_true
+    tab_bar.auto_hide?.should be_true
+    tab_bar.change_current_on_drag?.should be_true
     tab_indices.last.should eq(1)
+    tab_moves.should contain({3, 1})
 
     stacked_layout.count.should eq(2)
     stacked_layout.current_index.should eq(1)
