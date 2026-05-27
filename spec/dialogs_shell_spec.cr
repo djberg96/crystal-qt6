@@ -796,10 +796,13 @@ describe Qt6 do
     splitter = Qt6::Splitter.new(Qt6::Orientation::Horizontal)
     scroll_area = Qt6::ScrollArea.new
     tab_widget = Qt6::TabWidget.new
+    top_left_badge = Qt6::Label.new("L")
+    top_right_badge = Qt6::Label.new("R")
     outline_page = Qt6::Label.new("Outline")
     replacement_page = Qt6::Label.new("Replacement")
     inspector = Qt6::Widget.new
     layers_page = Qt6::Label.new("Layers")
+    hidden_page = Qt6::Label.new("Hidden")
     export_page = Qt6::Label.new("Export")
     preview_page = Qt6::Label.new("Preview")
     options_group = Qt6::GroupBox.new("Options")
@@ -867,9 +870,27 @@ describe Qt6 do
     scroll_area.widget_resizable = true
     scroll_area.alignment = Qt6::AlignmentFlag::Center
     scroll_area.widget = inspector
+    tab_icon = Qt6::QIcon.new(radio_icon_path)
     tab_widget.add_tab(layers_page, "Layers")
-    tab_widget.add_tab(export_page, "Export")
-    tab_widget.add_tab(preview_page, "Preview")
+    tab_widget.add_tab(export_page, tab_icon, "Export")
+    tab_widget.insert_tab(1, hidden_page, "Hidden")
+    tab_widget.insert_tab(3, preview_page, tab_icon, "Preview")
+    tab_widget.set_tab_icon(0, tab_icon)
+    tab_widget.set_tab_enabled(1, false)
+    tab_widget.set_tab_visible(1, false)
+    tab_widget.set_tab_tool_tip(2, "Export the current map")
+    tab_widget.set_tab_whats_this(3, "Preview the current output")
+    tab_widget.set_tab_position(Qt6::TabPosition::West)
+    tab_widget.set_tabs_closable(true)
+    tab_widget.set_movable(true)
+    tab_widget.set_tab_shape(Qt6::TabShape::Triangular)
+    tab_widget.set_corner_widget(top_left_badge, Qt6::Corner::TopLeftCorner)
+    tab_widget.set_corner_widget(top_right_badge)
+    tab_widget.set_elide_mode(Qt6::TextElideMode::ElideMiddle)
+    tab_widget.set_icon_size(Qt6::Size.new(14, 14))
+    tab_widget.set_uses_scroll_buttons(false)
+    tab_widget.set_document_mode(true)
+    tab_widget.set_tab_bar_auto_hide(true)
     splitter << scroll_area
     splitter.insert(1, outline_page)
     splitter << tab_widget
@@ -914,9 +935,9 @@ describe Qt6 do
     splitter.refresh
     tab_widget.widget(0).not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
     tab_widget.current_widget.not_nil!.to_unsafe.should eq(layers_page.to_unsafe)
-    tab_widget.index_of(export_page).should eq(1)
-    tab_widget.tab_text(2).should eq("Preview")
-    tab_widget.set_tab_text(2, "Inspect")
+    tab_widget.index_of(export_page).should eq(2)
+    tab_widget.tab_text(3).should eq("Preview")
+    tab_widget.set_tab_text(3, "Inspect")
     tab_widget.current_widget = preview_page
     tab_widget.remove_tab(1)
     splitter.set_orientation(Qt6::Orientation::Vertical)
@@ -950,12 +971,31 @@ describe Qt6 do
     splitter_handle.size_hint.width.should be >= 0
     splitter_moves.last.should eq({123, 1})
     saved_splitter_state.empty?.should be_false
-    tab_widget.count.should eq(2)
-    tab_widget.current_index.should eq(1)
+    tab_widget.count.should eq(3)
+    tab_widget.current_index.should eq(2)
     tab_widget.current_widget.not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
-    tab_widget.widget(1).not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
-    tab_widget.index_of(export_page).should eq(-1)
-    tab_widget.tab_text(1).should eq("Inspect")
+    tab_widget.widget(2).not_nil!.to_unsafe.should eq(preview_page.to_unsafe)
+    tab_widget.index_of(export_page).should eq(1)
+    tab_widget.tab_text(2).should eq("Inspect")
+    tab_widget.tab_icon(0).null?.should be_false
+    tab_widget.tab_enabled?(1).should be_true
+    tab_widget.tab_visible?(1).should be_true
+    tab_widget.tab_tool_tip(1).should eq("Export the current map")
+    tab_widget.tab_whats_this(2).should eq("Preview the current output")
+    tab_widget.tab_position.should eq(Qt6::TabPosition::West)
+    tab_widget.tabs_closable?.should be_true
+    tab_widget.movable?.should be_true
+    tab_widget.tab_shape.should eq(Qt6::TabShape::Triangular)
+    tab_widget.size_hint.width.should be > 0
+    tab_widget.minimum_size_hint.height.should be >= 0
+    tab_widget.corner_widget(Qt6::Corner::TopLeftCorner).not_nil!.to_unsafe.should eq(top_left_badge.to_unsafe)
+    tab_widget.corner_widget.not_nil!.to_unsafe.should eq(top_right_badge.to_unsafe)
+    tab_widget.elide_mode.should eq(Qt6::TextElideMode::ElideMiddle)
+    tab_widget.icon_size.should eq(Qt6::Size.new(14, 14))
+    tab_widget.uses_scroll_buttons?.should be_false
+    tab_widget.document_mode?.should be_true
+    tab_widget.tab_bar_auto_hide?.should be_true
+    tab_widget.tab_bar.to_unsafe.should_not eq(Pointer(Void).null)
     options_group.title.should eq("Inspector Options")
     options_group.alignment.should eq(Qt6::AlignmentFlag::HCenter)
     options_group.checkable?.should be_true
@@ -997,7 +1037,7 @@ describe Qt6 do
     spin_values.last.should eq(5)
     double_values.last.should eq(1.75)
     group_states.last.should be_true
-    tab_indices.last.should eq(1)
+    tab_indices.last.should eq(2)
     replaced_outline.to_unsafe.should eq(outline_page.to_unsafe)
     tab_widget.clear
     tab_widget.count.should eq(0)
