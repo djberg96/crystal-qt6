@@ -56,6 +56,7 @@
 #include <QGestureRecognizer>
 #include <QPanGesture>
 #include <QPinchGesture>
+#include <QSwipeGesture>
 #include <QFont>
 #include <QFontMetrics>
 #include <QFocusEvent>
@@ -2444,6 +2445,10 @@ QPinchGesture *as_pinch_gesture(qt6cr_handle_t handle) {
   return static_cast<QPinchGesture *>(handle);
 }
 
+QSwipeGesture *as_swipe_gesture(qt6cr_handle_t handle) {
+  return static_cast<QSwipeGesture *>(handle);
+}
+
 CrystalGestureRecognizer *as_gesture_recognizer(qt6cr_handle_t handle) {
   return static_cast<CrystalGestureRecognizer *>(handle);
 }
@@ -4225,6 +4230,33 @@ void qt6cr_pan_gesture_set_acceleration(qt6cr_handle_t handle, double value) {
 
   if (gesture != nullptr) {
     gesture->setAcceleration(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_swipe_gesture_create(qt6cr_handle_t parent) {
+  return new QSwipeGesture(as_object(parent));
+}
+
+int qt6cr_swipe_gesture_horizontal_direction(qt6cr_handle_t handle) {
+  auto *gesture = as_swipe_gesture(handle);
+  return gesture == nullptr ? static_cast<int>(QSwipeGesture::NoDirection) : static_cast<int>(gesture->horizontalDirection());
+}
+
+int qt6cr_swipe_gesture_vertical_direction(qt6cr_handle_t handle) {
+  auto *gesture = as_swipe_gesture(handle);
+  return gesture == nullptr ? static_cast<int>(QSwipeGesture::NoDirection) : static_cast<int>(gesture->verticalDirection());
+}
+
+double qt6cr_swipe_gesture_swipe_angle(qt6cr_handle_t handle) {
+  auto *gesture = as_swipe_gesture(handle);
+  return gesture == nullptr ? 0.0 : gesture->swipeAngle();
+}
+
+void qt6cr_swipe_gesture_set_swipe_angle(qt6cr_handle_t handle, double value) {
+  auto *gesture = as_swipe_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setSwipeAngle(value);
   }
 }
 

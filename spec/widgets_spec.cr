@@ -772,16 +772,17 @@ describe Qt6 do
     gesture.release
   end
 
-  it "supports pan and pinch gesture state helpers" do
+  it "supports pan, pinch, and swipe gesture state helpers" do
     app
     pan = Qt6::PanGesture.new
     pinch = Qt6::PinchGesture.new
+    swipe = Qt6::SwipeGesture.new
     pan_offset = Qt6::PointF.new(18.0, 24.5)
     pan_last_offset = Qt6::PointF.new(5.0, 11.0)
     start_center = Qt6::PointF.new(10.0, 12.0)
     last_center = Qt6::PointF.new(14.5, 17.0)
     center = Qt6::PointF.new(19.0, 21.5)
-    event = Qt6::GestureEvent.new([pan, pinch])
+    event = Qt6::GestureEvent.new([pan, pinch, swipe])
 
     pan.set_offset(pan_offset)
     pan.set_last_offset(pan_last_offset)
@@ -798,6 +799,7 @@ describe Qt6 do
     pinch.set_total_rotation_angle(45.0)
     pinch.set_last_rotation_angle(12.5)
     pinch.set_rotation_angle(30.0)
+    swipe.set_swipe_angle(90.0)
 
     pan.gesture_type.should eq(Qt6::GestureType::PanGesture)
     pan.offset.should eq(pan_offset)
@@ -818,11 +820,18 @@ describe Qt6 do
     pinch.last_rotation_angle.should eq(12.5)
     pinch.rotation_angle.should eq(30.0)
 
+    swipe.gesture_type.should eq(Qt6::GestureType::SwipeGesture)
+    swipe.horizontal_direction.should eq(Qt6::SwipeGestureDirection::NoDirection)
+    swipe.vertical_direction.should eq(Qt6::SwipeGestureDirection::Up)
+    swipe.swipe_angle.should eq(90.0)
+
     event.gesture(Qt6::GestureType::PanGesture).should be_a(Qt6::PanGesture)
     event.gesture(Qt6::GestureType::PinchGesture).should be_a(Qt6::PinchGesture)
-    event.gestures.map(&.gesture_type).should eq([Qt6::GestureType::PanGesture, Qt6::GestureType::PinchGesture])
+    event.gesture(Qt6::GestureType::SwipeGesture).should be_a(Qt6::SwipeGesture)
+    event.gestures.map(&.gesture_type).should eq([Qt6::GestureType::PanGesture, Qt6::GestureType::PinchGesture, Qt6::GestureType::SwipeGesture])
 
     event.release
+    swipe.release
     pinch.release
     pan.release
   end

@@ -7,6 +7,8 @@ module Qt6
         PanGesture.wrap(handle, owned)
       when GestureType::PinchGesture.value
         PinchGesture.wrap(handle, owned)
+      when GestureType::SwipeGesture.value
+        SwipeGesture.wrap(handle, owned)
       else
         new(handle, owned)
       end

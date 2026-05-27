@@ -524,6 +524,11 @@ void qt6cr_pan_gesture_set_last_offset(qt6cr_handle_t handle, qt6cr_pointf_t val
 qt6cr_pointf_t qt6cr_pan_gesture_delta(qt6cr_handle_t handle);
 double qt6cr_pan_gesture_acceleration(qt6cr_handle_t handle);
 void qt6cr_pan_gesture_set_acceleration(qt6cr_handle_t handle, double value);
+qt6cr_handle_t qt6cr_swipe_gesture_create(qt6cr_handle_t parent);
+int qt6cr_swipe_gesture_horizontal_direction(qt6cr_handle_t handle);
+int qt6cr_swipe_gesture_vertical_direction(qt6cr_handle_t handle);
+double qt6cr_swipe_gesture_swipe_angle(qt6cr_handle_t handle);
+void qt6cr_swipe_gesture_set_swipe_angle(qt6cr_handle_t handle, double value);
 qt6cr_handle_t qt6cr_pinch_gesture_create(qt6cr_handle_t parent);
 int qt6cr_pinch_gesture_change_flags(qt6cr_handle_t handle);
 void qt6cr_pinch_gesture_set_change_flags(qt6cr_handle_t handle, int value);

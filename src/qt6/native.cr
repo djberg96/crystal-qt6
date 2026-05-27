@@ -342,6 +342,11 @@ module Qt6
     fun qt6cr_pan_gesture_delta = qt6cr_pan_gesture_delta(handle : Handle) : PointFValue
     fun qt6cr_pan_gesture_acceleration = qt6cr_pan_gesture_acceleration(handle : Handle) : Float64
     fun qt6cr_pan_gesture_set_acceleration = qt6cr_pan_gesture_set_acceleration(handle : Handle, value : Float64)
+    fun qt6cr_swipe_gesture_create = qt6cr_swipe_gesture_create(parent : Handle) : Handle
+    fun qt6cr_swipe_gesture_horizontal_direction = qt6cr_swipe_gesture_horizontal_direction(handle : Handle) : LibC::Int
+    fun qt6cr_swipe_gesture_vertical_direction = qt6cr_swipe_gesture_vertical_direction(handle : Handle) : LibC::Int
+    fun qt6cr_swipe_gesture_swipe_angle = qt6cr_swipe_gesture_swipe_angle(handle : Handle) : Float64
+    fun qt6cr_swipe_gesture_set_swipe_angle = qt6cr_swipe_gesture_set_swipe_angle(handle : Handle, value : Float64)
     fun qt6cr_pinch_gesture_create = qt6cr_pinch_gesture_create(parent : Handle) : Handle
     fun qt6cr_pinch_gesture_change_flags = qt6cr_pinch_gesture_change_flags(handle : Handle) : LibC::Int
     fun qt6cr_pinch_gesture_set_change_flags = qt6cr_pinch_gesture_set_change_flags(handle : Handle, value : LibC::Int)
