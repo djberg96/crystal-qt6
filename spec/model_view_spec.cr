@@ -814,12 +814,20 @@ describe Qt6 do
     table_view.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
     table_view.alternating_row_colors = true
     table_view.show_grid = false
+    table_view.grid_style = Qt6::PenStyle::DashLine
     table_view.word_wrap = false
     table_view.sorting_enabled = true
+    table_view.corner_button_enabled = false
     table_view.drag_enabled = true
     table_view.drag_drop_mode = Qt6::ItemViewDragDropMode::DragOnly
     table_view.default_drop_action = Qt6::DropAction::CopyAction
     table_view.drop_indicator_shown = true
+    table_view.set_row_height(0, 44)
+    table_view.set_column_width(1, 84)
+    table_view.set_row_hidden(0, true)
+    table_view.set_column_hidden(1, true)
+    table_view.show_row(0)
+    table_view.show_column(1)
 
     horizontal_header = table_view.horizontal_header
     horizontal_header.default_section_size = 96
@@ -838,9 +846,14 @@ describe Qt6 do
     vertical_header.set_section_hidden(1, true)
 
     selected_index = model.index(1, 1)
+    table_view.resize(260, 120)
+    table_view.show
+    application.process_events
     table_view.current_index = selected_index
     table_view.set_span(0, 0, 1, 2)
     table_view.sort_by_column(0, Qt6::SortOrder::Descending)
+    table_view.resize_column_to_contents(1)
+    table_view.resize_row_to_contents(0)
     table_view.resize_columns_to_contents
     table_view.resize_rows_to_contents
     horizontal_header.move_section(0, 1)
@@ -881,12 +894,20 @@ describe Qt6 do
     table_view.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
     table_view.alternating_row_colors?.should be_true
     table_view.show_grid?.should be_false
+    table_view.grid_style.should eq(Qt6::PenStyle::DashLine)
     table_view.word_wrap?.should be_false
     table_view.sorting_enabled?.should be_true
+    table_view.corner_button_enabled?.should be_false
     table_view.drag_enabled?.should be_true
     table_view.drag_drop_mode.should eq(Qt6::ItemViewDragDropMode::DragOnly)
     table_view.default_drop_action.should eq(Qt6::DropAction::CopyAction)
     table_view.drop_indicator_shown?.should be_true
+    table_view.row_height(0).should be > 0
+    table_view.column_width(1).should be > 0
+    table_view.row_hidden?(0).should be_false
+    table_view.column_hidden?(1).should be_false
+    table_view.row_at(table_view.row_viewport_position(0)).should eq(0)
+    table_view.column_at(table_view.column_viewport_position(0)).should eq(0)
     current_index.valid?.should be_true
     current_index.row.should eq(1)
     current_index.column.should eq(1)
@@ -917,6 +938,11 @@ describe Qt6 do
     vertical_header.section_hidden?(1).should be_true
     table_view.row_span(0, 0).should eq(1)
     table_view.column_span(0, 0).should eq(2)
+    table_view.clear_spans
+    table_view.row_span(0, 0).should eq(1)
+    table_view.column_span(0, 0).should eq(1)
+    table_view.select_row(0)
+    table_view.select_column(0)
     first_sorted_index = model.index(0, 0)
     model.data(first_sorted_index).should eq("Units")
 
