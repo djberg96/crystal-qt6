@@ -84,6 +84,83 @@ module Qt6
       handle.null? ? nil : TableWidgetItem.wrap(handle)
     end
 
+    # Returns the row containing the given item, or `-1`.
+    def row(item : TableWidgetItem) : Int32
+      LibQt6.qt6cr_table_widget_row_for_item(to_unsafe, item.to_unsafe)
+    end
+
+    # Returns the column containing the given item, or `-1`.
+    def column(item : TableWidgetItem) : Int32
+      LibQt6.qt6cr_table_widget_column_for_item(to_unsafe, item.to_unsafe)
+    end
+
+    # Removes and returns the item at the given row and column, if present.
+    def take_item(row : Int, column : Int) : TableWidgetItem?
+      handle = LibQt6.qt6cr_table_widget_take_item(to_unsafe, row.to_i32, column.to_i32)
+      return nil if handle.null?
+
+      item = TableWidgetItem.wrap(handle)
+      item.assume_ownership!
+      item
+    end
+
+    # Returns the model index corresponding to the given table item.
+    def index_from_item(item : TableWidgetItem) : ModelIndex
+      ModelIndex.wrap(LibQt6.qt6cr_table_widget_index_from_item(to_unsafe, item.to_unsafe), true)
+    end
+
+    # Returns the table item backing the given model index, if present.
+    def item_from_index(index : ModelIndex) : TableWidgetItem?
+      handle = LibQt6.qt6cr_table_widget_item_from_index(to_unsafe, index.to_unsafe)
+      handle.null? ? nil : TableWidgetItem.wrap(handle)
+    end
+
+    # Returns the vertical header item for the given row, if present.
+    def vertical_header_item(row : Int) : TableWidgetItem?
+      handle = LibQt6.qt6cr_table_widget_vertical_header_item(to_unsafe, row.to_i32)
+      handle.null? ? nil : TableWidgetItem.wrap(handle)
+    end
+
+    # Sets the vertical header item for the given row and returns it.
+    def set_vertical_header_item(row : Int, item : TableWidgetItem) : TableWidgetItem
+      LibQt6.qt6cr_table_widget_set_vertical_header_item(to_unsafe, row.to_i32, item.to_unsafe)
+      item.adopt_by_parent!
+      item
+    end
+
+    # Removes and returns the vertical header item for the given row, if present.
+    def take_vertical_header_item(row : Int) : TableWidgetItem?
+      handle = LibQt6.qt6cr_table_widget_take_vertical_header_item(to_unsafe, row.to_i32)
+      return nil if handle.null?
+
+      item = TableWidgetItem.wrap(handle)
+      item.assume_ownership!
+      item
+    end
+
+    # Returns the horizontal header item for the given column, if present.
+    def horizontal_header_item(column : Int) : TableWidgetItem?
+      handle = LibQt6.qt6cr_table_widget_horizontal_header_item(to_unsafe, column.to_i32)
+      handle.null? ? nil : TableWidgetItem.wrap(handle)
+    end
+
+    # Sets the horizontal header item for the given column and returns it.
+    def set_horizontal_header_item(column : Int, item : TableWidgetItem) : TableWidgetItem
+      LibQt6.qt6cr_table_widget_set_horizontal_header_item(to_unsafe, column.to_i32, item.to_unsafe)
+      item.adopt_by_parent!
+      item
+    end
+
+    # Removes and returns the horizontal header item for the given column, if present.
+    def take_horizontal_header_item(column : Int) : TableWidgetItem?
+      handle = LibQt6.qt6cr_table_widget_take_horizontal_header_item(to_unsafe, column.to_i32)
+      return nil if handle.null?
+
+      item = TableWidgetItem.wrap(handle)
+      item.assume_ownership!
+      item
+    end
+
     # Returns the current item, if any.
     def current_item : TableWidgetItem?
       handle = LibQt6.qt6cr_table_widget_current_item(to_unsafe)
@@ -93,6 +170,12 @@ module Qt6
     # Sets the current item and returns it.
     def current_item=(item : TableWidgetItem) : TableWidgetItem
       LibQt6.qt6cr_table_widget_set_current_item(to_unsafe, item.to_unsafe)
+      item
+    end
+
+    # Sets the current item using a selection command and returns it.
+    def set_current_item(item : TableWidgetItem, command : SelectionFlag) : TableWidgetItem
+      LibQt6.qt6cr_table_widget_set_current_item_with_command(to_unsafe, item.to_unsafe, command.value)
       item
     end
 
@@ -109,6 +192,12 @@ module Qt6
     # Sets the current cell and returns `self`.
     def set_current_cell(row : Int, column : Int) : self
       LibQt6.qt6cr_table_widget_set_current_cell(to_unsafe, row.to_i32, column.to_i32)
+      self
+    end
+
+    # Sets the current cell using a selection command and returns `self`.
+    def set_current_cell(row : Int, column : Int, command : SelectionFlag) : self
+      LibQt6.qt6cr_table_widget_set_current_cell_with_command(to_unsafe, row.to_i32, column.to_i32, command.value)
       self
     end
 
@@ -176,6 +265,25 @@ module Qt6
     # Returns whether a persistent editor is open for the given item.
     def persistent_editor_open?(item : TableWidgetItem) : Bool
       LibQt6.qt6cr_table_widget_is_persistent_editor_open(to_unsafe, item.to_unsafe)
+    end
+
+    # Starts editing the given item.
+    def edit_item(item : TableWidgetItem) : self
+      LibQt6.qt6cr_table_widget_edit_item(to_unsafe, item.to_unsafe)
+      self
+    end
+
+    # Returns the embedded cell widget at the given row and column, if present.
+    def cell_widget(row : Int, column : Int) : Widget?
+      handle = LibQt6.qt6cr_table_widget_cell_widget(to_unsafe, row.to_i32, column.to_i32)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Installs a widget into the given cell and returns it.
+    def set_cell_widget(row : Int, column : Int, widget : Widget) : Widget
+      LibQt6.qt6cr_table_widget_set_cell_widget(to_unsafe, row.to_i32, column.to_i32, widget.to_unsafe)
+      widget.adopt_by_parent!
+      widget
     end
 
     # Sorts items by the given column and order.

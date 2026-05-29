@@ -864,6 +864,10 @@ describe Qt6 do
     table_widget.set_horizontal_header_label(1, "Visible")
     table_widget.set_vertical_header_label(0, "Base")
     table_widget.set_vertical_header_label(1, "Overlay")
+    horizontal_header_item = Qt6::TableWidgetItem.new("Layer Name")
+    vertical_header_item = Qt6::TableWidgetItem.new("Overlay Row")
+    table_widget.set_horizontal_header_item(0, horizontal_header_item)
+    table_widget.set_vertical_header_item(1, vertical_header_item)
     table_widget.selection_mode = Qt6::ItemSelectionMode::SingleSelection
     table_widget.selection_behavior = Qt6::ItemSelectionBehavior::SelectRows
     table_widget.alternating_row_colors = true
@@ -875,15 +879,27 @@ describe Qt6 do
     visible_item = Qt6::TableWidgetItem.new("Shown")
     visible_item.check_state = Qt6::CheckState::Checked
     visible_item.foreground = Qt6::Color.new(24, 120, 48)
+    embedded_widget = Qt6::Label.new("Cell Host")
 
     table_widget.set_item(0, 0, terrain_item)
     table_widget.set_item(0, 1, visible_item)
+    table_widget.set_cell_widget(1, 1, embedded_widget)
     terrain_item.text = "Terrain Layer"
+    terrain_index = table_widget.index_from_item(terrain_item)
+    table_widget.item_from_index(terrain_index).not_nil!.to_unsafe.should eq(terrain_item.to_unsafe)
     table_widget.set_span(1, 0, 1, 2)
-    table_widget.set_current_cell(0, 1)
+    table_widget.set_current_item(visible_item, Qt6::SelectionFlag::ClearAndSelect)
+    table_widget.set_current_cell(0, 1, Qt6::SelectionFlag::Current | Qt6::SelectionFlag::Select)
+    table_widget.edit_item(terrain_item)
     table_widget.sort_by_column(0, Qt6::SortOrder::Descending)
     table_widget.resize_columns_to_contents
     table_widget.resize_rows_to_contents
+    taken_visible_item = table_widget.take_item(0, 1)
+    table_widget.set_item(0, 1, taken_visible_item.not_nil!)
+    taken_horizontal_header_item = table_widget.take_horizontal_header_item(0)
+    table_widget.set_horizontal_header_item(0, taken_horizontal_header_item.not_nil!)
+    taken_vertical_header_item = table_widget.take_vertical_header_item(1)
+    table_widget.set_vertical_header_item(1, taken_vertical_header_item.not_nil!)
     application.process_events
     Qt6::LibQt6.qt6cr_table_widget_emit_item_double_clicked(table_widget.to_unsafe, 0, 0)
     application.process_events
@@ -948,10 +964,12 @@ describe Qt6 do
 
     table_widget.row_count.should eq(2)
     table_widget.column_count.should eq(2)
-    table_widget.horizontal_header_label.should eq("Layer")
+    table_widget.horizontal_header_label.should eq("Layer Name")
     table_widget.horizontal_header_label(1).should eq("Visible")
     table_widget.vertical_header_label.should eq("Base")
-    table_widget.vertical_header_label(1).should eq("Overlay")
+    table_widget.vertical_header_label(1).should eq("Overlay Row")
+    table_widget.horizontal_header_item(0).not_nil!.text.should eq("Layer Name")
+    table_widget.vertical_header_item(1).not_nil!.text.should eq("Overlay Row")
     table_widget.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
     table_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
     table_widget.alternating_row_colors?.should be_true
@@ -961,8 +979,11 @@ describe Qt6 do
     table_widget.current_item.not_nil!.text.should eq("Shown")
     table_widget.item(0, 0).not_nil!.text.should eq("Terrain Layer")
     table_widget.item(0, 0).not_nil!.data(Qt6::ItemDataRole::User).should eq("terrain")
+    table_widget.row(terrain_item).should eq(0)
+    table_widget.column(terrain_item).should eq(0)
     table_widget.item(0, 1).not_nil!.check_state.should eq(Qt6::CheckState::Checked)
     table_widget.item(0, 1).not_nil!.foreground.should eq(Qt6::Color.new(24, 120, 48, 255))
+    table_widget.cell_widget(1, 1).not_nil!.to_unsafe.should eq(embedded_widget.to_unsafe)
     current_cell_changes.should be >= 1
     changed_item_texts.includes?("Terrain Layer").should be_true
     double_clicked_item_texts.should eq(["Terrain Layer"])
@@ -975,6 +996,7 @@ describe Qt6 do
     first_sorted_index.release
     current_index.release
     selected_index.release
+    terrain_index.release
     table_view.release
     table_widget.release
   end
