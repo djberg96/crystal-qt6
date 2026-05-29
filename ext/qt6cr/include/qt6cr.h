@@ -3762,11 +3762,14 @@ void qt6cr_tree_widget_clear(qt6cr_handle_t handle);
 void qt6cr_tree_widget_on_current_item_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_table_widget_item_create(const char *text);
+qt6cr_handle_t qt6cr_table_widget_item_create_with_icon(qt6cr_handle_t icon, const char *text);
 void qt6cr_table_widget_item_destroy(qt6cr_handle_t handle);
 void qt6cr_table_widget_item_set_text(qt6cr_handle_t handle, const char *text);
 char *qt6cr_table_widget_item_text(qt6cr_handle_t handle);
 qt6cr_handle_t qt6cr_table_widget_item_icon(qt6cr_handle_t handle);
 void qt6cr_table_widget_item_set_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
+int qt6cr_table_widget_item_row(qt6cr_handle_t handle);
+int qt6cr_table_widget_item_column(qt6cr_handle_t handle);
 int qt6cr_table_widget_item_flags(qt6cr_handle_t handle);
 void qt6cr_table_widget_item_set_flags(qt6cr_handle_t handle, int flags);
 int qt6cr_table_widget_item_check_state(qt6cr_handle_t handle);
@@ -3775,6 +3778,22 @@ qt6cr_variant_value_t qt6cr_table_widget_item_data(qt6cr_handle_t handle, int ro
 void qt6cr_table_widget_item_set_data(qt6cr_handle_t handle, int role, qt6cr_variant_value_t value);
 qt6cr_color_t qt6cr_table_widget_item_foreground(qt6cr_handle_t handle);
 void qt6cr_table_widget_item_set_foreground(qt6cr_handle_t handle, qt6cr_color_t color);
+qt6cr_handle_t qt6cr_table_widget_item_background(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_background(qt6cr_handle_t handle, qt6cr_handle_t brush);
+qt6cr_handle_t qt6cr_table_widget_item_font(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_font(qt6cr_handle_t handle, qt6cr_handle_t font);
+bool qt6cr_table_widget_item_is_selected(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_selected(qt6cr_handle_t handle, bool value);
+qt6cr_size_t qt6cr_table_widget_item_size_hint(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_size_hint(qt6cr_handle_t handle, qt6cr_size_t size);
+int qt6cr_table_widget_item_text_alignment(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_text_alignment(qt6cr_handle_t handle, int alignment);
+char *qt6cr_table_widget_item_tool_tip(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_tool_tip(qt6cr_handle_t handle, const char *value);
+char *qt6cr_table_widget_item_status_tip(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_status_tip(qt6cr_handle_t handle, const char *value);
+char *qt6cr_table_widget_item_whats_this(qt6cr_handle_t handle);
+void qt6cr_table_widget_item_set_whats_this(qt6cr_handle_t handle, const char *value);
 
 qt6cr_handle_t qt6cr_table_widget_create(qt6cr_handle_t parent);
 int qt6cr_table_widget_row_count(qt6cr_handle_t handle);

@@ -876,13 +876,25 @@ describe Qt6 do
     terrain_item = Qt6::TableWidgetItem.new("Terrain")
     terrain_item.flags = Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable
     terrain_item.set_data("terrain", Qt6::ItemDataRole::User)
+    terrain_item.background = Qt6::QBrush.new(Qt6::Color.new(228, 236, 248))
+    terrain_font = terrain_item.font
+    terrain_font.bold = true
+    terrain_item.font = terrain_font
+    terrain_item.tool_tip = "Terrain controls"
+    terrain_item.status_tip = "Toggle terrain visibility"
+    terrain_item.whats_this = "Used for managing terrain-related layers."
+    terrain_item.text_alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    terrain_item.size_hint = Qt6::Size.new(140, 30)
     visible_item = Qt6::TableWidgetItem.new("Shown")
     visible_item.check_state = Qt6::CheckState::Checked
     visible_item.foreground = Qt6::Color.new(24, 120, 48)
     embedded_widget = Qt6::Label.new("Cell Host")
+    header_icon = Qt6::QIcon.new
+    icon_header_item = Qt6::TableWidgetItem.new(header_icon, "Visibility Flag")
 
     table_widget.set_item(0, 0, terrain_item)
     table_widget.set_item(0, 1, visible_item)
+    table_widget.set_horizontal_header_item(1, icon_header_item)
     table_widget.set_cell_widget(1, 1, embedded_widget)
     terrain_item.text = "Terrain Layer"
     terrain_index = table_widget.index_from_item(terrain_item)
@@ -965,10 +977,11 @@ describe Qt6 do
     table_widget.row_count.should eq(2)
     table_widget.column_count.should eq(2)
     table_widget.horizontal_header_label.should eq("Layer Name")
-    table_widget.horizontal_header_label(1).should eq("Visible")
+    table_widget.horizontal_header_label(1).should eq("Visibility Flag")
     table_widget.vertical_header_label.should eq("Base")
     table_widget.vertical_header_label(1).should eq("Overlay Row")
     table_widget.horizontal_header_item(0).not_nil!.text.should eq("Layer Name")
+    table_widget.horizontal_header_item(1).not_nil!.text.should eq("Visibility Flag")
     table_widget.vertical_header_item(1).not_nil!.text.should eq("Overlay Row")
     table_widget.selection_mode.should eq(Qt6::ItemSelectionMode::SingleSelection)
     table_widget.selection_behavior.should eq(Qt6::ItemSelectionBehavior::SelectRows)
@@ -981,8 +994,19 @@ describe Qt6 do
     table_widget.item(0, 0).not_nil!.data(Qt6::ItemDataRole::User).should eq("terrain")
     table_widget.row(terrain_item).should eq(0)
     table_widget.column(terrain_item).should eq(0)
+    terrain_item.row.should eq(0)
+    terrain_item.column.should eq(0)
+    terrain_item.background.color.should eq(Qt6::Color.new(228, 236, 248, 255))
+    terrain_item.font.bold?.should be_true
+    terrain_item.tool_tip.should eq("Terrain controls")
+    terrain_item.status_tip.should eq("Toggle terrain visibility")
+    terrain_item.whats_this.should eq("Used for managing terrain-related layers.")
+    terrain_item.text_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+    terrain_item.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    terrain_item.size_hint.should eq(Qt6::Size.new(140, 30))
     table_widget.item(0, 1).not_nil!.check_state.should eq(Qt6::CheckState::Checked)
     table_widget.item(0, 1).not_nil!.foreground.should eq(Qt6::Color.new(24, 120, 48, 255))
+    visible_item.selected?.should be_true
     table_widget.cell_widget(1, 1).not_nil!.to_unsafe.should eq(embedded_widget.to_unsafe)
     current_cell_changes.should be >= 1
     changed_item_texts.includes?("Terrain Layer").should be_true

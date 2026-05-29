@@ -3684,11 +3684,14 @@ module Qt6
     fun qt6cr_tree_widget_on_current_item_changed = qt6cr_tree_widget_on_current_item_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_table_widget_item_create = qt6cr_table_widget_item_create(text : UInt8*) : Handle
+    fun qt6cr_table_widget_item_create_with_icon = qt6cr_table_widget_item_create_with_icon(icon : Handle, text : UInt8*) : Handle
     fun qt6cr_table_widget_item_destroy = qt6cr_table_widget_item_destroy(handle : Handle)
     fun qt6cr_table_widget_item_set_text = qt6cr_table_widget_item_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_table_widget_item_text = qt6cr_table_widget_item_text(handle : Handle) : UInt8*
     fun qt6cr_table_widget_item_icon = qt6cr_table_widget_item_icon(handle : Handle) : Handle
     fun qt6cr_table_widget_item_set_icon = qt6cr_table_widget_item_set_icon(handle : Handle, icon : Handle)
+    fun qt6cr_table_widget_item_row = qt6cr_table_widget_item_row(handle : Handle) : LibC::Int
+    fun qt6cr_table_widget_item_column = qt6cr_table_widget_item_column(handle : Handle) : LibC::Int
     fun qt6cr_table_widget_item_flags = qt6cr_table_widget_item_flags(handle : Handle) : LibC::Int
     fun qt6cr_table_widget_item_set_flags = qt6cr_table_widget_item_set_flags(handle : Handle, flags : LibC::Int)
     fun qt6cr_table_widget_item_check_state = qt6cr_table_widget_item_check_state(handle : Handle) : LibC::Int
@@ -3697,6 +3700,22 @@ module Qt6
     fun qt6cr_table_widget_item_set_data = qt6cr_table_widget_item_set_data(handle : Handle, role : LibC::Int, value : VariantValue)
     fun qt6cr_table_widget_item_foreground = qt6cr_table_widget_item_foreground(handle : Handle) : ColorValue
     fun qt6cr_table_widget_item_set_foreground = qt6cr_table_widget_item_set_foreground(handle : Handle, color : ColorValue)
+    fun qt6cr_table_widget_item_background = qt6cr_table_widget_item_background(handle : Handle) : Handle
+    fun qt6cr_table_widget_item_set_background = qt6cr_table_widget_item_set_background(handle : Handle, brush : Handle)
+    fun qt6cr_table_widget_item_font = qt6cr_table_widget_item_font(handle : Handle) : Handle
+    fun qt6cr_table_widget_item_set_font = qt6cr_table_widget_item_set_font(handle : Handle, font : Handle)
+    fun qt6cr_table_widget_item_is_selected = qt6cr_table_widget_item_is_selected(handle : Handle) : Bool
+    fun qt6cr_table_widget_item_set_selected = qt6cr_table_widget_item_set_selected(handle : Handle, value : Bool)
+    fun qt6cr_table_widget_item_size_hint = qt6cr_table_widget_item_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_table_widget_item_set_size_hint = qt6cr_table_widget_item_set_size_hint(handle : Handle, size : SizeValue)
+    fun qt6cr_table_widget_item_text_alignment = qt6cr_table_widget_item_text_alignment(handle : Handle) : LibC::Int
+    fun qt6cr_table_widget_item_set_text_alignment = qt6cr_table_widget_item_set_text_alignment(handle : Handle, alignment : LibC::Int)
+    fun qt6cr_table_widget_item_tool_tip = qt6cr_table_widget_item_tool_tip(handle : Handle) : UInt8*
+    fun qt6cr_table_widget_item_set_tool_tip = qt6cr_table_widget_item_set_tool_tip(handle : Handle, value : UInt8*)
+    fun qt6cr_table_widget_item_status_tip = qt6cr_table_widget_item_status_tip(handle : Handle) : UInt8*
+    fun qt6cr_table_widget_item_set_status_tip = qt6cr_table_widget_item_set_status_tip(handle : Handle, value : UInt8*)
+    fun qt6cr_table_widget_item_whats_this = qt6cr_table_widget_item_whats_this(handle : Handle) : UInt8*
+    fun qt6cr_table_widget_item_set_whats_this = qt6cr_table_widget_item_set_whats_this(handle : Handle, value : UInt8*)
 
     fun qt6cr_table_widget_create = qt6cr_table_widget_create(parent : Handle) : Handle
     fun qt6cr_table_widget_row_count = qt6cr_table_widget_row_count(handle : Handle) : LibC::Int

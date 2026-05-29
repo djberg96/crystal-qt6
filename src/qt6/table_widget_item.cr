@@ -10,6 +10,11 @@ module Qt6
       super(LibQt6.qt6cr_table_widget_item_create(text.to_unsafe))
     end
 
+    # Creates a table item with an icon and display text.
+    def initialize(icon : QIcon, text : String)
+      super(LibQt6.qt6cr_table_widget_item_create_with_icon(icon.to_unsafe, text.to_unsafe))
+    end
+
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
       super(handle, owned)
     end
@@ -34,6 +39,16 @@ module Qt6
     def icon=(value : QIcon) : QIcon
       LibQt6.qt6cr_table_widget_item_set_icon(to_unsafe, value.to_unsafe)
       value
+    end
+
+    # Returns the item's current row, or `-1` when not inserted.
+    def row : Int32
+      LibQt6.qt6cr_table_widget_item_row(to_unsafe)
+    end
+
+    # Returns the item's current column, or `-1` when not inserted.
+    def column : Int32
+      LibQt6.qt6cr_table_widget_item_column(to_unsafe)
     end
 
     # Returns the item's current flags.
@@ -77,6 +92,94 @@ module Qt6
     # Sets the item's foreground color.
     def foreground=(value : Color) : Color
       LibQt6.qt6cr_table_widget_item_set_foreground(to_unsafe, value.to_native)
+      value
+    end
+
+    # Returns the item's background brush.
+    def background : QBrush
+      QBrush.wrap(LibQt6.qt6cr_table_widget_item_background(to_unsafe), true)
+    end
+
+    # Sets the item's background brush.
+    def background=(value : QBrush) : QBrush
+      LibQt6.qt6cr_table_widget_item_set_background(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the item's font.
+    def font : QFont
+      QFont.wrap(LibQt6.qt6cr_table_widget_item_font(to_unsafe), true)
+    end
+
+    # Sets the item's font.
+    def font=(value : QFont) : QFont
+      LibQt6.qt6cr_table_widget_item_set_font(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns `true` when the item is selected.
+    def selected? : Bool
+      LibQt6.qt6cr_table_widget_item_is_selected(to_unsafe)
+    end
+
+    # Selects or deselects the item.
+    def selected=(value : Bool) : Bool
+      LibQt6.qt6cr_table_widget_item_set_selected(to_unsafe, value)
+      value
+    end
+
+    # Returns the preferred item size hint.
+    def size_hint : Size
+      Size.from_native(LibQt6.qt6cr_table_widget_item_size_hint(to_unsafe))
+    end
+
+    # Sets the preferred item size hint.
+    def size_hint=(value : Size) : Size
+      LibQt6.qt6cr_table_widget_item_set_size_hint(to_unsafe, LibQt6::SizeValue.new(width: value.width, height: value.height))
+      value
+    end
+
+    # Returns the item's text alignment flags.
+    def text_alignment : AlignmentFlag
+      AlignmentFlag.from_value(LibQt6.qt6cr_table_widget_item_text_alignment(to_unsafe))
+    end
+
+    # Sets the item's text alignment flags.
+    def text_alignment=(value : AlignmentFlag) : AlignmentFlag
+      LibQt6.qt6cr_table_widget_item_set_text_alignment(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the item's tool-tip text.
+    def tool_tip : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_table_widget_item_tool_tip(to_unsafe))
+    end
+
+    # Sets the item's tool-tip text.
+    def tool_tip=(value : String) : String
+      LibQt6.qt6cr_table_widget_item_set_tool_tip(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the item's status-tip text.
+    def status_tip : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_table_widget_item_status_tip(to_unsafe))
+    end
+
+    # Sets the item's status-tip text.
+    def status_tip=(value : String) : String
+      LibQt6.qt6cr_table_widget_item_set_status_tip(to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the item's What's This help text.
+    def whats_this : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_table_widget_item_whats_this(to_unsafe))
+    end
+
+    # Sets the item's What's This help text.
+    def whats_this=(value : String) : String
+      LibQt6.qt6cr_table_widget_item_set_whats_this(to_unsafe, value.to_unsafe)
       value
     end
 
