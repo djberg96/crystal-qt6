@@ -891,6 +891,7 @@ describe Qt6 do
     embedded_widget = Qt6::Label.new("Cell Host")
     header_icon = Qt6::QIcon.new
     icon_header_item = Qt6::TableWidgetItem.new(header_icon, "Visibility Flag")
+    selection_range = Qt6::TableWidgetSelectionRange.new(0, 0, 0, 1)
 
     table_widget.set_item(0, 0, terrain_item)
     table_widget.set_item(0, 1, visible_item)
@@ -1016,6 +1017,10 @@ describe Qt6 do
     table_widget.vertical_header.count.should eq(2)
     table_widget.row_span(1, 0).should eq(1)
     table_widget.column_span(1, 0).should eq(2)
+    selection_range.row_count.should eq(1)
+    selection_range.column_count.should eq(2)
+    table_widget.set_range_selected(selection_range, true)
+    table_widget.selected_ranges.any? { |range| range == selection_range }.should be_true
 
     first_sorted_index.release
     current_index.release

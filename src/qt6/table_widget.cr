@@ -286,6 +286,17 @@ module Qt6
       widget
     end
 
+    # Selects or deselects the given table range.
+    def set_range_selected(range : TableWidgetSelectionRange, selected : Bool) : self
+      LibQt6.qt6cr_table_widget_set_range_selected(to_unsafe, range.to_native, selected)
+      self
+    end
+
+    # Returns the currently selected table ranges.
+    def selected_ranges : Array(TableWidgetSelectionRange)
+      Qt6.copy_and_release_table_widget_selection_ranges(LibQt6.qt6cr_table_widget_selected_ranges(to_unsafe))
+    end
+
     # Sorts items by the given column and order.
     def sort_by_column(column : Int, order : SortOrder = SortOrder::Ascending) : self
       LibQt6.qt6cr_table_widget_sort_by_column(to_unsafe, column.to_i32, order.value)

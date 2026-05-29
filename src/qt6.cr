@@ -422,6 +422,7 @@ require "./qt6/list_widget"
 require "./qt6/tree_widget_item"
 require "./qt6/tree_widget"
 require "./qt6/table_widget_item"
+require "./qt6/table_widget_selection_range"
 require "./qt6/table_widget"
 require "./qt6/column_view"
 require "./qt6/list_view"
@@ -640,6 +641,24 @@ module Qt6
 
     LibQt6.qt6cr_gradient_stop_array_free(value)
     stops
+  end
+
+  def self.copy_and_release_table_widget_selection_ranges(value : LibQt6::TableWidgetSelectionRangeArrayValue) : Array(TableWidgetSelectionRange)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_table_widget_selection_range_array_free(value)
+      return [] of TableWidgetSelectionRange
+    end
+
+    ranges = Array(TableWidgetSelectionRange).new(size)
+    size.times do |index|
+      ranges << TableWidgetSelectionRange.from_native(pointer[index])
+    end
+
+    LibQt6.qt6cr_table_widget_selection_range_array_free(value)
+    ranges
   end
 
   def self.malloc_string(value : String) : UInt8*

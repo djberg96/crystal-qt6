@@ -2853,6 +2853,18 @@ qt6cr_gradient_stop_t to_gradient_stop(const QGradientStop &stop) {
   return qt6cr_gradient_stop_t{stop.first, to_color(stop.second)};
 }
 
+qt6cr_table_widget_selection_range_t to_table_widget_selection_range(const QTableWidgetSelectionRange &range) {
+  return qt6cr_table_widget_selection_range_t{
+      range.topRow(),
+      range.leftColumn(),
+      range.bottomRow(),
+      range.rightColumn()};
+}
+
+QTableWidgetSelectionRange from_table_widget_selection_range(qt6cr_table_widget_selection_range_t range) {
+  return QTableWidgetSelectionRange(range.top_row, range.left_column, range.bottom_row, range.right_column);
+}
+
 qt6cr_size_t to_size(const QSize &size) {
   return qt6cr_size_t{size.width(), size.height()};
 }
@@ -27505,6 +27517,32 @@ void qt6cr_table_widget_set_cell_widget(qt6cr_handle_t handle, int row, int colu
   }
 }
 
+void qt6cr_table_widget_set_range_selected(qt6cr_handle_t handle, qt6cr_table_widget_selection_range_t range, bool select) {
+  auto *table = as_table_widget(handle);
+
+  if (table != nullptr) {
+    table->setRangeSelected(from_table_widget_selection_range(range), select);
+  }
+}
+
+qt6cr_table_widget_selection_range_array_t qt6cr_table_widget_selected_ranges(qt6cr_handle_t handle) {
+  auto *table = as_table_widget(handle);
+
+  if (table == nullptr) {
+    return qt6cr_table_widget_selection_range_array_t{nullptr, 0};
+  }
+
+  QList<QTableWidgetSelectionRange> ranges = table->selectedRanges();
+  int size = ranges.size();
+  auto *data = size > 0 ? new qt6cr_table_widget_selection_range_t[size] : nullptr;
+
+  for (int index = 0; index < size; ++index) {
+    data[index] = to_table_widget_selection_range(ranges[index]);
+  }
+
+  return qt6cr_table_widget_selection_range_array_t{data, size};
+}
+
 void qt6cr_table_widget_emit_item_double_clicked(qt6cr_handle_t handle, int row, int column) {
   auto *table = static_cast<CrystalTableWidget *>(as_table_widget(handle));
   auto *item = table == nullptr ? nullptr : table->item(row, column);
@@ -33493,6 +33531,14 @@ void qt6cr_handle_array_free(qt6cr_handle_array_t value) {
 }
 
 void qt6cr_gradient_stop_array_free(qt6cr_gradient_stop_array_t value) {
+  if (value.data == nullptr || value.size <= 0) {
+    return;
+  }
+
+  delete[] value.data;
+}
+
+void qt6cr_table_widget_selection_range_array_free(qt6cr_table_widget_selection_range_array_t value) {
   if (value.data == nullptr || value.size <= 0) {
     return;
   }

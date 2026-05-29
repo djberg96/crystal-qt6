@@ -156,6 +156,13 @@ module Qt6
       maximum : LibC::Int
     end
 
+    struct TableWidgetSelectionRangeValue
+      top_row : LibC::Int
+      left_column : LibC::Int
+      bottom_row : LibC::Int
+      right_column : LibC::Int
+    end
+
     struct GradientStopValue
       position : Float64
       color : ColorValue
@@ -163,6 +170,11 @@ module Qt6
 
     struct GradientStopArrayValue
       data : GradientStopValue*
+      size : LibC::Int
+    end
+
+    struct TableWidgetSelectionRangeArrayValue
+      data : TableWidgetSelectionRangeValue*
       size : LibC::Int
     end
 
@@ -3769,6 +3781,8 @@ module Qt6
     fun qt6cr_table_widget_edit_item = qt6cr_table_widget_edit_item(handle : Handle, item : Handle)
     fun qt6cr_table_widget_cell_widget = qt6cr_table_widget_cell_widget(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
     fun qt6cr_table_widget_set_cell_widget = qt6cr_table_widget_set_cell_widget(handle : Handle, row : LibC::Int, column : LibC::Int, widget : Handle)
+    fun qt6cr_table_widget_set_range_selected = qt6cr_table_widget_set_range_selected(handle : Handle, range : TableWidgetSelectionRangeValue, select : Bool)
+    fun qt6cr_table_widget_selected_ranges = qt6cr_table_widget_selected_ranges(handle : Handle) : TableWidgetSelectionRangeArrayValue
     fun qt6cr_table_widget_emit_item_double_clicked = qt6cr_table_widget_emit_item_double_clicked(handle : Handle, row : LibC::Int, column : LibC::Int)
     fun qt6cr_table_widget_on_current_cell_changed = qt6cr_table_widget_on_current_cell_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
     fun qt6cr_table_widget_on_item_changed = qt6cr_table_widget_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
@@ -4702,5 +4716,6 @@ module Qt6
     fun qt6cr_int_array_free = qt6cr_int_array_free(value : IntArrayValue)
     fun qt6cr_handle_array_free = qt6cr_handle_array_free(value : HandleArrayValue)
     fun qt6cr_gradient_stop_array_free = qt6cr_gradient_stop_array_free(value : GradientStopArrayValue)
+    fun qt6cr_table_widget_selection_range_array_free = qt6cr_table_widget_selection_range_array_free(value : TableWidgetSelectionRangeArrayValue)
   end
 end

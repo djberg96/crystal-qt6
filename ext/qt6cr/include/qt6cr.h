@@ -154,6 +154,13 @@ typedef struct {
 } qt6cr_splitter_range_t;
 
 typedef struct {
+  int top_row;
+  int left_column;
+  int bottom_row;
+  int right_column;
+} qt6cr_table_widget_selection_range_t;
+
+typedef struct {
 	double position;
 	qt6cr_color_t color;
 } qt6cr_gradient_stop_t;
@@ -162,6 +169,11 @@ typedef struct {
 	qt6cr_gradient_stop_t *data;
 	int size;
 } qt6cr_gradient_stop_array_t;
+
+typedef struct {
+  qt6cr_table_widget_selection_range_t *data;
+  int size;
+} qt6cr_table_widget_selection_range_array_t;
 
 typedef struct {
 	int type;
@@ -3847,6 +3859,8 @@ bool qt6cr_table_widget_is_persistent_editor_open(qt6cr_handle_t handle, qt6cr_h
 void qt6cr_table_widget_edit_item(qt6cr_handle_t handle, qt6cr_handle_t item);
 qt6cr_handle_t qt6cr_table_widget_cell_widget(qt6cr_handle_t handle, int row, int column);
 void qt6cr_table_widget_set_cell_widget(qt6cr_handle_t handle, int row, int column, qt6cr_handle_t widget);
+void qt6cr_table_widget_set_range_selected(qt6cr_handle_t handle, qt6cr_table_widget_selection_range_t range, bool select);
+qt6cr_table_widget_selection_range_array_t qt6cr_table_widget_selected_ranges(qt6cr_handle_t handle);
 void qt6cr_table_widget_emit_item_double_clicked(qt6cr_handle_t handle, int row, int column);
 void qt6cr_table_widget_on_current_cell_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 void qt6cr_table_widget_on_item_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
@@ -4747,6 +4761,7 @@ void qt6cr_string_array_free(qt6cr_string_array_t value);
 void qt6cr_int_array_free(qt6cr_int_array_t value);
 void qt6cr_handle_array_free(qt6cr_handle_array_t value);
 void qt6cr_gradient_stop_array_free(qt6cr_gradient_stop_array_t value);
+void qt6cr_table_widget_selection_range_array_free(qt6cr_table_widget_selection_range_array_t value);
 
 #ifdef __cplusplus
 }
