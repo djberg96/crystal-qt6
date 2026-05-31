@@ -168,6 +168,11 @@ module Qt6
       color : ColorValue
     end
 
+    struct TileRulesValue
+      horizontal : LibC::Int
+      vertical : LibC::Int
+    end
+
     struct GradientStopArrayValue
       data : GradientStopValue*
       size : LibC::Int

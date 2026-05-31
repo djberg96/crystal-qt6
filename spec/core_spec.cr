@@ -2882,4 +2882,22 @@ describe Qt6 do
     window.window_title.should eq("Helper Window")
     window.release
   end
+
+  it "supports tile-rule value wrappers" do
+    default_rules = Qt6::TileRules.new
+    repeated_rules = Qt6::TileRules.new(Qt6::TileRule::RepeatTile)
+    mixed_rules = Qt6::TileRules.new(Qt6::TileRule::RoundTile, Qt6::TileRule::RepeatTile)
+
+    default_rules.horizontal.should eq(Qt6::TileRule::StretchTile)
+    default_rules.vertical.should eq(Qt6::TileRule::StretchTile)
+    repeated_rules.horizontal.should eq(Qt6::TileRule::RepeatTile)
+    repeated_rules.vertical.should eq(Qt6::TileRule::RepeatTile)
+    mixed_rules.horizontal.should eq(Qt6::TileRule::RoundTile)
+    mixed_rules.vertical.should eq(Qt6::TileRule::RepeatTile)
+
+    native_rules = mixed_rules.to_native
+    native_rules.horizontal.should eq(Qt6::TileRule::RoundTile.value)
+    native_rules.vertical.should eq(Qt6::TileRule::RepeatTile.value)
+    Qt6::TileRules.from_native(native_rules).should eq(mixed_rules)
+  end
 end
