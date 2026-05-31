@@ -1504,17 +1504,58 @@ describe Qt6 do
 
     browser = Qt6::TextBrowser.new(host)
     browser.open_external_links = false
+    browser.open_links = false
     browser.default_style_sheet = "a { color: #c00; }"
-    browser.html = <<-HTML
-      <h1>Guide</h1>
-      <p><a href="page:intro">Intro</a></p>
+    browser_root = File.join(Dir.tempdir, "crystal-qt6-text-browser-#{Process.pid}")
+    home_path = File.join(browser_root, "home.html")
+    guide_path = File.join(browser_root, "guide.html")
+    Dir.mkdir_p(browser_root)
+    File.write(home_path, <<-HTML)
+      <html>
+        <head><title>Home</title></head>
+        <body>
+          <h1>Home</h1>
+          <p><a href="guide.html">Guide</a></p>
+        </body>
+      </html>
     HTML
-    browser.scroll_to_top
+    File.write(guide_path, <<-HTML)
+      <html>
+        <head><title>Guide</title></head>
+        <body>
+          <h1>Guide</h1>
+          <p><a href="page:intro">Intro</a></p>
+        </body>
+      </html>
+    HTML
 
     clicked_links = [] of String
+    source_changes = [] of String
+    backward_availability = [] of Bool
+    forward_availability = [] of Bool
+    history_changes = 0
     browser.on_anchor_clicked do |href|
       clicked_links << href
     end
+    browser.on_source_changed do |href|
+      source_changes << href
+    end
+    browser.on_backward_available do |value|
+      backward_availability << value
+    end
+    browser.on_forward_available do |value|
+      forward_availability << value
+    end
+    browser.on_history_changed do
+      history_changes += 1
+    end
+    browser.search_paths = [browser_root]
+    home_url = Qt6::QUrl.from_local_file(home_path)
+    guide_url = Qt6::QUrl.from_local_file(guide_path)
+    browser.set_source(home_url, Qt6::TextDocumentResourceType::HtmlResource)
+    browser.set_source(guide_url, Qt6::TextDocumentResourceType::HtmlResource)
+    browser.scroll_to_top
+    application.process_events
 
     stack = Qt6::StackedWidget.new(host)
     stack_indices = [] of Int32
@@ -1562,11 +1603,24 @@ describe Qt6 do
     font_combo.current_font.family.should_not be_empty
     font_families.last?.should_not be_nil if font_combo.count > 1 && font_combo.current_index != original_font_index
     browser.open_external_links?.should be_false
+    browser.open_links?.should be_false
     browser.default_style_sheet.should contain("#c00")
     browser.plain_text.should contain("Guide")
     browser.html.should contain("page:intro")
+    browser.source.to_local_file.should eq(guide_path)
+    browser.source_type.should eq(Qt6::TextDocumentResourceType::HtmlResource)
+    browser.search_paths.should eq([browser_root])
+    browser.backward_available?.should be_true
+    browser.forward_available?.should be_false
+    browser.backward_history_count.should eq(1)
+    browser.forward_history_count.should eq(0)
+    browser.history_title(0).should eq("Guide")
+    browser.history_url(0).to_local_file.should eq(guide_path)
     browser.vertical_scroll_value.should eq(0)
     clicked_links.should be_empty
+    source_changes.last.should contain("guide.html")
+    backward_availability.last.should be_true
+    history_changes.should be >= 2
     stack.count.should eq(3)
     stack.current_index.should eq(2)
     stack.current_widget.not_nil!.to_unsafe.should eq(browser.to_unsafe)
@@ -1576,12 +1630,35 @@ describe Qt6 do
     else
       stack_added.should be_empty
     end
+    browser.backward
+    application.process_events
+    browser.source.to_local_file.should eq(home_path)
+    browser.forward_available?.should be_true
+    browser.forward_history_count.should eq(1)
+    forward_availability.last.should be_true
+    source_changes.last.should contain("home.html")
+    browser.forward
+    application.process_events
+    browser.source.to_local_file.should eq(guide_path)
+    browser.home
+    application.process_events
+    browser.source.to_local_file.should eq(home_path)
+    browser.reload
+    application.process_events
+    browser.clear_history
+    application.process_events
+    browser.backward_available?.should be_false
+    browser.forward_available?.should be_false
+    browser.backward_history_count.should eq(0)
+    browser.forward_history_count.should eq(0)
     stack.remove_widget(details_page)
     stack_removed.should eq([1])
     stack.remove_widget(info_page)
     stack.count.should eq(1)
     stack.index_of(info_page).should eq(-1)
 
+    guide_url.release
+    home_url.release
     host.release
   end
 

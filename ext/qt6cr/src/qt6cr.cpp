@@ -30684,6 +30684,84 @@ char *qt6cr_text_browser_plain_text(qt6cr_handle_t handle) {
   return text_browser == nullptr ? duplicate_string("") : duplicate_string(text_browser->toPlainText());
 }
 
+qt6cr_handle_t qt6cr_text_browser_source(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? nullptr : new QUrl(text_browser->source());
+}
+
+int qt6cr_text_browser_source_type(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? static_cast<int>(QTextDocument::UnknownResource) : static_cast<int>(text_browser->sourceType());
+}
+
+void qt6cr_text_browser_set_source(qt6cr_handle_t handle, qt6cr_handle_t url, int type) {
+  auto *text_browser = as_text_browser(handle);
+  auto *source = as_qurl(url);
+
+  if (text_browser != nullptr && source != nullptr) {
+    text_browser->setSource(*source, static_cast<QTextDocument::ResourceType>(type));
+  }
+}
+
+qt6cr_string_array_t qt6cr_text_browser_search_paths(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(text_browser->searchPaths());
+}
+
+void qt6cr_text_browser_set_search_paths(qt6cr_handle_t handle, const char *const *paths, int count) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr) {
+    return;
+  }
+
+  QStringList values;
+  for (int index = 0; index < count; ++index) {
+    const char *value = paths == nullptr ? nullptr : paths[index];
+    values << QString::fromUtf8(value == nullptr ? "" : value);
+  }
+
+  text_browser->setSearchPaths(values);
+}
+
+bool qt6cr_text_browser_is_backward_available(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser != nullptr && text_browser->isBackwardAvailable();
+}
+
+bool qt6cr_text_browser_is_forward_available(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser != nullptr && text_browser->isForwardAvailable();
+}
+
+void qt6cr_text_browser_clear_history(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->clearHistory();
+  }
+}
+
+char *qt6cr_text_browser_history_title(qt6cr_handle_t handle, int index) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? duplicate_string("") : duplicate_string(text_browser->historyTitle(index));
+}
+
+qt6cr_handle_t qt6cr_text_browser_history_url(qt6cr_handle_t handle, int index) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? nullptr : new QUrl(text_browser->historyUrl(index));
+}
+
+int qt6cr_text_browser_backward_history_count(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? 0 : text_browser->backwardHistoryCount();
+}
+
+int qt6cr_text_browser_forward_history_count(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser == nullptr ? 0 : text_browser->forwardHistoryCount();
+}
+
 bool qt6cr_text_browser_open_external_links(qt6cr_handle_t handle) {
   auto *text_browser = as_text_browser(handle);
   return text_browser != nullptr && text_browser->openExternalLinks();
@@ -30694,6 +30772,19 @@ void qt6cr_text_browser_set_open_external_links(qt6cr_handle_t handle, bool valu
 
   if (text_browser != nullptr) {
     text_browser->setOpenExternalLinks(value);
+  }
+}
+
+bool qt6cr_text_browser_open_links(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+  return text_browser != nullptr && text_browser->openLinks();
+}
+
+void qt6cr_text_browser_set_open_links(qt6cr_handle_t handle, bool value) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->setOpenLinks(value);
   }
 }
 
@@ -30725,6 +30816,102 @@ void qt6cr_text_browser_set_vertical_scroll_value(qt6cr_handle_t handle, int val
   if (scroll_bar != nullptr) {
     scroll_bar->setValue(value);
   }
+}
+
+void qt6cr_text_browser_backward(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->backward();
+  }
+}
+
+void qt6cr_text_browser_forward(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->forward();
+  }
+}
+
+void qt6cr_text_browser_home(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->home();
+  }
+}
+
+void qt6cr_text_browser_reload(qt6cr_handle_t handle) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser != nullptr) {
+    text_browser->reload();
+  }
+}
+
+void qt6cr_text_browser_on_backward_available(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_browser, &QTextBrowser::backwardAvailable, text_browser, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_text_browser_on_forward_available(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_browser, &QTextBrowser::forwardAvailable, text_browser, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_text_browser_on_history_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_browser, &QTextBrowser::historyChanged, text_browser, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_text_browser_on_source_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_browser, &QTextBrowser::sourceChanged, text_browser, [callback, userdata](const QUrl &url) {
+    char *value = duplicate_string(url.toString());
+    callback(userdata, value);
+    delete[] value;
+  });
+}
+
+void qt6cr_text_browser_on_highlighted(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *text_browser = as_text_browser(handle);
+
+  if (text_browser == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(text_browser, &QTextBrowser::highlighted, text_browser, [callback, userdata](const QUrl &url) {
+    char *value = duplicate_string(url.toString());
+    callback(userdata, value);
+    delete[] value;
+  });
 }
 
 void qt6cr_text_browser_on_anchor_clicked(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
