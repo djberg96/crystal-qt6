@@ -1686,10 +1686,31 @@ describe Qt6 do
       rich_text_changes += 1
     end
     text_edit.accept_rich_text = true
+    text_edit.auto_formatting = Qt6::TextEditAutoFormattingFlag::AutoBulletList
+    text_edit.tab_changes_focus = true
     text_edit.undo_redo_enabled = true
     text_edit.read_only = false
+    text_edit.document_title = "Layer Notes"
+    text_edit.line_wrap_mode = Qt6::TextEditLineWrapMode::FixedColumnWidth
+    text_edit.line_wrap_column_or_width = 48
+    text_edit.word_wrap_mode = Qt6::TextOptionWrapMode::WrapAnywhere
+    text_edit.overwrite_mode = true
     text_edit.placeholder_text = "Describe the selected layer"
     text_edit.document = rich_document
+    text_edit.tab_stop_distance = 28.0
+    text_edit.cursor_width = 3
+    text_edit.text_interaction_flags = Qt6::TextInteractionFlag::TextSelectableByKeyboard | Qt6::TextInteractionFlag::LinksAccessibleByMouse | Qt6::TextInteractionFlag::TextEditable
+    rich_text_color = Qt6::Color.new(32, 64, 160)
+    rich_background_color = Qt6::Color.new(245, 230, 180)
+    rich_font = Qt6::QFont.new("Courier", 13, false, false)
+    text_edit.set_current_font(rich_font)
+    text_edit.set_font_point_size(15.0)
+    text_edit.set_font_weight(700)
+    text_edit.set_font_underline(true)
+    text_edit.set_font_italic(true)
+    text_edit.set_text_color(rich_text_color)
+    text_edit.set_text_background_color(rich_background_color)
+    text_edit.alignment = Qt6::AlignmentFlag::Right
     editor_cursor = text_edit.text_cursor
     editor_cursor.move_position(Qt6::TextCursorMoveOperation::End)
     text_edit.text_cursor = editor_cursor
@@ -1747,6 +1768,18 @@ describe Qt6 do
     text_edit.undo
     text_edit.can_redo?.should be_true
     text_edit.redo
+    text_edit.set_current_font(rich_font)
+    text_edit.set_font_point_size(15.0)
+    text_edit.set_font_weight(700)
+    text_edit.set_font_underline(true)
+    text_edit.set_font_italic(true)
+    text_edit.set_text_color(rich_text_color)
+    text_edit.set_text_background_color(rich_background_color)
+    text_edit.set_alignment(Qt6::AlignmentFlag::Right)
+    text_edit.move_cursor(Qt6::TextCursorMoveOperation::End)
+    text_edit.ensure_cursor_visible
+    text_edit.zoom_in
+    text_edit.zoom_out
     plain_edit.can_undo?.should be_true
     plain_edit.undo
     plain_edit.can_redo?.should be_true
@@ -1784,13 +1817,30 @@ describe Qt6 do
     missing_text.null?.should be_true
 
     text_edit.accept_rich_text?.should be_true
+    text_edit.auto_formatting.should eq(Qt6::TextEditAutoFormattingFlag::AutoBulletList)
+    text_edit.tab_changes_focus?.should be_true
     text_edit.undo_redo_enabled?.should be_true
     text_edit.read_only?.should be_false
+    text_edit.document_title.should eq("Layer Notes")
+    text_edit.line_wrap_mode.should eq(Qt6::TextEditLineWrapMode::FixedColumnWidth)
+    text_edit.line_wrap_column_or_width.should eq(48)
+    text_edit.word_wrap_mode.should eq(Qt6::TextOptionWrapMode::WrapAnywhere)
+    text_edit.overwrite_mode?.should be_true
+    text_edit.tab_stop_distance.should eq(28.0)
+    text_edit.cursor_width.should eq(3)
+    text_edit.text_interaction_flags.includes?(Qt6::TextInteractionFlag::TextSelectableByKeyboard).should be_true
+    text_edit.text_interaction_flags.includes?(Qt6::TextInteractionFlag::LinksAccessibleByMouse).should be_true
+    text_edit.text_interaction_flags.includes?(Qt6::TextInteractionFlag::TextEditable).should be_true
     text_edit.placeholder_text.should eq("Describe the selected layer")
     text_edit.plain_text.should contain("Omega beta!")
     text_edit.plain_text.should contain("Gamma")
     text_edit.plain_text.should contain("Delta Epsilon")
     text_edit.can_undo?.should be_true
+    text_edit.font_point_size.should be >= 0.0
+    text_edit.font_weight.should eq(700)
+    text_edit.current_font.point_size.should be > 0
+    text_edit.alignment.should eq(Qt6::AlignmentFlag::Right)
+    text_edit.text_cursor.at_end?.should be_true
     text_edit.document.plain_text.should eq(text_edit.plain_text)
     rich_text_changes.should be >= 1
 
@@ -1843,6 +1893,7 @@ describe Qt6 do
     found_units.release
     found_omega.release
     found_plain_block.release
+    rich_font.release
     second_block.release
     first_block.release
     editor_cursor.release

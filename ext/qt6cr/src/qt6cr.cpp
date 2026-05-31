@@ -30220,6 +30220,84 @@ void qt6cr_text_edit_set_accept_rich_text(qt6cr_handle_t handle, bool value) {
   }
 }
 
+int qt6cr_text_edit_auto_formatting(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0 : static_cast<int>(text_edit->autoFormatting());
+}
+
+void qt6cr_text_edit_set_auto_formatting(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setAutoFormatting(static_cast<QTextEdit::AutoFormatting>(value));
+  }
+}
+
+bool qt6cr_text_edit_tab_changes_focus(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->tabChangesFocus();
+}
+
+void qt6cr_text_edit_set_tab_changes_focus(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setTabChangesFocus(value);
+  }
+}
+
+char *qt6cr_text_edit_document_title(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? duplicate_string("") : duplicate_string(text_edit->documentTitle());
+}
+
+void qt6cr_text_edit_set_document_title(qt6cr_handle_t handle, const char *value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setDocumentTitle(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+int qt6cr_text_edit_line_wrap_mode(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? static_cast<int>(QTextEdit::NoWrap) : static_cast<int>(text_edit->lineWrapMode());
+}
+
+void qt6cr_text_edit_set_line_wrap_mode(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setLineWrapMode(static_cast<QTextEdit::LineWrapMode>(value));
+  }
+}
+
+int qt6cr_text_edit_line_wrap_column_or_width(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0 : text_edit->lineWrapColumnOrWidth();
+}
+
+void qt6cr_text_edit_set_line_wrap_column_or_width(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setLineWrapColumnOrWidth(value);
+  }
+}
+
+int qt6cr_text_edit_word_wrap_mode(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? static_cast<int>(QTextOption::WordWrap) : static_cast<int>(text_edit->wordWrapMode());
+}
+
+void qt6cr_text_edit_set_word_wrap_mode(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setWordWrapMode(static_cast<QTextOption::WrapMode>(value));
+  }
+}
+
 bool qt6cr_text_edit_undo_redo_enabled(qt6cr_handle_t handle) {
   auto *text_edit = as_text_edit(handle);
   return text_edit != nullptr && text_edit->isUndoRedoEnabled();
@@ -30243,6 +30321,58 @@ void qt6cr_text_edit_set_placeholder_text(qt6cr_handle_t handle, const char *tex
 
   if (text_edit != nullptr) {
     text_edit->setPlaceholderText(QString::fromUtf8(text == nullptr ? "" : text));
+  }
+}
+
+bool qt6cr_text_edit_overwrite_mode(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->overwriteMode();
+}
+
+void qt6cr_text_edit_set_overwrite_mode(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setOverwriteMode(value);
+  }
+}
+
+double qt6cr_text_edit_tab_stop_distance(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0.0 : text_edit->tabStopDistance();
+}
+
+void qt6cr_text_edit_set_tab_stop_distance(qt6cr_handle_t handle, double value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setTabStopDistance(value);
+  }
+}
+
+int qt6cr_text_edit_cursor_width(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 1 : text_edit->cursorWidth();
+}
+
+void qt6cr_text_edit_set_cursor_width(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setCursorWidth(value);
+  }
+}
+
+int qt6cr_text_edit_text_interaction_flags(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0 : static_cast<int>(text_edit->textInteractionFlags());
+}
+
+void qt6cr_text_edit_set_text_interaction_flags(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setTextInteractionFlags(static_cast<Qt::TextInteractionFlags>(value));
   }
 }
 
@@ -30274,6 +30404,119 @@ void qt6cr_text_edit_set_text_cursor(qt6cr_handle_t handle, qt6cr_handle_t curso
   }
 }
 
+double qt6cr_text_edit_font_point_size(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0.0 : text_edit->fontPointSize();
+}
+
+int qt6cr_text_edit_font_weight(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0 : text_edit->fontWeight();
+}
+
+bool qt6cr_text_edit_font_underline(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->fontUnderline();
+}
+
+bool qt6cr_text_edit_font_italic(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->fontItalic();
+}
+
+qt6cr_color_t qt6cr_text_edit_text_color(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(text_edit->textColor());
+}
+
+qt6cr_color_t qt6cr_text_edit_text_background_color(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? qt6cr_color_t{0, 0, 0, 255} : to_color(text_edit->textBackgroundColor());
+}
+
+qt6cr_handle_t qt6cr_text_edit_current_font(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? nullptr : static_cast<qt6cr_handle_t>(new QFont(text_edit->currentFont()));
+}
+
+int qt6cr_text_edit_alignment(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit == nullptr ? 0 : static_cast<int>(text_edit->alignment());
+}
+
+void qt6cr_text_edit_set_font_point_size(qt6cr_handle_t handle, double value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setFontPointSize(value);
+  }
+}
+
+void qt6cr_text_edit_set_font_family(qt6cr_handle_t handle, const char *value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setFontFamily(QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+void qt6cr_text_edit_set_font_weight(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setFontWeight(value);
+  }
+}
+
+void qt6cr_text_edit_set_font_underline(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setFontUnderline(value);
+  }
+}
+
+void qt6cr_text_edit_set_font_italic(qt6cr_handle_t handle, bool value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setFontItalic(value);
+  }
+}
+
+void qt6cr_text_edit_set_text_color(qt6cr_handle_t handle, qt6cr_color_t value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setTextColor(QColor(value.red, value.green, value.blue, value.alpha));
+  }
+}
+
+void qt6cr_text_edit_set_text_background_color(qt6cr_handle_t handle, qt6cr_color_t value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setTextBackgroundColor(QColor(value.red, value.green, value.blue, value.alpha));
+  }
+}
+
+void qt6cr_text_edit_set_current_font(qt6cr_handle_t handle, qt6cr_handle_t font) {
+  auto *text_edit = as_text_edit(handle);
+  auto *value = as_qfont(font);
+
+  if (text_edit != nullptr && value != nullptr) {
+    text_edit->setCurrentFont(*value);
+  }
+}
+
+void qt6cr_text_edit_set_alignment(qt6cr_handle_t handle, int value) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->setAlignment(static_cast<Qt::Alignment>(value));
+  }
+}
+
 void qt6cr_text_edit_clear(qt6cr_handle_t handle) {
   auto *text_edit = as_text_edit(handle);
 
@@ -30290,6 +30533,11 @@ bool qt6cr_text_edit_can_undo(qt6cr_handle_t handle) {
 bool qt6cr_text_edit_can_redo(qt6cr_handle_t handle) {
   auto *text_edit = as_text_edit(handle);
   return text_edit != nullptr && text_edit->document()->isRedoAvailable();
+}
+
+bool qt6cr_text_edit_can_paste(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+  return text_edit != nullptr && text_edit->canPaste();
 }
 
 void qt6cr_text_edit_undo(qt6cr_handle_t handle) {
@@ -30337,6 +30585,38 @@ void qt6cr_text_edit_paste(qt6cr_handle_t handle) {
 
   if (text_edit != nullptr) {
     text_edit->paste();
+  }
+}
+
+void qt6cr_text_edit_ensure_cursor_visible(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->ensureCursorVisible();
+  }
+}
+
+void qt6cr_text_edit_move_cursor(qt6cr_handle_t handle, int operation, int mode) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->moveCursor(static_cast<QTextCursor::MoveOperation>(operation), static_cast<QTextCursor::MoveMode>(mode));
+  }
+}
+
+void qt6cr_text_edit_zoom_in(qt6cr_handle_t handle, int range) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->zoomIn(range);
+  }
+}
+
+void qt6cr_text_edit_zoom_out(qt6cr_handle_t handle, int range) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit != nullptr) {
+    text_edit->zoomOut(range);
   }
 }
 
