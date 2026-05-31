@@ -2449,6 +2449,10 @@ QSwipeGesture *as_swipe_gesture(qt6cr_handle_t handle) {
   return static_cast<QSwipeGesture *>(handle);
 }
 
+QTapGesture *as_tap_gesture(qt6cr_handle_t handle) {
+  return static_cast<QTapGesture *>(handle);
+}
+
 QTapAndHoldGesture *as_tap_and_hold_gesture(qt6cr_handle_t handle) {
   return static_cast<QTapAndHoldGesture *>(handle);
 }
@@ -4273,6 +4277,23 @@ void qt6cr_swipe_gesture_set_swipe_angle(qt6cr_handle_t handle, double value) {
 
   if (gesture != nullptr) {
     gesture->setSwipeAngle(value);
+  }
+}
+
+qt6cr_handle_t qt6cr_tap_gesture_create(qt6cr_handle_t parent) {
+  return new QTapGesture(as_object(parent));
+}
+
+qt6cr_pointf_t qt6cr_tap_gesture_position(qt6cr_handle_t handle) {
+  auto *gesture = as_tap_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->position());
+}
+
+void qt6cr_tap_gesture_set_position(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_tap_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setPosition(QPointF(value.x, value.y));
   }
 }
 

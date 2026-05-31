@@ -3,14 +3,16 @@ module Qt6
   class Gesture < QObject
     def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : Gesture
       case LibQt6.qt6cr_gesture_type(handle)
+      when GestureType::TapGesture.value
+        TapGesture.wrap(handle, owned)
+      when GestureType::TapAndHoldGesture.value
+        TapAndHoldGesture.wrap(handle, owned)
       when GestureType::PanGesture.value
         PanGesture.wrap(handle, owned)
       when GestureType::PinchGesture.value
         PinchGesture.wrap(handle, owned)
       when GestureType::SwipeGesture.value
         SwipeGesture.wrap(handle, owned)
-      when GestureType::TapAndHoldGesture.value
-        TapAndHoldGesture.wrap(handle, owned)
       else
         new(handle, owned)
       end

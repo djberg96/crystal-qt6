@@ -359,6 +359,9 @@ module Qt6
     fun qt6cr_swipe_gesture_vertical_direction = qt6cr_swipe_gesture_vertical_direction(handle : Handle) : LibC::Int
     fun qt6cr_swipe_gesture_swipe_angle = qt6cr_swipe_gesture_swipe_angle(handle : Handle) : Float64
     fun qt6cr_swipe_gesture_set_swipe_angle = qt6cr_swipe_gesture_set_swipe_angle(handle : Handle, value : Float64)
+    fun qt6cr_tap_gesture_create = qt6cr_tap_gesture_create(parent : Handle) : Handle
+    fun qt6cr_tap_gesture_position = qt6cr_tap_gesture_position(handle : Handle) : PointFValue
+    fun qt6cr_tap_gesture_set_position = qt6cr_tap_gesture_set_position(handle : Handle, value : PointFValue)
     fun qt6cr_tap_and_hold_gesture_create = qt6cr_tap_and_hold_gesture_create(parent : Handle) : Handle
     fun qt6cr_tap_and_hold_gesture_position = qt6cr_tap_and_hold_gesture_position(handle : Handle) : PointFValue
     fun qt6cr_tap_and_hold_gesture_set_position = qt6cr_tap_and_hold_gesture_set_position(handle : Handle, value : PointFValue)

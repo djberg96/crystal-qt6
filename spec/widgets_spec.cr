@@ -817,22 +817,25 @@ describe Qt6 do
     gesture.release
   end
 
-  it "supports pan, pinch, swipe, and tap-and-hold gesture state helpers" do
+  it "supports tap, pan, pinch, swipe, and tap-and-hold gesture state helpers" do
     app
+    tap = Qt6::TapGesture.new
     pan = Qt6::PanGesture.new
     pinch = Qt6::PinchGesture.new
     swipe = Qt6::SwipeGesture.new
     tap_and_hold = Qt6::TapAndHoldGesture.new
+    tap_position = Qt6::PointF.new(7.5, 9.0)
     pan_offset = Qt6::PointF.new(18.0, 24.5)
     pan_last_offset = Qt6::PointF.new(5.0, 11.0)
     start_center = Qt6::PointF.new(10.0, 12.0)
     last_center = Qt6::PointF.new(14.5, 17.0)
     center = Qt6::PointF.new(19.0, 21.5)
-    tap_position = Qt6::PointF.new(27.5, 33.0)
+    tap_and_hold_position = Qt6::PointF.new(27.5, 33.0)
     previous_timeout = Qt6::TapAndHoldGesture.timeout
-    event = Qt6::GestureEvent.new([pan, pinch, swipe, tap_and_hold])
+    event = Qt6::GestureEvent.new([tap, pan, pinch, swipe, tap_and_hold])
 
     begin
+      tap.set_position(tap_position)
       pan.set_offset(pan_offset)
       pan.set_last_offset(pan_last_offset)
       pan.set_acceleration(1.75)
@@ -849,8 +852,11 @@ describe Qt6 do
       pinch.set_last_rotation_angle(12.5)
       pinch.set_rotation_angle(30.0)
       swipe.set_swipe_angle(90.0)
-      tap_and_hold.set_position(tap_position)
+      tap_and_hold.set_position(tap_and_hold_position)
       Qt6::TapAndHoldGesture.set_timeout(900)
+
+      tap.gesture_type.should eq(Qt6::GestureType::TapGesture)
+      tap.position.should eq(tap_position)
 
       pan.gesture_type.should eq(Qt6::GestureType::PanGesture)
       pan.offset.should eq(pan_offset)
@@ -877,17 +883,19 @@ describe Qt6 do
       swipe.swipe_angle.should eq(90.0)
 
       tap_and_hold.gesture_type.should eq(Qt6::GestureType::TapAndHoldGesture)
-      tap_and_hold.position.should eq(tap_position)
+      tap_and_hold.position.should eq(tap_and_hold_position)
       Qt6::TapAndHoldGesture.timeout.should eq(900)
 
+      event.gesture(Qt6::GestureType::TapGesture).should be_a(Qt6::TapGesture)
       event.gesture(Qt6::GestureType::PanGesture).should be_a(Qt6::PanGesture)
       event.gesture(Qt6::GestureType::PinchGesture).should be_a(Qt6::PinchGesture)
       event.gesture(Qt6::GestureType::SwipeGesture).should be_a(Qt6::SwipeGesture)
       event.gesture(Qt6::GestureType::TapAndHoldGesture).should be_a(Qt6::TapAndHoldGesture)
-      event.gestures.map(&.gesture_type).should eq([Qt6::GestureType::PanGesture, Qt6::GestureType::PinchGesture, Qt6::GestureType::SwipeGesture, Qt6::GestureType::TapAndHoldGesture])
+      event.gestures.map(&.gesture_type).should eq([Qt6::GestureType::TapGesture, Qt6::GestureType::PanGesture, Qt6::GestureType::PinchGesture, Qt6::GestureType::SwipeGesture, Qt6::GestureType::TapAndHoldGesture])
     ensure
       Qt6::TapAndHoldGesture.timeout = previous_timeout
       event.release
+      tap.release
       tap_and_hold.release
       swipe.release
       pinch.release
