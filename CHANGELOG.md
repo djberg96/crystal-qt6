@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QTapGesture` bindings with tap-position helpers and automatic gesture-event dispatch to the concrete tap wrapper.
 - Added `QSwipeGesture` bindings with typed swipe-direction and swipe-angle helpers, plus automatic gesture-event dispatch to the concrete swipe wrapper.
 - Added `QTapAndHoldGesture` bindings with held-position helpers, process-wide timeout access, and automatic gesture-event dispatch to the concrete tap-and-hold wrapper.
+- Expanded `QTimeEdit` with initial-time construction and the real subclass-specific `user_time_changed` signal alongside the existing time-change callback surface.
 - Expanded `QTextBrowser` with source/resource-type access, search-path and open-links control, backward/forward/home/reload/history helpers, and navigation/source signals for fuller rich-text browser workflows.
 - Expanded `QTextEdit` with auto-formatting, tab-focus, document-title, line-wrap, overwrite, cursor-width, text-interaction, current-formatting, alignment, and cursor-visibility/movement helpers for fuller rich-text editor parity.
 - Added `QTextCharFormat` and `QTextEdit::ExtraSelection` wrappers, and expanded `QTextEdit` with extra-selection get/set support for line highlights and search-hit style overlays.

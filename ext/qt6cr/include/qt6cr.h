@@ -4154,6 +4154,8 @@ void qt6cr_date_edit_on_date_changed(qt6cr_handle_t handle, qt6cr_handle_callbac
 
 qt6cr_handle_t qt6cr_time_edit_create(qt6cr_handle_t parent);
 void qt6cr_time_edit_on_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_time_edit_on_user_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata);
+void qt6cr_time_edit_emit_user_time_changed(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_calendar_widget_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_calendar_widget_selected_date(qt6cr_handle_t handle);

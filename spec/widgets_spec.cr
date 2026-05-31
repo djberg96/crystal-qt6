@@ -9,7 +9,8 @@ describe Qt6 do
     dial = Qt6::Dial.new
     date_time_edit = Qt6::DateTimeEdit.new
     date_edit = Qt6::DateEdit.new
-    time_edit = Qt6::TimeEdit.new
+    initial_time = Qt6::QTime.new(6, 15, 0)
+    time_edit = Qt6::TimeEdit.new(initial_time)
     calendar = Qt6::CalendarWidget.new
     lcd = Qt6::LcdNumber.new
     stacked_host = Qt6::Widget.new
@@ -36,6 +37,7 @@ describe Qt6 do
     date_time_values = [] of String
     date_values = [] of String
     time_values = [] of String
+    user_time_values = [] of String
     calendar_values = [] of String
     calendar_clicked = [] of String
     calendar_activated = [] of String
@@ -85,6 +87,9 @@ describe Qt6 do
     end
     time_edit.on_time_changed do |value|
       time_values << value.to_string
+    end
+    time_edit.on_user_time_changed do |value|
+      user_time_values << value.to_string
     end
     calendar.on_selection_changed do
       calendar_values << calendar.selected_date.to_string
@@ -171,6 +176,7 @@ describe Qt6 do
     date_time_edit.date_time = date_time
     date_edit.date = date
     time_edit.time = time
+    Qt6::LibQt6.qt6cr_time_edit_emit_user_time_changed(time_edit.to_unsafe)
 
     calendar.minimum_date = Qt6::QDate.new(2026, 1, 1)
     calendar.maximum_date = Qt6::QDate.new(2026, 12, 31)
@@ -325,7 +331,9 @@ describe Qt6 do
     date_values.last.should eq(date.to_string)
 
     time_edit.time.to_string.should eq(time.to_string)
+    initial_time.to_string.should eq("06:15:00")
     time_values.last.should eq(time.to_string)
+    user_time_values.last.should eq(time.to_string)
 
     calendar.minimum_date.to_string.should eq("2026-02-01")
     calendar.maximum_date.to_string.should eq("2026-11-30")
@@ -411,6 +419,7 @@ describe Qt6 do
     date_time_edit.release
     date_edit.release
     time_edit.release
+    initial_time.release
     calendar.release
     lcd.release
     command_link.release

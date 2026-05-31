@@ -29427,6 +29427,26 @@ void qt6cr_time_edit_on_time_changed(qt6cr_handle_t handle, qt6cr_handle_callbac
   });
 }
 
+void qt6cr_time_edit_on_user_time_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *editor = as_time_edit(handle);
+
+  if (editor == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(editor, &QTimeEdit::userTimeChanged, editor, [callback, userdata](const QTime &value) {
+    callback(userdata, new QTime(value));
+  });
+}
+
+void qt6cr_time_edit_emit_user_time_changed(qt6cr_handle_t handle) {
+  auto *editor = as_time_edit(handle);
+
+  if (editor != nullptr) {
+    emit editor->userTimeChanged(editor->time());
+  }
+}
+
 qt6cr_handle_t qt6cr_calendar_widget_create(qt6cr_handle_t parent) {
   return new QCalendarWidget(as_widget(parent));
 }

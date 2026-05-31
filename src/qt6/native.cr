@@ -4116,6 +4116,8 @@ module Qt6
 
     fun qt6cr_time_edit_create = qt6cr_time_edit_create(parent : Handle) : Handle
     fun qt6cr_time_edit_on_time_changed = qt6cr_time_edit_on_time_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_time_edit_on_user_time_changed = qt6cr_time_edit_on_user_time_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+    fun qt6cr_time_edit_emit_user_time_changed = qt6cr_time_edit_emit_user_time_changed(handle : Handle)
 
     fun qt6cr_calendar_widget_create = qt6cr_calendar_widget_create(parent : Handle) : Handle
     fun qt6cr_calendar_widget_selected_date = qt6cr_calendar_widget_selected_date(handle : Handle) : Handle
