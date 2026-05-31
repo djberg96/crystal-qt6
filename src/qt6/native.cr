@@ -4282,6 +4282,8 @@ module Qt6
     fun qt6cr_text_edit_set_text_background_color = qt6cr_text_edit_set_text_background_color(handle : Handle, value : ColorValue)
     fun qt6cr_text_edit_set_current_font = qt6cr_text_edit_set_current_font(handle : Handle, font : Handle)
     fun qt6cr_text_edit_set_alignment = qt6cr_text_edit_set_alignment(handle : Handle, value : LibC::Int)
+    fun qt6cr_text_edit_extra_selections = qt6cr_text_edit_extra_selections(handle : Handle) : HandleArrayValue
+    fun qt6cr_text_edit_set_extra_selections = qt6cr_text_edit_set_extra_selections(handle : Handle, selections : Handle*, count : LibC::Int)
     fun qt6cr_text_edit_clear = qt6cr_text_edit_clear(handle : Handle)
     fun qt6cr_text_edit_can_undo = qt6cr_text_edit_can_undo(handle : Handle) : Bool
     fun qt6cr_text_edit_can_redo = qt6cr_text_edit_can_redo(handle : Handle) : Bool
@@ -4297,6 +4299,26 @@ module Qt6
     fun qt6cr_text_edit_zoom_in = qt6cr_text_edit_zoom_in(handle : Handle, range : LibC::Int)
     fun qt6cr_text_edit_zoom_out = qt6cr_text_edit_zoom_out(handle : Handle, range : LibC::Int)
     fun qt6cr_text_edit_on_text_changed = qt6cr_text_edit_on_text_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_text_char_format_create = qt6cr_text_char_format_create : Handle
+    fun qt6cr_text_char_format_destroy = qt6cr_text_char_format_destroy(handle : Handle)
+    fun qt6cr_text_char_format_background = qt6cr_text_char_format_background(handle : Handle) : Handle
+    fun qt6cr_text_char_format_set_background = qt6cr_text_char_format_set_background(handle : Handle, brush : Handle)
+    fun qt6cr_text_char_format_foreground = qt6cr_text_char_format_foreground(handle : Handle) : Handle
+    fun qt6cr_text_char_format_set_foreground = qt6cr_text_char_format_set_foreground(handle : Handle, brush : Handle)
+    fun qt6cr_text_char_format_font_weight = qt6cr_text_char_format_font_weight(handle : Handle) : LibC::Int
+    fun qt6cr_text_char_format_set_font_weight = qt6cr_text_char_format_set_font_weight(handle : Handle, value : LibC::Int)
+    fun qt6cr_text_char_format_font_italic = qt6cr_text_char_format_font_italic(handle : Handle) : Bool
+    fun qt6cr_text_char_format_set_font_italic = qt6cr_text_char_format_set_font_italic(handle : Handle, value : Bool)
+    fun qt6cr_text_char_format_font_underline = qt6cr_text_char_format_font_underline(handle : Handle) : Bool
+    fun qt6cr_text_char_format_set_font_underline = qt6cr_text_char_format_set_font_underline(handle : Handle, value : Bool)
+    fun qt6cr_text_char_format_full_width_selection = qt6cr_text_char_format_full_width_selection(handle : Handle) : Bool
+    fun qt6cr_text_char_format_set_full_width_selection = qt6cr_text_char_format_set_full_width_selection(handle : Handle, value : Bool)
+    fun qt6cr_text_edit_extra_selection_create = qt6cr_text_edit_extra_selection_create(cursor : Handle, format : Handle) : Handle
+    fun qt6cr_text_edit_extra_selection_destroy = qt6cr_text_edit_extra_selection_destroy(handle : Handle)
+    fun qt6cr_text_edit_extra_selection_cursor = qt6cr_text_edit_extra_selection_cursor(handle : Handle) : Handle
+    fun qt6cr_text_edit_extra_selection_set_cursor = qt6cr_text_edit_extra_selection_set_cursor(handle : Handle, cursor : Handle)
+    fun qt6cr_text_edit_extra_selection_format = qt6cr_text_edit_extra_selection_format(handle : Handle) : Handle
+    fun qt6cr_text_edit_extra_selection_set_format = qt6cr_text_edit_extra_selection_set_format(handle : Handle, format : Handle)
 
     fun qt6cr_plain_text_edit_create = qt6cr_plain_text_edit_create(parent : Handle) : Handle
     fun qt6cr_plain_text_edit_plain_text = qt6cr_plain_text_edit_plain_text(handle : Handle) : UInt8*

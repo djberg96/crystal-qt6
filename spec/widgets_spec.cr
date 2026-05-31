@@ -1776,6 +1776,20 @@ describe Qt6 do
     text_edit.set_text_color(rich_text_color)
     text_edit.set_text_background_color(rich_background_color)
     text_edit.set_alignment(Qt6::AlignmentFlag::Right)
+    extra_selection_cursor = Qt6::TextCursor.new(rich_document)
+    extra_selection_cursor.set_position(0)
+    extra_selection_cursor.move_position(Qt6::TextCursorMoveOperation::Right, Qt6::TextCursorMoveMode::KeepAnchor, 5)
+    extra_selection_background = Qt6::QBrush.new(Qt6::Color.new(255, 255, 0))
+    extra_selection_foreground = Qt6::QBrush.new(Qt6::Color.new(32, 32, 32))
+    extra_selection_format = Qt6::TextCharFormat.new
+    extra_selection_format.background = extra_selection_background
+    extra_selection_format.foreground = extra_selection_foreground
+    extra_selection_format.font_weight = 600
+    extra_selection_format.font_italic = true
+    extra_selection_format.font_underline = true
+    extra_selection_format.full_width_selection = true
+    extra_selection = Qt6::TextEditExtraSelection.new(extra_selection_cursor, extra_selection_format)
+    text_edit.extra_selections = [extra_selection]
     text_edit.move_cursor(Qt6::TextCursorMoveOperation::End)
     text_edit.ensure_cursor_visible
     text_edit.zoom_in
@@ -1841,6 +1855,19 @@ describe Qt6 do
     text_edit.current_font.point_size.should be > 0
     text_edit.alignment.should eq(Qt6::AlignmentFlag::Right)
     text_edit.text_cursor.at_end?.should be_true
+    text_edit.extra_selections.size.should eq(1)
+    live_extra_selection = text_edit.extra_selections.first
+    live_extra_selection_cursor = live_extra_selection.cursor
+    live_extra_selection_format = live_extra_selection.format
+    live_extra_selection_background = live_extra_selection_format.background
+    live_extra_selection_foreground = live_extra_selection_format.foreground
+    live_extra_selection_cursor.selected_text.should eq("Omega")
+    live_extra_selection_background.color.should eq(Qt6::Color.new(255, 255, 0))
+    live_extra_selection_foreground.color.should eq(Qt6::Color.new(32, 32, 32))
+    live_extra_selection_format.font_weight.should eq(600)
+    live_extra_selection_format.font_italic?.should be_true
+    live_extra_selection_format.font_underline?.should be_true
+    live_extra_selection_format.full_width_selection?.should be_true
     text_edit.document.plain_text.should eq(text_edit.plain_text)
     rich_text_changes.should be >= 1
 
@@ -1893,6 +1920,16 @@ describe Qt6 do
     found_units.release
     found_omega.release
     found_plain_block.release
+    live_extra_selection_foreground.release
+    live_extra_selection_background.release
+    live_extra_selection_format.release
+    live_extra_selection_cursor.release
+    live_extra_selection.release
+    extra_selection.release
+    extra_selection_format.release
+    extra_selection_foreground.release
+    extra_selection_background.release
+    extra_selection_cursor.release
     rich_font.release
     second_block.release
     first_block.release

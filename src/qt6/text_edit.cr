@@ -345,6 +345,25 @@ module Qt6
       value
     end
 
+    # Returns the current extra selections applied to the editor.
+    def extra_selections : Array(TextEditExtraSelection)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_text_edit_extra_selections(to_unsafe)).map do |handle|
+        TextEditExtraSelection.wrap(handle, true)
+      end
+    end
+
+    # Replaces the current extra selections and returns them.
+    def extra_selections=(selections : Enumerable(TextEditExtraSelection)) : Array(TextEditExtraSelection)
+      values = selections.to_a
+      handles = values.map(&.to_unsafe)
+      LibQt6.qt6cr_text_edit_set_extra_selections(
+        to_unsafe,
+        handles.empty? ? Pointer(Void).null.as(LibQt6::Handle*) : handles.to_unsafe,
+        handles.size
+      )
+      values
+    end
+
     # Clears the editor contents.
     def clear : self
       LibQt6.qt6cr_text_edit_clear(to_unsafe)
@@ -489,6 +508,12 @@ module Qt6
     # Qt-style alias for `alignment=`.
     def set_alignment(value : AlignmentFlag) : self
       self.alignment = value
+      self
+    end
+
+    # Qt-style alias for `extra_selections=`.
+    def set_extra_selections(selections : Enumerable(TextEditExtraSelection)) : self
+      self.extra_selections = selections
       self
     end
 

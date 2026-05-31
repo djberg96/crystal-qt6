@@ -1891,7 +1891,7 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &value
     copy[index] = values.at(index);
   }
 
-  return qt6cr_handle_array_t{copy, size};
+  return qt6cr_handle_array_t{copy, static_cast<int>(size)};
 }
 
 qt6cr_handle_array_t to_handle_array_value(const QList<QAction *> &values) {
@@ -1907,7 +1907,7 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QAction *> &values) {
     copy[index] = values.at(index);
   }
 
-  return qt6cr_handle_array_t{copy, size};
+  return qt6cr_handle_array_t{copy, static_cast<int>(size)};
 }
 
 qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values) {
@@ -2663,6 +2663,14 @@ QTextCursor *as_text_cursor(qt6cr_handle_t handle) {
 
 QTextEdit *as_text_edit(qt6cr_handle_t handle) {
   return static_cast<QTextEdit *>(handle);
+}
+
+QTextCharFormat *as_text_char_format(qt6cr_handle_t handle) {
+  return static_cast<QTextCharFormat *>(handle);
+}
+
+QTextEdit::ExtraSelection *as_text_edit_extra_selection(qt6cr_handle_t handle) {
+  return static_cast<QTextEdit::ExtraSelection *>(handle);
 }
 
 QPlainTextEdit *as_plain_text_edit(qt6cr_handle_t handle) {
@@ -30517,6 +30525,45 @@ void qt6cr_text_edit_set_alignment(qt6cr_handle_t handle, int value) {
   }
 }
 
+qt6cr_handle_array_t qt6cr_text_edit_extra_selections(qt6cr_handle_t handle) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit == nullptr) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  const auto selections = text_edit->extraSelections();
+  const auto size = selections.size();
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[size];
+  for (int index = 0; index < size; ++index) {
+    copy[index] = new QTextEdit::ExtraSelection(selections.at(index));
+  }
+
+  return qt6cr_handle_array_t{copy, static_cast<int>(size)};
+}
+
+void qt6cr_text_edit_set_extra_selections(qt6cr_handle_t handle, qt6cr_handle_t *selections, int count) {
+  auto *text_edit = as_text_edit(handle);
+
+  if (text_edit == nullptr) {
+    return;
+  }
+
+  QList<QTextEdit::ExtraSelection> values;
+  for (int index = 0; index < count; ++index) {
+    auto *selection = selections == nullptr ? nullptr : as_text_edit_extra_selection(selections[index]);
+    if (selection != nullptr) {
+      values.append(*selection);
+    }
+  }
+
+  text_edit->setExtraSelections(values);
+}
+
 void qt6cr_text_edit_clear(qt6cr_handle_t handle) {
   auto *text_edit = as_text_edit(handle);
 
@@ -30630,6 +30677,142 @@ void qt6cr_text_edit_on_text_changed(qt6cr_handle_t handle, qt6cr_void_callback_
   QObject::connect(text_edit, &QTextEdit::textChanged, text_edit, [callback, userdata]() {
     callback(userdata);
   });
+}
+
+qt6cr_handle_t qt6cr_text_char_format_create(void) {
+  return new QTextCharFormat();
+}
+
+void qt6cr_text_char_format_destroy(qt6cr_handle_t handle) {
+  delete as_text_char_format(handle);
+}
+
+qt6cr_handle_t qt6cr_text_char_format_background(qt6cr_handle_t handle) {
+  auto *format = as_text_char_format(handle);
+  return format == nullptr ? new QBrush() : new QBrush(format->background());
+}
+
+void qt6cr_text_char_format_set_background(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *format = as_text_char_format(handle);
+  auto *value = as_qbrush(brush);
+
+  if (format != nullptr && value != nullptr) {
+    format->setBackground(*value);
+  }
+}
+
+qt6cr_handle_t qt6cr_text_char_format_foreground(qt6cr_handle_t handle) {
+  auto *format = as_text_char_format(handle);
+  return format == nullptr ? new QBrush() : new QBrush(format->foreground());
+}
+
+void qt6cr_text_char_format_set_foreground(qt6cr_handle_t handle, qt6cr_handle_t brush) {
+  auto *format = as_text_char_format(handle);
+  auto *value = as_qbrush(brush);
+
+  if (format != nullptr && value != nullptr) {
+    format->setForeground(*value);
+  }
+}
+
+int qt6cr_text_char_format_font_weight(qt6cr_handle_t handle) {
+  auto *format = as_text_char_format(handle);
+  return format == nullptr ? 0 : format->fontWeight();
+}
+
+void qt6cr_text_char_format_set_font_weight(qt6cr_handle_t handle, int value) {
+  auto *format = as_text_char_format(handle);
+
+  if (format != nullptr) {
+    format->setFontWeight(value);
+  }
+}
+
+bool qt6cr_text_char_format_font_italic(qt6cr_handle_t handle) {
+  auto *format = as_text_char_format(handle);
+  return format != nullptr && format->fontItalic();
+}
+
+void qt6cr_text_char_format_set_font_italic(qt6cr_handle_t handle, bool value) {
+  auto *format = as_text_char_format(handle);
+
+  if (format != nullptr) {
+    format->setFontItalic(value);
+  }
+}
+
+bool qt6cr_text_char_format_font_underline(qt6cr_handle_t handle) {
+  auto *format = as_text_char_format(handle);
+  return format != nullptr && format->fontUnderline();
+}
+
+void qt6cr_text_char_format_set_font_underline(qt6cr_handle_t handle, bool value) {
+  auto *format = as_text_char_format(handle);
+
+  if (format != nullptr) {
+    format->setFontUnderline(value);
+  }
+}
+
+bool qt6cr_text_char_format_full_width_selection(qt6cr_handle_t handle) {
+  auto *format = as_text_char_format(handle);
+  return format != nullptr && format->property(QTextFormat::FullWidthSelection).toBool();
+}
+
+void qt6cr_text_char_format_set_full_width_selection(qt6cr_handle_t handle, bool value) {
+  auto *format = as_text_char_format(handle);
+
+  if (format != nullptr) {
+    format->setProperty(QTextFormat::FullWidthSelection, value);
+  }
+}
+
+qt6cr_handle_t qt6cr_text_edit_extra_selection_create(qt6cr_handle_t cursor, qt6cr_handle_t format) {
+  auto *selection = new QTextEdit::ExtraSelection();
+  auto *cursor_value = as_text_cursor(cursor);
+  auto *format_value = as_text_char_format(format);
+
+  if (cursor_value != nullptr) {
+    selection->cursor = *cursor_value;
+  }
+
+  if (format_value != nullptr) {
+    selection->format = *format_value;
+  }
+
+  return selection;
+}
+
+void qt6cr_text_edit_extra_selection_destroy(qt6cr_handle_t handle) {
+  delete as_text_edit_extra_selection(handle);
+}
+
+qt6cr_handle_t qt6cr_text_edit_extra_selection_cursor(qt6cr_handle_t handle) {
+  auto *selection = as_text_edit_extra_selection(handle);
+  return selection == nullptr ? nullptr : new QTextCursor(selection->cursor);
+}
+
+void qt6cr_text_edit_extra_selection_set_cursor(qt6cr_handle_t handle, qt6cr_handle_t cursor) {
+  auto *selection = as_text_edit_extra_selection(handle);
+  auto *value = as_text_cursor(cursor);
+
+  if (selection != nullptr && value != nullptr) {
+    selection->cursor = *value;
+  }
+}
+
+qt6cr_handle_t qt6cr_text_edit_extra_selection_format(qt6cr_handle_t handle) {
+  auto *selection = as_text_edit_extra_selection(handle);
+  return selection == nullptr ? new QTextCharFormat() : new QTextCharFormat(selection->format);
+}
+
+void qt6cr_text_edit_extra_selection_set_format(qt6cr_handle_t handle, qt6cr_handle_t format) {
+  auto *selection = as_text_edit_extra_selection(handle);
+  auto *value = as_text_char_format(format);
+
+  if (selection != nullptr && value != nullptr) {
+    selection->format = *value;
+  }
 }
 
 qt6cr_handle_t qt6cr_plain_text_edit_create(qt6cr_handle_t parent) {
