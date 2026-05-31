@@ -9,6 +9,8 @@ module Qt6
         PinchGesture.wrap(handle, owned)
       when GestureType::SwipeGesture.value
         SwipeGesture.wrap(handle, owned)
+      when GestureType::TapAndHoldGesture.value
+        TapAndHoldGesture.wrap(handle, owned)
       else
         new(handle, owned)
       end

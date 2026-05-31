@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QWidget` with shared font access, resolved `font_metrics` / `font_info`, background and foreground palette-role helpers, and `auto_fill_background` control for fuller visual-state parity.
 - Expanded `QWidget` with full cursor access and clearing, tablet-tracking, context-menu policy, and input-method-hint helpers for fuller shared input and interaction control.
 - Added `QSwipeGesture` bindings with typed swipe-direction and swipe-angle helpers, plus automatic gesture-event dispatch to the concrete swipe wrapper.
+- Added `QTapAndHoldGesture` bindings with held-position helpers, process-wide timeout access, and automatic gesture-event dispatch to the concrete tap-and-hold wrapper.
 - Expanded `QSystemTrayIcon` with icon-based construction, tray geometry access, custom-icon message display, Qt-style setter aliases, and correct native ownership handoff for assigned context menus.
 - Expanded `QTableView` with row and column geometry and visibility helpers, grid-style and corner-button control, direct row and column selection and hide/show slots, per-axis resize-to-contents helpers, span clearing, and assignable table headers for fuller tabular view parity.
 - Expanded `QTableWidget` with item row/column and index mapping helpers, take-and-restore ownership transfer for body and header items, flagged current-item/current-cell setters, embedded cell-widget support, and direct item editing for fuller item-based table workflows.

@@ -2449,6 +2449,10 @@ QSwipeGesture *as_swipe_gesture(qt6cr_handle_t handle) {
   return static_cast<QSwipeGesture *>(handle);
 }
 
+QTapAndHoldGesture *as_tap_and_hold_gesture(qt6cr_handle_t handle) {
+  return static_cast<QTapAndHoldGesture *>(handle);
+}
+
 CrystalGestureRecognizer *as_gesture_recognizer(qt6cr_handle_t handle) {
   return static_cast<CrystalGestureRecognizer *>(handle);
 }
@@ -4270,6 +4274,31 @@ void qt6cr_swipe_gesture_set_swipe_angle(qt6cr_handle_t handle, double value) {
   if (gesture != nullptr) {
     gesture->setSwipeAngle(value);
   }
+}
+
+qt6cr_handle_t qt6cr_tap_and_hold_gesture_create(qt6cr_handle_t parent) {
+  return new QTapAndHoldGesture(as_object(parent));
+}
+
+qt6cr_pointf_t qt6cr_tap_and_hold_gesture_position(qt6cr_handle_t handle) {
+  auto *gesture = as_tap_and_hold_gesture(handle);
+  return gesture == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(gesture->position());
+}
+
+void qt6cr_tap_and_hold_gesture_set_position(qt6cr_handle_t handle, qt6cr_pointf_t value) {
+  auto *gesture = as_tap_and_hold_gesture(handle);
+
+  if (gesture != nullptr) {
+    gesture->setPosition(QPointF(value.x, value.y));
+  }
+}
+
+void qt6cr_tap_and_hold_gesture_set_timeout(int msecs) {
+  QTapAndHoldGesture::setTimeout(msecs);
+}
+
+int qt6cr_tap_and_hold_gesture_timeout(void) {
+  return QTapAndHoldGesture::timeout();
 }
 
 qt6cr_handle_t qt6cr_pinch_gesture_create(qt6cr_handle_t parent) {
