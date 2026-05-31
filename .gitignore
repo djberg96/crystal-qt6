@@ -1,8 +1,22 @@
 /.shards/
 /ext/qt6cr/build/
 /docs/_site/
+/*.dwarf
+
+# Local Crystal build outputs
+/qt6
+/hello_world
+/counter
+/editor_shell
+/editor_vertical_slice
+/desktop_editor_showcase
+/event_monitor
 /rendering_stack
-/rendering_stack.dwarf
+/svg_widget_renderer
+/inspector_workbench
+/model_view_workbench
+/application_services_showcase
+/dialog_gallery
 /docs/book/*.aux
 /docs/book/*.log
 /docs/book/*.out
