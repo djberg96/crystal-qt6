@@ -4960,6 +4960,7 @@ module Qt6
     fun qt6cr_form_layout_take_row_widget = qt6cr_form_layout_take_row_widget(handle : Handle, widget : Handle) : FormLayoutTakeRowResultValue
     fun qt6cr_form_layout_take_row_layout = qt6cr_form_layout_take_row_layout(handle : Handle, layout : Handle) : FormLayoutTakeRowResultValue
     fun qt6cr_form_layout_row_count = qt6cr_form_layout_row_count(handle : Handle) : LibC::Int
+    fun qt6cr_widget_item_create = qt6cr_widget_item_create(widget : Handle) : Handle
     fun qt6cr_spacer_item_create = qt6cr_spacer_item_create(width : LibC::Int, height : LibC::Int, horizontal_policy : LibC::Int, vertical_policy : LibC::Int) : Handle
     fun qt6cr_spacer_item_change_size = qt6cr_spacer_item_change_size(handle : Handle, width : LibC::Int, height : LibC::Int, horizontal_policy : LibC::Int, vertical_policy : LibC::Int)
     fun qt6cr_spacer_item_size_policy = qt6cr_spacer_item_size_policy(handle : Handle) : SizePolicyStructValue
@@ -4967,10 +4968,16 @@ module Qt6
     fun qt6cr_layout_item_size_hint = qt6cr_layout_item_size_hint(handle : Handle) : SizeValue
     fun qt6cr_layout_item_minimum_size = qt6cr_layout_item_minimum_size(handle : Handle) : SizeValue
     fun qt6cr_layout_item_maximum_size = qt6cr_layout_item_maximum_size(handle : Handle) : SizeValue
+    fun qt6cr_layout_item_expanding_directions = qt6cr_layout_item_expanding_directions(handle : Handle) : LibC::Int
     fun qt6cr_layout_item_geometry = qt6cr_layout_item_geometry(handle : Handle) : RectValue
     fun qt6cr_layout_item_set_geometry = qt6cr_layout_item_set_geometry(handle : Handle, value : RectValue)
     fun qt6cr_layout_item_alignment = qt6cr_layout_item_alignment(handle : Handle) : LibC::Int
     fun qt6cr_layout_item_is_empty = qt6cr_layout_item_is_empty(handle : Handle) : Bool
+    fun qt6cr_layout_item_has_height_for_width = qt6cr_layout_item_has_height_for_width(handle : Handle) : Bool
+    fun qt6cr_layout_item_height_for_width = qt6cr_layout_item_height_for_width(handle : Handle, width : LibC::Int) : LibC::Int
+    fun qt6cr_layout_item_minimum_height_for_width = qt6cr_layout_item_minimum_height_for_width(handle : Handle, width : LibC::Int) : LibC::Int
+    fun qt6cr_layout_item_invalidate = qt6cr_layout_item_invalidate(handle : Handle)
+    fun qt6cr_layout_item_control_types = qt6cr_layout_item_control_types(handle : Handle) : LibC::Int
     fun qt6cr_layout_item_widget = qt6cr_layout_item_widget(handle : Handle) : Handle
     fun qt6cr_layout_item_layout = qt6cr_layout_item_layout(handle : Handle) : Handle
     fun qt6cr_layout_item_spacer_item = qt6cr_layout_item_spacer_item(handle : Handle) : Handle

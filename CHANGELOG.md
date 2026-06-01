@@ -36,6 +36,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QToolBar` with area/orientation/floating helpers, icon-backed action creation, separator and widget insertion, action geometry and hit-testing, hosted-widget lookup, toolbar-specific signals, and Qt-style setter aliases for fuller shell composition parity.
 - Expanded `QToolBox` with per-page icon and tooltip helpers plus Qt-style current-page setter aliases for fuller inspector-page parity.
 - Expanded `QToolButton` with popup-mode and arrow-type control, size hints, menu display, triggered-action callbacks, Qt-style setter aliases, and parent-ownership handoff for attached menus.
+- Added `QWidgetItem` bindings and rounded out shared `QLayoutItem` helpers with control-type, expanding-direction, invalidate, and height-for-width support for fuller widget-backed layout item coverage.
 
 ## [0.11.0] - 2026-05-23
 

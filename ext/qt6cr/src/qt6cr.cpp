@@ -35260,6 +35260,11 @@ int qt6cr_form_layout_row_count(qt6cr_handle_t handle) {
   return layout == nullptr ? 0 : layout->rowCount();
 }
 
+qt6cr_handle_t qt6cr_widget_item_create(qt6cr_handle_t widget) {
+  auto *value = as_widget(widget);
+  return value == nullptr ? nullptr : new QWidgetItem(value);
+}
+
 qt6cr_handle_t qt6cr_spacer_item_create(int width, int height, int horizontal_policy, int vertical_policy) {
   return new QSpacerItem(
     width,
@@ -35306,6 +35311,11 @@ qt6cr_size_t qt6cr_layout_item_maximum_size(qt6cr_handle_t handle) {
   return item == nullptr ? qt6cr_size_t{0, 0} : to_size(item->maximumSize());
 }
 
+int qt6cr_layout_item_expanding_directions(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? 0 : static_cast<int>(item->expandingDirections());
+}
+
 qt6cr_rect_t qt6cr_layout_item_geometry(qt6cr_handle_t handle) {
   auto *item = as_layout_item(handle);
   return item == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(item->geometry());
@@ -35327,6 +35337,34 @@ int qt6cr_layout_item_alignment(qt6cr_handle_t handle) {
 bool qt6cr_layout_item_is_empty(qt6cr_handle_t handle) {
   auto *item = as_layout_item(handle);
   return item != nullptr && item->isEmpty();
+}
+
+bool qt6cr_layout_item_has_height_for_width(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item != nullptr && item->hasHeightForWidth();
+}
+
+int qt6cr_layout_item_height_for_width(qt6cr_handle_t handle, int width) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? -1 : item->heightForWidth(width);
+}
+
+int qt6cr_layout_item_minimum_height_for_width(qt6cr_handle_t handle, int width) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? -1 : item->minimumHeightForWidth(width);
+}
+
+void qt6cr_layout_item_invalidate(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+
+  if (item != nullptr) {
+    item->invalidate();
+  }
+}
+
+int qt6cr_layout_item_control_types(qt6cr_handle_t handle) {
+  auto *item = as_layout_item(handle);
+  return item == nullptr ? static_cast<int>(QSizePolicy::DefaultType) : static_cast<int>(item->controlTypes());
 }
 
 qt6cr_handle_t qt6cr_layout_item_widget(qt6cr_handle_t handle) {

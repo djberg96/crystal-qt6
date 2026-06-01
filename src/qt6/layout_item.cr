@@ -5,6 +5,9 @@ module Qt6
       spacer_handle = LibQt6.qt6cr_layout_item_spacer_item(handle)
       return SpacerItem.wrap(spacer_handle, owned) unless spacer_handle.null?
 
+      widget_handle = LibQt6.qt6cr_layout_item_widget(handle)
+      return WidgetItem.wrap(handle, owned) unless widget_handle.null?
+
       new(handle, owned)
     end
 
@@ -25,6 +28,16 @@ module Qt6
     # Returns the maximum item size.
     def maximum_size : Size
       Size.from_native(LibQt6.qt6cr_layout_item_maximum_size(to_unsafe))
+    end
+
+    # Returns `true` when the item expands horizontally.
+    def horizontal_expanding? : Bool
+      (LibQt6.qt6cr_layout_item_expanding_directions(to_unsafe) & Orientation::Horizontal.value) != 0
+    end
+
+    # Returns `true` when the item expands vertically.
+    def vertical_expanding? : Bool
+      (LibQt6.qt6cr_layout_item_expanding_directions(to_unsafe) & Orientation::Vertical.value) != 0
     end
 
     # Returns the current geometry assigned to the item.
@@ -58,6 +71,32 @@ module Qt6
     # Returns `true` when the item contributes no visible or measurable content.
     def empty? : Bool
       LibQt6.qt6cr_layout_item_is_empty(to_unsafe)
+    end
+
+    # Returns `true` when the item computes height from an assigned width.
+    def has_height_for_width? : Bool
+      LibQt6.qt6cr_layout_item_has_height_for_width(to_unsafe)
+    end
+
+    # Returns the preferred height for the given width.
+    def height_for_width(width : Int) : Int32
+      LibQt6.qt6cr_layout_item_height_for_width(to_unsafe, width.to_i32)
+    end
+
+    # Returns the minimum height for the given width.
+    def minimum_height_for_width(width : Int) : Int32
+      LibQt6.qt6cr_layout_item_minimum_height_for_width(to_unsafe, width.to_i32)
+    end
+
+    # Invalidates cached geometry and returns `self`.
+    def invalidate : self
+      LibQt6.qt6cr_layout_item_invalidate(to_unsafe)
+      self
+    end
+
+    # Returns the control-type flags the item reports to styles and layouts.
+    def control_types : SizePolicyControlType
+      SizePolicyControlType.from_value(LibQt6.qt6cr_layout_item_control_types(to_unsafe))
     end
 
     # Returns the wrapped widget when this item represents one.

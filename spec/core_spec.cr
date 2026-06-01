@@ -2898,6 +2898,54 @@ describe Qt6 do
     window.release
   end
 
+  it "supports widget items through shared layout item wrappers" do
+    application = app
+    host = Qt6::Widget.new
+    label = Qt6::Label.new("Wrapped")
+    label.word_wrap = true
+    label.size_policy = Qt6::SizePolicyValue.new(
+      horizontal_policy: Qt6::SizePolicy::Preferred,
+      vertical_policy: Qt6::SizePolicy::Preferred,
+      control_type: Qt6::SizePolicyControlType::Label,
+      height_for_width: true
+    )
+    direct_item = Qt6::WidgetItem.new(label)
+    layout = Qt6::VBoxLayout.new(host)
+
+    begin
+      direct_item.widget.to_unsafe.should eq(label.to_unsafe)
+      direct_item.control_types.should eq(Qt6::SizePolicyControlType::Label)
+      direct_item.has_height_for_width?.should be_a(Bool)
+      direct_item.height_for_width(120).should be_a(Int32)
+      direct_item.minimum_height_for_width(120).should be_a(Int32)
+      direct_item.horizontal_expanding?.should be_false
+      direct_item.vertical_expanding?.should be_false
+      direct_item.set_geometry(1, 2, 90, 28).to_unsafe.should eq(direct_item.to_unsafe)
+      direct_item.geometry.width.should be > 0
+      direct_item.geometry.height.should be > 0
+      direct_item.invalidate.to_unsafe.should eq(direct_item.to_unsafe)
+
+      layout << label
+      host.resize(180, 80)
+      host.show
+      application.process_events
+
+      item = layout.item_at(0).not_nil!
+      item.should be_a(Qt6::WidgetItem)
+      item.widget.not_nil!.to_unsafe.should eq(label.to_unsafe)
+      item.control_types.should eq(Qt6::SizePolicyControlType::Label)
+      item.has_height_for_width?.should be_a(Bool)
+      item.height_for_width(120).should be_a(Int32)
+      item.minimum_height_for_width(120).should be_a(Int32)
+      item.invalidate.to_unsafe.should eq(item.to_unsafe)
+      item.geometry.height.should be > 0
+      item.release
+    ensure
+      direct_item.release
+      host.release
+    end
+  end
+
   it "supports label alignment and pixmap display settings" do
     application = app
     window = Qt6::Widget.new
