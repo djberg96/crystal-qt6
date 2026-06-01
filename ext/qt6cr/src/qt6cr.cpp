@@ -23950,6 +23950,12 @@ qt6cr_handle_t qt6cr_tool_bar_add_text_action(qt6cr_handle_t handle, const char 
   return tool_bar == nullptr ? nullptr : tool_bar->addAction(QString::fromUtf8(text == nullptr ? "" : text));
 }
 
+qt6cr_handle_t qt6cr_tool_bar_add_icon_text_action(qt6cr_handle_t handle, qt6cr_handle_t icon, const char *text) {
+  auto *tool_bar = as_tool_bar(handle);
+  auto *tool_icon = as_qicon(icon);
+  return tool_bar == nullptr || tool_icon == nullptr ? nullptr : tool_bar->addAction(*tool_icon, QString::fromUtf8(text == nullptr ? "" : text));
+}
+
 void qt6cr_tool_bar_add_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
   auto *tool_bar = as_tool_bar(handle);
   auto *tool_bar_action = as_action(action);
@@ -23976,6 +23982,36 @@ void qt6cr_tool_bar_add_separator(qt6cr_handle_t handle) {
   }
 }
 
+qt6cr_handle_t qt6cr_tool_bar_insert_separator(qt6cr_handle_t handle, qt6cr_handle_t before) {
+  auto *tool_bar = as_tool_bar(handle);
+  auto *before_action = as_action(before);
+  return tool_bar == nullptr || before_action == nullptr ? nullptr : static_cast<qt6cr_handle_t>(tool_bar->insertSeparator(before_action));
+}
+
+qt6cr_handle_t qt6cr_tool_bar_insert_widget(qt6cr_handle_t handle, qt6cr_handle_t before, qt6cr_handle_t widget) {
+  auto *tool_bar = as_tool_bar(handle);
+  auto *before_action = as_action(before);
+  auto *tool_widget = as_widget(widget);
+  return tool_bar == nullptr || before_action == nullptr || tool_widget == nullptr ? nullptr : static_cast<qt6cr_handle_t>(tool_bar->insertWidget(before_action, tool_widget));
+}
+
+qt6cr_rect_t qt6cr_tool_bar_action_geometry(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *tool_bar = as_tool_bar(handle);
+  auto *tool_bar_action = as_action(action);
+  return tool_bar == nullptr || tool_bar_action == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(tool_bar->actionGeometry(tool_bar_action));
+}
+
+qt6cr_handle_t qt6cr_tool_bar_action_at(qt6cr_handle_t handle, qt6cr_point_t point) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar == nullptr ? nullptr : static_cast<qt6cr_handle_t>(tool_bar->actionAt(QPoint(point.x, point.y)));
+}
+
+qt6cr_handle_t qt6cr_tool_bar_widget_for_action(qt6cr_handle_t handle, qt6cr_handle_t action) {
+  auto *tool_bar = as_tool_bar(handle);
+  auto *tool_bar_action = as_action(action);
+  return tool_bar == nullptr || tool_bar_action == nullptr ? nullptr : static_cast<qt6cr_handle_t>(tool_bar->widgetForAction(tool_bar_action));
+}
+
 void qt6cr_tool_bar_clear(qt6cr_handle_t handle) {
   auto *tool_bar = as_tool_bar(handle);
 
@@ -23997,6 +24033,37 @@ bool qt6cr_tool_bar_is_movable(qt6cr_handle_t handle) {
   return tool_bar != nullptr && tool_bar->isMovable();
 }
 
+void qt6cr_tool_bar_set_allowed_areas(qt6cr_handle_t handle, int value) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->setAllowedAreas(static_cast<Qt::ToolBarAreas>(value));
+  }
+}
+
+int qt6cr_tool_bar_allowed_areas(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar == nullptr ? static_cast<int>(Qt::NoToolBarArea) : static_cast<int>(tool_bar->allowedAreas());
+}
+
+bool qt6cr_tool_bar_is_area_allowed(qt6cr_handle_t handle, int value) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar != nullptr && tool_bar->isAreaAllowed(static_cast<Qt::ToolBarArea>(value));
+}
+
+void qt6cr_tool_bar_set_orientation(qt6cr_handle_t handle, int value) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar != nullptr) {
+    tool_bar->setOrientation(static_cast<Qt::Orientation>(value));
+  }
+}
+
+int qt6cr_tool_bar_orientation(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar == nullptr ? static_cast<int>(Qt::Horizontal) : static_cast<int>(tool_bar->orientation());
+}
+
 void qt6cr_tool_bar_set_floatable(qt6cr_handle_t handle, bool value) {
   auto *tool_bar = as_tool_bar(handle);
 
@@ -24008,6 +24075,11 @@ void qt6cr_tool_bar_set_floatable(qt6cr_handle_t handle, bool value) {
 bool qt6cr_tool_bar_is_floatable(qt6cr_handle_t handle) {
   auto *tool_bar = as_tool_bar(handle);
   return tool_bar != nullptr && tool_bar->isFloatable();
+}
+
+bool qt6cr_tool_bar_is_floating(qt6cr_handle_t handle) {
+  auto *tool_bar = as_tool_bar(handle);
+  return tool_bar != nullptr && tool_bar->isFloating();
 }
 
 qt6cr_size_t qt6cr_tool_bar_icon_size(qt6cr_handle_t handle) {
@@ -24048,6 +24120,102 @@ void qt6cr_tool_bar_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t opti
   if (tool_bar != nullptr && option != nullptr) {
     tool_bar->initStyleOptionBridge(option);
   }
+}
+
+void qt6cr_tool_bar_on_action_triggered(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::actionTriggered, tool_bar, [callback, userdata](QAction *action) {
+    callback(userdata, action);
+  });
+}
+
+void qt6cr_tool_bar_on_movable_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::movableChanged, tool_bar, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_tool_bar_on_allowed_areas_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::allowedAreasChanged, tool_bar, [callback, userdata](Qt::ToolBarAreas value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_tool_bar_on_orientation_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::orientationChanged, tool_bar, [callback, userdata](Qt::Orientation value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_tool_bar_on_icon_size_changed(qt6cr_handle_t handle, qt6cr_size_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::iconSizeChanged, tool_bar, [callback, userdata](const QSize &value) {
+    callback(userdata, to_size(value));
+  });
+}
+
+void qt6cr_tool_bar_on_tool_button_style_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::toolButtonStyleChanged, tool_bar, [callback, userdata](Qt::ToolButtonStyle value) {
+    callback(userdata, static_cast<int>(value));
+  });
+}
+
+void qt6cr_tool_bar_on_top_level_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::topLevelChanged, tool_bar, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
+}
+
+void qt6cr_tool_bar_on_visibility_changed(qt6cr_handle_t handle, qt6cr_bool_callback_t callback, void *userdata) {
+  auto *tool_bar = as_tool_bar(handle);
+
+  if (tool_bar == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_bar, &QToolBar::visibilityChanged, tool_bar, [callback, userdata](bool value) {
+    callback(userdata, value);
+  });
 }
 
 qt6cr_handle_t qt6cr_status_bar_create(qt6cr_handle_t parent) {

@@ -1097,6 +1097,14 @@ describe Qt6 do
     application = app
     window = Qt6::MainWindow.new
     toggled = [] of Bool
+    toolbar_actions = [] of String
+    toolbar_movable_states = [] of Bool
+    toolbar_area_states = [] of Qt6::ToolBarArea
+    toolbar_orientations = [] of Qt6::Orientation
+    toolbar_icon_sizes = [] of Qt6::Size
+    toolbar_styles = [] of Qt6::ToolButtonStyle
+    toolbar_top_levels = [] of Bool
+    toolbar_visibility_states = [] of Bool
 
     window.window_title = "Shell Polish"
     file_menu = window.menu_bar.add_menu("File")
@@ -1113,6 +1121,7 @@ describe Qt6 do
     tools_menu.add_action(preferences_action)
     toolbar = Qt6::ToolBar.new("Inspector", window)
     search = Qt6::LineEdit.new(parent: window)
+    inserted_label = Qt6::Label.new("Filter", window)
 
     quick_open.shortcut = "Ctrl+Shift+O"
     quick_open.icon = Qt6::QIcon.new
@@ -1134,16 +1143,57 @@ describe Qt6 do
     tools_menu.default_action = preferences_action
 
     window.add_tool_bar(toolbar)
+    toolbar.on_action_triggered do |action|
+      toolbar_actions << action.text
+    end
+    toolbar.on_movable_changed do |value|
+      toolbar_movable_states << value
+    end
+    toolbar.on_allowed_areas_changed do |value|
+      toolbar_area_states << value
+    end
+    toolbar.on_orientation_changed do |value|
+      toolbar_orientations << value
+    end
+    toolbar.on_icon_size_changed do |value|
+      toolbar_icon_sizes << value
+    end
+    toolbar.on_tool_button_style_changed do |value|
+      toolbar_styles << value
+    end
+    toolbar.on_top_level_changed do |value|
+      toolbar_top_levels << value
+    end
+    toolbar.on_visibility_changed do |value|
+      toolbar_visibility_states << value
+    end
     toolbar.movable = false
+    toolbar.allowed_areas = Qt6::ToolBarArea::Top | Qt6::ToolBarArea::Left
+    toolbar.orientation = Qt6::Orientation::Vertical
     toolbar.floatable = false
     toolbar.icon_size = Qt6::Size.new(20, 18)
     toolbar.tool_button_style = Qt6::ToolButtonStyle::TextBesideIcon
     toolbar.add_widget(search)
     toolbar.add_separator
     toolbar_action = toolbar.add_action("Refresh")
+    icon_toolbar_action = toolbar.add_action(Qt6::QIcon.new, "Pin")
+    inserted_separator = toolbar.insert_separator(toolbar_action)
+    inserted_widget_action = toolbar.insert_widget(toolbar_action, inserted_label)
     toggle_view_action = toolbar.toggle_view_action
     toolbar_action.text.should eq("Refresh")
+    icon_toolbar_action.text.should eq("Pin")
     toolbar.title = "Inspector Tools"
+    window.show
+    application.process_events
+    action_geometry = toolbar.action_geometry(toolbar_action)
+    toolbar.action_at(action_geometry.x + 2, action_geometry.y + 2).not_nil!.to_unsafe.should eq(toolbar_action.to_unsafe)
+    toolbar.widget_for_action(inserted_widget_action).not_nil!.to_unsafe.should eq(inserted_label.to_unsafe)
+    inserted_separator.separator?.should be_true
+    toolbar_action.trigger
+    toolbar.hide
+    application.process_events
+    toolbar.show
+    application.process_events
     window.remove_tool_bar(toolbar)
     window.add_tool_bar(toolbar)
     toolbar.clear
@@ -1164,14 +1214,33 @@ describe Qt6 do
     tools_menu.default_action.not_nil!.text.should eq("Preferences")
     file_menu.clear
     toolbar.movable?.should be_false
+    toolbar.allowed_areas.should eq(Qt6::ToolBarArea::Top | Qt6::ToolBarArea::Left)
+    toolbar.area_allowed?(Qt6::ToolBarArea::Top).should be_true
+    toolbar.area_allowed?(Qt6::ToolBarArea::Right).should be_false
+    toolbar.orientation.should eq(Qt6::Orientation::Horizontal)
     toolbar.floatable?.should be_false
+    toolbar.floating?.should be_false
     toolbar.icon_size.should eq(Qt6::Size.new(20, 18))
     toolbar.tool_button_style.should eq(Qt6::ToolButtonStyle::TextBesideIcon)
     toolbar.title.should eq("Inspector Tools")
+    action_geometry.width.should be > 0
+    action_geometry.height.should be > 0
     toggle_view_action.checkable?.should be_true
     toggle_view_action.text.should eq("Inspector Tools")
+    toolbar_actions.should contain("Refresh")
+    toolbar_movable_states.should contain(false)
+    toolbar_area_states.should contain(Qt6::ToolBarArea::Top | Qt6::ToolBarArea::Left)
+    toolbar_orientations.should contain(Qt6::Orientation::Vertical)
+    toolbar_icon_sizes.should contain(Qt6::Size.new(20, 18))
+    toolbar_styles.should contain(Qt6::ToolButtonStyle::TextBesideIcon)
+    toolbar_top_levels.should be_empty
+    toolbar_visibility_states.should contain(false)
+    toolbar_visibility_states.should contain(true)
     window.window_title.should eq("Shell Polish")
 
+    inserted_widget_action.release
+    inserted_separator.release
+    icon_toolbar_action.release
     menu_action.release
     toggle_view_action.release
     window.release

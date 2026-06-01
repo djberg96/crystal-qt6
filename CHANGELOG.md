@@ -26,6 +26,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Added `QTableWidgetSelectionRange` as a typed value object with row and column span helpers, and integrated it into `QTableWidget` selection-range get/set workflows.
 - Expanded `QTabBar` with shape, icon/text/color/tooltip metadata, tab visibility and geometry helpers, icon-size and elide controls, scroll/document/autohide behavior, move and selection behavior helpers, and richer tab-bar signals for fuller standalone tab-strip workflows.
 - Expanded `QTabWidget` with icon-backed tab insertion, per-tab icon/enabled/visible/tooltip metadata, tab position and shape control, corner-widget and underlying-tab-bar access, elide/icon-size/scroll/document/autohide behavior, size hints, and richer tab-widget tab signals for fuller multi-page shell workflows.
+- Expanded `QToolBar` with area/orientation/floating helpers, icon-backed action creation, separator and widget insertion, action geometry and hit-testing, hosted-widget lookup, toolbar-specific signals, and Qt-style setter aliases for fuller shell composition parity.
 
 ## [0.11.0] - 2026-05-23
 
