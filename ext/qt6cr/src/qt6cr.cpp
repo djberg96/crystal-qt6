@@ -851,10 +851,26 @@ class ModelTreeView final : public QTreeView {
  public:
   explicit ModelTreeView(QWidget *parent = nullptr) : QTreeView(parent) {
     setHeader(new CrystalHeaderView(Qt::Horizontal, this));
+
+    QObject::connect(this, &QTreeView::expanded, this, [this](const QModelIndex &index) {
+      if (expanded_callback != nullptr) {
+        expanded_callback(expanded_userdata, new QModelIndex(index));
+      }
+    });
+
+    QObject::connect(this, &QTreeView::collapsed, this, [this](const QModelIndex &index) {
+      if (collapsed_callback != nullptr) {
+        collapsed_callback(collapsed_userdata, new QModelIndex(index));
+      }
+    });
   }
 
   qt6cr_void_callback_t current_index_changed_callback = nullptr;
   void *current_index_changed_userdata = nullptr;
+  qt6cr_handle_callback_t expanded_callback = nullptr;
+  void *expanded_userdata = nullptr;
+  qt6cr_handle_callback_t collapsed_callback = nullptr;
+  void *collapsed_userdata = nullptr;
 
   void setModel(QAbstractItemModel *model) override {
     if (current_changed_connection) {
@@ -15674,6 +15690,27 @@ qt6cr_handle_t qt6cr_tree_view_header(qt6cr_handle_t handle) {
   return view == nullptr ? nullptr : view->header();
 }
 
+void qt6cr_tree_view_set_header(qt6cr_handle_t handle, qt6cr_handle_t header) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setHeader(as_header_view(header));
+  }
+}
+
+int qt6cr_tree_view_auto_expand_delay(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? -1 : view->autoExpandDelay();
+}
+
+void qt6cr_tree_view_set_auto_expand_delay(qt6cr_handle_t handle, int value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setAutoExpandDelay(value);
+  }
+}
+
 int qt6cr_tree_view_selection_mode(qt6cr_handle_t handle) {
   auto *view = as_tree_view(handle);
   return view == nullptr ? 0 : static_cast<int>(view->selectionMode());
@@ -15765,6 +15802,106 @@ void qt6cr_tree_view_set_indentation(qt6cr_handle_t handle, int value) {
   }
 }
 
+void qt6cr_tree_view_reset_indentation(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->resetIndentation();
+  }
+}
+
+bool qt6cr_tree_view_items_expandable(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->itemsExpandable();
+}
+
+void qt6cr_tree_view_set_items_expandable(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setItemsExpandable(value);
+  }
+}
+
+bool qt6cr_tree_view_expands_on_double_click(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->expandsOnDoubleClick();
+}
+
+void qt6cr_tree_view_set_expands_on_double_click(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setExpandsOnDoubleClick(value);
+  }
+}
+
+int qt6cr_tree_view_column_viewport_position(qt6cr_handle_t handle, int column) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? 0 : view->columnViewportPosition(column);
+}
+
+int qt6cr_tree_view_column_width(qt6cr_handle_t handle, int column) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? 0 : view->columnWidth(column);
+}
+
+void qt6cr_tree_view_set_column_width(qt6cr_handle_t handle, int column, int width) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr && column >= 0 && width >= 0) {
+    view->setColumnWidth(column, width);
+  }
+}
+
+int qt6cr_tree_view_column_at(qt6cr_handle_t handle, int x) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? -1 : view->columnAt(x);
+}
+
+bool qt6cr_tree_view_column_hidden(qt6cr_handle_t handle, int column) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && column >= 0 && view->isColumnHidden(column);
+}
+
+void qt6cr_tree_view_set_column_hidden(qt6cr_handle_t handle, int column, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr && column >= 0) {
+    view->setColumnHidden(column, value);
+  }
+}
+
+bool qt6cr_tree_view_row_hidden(qt6cr_handle_t handle, int row, qt6cr_handle_t parent) {
+  auto *view = as_tree_view(handle);
+  auto *parent_index = as_model_index(parent);
+  return view != nullptr && row >= 0 && view->isRowHidden(row, parent_index == nullptr ? QModelIndex() : *parent_index);
+}
+
+void qt6cr_tree_view_set_row_hidden(qt6cr_handle_t handle, int row, qt6cr_handle_t parent, bool value) {
+  auto *view = as_tree_view(handle);
+  auto *parent_index = as_model_index(parent);
+
+  if (view != nullptr && row >= 0) {
+    view->setRowHidden(row, parent_index == nullptr ? QModelIndex() : *parent_index, value);
+  }
+}
+
+bool qt6cr_tree_view_first_column_spanned(qt6cr_handle_t handle, int row, qt6cr_handle_t parent) {
+  auto *view = as_tree_view(handle);
+  auto *parent_index = as_model_index(parent);
+  return view != nullptr && row >= 0 && view->isFirstColumnSpanned(row, parent_index == nullptr ? QModelIndex() : *parent_index);
+}
+
+void qt6cr_tree_view_set_first_column_spanned(qt6cr_handle_t handle, int row, qt6cr_handle_t parent, bool value) {
+  auto *view = as_tree_view(handle);
+  auto *parent_index = as_model_index(parent);
+
+  if (view != nullptr && row >= 0) {
+    view->setFirstColumnSpanned(row, parent_index == nullptr ? QModelIndex() : *parent_index, value);
+  }
+}
+
 bool qt6cr_tree_view_drag_enabled(qt6cr_handle_t handle) {
   auto *view = as_tree_view(handle);
   return view != nullptr && view->dragEnabled();
@@ -15850,6 +15987,24 @@ void qt6cr_tree_view_expand(qt6cr_handle_t handle, qt6cr_handle_t index) {
   }
 }
 
+void qt6cr_tree_view_collapse(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->collapse(*model_index);
+  }
+}
+
+void qt6cr_tree_view_set_expanded(qt6cr_handle_t handle, qt6cr_handle_t index, bool value) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->setExpanded(*model_index, value);
+  }
+}
+
 bool qt6cr_tree_view_is_expanded(qt6cr_handle_t handle, qt6cr_handle_t index) {
   auto *view = as_tree_view(handle);
   auto *model_index = as_model_index(index);
@@ -15872,6 +16027,140 @@ void qt6cr_tree_view_collapse_all(qt6cr_handle_t handle) {
   }
 }
 
+void qt6cr_tree_view_expand_recursively(qt6cr_handle_t handle, qt6cr_handle_t index, int depth) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+
+  if (view != nullptr && model_index != nullptr) {
+    view->expandRecursively(*model_index, depth);
+  }
+}
+
+void qt6cr_tree_view_expand_to_depth(qt6cr_handle_t handle, int depth) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->expandToDepth(depth);
+  }
+}
+
+bool qt6cr_tree_view_sorting_enabled(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->isSortingEnabled();
+}
+
+void qt6cr_tree_view_set_sorting_enabled(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setSortingEnabled(value);
+  }
+}
+
+void qt6cr_tree_view_sort_by_column(qt6cr_handle_t handle, int column, int order) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr && column >= 0) {
+    view->sortByColumn(column, static_cast<Qt::SortOrder>(order));
+  }
+}
+
+bool qt6cr_tree_view_animated(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->isAnimated();
+}
+
+void qt6cr_tree_view_set_animated(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setAnimated(value);
+  }
+}
+
+bool qt6cr_tree_view_all_columns_show_focus(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->allColumnsShowFocus();
+}
+
+void qt6cr_tree_view_set_all_columns_show_focus(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setAllColumnsShowFocus(value);
+  }
+}
+
+bool qt6cr_tree_view_word_wrap(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view != nullptr && view->wordWrap();
+}
+
+void qt6cr_tree_view_set_word_wrap(qt6cr_handle_t handle, bool value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->setWordWrap(value);
+  }
+}
+
+int qt6cr_tree_view_tree_position(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+  return view == nullptr ? 0 : view->treePosition();
+}
+
+void qt6cr_tree_view_set_tree_position(qt6cr_handle_t handle, int value) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr && value >= 0) {
+    view->setTreePosition(value);
+  }
+}
+
+void qt6cr_tree_view_keyboard_search(qt6cr_handle_t handle, const char *search) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->keyboardSearch(QString::fromUtf8(search == nullptr ? "" : search));
+  }
+}
+
+qt6cr_handle_t qt6cr_tree_view_index_above(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+  return (view == nullptr || model_index == nullptr) ? new QModelIndex() : new QModelIndex(view->indexAbove(*model_index));
+}
+
+qt6cr_handle_t qt6cr_tree_view_index_below(qt6cr_handle_t handle, qt6cr_handle_t index) {
+  auto *view = as_tree_view(handle);
+  auto *model_index = as_model_index(index);
+  return (view == nullptr || model_index == nullptr) ? new QModelIndex() : new QModelIndex(view->indexBelow(*model_index));
+}
+
+void qt6cr_tree_view_do_items_layout(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->doItemsLayout();
+  }
+}
+
+void qt6cr_tree_view_reset(qt6cr_handle_t handle) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr) {
+    view->reset();
+  }
+}
+
+void qt6cr_tree_view_resize_column_to_contents(qt6cr_handle_t handle, int column) {
+  auto *view = as_tree_view(handle);
+
+  if (view != nullptr && column >= 0) {
+    view->resizeColumnToContents(column);
+  }
+}
+
 void qt6cr_tree_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
   auto *view = as_tree_view(handle);
 
@@ -15882,6 +16171,28 @@ void qt6cr_tree_view_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_
   view->current_index_changed_callback = callback;
   view->current_index_changed_userdata = userdata;
   view->reconnect_current_changed();
+}
+
+void qt6cr_tree_view_on_expanded(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *view = as_tree_view(handle);
+
+  if (view == nullptr) {
+    return;
+  }
+
+  view->expanded_callback = callback;
+  view->expanded_userdata = userdata;
+}
+
+void qt6cr_tree_view_on_collapsed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *view = as_tree_view(handle);
+
+  if (view == nullptr) {
+    return;
+  }
+
+  view->collapsed_callback = callback;
+  view->collapsed_userdata = userdata;
 }
 
 qt6cr_handle_t qt6cr_column_view_create(qt6cr_handle_t parent) {

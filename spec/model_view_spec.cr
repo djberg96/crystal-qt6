@@ -92,6 +92,132 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports fuller tree view structure and expansion controls" do
+    application = app
+    host = Qt6::Widget.new
+    tree_view = Qt6::TreeView.new(host)
+    donor_view = Qt6::TreeView.new
+    donor_header = donor_view.header
+    model = Qt6::StandardItemModel.new(tree_view)
+    expanded_rows = [] of Int32
+    collapsed_rows = [] of Int32
+
+    terrain_item = Qt6::StandardItem.new("Terrain")
+    terrain_item.set_child(0, 0, Qt6::StandardItem.new("Contours"))
+    terrain_item.set_child(0, 1, Qt6::StandardItem.new("Visible"))
+    terrain_item.set_child(1, 0, Qt6::StandardItem.new("Roads"))
+    terrain_item.set_child(1, 1, Qt6::StandardItem.new("Hidden"))
+    terrain_item.child(1, 0).not_nil!.set_child(0, 0, Qt6::StandardItem.new("Major Roads"))
+    terrain_item.child(1, 0).not_nil!.set_child(0, 1, Qt6::StandardItem.new("Locked"))
+    units_item = Qt6::StandardItem.new("Units")
+    units_item.set_child(0, 0, Qt6::StandardItem.new("Infantry"))
+    units_item.set_child(0, 1, Qt6::StandardItem.new("Visible"))
+    model.set_horizontal_header_label(0, "Layer")
+    model.set_horizontal_header_label(1, "State")
+    model.append_row(terrain_item)
+    model.append_row(units_item)
+
+    tree_view.on_expanded do |index|
+      expanded_rows << index.row
+      index.release
+    end
+
+    tree_view.on_collapsed do |index|
+      collapsed_rows << index.row
+      index.release
+    end
+
+    tree_view.model = model
+    tree_view.header = donor_header
+    tree_view.auto_expand_delay = 120
+    tree_view.header_hidden = false
+    tree_view.root_is_decorated = true
+    tree_view.uniform_row_heights = true
+    tree_view.items_expandable = true
+    tree_view.expands_on_double_click = false
+    tree_view.sorting_enabled = true
+    tree_view.animated = true
+    tree_view.all_columns_show_focus = true
+    tree_view.word_wrap = true
+    tree_view.tree_position = 1
+    tree_view.indentation = 18
+    tree_view.set_column_width(0, 150)
+    tree_view.set_column_width(1, 80)
+
+    host.vbox do |column|
+      column << tree_view
+    end
+    host.resize(280, 200)
+    host.show
+    application.process_events
+
+    root_index = model.index(0, 0)
+    contours_index = model.index(0, 0, root_index)
+    roads_index = model.index(1, 0, root_index)
+
+    tree_view.expand(root_index)
+    application.process_events
+    tree_view.set_first_column_spanned(0, true, root_index)
+    tree_view.set_row_hidden(1, true, root_index)
+    application.process_events
+    tree_view.set_row_hidden(1, false, root_index)
+    tree_view.collapse(root_index)
+    application.process_events
+    tree_view.set_expanded(root_index, true)
+    application.process_events
+    tree_view.expand_recursively(root_index, 2)
+    application.process_events
+    tree_view.set_column_hidden(1, true)
+    application.process_events
+    tree_view.show_column(1)
+    tree_view.resize_column_to_contents(1)
+
+    tree_view.header.to_unsafe.should eq(donor_header.to_unsafe)
+    tree_view.auto_expand_delay.should eq(120)
+    tree_view.header_hidden?.should be_false
+    tree_view.root_is_decorated?.should be_true
+    tree_view.uniform_row_heights?.should be_true
+    tree_view.items_expandable?.should be_true
+    tree_view.expands_on_double_click?.should be_false
+    tree_view.sorting_enabled?.should be_true
+    tree_view.animated?.should be_true
+    tree_view.all_columns_show_focus?.should be_true
+    tree_view.word_wrap?.should be_true
+    tree_view.tree_position.should eq(1)
+    tree_view.indentation.should eq(18)
+    tree_view.column_width(0).should eq(150)
+    tree_view.column_width(1).should be > 0
+    tree_view.column_hidden?(1).should be_false
+    tree_view.column_viewport_position(1).should be >= 0
+    tree_view.column_at(tree_view.column_viewport_position(1) + 1).should eq(1)
+    below_index = tree_view.index_below(root_index)
+    above_index = tree_view.index_above(below_index)
+
+    tree_view.expanded?(root_index).should be_true
+    tree_view.first_column_spanned?(0, root_index).should be_true
+    tree_view.row_hidden?(1, root_index).should be_false
+    below_index.valid?.should be_true
+    below_index.row.should eq(0)
+    above_index.valid?.should be_true
+    above_index.row.should eq(0)
+    expanded_rows.should contain(0)
+    collapsed_rows.should contain(0)
+
+    tree_view.sort_by_column(0, Qt6::SortOrder::Descending)
+    tree_view.do_items_layout
+    tree_view.reset
+    tree_view.expand_to_depth(1)
+    application.process_events
+
+    above_index.release
+    below_index.release
+    roads_index.release
+    contours_index.release
+    root_index.release
+    host.release
+    donor_view.release
+  end
+
   it "supports advanced list widget item hooks and reorder state" do
     application = app
     list_widget = Qt6::ListWidget.new
