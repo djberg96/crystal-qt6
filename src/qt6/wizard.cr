@@ -129,10 +129,20 @@ module Qt6
       LibQt6.qt6cr_wizard_validate_current_page(to_unsafe)
     end
 
+    # Returns the next page id according to the wizard's current flow logic.
+    def next_id : Int32
+      LibQt6.qt6cr_wizard_next_id(to_unsafe)
+    end
+
     # Restarts the wizard from the start page.
     def restart : self
       LibQt6.qt6cr_wizard_restart(to_unsafe)
       self
+    end
+
+    # Returns the preferred wizard size.
+    def size_hint : Size
+      Size.from_native(LibQt6.qt6cr_wizard_size_hint(to_unsafe))
     end
 
     # Returns the configured wizard style.
@@ -168,6 +178,28 @@ module Qt6
       value
     end
 
+    # Returns the text format used for page titles.
+    def title_format : TextFormat
+      TextFormat.from_value(LibQt6.qt6cr_wizard_title_format(to_unsafe))
+    end
+
+    # Sets the text format used for page titles.
+    def title_format=(value : TextFormat) : TextFormat
+      LibQt6.qt6cr_wizard_set_title_format(to_unsafe, value.value)
+      value
+    end
+
+    # Returns the text format used for page subtitles.
+    def sub_title_format : TextFormat
+      TextFormat.from_value(LibQt6.qt6cr_wizard_sub_title_format(to_unsafe))
+    end
+
+    # Sets the text format used for page subtitles.
+    def sub_title_format=(value : TextFormat) : TextFormat
+      LibQt6.qt6cr_wizard_set_sub_title_format(to_unsafe, value.value)
+      value
+    end
+
     # Returns the text shown on the given wizard button.
     def button_text(which : WizardButton) : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_wizard_button_text(to_unsafe, which.value))
@@ -185,6 +217,13 @@ module Qt6
       handle.null? ? nil : AbstractButton.wrap(handle)
     end
 
+    # Replaces one of the wizard buttons with a custom button widget.
+    def set_button(which : WizardButton, value : AbstractButton) : AbstractButton
+      LibQt6.qt6cr_wizard_set_button(to_unsafe, which.value, value.to_unsafe)
+      value.adopt_by_parent!
+      value
+    end
+
     # Sets the pixmap for one of the wizard decoration roles.
     def set_pixmap(which : WizardPixmap, pixmap : QPixmap) : QPixmap
       LibQt6.qt6cr_wizard_set_pixmap(to_unsafe, which.value, pixmap.to_unsafe)
@@ -194,6 +233,25 @@ module Qt6
     # Returns the pixmap for one of the wizard decoration roles.
     def pixmap(which : WizardPixmap) : QPixmap
       QPixmap.wrap(LibQt6.qt6cr_wizard_pixmap(to_unsafe, which.value), true)
+    end
+
+    # Installs or clears a side widget for styles that support one.
+    def side_widget=(value : Widget?) : Widget?
+      LibQt6.qt6cr_wizard_set_side_widget(to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value.try(&.adopt_by_parent!)
+      value
+    end
+
+    # Returns the current side widget, if any.
+    def side_widget : Widget?
+      handle = LibQt6.qt6cr_wizard_side_widget(to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Registers a default property mapping for a widget class.
+    def set_default_property(class_name : String, property : String, changed_signal : String) : self
+      LibQt6.qt6cr_wizard_set_default_property(to_unsafe, class_name.to_unsafe, property.to_unsafe, changed_signal.to_unsafe)
+      self
     end
 
     # Registers a block to run when the current page id changes.

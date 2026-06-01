@@ -1483,18 +1483,28 @@ module Qt6
     fun qt6cr_wizard_back = qt6cr_wizard_back(handle : Handle)
     fun qt6cr_wizard_next = qt6cr_wizard_next(handle : Handle)
     fun qt6cr_wizard_validate_current_page = qt6cr_wizard_validate_current_page(handle : Handle) : Bool
+    fun qt6cr_wizard_next_id = qt6cr_wizard_next_id(handle : Handle) : LibC::Int
     fun qt6cr_wizard_restart = qt6cr_wizard_restart(handle : Handle)
+    fun qt6cr_wizard_size_hint = qt6cr_wizard_size_hint(handle : Handle) : SizeValue
     fun qt6cr_wizard_set_wizard_style = qt6cr_wizard_set_wizard_style(handle : Handle, style : LibC::Int)
     fun qt6cr_wizard_wizard_style = qt6cr_wizard_wizard_style(handle : Handle) : LibC::Int
     fun qt6cr_wizard_set_option = qt6cr_wizard_set_option(handle : Handle, option : LibC::Int, on : Bool)
     fun qt6cr_wizard_test_option = qt6cr_wizard_test_option(handle : Handle, option : LibC::Int) : Bool
     fun qt6cr_wizard_set_options = qt6cr_wizard_set_options(handle : Handle, options : LibC::Int)
     fun qt6cr_wizard_options = qt6cr_wizard_options(handle : Handle) : LibC::Int
+    fun qt6cr_wizard_set_title_format = qt6cr_wizard_set_title_format(handle : Handle, format : LibC::Int)
+    fun qt6cr_wizard_title_format = qt6cr_wizard_title_format(handle : Handle) : LibC::Int
+    fun qt6cr_wizard_set_sub_title_format = qt6cr_wizard_set_sub_title_format(handle : Handle, format : LibC::Int)
+    fun qt6cr_wizard_sub_title_format = qt6cr_wizard_sub_title_format(handle : Handle) : LibC::Int
     fun qt6cr_wizard_set_button_text = qt6cr_wizard_set_button_text(handle : Handle, which : LibC::Int, text : UInt8*)
     fun qt6cr_wizard_button_text = qt6cr_wizard_button_text(handle : Handle, which : LibC::Int) : UInt8*
+    fun qt6cr_wizard_set_button = qt6cr_wizard_set_button(handle : Handle, which : LibC::Int, button : Handle)
     fun qt6cr_wizard_button = qt6cr_wizard_button(handle : Handle, which : LibC::Int) : Handle
     fun qt6cr_wizard_set_pixmap = qt6cr_wizard_set_pixmap(handle : Handle, which : LibC::Int, pixmap : Handle)
     fun qt6cr_wizard_pixmap = qt6cr_wizard_pixmap(handle : Handle, which : LibC::Int) : Handle
+    fun qt6cr_wizard_set_side_widget = qt6cr_wizard_set_side_widget(handle : Handle, widget : Handle)
+    fun qt6cr_wizard_side_widget = qt6cr_wizard_side_widget(handle : Handle) : Handle
+    fun qt6cr_wizard_set_default_property = qt6cr_wizard_set_default_property(handle : Handle, class_name : UInt8*, property : UInt8*, changed_signal : UInt8*)
     fun qt6cr_wizard_on_current_id_changed = qt6cr_wizard_on_current_id_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_wizard_on_custom_button_clicked = qt6cr_wizard_on_custom_button_clicked(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_wizard_on_help_requested = qt6cr_wizard_on_help_requested(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -1521,6 +1531,7 @@ module Qt6
     fun qt6cr_wizard_page_is_complete = qt6cr_wizard_page_is_complete(handle : Handle) : Bool
     fun qt6cr_wizard_page_next_id = qt6cr_wizard_page_next_id(handle : Handle) : LibC::Int
     fun qt6cr_wizard_page_register_field = qt6cr_wizard_page_register_field(handle : Handle, name : UInt8*, widget : Handle)
+    fun qt6cr_wizard_page_register_field_with_property = qt6cr_wizard_page_register_field_with_property(handle : Handle, name : UInt8*, widget : Handle, property : UInt8*, changed_signal : UInt8*)
     fun qt6cr_wizard_page_on_complete_changed = qt6cr_wizard_page_on_complete_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_qimage_create = qt6cr_qimage_create(width : LibC::Int, height : LibC::Int, format : LibC::Int) : Handle

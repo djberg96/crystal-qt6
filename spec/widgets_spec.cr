@@ -1249,6 +1249,8 @@ describe Qt6 do
     application = app
     wizard = Qt6::Wizard.new
     wizard.resize(360, 220)
+    wizard.title_format = Qt6::TextFormat::RichText
+    wizard.sub_title_format = Qt6::TextFormat::PlainText
 
     intro_page = Qt6::WizardPage.new
     intro_page.title = "Welcome"
@@ -1268,11 +1270,18 @@ describe Qt6 do
     summary_page.final_page = true
     summary_page.commit_page = true
 
+    agreed_box = Qt6::CheckBox.new("I agree", summary_page)
+    summary_page.register_field("agreed", agreed_box, "checked", "toggled(bool)")
+
     accent = Qt6::QPixmap.new(8, 8)
     accent.fill(Qt6::Color.new(32, 96, 160))
     intro_page.set_pixmap(Qt6::WizardPixmap::LogoPixmap, accent)
     summary_page.set_pixmap(Qt6::WizardPixmap::BannerPixmap, accent)
     wizard.set_pixmap(Qt6::WizardPixmap::WatermarkPixmap, accent)
+
+    side_label = Qt6::Label.new("Deployment checklist")
+    help_button = Qt6::PushButton.new("Need Help?")
+    wizard.side_widget = side_label
 
     current_ids = [] of Int32
     custom_buttons = [] of Int32
@@ -1302,6 +1311,8 @@ describe Qt6 do
     wizard.options = Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::HaveCustomButton1 | Qt6::WizardOption::IndependentPages
     wizard.set_button_text(Qt6::WizardButton::CancelButton, "Abort")
     wizard.set_button_text(Qt6::WizardButton::CustomButton1, "Preview")
+    wizard.set_button(Qt6::WizardButton::HelpButton, help_button)
+    wizard.set_default_property("QCheckBox", "checked", "toggled(bool)")
 
     intro_id = 10
     wizard.set_page(intro_id, intro_page)
@@ -1316,17 +1327,24 @@ describe Qt6 do
     added_pages.should contain(summary_id)
     wizard.start_id.should eq(intro_id)
     wizard.current_id.should eq(intro_id)
+    wizard.next_id.should eq(summary_id)
     wizard.current_page.not_nil!.title.should eq("Welcome")
     wizard.page(intro_id).not_nil!.sub_title.should contain("deployment")
     wizard.wizard_style.should eq(Qt6::WizardStyle::ModernStyle)
+    wizard.title_format.should eq(Qt6::TextFormat::RichText)
+    wizard.sub_title_format.should eq(Qt6::TextFormat::PlainText)
     wizard.option?(Qt6::WizardOption::HaveHelpButton).should be_true
     wizard.option?(Qt6::WizardOption::HaveCustomButton1).should be_true
     wizard.option?(Qt6::WizardOption::IndependentPages).should be_true
     wizard.options.should eq(Qt6::WizardOption::HaveHelpButton | Qt6::WizardOption::HaveCustomButton1 | Qt6::WizardOption::IndependentPages)
+    wizard.size_hint.width.should be > 0
+    wizard.size_hint.height.should be > 0
     wizard.button_text(Qt6::WizardButton::CancelButton).should eq("Abort")
     wizard.button(Qt6::WizardButton::CancelButton).not_nil!.text.should eq("Abort")
     wizard.button_text(Qt6::WizardButton::CustomButton1).should eq("Preview")
     wizard.button(Qt6::WizardButton::CustomButton1).not_nil!.text.should eq("Preview")
+    wizard.button(Qt6::WizardButton::HelpButton).not_nil!.to_unsafe.should eq(help_button.to_unsafe)
+    wizard.side_widget.not_nil!.to_unsafe.should eq(side_label.to_unsafe)
     wizard.pixmap(Qt6::WizardPixmap::WatermarkPixmap).size.should eq(Qt6::Size.new(8, 8))
     intro_page.pixmap(Qt6::WizardPixmap::LogoPixmap).size.should eq(Qt6::Size.new(8, 8))
     summary_page.pixmap(Qt6::WizardPixmap::BannerPixmap).size.should eq(Qt6::Size.new(8, 8))
@@ -1351,6 +1369,10 @@ describe Qt6 do
 
     wizard.field("project_name").should eq("Cartographer")
     required_name.text.should eq("Cartographer")
+    agreed_box.checked = true
+    application.process_events
+    summary_page.field("agreed").should eq(true)
+    wizard.field("agreed").should eq(true)
     help_requests_before = help_requests
     custom_button_count_before = custom_buttons.size
     wizard.button(Qt6::WizardButton::HelpButton).not_nil!.click

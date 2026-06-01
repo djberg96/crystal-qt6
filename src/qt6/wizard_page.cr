@@ -126,6 +126,18 @@ module Qt6
       widget
     end
 
+    # Registers a wizard field using an explicit property and changed signal for the widget type.
+    def register_field(name : String, widget : Widget, property : String, changed_signal : String) : Widget
+      LibQt6.qt6cr_wizard_page_register_field_with_property(
+        to_unsafe,
+        name.to_unsafe,
+        widget.to_unsafe,
+        property.to_unsafe,
+        changed_signal.to_unsafe
+      )
+      widget
+    end
+
     # Registers a block to run when the page completeness changes.
     def on_complete_changed(&block : ->) : self
       @complete_changed.connect { block.call }

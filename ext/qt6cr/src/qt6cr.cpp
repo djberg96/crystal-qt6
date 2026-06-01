@@ -11704,12 +11704,22 @@ bool qt6cr_wizard_validate_current_page(qt6cr_handle_t handle) {
   return wizard != nullptr && wizard->validateCurrentPage();
 }
 
+int qt6cr_wizard_next_id(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? -1 : wizard->nextId();
+}
+
 void qt6cr_wizard_restart(qt6cr_handle_t handle) {
   auto *wizard = as_wizard(handle);
 
   if (wizard != nullptr) {
     wizard->restart();
   }
+}
+
+qt6cr_size_t qt6cr_wizard_size_hint(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? qt6cr_size_t{0, 0} : to_size(wizard->sizeHint());
 }
 
 void qt6cr_wizard_set_wizard_style(qt6cr_handle_t handle, int style) {
@@ -11751,6 +11761,32 @@ int qt6cr_wizard_options(qt6cr_handle_t handle) {
   return wizard == nullptr ? 0 : static_cast<int>(wizard->options());
 }
 
+void qt6cr_wizard_set_title_format(qt6cr_handle_t handle, int format) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setTitleFormat(static_cast<Qt::TextFormat>(format));
+  }
+}
+
+int qt6cr_wizard_title_format(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? static_cast<int>(Qt::AutoText) : static_cast<int>(wizard->titleFormat());
+}
+
+void qt6cr_wizard_set_sub_title_format(qt6cr_handle_t handle, int format) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setSubTitleFormat(static_cast<Qt::TextFormat>(format));
+  }
+}
+
+int qt6cr_wizard_sub_title_format(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? static_cast<int>(Qt::AutoText) : static_cast<int>(wizard->subTitleFormat());
+}
+
 void qt6cr_wizard_set_button_text(qt6cr_handle_t handle, int which, const char *text) {
   auto *wizard = as_wizard(handle);
 
@@ -11762,6 +11798,15 @@ void qt6cr_wizard_set_button_text(qt6cr_handle_t handle, int which, const char *
 char *qt6cr_wizard_button_text(qt6cr_handle_t handle, int which) {
   auto *wizard = as_wizard(handle);
   return wizard == nullptr ? duplicate_string("") : duplicate_string(wizard->buttonText(static_cast<QWizard::WizardButton>(which)));
+}
+
+void qt6cr_wizard_set_button(qt6cr_handle_t handle, int which, qt6cr_handle_t button) {
+  auto *wizard = as_wizard(handle);
+  auto *value = as_abstract_button(button);
+
+  if (wizard != nullptr && value != nullptr) {
+    wizard->setButton(static_cast<QWizard::WizardButton>(which), value);
+  }
 }
 
 qt6cr_handle_t qt6cr_wizard_button(qt6cr_handle_t handle, int which) {
@@ -11781,6 +11826,31 @@ void qt6cr_wizard_set_pixmap(qt6cr_handle_t handle, int which, qt6cr_handle_t pi
 qt6cr_handle_t qt6cr_wizard_pixmap(qt6cr_handle_t handle, int which) {
   auto *wizard = as_wizard(handle);
   return wizard == nullptr ? new QPixmap() : new QPixmap(wizard->pixmap(static_cast<QWizard::WizardPixmap>(which)));
+}
+
+void qt6cr_wizard_set_side_widget(qt6cr_handle_t handle, qt6cr_handle_t widget) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr) {
+    wizard->setSideWidget(as_widget(widget));
+  }
+}
+
+qt6cr_handle_t qt6cr_wizard_side_widget(qt6cr_handle_t handle) {
+  auto *wizard = as_wizard(handle);
+  return wizard == nullptr ? nullptr : wizard->sideWidget();
+}
+
+void qt6cr_wizard_set_default_property(qt6cr_handle_t handle, const char *class_name, const char *property, const char *changed_signal) {
+  auto *wizard = as_wizard(handle);
+
+  if (wizard != nullptr && class_name != nullptr) {
+    wizard->setDefaultProperty(
+      class_name,
+      property == nullptr ? nullptr : property,
+      changed_signal == nullptr ? nullptr : changed_signal
+    );
+  }
 }
 
 void qt6cr_wizard_on_current_id_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
@@ -11965,6 +12035,20 @@ void qt6cr_wizard_page_register_field(qt6cr_handle_t handle, const char *name, q
 
   if (page != nullptr && field_widget != nullptr) {
     page->registerField(QString::fromUtf8(name == nullptr ? "" : name), field_widget);
+  }
+}
+
+void qt6cr_wizard_page_register_field_with_property(qt6cr_handle_t handle, const char *name, qt6cr_handle_t widget, const char *property, const char *changed_signal) {
+  auto *page = as_crystal_wizard_page(handle);
+  auto *field_widget = as_widget(widget);
+
+  if (page != nullptr && field_widget != nullptr) {
+    page->registerField(
+      QString::fromUtf8(name == nullptr ? "" : name),
+      field_widget,
+      property == nullptr ? nullptr : property,
+      changed_signal == nullptr ? nullptr : changed_signal
+    );
   }
 }
 
