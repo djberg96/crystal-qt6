@@ -92,6 +92,144 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports richer tree widget items and tree widget item iterators" do
+    application = app
+    tree_widget = Qt6::TreeWidget.new
+    tree_widget.column_count = 2
+    tree_widget.header_label = "Layer"
+    tree_widget.set_header_label(1, "State")
+
+    root = Qt6::TreeWidgetItem.new("Layers")
+    root.set_text(1, "Visible")
+    root.flags = root.flags | Qt6::ItemFlag::Editable | Qt6::ItemFlag::UserCheckable
+    root.check_state = Qt6::CheckState::Checked
+    root.set_data(1, "active", Qt6::ItemDataRole::User)
+    root.tool_tip = "Primary layer group"
+    root.status_tip = "Shown in layer panel status"
+    root.whats_this = "Contains the main editable map layers."
+    root.text_alignment = Qt6::AlignmentFlag::Right | Qt6::AlignmentFlag::VCenter
+    root.size_hint = Qt6::Size.new(150, 28)
+    root.background = Qt6::QBrush.new(Qt6::Color.new(232, 238, 244))
+    root.foreground = Qt6::Color.new(48, 56, 65)
+    root_font = root.font
+    root_font.bold = true
+    root.font = root_font
+    root.child_indicator_policy = Qt6::TreeWidgetItemChildIndicatorPolicy::ShowIndicator
+
+    contours = Qt6::TreeWidgetItem.new("Contours")
+    contours.set_text(1, "Locked")
+    contours.check_state = Qt6::CheckState::PartiallyChecked
+    contours.tool_tip = "Contour overlay"
+    contours.whats_this = "Useful for elevation reference."
+
+    roads = Qt6::TreeWidgetItem.new("Roads")
+    roads.set_text(1, "Hidden")
+    roads.check_state = Qt6::CheckState::Unchecked
+
+    detached = Qt6::TreeWidgetItem.new("Detached")
+
+    root.add_child(contours)
+    root.insert_child(1, roads)
+    root.add_child(detached)
+    root.remove_child(detached)
+    detached.parent_item.should be_nil
+    detached.tree_widget.should be_nil
+
+    tree_widget << root
+    tree_widget.current_item = contours
+    root.first_column_spanned = true
+    root.expanded = true
+    application.process_events
+
+    taken = root.take_child(1)
+    taken.should_not be_nil
+    root.insert_child(1, taken.not_nil!)
+    root.sort_children(0, Qt6::SortOrder::Descending)
+    application.process_events
+
+    root.selected = true
+    root.hidden = false
+    root.disabled = true
+    root.disabled = false
+    application.process_events
+
+    item_names = [] of String
+    iterator = Qt6::TreeWidgetItemIterator.new(tree_widget)
+    until iterator.ended?
+      item = iterator.item.not_nil!
+      item_names << item.text
+      iterator.next
+    end
+
+    checked_names = [] of String
+    checked_iterator = Qt6::TreeWidgetItemIterator.new(tree_widget, Qt6::TreeWidgetItemIteratorFlag::Checked)
+    until checked_iterator.ended?
+      item = checked_iterator.item.not_nil!
+      checked_names << item.text
+      checked_iterator.next
+    end
+
+    step_iterator = Qt6::TreeWidgetItemIterator.new(tree_widget)
+    step_iterator.item.not_nil!.text.should eq("Layers")
+    step_iterator.advance(1)
+    first_child_name = step_iterator.item.not_nil!.text
+    ["Roads", "Contours"].includes?(first_child_name).should be_true
+    step_iterator.advance(1)
+    second_child_name = step_iterator.item.not_nil!.text
+    second_child_name.should_not eq(first_child_name)
+    step_iterator.previous
+    step_iterator.item.not_nil!.text.should eq(first_child_name)
+    step_iterator.rewind(1)
+    step_iterator.item.not_nil!.text.should eq("Layers")
+
+    rooted_iterator = Qt6::TreeWidgetItemIterator.new(root)
+    rooted_iterator.ended?.should be_a(Bool)
+
+    root.text.should eq("Layers")
+    root.text(1).should eq("Visible")
+    root.column_count.should eq(2)
+    root.flags.includes?(Qt6::ItemFlag::Editable).should be_true
+    root.flags.includes?(Qt6::ItemFlag::UserCheckable).should be_true
+    root.check_state.should eq(Qt6::CheckState::Checked)
+    root.data(1, Qt6::ItemDataRole::User).should eq("active")
+    root.tool_tip.should eq("Primary layer group")
+    root.status_tip.should eq("Shown in layer panel status")
+    root.whats_this.should eq("Contains the main editable map layers.")
+    root.text_alignment.includes?(Qt6::AlignmentFlag::Right).should be_true
+    root.text_alignment.includes?(Qt6::AlignmentFlag::VCenter).should be_true
+    root.size_hint.should eq(Qt6::Size.new(150, 28))
+    root.background.color.should eq(Qt6::Color.new(232, 238, 244, 255))
+    root.foreground.should eq(Qt6::Color.new(48, 56, 65, 255))
+    root.font.bold?.should be_true
+    root.child_indicator_policy.should eq(Qt6::TreeWidgetItemChildIndicatorPolicy::ShowIndicator)
+    root.first_column_spanned?.should be_true
+    root.expanded?.should be_true
+    root.disabled?.should be_false
+    root.hidden?.should be_false
+    root.selected?.should be_true
+    root.child_count.should eq(2)
+    root.index_of_child(contours).should eq(1)
+    root.index_of_child(roads).should eq(0)
+    root.child(0).not_nil!.text.should eq("Roads")
+    root.child(1).not_nil!.text.should eq("Contours")
+    root.tree_widget.not_nil!.to_unsafe.should eq(tree_widget.to_unsafe)
+    contours.parent_item.not_nil!.to_unsafe.should eq(root.to_unsafe)
+    contours.tree_widget.not_nil!.to_unsafe.should eq(tree_widget.to_unsafe)
+    contours.check_state.should eq(Qt6::CheckState::PartiallyChecked)
+    contours.tool_tip.should eq("Contour overlay")
+    contours.whats_this.should eq("Useful for elevation reference.")
+    tree_widget.current_item.not_nil!.to_unsafe.should eq(contours.to_unsafe)
+    item_names.should eq(["Layers", "Roads", "Contours"])
+    checked_names.should eq(["Layers", "Contours"])
+
+    rooted_iterator.release
+    step_iterator.release
+    checked_iterator.release
+    iterator.release
+    detached.release
+    tree_widget.release
+  end
+
   it "supports fuller tree view structure and expansion controls" do
     application = app
     host = Qt6::Widget.new

@@ -4,12 +4,23 @@ module Qt6
     @current_item_changed : Signal() = Signal().new
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
 
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Signal emitted when the current item changes.
     getter current_item_changed : Signal()
 
     # Creates a tree widget with an optional parent.
     def initialize(parent : Widget? = nil)
       super(LibQt6.qt6cr_tree_widget_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+      @current_item_changed = Signal().new
+      @callback_userdata = Box.box(self)
+      LibQt6.qt6cr_tree_widget_on_current_item_changed(to_unsafe, CURRENT_ITEM_CHANGED_TRAMPOLINE, @callback_userdata)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
       @current_item_changed = Signal().new
       @callback_userdata = Box.box(self)
       LibQt6.qt6cr_tree_widget_on_current_item_changed(to_unsafe, CURRENT_ITEM_CHANGED_TRAMPOLINE, @callback_userdata)
