@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-06-01
+
+### Added
+
 - Expanded `QWizard` with title/subtitle text-format control, side-widget and custom-button replacement, `next_id` and `size_hint`, default-property registration, and expanded `QWizardPage` coverage including lifecycle hooks, Qt-style setter aliases, and richer `register_field` overloads.
 - Expanded `QWidget` with shared frame/geometry, child-region, coordinate-mapping, tooltip-duration, window-file-path, opacity, repaint-state, and extra window-state helpers for fuller base-widget parity.
 - Expanded `QWidget` with installed-layout access, widget contents-margins and contents-rect helpers, typed parent-widget reassignment, and `update_geometry` support for smoother embedded layout workflows.
