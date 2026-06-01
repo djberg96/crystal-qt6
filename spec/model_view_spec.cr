@@ -1590,8 +1590,21 @@ describe Qt6 do
 
     selection_model.current_index.row.should eq(0)
     selection_model.has_selection?.should be_true
+    selection_model.selected_indexes.map(&.row).should eq([1])
+    selection_model.selected_rows.map(&.row).should eq([1])
     selection_model.selected?(units_index).should be_true
     selection_model.selected?(terrain_index).should be_false
+
+    selection = selection_model.selection
+    selection.count.should eq(1)
+    selection.indexes.map(&.row).should eq([1])
+    range = selection.at(0)
+    range.top.should eq(1)
+    range.bottom.should eq(1)
+    range.left.should eq(0)
+    range.right.should eq(0)
+    range.release
+    selection.release
 
     selection_model.set_current_index(units_index, Qt6::SelectionFlag::Current)
     application.process_events
@@ -1609,6 +1622,23 @@ describe Qt6 do
     units_index.release
     parent_index.release
     list_view.release
+  end
+
+  it "uses callback-backed model flags for invalid root indexes" do
+    list_model = RootDropListModel.new
+    tree_model = RootDropTreeModel.new
+    invalid_index = Qt6::ModelIndex.new
+    list_index = list_model.index(0)
+    tree_index = tree_model.index(0)
+
+    list_model.flags(invalid_index).should eq(Qt6::ItemFlag::DropEnabled)
+    tree_model.flags(invalid_index).should eq(Qt6::ItemFlag::DropEnabled)
+    list_model.flags(list_index).should eq(Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable)
+    tree_model.flags(tree_index).should eq(Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable)
+
+    invalid_index.release
+    list_index.release
+    tree_index.release
   end
 
   it "shares abstract item-view coverage across item-based widgets" do

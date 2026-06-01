@@ -93,6 +93,7 @@
 #include <QInputDialog>
 #include <QItemEditorFactory>
 #include <QItemDelegate>
+#include <QItemSelection>
 #include <QItemSelectionModel>
 #include <QIODevice>
 #include <QKeyEvent>
@@ -305,6 +306,7 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &va
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsView *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QMdiSubWindow *> &values);
+qt6cr_handle_array_t to_model_index_handle_array_value(const QModelIndexList &values);
 QMimeData *as_mime_data(qt6cr_handle_t handle);
 QMimeData *clone_mime_data(const QMimeData *source);
 
@@ -1179,7 +1181,7 @@ class CrystalAbstractListModel final : public QAbstractListModel {
   }
 
   Qt::ItemFlags flags(const QModelIndex &index) const override {
-    if (flags_callback == nullptr || !index.isValid()) {
+    if (flags_callback == nullptr) {
       return QAbstractListModel::flags(index);
     }
 
@@ -1382,7 +1384,7 @@ class CrystalAbstractTreeModel final : public QAbstractItemModel {
   }
 
   Qt::ItemFlags flags(const QModelIndex &index) const override {
-    if (flags_callback == nullptr || !index.isValid()) {
+    if (flags_callback == nullptr) {
       return QAbstractItemModel::flags(index);
     }
 
@@ -1990,6 +1992,22 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QMdiSubWindow *> &values)
   return qt6cr_handle_array_t{copy, size};
 }
 
+qt6cr_handle_array_t to_model_index_handle_array_value(const QModelIndexList &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = new QModelIndex(values.at(index));
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
 QMimeData *clone_mime_data(const QMimeData *source) {
   if (source == nullptr) {
     return nullptr;
@@ -2218,6 +2236,14 @@ CrystalAbstractListModel *as_abstract_list_model(qt6cr_handle_t handle) {
 
 QItemSelectionModel *as_item_selection_model(qt6cr_handle_t handle) {
   return static_cast<QItemSelectionModel *>(handle);
+}
+
+QItemSelection *as_item_selection(qt6cr_handle_t handle) {
+  return static_cast<QItemSelection *>(handle);
+}
+
+QItemSelectionRange *as_item_selection_range(qt6cr_handle_t handle) {
+  return static_cast<QItemSelectionRange *>(handle);
 }
 
 QDataWidgetMapper *as_data_widget_mapper(qt6cr_handle_t handle) {
@@ -13084,6 +13110,69 @@ bool qt6cr_item_selection_model_is_selected(qt6cr_handle_t handle, qt6cr_handle_
   }
 
   return selection_model->isSelected(*model_index);
+}
+
+qt6cr_handle_array_t qt6cr_item_selection_model_selected_indexes(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+  return selection_model == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_model_index_handle_array_value(selection_model->selectedIndexes());
+}
+
+qt6cr_handle_array_t qt6cr_item_selection_model_selected_rows(qt6cr_handle_t handle, int column) {
+  auto *selection_model = as_item_selection_model(handle);
+  return selection_model == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_model_index_handle_array_value(selection_model->selectedRows(column));
+}
+
+qt6cr_handle_t qt6cr_item_selection_model_selection(qt6cr_handle_t handle) {
+  auto *selection_model = as_item_selection_model(handle);
+  return selection_model == nullptr ? new QItemSelection() : new QItemSelection(selection_model->selection());
+}
+
+void qt6cr_item_selection_destroy(qt6cr_handle_t handle) {
+  delete as_item_selection(handle);
+}
+
+int qt6cr_item_selection_count(qt6cr_handle_t handle) {
+  auto *selection = as_item_selection(handle);
+  return selection == nullptr ? 0 : selection->count();
+}
+
+qt6cr_handle_t qt6cr_item_selection_at(qt6cr_handle_t handle, int index) {
+  auto *selection = as_item_selection(handle);
+
+  if (selection == nullptr || index < 0 || index >= selection->count()) {
+    return new QItemSelectionRange();
+  }
+
+  return new QItemSelectionRange(selection->at(index));
+}
+
+qt6cr_handle_array_t qt6cr_item_selection_indexes(qt6cr_handle_t handle) {
+  auto *selection = as_item_selection(handle);
+  return selection == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_model_index_handle_array_value(selection->indexes());
+}
+
+void qt6cr_item_selection_range_destroy(qt6cr_handle_t handle) {
+  delete as_item_selection_range(handle);
+}
+
+int qt6cr_item_selection_range_top(qt6cr_handle_t handle) {
+  auto *range = as_item_selection_range(handle);
+  return range == nullptr ? -1 : range->top();
+}
+
+int qt6cr_item_selection_range_bottom(qt6cr_handle_t handle) {
+  auto *range = as_item_selection_range(handle);
+  return range == nullptr ? -1 : range->bottom();
+}
+
+int qt6cr_item_selection_range_left(qt6cr_handle_t handle) {
+  auto *range = as_item_selection_range(handle);
+  return range == nullptr ? -1 : range->left();
+}
+
+int qt6cr_item_selection_range_right(qt6cr_handle_t handle) {
+  auto *range = as_item_selection_range(handle);
+  return range == nullptr ? -1 : range->right();
 }
 
 void qt6cr_item_selection_model_on_current_index_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
