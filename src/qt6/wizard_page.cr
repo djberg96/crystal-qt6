@@ -32,6 +32,11 @@ module Qt6
       value
     end
 
+    # Sets the page title and returns it.
+    def set_title(value : String) : String
+      self.title = value
+    end
+
     # Returns the page subtitle.
     def sub_title : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_wizard_page_sub_title(to_unsafe))
@@ -41,6 +46,11 @@ module Qt6
     def sub_title=(value : String) : String
       LibQt6.qt6cr_wizard_page_set_sub_title(to_unsafe, value.to_unsafe)
       value
+    end
+
+    # Sets the page subtitle and returns it.
+    def set_sub_title(value : String) : String
+      self.sub_title = value
     end
 
     # Sets the pixmap for one of the page decoration roles.
@@ -65,6 +75,11 @@ module Qt6
       value
     end
 
+    # Marks the page as final or non-final.
+    def set_final_page(value : Bool) : Bool
+      self.final_page = value
+    end
+
     # Returns `true` when this page acts as a commit page.
     def commit_page? : Bool
       LibQt6.qt6cr_wizard_page_is_commit_page(to_unsafe)
@@ -74,6 +89,11 @@ module Qt6
     def commit_page=(value : Bool) : Bool
       LibQt6.qt6cr_wizard_page_set_commit_page(to_unsafe, value)
       value
+    end
+
+    # Marks the page as a commit page or not.
+    def set_commit_page(value : Bool) : Bool
+      self.commit_page = value
     end
 
     # Returns the owning wizard, if this page is currently installed in one.
@@ -118,6 +138,18 @@ module Qt6
     # Returns the next page id according to the current page logic.
     def next_id : Int32
       LibQt6.qt6cr_wizard_page_next_id(to_unsafe)
+    end
+
+    # Runs the page's initialization hook.
+    def initialize_page : self
+      LibQt6.qt6cr_wizard_page_initialize_page(to_unsafe)
+      self
+    end
+
+    # Runs the page's cleanup hook.
+    def cleanup_page : self
+      LibQt6.qt6cr_wizard_page_cleanup_page(to_unsafe)
+      self
     end
 
     # Registers a wizard field using Qt's default property and changed signal for the widget type.

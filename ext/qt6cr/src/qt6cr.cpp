@@ -12029,6 +12029,20 @@ int qt6cr_wizard_page_next_id(qt6cr_handle_t handle) {
   return page == nullptr ? -1 : page->nextId();
 }
 
+void qt6cr_wizard_page_initialize_page(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  if (page != nullptr) {
+    page->initializePage();
+  }
+}
+
+void qt6cr_wizard_page_cleanup_page(qt6cr_handle_t handle) {
+  auto *page = as_wizard_page(handle);
+  if (page != nullptr) {
+    page->cleanupPage();
+  }
+}
+
 void qt6cr_wizard_page_register_field(qt6cr_handle_t handle, const char *name, qt6cr_handle_t widget) {
   auto *page = as_crystal_wizard_page(handle);
   auto *field_widget = as_widget(widget);

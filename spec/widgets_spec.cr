@@ -1348,6 +1348,12 @@ describe Qt6 do
     wizard.pixmap(Qt6::WizardPixmap::WatermarkPixmap).size.should eq(Qt6::Size.new(8, 8))
     intro_page.pixmap(Qt6::WizardPixmap::LogoPixmap).size.should eq(Qt6::Size.new(8, 8))
     summary_page.pixmap(Qt6::WizardPixmap::BannerPixmap).size.should eq(Qt6::Size.new(8, 8))
+    intro_page.set_title("Welcome").should eq("Welcome")
+    intro_page.set_sub_title("Choose your deployment settings.").should contain("deployment")
+    summary_page.set_final_page(true).should be_true
+    summary_page.set_commit_page(true).should be_true
+    intro_page.initialize_page.should eq(intro_page)
+    intro_page.cleanup_page.should eq(intro_page)
     intro_page.button_text(Qt6::WizardButton::NextButton).should eq("Continue")
     intro_page.wizard.not_nil!.to_unsafe.should eq(wizard.to_unsafe)
     summary_page.wizard.not_nil!.to_unsafe.should eq(wizard.to_unsafe)

@@ -1570,6 +1570,8 @@ char *qt6cr_wizard_page_button_text(qt6cr_handle_t handle, int which);
 bool qt6cr_wizard_page_validate_page(qt6cr_handle_t handle);
 bool qt6cr_wizard_page_is_complete(qt6cr_handle_t handle);
 int qt6cr_wizard_page_next_id(qt6cr_handle_t handle);
+void qt6cr_wizard_page_initialize_page(qt6cr_handle_t handle);
+void qt6cr_wizard_page_cleanup_page(qt6cr_handle_t handle);
 void qt6cr_wizard_page_register_field(qt6cr_handle_t handle, const char *name, qt6cr_handle_t widget);
 void qt6cr_wizard_page_register_field_with_property(qt6cr_handle_t handle, const char *name, qt6cr_handle_t widget, const char *property, const char *changed_signal);
 void qt6cr_wizard_page_on_complete_changed(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);

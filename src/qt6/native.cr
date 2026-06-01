@@ -1530,6 +1530,8 @@ module Qt6
     fun qt6cr_wizard_page_validate_page = qt6cr_wizard_page_validate_page(handle : Handle) : Bool
     fun qt6cr_wizard_page_is_complete = qt6cr_wizard_page_is_complete(handle : Handle) : Bool
     fun qt6cr_wizard_page_next_id = qt6cr_wizard_page_next_id(handle : Handle) : LibC::Int
+    fun qt6cr_wizard_page_initialize_page = qt6cr_wizard_page_initialize_page(handle : Handle)
+    fun qt6cr_wizard_page_cleanup_page = qt6cr_wizard_page_cleanup_page(handle : Handle)
     fun qt6cr_wizard_page_register_field = qt6cr_wizard_page_register_field(handle : Handle, name : UInt8*, widget : Handle)
     fun qt6cr_wizard_page_register_field_with_property = qt6cr_wizard_page_register_field_with_property(handle : Handle, name : UInt8*, widget : Handle, property : UInt8*, changed_signal : UInt8*)
     fun qt6cr_wizard_page_on_complete_changed = qt6cr_wizard_page_on_complete_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
