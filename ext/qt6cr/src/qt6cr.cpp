@@ -218,6 +218,7 @@
 #include <QWidgetAction>
 #include <QWizard>
 #include <QToolTip>
+#include <QWhatsThis>
 #include <QSplitter>
 #include <QVariant>
 #include <QMetaType>
@@ -9405,6 +9406,34 @@ void qt6cr_tool_tip_show_text_at(qt6cr_handle_t handle, qt6cr_point_t position, 
 
 char *qt6cr_tool_tip_text(void) {
   return duplicate_string(QToolTip::text());
+}
+
+void qt6cr_whats_this_enter_mode(void) {
+  QWhatsThis::enterWhatsThisMode();
+}
+
+bool qt6cr_whats_this_in_mode(void) {
+  return QWhatsThis::inWhatsThisMode();
+}
+
+void qt6cr_whats_this_leave_mode(void) {
+  QWhatsThis::leaveWhatsThisMode();
+}
+
+void qt6cr_whats_this_show_text(qt6cr_point_t position, const char *text, qt6cr_handle_t widget) {
+  QWhatsThis::showText(
+    from_point(position),
+    QString::fromUtf8(text == nullptr ? "" : text),
+    as_widget(widget)
+  );
+}
+
+void qt6cr_whats_this_hide_text(void) {
+  QWhatsThis::hideText();
+}
+
+qt6cr_handle_t qt6cr_whats_this_create_action(qt6cr_handle_t parent) {
+  return QWhatsThis::createAction(as_object(parent));
 }
 
 qt6cr_handle_t qt6cr_widget_window_icon(qt6cr_handle_t handle) {

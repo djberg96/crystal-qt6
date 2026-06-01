@@ -463,6 +463,19 @@ describe Qt6 do
     Qt6::ToolTip.text.should eq("Point-based local tooltip")
     Qt6::ToolTip.hide_text
     application.process_events
+    whats_this_action = Qt6::WhatsThis.create_action(label)
+    whats_this_action.trigger
+    application.process_events
+    Qt6::WhatsThis.in_mode?.should be_true
+    Qt6::WhatsThis.leave_mode
+    Qt6::WhatsThis.in_mode?.should be_false
+    Qt6::WhatsThis.enter_mode
+    Qt6::WhatsThis.in_mode?.should be_true
+    Qt6::WhatsThis.show_text(label, Qt6::Point.new(8, 10), "Shared what's this help")
+    application.process_events
+    Qt6::WhatsThis.hide_text
+    Qt6::WhatsThis.leave_mode
+    Qt6::WhatsThis.in_mode?.should be_false
 
     label.tool_tip.should eq("Shared widget affordances")
     label.status_tip.should eq("Shown in the status bar when hovered")
@@ -507,6 +520,7 @@ describe Qt6 do
 
     Qt6::ToolTip.font = previous_tool_tip_font
     Qt6::ToolTip.palette = previous_tool_tip_palette
+    whats_this_action.release
     line_edit.release
     label.release
   end

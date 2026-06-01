@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QWidget` with shared font access, resolved `font_metrics` / `font_info`, background and foreground palette-role helpers, and `auto_fill_background` control for fuller visual-state parity.
 - Expanded `QWidget` with full cursor access and clearing, tablet-tracking, context-menu policy, and input-method-hint helpers for fuller shared input and interaction control.
 - Expanded `QToolTip` with global-position and target-rect `show_text(...)` support while preserving the existing widget-local convenience form.
+- Added `QWhatsThis` bindings with global mode entry and exit, inline help popup helpers, and the shared What's This action factory.
 - Added `QUndoView` bindings with stack/group construction, clean-icon and empty-label control, plus live retargeting between standalone stacks and shared undo groups.
 - Added `QTapGesture` bindings with tap-position helpers and automatic gesture-event dispatch to the concrete tap wrapper.
 - Added `QSwipeGesture` bindings with typed swipe-direction and swipe-angle helpers, plus automatic gesture-event dispatch to the concrete swipe wrapper.

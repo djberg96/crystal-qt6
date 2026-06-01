@@ -1143,6 +1143,12 @@ module Qt6
     fun qt6cr_tool_tip_set_palette = qt6cr_tool_tip_set_palette(palette : Handle)
     fun qt6cr_tool_tip_show_text_at = qt6cr_tool_tip_show_text_at(widget : Handle, position : PointValue, text : UInt8*, rect : RectValue, msec_display_time : LibC::Int)
     fun qt6cr_tool_tip_text = qt6cr_tool_tip_text : UInt8*
+    fun qt6cr_whats_this_enter_mode = qt6cr_whats_this_enter_mode
+    fun qt6cr_whats_this_in_mode = qt6cr_whats_this_in_mode : Bool
+    fun qt6cr_whats_this_leave_mode = qt6cr_whats_this_leave_mode
+    fun qt6cr_whats_this_show_text = qt6cr_whats_this_show_text(position : PointValue, text : UInt8*, widget : Handle)
+    fun qt6cr_whats_this_hide_text = qt6cr_whats_this_hide_text
+    fun qt6cr_whats_this_create_action = qt6cr_whats_this_create_action(parent : Handle) : Handle
     fun qt6cr_widget_window_icon = qt6cr_widget_window_icon(handle : Handle) : Handle
     fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
     fun qt6cr_widget_is_enabled = qt6cr_widget_is_enabled(handle : Handle) : Bool
