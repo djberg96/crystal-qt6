@@ -564,6 +564,11 @@ describe Qt6 do
     focus_frame = Qt6::FocusFrame.new(dialog)
     tool_box = Qt6::ToolBox.new(dialog)
     tool_box_events = [] of Int32
+    tool_box_icon_path = File.join(Dir.tempdir, "crystal-qt6-tool-box-icon-#{Process.pid}.png")
+    tool_box_icon_image = Qt6::QImage.new(10, 10)
+    tool_box_icon_image.fill(Qt6::Color.new(60, 110, 190, 255))
+    tool_box_icon_image.save(tool_box_icon_path).should be_true
+    tool_box_icon = Qt6::QIcon.from_file(tool_box_icon_path)
     layers_page = Qt6::Label.new("Layers")
     filters_page = Qt6::Label.new("Filters")
     imported_page = Qt6::Label.new("Imported")
@@ -648,19 +653,23 @@ describe Qt6 do
     tool_box.item_text(1).should eq("Imported")
     tool_box.set_item_text(1, "Assets").should eq("Assets")
     tool_box.item_text(1).should eq("Assets")
+    tool_box.set_item_icon(0, tool_box_icon).null?.should be_false
+    tool_box.item_icon(0).null?.should be_false
+    tool_box.set_item_tool_tip(2, "Filter controls").should eq("Filter controls")
+    tool_box.item_tool_tip(2).should eq("Filter controls")
     tool_box.item_enabled?(0).should be_true
     tool_box.set_item_enabled(0, false).should be_false
     tool_box.item_enabled?(0).should be_false
     tool_box.current_widget = layers_page
     application.process_events
     tool_box.current_index.should eq(0)
-    tool_box.current_index = 1
+    tool_box.set_current_index(1).to_unsafe.should eq(tool_box.to_unsafe)
     application.process_events
     tool_box.current_widget.not_nil!.to_unsafe.should eq(imported_page.to_unsafe)
     tool_box.widget(2).not_nil!.to_unsafe.should eq(filters_page.to_unsafe)
     tool_box.index_of(filters_page).should eq(2)
     tool_box_events.last.should eq(1)
-    tool_box.current_widget = filters_page
+    tool_box.set_current_widget(filters_page).to_unsafe.should eq(tool_box.to_unsafe)
     application.process_events
     tool_box.current_index.should eq(2)
     tool_box.remove_item(1)
@@ -709,7 +718,10 @@ describe Qt6 do
     mode_group.remove(place_button)
     mode_group.id(place_button).should eq(-1)
 
+    tool_box_icon.release
+    tool_box_icon_image.release
     dialog.release
+    File.delete?(tool_box_icon_path)
   end
 
   it "supports shortcut, rubber-band, and error helper widgets" do

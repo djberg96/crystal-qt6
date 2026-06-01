@@ -31663,6 +31663,33 @@ char *qt6cr_tool_box_item_text(qt6cr_handle_t handle, int index) {
   return tool_box == nullptr ? duplicate_string("") : duplicate_string(tool_box->itemText(index));
 }
 
+void qt6cr_tool_box_set_item_icon(qt6cr_handle_t handle, int index, qt6cr_handle_t icon) {
+  auto *tool_box = as_tool_box(handle);
+  auto *page_icon = as_qicon(icon);
+
+  if (tool_box != nullptr && index >= 0 && page_icon != nullptr) {
+    tool_box->setItemIcon(index, *page_icon);
+  }
+}
+
+qt6cr_handle_t qt6cr_tool_box_item_icon(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? nullptr : new QIcon(tool_box->itemIcon(index));
+}
+
+void qt6cr_tool_box_set_item_tool_tip(qt6cr_handle_t handle, int index, const char *value) {
+  auto *tool_box = as_tool_box(handle);
+
+  if (tool_box != nullptr && index >= 0) {
+    tool_box->setItemToolTip(index, QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+char *qt6cr_tool_box_item_tool_tip(qt6cr_handle_t handle, int index) {
+  auto *tool_box = as_tool_box(handle);
+  return tool_box == nullptr ? duplicate_string("") : duplicate_string(tool_box->itemToolTip(index));
+}
+
 int qt6cr_tool_box_current_index(qt6cr_handle_t handle) {
   auto *tool_box = as_tool_box(handle);
   return tool_box == nullptr ? -1 : tool_box->currentIndex();

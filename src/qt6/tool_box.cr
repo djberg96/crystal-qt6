@@ -81,6 +81,28 @@ module Qt6
       Qt6.copy_and_release_string(LibQt6.qt6cr_tool_box_item_text(to_unsafe, index.to_i32))
     end
 
+    # Sets the page icon and returns it.
+    def set_item_icon(index : Int, value : QIcon) : QIcon
+      LibQt6.qt6cr_tool_box_set_item_icon(to_unsafe, index.to_i32, value.to_unsafe)
+      value
+    end
+
+    # Returns the page icon at the given index.
+    def item_icon(index : Int) : QIcon
+      QIcon.wrap(LibQt6.qt6cr_tool_box_item_icon(to_unsafe, index.to_i32), true)
+    end
+
+    # Sets the page tooltip and returns it.
+    def set_item_tool_tip(index : Int, value : String) : String
+      LibQt6.qt6cr_tool_box_set_item_tool_tip(to_unsafe, index.to_i32, value.to_unsafe)
+      value
+    end
+
+    # Returns the page tooltip at the given index.
+    def item_tool_tip(index : Int) : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_tool_box_item_tool_tip(to_unsafe, index.to_i32))
+    end
+
     # Returns the selected page index.
     def current_index : Int32
       LibQt6.qt6cr_tool_box_current_index(to_unsafe)
@@ -124,6 +146,18 @@ module Qt6
     # Registers a block to run when the selected page changes.
     def on_current_index_changed(&block : Int32 ->) : self
       @current_index_changed.connect { |value| block.call(value) }
+      self
+    end
+
+    # Qt-style alias for `current_index=`.
+    def set_current_index(value : Int) : self
+      self.current_index = value
+      self
+    end
+
+    # Qt-style alias for `current_widget=`.
+    def set_current_widget(widget : Widget) : self
+      self.current_widget = widget
       self
     end
 

@@ -4474,6 +4474,10 @@ void qt6cr_tool_box_set_item_enabled(qt6cr_handle_t handle, int index, bool valu
 bool qt6cr_tool_box_item_enabled(qt6cr_handle_t handle, int index);
 void qt6cr_tool_box_set_item_text(qt6cr_handle_t handle, int index, const char *value);
 char *qt6cr_tool_box_item_text(qt6cr_handle_t handle, int index);
+void qt6cr_tool_box_set_item_icon(qt6cr_handle_t handle, int index, qt6cr_handle_t icon);
+qt6cr_handle_t qt6cr_tool_box_item_icon(qt6cr_handle_t handle, int index);
+void qt6cr_tool_box_set_item_tool_tip(qt6cr_handle_t handle, int index, const char *value);
+char *qt6cr_tool_box_item_tool_tip(qt6cr_handle_t handle, int index);
 int qt6cr_tool_box_current_index(qt6cr_handle_t handle);
 void qt6cr_tool_box_set_current_index(qt6cr_handle_t handle, int index);
 qt6cr_handle_t qt6cr_tool_box_current_widget(qt6cr_handle_t handle);
