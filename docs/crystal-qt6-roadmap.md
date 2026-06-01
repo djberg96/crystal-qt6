@@ -8,7 +8,7 @@ The current motivating example is `WargameMapTool`, a substantial Python/PySide6
 
 Large PySide6-style desktop applications should still not be ported directly today.
 
-`crystal-qt6` is now well beyond simple widget demos: it can host a reduced desktop shell, custom event-driven widgets, a usable raster/SVG/PDF rendering stack, and deterministic teardown. That is enough to prototype real editor subsystems, and the project is now moving from "can this be done at all?" to "which Qt6 surface areas should reach general-purpose parity next?"
+`crystal-qt6` is now well beyond simple widget demos: it can host a reduced desktop shell, a broad ordinary `QtWidgets` control and container layer, custom event-driven widgets, a usable raster/SVG/PDF rendering stack, and deterministic teardown. That is enough to prototype real editor subsystems, and the project is now moving from "can this be done at all?" to "which Qt6 surface areas beyond the mainstream widget layer should reach general-purpose parity next?"
 
 Larger editor-style applications still typically need:
 
@@ -39,7 +39,7 @@ Today, `crystal-qt6` already exposes a meaningful slice of Qt6 across the core a
 - basic clipboard and MIME/data-transfer support through text, image, pixmap, `QMimeData`, model/view drag-drop payload helpers, and widget-side drop hooks
 - custom widget/event bridging through `EventWidget` paint, resize, mouse, wheel, key, pointer-boundary, focus, and drop callbacks, plus installable event filters and scroll-guard hooks
 
-That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell or rendering system. The main gap is the remaining editor-control and application-services layer that sits between the shell and the canvas.
+That moves the project well past the initial foundation stage. The main gap is no longer the lack of a shell, rendering system, or everyday widget toolkit. The remaining work is more about the long tail around application services, workflow-specific helpers, deeper document/export infrastructure, and the parts of Qt that sit beyond the ordinary widget layer.
 
 Applications in the target class still usually depend on at least these Qt areas:
 
@@ -54,7 +54,7 @@ The next stage of the roadmap should be driven by broad Qt6 usefulness, not by o
 
 Recommended parity targets for the next development cycles:
 
-1. Reach strong coverage for the common `QtWidgets` subset used by desktop editors, data tools, and internal application shells.
+1. Preserve and validate the now-broad common `QtWidgets` subset used by desktop editors, data tools, and internal application shells.
 2. Prefer binding reusable base classes and shared infrastructure before adding one-off convenience widgets.
 3. Keep Crystal naming and ownership conventions even when PySide6 uses different method names.
 4. Validate each new surface with focused specs and at least one maintained in-repo example path.

@@ -10,7 +10,7 @@ Application & \api{Application}, \api{Qt6.application}, metadata, style sheets, 
 Styles & \api{Style}, \api{CommonStyle}, \api{StyleFactory}, \api{ProxyStyle}, \api{StylePainter}, \api{StyledItemDelegate}, item editor factories, and the shared \api{StyleOption*} and \api{StyleHintReturn*} families \\
 Shells & \api{MainWindow}, \api{Action}, \api{ActionGroup}, \api{MenuBar}, \api{Menu}, \api{ToolBar}, \api{StatusBar}, \api{DockWidget}, \api{SystemTrayIcon}, action icons, dock toggle/title-bar helpers, tray activation and notification flows, and status-bar size-grip control \\
 Dialogs & \api{Dialog}, \api{MessageBox}, \api{FileDialog}, \api{ColorDialog}, \api{FontDialog}, \api{InputDialog}, \api{ProgressDialog}, \api{SplashScreen}, \api{DialogButtonBox}, aligned splash messages, and button-box layout helpers \\
-Widgets & Labels, buttons, line edits, completers, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, tool boxes, splitters, stacked widgets, scroll areas, group boxes, progress bars, frames, focus frames, LCD numbers, size grips, date/time controls, calendar widgets, and text editors \\
+Widgets & Labels, buttons, line edits, completers, check boxes, radio buttons, combo boxes, sliders, spin boxes, tabs, tool boxes, splitters, stacked widgets, scroll areas, group boxes, progress bars, frames, focus frames, LCD numbers, size grips, date/time controls, calendar widgets, text editors, text browsers, item widgets, and most of the ordinary widget/control surface the project currently targets \\
 Events & \api{EventWidget}, paint, resize, mouse, wheel, key, focus, enter/leave, drag/drop callbacks, synthetic event helpers \\
 Rendering & \api{QPainter}, \api{QPainterPath}, \api{QTransform}, \api{QPen}, \api{QBrush}, gradients, \api{QPalette}, \api{QRegion}, polygons, \api{QFont}, font metrics, SVG, and PDF \\
 Graphics View & \api{GraphicsScene}, \api{GraphicsView}, \api{GraphicsItem}, graphics shape, text, pixmap, and group items, \api{GraphicsWidget}, proxy widgets, graphics layouts, transforms, effects, and scene events \\
@@ -47,7 +47,7 @@ Type & Summary \\
 
 \section{Widget Reference}
 
-The following table collects the major visible widget wrappers in one place. It is intentionally brief: use it as a map of the UI surface, then jump to the earlier chapters or the source when a widget becomes central to your application.
+The following table collects the major visible widget wrappers in one place. It is intentionally brief: use it as a map of the UI surface, then jump to the earlier chapters or the source when a widget becomes central to your application. The binding now covers the common widget and container families broadly enough that this appendix is mostly a navigation aid, not a list of speculative future wrappers.
 
 \begin{longtable}{@{}p{0.28\textwidth}p{0.64\textwidth}@{}}
 \toprule
@@ -97,9 +97,12 @@ Widget & Summary \\
 \api{ScrollArea} & Single-child scrolling container for large forms, previews, and inspector panes. \\
 \api{Splitter} & Resizable multi-pane container for editor shells and side-by-side work areas. \\
 \api{DockWidget} & Repositionable side panel for layers, inspectors, logs, search results, and tool palettes. \\
+\api{Wizard} and \api{WizardPage} & Page-based guided workflow surface for installers, setup flows, and multi-step task sequences with shared field registration. \\
+\api{MdiArea} and \api{MdiSubWindow} & Multi-document workspace widgets for applications that keep several child editors or document panes alive at once. \\
 \api{ListWidget} & Small list surface that owns its items directly. Use it for sidebars and simple collections. \\
 \api{TreeWidget} & Hierarchical item widget for expandable owned data such as grouped layers or outline trees. \\
 \api{TableWidget} & Grid widget that stores its own cell items for small editable tables. \\
+\api{UndoView} & Read-only history list for \api{UndoStack} or \api{UndoGroup} state, useful in desktop editor shells. \\
 \api{EventWidget} & Custom widget surface with direct paint, input, focus, and drag/drop callbacks. \\
 \api{SizeGrip} & Explicit resize-corner widget for dialogs and utility windows. \\
 \bottomrule

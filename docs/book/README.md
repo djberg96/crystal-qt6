@@ -18,7 +18,7 @@ make docs-book
 
 The guide is intentionally written with screenshot placeholders so it can compile before every image has been captured. Store screenshots in `docs/book/images/` using the filenames named by the chapter figures and placeholders.
 
-The guide now includes dedicated Graphics View and Styles chapters alongside the existing dialog, model/view, painting, and worked-example material.
+The guide now includes dedicated Graphics View and Styles chapters alongside the existing widgets/layouts, dialog, model/view, painting, and worked-example material.
 
 Recommended screenshot refresh set:
 

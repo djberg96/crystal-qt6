@@ -508,6 +508,27 @@ pixmap = main.grab
 pixmap.save("window.png")
 \end{lstlisting}
 
+\section{Broader Widget Surface}
+
+At this point in the project, the widget layer is no longer just a starter kit. The common desktop controls, containers, and shell-facing helper widgets are broadly covered. In practice, that means most ordinary ``which Qt widget should I use here?'' questions now have a direct Crystal answer without dropping into the native bridge.
+
+The remaining question is usually not ``is there a wrapper?'' but ``which chapter covers the workflow I care about?''
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.64\textwidth}@{}}
+\toprule
+If you need... & Start here \\
+\midrule
+forms, panels, tabs, splitters, stacked pages, and editor controls & This chapter \\
+\api{MainWindow}, menus, toolbars, status bars, docks, system tray icons, or MDI shells & Chapter 4 \\
+message boxes, file/color/font/input dialogs, wizards, splash screens, or progress dialogs & Chapter 5 \\
+custom event-driven widgets, shortcuts, gestures, and drag/drop hooks & Chapter 6 \\
+item widgets, list/tree/table views, delegates, editors, and proxy models & Chapter 10 \\
+style-aware painting, \api{StyleOption*}, or delegate presentation polish & Chapter 11 \\
+\bottomrule
+\end{longtable}
+
+That split keeps Chapter 3 focused on everyday composition while still acknowledging that the larger widget family now extends well into shells, dialogs, model/view, and style-aware infrastructure.
+
 \section{Exercise: Build A Preferences Panel}
 
 As a small practice project, build a preferences panel with two tabs. The General tab can hold a \api{LineEdit} for a profile name, a \api{ComboBox} for a theme choice, and a \api{CheckBox} for an option such as restoring the last project. The Editor tab can hold a \api{SpinBox} for tab width, a \api{Slider} for zoom, and a \api{PlainTextEdit} for notes.
@@ -516,4 +537,4 @@ Use a \api{FormLayout} for each page, put the pages in a \api{TabWidget}, and ad
 
 \section{Where To Look Next}
 
-\api{examples/inspector_workbench.cr} is the best example for form controls, group boxes, sliders, spin boxes, tabs, splitters, and a live custom canvas. \api{examples/editor_shell.cr} shows how ordinary widgets fit into a main-window shell with actions, menus, toolbars, docks, dialogs, and a status bar.
+\api{examples/inspector_workbench.cr} is the best example for form controls, group boxes, sliders, spin boxes, tabs, splitters, and a live custom canvas. \api{examples/editor_shell.cr} shows how ordinary widgets fit into a main-window shell with actions, menus, toolbars, docks, dialogs, and a status bar. \api{examples/dialog_gallery.cr} is the quickest way to skim the standard dialog and wizard-facing surface, while \api{examples/model_view_workbench.cr} picks up where item widgets and ordinary tables give way to model/view structure.
