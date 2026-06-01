@@ -127,6 +127,10 @@ module Qt6
       false
     end
 
+    protected def model_drop_mime_data_handle(mime_data_handle : LibQt6::Handle, action : DropAction, row : Int32, column : Int32, parent : ModelIndex) : Bool
+      model_drop_mime_data(MimeData.wrap(mime_data_handle), action, row, column, parent)
+    end
+
     protected def model_supported_drag_actions : DropAction
       DropAction::CopyAction
     end
@@ -201,9 +205,8 @@ module Qt6
 
     private DROP_MIME_DATA_TRAMPOLINE = ->(userdata : Void*, mime_data_handle : Void*, action : Int32, row : Int32, column : Int32, parent_handle : Void*) do
       model = Box(AbstractTreeModel).unbox(userdata)
-      mime_data = MimeData.wrap(mime_data_handle)
       parent = ModelIndex.wrap(parent_handle)
-      model.model_drop_mime_data(mime_data, DropAction.from_value(action), row, column, parent)
+      model.model_drop_mime_data_handle(mime_data_handle, DropAction.from_value(action), row, column, parent)
     end
 
     private SUPPORTED_DRAG_ACTIONS_TRAMPOLINE = ->(userdata : Void*) do
