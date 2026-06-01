@@ -35,6 +35,12 @@ module Qt6
       LibQt6.qt6cr_qicon_is_null(to_unsafe)
     end
 
+    # Paints the icon into the given rectangle using Qt's native icon rendering.
+    def paint(painter : QPainter, rect : RectF, alignment : AlignmentFlag = AlignmentFlag::Center) : self
+      LibQt6.qt6cr_qicon_paint(to_unsafe, painter.to_unsafe, rect.to_native, alignment.value)
+      self
+    end
+
     protected def destroy_native : Nil
       LibQt6.qt6cr_qicon_destroy(to_unsafe)
     end

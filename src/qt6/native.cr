@@ -1592,6 +1592,7 @@ module Qt6
     fun qt6cr_qicon_create_from_theme = qt6cr_qicon_create_from_theme(name : UInt8*) : Handle
     fun qt6cr_qicon_destroy = qt6cr_qicon_destroy(handle : Handle)
     fun qt6cr_qicon_is_null = qt6cr_qicon_is_null(handle : Handle) : Bool
+    fun qt6cr_qicon_paint = qt6cr_qicon_paint(handle : Handle, painter : Handle, rect : RectFValue, alignment : LibC::Int)
     fun qt6cr_qcursor_create = qt6cr_qcursor_create(shape : LibC::Int) : Handle
     fun qt6cr_qcursor_destroy = qt6cr_qcursor_destroy(handle : Handle)
     fun qt6cr_qcursor_shape = qt6cr_qcursor_shape(handle : Handle) : LibC::Int
