@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QWidget` with width/height, `QSize`/`QPoint` move-resize overloads, base-size and size-increment helpers, visible-region lookup, child hit-testing, and saved-geometry roundtripping for fuller shared geometry control.
 - Expanded `QWidget` with shared font access, resolved `font_metrics` / `font_info`, background and foreground palette-role helpers, and `auto_fill_background` control for fuller visual-state parity.
 - Expanded `QWidget` with full cursor access and clearing, tablet-tracking, context-menu policy, and input-method-hint helpers for fuller shared input and interaction control.
+- Expanded `QToolTip` with global-position and target-rect `show_text(...)` support while preserving the existing widget-local convenience form.
 - Added `QTapGesture` bindings with tap-position helpers and automatic gesture-event dispatch to the concrete tap wrapper.
 - Added `QSwipeGesture` bindings with typed swipe-direction and swipe-angle helpers, plus automatic gesture-event dispatch to the concrete swipe wrapper.
 - Added `QTapAndHoldGesture` bindings with held-position helpers, process-wide timeout access, and automatic gesture-event dispatch to the concrete tap-and-hold wrapper.
@@ -28,6 +29,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QTabWidget` with icon-backed tab insertion, per-tab icon/enabled/visible/tooltip metadata, tab position and shape control, corner-widget and underlying-tab-bar access, elide/icon-size/scroll/document/autohide behavior, size hints, and richer tab-widget tab signals for fuller multi-page shell workflows.
 - Expanded `QToolBar` with area/orientation/floating helpers, icon-backed action creation, separator and widget insertion, action geometry and hit-testing, hosted-widget lookup, toolbar-specific signals, and Qt-style setter aliases for fuller shell composition parity.
 - Expanded `QToolBox` with per-page icon and tooltip helpers plus Qt-style current-page setter aliases for fuller inspector-page parity.
+- Expanded `QToolButton` with popup-mode and arrow-type control, size hints, menu display, triggered-action callbacks, Qt-style setter aliases, and parent-ownership handoff for attached menus.
 
 ## [0.11.0] - 2026-05-23
 

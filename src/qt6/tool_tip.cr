@@ -28,7 +28,25 @@ module Qt6
     end
 
     def self.show_text(widget : Widget, position : PointF, text : String, msec_display_time : Int = -1) : Nil
-      LibQt6.qt6cr_tool_tip_show_text(widget.to_unsafe, position.to_native, text.to_unsafe, msec_display_time.to_i32)
+      show_text(widget, Point.new(position.x.to_i, position.y.to_i), text, nil, msec_display_time)
+    end
+
+    def self.show_text(widget : Widget, position : Point, text : String, rect : Rect? = nil, msec_display_time : Int = -1) : Nil
+      show_text(widget.map_to_global(position), text, widget, rect, msec_display_time)
+    end
+
+    def self.show_text(position : PointF, text : String, widget : Widget? = nil, rect : Rect? = nil, msec_display_time : Int = -1) : Nil
+      show_text(Point.new(position.x.to_i, position.y.to_i), text, widget, rect, msec_display_time)
+    end
+
+    def self.show_text(position : Point, text : String, widget : Widget? = nil, rect : Rect? = nil, msec_display_time : Int = -1) : Nil
+      LibQt6.qt6cr_tool_tip_show_text_at(
+        widget.try(&.to_unsafe) || Pointer(Void).null,
+        position.to_native,
+        text.to_unsafe,
+        (rect || Rect.new(0, 0, 0, 0)).to_native,
+        msec_display_time.to_i32
+      )
     end
 
     def self.text : String

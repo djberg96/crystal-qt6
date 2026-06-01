@@ -9347,13 +9347,13 @@ void qt6cr_tool_tip_set_palette(qt6cr_handle_t palette) {
   }
 }
 
-void qt6cr_tool_tip_show_text(qt6cr_handle_t handle, qt6cr_pointf_t position, const char *text, int msec_display_time) {
+void qt6cr_tool_tip_show_text_at(qt6cr_handle_t handle, qt6cr_point_t position, const char *text, qt6cr_rect_t rect, int msec_display_time) {
   auto *widget = as_widget(handle);
-
-  if (widget != nullptr) {
-    const QPoint global_position = widget->mapToGlobal(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)));
-    QToolTip::showText(global_position, QString::fromUtf8(text == nullptr ? "" : text), widget, QRect(), msec_display_time);
-  }
+  const QPoint global_position(position.x, position.y);
+  const QRect target_rect = (rect.width <= 0 || rect.height <= 0)
+                                ? QRect()
+                                : QRect(rect.x, rect.y, rect.width, rect.height);
+  QToolTip::showText(global_position, QString::fromUtf8(text == nullptr ? "" : text), widget, target_rect, msec_display_time);
 }
 
 char *qt6cr_tool_tip_text(void) {
@@ -25911,6 +25911,32 @@ void qt6cr_tool_button_set_style(qt6cr_handle_t handle, int style) {
   }
 }
 
+int qt6cr_tool_button_popup_mode(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  return tool_button == nullptr ? static_cast<int>(QToolButton::DelayedPopup) : static_cast<int>(tool_button->popupMode());
+}
+
+void qt6cr_tool_button_set_popup_mode(qt6cr_handle_t handle, int mode) {
+  auto *tool_button = as_tool_button(handle);
+
+  if (tool_button != nullptr) {
+    tool_button->setPopupMode(static_cast<QToolButton::ToolButtonPopupMode>(mode));
+  }
+}
+
+int qt6cr_tool_button_arrow_type(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  return tool_button == nullptr ? static_cast<int>(Qt::NoArrow) : static_cast<int>(tool_button->arrowType());
+}
+
+void qt6cr_tool_button_set_arrow_type(qt6cr_handle_t handle, int type) {
+  auto *tool_button = as_tool_button(handle);
+
+  if (tool_button != nullptr) {
+    tool_button->setArrowType(static_cast<Qt::ArrowType>(type));
+  }
+}
+
 qt6cr_handle_t qt6cr_tool_button_menu(qt6cr_handle_t handle) {
   auto *tool_button = as_tool_button(handle);
   auto *menu = tool_button == nullptr ? nullptr : tool_button->menu();
@@ -25952,6 +25978,36 @@ void qt6cr_tool_button_set_auto_raise(qt6cr_handle_t handle, bool value) {
   if (tool_button != nullptr) {
     tool_button->setAutoRaise(value);
   }
+}
+
+qt6cr_size_t qt6cr_tool_button_size_hint(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  return tool_button == nullptr ? qt6cr_size_t{0, 0} : to_size(tool_button->sizeHint());
+}
+
+qt6cr_size_t qt6cr_tool_button_minimum_size_hint(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+  return tool_button == nullptr ? qt6cr_size_t{0, 0} : to_size(tool_button->minimumSizeHint());
+}
+
+void qt6cr_tool_button_show_menu(qt6cr_handle_t handle) {
+  auto *tool_button = as_tool_button(handle);
+
+  if (tool_button != nullptr) {
+    tool_button->showMenu();
+  }
+}
+
+void qt6cr_tool_button_on_triggered(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *tool_button = as_tool_button(handle);
+
+  if (tool_button == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(tool_button, &QToolButton::triggered, tool_button, [callback, userdata](QAction *action) {
+    callback(userdata, action);
+  });
 }
 
 void qt6cr_tool_button_init_style_option(qt6cr_handle_t handle, qt6cr_handle_t option_handle) {

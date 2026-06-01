@@ -1141,7 +1141,7 @@ module Qt6
     fun qt6cr_tool_tip_is_visible = qt6cr_tool_tip_is_visible : Bool
     fun qt6cr_tool_tip_palette = qt6cr_tool_tip_palette : Handle
     fun qt6cr_tool_tip_set_palette = qt6cr_tool_tip_set_palette(palette : Handle)
-    fun qt6cr_tool_tip_show_text = qt6cr_tool_tip_show_text(widget : Handle, position : PointFValue, text : UInt8*, msec_display_time : LibC::Int)
+    fun qt6cr_tool_tip_show_text_at = qt6cr_tool_tip_show_text_at(widget : Handle, position : PointValue, text : UInt8*, rect : RectValue, msec_display_time : LibC::Int)
     fun qt6cr_tool_tip_text = qt6cr_tool_tip_text : UInt8*
     fun qt6cr_widget_window_icon = qt6cr_widget_window_icon(handle : Handle) : Handle
     fun qt6cr_widget_set_window_icon = qt6cr_widget_set_window_icon(handle : Handle, icon : Handle)
@@ -3556,12 +3556,20 @@ module Qt6
     fun qt6cr_tool_button_create = qt6cr_tool_button_create(parent : Handle) : Handle
     fun qt6cr_tool_button_style = qt6cr_tool_button_style(handle : Handle) : LibC::Int
     fun qt6cr_tool_button_set_style = qt6cr_tool_button_set_style(handle : Handle, style : LibC::Int)
+    fun qt6cr_tool_button_popup_mode = qt6cr_tool_button_popup_mode(handle : Handle) : LibC::Int
+    fun qt6cr_tool_button_set_popup_mode = qt6cr_tool_button_set_popup_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_tool_button_arrow_type = qt6cr_tool_button_arrow_type(handle : Handle) : LibC::Int
+    fun qt6cr_tool_button_set_arrow_type = qt6cr_tool_button_set_arrow_type(handle : Handle, type : LibC::Int)
     fun qt6cr_tool_button_menu = qt6cr_tool_button_menu(handle : Handle) : Handle
     fun qt6cr_tool_button_set_menu = qt6cr_tool_button_set_menu(handle : Handle, menu : Handle)
     fun qt6cr_tool_button_default_action = qt6cr_tool_button_default_action(handle : Handle) : Handle
     fun qt6cr_tool_button_set_default_action = qt6cr_tool_button_set_default_action(handle : Handle, action : Handle)
     fun qt6cr_tool_button_auto_raise = qt6cr_tool_button_auto_raise(handle : Handle) : Bool
     fun qt6cr_tool_button_set_auto_raise = qt6cr_tool_button_set_auto_raise(handle : Handle, value : Bool)
+    fun qt6cr_tool_button_size_hint = qt6cr_tool_button_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_tool_button_minimum_size_hint = qt6cr_tool_button_minimum_size_hint(handle : Handle) : SizeValue
+    fun qt6cr_tool_button_show_menu = qt6cr_tool_button_show_menu(handle : Handle)
+    fun qt6cr_tool_button_on_triggered = qt6cr_tool_button_on_triggered(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
     fun qt6cr_tool_button_init_style_option = qt6cr_tool_button_init_style_option(handle : Handle, option : Handle)
 
     fun qt6cr_combo_box_create = qt6cr_combo_box_create(parent : Handle) : Handle

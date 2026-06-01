@@ -449,6 +449,18 @@ describe Qt6 do
     Qt6::ToolTip.palette.color(Qt6::ColorRole::ToolTipText).should eq(Qt6::Color.new(232, 238, 244, 255))
     Qt6::ToolTip.text.should eq("Explicit shared tooltip")
     Qt6::ToolTip.visible?.should be_a(Bool)
+    Qt6::ToolTip.show_text(
+      label.map_to_global(Qt6::Point.new(10, 12)),
+      "Global shared tooltip",
+      label,
+      Qt6::Rect.new(0, 0, label.width, label.height),
+      250
+    )
+    application.process_events
+    Qt6::ToolTip.text.should eq("Global shared tooltip")
+    Qt6::ToolTip.show_text(label, Qt6::Point.new(8, 10), "Point-based local tooltip")
+    application.process_events
+    Qt6::ToolTip.text.should eq("Point-based local tooltip")
     Qt6::ToolTip.hide_text
     application.process_events
 

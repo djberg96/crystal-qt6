@@ -440,6 +440,7 @@ describe Qt6 do
     tool_button = Qt6::ToolButton.new
     tool_menu = Qt6::Menu.new("Brush Modes", dialog)
     stroke_action = Qt6::Action.new("Stroke", dialog)
+    tool_button_triggered = [] of String
     tool_button.text = "Brush"
     tool_button.tool_button_style = Qt6::ToolButtonStyle::TextUnderIcon
     tool_button.icon = Qt6::QIcon.new
@@ -448,11 +449,18 @@ describe Qt6 do
     tool_button.menu.should be_nil
     tool_button.default_action.should be_nil
     tool_button.auto_raise = true
+    tool_button.popup_mode = Qt6::ToolButtonPopupMode::MenuButtonPopup
+    tool_button.arrow_type = Qt6::ArrowType::RightArrow
     tool_menu.add_action("Fill")
     tool_button.menu = tool_menu
     tool_button.default_action = stroke_action
+    tool_button.on_triggered_action do |action|
+      tool_button_triggered << (action.try(&.text) || "")
+    end
     tool_button.enabled = false
     tool_button.enabled = true
+    tool_button.click
+    application.process_events
 
     toggled_states = [] of Bool
     clicked_labels = [] of String
@@ -616,12 +624,17 @@ describe Qt6 do
     dialog.minimum_width.should eq(280)
     layout.spacing.should eq(6)
     tool_button.tool_button_style.should eq(Qt6::ToolButtonStyle::TextUnderIcon)
+    tool_button.popup_mode.should eq(Qt6::ToolButtonPopupMode::MenuButtonPopup)
+    tool_button.arrow_type.should eq(Qt6::ArrowType::RightArrow)
     tool_button.icon_size.should eq(Qt6::Size.new(24, 24))
     tool_button.menu.not_nil!.title.should eq("Brush Modes")
     tool_button.default_action.not_nil!.to_unsafe.should eq(stroke_action.to_unsafe)
     tool_button.auto_raise?.should be_true
     tool_button.enabled?.should be_true
     tool_button.size.should eq(Qt6::Size.new(72, 88))
+    tool_button.size_hint.width.should be > 0
+    tool_button.minimum_size_hint.height.should be > 0
+    tool_button_triggered.should contain("Stroke")
     place_button.checkable?.should be_true
     place_button.checked?.should be_false
     select_button.checked?.should be_true
