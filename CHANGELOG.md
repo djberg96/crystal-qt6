@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QWidget` with width/height, `QSize`/`QPoint` move-resize overloads, base-size and size-increment helpers, visible-region lookup, child hit-testing, and saved-geometry roundtripping for fuller shared geometry control.
 - Expanded `QWidget` with shared font access, resolved `font_metrics` / `font_info`, background and foreground palette-role helpers, and `auto_fill_background` control for fuller visual-state parity.
 - Expanded `QWidget` with full cursor access and clearing, tablet-tracking, context-menu policy, and input-method-hint helpers for fuller shared input and interaction control.
+- Expanded `QWidget` with hidden/visible-to, size-hint, window icon-text/role/modified-state, typed window-state, focus-chain/proxy, action collection, repaint/scroll, and ancestor/enabled-to helpers for fuller shared widget parity.
 - Expanded `QToolTip` with global-position and target-rect `show_text(...)` support while preserving the existing widget-local convenience form.
 - Added `QWhatsThis` bindings with global mode entry and exit, inline help popup helpers, and the shared What's This action factory.
 - Added `QUndoView` bindings with stack/group construction, clean-icon and empty-label control, plus live retargeting between standalone stacks and shared undo groups.

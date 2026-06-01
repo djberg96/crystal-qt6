@@ -258,7 +258,7 @@ describe Qt6 do
     child = Qt6::Widget.new(window)
     sibling = Qt6::Widget.new(window)
 
-    window.window_title = "Mapping Host"
+    window.window_title = "Mapping Host[*]"
     window.set_geometry(30, 40, 260, 180)
     child.set_geometry(12, 18, 80, 36)
     sibling.set_geometry(120, 60, 70, 50)
@@ -291,7 +291,11 @@ describe Qt6 do
     child.map_from(window, Qt6::Point.new(16, 23)).should eq(Qt6::Point.new(4, 5))
     global = child.map_to_global(Qt6::Point.new(4, 5))
     child.map_from_global(global).should eq(Qt6::Point.new(4, 5))
+    child.visible_to?(window).should be_true
+    window.ancestor_of?(child).should be_true
 
+    window.size_hint.should eq(Qt6::Size.new(-1, -1))
+    window.minimum_size_hint.should eq(Qt6::Size.new(-1, -1))
     window.window_file_path.should eq("/tmp/terrain.map")
     window.window_opacity.should be_close(0.82, 0.01)
     child.tool_tip_duration.should eq(1700)
@@ -301,8 +305,27 @@ describe Qt6 do
 
     window.updates_enabled = true
     window.updates_enabled?.should be_true
+    window.window_icon_text = "Terrain"
+    window.window_icon_text.should eq("Terrain")
+    window.window_role = "editor"
+    window.window_role.should be_a(String)
+    window.window_modified = true
+    window.window_modified?.should be_true
+    child.enabled_to?(window).should be_true
+    child.hidden = true
+    application.process_events
+    child.hidden?.should be_true
+    child.hidden = false
+    application.process_events
+    child.hidden?.should be_false
 
     child.stack_under(sibling)
+    window.window_state = Qt6::WindowState::Minimized
+    application.process_events
+    window.window_state.includes?(Qt6::WindowState::Minimized).should be_true
+    window.show_normal
+    application.process_events
+    window.override_window_state(Qt6::WindowState::NoState).to_unsafe.should eq(window.to_unsafe)
     window.show_minimized
     application.process_events
     window.minimized?.should be_a(Bool)
@@ -523,6 +546,45 @@ describe Qt6 do
     whats_this_action.release
     line_edit.release
     label.release
+  end
+
+  it "supports widget action collections and repaint-scroll helpers" do
+    application = app
+    host = Qt6::Widget.new
+    child = Qt6::Widget.new(host)
+    action_a = Qt6::Action.new("Alpha")
+    action_b = Qt6::Action.new("Beta")
+    action_c = Qt6::Action.new("Gamma")
+    clip = Qt6::QRegion.new(Qt6::Rect.new(0, 0, 18, 18))
+
+    begin
+      host.set_geometry(0, 0, 120, 80)
+      child.set_geometry(8, 10, 32, 20)
+      host.show
+      application.process_events
+
+      host.add_action(action_a).to_unsafe.should eq(action_a.to_unsafe)
+      host.add_actions([action_b]).to_unsafe.should eq(host.to_unsafe)
+      host.insert_action(action_b, action_c).to_unsafe.should eq(action_c.to_unsafe)
+      host.actions.map(&.text).should eq(["Alpha", "Gamma", "Beta"])
+
+      host.remove_action(action_b).to_unsafe.should eq(action_b.to_unsafe)
+      host.actions.map(&.text).should eq(["Alpha", "Gamma"])
+
+      host.repaint.to_unsafe.should eq(host.to_unsafe)
+      host.repaint(Qt6::Rect.new(0, 0, 24, 16)).to_unsafe.should eq(host.to_unsafe)
+      host.repaint(2, 3, 10, 12).to_unsafe.should eq(host.to_unsafe)
+      host.repaint(clip).to_unsafe.should eq(host.to_unsafe)
+      host.scroll(1, 2).to_unsafe.should eq(host.to_unsafe)
+      host.scroll(1, 2, Qt6::Rect.new(0, 0, 12, 12)).to_unsafe.should eq(host.to_unsafe)
+    ensure
+      clip.release
+      action_c.release
+      action_b.release
+      action_a.release
+      child.release
+      host.release
+    end
   end
 
   it "supports validators, completers, and rich line-edit editing helpers" do
@@ -2319,7 +2381,9 @@ describe Qt6 do
 
     window = Qt6::Widget.new
     line_edit = Qt6::LineEdit.new("", window)
+    line_edit_two = Qt6::LineEdit.new("", window)
     line_edit.focus_policy = Qt6::FocusPolicy::StrongFocus
+    line_edit_two.focus_policy = Qt6::FocusPolicy::StrongFocus
 
     begin
       application.cursor_flash_time = previous_cursor_flash_time + 100
@@ -2330,6 +2394,9 @@ describe Qt6 do
       application.start_drag_distance = previous_start_drag_distance + 2
       application.auto_sip_enabled = !previous_auto_sip_enabled
 
+      window.focus_proxy = line_edit
+      window.focus_proxy.should_not be_nil
+      window.focus_proxy.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
       window.show
       window.raise_to_front
       window.activate_window
@@ -2341,6 +2408,9 @@ describe Qt6 do
         sleep 10.milliseconds
       end
 
+      next_widget = line_edit.next_in_focus_chain
+      previous_widget = line_edit.previous_in_focus_chain
+
       application.cursor_flash_time.should eq(previous_cursor_flash_time + 100)
       application.double_click_interval.should eq(previous_double_click_interval + 25)
       application.keyboard_input_interval.should eq(previous_keyboard_input_interval + 15)
@@ -2348,6 +2418,13 @@ describe Qt6 do
       application.start_drag_time.should eq(previous_start_drag_time + 20)
       application.start_drag_distance.should eq(previous_start_drag_distance + 2)
       application.auto_sip_enabled?.should eq(!previous_auto_sip_enabled)
+      window.focus_widget.should_not be_nil
+      next_widget.should_not be_nil
+      previous_widget.should_not be_nil
+      next_widget.not_nil!.previous_in_focus_chain.should_not be_nil
+      previous_widget.not_nil!.next_in_focus_chain.should_not be_nil
+      next_widget.not_nil!.previous_in_focus_chain.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
+      previous_widget.not_nil!.next_in_focus_chain.not_nil!.to_unsafe.should eq(line_edit.to_unsafe)
       if active_window = application.active_window
         active_window.to_unsafe.should eq(window.to_unsafe)
         line_edit.has_focus?.should be_true
@@ -2366,6 +2443,7 @@ describe Qt6 do
       application.start_drag_time = previous_start_drag_time
       application.start_drag_distance = previous_start_drag_distance
       application.auto_sip_enabled = previous_auto_sip_enabled
+      line_edit_two.release
       line_edit.release
       window.release
     end

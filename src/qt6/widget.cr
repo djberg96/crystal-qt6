@@ -97,6 +97,28 @@ module Qt6
       LibQt6.qt6cr_widget_is_maximized(@to_unsafe)
     end
 
+    # Returns `true` when the widget is currently hidden.
+    def hidden? : Bool
+      LibQt6.qt6cr_widget_is_hidden(@to_unsafe)
+    end
+
+    # Shows or hides the widget through Qt's hidden-state API.
+    def hidden=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_hidden(@to_unsafe, value)
+      value
+    end
+
+    # Qt-style alias for `hidden=`.
+    def set_hidden(value : Bool) : self
+      self.hidden = value
+      self
+    end
+
+    # Returns `true` when the widget is visible to the given ancestor widget.
+    def visible_to?(ancestor : Widget) : Bool
+      LibQt6.qt6cr_widget_is_visible_to(@to_unsafe, ancestor.to_unsafe)
+    end
+
     # Returns the widget frame geometry in parent or screen coordinates.
     def frame_geometry : Rect
       Rect.from_native(LibQt6.qt6cr_widget_frame_geometry(@to_unsafe))
@@ -299,6 +321,11 @@ module Qt6
       child_at(Point.new(x.to_i32, y.to_i32))
     end
 
+    # Returns `true` when this widget is an ancestor of the given child widget.
+    def ancestor_of?(child : Widget) : Bool
+      LibQt6.qt6cr_widget_is_ancestor_of(@to_unsafe, child.to_unsafe)
+    end
+
     # Saves the current top-level geometry and state payload.
     def save_geometry : QByteArray
       QByteArray.wrap(LibQt6.qt6cr_widget_save_geometry(@to_unsafe), true)
@@ -307,6 +334,16 @@ module Qt6
     # Restores a previously saved top-level geometry payload.
     def restore_geometry(value : QByteArray) : Bool
       LibQt6.qt6cr_widget_restore_geometry(@to_unsafe, value.to_unsafe)
+    end
+
+    # Returns the preferred size hint for the widget.
+    def size_hint : Size
+      Size.from_native(LibQt6.qt6cr_widget_size_hint(@to_unsafe))
+    end
+
+    # Returns the minimum recommended size hint for the widget.
+    def minimum_size_hint : Size
+      Size.from_native(LibQt6.qt6cr_widget_minimum_size_hint(@to_unsafe))
     end
 
     # Maps a local point into global screen coordinates.
@@ -345,6 +382,29 @@ module Qt6
       self
     end
 
+    # Repaints the widget immediately and returns `self`.
+    def repaint : self
+      LibQt6.qt6cr_widget_repaint(@to_unsafe)
+      self
+    end
+
+    # Repaints the given rectangle immediately and returns `self`.
+    def repaint(rect : Rect) : self
+      LibQt6.qt6cr_widget_repaint_rect(@to_unsafe, rect.to_native)
+      self
+    end
+
+    # Repaints the given region immediately and returns `self`.
+    def repaint(region : QRegion) : self
+      LibQt6.qt6cr_widget_repaint_region(@to_unsafe, region.to_unsafe)
+      self
+    end
+
+    # Repaints the given coordinates immediately and returns `self`.
+    def repaint(x : Int, y : Int, width : Int, height : Int) : self
+      repaint(Rect.new(x.to_i32, y.to_i32, width.to_i32, height.to_i32))
+    end
+
     # Schedules the given rectangle for repaint and returns `self`.
     def update(rect : Rect) : self
       LibQt6.qt6cr_widget_update_rect(@to_unsafe, rect.to_native)
@@ -354,6 +414,18 @@ module Qt6
     # Schedules the given region for repaint and returns `self`.
     def update(region : QRegion) : self
       LibQt6.qt6cr_widget_update_region(@to_unsafe, region.to_unsafe)
+      self
+    end
+
+    # Scrolls the widget contents and returns `self`.
+    def scroll(dx : Int, dy : Int) : self
+      LibQt6.qt6cr_widget_scroll(@to_unsafe, dx.to_i32, dy.to_i32)
+      self
+    end
+
+    # Scrolls the given rectangle within the widget and returns `self`.
+    def scroll(dx : Int, dy : Int, rect : Rect) : self
+      LibQt6.qt6cr_widget_scroll_rect(@to_unsafe, dx.to_i32, dy.to_i32, rect.to_native)
       self
     end
 
@@ -582,6 +654,39 @@ module Qt6
       value
     end
 
+    # Returns the text Qt associates with the window icon.
+    def window_icon_text : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_window_icon_text(@to_unsafe))
+    end
+
+    # Sets the text Qt associates with the window icon.
+    def window_icon_text=(value : String) : String
+      LibQt6.qt6cr_widget_set_window_icon_text(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns the window role string used by some desktop environments.
+    def window_role : String
+      Qt6.copy_and_release_string(LibQt6.qt6cr_widget_window_role(@to_unsafe))
+    end
+
+    # Sets the window role string used by some desktop environments.
+    def window_role=(value : String) : String
+      LibQt6.qt6cr_widget_set_window_role(@to_unsafe, value.to_unsafe)
+      value
+    end
+
+    # Returns `true` when the window is marked modified.
+    def window_modified? : Bool
+      LibQt6.qt6cr_widget_is_window_modified(@to_unsafe)
+    end
+
+    # Marks or clears the window-modified state.
+    def window_modified=(value : Bool) : Bool
+      LibQt6.qt6cr_widget_set_window_modified(@to_unsafe, value)
+      value
+    end
+
     # Returns the window-associated file path.
     def window_file_path : String
       Qt6.copy_and_release_string(LibQt6.qt6cr_widget_window_file_path(@to_unsafe))
@@ -616,6 +721,17 @@ module Qt6
       value
     end
 
+    # Disables or re-enables the widget using Qt's `setDisabled`.
+    def set_disabled(value : Bool = true) : self
+      LibQt6.qt6cr_widget_set_disabled(@to_unsafe, value)
+      self
+    end
+
+    # Returns `true` when the widget is enabled relative to the given ancestor.
+    def enabled_to?(ancestor : Widget) : Bool
+      LibQt6.qt6cr_widget_is_enabled_to(@to_unsafe, ancestor.to_unsafe)
+    end
+
     # Returns `true` when this widget belongs to the active window.
     def active_window? : Bool
       LibQt6.qt6cr_widget_is_active_window(@to_unsafe)
@@ -640,6 +756,65 @@ module Qt6
     # Returns `true` when the widget currently owns keyboard focus.
     def has_focus? : Bool
       LibQt6.qt6cr_widget_has_focus(@to_unsafe)
+    end
+
+    # Returns the current top-level window state flags.
+    def window_state : WindowState
+      WindowState.from_value(LibQt6.qt6cr_widget_window_state(@to_unsafe))
+    end
+
+    # Sets the top-level window state flags.
+    def window_state=(value : WindowState) : WindowState
+      LibQt6.qt6cr_widget_set_window_state(@to_unsafe, value.value)
+      value
+    end
+
+    # Qt-style alias for `window_state=`.
+    def set_window_state(value : WindowState) : self
+      self.window_state = value
+      self
+    end
+
+    # Overrides the stored window state flags without forcing a show mode transition.
+    def override_window_state(value : WindowState) : self
+      LibQt6.qt6cr_widget_override_window_state(@to_unsafe, value.value)
+      self
+    end
+
+    # Returns the currently focused child widget, if any.
+    def focus_widget : Widget?
+      handle = LibQt6.qt6cr_widget_focus_widget(@to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Returns the next widget in the focus chain.
+    def next_in_focus_chain : Widget?
+      handle = LibQt6.qt6cr_widget_next_in_focus_chain(@to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Returns the previous widget in the focus chain.
+    def previous_in_focus_chain : Widget?
+      handle = LibQt6.qt6cr_widget_previous_in_focus_chain(@to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Returns the installed focus proxy widget, if any.
+    def focus_proxy : Widget?
+      handle = LibQt6.qt6cr_widget_focus_proxy(@to_unsafe)
+      handle.null? ? nil : Widget.wrap(handle)
+    end
+
+    # Installs or clears a focus proxy widget.
+    def focus_proxy=(value : Widget?) : Widget?
+      LibQt6.qt6cr_widget_set_focus_proxy(@to_unsafe, value.try(&.to_unsafe) || Pointer(Void).null)
+      value
+    end
+
+    # Qt-style alias for `focus_proxy=`.
+    def set_focus_proxy(value : Widget?) : self
+      self.focus_proxy = value
+      self
     end
 
     # Returns the widget's focus policy.
@@ -698,6 +873,39 @@ module Qt6
     def add_action(action : Action) : Action
       LibQt6.qt6cr_widget_add_action(@to_unsafe, action.to_unsafe)
       action
+    end
+
+    # Adds several actions to the widget and returns `self`.
+    def add_actions(actions : Enumerable(Action)) : self
+      actions.each { |action| add_action(action) }
+      self
+    end
+
+    # Inserts an action before another action and returns it.
+    def insert_action(before : Action?, action : Action) : Action
+      LibQt6.qt6cr_widget_insert_action(@to_unsafe, before.try(&.to_unsafe) || Pointer(Void).null, action.to_unsafe)
+      action
+    end
+
+    # Inserts several actions before another action and returns `self`.
+    def insert_actions(before : Action?, actions : Enumerable(Action)) : self
+      actions.each do |action|
+        insert_action(before, action)
+      end
+      self
+    end
+
+    # Removes an action from the widget and returns it.
+    def remove_action(action : Action) : Action
+      LibQt6.qt6cr_widget_remove_action(@to_unsafe, action.to_unsafe)
+      action
+    end
+
+    # Returns the actions currently installed on the widget.
+    def actions : Array(Action)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_widget_actions(@to_unsafe)).map do |handle|
+        Action.wrap(handle)
+      end
     end
 
     # Registers a gesture type for delivery to this widget.
