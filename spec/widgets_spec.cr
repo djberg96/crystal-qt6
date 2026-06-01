@@ -2280,6 +2280,69 @@ describe Qt6 do
     group.release
   end
 
+  it "supports undo views for stacks and groups" do
+    application = app
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-undo-view-icon-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(10, 10)
+    icon_image.fill(Qt6::Color.new(70, 120, 180, 255))
+    icon_image.save(icon_path).should be_true
+    clean_icon = Qt6::QIcon.from_file(icon_path)
+
+    main = Qt6::Widget.new
+    stack_a = Qt6::UndoStack.new
+    stack_b = Qt6::UndoStack.new
+    group = Qt6::UndoGroup.new
+    view = Qt6::UndoView.new(stack_a, main)
+    grouped_view = Qt6::UndoView.new(group)
+
+    stack_a.push(Qt6::UndoCommand.new("Add roads", redo: -> { }, undo: -> { }))
+    stack_b.push(Qt6::UndoCommand.new("Add rivers", redo: -> { }, undo: -> { }))
+    group << stack_a
+    group.add_stack(stack_b)
+    group.active_stack = stack_b
+
+    view.empty_label = "No edits yet"
+    view.clean_icon = clean_icon
+    grouped_view.set_empty_label("Shared history")
+    grouped_view.set_clean_icon(clean_icon)
+
+    application.process_events
+
+    view.stack.not_nil!.to_unsafe.should eq(stack_a.to_unsafe)
+    view.group.should be_nil
+    view.empty_label.should eq("No edits yet")
+    view.clean_icon.null?.should be_false
+    view.model.should_not be_nil
+    view.model.not_nil!.row_count.should be > 0
+
+    grouped_view.group.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    grouped_view.stack.not_nil!.to_unsafe.should eq(stack_b.to_unsafe)
+    grouped_view.empty_label.should eq("Shared history")
+    grouped_view.clean_icon.null?.should be_false
+    grouped_view.model.should_not be_nil
+    grouped_view.model.not_nil!.row_count.should be > 0
+
+    view.set_stack(nil)
+    view.stack.should be_nil
+    view.set_group(group)
+    view.group.not_nil!.to_unsafe.should eq(group.to_unsafe)
+    view.stack.not_nil!.to_unsafe.should eq(stack_b.to_unsafe)
+    view.model.should_not be_nil
+    view.model.not_nil!.row_count.should be > 0
+
+    grouped_view.set_group(nil)
+    grouped_view.group.should be_nil
+    grouped_view.set_stack(stack_a)
+    grouped_view.stack.not_nil!.to_unsafe.should eq(stack_a.to_unsafe)
+
+    grouped_view.release
+    main.release
+    stack_a.release
+    stack_b.release
+    group.release
+    File.delete?(icon_path)
+  end
+
   it "keeps parent-owned QObject wrappers alive until Qt destroys them" do
     app
     content_destroyed = 0

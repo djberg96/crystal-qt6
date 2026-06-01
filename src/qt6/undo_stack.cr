@@ -17,9 +17,18 @@ module Qt6
     getter undo_text_changed : Signal(String)
     getter redo_text_changed : Signal(String)
 
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
+
     # Creates an undo stack, optionally parented to another `QObject`.
     def initialize(parent : QObject? = nil)
       super(LibQt6.qt6cr_undo_stack_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
+      register_callbacks
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
       register_callbacks
     end
 

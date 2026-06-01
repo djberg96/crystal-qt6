@@ -3285,6 +3285,17 @@ module Qt6
     fun qt6cr_undo_group_on_index_changed = qt6cr_undo_group_on_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
     fun qt6cr_undo_group_on_undo_text_changed = qt6cr_undo_group_on_undo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
     fun qt6cr_undo_group_on_redo_text_changed = qt6cr_undo_group_on_redo_text_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
+    fun qt6cr_undo_view_create = qt6cr_undo_view_create(parent : Handle) : Handle
+    fun qt6cr_undo_view_create_with_stack = qt6cr_undo_view_create_with_stack(stack : Handle, parent : Handle) : Handle
+    fun qt6cr_undo_view_create_with_group = qt6cr_undo_view_create_with_group(group : Handle, parent : Handle) : Handle
+    fun qt6cr_undo_view_stack = qt6cr_undo_view_stack(handle : Handle) : Handle
+    fun qt6cr_undo_view_group = qt6cr_undo_view_group(handle : Handle) : Handle
+    fun qt6cr_undo_view_set_stack = qt6cr_undo_view_set_stack(handle : Handle, stack : Handle)
+    fun qt6cr_undo_view_set_group = qt6cr_undo_view_set_group(handle : Handle, group : Handle)
+    fun qt6cr_undo_view_empty_label = qt6cr_undo_view_empty_label(handle : Handle) : UInt8*
+    fun qt6cr_undo_view_set_empty_label = qt6cr_undo_view_set_empty_label(handle : Handle, label : UInt8*)
+    fun qt6cr_undo_view_clean_icon = qt6cr_undo_view_clean_icon(handle : Handle) : Handle
+    fun qt6cr_undo_view_set_clean_icon = qt6cr_undo_view_set_clean_icon(handle : Handle, icon : Handle)
 
     fun qt6cr_system_tray_icon_create = qt6cr_system_tray_icon_create(parent : Handle) : Handle
     fun qt6cr_system_tray_icon_create_with_icon = qt6cr_system_tray_icon_create_with_icon(parent : Handle, icon : Handle) : Handle

@@ -210,6 +210,7 @@
 #include <QUndoCommand>
 #include <QUndoGroup>
 #include <QUndoStack>
+#include <QUndoView>
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QWheelEvent>
@@ -2877,6 +2878,10 @@ QUndoStack *as_undo_stack(qt6cr_handle_t handle) {
 
 QUndoGroup *as_undo_group(qt6cr_handle_t handle) {
   return static_cast<QUndoGroup *>(handle);
+}
+
+QUndoView *as_undo_view(qt6cr_handle_t handle) {
+  return static_cast<QUndoView *>(handle);
 }
 
 qt6cr_pointf_t to_pointf(const QPointF &point) {
@@ -24005,6 +24010,70 @@ void qt6cr_undo_group_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_c
     const auto bytes = value.toUtf8();
     callback(userdata, bytes.constData());
   });
+}
+
+qt6cr_handle_t qt6cr_undo_view_create(qt6cr_handle_t parent) {
+  return new QUndoView(as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_undo_view_create_with_stack(qt6cr_handle_t stack, qt6cr_handle_t parent) {
+  return new QUndoView(as_undo_stack(stack), as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_undo_view_create_with_group(qt6cr_handle_t group, qt6cr_handle_t parent) {
+  return new QUndoView(as_undo_group(group), as_widget(parent));
+}
+
+qt6cr_handle_t qt6cr_undo_view_stack(qt6cr_handle_t handle) {
+  auto *view = as_undo_view(handle);
+  return view == nullptr ? nullptr : view->stack();
+}
+
+qt6cr_handle_t qt6cr_undo_view_group(qt6cr_handle_t handle) {
+  auto *view = as_undo_view(handle);
+  return view == nullptr ? nullptr : view->group();
+}
+
+void qt6cr_undo_view_set_stack(qt6cr_handle_t handle, qt6cr_handle_t stack) {
+  auto *view = as_undo_view(handle);
+
+  if (view != nullptr) {
+    view->setStack(as_undo_stack(stack));
+  }
+}
+
+void qt6cr_undo_view_set_group(qt6cr_handle_t handle, qt6cr_handle_t group) {
+  auto *view = as_undo_view(handle);
+
+  if (view != nullptr) {
+    view->setGroup(as_undo_group(group));
+  }
+}
+
+char *qt6cr_undo_view_empty_label(qt6cr_handle_t handle) {
+  auto *view = as_undo_view(handle);
+  return view == nullptr ? duplicate_string("") : duplicate_string(view->emptyLabel());
+}
+
+void qt6cr_undo_view_set_empty_label(qt6cr_handle_t handle, const char *label) {
+  auto *view = as_undo_view(handle);
+
+  if (view != nullptr) {
+    view->setEmptyLabel(QString::fromUtf8(label == nullptr ? "" : label));
+  }
+}
+
+qt6cr_handle_t qt6cr_undo_view_clean_icon(qt6cr_handle_t handle) {
+  auto *view = as_undo_view(handle);
+  return view == nullptr ? nullptr : new QIcon(view->cleanIcon());
+}
+
+void qt6cr_undo_view_set_clean_icon(qt6cr_handle_t handle, qt6cr_handle_t icon) {
+  auto *view = as_undo_view(handle);
+
+  if (view != nullptr) {
+    view->setCleanIcon(as_qicon(icon) == nullptr ? QIcon() : *as_qicon(icon));
+  }
 }
 
 qt6cr_handle_t qt6cr_system_tray_icon_create(qt6cr_handle_t parent) {

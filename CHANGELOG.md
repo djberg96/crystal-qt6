@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QWidget` with shared font access, resolved `font_metrics` / `font_info`, background and foreground palette-role helpers, and `auto_fill_background` control for fuller visual-state parity.
 - Expanded `QWidget` with full cursor access and clearing, tablet-tracking, context-menu policy, and input-method-hint helpers for fuller shared input and interaction control.
 - Expanded `QToolTip` with global-position and target-rect `show_text(...)` support while preserving the existing widget-local convenience form.
+- Added `QUndoView` bindings with stack/group construction, clean-icon and empty-label control, plus live retargeting between standalone stacks and shared undo groups.
 - Added `QTapGesture` bindings with tap-position helpers and automatic gesture-event dispatch to the concrete tap wrapper.
 - Added `QSwipeGesture` bindings with typed swipe-direction and swipe-angle helpers, plus automatic gesture-event dispatch to the concrete swipe wrapper.
 - Added `QTapAndHoldGesture` bindings with held-position helpers, process-wide timeout access, and automatic gesture-event dispatch to the concrete tap-and-hold wrapper.
@@ -23,6 +24,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded `QSystemTrayIcon` with icon-based construction, tray geometry access, custom-icon message display, Qt-style setter aliases, and correct native ownership handoff for assigned context menus.
 - Expanded `QTreeView` with header installation, auto-expand and indentation reset control, row/column visibility and sizing helpers, child-row spanning, richer expand/collapse and sorting behavior, tree-position and focus/word-wrap options, plus `expanded` / `collapsed` signals.
 - Expanded `QTreeWidgetItem` with per-column check/data/icon/background/tip/alignment/size helpers, richer selection and hierarchy state, child insertion/removal/sorting utilities, and added `QTreeWidgetItemIterator` with typed traversal filters.
+- Expanded `QVBoxLayout` with concrete handle wrapping support and stronger detached-column coverage alongside the shared `QBoxLayout` API.
 - Expanded `QTableView` with row and column geometry and visibility helpers, grid-style and corner-button control, direct row and column selection and hide/show slots, per-axis resize-to-contents helpers, span clearing, and assignable table headers for fuller tabular view parity.
 - Expanded `QTableWidget` with item row/column and index mapping helpers, take-and-restore ownership transfer for body and header items, flagged current-item/current-cell setters, embedded cell-widget support, and direct item editing for fuller item-based table workflows.
 - Expanded `QTableWidgetItem` with icon-and-text construction, direct row/column lookup, background brush and font helpers, selection state, size hints, text alignment, and tooltip/status/What's This metadata for parity with the richer item-widget wrappers.

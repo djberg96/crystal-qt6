@@ -2675,6 +2675,8 @@ describe Qt6 do
     center = Qt6::Label.new("Center")
     row = Qt6::HBoxLayout.new
     mirrored_row = Qt6::HBoxLayout.wrap(row.to_unsafe)
+    column = Qt6::VBoxLayout.new
+    mirrored_column = Qt6::VBoxLayout.wrap(column.to_unsafe)
 
     layout = Qt6::BoxLayout.new(Qt6::BoxLayoutDirection::LeftToRight, window)
     layout.enabled = false
@@ -2687,6 +2689,9 @@ describe Qt6 do
     row.stretch(0).should eq(1)
     row.stretch(1).should eq(4)
     layout.add(row, 2)
+    column.add(Qt6::Label.new("Top"))
+    column.add(Qt6::Label.new("Bottom"))
+    layout.add(column, 1)
     layout.insert_spacing(1, 8)
     layout.insert(2, right, 5)
     layout.insert_stretch(3, 2)
@@ -2700,6 +2705,8 @@ describe Qt6 do
     layout.add_strut(24)
     mirrored_row.direction.should eq(Qt6::BoxLayoutDirection::LeftToRight)
     mirrored_row.direction = Qt6::BoxLayoutDirection::RightToLeft
+    mirrored_column.direction.should eq(Qt6::BoxLayoutDirection::TopToBottom)
+    mirrored_column.direction = Qt6::BoxLayoutDirection::BottomToTop
     layout.direction = Qt6::BoxLayoutDirection::RightToLeft
     window.resize(180, 60)
     window.show
@@ -2707,9 +2714,11 @@ describe Qt6 do
 
     row.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
     mirrored_row.to_unsafe.should eq(row.to_unsafe)
+    column.direction.should eq(Qt6::BoxLayoutDirection::BottomToTop)
+    mirrored_column.to_unsafe.should eq(column.to_unsafe)
     layout.direction.should eq(Qt6::BoxLayoutDirection::RightToLeft)
     layout.contents_margins.should eq(Qt6::Margins.new(3, 4, 5, 6))
-    layout.count.should eq(7)
+    layout.count.should eq(8)
     layout.index_of(right).should eq(2)
     layout.size_hint.width.should be >= 0
     layout.size_hint.height.should be >= 0

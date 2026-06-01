@@ -3311,6 +3311,17 @@ void qt6cr_undo_group_on_clean_changed(qt6cr_handle_t handle, qt6cr_bool_callbac
 void qt6cr_undo_group_on_index_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
 void qt6cr_undo_group_on_undo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
 void qt6cr_undo_group_on_redo_text_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata);
+qt6cr_handle_t qt6cr_undo_view_create(qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_undo_view_create_with_stack(qt6cr_handle_t stack, qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_undo_view_create_with_group(qt6cr_handle_t group, qt6cr_handle_t parent);
+qt6cr_handle_t qt6cr_undo_view_stack(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_undo_view_group(qt6cr_handle_t handle);
+void qt6cr_undo_view_set_stack(qt6cr_handle_t handle, qt6cr_handle_t stack);
+void qt6cr_undo_view_set_group(qt6cr_handle_t handle, qt6cr_handle_t group);
+char *qt6cr_undo_view_empty_label(qt6cr_handle_t handle);
+void qt6cr_undo_view_set_empty_label(qt6cr_handle_t handle, const char *label);
+qt6cr_handle_t qt6cr_undo_view_clean_icon(qt6cr_handle_t handle);
+void qt6cr_undo_view_set_clean_icon(qt6cr_handle_t handle, qt6cr_handle_t icon);
 
 qt6cr_handle_t qt6cr_system_tray_icon_create(qt6cr_handle_t parent);
 qt6cr_handle_t qt6cr_system_tray_icon_create_with_icon(qt6cr_handle_t parent, qt6cr_handle_t icon);

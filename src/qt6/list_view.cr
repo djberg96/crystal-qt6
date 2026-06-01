@@ -18,8 +18,12 @@ module Qt6
     end
 
     protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      initialize(handle, owned, true)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool, register_current_index_callbacks : Bool)
       super(handle, owned)
-      register_callbacks
+      register_callbacks if register_current_index_callbacks
     end
 
     # Assigns the backing model and returns it.
