@@ -260,6 +260,29 @@ class DraggableLayerListModel < Qt6::AbstractListModel
   end
 end
 
+class RootDropListModel < Qt6::AbstractListModel
+  def initialize(parent : Qt6::QObject? = nil)
+    super(parent)
+  end
+
+  protected def model_row_count : Int32
+    1
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+    return nil unless role == Qt6::ItemDataRole::Display.value
+
+    "Layer"
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::DropEnabled unless index.valid?
+
+    Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable
+  end
+end
+
 class LayerTreeModel < Qt6::AbstractTreeModel
   private record Node, id : UInt64, label : String, parent_id : UInt64?, children : Array(UInt64)
 
@@ -341,6 +364,44 @@ class LayerTreeModel < Qt6::AbstractTreeModel
     return @roots unless parent.valid?
 
     @nodes[parent.internal_id]?.try(&.children) || ([] of UInt64)
+  end
+end
+
+class RootDropTreeModel < Qt6::AbstractTreeModel
+  def initialize(parent : Qt6::QObject? = nil)
+    super(parent)
+  end
+
+  protected def model_row_count(parent : Qt6::ModelIndex) : Int32
+    parent.valid? ? 0 : 1
+  end
+
+  protected def model_column_count(parent : Qt6::ModelIndex) : Int32
+    1
+  end
+
+  protected def model_index_internal_id(row : Int32, column : Int32, parent : Qt6::ModelIndex) : UInt64?
+    return nil if parent.valid?
+    return nil unless row == 0 && column == 0
+
+    1_u64
+  end
+
+  protected def model_parent(index : Qt6::ModelIndex) : Qt6::ModelIndexSpec?
+    nil
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+    return nil unless role == Qt6::ItemDataRole::Display.value
+
+    "Layer"
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::DropEnabled unless index.valid?
+
+    Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable
   end
 end
 

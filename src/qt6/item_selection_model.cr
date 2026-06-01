@@ -73,6 +73,25 @@ module Qt6
       LibQt6.qt6cr_item_selection_model_is_selected(to_unsafe, index.to_unsafe)
     end
 
+    # Returns copies of the currently selected model indexes.
+    def selected_indexes : Array(ModelIndex)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_item_selection_model_selected_indexes(to_unsafe)).map do |handle|
+        ModelIndex.wrap(handle, true)
+      end
+    end
+
+    # Returns one selected index per selected row for the requested column.
+    def selected_rows(column : Int = 0) : Array(ModelIndex)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_item_selection_model_selected_rows(to_unsafe, column.to_i32)).map do |handle|
+        ModelIndex.wrap(handle, true)
+      end
+    end
+
+    # Returns the full Qt item selection object.
+    def selection : ItemSelection
+      ItemSelection.wrap(LibQt6.qt6cr_item_selection_model_selection(to_unsafe), true)
+    end
+
     # Registers a block to run when the current index changes.
     def on_current_index_changed(&block : ->) : self
       register_current_index_callback

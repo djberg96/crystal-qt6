@@ -1660,7 +1660,21 @@ module Qt6
     fun qt6cr_item_selection_model_clear_selection = qt6cr_item_selection_model_clear_selection(handle : Handle)
     fun qt6cr_item_selection_model_has_selection = qt6cr_item_selection_model_has_selection(handle : Handle) : Bool
     fun qt6cr_item_selection_model_is_selected = qt6cr_item_selection_model_is_selected(handle : Handle, index : Handle) : Bool
+    fun qt6cr_item_selection_model_selected_indexes = qt6cr_item_selection_model_selected_indexes(handle : Handle) : HandleArrayValue
+    fun qt6cr_item_selection_model_selected_rows = qt6cr_item_selection_model_selected_rows(handle : Handle, column : LibC::Int) : HandleArrayValue
+    fun qt6cr_item_selection_model_selection = qt6cr_item_selection_model_selection(handle : Handle) : Handle
     fun qt6cr_item_selection_model_on_current_index_changed = qt6cr_item_selection_model_on_current_index_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+
+    fun qt6cr_item_selection_destroy = qt6cr_item_selection_destroy(handle : Handle)
+    fun qt6cr_item_selection_count = qt6cr_item_selection_count(handle : Handle) : LibC::Int
+    fun qt6cr_item_selection_at = qt6cr_item_selection_at(handle : Handle, index : LibC::Int) : Handle
+    fun qt6cr_item_selection_indexes = qt6cr_item_selection_indexes(handle : Handle) : HandleArrayValue
+
+    fun qt6cr_item_selection_range_destroy = qt6cr_item_selection_range_destroy(handle : Handle)
+    fun qt6cr_item_selection_range_top = qt6cr_item_selection_range_top(handle : Handle) : LibC::Int
+    fun qt6cr_item_selection_range_bottom = qt6cr_item_selection_range_bottom(handle : Handle) : LibC::Int
+    fun qt6cr_item_selection_range_left = qt6cr_item_selection_range_left(handle : Handle) : LibC::Int
+    fun qt6cr_item_selection_range_right = qt6cr_item_selection_range_right(handle : Handle) : LibC::Int
 
     fun qt6cr_data_widget_mapper_create = qt6cr_data_widget_mapper_create(parent : Handle) : Handle
     fun qt6cr_data_widget_mapper_set_model = qt6cr_data_widget_mapper_set_model(handle : Handle, model : Handle)
