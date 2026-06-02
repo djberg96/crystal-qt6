@@ -1681,6 +1681,8 @@ qt6cr_handle_t qt6cr_qicon_create_from_file(const char *path);
 qt6cr_handle_t qt6cr_qicon_create_from_theme(const char *name);
 void qt6cr_qicon_destroy(qt6cr_handle_t handle);
 bool qt6cr_qicon_is_null(qt6cr_handle_t handle);
+void qt6cr_qicon_paint_rect(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rectf_t rect, int alignment, int mode, int state);
+void qt6cr_qicon_paint_bounds(qt6cr_handle_t handle, qt6cr_handle_t painter, int x, int y, int width, int height, int alignment, int mode, int state);
 qt6cr_handle_t qt6cr_qcursor_create(int shape);
 void qt6cr_qcursor_destroy(qt6cr_handle_t handle);
 int qt6cr_qcursor_shape(qt6cr_handle_t handle);

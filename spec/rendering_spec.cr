@@ -1,6 +1,44 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "paints icons using rectangle and coordinate overloads" do
+    app
+
+    icon_path = File.join(Dir.tempdir, "crystal-qt6-qicon-paint-#{Process.pid}.png")
+    icon_image = Qt6::QImage.new(8, 8)
+    icon_image.fill(Qt6::Color.new(220, 40, 40, 255))
+    icon_image.save(icon_path).should be_true
+
+    icon = Qt6::QIcon.from_file(icon_path)
+    icon.null?.should be_false
+
+    canvas = Qt6::QImage.new(24, 12)
+    canvas.fill(Qt6::Color.new(0, 0, 0, 0))
+
+    Qt6::QPainter.paint(canvas) do |painter|
+      icon.paint(
+        painter,
+        Qt6::RectF.new(0.0, 0.0, 8.0, 8.0),
+        Qt6::AlignmentFlag::Center,
+        Qt6::IconMode::Normal,
+        Qt6::IconState::Off
+      ).should eq(icon)
+      icon.paint(
+        painter,
+        12,
+        0,
+        8,
+        8,
+        Qt6::AlignmentFlag::Center,
+        Qt6::IconMode::Selected,
+        Qt6::IconState::On
+      ).should eq(icon)
+    end
+
+    canvas.pixel_color(4, 4).alpha.should be > 0
+    canvas.pixel_color(16, 4).alpha.should be > 0
+  end
+
   it "renders into images and pixmaps with paths and transforms" do
     app
     image = Qt6::QImage.new(32, 32)
