@@ -36,8 +36,29 @@ module Qt6
     end
 
     # Paints the icon into the given rectangle using Qt's native icon rendering.
-    def paint(painter : QPainter, rect : RectF, alignment : AlignmentFlag = AlignmentFlag::Center) : self
-      LibQt6.qt6cr_qicon_paint(to_unsafe, painter.to_unsafe, rect.to_native, alignment.value)
+    def paint(
+      painter : QPainter,
+      rect : RectF,
+      alignment : AlignmentFlag = AlignmentFlag::Center,
+      mode : IconMode = IconMode::Normal,
+      state : IconState = IconState::Off,
+    ) : self
+      LibQt6.qt6cr_qicon_paint_rect(to_unsafe, painter.to_unsafe, rect.to_native, alignment.value, mode.value, state.value)
+      self
+    end
+
+    # Paints the icon into the given bounds using Qt's native icon rendering.
+    def paint(
+      painter : QPainter,
+      x : Int32,
+      y : Int32,
+      width : Int32,
+      height : Int32,
+      alignment : AlignmentFlag = AlignmentFlag::Center,
+      mode : IconMode = IconMode::Normal,
+      state : IconState = IconState::Off,
+    ) : self
+      LibQt6.qt6cr_qicon_paint_bounds(to_unsafe, painter.to_unsafe, x, y, width, height, alignment.value, mode.value, state.value)
       self
     end
 

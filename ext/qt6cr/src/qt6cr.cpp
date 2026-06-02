@@ -12366,7 +12366,7 @@ bool qt6cr_qicon_is_null(qt6cr_handle_t handle) {
   return icon == nullptr || icon->isNull();
 }
 
-void qt6cr_qicon_paint(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rectf_t rect, int alignment) {
+void qt6cr_qicon_paint_rect(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rectf_t rect, int alignment, int mode, int state) {
   auto *icon = as_qicon(handle);
   auto *target = as_qpainter(painter);
 
@@ -12374,7 +12374,33 @@ void qt6cr_qicon_paint(qt6cr_handle_t handle, qt6cr_handle_t painter, qt6cr_rect
     return;
   }
 
-  icon->paint(target, from_rect(rect), static_cast<Qt::Alignment>(alignment));
+  icon->paint(
+    target,
+    from_rect(rect),
+    static_cast<Qt::Alignment>(alignment),
+    static_cast<QIcon::Mode>(mode),
+    static_cast<QIcon::State>(state)
+  );
+}
+
+void qt6cr_qicon_paint_bounds(qt6cr_handle_t handle, qt6cr_handle_t painter, int x, int y, int width, int height, int alignment, int mode, int state) {
+  auto *icon = as_qicon(handle);
+  auto *target = as_qpainter(painter);
+
+  if (icon == nullptr || target == nullptr) {
+    return;
+  }
+
+  icon->paint(
+    target,
+    x,
+    y,
+    width,
+    height,
+    static_cast<Qt::Alignment>(alignment),
+    static_cast<QIcon::Mode>(mode),
+    static_cast<QIcon::State>(state)
+  );
 }
 
 qt6cr_handle_t qt6cr_qcursor_create(int shape) {
