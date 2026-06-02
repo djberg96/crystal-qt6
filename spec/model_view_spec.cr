@@ -1040,6 +1040,40 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports raw MIME data drop hooks on list models" do
+    model = RawDropHandleListModel.new
+    payload = Qt6::MimeData.new
+
+    payload.text = "list drop"
+    model.drop_mime_data(payload, Qt6::DropAction::CopyAction, 2, 0).should be_true
+
+    model.raw_drop_handle.should eq(payload.to_unsafe)
+    model.raw_drop_action.should eq(Qt6::DropAction::CopyAction)
+    model.raw_drop_row.should eq(2)
+    model.raw_drop_column.should eq(0)
+    model.raw_drop_parent_valid.should be_false
+
+    payload.release
+    model.release
+  end
+
+  it "supports raw MIME data drop hooks on tree models" do
+    model = RawDropHandleTreeModel.new
+    payload = Qt6::MimeData.new
+
+    payload.text = "tree drop"
+    model.drop_mime_data(payload, Qt6::DropAction::MoveAction, 4, 1).should be_true
+
+    model.raw_drop_handle.should eq(payload.to_unsafe)
+    model.raw_drop_action.should eq(Qt6::DropAction::MoveAction)
+    model.raw_drop_row.should eq(4)
+    model.raw_drop_column.should eq(1)
+    model.raw_drop_parent_valid.should be_false
+
+    payload.release
+    model.release
+  end
+
   it "supports table views and table widgets" do
     application = app
     table_view = Qt6::TableView.new

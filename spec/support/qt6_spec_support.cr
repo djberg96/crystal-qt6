@@ -283,6 +283,31 @@ class RootDropListModel < Qt6::AbstractListModel
   end
 end
 
+class RawDropHandleListModel < Qt6::AbstractListModel
+  getter raw_drop_handle : Qt6::LibQt6::Handle = Pointer(Void).null
+  getter raw_drop_action : Qt6::DropAction? = nil
+  getter raw_drop_row : Int32? = nil
+  getter raw_drop_column : Int32? = nil
+  getter raw_drop_parent_valid : Bool? = nil
+
+  def initialize(parent : Qt6::QObject? = nil)
+    super(parent)
+  end
+
+  protected def model_row_count : Int32
+    0
+  end
+
+  protected def model_drop_mime_data_handle(mime_data_handle : Qt6::LibQt6::Handle, action : Qt6::DropAction, row : Int32, column : Int32, parent : Qt6::ModelIndex) : Bool
+    @raw_drop_handle = mime_data_handle
+    @raw_drop_action = action
+    @raw_drop_row = row
+    @raw_drop_column = column
+    @raw_drop_parent_valid = parent.valid?
+    true
+  end
+end
+
 class LayerTreeModel < Qt6::AbstractTreeModel
   private record Node, id : UInt64, label : String, parent_id : UInt64?, children : Array(UInt64)
 
@@ -402,6 +427,43 @@ class RootDropTreeModel < Qt6::AbstractTreeModel
     return Qt6::ItemFlag::DropEnabled unless index.valid?
 
     Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable
+  end
+end
+
+class RawDropHandleTreeModel < Qt6::AbstractTreeModel
+  getter raw_drop_handle : Qt6::LibQt6::Handle = Pointer(Void).null
+  getter raw_drop_action : Qt6::DropAction? = nil
+  getter raw_drop_row : Int32? = nil
+  getter raw_drop_column : Int32? = nil
+  getter raw_drop_parent_valid : Bool? = nil
+
+  def initialize(parent : Qt6::QObject? = nil)
+    super(parent)
+  end
+
+  protected def model_row_count(parent : Qt6::ModelIndex) : Int32
+    0
+  end
+
+  protected def model_column_count(parent : Qt6::ModelIndex) : Int32
+    1
+  end
+
+  protected def model_index_internal_id(row : Int32, column : Int32, parent : Qt6::ModelIndex) : UInt64?
+    nil
+  end
+
+  protected def model_parent(index : Qt6::ModelIndex) : Qt6::ModelIndexSpec?
+    nil
+  end
+
+  protected def model_drop_mime_data_handle(mime_data_handle : Qt6::LibQt6::Handle, action : Qt6::DropAction, row : Int32, column : Int32, parent : Qt6::ModelIndex) : Bool
+    @raw_drop_handle = mime_data_handle
+    @raw_drop_action = action
+    @raw_drop_row = row
+    @raw_drop_column = column
+    @raw_drop_parent_valid = parent.valid?
+    true
   end
 end
 
