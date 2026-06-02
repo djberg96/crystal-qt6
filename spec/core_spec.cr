@@ -43,6 +43,34 @@ describe Qt6 do
     host.release
   end
 
+  it "reuses watched widget wrappers in event filters" do
+    application = app
+    host = Qt6::Widget.new
+    spin_box = Qt6::SpinBox.new(host)
+    spin_box.set_range(0, 10)
+    spin_box.value = 5
+
+    watched_wrappers = [] of Qt6::Widget
+    filter = Qt6::EventFilter.new(host)
+    filter.on_event do |watched, event|
+      watched_wrappers << watched if watched && event.type == Qt6::EventType::Wheel
+      false
+    end
+    spin_box.install_event_filter(filter)
+
+    spin_box.show
+    application.process_events
+    spin_box.simulate_wheel(Qt6::PointF.new(10.0, 10.0))
+    spin_box.simulate_wheel(Qt6::PointF.new(10.0, 10.0))
+    application.process_events
+
+    watched_wrappers.size.should eq(2)
+    watched_wrappers.first.should be(watched_wrappers.last)
+    watched_wrappers.first.to_unsafe.should eq(spin_box.to_unsafe)
+
+    host.release
+  end
+
   it "exposes mouse event details from event filters" do
     application = app
     widget = Qt6::EventWidget.new

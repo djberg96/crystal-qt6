@@ -3,6 +3,7 @@ module Qt6
   class EventFilter < QObject
     @event_callback : Proc(Widget?, QEvent, Bool)? = nil
     @callback_userdata : LibQt6::Handle = Pointer(Void).null
+    @watched_widgets = {} of LibQt6::Handle => Widget
 
     def initialize(parent : QObject? = nil)
       super(LibQt6.qt6cr_event_filter_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
@@ -20,8 +21,16 @@ module Qt6
       callback = @event_callback
       return false unless callback
 
-      watched = watched_handle.null? ? nil : Widget.wrap(watched_handle)
+      watched = watched_handle.null? ? nil : watched_widget_for(watched_handle)
       callback.call(watched, QEvent.new(event_handle))
+    end
+
+    private def watched_widget_for(handle : LibQt6::Handle) : Widget
+      @watched_widgets[handle] ||= begin
+        widget = Widget.wrap(handle)
+        widget.destroyed.connect { @watched_widgets.delete(handle) }
+        widget
+      end
     end
 
     private EVENT_TRAMPOLINE = ->(userdata : Void*, watched_handle : Void*, event_handle : Void*) do
