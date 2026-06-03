@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+
+- Expanded `QObject` with construction, hierarchy lookup, type introspection, dynamic properties, object-name change signals, delayed deletion, debug dumps, and basic timer-id helpers for broader Qt Core base-class parity.
+
+### Changed
+
+- Updated event processing helpers to flush Qt deferred-delete events, making `QObject#delete_later` deterministic in tests and short-lived event-processing loops.
+
 ## [0.12.0] - 2026-06-01
 
 ### Added

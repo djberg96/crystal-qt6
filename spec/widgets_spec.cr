@@ -2029,6 +2029,82 @@ describe Qt6 do
     destroyed.should eq(1)
   end
 
+  it "supports QObject hierarchy, introspection, properties, and lifecycle helpers" do
+    application = app
+    parent = Qt6::QObject.new
+    child = Qt6::QObject.new(parent)
+    grandchild = Qt6::QObject.new(child)
+    loose_child = Qt6::QObject.new
+    changed_names = [] of String
+    deleted = 0
+
+    child.object_name_changed.connect { |name| changed_names << name }
+    child.object_name = "target"
+    grandchild.object_name = "target"
+    loose_child.object_name = "loose"
+    loose_child.parent = parent
+
+    child.parent.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    loose_child.parent.not_nil!.to_unsafe.should eq(parent.to_unsafe)
+    parent.child_count.should eq(2)
+    parent.children.map(&.to_unsafe).should contain(child.to_unsafe)
+    parent.children.map(&.to_unsafe).should contain(loose_child.to_unsafe)
+    parent.find_child("target").not_nil!.to_unsafe.should eq(child.to_unsafe)
+    parent.find_children("target").map(&.to_unsafe).should contain(grandchild.to_unsafe)
+    parent.find_children("target", recursive: false).map(&.to_unsafe).should eq([child.to_unsafe])
+    changed_names.should eq(["target"])
+
+    parent.inherits?("QObject").should be_true
+    parent.widget_type?.should be_false
+    parent.window_type?.should be_false
+    parent.quick_item_type?.should be_false
+    parent.qml_exposed?.should be_false
+
+    color = Qt6::Color.new(10, 20, 30, 255)
+    parent.set_property("title", "Root")
+    parent.set_property("enabled", true)
+    parent.set_property("count", 12)
+    parent.set_property("ratio", 1.5)
+    parent.set_property("accent", color)
+    parent.property("title").should eq("Root")
+    parent.property("enabled").should eq(true)
+    parent.property("count").should eq(12)
+    parent.property("ratio").should eq(1.5)
+    parent.property("accent").should eq(color)
+    parent.dynamic_property_names.should contain("title")
+    parent.clear_property("title")
+    parent.property("title").should be_nil
+    parent.dynamic_property_names.should_not contain("title")
+
+    timer_id = parent.start_timer(100, Qt6::TimerType::PreciseTimer)
+    timer_id.should be > 0
+    parent.kill_timer(timer_id)
+
+    transient = Qt6::QObject.new
+    transient.destroyed.connect { deleted += 1 }
+    transient.delete_later
+
+    10.times do
+      application.process_events
+      break if deleted == 1
+    end
+
+    deleted.should eq(1)
+    transient.destroyed?.should be_true
+
+    parent.release
+  end
+
+  it "reports QWidget-derived QObject type information" do
+    widget = Qt6::Widget.new
+
+    widget.inherits?("QObject").should be_true
+    widget.inherits?("QWidget").should be_true
+    widget.widget_type?.should be_true
+
+    widget.release
+  end
+
   it "supports standalone undo stacks with Crystal-backed commands" do
     app
     stack = Qt6::UndoStack.new

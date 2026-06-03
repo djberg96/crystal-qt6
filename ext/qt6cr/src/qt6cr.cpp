@@ -300,7 +300,9 @@ QGraphicsOpacityEffect *as_graphics_opacity_effect(qt6cr_handle_t handle);
 QGesture *as_gesture(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
+qt6cr_string_array_t to_string_array_value(const QList<QByteArray> &values);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
+qt6cr_handle_array_t to_handle_array_value(const QObjectList &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QAction *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGesture *> &values);
@@ -1882,6 +1884,22 @@ qt6cr_string_array_t to_string_array_value(const QStringList &values) {
   return qt6cr_string_array_t{copy, size};
 }
 
+qt6cr_string_array_t to_string_array_value(const QList<QByteArray> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_string_array_t{nullptr, 0};
+  }
+
+  auto **copy = new char *[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = duplicate_string(QString::fromUtf8(values.at(index)));
+  }
+
+  return qt6cr_string_array_t{copy, size};
+}
+
 qt6cr_int_array_t to_int_array_value(const QList<int> &values) {
   const auto size = static_cast<int>(values.size());
 
@@ -1896,6 +1914,22 @@ qt6cr_int_array_t to_int_array_value(const QList<int> &values) {
   }
 
   return qt6cr_int_array_t{copy, size};
+}
+
+qt6cr_handle_array_t to_handle_array_value(const QObjectList &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = values.at(index);
+  }
+
+  return qt6cr_handle_array_t{copy, size};
 }
 
 qt6cr_handle_array_t to_handle_array_value(const QList<QAbstractButton *> &values) {
@@ -3181,6 +3215,10 @@ void send_wheel_event(QWidget *widget, qt6cr_pointf_t position, qt6cr_pointf_t p
 
 extern "C" {
 
+qt6cr_handle_t qt6cr_object_create(qt6cr_handle_t parent) {
+  return new QObject(as_object(parent));
+}
+
 void qt6cr_object_destroy(qt6cr_handle_t handle) {
   delete as_object(handle);
 }
@@ -3194,6 +3232,18 @@ void qt6cr_object_on_destroyed(qt6cr_handle_t handle, qt6cr_void_callback_t call
 
   QObject::connect(object, &QObject::destroyed, object, [callback, userdata]() {
     callback(userdata);
+  });
+}
+
+void qt6cr_object_on_object_name_changed(qt6cr_handle_t handle, qt6cr_string_callback_t callback, void *userdata) {
+  auto *object = as_object(handle);
+
+  if (object == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(object, &QObject::objectNameChanged, object, [callback, userdata](const QString &name) {
+    callback(userdata, name.toUtf8().constData());
   });
 }
 
@@ -3218,6 +3268,121 @@ bool qt6cr_object_block_signals(qt6cr_handle_t handle, bool block) {
 bool qt6cr_object_signals_blocked(qt6cr_handle_t handle) {
   auto *object = as_object(handle);
   return object != nullptr && object->signalsBlocked();
+}
+
+qt6cr_handle_t qt6cr_object_parent(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object == nullptr ? nullptr : object->parent();
+}
+
+void qt6cr_object_set_parent(qt6cr_handle_t handle, qt6cr_handle_t parent) {
+  auto *object = as_object(handle);
+
+  if (object != nullptr) {
+    object->setParent(as_object(parent));
+  }
+}
+
+qt6cr_handle_array_t qt6cr_object_children(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_handle_array_value(object->children());
+}
+
+qt6cr_handle_t qt6cr_object_find_child(qt6cr_handle_t handle, const char *name, int options) {
+  auto *object = as_object(handle);
+
+  if (object == nullptr) {
+    return nullptr;
+  }
+
+  return object->findChild<QObject *>(QString::fromUtf8(name == nullptr ? "" : name), static_cast<Qt::FindChildOptions>(options));
+}
+
+qt6cr_handle_array_t qt6cr_object_find_children(qt6cr_handle_t handle, const char *name, int options) {
+  auto *object = as_object(handle);
+
+  if (object == nullptr) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  return to_handle_array_value(object->findChildren<QObject *>(QString::fromUtf8(name == nullptr ? "" : name), static_cast<Qt::FindChildOptions>(options)));
+}
+
+bool qt6cr_object_inherits(qt6cr_handle_t handle, const char *class_name) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->inherits(class_name == nullptr ? "" : class_name);
+}
+
+bool qt6cr_object_is_widget_type(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->isWidgetType();
+}
+
+bool qt6cr_object_is_window_type(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->isWindowType();
+}
+
+bool qt6cr_object_is_quick_item_type(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->isQuickItemType();
+}
+
+bool qt6cr_object_is_qml_exposed(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->isQmlExposed();
+}
+
+qt6cr_variant_value_t qt6cr_object_property(qt6cr_handle_t handle, const char *name) {
+  auto *object = as_object(handle);
+  return object == nullptr ? to_variant_value(QVariant()) : to_variant_value(object->property(name == nullptr ? "" : name));
+}
+
+bool qt6cr_object_set_property(qt6cr_handle_t handle, const char *name, qt6cr_variant_value_t value) {
+  auto *object = as_object(handle);
+  return object != nullptr && object->setProperty(name == nullptr ? "" : name, from_variant_value(value));
+}
+
+qt6cr_string_array_t qt6cr_object_dynamic_property_names(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+  return object == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(object->dynamicPropertyNames());
+}
+
+void qt6cr_object_delete_later(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+
+  if (object != nullptr) {
+    object->deleteLater();
+  }
+}
+
+void qt6cr_object_dump_object_tree(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+
+  if (object != nullptr) {
+    object->dumpObjectTree();
+  }
+}
+
+void qt6cr_object_dump_object_info(qt6cr_handle_t handle) {
+  auto *object = as_object(handle);
+
+  if (object != nullptr) {
+    object->dumpObjectInfo();
+  }
+}
+
+int qt6cr_object_start_timer(qt6cr_handle_t handle, int interval, int timer_type) {
+  auto *object = as_object(handle);
+  return object == nullptr ? 0 : object->startTimer(interval, static_cast<Qt::TimerType>(timer_type));
+}
+
+void qt6cr_object_kill_timer(qt6cr_handle_t handle, int timer_id) {
+  auto *object = as_object(handle);
+
+  if (object != nullptr) {
+    object->killTimer(timer_id);
+  }
 }
 
 void qt6cr_object_install_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filter) {
@@ -5925,6 +6090,7 @@ void qt6cr_application_process_events(qt6cr_handle_t handle) {
 
   if (state != nullptr && state->application != nullptr) {
     state->application->processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
   }
 }
 
@@ -6240,6 +6406,7 @@ void qt6cr_event_loop_process_events(qt6cr_handle_t handle) {
 
   if (event_loop != nullptr) {
     event_loop->processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
   }
 }
 

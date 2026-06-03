@@ -211,11 +211,31 @@ module Qt6
     end
 
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
+    fun qt6cr_object_create = qt6cr_object_create(parent : Handle) : Handle
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_object_on_object_name_changed = qt6cr_object_on_object_name_changed(handle : Handle, callback : (Handle, UInt8* ->), userdata : Handle)
     fun qt6cr_object_object_name = qt6cr_object_object_name(handle : Handle) : UInt8*
     fun qt6cr_object_set_object_name = qt6cr_object_set_object_name(handle : Handle, name : UInt8*)
     fun qt6cr_object_block_signals = qt6cr_object_block_signals(handle : Handle, block : Bool) : Bool
     fun qt6cr_object_signals_blocked = qt6cr_object_signals_blocked(handle : Handle) : Bool
+    fun qt6cr_object_parent = qt6cr_object_parent(handle : Handle) : Handle
+    fun qt6cr_object_set_parent = qt6cr_object_set_parent(handle : Handle, parent : Handle)
+    fun qt6cr_object_children = qt6cr_object_children(handle : Handle) : HandleArrayValue
+    fun qt6cr_object_find_child = qt6cr_object_find_child(handle : Handle, name : UInt8*, options : LibC::Int) : Handle
+    fun qt6cr_object_find_children = qt6cr_object_find_children(handle : Handle, name : UInt8*, options : LibC::Int) : HandleArrayValue
+    fun qt6cr_object_inherits = qt6cr_object_inherits(handle : Handle, class_name : UInt8*) : Bool
+    fun qt6cr_object_is_widget_type = qt6cr_object_is_widget_type(handle : Handle) : Bool
+    fun qt6cr_object_is_window_type = qt6cr_object_is_window_type(handle : Handle) : Bool
+    fun qt6cr_object_is_quick_item_type = qt6cr_object_is_quick_item_type(handle : Handle) : Bool
+    fun qt6cr_object_is_qml_exposed = qt6cr_object_is_qml_exposed(handle : Handle) : Bool
+    fun qt6cr_object_property = qt6cr_object_property(handle : Handle, name : UInt8*) : VariantValue
+    fun qt6cr_object_set_property = qt6cr_object_set_property(handle : Handle, name : UInt8*, value : VariantValue) : Bool
+    fun qt6cr_object_dynamic_property_names = qt6cr_object_dynamic_property_names(handle : Handle) : StringArrayValue
+    fun qt6cr_object_delete_later = qt6cr_object_delete_later(handle : Handle)
+    fun qt6cr_object_dump_object_tree = qt6cr_object_dump_object_tree(handle : Handle)
+    fun qt6cr_object_dump_object_info = qt6cr_object_dump_object_info(handle : Handle)
+    fun qt6cr_object_start_timer = qt6cr_object_start_timer(handle : Handle, interval : LibC::Int, timer_type : LibC::Int) : LibC::Int
+    fun qt6cr_object_kill_timer = qt6cr_object_kill_timer(handle : Handle, timer_id : LibC::Int)
     fun qt6cr_object_install_event_filter = qt6cr_object_install_event_filter(handle : Handle, filter : Handle)
     fun qt6cr_object_remove_event_filter = qt6cr_object_remove_event_filter(handle : Handle, filter : Handle)
     fun qt6cr_graphics_transform_kind = qt6cr_graphics_transform_kind(handle : Handle) : LibC::Int
