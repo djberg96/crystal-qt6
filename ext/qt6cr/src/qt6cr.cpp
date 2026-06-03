@@ -262,16 +262,22 @@ struct HasIsQmlExposed : std::false_type {};
 template <typename T>
 struct HasIsQmlExposed<T, std::void_t<decltype(std::declval<const T *>()->isQmlExposed())>> : std::true_type {};
 
+template <typename T>
+bool is_qml_exposed_impl(const T *object, std::true_type) {
+  return object->isQmlExposed();
+}
+
+template <typename T>
+bool is_qml_exposed_impl(const T *, std::false_type) {
+  return false;
+}
+
 bool is_qml_exposed(const QObject *object) {
   if (object == nullptr) {
     return false;
   }
 
-  if constexpr (HasIsQmlExposed<QObject>::value) {
-    return object->isQmlExposed();
-  } else {
-    return false;
-  }
+  return is_qml_exposed_impl(object, HasIsQmlExposed<QObject>{});
 }
 
 qt6cr_pointf_t to_pointf(const QPointF &point);
