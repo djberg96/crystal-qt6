@@ -7,9 +7,11 @@
 #include <QApplication>
 #include <QAction>
 #include <QActionGroup>
+#include <QAbstractAnimation>
 #include <QAbstractButton>
 #include <QAbstractItemModel>
 #include <QAbstractListModel>
+#include <QAnimationGroup>
 #include <QBuffer>
 #include <QBitmap>
 #include <QButtonGroup>
@@ -126,7 +128,9 @@
 #include <QPainterPath>
 #include <QPainterPathStroker>
 #include <QPalette>
+#include <QParallelAnimationGroup>
 #include <QDesktopServices>
+#include <QPauseAnimation>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QPageLayout>
@@ -149,6 +153,7 @@
 #endif
 #include <QShortcut>
 #include <QSettings>
+#include <QSequentialAnimationGroup>
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
 #include <QKeySequence>
@@ -221,6 +226,7 @@
 #include <QWhatsThis>
 #include <QSplitter>
 #include <QVariant>
+#include <QVariantAnimation>
 #include <QMetaType>
 #include <QLocale>
 #include <QDropEvent>
@@ -264,6 +270,12 @@ QSizePolicy from_size_policy_value(qt6cr_size_policy_value_t value);
 QLineF from_linef(qt6cr_linef_t line);
 QVector3D from_vector3d(qt6cr_vector3d_t vector);
 QObject *as_qobject(qt6cr_handle_t handle);
+QAbstractAnimation *as_abstract_animation(qt6cr_handle_t handle);
+QAnimationGroup *as_animation_group(qt6cr_handle_t handle);
+QParallelAnimationGroup *as_parallel_animation_group(qt6cr_handle_t handle);
+QSequentialAnimationGroup *as_sequential_animation_group(qt6cr_handle_t handle);
+QPauseAnimation *as_pause_animation(qt6cr_handle_t handle);
+QVariantAnimation *as_variant_animation(qt6cr_handle_t handle);
 QWidget *as_widget(qt6cr_handle_t handle);
 QStyle *as_style(qt6cr_handle_t handle);
 QStyleOption *as_style_option(qt6cr_handle_t handle);
@@ -2082,6 +2094,30 @@ QObject *as_qobject(qt6cr_handle_t handle) {
   return static_cast<QObject *>(handle);
 }
 
+QAbstractAnimation *as_abstract_animation(qt6cr_handle_t handle) {
+  return static_cast<QAbstractAnimation *>(handle);
+}
+
+QAnimationGroup *as_animation_group(qt6cr_handle_t handle) {
+  return static_cast<QAnimationGroup *>(handle);
+}
+
+QParallelAnimationGroup *as_parallel_animation_group(qt6cr_handle_t handle) {
+  return static_cast<QParallelAnimationGroup *>(handle);
+}
+
+QSequentialAnimationGroup *as_sequential_animation_group(qt6cr_handle_t handle) {
+  return static_cast<QSequentialAnimationGroup *>(handle);
+}
+
+QPauseAnimation *as_pause_animation(qt6cr_handle_t handle) {
+  return static_cast<QPauseAnimation *>(handle);
+}
+
+QVariantAnimation *as_variant_animation(qt6cr_handle_t handle) {
+  return static_cast<QVariantAnimation *>(handle);
+}
+
 QWidget *as_widget(qt6cr_handle_t handle) {
   return static_cast<QWidget *>(handle);
 }
@@ -3401,6 +3437,393 @@ void qt6cr_object_remove_event_filter(qt6cr_handle_t handle, qt6cr_handle_t filt
   if (object != nullptr && event_filter != nullptr) {
     object->removeEventFilter(event_filter);
   }
+}
+
+qt6cr_handle_t qt6cr_abstract_animation_group(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? nullptr : animation->group();
+}
+
+int qt6cr_abstract_animation_state(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? 0 : static_cast<int>(animation->state());
+}
+
+int qt6cr_abstract_animation_direction(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? 0 : static_cast<int>(animation->direction());
+}
+
+void qt6cr_abstract_animation_set_direction(qt6cr_handle_t handle, int direction) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setDirection(static_cast<QAbstractAnimation::Direction>(direction));
+  }
+}
+
+int qt6cr_abstract_animation_current_time(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? 0 : animation->currentTime();
+}
+
+void qt6cr_abstract_animation_set_current_time(qt6cr_handle_t handle, int msecs) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setCurrentTime(msecs);
+  }
+}
+
+int qt6cr_abstract_animation_current_loop_time(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? 0 : animation->currentLoopTime();
+}
+
+int qt6cr_abstract_animation_loop_count(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? 0 : animation->loopCount();
+}
+
+void qt6cr_abstract_animation_set_loop_count(qt6cr_handle_t handle, int loop_count) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setLoopCount(loop_count);
+  }
+}
+
+int qt6cr_abstract_animation_current_loop(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? 0 : animation->currentLoop();
+}
+
+int qt6cr_abstract_animation_duration(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? -1 : animation->duration();
+}
+
+int qt6cr_abstract_animation_total_duration(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+  return animation == nullptr ? -1 : animation->totalDuration();
+}
+
+void qt6cr_abstract_animation_start(qt6cr_handle_t handle, int policy) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->start(static_cast<QAbstractAnimation::DeletionPolicy>(policy));
+  }
+}
+
+void qt6cr_abstract_animation_pause(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->pause();
+  }
+}
+
+void qt6cr_abstract_animation_resume(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->resume();
+  }
+}
+
+void qt6cr_abstract_animation_set_paused(qt6cr_handle_t handle, bool paused) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setPaused(paused);
+  }
+}
+
+void qt6cr_abstract_animation_stop(qt6cr_handle_t handle) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation != nullptr) {
+    animation->stop();
+  }
+}
+
+void qt6cr_abstract_animation_on_finished(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(animation, &QAbstractAnimation::finished, animation, [callback, userdata]() {
+    callback(userdata);
+  });
+}
+
+void qt6cr_abstract_animation_on_state_changed(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(animation, &QAbstractAnimation::stateChanged, animation, [callback, userdata](QAbstractAnimation::State new_state, QAbstractAnimation::State old_state) {
+    callback(userdata, static_cast<int>(new_state), static_cast<int>(old_state));
+  });
+}
+
+void qt6cr_abstract_animation_on_current_loop_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(animation, &QAbstractAnimation::currentLoopChanged, animation, [callback, userdata](int loop) {
+    callback(userdata, loop);
+  });
+}
+
+void qt6cr_abstract_animation_on_direction_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *animation = as_abstract_animation(handle);
+
+  if (animation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(animation, &QAbstractAnimation::directionChanged, animation, [callback, userdata](QAbstractAnimation::Direction direction) {
+    callback(userdata, static_cast<int>(direction));
+  });
+}
+
+qt6cr_handle_t qt6cr_animation_group_animation_at(qt6cr_handle_t handle, int index) {
+  auto *group = as_animation_group(handle);
+  return group == nullptr ? nullptr : group->animationAt(index);
+}
+
+int qt6cr_animation_group_animation_count(qt6cr_handle_t handle) {
+  auto *group = as_animation_group(handle);
+  return group == nullptr ? 0 : group->animationCount();
+}
+
+int qt6cr_animation_group_index_of_animation(qt6cr_handle_t handle, qt6cr_handle_t animation) {
+  auto *group = as_animation_group(handle);
+  auto *child = as_abstract_animation(animation);
+  return group == nullptr || child == nullptr ? -1 : group->indexOfAnimation(child);
+}
+
+void qt6cr_animation_group_add_animation(qt6cr_handle_t handle, qt6cr_handle_t animation) {
+  auto *group = as_animation_group(handle);
+  auto *child = as_abstract_animation(animation);
+
+  if (group != nullptr && child != nullptr) {
+    group->addAnimation(child);
+  }
+}
+
+void qt6cr_animation_group_insert_animation(qt6cr_handle_t handle, int index, qt6cr_handle_t animation) {
+  auto *group = as_animation_group(handle);
+  auto *child = as_abstract_animation(animation);
+
+  if (group != nullptr && child != nullptr) {
+    group->insertAnimation(index, child);
+  }
+}
+
+void qt6cr_animation_group_remove_animation(qt6cr_handle_t handle, qt6cr_handle_t animation) {
+  auto *group = as_animation_group(handle);
+  auto *child = as_abstract_animation(animation);
+
+  if (group != nullptr && child != nullptr) {
+    group->removeAnimation(child);
+  }
+}
+
+qt6cr_handle_t qt6cr_animation_group_take_animation(qt6cr_handle_t handle, int index) {
+  auto *group = as_animation_group(handle);
+  return group == nullptr ? nullptr : group->takeAnimation(index);
+}
+
+void qt6cr_animation_group_clear(qt6cr_handle_t handle) {
+  auto *group = as_animation_group(handle);
+
+  if (group != nullptr) {
+    group->clear();
+  }
+}
+
+qt6cr_handle_t qt6cr_parallel_animation_group_create(qt6cr_handle_t parent) {
+  return new QParallelAnimationGroup(as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_sequential_animation_group_create(qt6cr_handle_t parent) {
+  return new QSequentialAnimationGroup(as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_sequential_animation_group_add_pause(qt6cr_handle_t handle, int msecs) {
+  auto *group = as_sequential_animation_group(handle);
+  return group == nullptr ? nullptr : group->addPause(msecs);
+}
+
+qt6cr_handle_t qt6cr_sequential_animation_group_insert_pause(qt6cr_handle_t handle, int index, int msecs) {
+  auto *group = as_sequential_animation_group(handle);
+  return group == nullptr ? nullptr : group->insertPause(index, msecs);
+}
+
+qt6cr_handle_t qt6cr_sequential_animation_group_current_animation(qt6cr_handle_t handle) {
+  auto *group = as_sequential_animation_group(handle);
+  return group == nullptr ? nullptr : group->currentAnimation();
+}
+
+void qt6cr_sequential_animation_group_on_current_animation_changed(qt6cr_handle_t handle, qt6cr_handle_callback_t callback, void *userdata) {
+  auto *group = as_sequential_animation_group(handle);
+
+  if (group == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(group, &QSequentialAnimationGroup::currentAnimationChanged, group, [callback, userdata](QAbstractAnimation *animation) {
+    callback(userdata, animation);
+  });
+}
+
+qt6cr_handle_t qt6cr_pause_animation_create(qt6cr_handle_t parent) {
+  return new QPauseAnimation(as_object(parent));
+}
+
+qt6cr_handle_t qt6cr_pause_animation_create_with_duration(int msecs, qt6cr_handle_t parent) {
+  return new QPauseAnimation(msecs, as_object(parent));
+}
+
+void qt6cr_pause_animation_set_duration(qt6cr_handle_t handle, int msecs) {
+  auto *animation = as_pause_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setDuration(msecs);
+  }
+}
+
+qt6cr_handle_t qt6cr_variant_animation_create(qt6cr_handle_t parent) {
+  return new QVariantAnimation(as_object(parent));
+}
+
+qt6cr_variant_value_t qt6cr_variant_animation_start_value(qt6cr_handle_t handle) {
+  auto *animation = as_variant_animation(handle);
+  return animation == nullptr ? to_variant_value(QVariant()) : to_variant_value(animation->startValue());
+}
+
+void qt6cr_variant_animation_set_start_value(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setStartValue(from_variant_value(value));
+  }
+}
+
+qt6cr_variant_value_t qt6cr_variant_animation_end_value(qt6cr_handle_t handle) {
+  auto *animation = as_variant_animation(handle);
+  return animation == nullptr ? to_variant_value(QVariant()) : to_variant_value(animation->endValue());
+}
+
+void qt6cr_variant_animation_set_end_value(qt6cr_handle_t handle, qt6cr_variant_value_t value) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setEndValue(from_variant_value(value));
+  }
+}
+
+qt6cr_variant_value_t qt6cr_variant_animation_key_value_at(qt6cr_handle_t handle, double step) {
+  auto *animation = as_variant_animation(handle);
+  return animation == nullptr ? to_variant_value(QVariant()) : to_variant_value(animation->keyValueAt(step));
+}
+
+void qt6cr_variant_animation_set_key_value_at(qt6cr_handle_t handle, double step, qt6cr_variant_value_t value) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setKeyValueAt(step, from_variant_value(value));
+  }
+}
+
+int qt6cr_variant_animation_key_value_count(qt6cr_handle_t handle) {
+  auto *animation = as_variant_animation(handle);
+  return animation == nullptr ? 0 : static_cast<int>(animation->keyValues().size());
+}
+
+double qt6cr_variant_animation_key_value_step_at(qt6cr_handle_t handle, int index) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation == nullptr) {
+    return 0.0;
+  }
+
+  const auto values = animation->keyValues();
+  return index < 0 || index >= values.size() ? 0.0 : values.at(index).first;
+}
+
+qt6cr_variant_value_t qt6cr_variant_animation_key_value_value_at(qt6cr_handle_t handle, int index) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation == nullptr) {
+    return to_variant_value(QVariant());
+  }
+
+  const auto values = animation->keyValues();
+  return index < 0 || index >= values.size() ? to_variant_value(QVariant()) : to_variant_value(values.at(index).second);
+}
+
+void qt6cr_variant_animation_set_key_values(qt6cr_handle_t handle, const double *steps, const qt6cr_variant_value_t *values, int count) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation == nullptr) {
+    return;
+  }
+
+  QVariantAnimation::KeyValues key_values;
+  for (int index = 0; index < count; ++index) {
+    key_values.append(QVariantAnimation::KeyValue(steps[index], from_variant_value(values[index])));
+  }
+  animation->setKeyValues(key_values);
+}
+
+qt6cr_variant_value_t qt6cr_variant_animation_current_value(qt6cr_handle_t handle) {
+  auto *animation = as_variant_animation(handle);
+  return animation == nullptr ? to_variant_value(QVariant()) : to_variant_value(animation->currentValue());
+}
+
+void qt6cr_variant_animation_set_duration(qt6cr_handle_t handle, int msecs) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation != nullptr) {
+    animation->setDuration(msecs);
+  }
+}
+
+qt6cr_handle_t qt6cr_variant_animation_easing_curve(qt6cr_handle_t handle) {
+  auto *animation = as_variant_animation(handle);
+  return animation == nullptr ? nullptr : new QEasingCurve(animation->easingCurve());
+}
+
+void qt6cr_variant_animation_set_easing_curve(qt6cr_handle_t handle, qt6cr_handle_t easing) {
+  auto *animation = as_variant_animation(handle);
+  auto *curve = static_cast<QEasingCurve *>(easing);
+
+  if (animation != nullptr && curve != nullptr) {
+    animation->setEasingCurve(*curve);
+  }
+}
+
+void qt6cr_variant_animation_on_value_changed(qt6cr_handle_t handle, qt6cr_variant_callback_t callback, void *userdata) {
+  auto *animation = as_variant_animation(handle);
+
+  if (animation == nullptr || callback == nullptr) {
+    return;
+  }
+
+  QObject::connect(animation, &QVariantAnimation::valueChanged, animation, [callback, userdata](const QVariant &value) {
+    callback(userdata, to_variant_value(value));
+  });
 }
 
 int qt6cr_graphics_transform_kind(qt6cr_handle_t handle) {

@@ -2105,6 +2105,155 @@ describe Qt6 do
     widget.release
   end
 
+  it "supports pause animation state, timing, and deletion policy" do
+    application = app
+    animation = Qt6::PauseAnimation.new(5)
+    states = [] of Tuple(Qt6::AnimationState, Qt6::AnimationState)
+    directions = [] of Qt6::AnimationDirection
+    finished = 0
+    deleted = 0
+
+    animation.on_state_changed { |new_state, old_state| states << {new_state, old_state} }
+    animation.on_direction_changed { |direction| directions << direction }
+    animation.on_finished { finished += 1 }
+
+    animation.duration.should eq(5)
+    animation.duration = 10
+    animation.duration.should eq(10)
+    animation.loop_count = 2
+    animation.total_duration.should eq(20)
+    animation.direction = Qt6::AnimationDirection::Backward
+    directions.should eq([Qt6::AnimationDirection::Backward])
+
+    animation.start
+    animation.state.should eq(Qt6::AnimationState::Running)
+    animation.pause
+    animation.state.should eq(Qt6::AnimationState::Paused)
+    animation.resume
+    animation.state.should eq(Qt6::AnimationState::Running)
+    animation.set_paused(true)
+    animation.state.should eq(Qt6::AnimationState::Paused)
+    animation.set_paused(false)
+    animation.state.should eq(Qt6::AnimationState::Running)
+    animation.stop
+    animation.state.should eq(Qt6::AnimationState::Stopped)
+    states.should_not be_empty
+
+    animation.release
+
+    finisher = Qt6::PauseAnimation.new(0)
+    finisher.on_finished { finished += 1 }
+    finisher.start
+    application.process_events
+    finished.should be >= 1
+    finisher.release
+
+    auto_delete = Qt6::PauseAnimation.new(0)
+    auto_delete.destroyed.connect { deleted += 1 }
+    auto_delete.start(Qt6::AnimationDeletionPolicy::DeleteWhenStopped)
+    10.times do
+      application.process_events
+      break if deleted == 1
+    end
+
+    deleted.should eq(1)
+    auto_delete.destroyed?.should be_true
+  end
+
+  it "supports variant animation values, keyframes, easing, and value signals" do
+    animation = Qt6::VariantAnimation.new
+    values = [] of Qt6::ModelData
+
+    animation.on_value_changed { |value| values << value }
+    animation.duration = 100
+    animation.start_value = 0
+    animation.end_value = 10
+    animation.set_key_value_at(0.5, 5)
+
+    animation.duration.should eq(100)
+    animation.start_value.should eq(0)
+    animation.end_value.should eq(10)
+    animation.key_value_at(0.5).should eq(5)
+
+    animation.key_values = [
+      Qt6::AnimationKeyValue.new(0.0, 0),
+      Qt6::AnimationKeyValue.new(0.5, 8),
+      Qt6::AnimationKeyValue.new(1.0, 10),
+    ]
+    animation.key_values.map(&.step).should eq([0.0, 0.5, 1.0])
+    animation.key_values.map(&.value).should eq([0, 8, 10])
+
+    animation.set_current_time(50)
+    animation.current_value.should eq(8)
+    values.should contain(8)
+
+    easing = Qt6::EasingCurve.new(Qt6::EasingCurveType::InQuad)
+    animation.easing_curve = easing
+    animation.easing_curve.type.should eq(Qt6::EasingCurveType::InQuad)
+
+    easing.release
+    animation.release
+  end
+
+  it "supports parallel animation group collection helpers" do
+    group = Qt6::ParallelAnimationGroup.new
+    first = Qt6::PauseAnimation.new(10)
+    second = Qt6::PauseAnimation.new(20)
+
+    group.add_animation(first)
+    group << second
+    group.count.should eq(2)
+    group.animation_count.should eq(2)
+    group.duration.should eq(20)
+    group.index_of(first).should eq(0)
+    group.animation_at(1).not_nil!.to_unsafe.should eq(second.to_unsafe)
+    first.group.not_nil!.to_unsafe.should eq(group.to_unsafe)
+
+    group.remove_animation(first)
+    group.count.should eq(1)
+    first.group.should be_nil
+    first.release
+
+    taken = group.take_animation(0).not_nil!
+    taken.duration.should eq(20)
+    group.count.should eq(0)
+
+    taken.release
+    group.release
+  end
+
+  it "supports sequential animation group pauses and current animation signals" do
+    application = app
+    group = Qt6::SequentialAnimationGroup.new
+    first = Qt6::PauseAnimation.new(10)
+    destroyed = 0
+    current_changes = [] of Pointer(Void)
+
+    group.on_current_animation_changed do |animation|
+      current_changes << animation.to_unsafe if animation
+    end
+
+    group.insert_animation(0, first)
+    inserted = group.insert_pause(1, 5)
+    appended = group.add_pause(15)
+    first.destroyed.connect { destroyed += 1 }
+    inserted.destroyed.connect { destroyed += 1 }
+    appended.destroyed.connect { destroyed += 1 }
+
+    group.count.should eq(3)
+    group.duration.should eq(30)
+    group.animation_at(1).not_nil!.to_unsafe.should eq(inserted.to_unsafe)
+
+    group.start
+    application.process_events
+    group.current_animation.not_nil!.to_unsafe.should eq(first.to_unsafe)
+    current_changes.should contain(first.to_unsafe)
+    group.stop
+
+    group.release
+    destroyed.should eq(3)
+  end
+
   it "supports standalone undo stacks with Crystal-backed commands" do
     app
     stack = Qt6::UndoStack.new

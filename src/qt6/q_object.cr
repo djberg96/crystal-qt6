@@ -223,6 +223,13 @@ module Qt6
       @owned = false
     end
 
+    # Marks this wrapper as responsible for releasing the native object again.
+    def assume_ownership! : Nil
+      return if @destroyed
+
+      @owned = true
+    end
+
     protected def mark_destroyed_from_qt : Nil
       return if @destroyed
 
