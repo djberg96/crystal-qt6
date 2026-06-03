@@ -239,6 +239,8 @@
 #include <cstring>
 #include <memory>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace {
@@ -250,6 +252,24 @@ struct ApplicationState {
   QApplication *application;
   bool owns_application;
 };
+
+template <typename T, typename = void>
+struct HasIsQmlExposed : std::false_type {};
+
+template <typename T>
+struct HasIsQmlExposed<T, std::void_t<decltype(std::declval<const T *>()->isQmlExposed())>> : std::true_type {};
+
+bool is_qml_exposed(const QObject *object) {
+  if (object == nullptr) {
+    return false;
+  }
+
+  if constexpr (HasIsQmlExposed<QObject>::value) {
+    return object->isQmlExposed();
+  } else {
+    return false;
+  }
+}
 
 qt6cr_pointf_t to_pointf(const QPointF &point);
 qt6cr_pointf_t to_pointf(const QPoint &point);
@@ -3366,7 +3386,7 @@ bool qt6cr_object_is_quick_item_type(qt6cr_handle_t handle) {
 
 bool qt6cr_object_is_qml_exposed(qt6cr_handle_t handle) {
   auto *object = as_object(handle);
-  return object != nullptr && object->isQmlExposed();
+  return is_qml_exposed(object);
 }
 
 qt6cr_variant_value_t qt6cr_object_property(qt6cr_handle_t handle, const char *name) {
