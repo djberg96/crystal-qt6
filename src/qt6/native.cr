@@ -210,6 +210,26 @@ module Qt6
       internal_id : UInt64
     end
 
+    struct ModelDataPairValue
+      role : LibC::Int
+      value : VariantValue
+    end
+
+    struct ModelDataPairArrayValue
+      data : ModelDataPairValue*
+      size : LibC::Int
+    end
+
+    struct ModelRoleNameValue
+      role : LibC::Int
+      name : UInt8*
+    end
+
+    struct ModelRoleNameArrayValue
+      data : ModelRoleNameValue*
+      size : LibC::Int
+    end
+
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_create = qt6cr_object_create(parent : Handle) : Handle
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -1742,17 +1762,54 @@ module Qt6
     fun qt6cr_abstract_item_model_column_count = qt6cr_abstract_item_model_column_count(handle : Handle, parent_index : Handle) : LibC::Int
     fun qt6cr_abstract_item_model_index = qt6cr_abstract_item_model_index(handle : Handle, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Handle
     fun qt6cr_abstract_item_model_parent = qt6cr_abstract_item_model_parent(handle : Handle, index : Handle) : Handle
+    fun qt6cr_abstract_item_model_has_index = qt6cr_abstract_item_model_has_index(handle : Handle, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_has_children = qt6cr_abstract_item_model_has_children(handle : Handle, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_sibling = qt6cr_abstract_item_model_sibling(handle : Handle, row : LibC::Int, column : LibC::Int, index : Handle) : Handle
     fun qt6cr_abstract_item_model_data = qt6cr_abstract_item_model_data(handle : Handle, index : Handle, role : LibC::Int) : VariantValue
     fun qt6cr_abstract_item_model_set_data = qt6cr_abstract_item_model_set_data(handle : Handle, index : Handle, value : VariantValue, role : LibC::Int) : Bool
+    fun qt6cr_abstract_item_model_item_data = qt6cr_abstract_item_model_item_data(handle : Handle, index : Handle) : ModelDataPairArrayValue
+    fun qt6cr_abstract_item_model_set_item_data = qt6cr_abstract_item_model_set_item_data(handle : Handle, index : Handle, pairs : ModelDataPairValue*, count : LibC::Int) : Bool
+    fun qt6cr_abstract_item_model_clear_item_data = qt6cr_abstract_item_model_clear_item_data(handle : Handle, index : Handle) : Bool
     fun qt6cr_abstract_item_model_header_data = qt6cr_abstract_item_model_header_data(handle : Handle, section : LibC::Int, orientation : LibC::Int, role : LibC::Int) : VariantValue
     fun qt6cr_abstract_item_model_set_header_data = qt6cr_abstract_item_model_set_header_data(handle : Handle, section : LibC::Int, orientation : LibC::Int, value : VariantValue, role : LibC::Int) : Bool
     fun qt6cr_abstract_item_model_flags = qt6cr_abstract_item_model_flags(handle : Handle, index : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_can_drop_mime_data = qt6cr_abstract_item_model_can_drop_mime_data(handle : Handle, mime_data : Handle, action : LibC::Int, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Bool
     fun qt6cr_abstract_item_model_mime_type_count = qt6cr_abstract_item_model_mime_type_count(handle : Handle) : LibC::Int
     fun qt6cr_abstract_item_model_mime_type = qt6cr_abstract_item_model_mime_type(handle : Handle, index : LibC::Int) : UInt8*
     fun qt6cr_abstract_item_model_mime_data_for_indexes = qt6cr_abstract_item_model_mime_data_for_indexes(handle : Handle, indexes : Handle*, count : LibC::Int) : Handle
     fun qt6cr_abstract_item_model_drop_mime_data = qt6cr_abstract_item_model_drop_mime_data(handle : Handle, mime_data : Handle, action : LibC::Int, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Bool
     fun qt6cr_abstract_item_model_supported_drag_actions = qt6cr_abstract_item_model_supported_drag_actions(handle : Handle) : LibC::Int
     fun qt6cr_abstract_item_model_supported_drop_actions = qt6cr_abstract_item_model_supported_drop_actions(handle : Handle) : LibC::Int
+    fun qt6cr_abstract_item_model_insert_rows = qt6cr_abstract_item_model_insert_rows(handle : Handle, row : LibC::Int, count : LibC::Int, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_insert_columns = qt6cr_abstract_item_model_insert_columns(handle : Handle, column : LibC::Int, count : LibC::Int, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_remove_rows = qt6cr_abstract_item_model_remove_rows(handle : Handle, row : LibC::Int, count : LibC::Int, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_remove_columns = qt6cr_abstract_item_model_remove_columns(handle : Handle, column : LibC::Int, count : LibC::Int, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_move_rows = qt6cr_abstract_item_model_move_rows(handle : Handle, source_parent_index : Handle, source_row : LibC::Int, count : LibC::Int, destination_parent_index : Handle, destination_child : LibC::Int) : Bool
+    fun qt6cr_abstract_item_model_move_columns = qt6cr_abstract_item_model_move_columns(handle : Handle, source_parent_index : Handle, source_column : LibC::Int, count : LibC::Int, destination_parent_index : Handle, destination_child : LibC::Int) : Bool
+    fun qt6cr_abstract_item_model_can_fetch_more = qt6cr_abstract_item_model_can_fetch_more(handle : Handle, parent_index : Handle) : Bool
+    fun qt6cr_abstract_item_model_fetch_more = qt6cr_abstract_item_model_fetch_more(handle : Handle, parent_index : Handle)
+    fun qt6cr_abstract_item_model_sort = qt6cr_abstract_item_model_sort(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_abstract_item_model_buddy = qt6cr_abstract_item_model_buddy(handle : Handle, index : Handle) : Handle
+    fun qt6cr_abstract_item_model_match = qt6cr_abstract_item_model_match(handle : Handle, start : Handle, role : LibC::Int, value : VariantValue, hits : LibC::Int, flags : LibC::Int) : HandleArrayValue
+    fun qt6cr_abstract_item_model_span = qt6cr_abstract_item_model_span(handle : Handle, index : Handle) : SizeValue
+    fun qt6cr_abstract_item_model_role_names = qt6cr_abstract_item_model_role_names(handle : Handle) : ModelRoleNameArrayValue
+    fun qt6cr_abstract_item_model_check_index = qt6cr_abstract_item_model_check_index(handle : Handle, index : Handle, options : LibC::Int) : Bool
+    fun qt6cr_abstract_item_model_submit = qt6cr_abstract_item_model_submit(handle : Handle) : Bool
+    fun qt6cr_abstract_item_model_revert = qt6cr_abstract_item_model_revert(handle : Handle)
+    fun qt6cr_abstract_item_model_on_data_changed = qt6cr_abstract_item_model_on_data_changed(handle : Handle, callback : (Handle, Handle, Handle ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_header_data_changed = qt6cr_abstract_item_model_on_header_data_changed(handle : Handle, callback : (Handle, LibC::Int, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_layout_about_to_be_changed = qt6cr_abstract_item_model_on_layout_about_to_be_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_layout_changed = qt6cr_abstract_item_model_on_layout_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_model_about_to_be_reset = qt6cr_abstract_item_model_on_model_about_to_be_reset(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_model_reset = qt6cr_abstract_item_model_on_model_reset(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_rows_about_to_be_inserted = qt6cr_abstract_item_model_on_rows_about_to_be_inserted(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_rows_inserted = qt6cr_abstract_item_model_on_rows_inserted(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_rows_about_to_be_removed = qt6cr_abstract_item_model_on_rows_about_to_be_removed(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_rows_removed = qt6cr_abstract_item_model_on_rows_removed(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_columns_about_to_be_inserted = qt6cr_abstract_item_model_on_columns_about_to_be_inserted(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_columns_inserted = qt6cr_abstract_item_model_on_columns_inserted(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_columns_about_to_be_removed = qt6cr_abstract_item_model_on_columns_about_to_be_removed(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_abstract_item_model_on_columns_removed = qt6cr_abstract_item_model_on_columns_removed(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_abstract_list_model_create = qt6cr_abstract_list_model_create(parent : Handle) : Handle
     fun qt6cr_abstract_list_model_on_row_count = qt6cr_abstract_list_model_on_row_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
@@ -1776,6 +1833,47 @@ module Qt6
     fun qt6cr_abstract_list_model_begin_move_rows = qt6cr_abstract_list_model_begin_move_rows(handle : Handle, source_first : LibC::Int, source_last : LibC::Int, source_parent_index : Handle, destination_child : LibC::Int, destination_parent_index : Handle) : Bool
     fun qt6cr_abstract_list_model_end_move_rows = qt6cr_abstract_list_model_end_move_rows(handle : Handle)
     fun qt6cr_abstract_list_model_data_changed = qt6cr_abstract_list_model_data_changed(handle : Handle, top_left : Handle, bottom_right : Handle)
+    fun qt6cr_abstract_list_model_header_data_changed = qt6cr_abstract_list_model_header_data_changed(handle : Handle, orientation : LibC::Int, first : LibC::Int, last : LibC::Int)
+    fun qt6cr_abstract_list_model_layout_about_to_be_changed = qt6cr_abstract_list_model_layout_about_to_be_changed(handle : Handle)
+    fun qt6cr_abstract_list_model_layout_changed = qt6cr_abstract_list_model_layout_changed(handle : Handle)
+    fun qt6cr_abstract_list_model_begin_insert_columns = qt6cr_abstract_list_model_begin_insert_columns(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_list_model_end_insert_columns = qt6cr_abstract_list_model_end_insert_columns(handle : Handle)
+    fun qt6cr_abstract_list_model_begin_remove_columns = qt6cr_abstract_list_model_begin_remove_columns(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_list_model_end_remove_columns = qt6cr_abstract_list_model_end_remove_columns(handle : Handle)
+    fun qt6cr_abstract_list_model_begin_move_columns = qt6cr_abstract_list_model_begin_move_columns(handle : Handle, source_first : LibC::Int, source_last : LibC::Int, source_parent_index : Handle, destination_child : LibC::Int, destination_parent_index : Handle) : Bool
+    fun qt6cr_abstract_list_model_end_move_columns = qt6cr_abstract_list_model_end_move_columns(handle : Handle)
+
+    fun qt6cr_abstract_table_model_create = qt6cr_abstract_table_model_create(parent : Handle) : Handle
+    fun qt6cr_abstract_table_model_on_row_count = qt6cr_abstract_table_model_on_row_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_column_count = qt6cr_abstract_table_model_on_column_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_data = qt6cr_abstract_table_model_on_data(handle : Handle, callback : (Handle, Handle, LibC::Int -> VariantValue), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_set_data = qt6cr_abstract_table_model_on_set_data(handle : Handle, callback : (Handle, Handle, VariantValue, LibC::Int -> Bool), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_header_data = qt6cr_abstract_table_model_on_header_data(handle : Handle, callback : (Handle, LibC::Int, LibC::Int, LibC::Int -> VariantValue), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_flags = qt6cr_abstract_table_model_on_flags(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_mime_type_count = qt6cr_abstract_table_model_on_mime_type_count(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_mime_type = qt6cr_abstract_table_model_on_mime_type(handle : Handle, callback : (Handle, LibC::Int -> UInt8*), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_mime_data = qt6cr_abstract_table_model_on_mime_data(handle : Handle, callback : (Handle, Handle*, LibC::Int -> Handle), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_drop_mime_data = qt6cr_abstract_table_model_on_drop_mime_data(handle : Handle, callback : (Handle, Handle, LibC::Int, LibC::Int, LibC::Int, Handle -> Bool), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_supported_drag_actions = qt6cr_abstract_table_model_on_supported_drag_actions(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_table_model_on_supported_drop_actions = qt6cr_abstract_table_model_on_supported_drop_actions(handle : Handle, callback : (Handle -> LibC::Int), userdata : Handle)
+    fun qt6cr_abstract_table_model_begin_reset_model = qt6cr_abstract_table_model_begin_reset_model(handle : Handle)
+    fun qt6cr_abstract_table_model_end_reset_model = qt6cr_abstract_table_model_end_reset_model(handle : Handle)
+    fun qt6cr_abstract_table_model_begin_insert_rows = qt6cr_abstract_table_model_begin_insert_rows(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_table_model_end_insert_rows = qt6cr_abstract_table_model_end_insert_rows(handle : Handle)
+    fun qt6cr_abstract_table_model_begin_remove_rows = qt6cr_abstract_table_model_begin_remove_rows(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_table_model_end_remove_rows = qt6cr_abstract_table_model_end_remove_rows(handle : Handle)
+    fun qt6cr_abstract_table_model_begin_move_rows = qt6cr_abstract_table_model_begin_move_rows(handle : Handle, source_first : LibC::Int, source_last : LibC::Int, source_parent_index : Handle, destination_child : LibC::Int, destination_parent_index : Handle) : Bool
+    fun qt6cr_abstract_table_model_end_move_rows = qt6cr_abstract_table_model_end_move_rows(handle : Handle)
+    fun qt6cr_abstract_table_model_begin_insert_columns = qt6cr_abstract_table_model_begin_insert_columns(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_table_model_end_insert_columns = qt6cr_abstract_table_model_end_insert_columns(handle : Handle)
+    fun qt6cr_abstract_table_model_begin_remove_columns = qt6cr_abstract_table_model_begin_remove_columns(handle : Handle, first : LibC::Int, last : LibC::Int, parent_index : Handle)
+    fun qt6cr_abstract_table_model_end_remove_columns = qt6cr_abstract_table_model_end_remove_columns(handle : Handle)
+    fun qt6cr_abstract_table_model_begin_move_columns = qt6cr_abstract_table_model_begin_move_columns(handle : Handle, source_first : LibC::Int, source_last : LibC::Int, source_parent_index : Handle, destination_child : LibC::Int, destination_parent_index : Handle) : Bool
+    fun qt6cr_abstract_table_model_end_move_columns = qt6cr_abstract_table_model_end_move_columns(handle : Handle)
+    fun qt6cr_abstract_table_model_data_changed = qt6cr_abstract_table_model_data_changed(handle : Handle, top_left : Handle, bottom_right : Handle)
+    fun qt6cr_abstract_table_model_header_data_changed = qt6cr_abstract_table_model_header_data_changed(handle : Handle, orientation : LibC::Int, first : LibC::Int, last : LibC::Int)
+    fun qt6cr_abstract_table_model_layout_about_to_be_changed = qt6cr_abstract_table_model_layout_about_to_be_changed(handle : Handle)
+    fun qt6cr_abstract_table_model_layout_changed = qt6cr_abstract_table_model_layout_changed(handle : Handle)
     fun qt6cr_abstract_tree_model_create = qt6cr_abstract_tree_model_create(parent : Handle) : Handle
     fun qt6cr_abstract_tree_model_on_row_count = qt6cr_abstract_tree_model_on_row_count(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
     fun qt6cr_abstract_tree_model_on_column_count = qt6cr_abstract_tree_model_on_column_count(handle : Handle, callback : (Handle, Handle -> LibC::Int), userdata : Handle)
@@ -1856,6 +1954,7 @@ module Qt6
     fun qt6cr_data_widget_mapper_on_current_index_changed = qt6cr_data_widget_mapper_on_current_index_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
 
     fun qt6cr_standard_item_create = qt6cr_standard_item_create(text : UInt8*) : Handle
+    fun qt6cr_standard_item_create_with_size = qt6cr_standard_item_create_with_size(rows : LibC::Int, columns : LibC::Int) : Handle
     fun qt6cr_standard_item_destroy = qt6cr_standard_item_destroy(handle : Handle)
     fun qt6cr_standard_item_text = qt6cr_standard_item_text(handle : Handle) : UInt8*
     fun qt6cr_standard_item_set_text = qt6cr_standard_item_set_text(handle : Handle, text : UInt8*)
@@ -1870,8 +1969,35 @@ module Qt6
     fun qt6cr_standard_item_child = qt6cr_standard_item_child(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
     fun qt6cr_standard_item_row_count = qt6cr_standard_item_row_count(handle : Handle) : LibC::Int
     fun qt6cr_standard_item_column_count = qt6cr_standard_item_column_count(handle : Handle) : LibC::Int
+    fun qt6cr_standard_item_set_row_count = qt6cr_standard_item_set_row_count(handle : Handle, rows : LibC::Int)
+    fun qt6cr_standard_item_set_column_count = qt6cr_standard_item_set_column_count(handle : Handle, columns : LibC::Int)
+    fun qt6cr_standard_item_has_children = qt6cr_standard_item_has_children(handle : Handle) : Bool
+    fun qt6cr_standard_item_parent = qt6cr_standard_item_parent(handle : Handle) : Handle
+    fun qt6cr_standard_item_row = qt6cr_standard_item_row(handle : Handle) : LibC::Int
+    fun qt6cr_standard_item_column = qt6cr_standard_item_column(handle : Handle) : LibC::Int
+    fun qt6cr_standard_item_index = qt6cr_standard_item_index(handle : Handle) : Handle
+    fun qt6cr_standard_item_insert_row = qt6cr_standard_item_insert_row(handle : Handle, row : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_insert_rows = qt6cr_standard_item_insert_rows(handle : Handle, row : LibC::Int, count : LibC::Int)
+    fun qt6cr_standard_item_insert_columns = qt6cr_standard_item_insert_columns(handle : Handle, column : LibC::Int, count : LibC::Int)
+    fun qt6cr_standard_item_remove_row = qt6cr_standard_item_remove_row(handle : Handle, row : LibC::Int)
+    fun qt6cr_standard_item_remove_column = qt6cr_standard_item_remove_column(handle : Handle, column : LibC::Int)
+    fun qt6cr_standard_item_remove_rows = qt6cr_standard_item_remove_rows(handle : Handle, row : LibC::Int, count : LibC::Int)
+    fun qt6cr_standard_item_remove_columns = qt6cr_standard_item_remove_columns(handle : Handle, column : LibC::Int, count : LibC::Int)
+    fun qt6cr_standard_item_take_child = qt6cr_standard_item_take_child(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
+    fun qt6cr_standard_item_sort_children = qt6cr_standard_item_sort_children(handle : Handle, column : LibC::Int, order : LibC::Int)
+    fun qt6cr_standard_item_is_enabled = qt6cr_standard_item_is_enabled(handle : Handle) : Bool
+    fun qt6cr_standard_item_set_enabled = qt6cr_standard_item_set_enabled(handle : Handle, value : Bool)
+    fun qt6cr_standard_item_is_editable = qt6cr_standard_item_is_editable(handle : Handle) : Bool
+    fun qt6cr_standard_item_set_editable = qt6cr_standard_item_set_editable(handle : Handle, value : Bool)
+    fun qt6cr_standard_item_is_selectable = qt6cr_standard_item_is_selectable(handle : Handle) : Bool
+    fun qt6cr_standard_item_set_selectable = qt6cr_standard_item_set_selectable(handle : Handle, value : Bool)
+    fun qt6cr_standard_item_is_checkable = qt6cr_standard_item_is_checkable(handle : Handle) : Bool
+    fun qt6cr_standard_item_set_checkable = qt6cr_standard_item_set_checkable(handle : Handle, value : Bool)
+    fun qt6cr_standard_item_check_state = qt6cr_standard_item_check_state(handle : Handle) : LibC::Int
+    fun qt6cr_standard_item_set_check_state = qt6cr_standard_item_set_check_state(handle : Handle, state : LibC::Int)
 
     fun qt6cr_standard_item_model_create = qt6cr_standard_item_model_create(parent : Handle) : Handle
+    fun qt6cr_standard_item_model_create_with_size = qt6cr_standard_item_model_create_with_size(rows : LibC::Int, columns : LibC::Int, parent : Handle) : Handle
     fun qt6cr_standard_item_model_clear = qt6cr_standard_item_model_clear(handle : Handle)
     fun qt6cr_standard_item_model_row_count = qt6cr_standard_item_model_row_count(handle : Handle, parent_index : Handle) : LibC::Int
     fun qt6cr_standard_item_model_column_count = qt6cr_standard_item_model_column_count(handle : Handle, parent_index : Handle) : LibC::Int
@@ -1883,6 +2009,34 @@ module Qt6
     fun qt6cr_standard_item_model_index = qt6cr_standard_item_model_index(handle : Handle, row : LibC::Int, column : LibC::Int, parent_index : Handle) : Handle
     fun qt6cr_standard_item_model_item_from_index = qt6cr_standard_item_model_item_from_index(handle : Handle, index : Handle) : Handle
     fun qt6cr_standard_item_model_index_from_item = qt6cr_standard_item_model_index_from_item(handle : Handle, item : Handle) : Handle
+    fun qt6cr_standard_item_model_set_row_count = qt6cr_standard_item_model_set_row_count(handle : Handle, rows : LibC::Int)
+    fun qt6cr_standard_item_model_set_column_count = qt6cr_standard_item_model_set_column_count(handle : Handle, columns : LibC::Int)
+    fun qt6cr_standard_item_model_append_column = qt6cr_standard_item_model_append_column(handle : Handle, item : Handle)
+    fun qt6cr_standard_item_model_insert_row_item = qt6cr_standard_item_model_insert_row_item(handle : Handle, row : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_model_insert_column_item = qt6cr_standard_item_model_insert_column_item(handle : Handle, column : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_model_take_item = qt6cr_standard_item_model_take_item(handle : Handle, row : LibC::Int, column : LibC::Int) : Handle
+    fun qt6cr_standard_item_model_take_horizontal_header_item = qt6cr_standard_item_model_take_horizontal_header_item(handle : Handle, column : LibC::Int) : Handle
+    fun qt6cr_standard_item_model_take_vertical_header_item = qt6cr_standard_item_model_take_vertical_header_item(handle : Handle, row : LibC::Int) : Handle
+    fun qt6cr_standard_item_model_invisible_root_item = qt6cr_standard_item_model_invisible_root_item(handle : Handle) : Handle
+    fun qt6cr_standard_item_model_horizontal_header_item = qt6cr_standard_item_model_horizontal_header_item(handle : Handle, column : LibC::Int) : Handle
+    fun qt6cr_standard_item_model_set_horizontal_header_item = qt6cr_standard_item_model_set_horizontal_header_item(handle : Handle, column : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_model_vertical_header_item = qt6cr_standard_item_model_vertical_header_item(handle : Handle, row : LibC::Int) : Handle
+    fun qt6cr_standard_item_model_set_vertical_header_item = qt6cr_standard_item_model_set_vertical_header_item(handle : Handle, row : LibC::Int, item : Handle)
+    fun qt6cr_standard_item_model_set_vertical_header_label = qt6cr_standard_item_model_set_vertical_header_label(handle : Handle, row : LibC::Int, text : UInt8*)
+    fun qt6cr_standard_item_model_vertical_header_label = qt6cr_standard_item_model_vertical_header_label(handle : Handle, row : LibC::Int) : UInt8*
+    fun qt6cr_standard_item_model_find_items = qt6cr_standard_item_model_find_items(handle : Handle, text : UInt8*, flags : LibC::Int, column : LibC::Int) : HandleArrayValue
+    fun qt6cr_standard_item_model_sort_role = qt6cr_standard_item_model_sort_role(handle : Handle) : LibC::Int
+    fun qt6cr_standard_item_model_set_sort_role = qt6cr_standard_item_model_set_sort_role(handle : Handle, role : LibC::Int)
+    fun qt6cr_standard_item_model_set_item_role_names = qt6cr_standard_item_model_set_item_role_names(handle : Handle, names : ModelRoleNameValue*, count : LibC::Int)
+    fun qt6cr_standard_item_model_on_item_changed = qt6cr_standard_item_model_on_item_changed(handle : Handle, callback : (Handle, Handle ->), userdata : Handle)
+
+    fun qt6cr_abstract_proxy_model_set_source_model = qt6cr_abstract_proxy_model_set_source_model(handle : Handle, model : Handle)
+    fun qt6cr_abstract_proxy_model_source_model = qt6cr_abstract_proxy_model_source_model(handle : Handle) : Handle
+    fun qt6cr_abstract_proxy_model_map_to_source = qt6cr_abstract_proxy_model_map_to_source(handle : Handle, proxy_index : Handle) : Handle
+    fun qt6cr_abstract_proxy_model_map_from_source = qt6cr_abstract_proxy_model_map_from_source(handle : Handle, source_index : Handle) : Handle
+    fun qt6cr_abstract_proxy_model_map_selection_to_source = qt6cr_abstract_proxy_model_map_selection_to_source(handle : Handle, selection : Handle) : Handle
+    fun qt6cr_abstract_proxy_model_map_selection_from_source = qt6cr_abstract_proxy_model_map_selection_from_source(handle : Handle, selection : Handle) : Handle
+    fun qt6cr_abstract_proxy_model_on_source_model_changed = qt6cr_abstract_proxy_model_on_source_model_changed(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_sort_filter_proxy_model_create = qt6cr_sort_filter_proxy_model_create(parent : Handle) : Handle
     fun qt6cr_sort_filter_proxy_model_set_source_model = qt6cr_sort_filter_proxy_model_set_source_model(handle : Handle, model : Handle)
@@ -1910,6 +2064,14 @@ module Qt6
     fun qt6cr_sort_filter_proxy_model_recursive_filtering_enabled = qt6cr_sort_filter_proxy_model_recursive_filtering_enabled(handle : Handle) : Bool
     fun qt6cr_sort_filter_proxy_model_invalidate = qt6cr_sort_filter_proxy_model_invalidate(handle : Handle)
     fun qt6cr_sort_filter_proxy_model_clear_filter = qt6cr_sort_filter_proxy_model_clear_filter(handle : Handle)
+
+    fun qt6cr_concatenate_tables_proxy_model_create = qt6cr_concatenate_tables_proxy_model_create(parent : Handle) : Handle
+    fun qt6cr_concatenate_tables_proxy_model_source_models = qt6cr_concatenate_tables_proxy_model_source_models(handle : Handle) : HandleArrayValue
+    fun qt6cr_concatenate_tables_proxy_model_add_source_model = qt6cr_concatenate_tables_proxy_model_add_source_model(handle : Handle, model : Handle)
+    fun qt6cr_concatenate_tables_proxy_model_remove_source_model = qt6cr_concatenate_tables_proxy_model_remove_source_model(handle : Handle, model : Handle)
+    fun qt6cr_concatenate_tables_proxy_model_has_mapping_api = qt6cr_concatenate_tables_proxy_model_has_mapping_api : Bool
+    fun qt6cr_concatenate_tables_proxy_model_map_to_source = qt6cr_concatenate_tables_proxy_model_map_to_source(handle : Handle, proxy_index : Handle) : Handle
+    fun qt6cr_concatenate_tables_proxy_model_map_from_source = qt6cr_concatenate_tables_proxy_model_map_from_source(handle : Handle, source_index : Handle) : Handle
 
     fun qt6cr_file_icon_provider_create = qt6cr_file_icon_provider_create : Handle
     fun qt6cr_file_icon_provider_destroy = qt6cr_file_icon_provider_destroy(handle : Handle)
@@ -5094,6 +5256,8 @@ module Qt6
     fun qt6cr_string_array_free = qt6cr_string_array_free(value : StringArrayValue)
     fun qt6cr_int_array_free = qt6cr_int_array_free(value : IntArrayValue)
     fun qt6cr_handle_array_free = qt6cr_handle_array_free(value : HandleArrayValue)
+    fun qt6cr_model_data_pair_array_free = qt6cr_model_data_pair_array_free(value : ModelDataPairArrayValue)
+    fun qt6cr_model_role_name_array_free = qt6cr_model_role_name_array_free(value : ModelRoleNameArrayValue)
     fun qt6cr_gradient_stop_array_free = qt6cr_gradient_stop_array_free(value : GradientStopArrayValue)
     fun qt6cr_table_widget_selection_range_array_free = qt6cr_table_widget_selection_range_array_free(value : TableWidgetSelectionRangeArrayValue)
   end

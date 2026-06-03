@@ -88,6 +88,66 @@ module Qt6
       self
     end
 
+    # Emits `headerDataChanged` after backing header data mutates.
+    def header_data_changed(orientation : Orientation, first : Int, last : Int = first) : self
+      LibQt6.qt6cr_abstract_list_model_header_data_changed(to_unsafe, orientation.value, first.to_i32, last.to_i32)
+      self
+    end
+
+    # Announces that layout-affecting changes are about to happen.
+    def layout_about_to_be_changed : self
+      LibQt6.qt6cr_abstract_list_model_layout_about_to_be_changed(to_unsafe)
+      self
+    end
+
+    # Announces that layout-affecting changes have completed.
+    def layout_changed : self
+      LibQt6.qt6cr_abstract_list_model_layout_changed(to_unsafe)
+      self
+    end
+
+    # Announces that columns are about to be inserted.
+    def begin_insert_columns(first : Int, last : Int, parent : ModelIndex? = nil) : self
+      LibQt6.qt6cr_abstract_list_model_begin_insert_columns(to_unsafe, first.to_i32, last.to_i32, parent.try(&.to_unsafe) || Pointer(Void).null)
+      self
+    end
+
+    # Announces that a column insertion has completed.
+    def end_insert_columns : self
+      LibQt6.qt6cr_abstract_list_model_end_insert_columns(to_unsafe)
+      self
+    end
+
+    # Announces that columns are about to be removed.
+    def begin_remove_columns(first : Int, last : Int, parent : ModelIndex? = nil) : self
+      LibQt6.qt6cr_abstract_list_model_begin_remove_columns(to_unsafe, first.to_i32, last.to_i32, parent.try(&.to_unsafe) || Pointer(Void).null)
+      self
+    end
+
+    # Announces that a column removal has completed.
+    def end_remove_columns : self
+      LibQt6.qt6cr_abstract_list_model_end_remove_columns(to_unsafe)
+      self
+    end
+
+    # Announces that columns are about to move and returns whether Qt accepted the move.
+    def begin_move_columns(source_first : Int, source_last : Int, destination_child : Int, source_parent : ModelIndex? = nil, destination_parent : ModelIndex? = nil) : Bool
+      LibQt6.qt6cr_abstract_list_model_begin_move_columns(
+        to_unsafe,
+        source_first.to_i32,
+        source_last.to_i32,
+        source_parent.try(&.to_unsafe) || Pointer(Void).null,
+        destination_child.to_i32,
+        destination_parent.try(&.to_unsafe) || Pointer(Void).null
+      )
+    end
+
+    # Announces that a column move has completed.
+    def end_move_columns : self
+      LibQt6.qt6cr_abstract_list_model_end_move_columns(to_unsafe)
+      self
+    end
+
     # Override to provide the top-level row count.
     protected def model_row_count : Int32
       0

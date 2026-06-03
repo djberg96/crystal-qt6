@@ -871,6 +871,146 @@ describe Qt6 do
     tree_view.release
   end
 
+  it "supports completed item-model helpers, table models, and concatenate proxies" do
+    application = app
+    source_a = Qt6::StandardItemModel.new(0, 2)
+    source_b = Qt6::StandardItemModel.new(0, 2)
+    source_changes = 0
+    row_events = [] of Int32
+    header_events = [] of String
+    item_changes = [] of String
+
+    source_a.on_data_changed do |top_left, bottom_right|
+      source_changes += 1
+      top_left.release
+      bottom_right.release
+    end
+    source_a.on_rows_inserted do |event|
+      row_events << event[:first]
+      event[:parent].release
+    end
+    source_a.on_header_data_changed do |orientation, first, last|
+      header_events << "#{orientation}:#{first}-#{last}"
+    end
+    source_a.on_item_changed do |item|
+      item_changes << item.text
+    end
+
+    source_a.set_item_role_names({Qt6::ItemDataRole::User.value => "priority"})
+    source_a.set_horizontal_header_label(0, "Layer")
+    source_a.set_vertical_header_label(0, "A")
+    source_a.set_item(0, 0, Qt6::StandardItem.new("Terrain"))
+    source_a.set_item(0, 1, Qt6::StandardItem.new("Visible"))
+    source_a.item(0).not_nil!.set_data(30, Qt6::ItemDataRole::User)
+    source_a.item(0).not_nil!.checkable = true
+    source_a.item(0).not_nil!.check_state = Qt6::CheckState::Checked
+    source_a.item(0).not_nil!.editable = true
+    source_a.item(0).not_nil!.text = "Terrain Layer"
+    application.process_events
+
+    source_b.set_item(0, 0, Qt6::StandardItem.new("Units"))
+    source_b.set_item(0, 1, Qt6::StandardItem.new("Hidden"))
+    source_b.item(0).not_nil!.set_data(10, Qt6::ItemDataRole::User)
+
+    index = source_a.index(0, 0)
+    sibling = source_a.sibling(0, 1, index)
+    match = source_a.match(index, "Terrain Layer")
+    data_map = source_a.item_data(index)
+    source_a.set_item_data(index, {
+      Qt6::ItemDataRole::Display.value => "Terrain Reset",
+      Qt6::ItemDataRole::User.value => 40,
+    }).should be_true
+    application.process_events
+
+    root = source_a.invisible_root_item.not_nil!
+    root.has_children?.should be_true
+    source_a.has_index?(0, 0).should be_true
+    source_a.has_children?.should be_true
+    source_a.check_index?(index, Qt6::ModelCheckIndexOption::IndexIsValid).should be_true
+    sibling.data(source_a).should eq("Visible")
+    source_a.horizontal_header_label.should eq("Layer")
+    source_a.vertical_header_label.should eq("A")
+    source_a.role_names[Qt6::ItemDataRole::User.value].should eq("priority")
+    data_map[Qt6::ItemDataRole::User.value].should eq(30)
+    source_a.data(index).should eq("Terrain Reset")
+    source_a.item(0).not_nil!.checkable?.should be_true
+    source_a.item(0).not_nil!.check_state.should eq(Qt6::CheckState::Checked)
+    source_a.item(0).not_nil!.editable?.should be_true
+    match.size.should eq(1)
+    source_changes.should be >= 1
+    row_events.should eq([0])
+    header_events.includes?("Horizontal:0-0").should be_true
+    item_changes.includes?("Terrain Layer").should be_true
+
+    taken = source_a.take_item(0, 1).not_nil!
+    taken.text.should eq("Visible")
+    source_a.item(0, 1).should be_nil
+    source_a.set_item(0, 1, taken)
+
+    header_item = Qt6::StandardItem.new("Layer Header")
+    source_a.set_horizontal_header_item(0, header_item)
+    source_a.horizontal_header_item(0).not_nil!.text.should eq("Layer Header")
+    taken_header = source_a.take_horizontal_header_item(0).not_nil!
+    taken_header.text.should eq("Layer Header")
+    taken_header.release
+
+    table = EditableLayerTableModel.new([["Terrain", "Visible"], ["Units", "Hidden"]])
+    table_data_changed = 0
+    table_columns = [] of Int32
+    table.on_data_changed do |top_left, bottom_right|
+      table_data_changed += 1
+      top_left.release
+      bottom_right.release
+    end
+    table.on_columns_inserted do |event|
+      table_columns << event[:first]
+      event[:parent].release
+    end
+    table_index = table.index(0, 1)
+    table.set_data(table_index, "Locked").should be_true
+    table.append_column("Notes")
+
+    table.row_count.should eq(2)
+    table.column_count.should eq(3)
+    table.data(table_index).should eq("Locked")
+    table.header_data(1).should eq("Column 1")
+    table_data_changed.should eq(1)
+    table_columns.should eq([2])
+
+    proxy = Qt6::SortFilterProxyModel.new
+    source_model_changes = 0
+    proxy.on_source_model_changed { source_model_changes += 1 }
+    proxy.source_model = source_a
+    proxy.source_model.not_nil!.to_unsafe.should eq(source_a.to_unsafe)
+    source_model_changes.should eq(1)
+
+    concat = Qt6::ConcatenateTablesProxyModel.new
+    concat << source_a
+    concat.add_source_model(source_b)
+    concat.source_models.size.should eq(2)
+    concat.row_count.should eq(2)
+    concat.column_count.should eq(2)
+    concat.data(concat.index(0, 0)).should eq("Terrain Reset")
+    concat.data(concat.index(1, 0)).should eq("Units")
+    if concat.mapping_api_available?
+      source_index = concat.map_to_source(concat.index(1, 0))
+      source_index.row.should eq(0)
+      source_index.release
+    end
+    concat.remove_source_model(source_b)
+    concat.row_count.should eq(1)
+
+    table_index.release
+    match.each(&.release)
+    sibling.release
+    index.release
+    proxy.release
+    concat.release
+    table.release
+    source_b.release
+    source_a.release
+  end
+
   it "supports data widget mappers for form-style model editing" do
     application = app
     model = Qt6::StandardItemModel.new

@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - Expanded `QObject` with construction, hierarchy lookup, type introspection, dynamic properties, object-name change signals, delayed deletion, debug dumps, and basic timer-id helpers for broader Qt Core base-class parity.
 - Added Qt Core animation bindings for `QAbstractAnimation`, `QAnimationGroup`, `QParallelAnimationGroup`, `QSequentialAnimationGroup`, `QPauseAnimation`, and `QVariantAnimation`, including typed state/direction/deletion-policy enums and `ModelData`-backed variant keyframes.
+- Expanded the model/view core with richer `QAbstractItemModel` helpers and signals, callback-backed `QAbstractTableModel`, shared `QAbstractProxyModel`, `QConcatenateTablesProxyModel`, and broader `QStandardItem` / `QStandardItemModel` coverage while keeping optional Qt modules out of the dependency set.
 
 ### Changed
 

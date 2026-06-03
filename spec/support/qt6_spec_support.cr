@@ -142,6 +142,64 @@ class EditableLayerListModel < Qt6::AbstractListModel
   end
 end
 
+class EditableLayerTableModel < Qt6::AbstractTableModel
+  getter rows
+
+  def initialize(rows : Array(Array(String)), parent : Qt6::QObject? = nil)
+    @rows = rows
+    super(parent)
+  end
+
+  def append_row(values : Array(String)) : Nil
+    position = @rows.size
+    begin_insert_rows(position, position)
+    @rows << values
+    end_insert_rows
+  end
+
+  def append_column(default_value : String) : Nil
+    position = model_column_count
+    begin_insert_columns(position, position)
+    @rows.each { |row| row << default_value }
+    end_insert_columns
+  end
+
+  protected def model_row_count : Int32
+    @rows.size.to_i32
+  end
+
+  protected def model_column_count : Int32
+    (@rows.first?.try(&.size) || 0).to_i32
+  end
+
+  protected def model_data(index : Qt6::ModelIndex, role : Int32) : Qt6::ModelData
+    return nil unless index.valid?
+    return nil unless role == Qt6::ItemDataRole::Display.value || role == Qt6::ItemDataRole::Edit.value
+
+    @rows[index.row]?.try(&.[](index.column))
+  end
+
+  protected def model_set_data(index : Qt6::ModelIndex, value : Qt6::ModelData, role : Int32) : Bool
+    return false unless index.valid? && role == Qt6::ItemDataRole::Edit.value
+
+    @rows[index.row][index.column] = value.to_s
+    data_changed(index)
+    true
+  end
+
+  protected def model_header_data(section : Int32, orientation : Qt6::Orientation, role : Int32) : Qt6::ModelData
+    return nil unless role == Qt6::ItemDataRole::Display.value
+
+    orientation == Qt6::Orientation::Horizontal ? "Column #{section}" : "Row #{section}"
+  end
+
+  protected def model_flags(index : Qt6::ModelIndex) : Qt6::ItemFlag
+    return Qt6::ItemFlag::None unless index.valid?
+
+    Qt6::ItemFlag::Enabled | Qt6::ItemFlag::Selectable | Qt6::ItemFlag::Editable
+  end
+end
+
 class DraggableLayerListModel < Qt6::AbstractListModel
   MIME_TYPE = "application/x-crystal-qt6-layer"
 

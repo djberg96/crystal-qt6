@@ -248,10 +248,14 @@ require "./qt6/validator_state"
 require "./qt6/echo_mode"
 require "./qt6/completer_completion_mode"
 require "./qt6/completer_model_sorting"
+require "./qt6/match_flag"
+require "./qt6/model_check_index_option"
 require "./qt6/model_data"
 require "./qt6/abstract_item_model"
 require "./qt6/abstract_list_model"
+require "./qt6/abstract_table_model"
 require "./qt6/abstract_tree_model"
+require "./qt6/abstract_proxy_model"
 require "./qt6/file_icon_provider_option"
 require "./qt6/file_icon_provider"
 require "./qt6/file_system_model"
@@ -263,6 +267,7 @@ require "./qt6/data_widget_mapper"
 require "./qt6/standard_item"
 require "./qt6/standard_item_model"
 require "./qt6/sort_filter_proxy_model"
+require "./qt6/concatenate_tables_proxy_model"
 require "./qt6/mime_data"
 require "./qt6/clipboard"
 require "./qt6/q_svg_generator"
@@ -656,6 +661,58 @@ module Qt6
 
     LibQt6.qt6cr_handle_array_free(value)
     handles
+  end
+
+  def self.copy_and_release_model_data_pairs(value : LibQt6::ModelDataPairArrayValue) : Hash(Int32, ModelData)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_model_data_pair_array_free(value)
+      return {} of Int32 => ModelData
+    end
+
+    pairs = {} of Int32 => ModelData
+    size.times do |index|
+      pair = pointer[index]
+      native_value = pair.value
+      pairs[pair.role] = case native_value.type
+                         when 1
+                           native_value.string_value.null? ? "" : String.new(native_value.string_value)
+                         when 2
+                           native_value.bool_value
+                         when 3
+                           native_value.int_value
+                         when 4
+                           native_value.double_value
+                         when 5
+                           Color.from_native(native_value.color_value)
+                         else
+                           nil
+                         end
+    end
+
+    LibQt6.qt6cr_model_data_pair_array_free(value)
+    pairs
+  end
+
+  def self.copy_and_release_model_role_names(value : LibQt6::ModelRoleNameArrayValue) : Hash(Int32, String)
+    pointer = value.data
+    size = value.size
+
+    if pointer.null? || size <= 0
+      LibQt6.qt6cr_model_role_name_array_free(value)
+      return {} of Int32 => String
+    end
+
+    names = {} of Int32 => String
+    size.times do |index|
+      item = pointer[index]
+      names[item.role] = item.name.null? ? "" : String.new(item.name)
+    end
+
+    LibQt6.qt6cr_model_role_name_array_free(value)
+    names
   end
 
   def self.copy_and_release_gradient_stops(value : LibQt6::GradientStopArrayValue) : Array(GradientStop)

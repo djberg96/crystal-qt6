@@ -1,6 +1,6 @@
 module Qt6
   # Wraps `QSortFilterProxyModel` for sorting and filtering over any item model.
-  class SortFilterProxyModel < AbstractItemModel
+  class SortFilterProxyModel < AbstractProxyModel
     def initialize(parent : QObject? = nil)
       super(LibQt6.qt6cr_sort_filter_proxy_model_create(parent.try(&.to_unsafe) || Pointer(Void).null), parent.nil?)
     end
