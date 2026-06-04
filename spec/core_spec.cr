@@ -1,6 +1,171 @@
 require "./spec_helper"
 
 describe Qt6 do
+  it "wraps base QEvent ownership and simple core events" do
+    event = Qt6::QEvent.new(Qt6::EventType::User)
+    event.type.should eq(Qt6::EventType::User)
+    event.accepted?.should be_true
+    event.ignore.accepted?.should be_false
+    event.accept.accepted?.should be_true
+    event.spontaneous?.should be_false
+    event.input_event?.should be_false
+    event.pointer_event?.should be_false
+    event.single_point_event?.should be_false
+
+    clone = event.clone
+    clone.type.should eq(Qt6::EventType::User)
+    clone.release
+
+    custom_type = Qt6::QEvent.register_event_type(62000)
+    custom_type.should be >= Qt6::EventType::User.value
+
+    child = Qt6::QObject.new
+    child_event = Qt6::ChildEvent.new(Qt6::EventType::ChildAdded, child)
+    child_event.child.not_nil!.to_unsafe.should eq(child.to_unsafe)
+    child_event.added?.should be_true
+    child_event.polished?.should be_false
+    child_event.removed?.should be_false
+
+    removed_event = Qt6::ChildEvent.new(Qt6::EventType::ChildRemoved, child)
+    removed_event.removed?.should be_true
+
+    property_event = Qt6::DynamicPropertyChangeEvent.new("answer")
+    property_event.type.should eq(Qt6::EventType::DynamicPropertyChange)
+    property_event.property_name.should eq("answer")
+
+    timer_event = Qt6::TimerEvent.new(42)
+    timer_event.type.should eq(Qt6::EventType::Timer)
+    timer_event.timer_id.should eq(42)
+
+    event.release
+    child_event.release
+    removed_event.release
+    property_event.release
+    timer_event.release
+    child.release
+  end
+
+  it "wraps GUI event payload objects" do
+    app
+    action = Qt6::Action.new("Open")
+    before = Qt6::Action.new("Before")
+    action_event = Qt6::ActionEvent.new(Qt6::EventType::ActionAdded, action, before)
+    action_event.action.not_nil!.to_unsafe.should eq(action.to_unsafe)
+    action_event.before.not_nil!.to_unsafe.should eq(before.to_unsafe)
+
+    close_event = Qt6::CloseEvent.new
+    close_event.type.should eq(Qt6::EventType::Close)
+    close_event.ignore.accepted?.should be_false
+
+    focus_event = Qt6::FocusEvent.new(Qt6::EventType::FocusIn, Qt6::FocusReason::TabFocusReason)
+    focus_event.got_focus?.should be_true
+    focus_event.lost_focus?.should be_false
+    focus_event.reason.should eq(Qt6::FocusReason::TabFocusReason)
+
+    help_event = Qt6::HelpEvent.new(Qt6::EventType::ToolTip, Qt6::Point.new(3, 4), Qt6::Point.new(30, 40))
+    help_event.pos.should eq(Qt6::Point.new(3, 4))
+    help_event.global_pos.should eq(Qt6::Point.new(30, 40))
+
+    move_event = Qt6::MoveEvent.new(Qt6::Point.new(10, 11), Qt6::Point.new(1, 2))
+    move_event.pos.should eq(Qt6::Point.new(10, 11))
+    move_event.old_pos.should eq(Qt6::Point.new(1, 2))
+
+    paint_event = Qt6::PaintEvent.new(Qt6::Rect.new(1, 2, 30, 40))
+    paint_event.rect.should eq(Qt6::RectF.new(1.0, 2.0, 30.0, 40.0))
+    paint_event.region.bounding_rect.should eq(Qt6::Rect.new(1, 2, 30, 40))
+
+    resize_event = Qt6::ResizeEvent.from_sizes(Qt6::Size.new(80, 60), Qt6::Size.new(40, 30))
+    resize_event.size.should eq(Qt6::Size.new(80, 60))
+    resize_event.old_size.should eq(Qt6::Size.new(40, 30))
+
+    surface_event = Qt6::PlatformSurfaceEvent.new(Qt6::PlatformSurfaceEventType::SurfaceAboutToBeDestroyed)
+    surface_event.type.should eq(Qt6::EventType::PlatformSurface)
+    surface_event.surface_event_type.should eq(Qt6::PlatformSurfaceEventType::SurfaceAboutToBeDestroyed)
+
+    scroll_event = Qt6::ScrollEvent.new(Qt6::PointF.new(5.5, 6.5), Qt6::PointF.new(0.5, 1.5), Qt6::ScrollState::ScrollUpdated)
+    scroll_event.content_pos.should eq(Qt6::PointF.new(5.5, 6.5))
+    scroll_event.overshoot_distance.should eq(Qt6::PointF.new(0.5, 1.5))
+    scroll_event.scroll_state.should eq(Qt6::ScrollState::ScrollUpdated)
+
+    prepare_event = Qt6::ScrollPrepareEvent.new(Qt6::PointF.new(1.0, 2.0))
+    prepare_event.viewport_size = Qt6::SizeF.new(200.0, 100.0)
+    prepare_event.content_pos_range = Qt6::RectF.new(0.0, 0.0, 400.0, 300.0)
+    prepare_event.content_pos = Qt6::PointF.new(20.0, 30.0)
+    prepare_event.start_pos.should eq(Qt6::PointF.new(1.0, 2.0))
+    prepare_event.viewport_size.should eq(Qt6::SizeF.new(200.0, 100.0))
+    prepare_event.content_pos_range.should eq(Qt6::RectF.new(0.0, 0.0, 400.0, 300.0))
+    prepare_event.content_pos.should eq(Qt6::PointF.new(20.0, 30.0))
+
+    shortcut_event = Qt6::ShortcutEvent.new("Ctrl+O", 7, true)
+    shortcut_event.key.to_s.should eq("Ctrl+O")
+    shortcut_event.shortcut_id.should eq(7)
+    shortcut_event.ambiguous?.should be_true
+
+    status_tip_event = Qt6::StatusTipEvent.new("Ready")
+    status_tip_event.tip.should eq("Ready")
+
+    whats_this_event = Qt6::WhatsThisClickedEvent.new("help://topic")
+    whats_this_event.href.should eq("help://topic")
+
+    window_state_event = Qt6::WindowStateChangeEvent.new(Qt6::WindowState::Maximized, true)
+    window_state_event.old_state.should eq(Qt6::WindowState::Maximized)
+    window_state_event.override?.should be_true
+
+    hide_event = Qt6::HideEvent.new
+    show_event = Qt6::ShowEvent.new
+    icon_drag_event = Qt6::IconDragEvent.new
+    drag_leave_event = Qt6::DragLeaveEvent.new
+    hide_event.type.should eq(Qt6::EventType::Hide)
+    show_event.type.should eq(Qt6::EventType::Show)
+    icon_drag_event.type.should eq(Qt6::EventType::IconDrag)
+    drag_leave_event.type.should eq(Qt6::EventType::DragLeave)
+
+    child_window_event = Qt6::ChildWindowEvent.new(Qt6::EventType::ChildWindowAdded)
+    child_window_event.child.should be_nil
+
+    file_event = Qt6::FileOpenEvent.new("/tmp/example.txt")
+    file_event.file.should eq("/tmp/example.txt")
+
+    url = Qt6::QUrl.new("file:///tmp/example.txt")
+    url_event = Qt6::FileOpenEvent.new(url)
+    url_event.url.to_string.should eq("file:///tmp/example.txt")
+
+    [action_event, close_event, focus_event, help_event, move_event, paint_event, resize_event,
+     surface_event, scroll_event, prepare_event, shortcut_event, status_tip_event, whats_this_event,
+     window_state_event, hide_event, show_event, icon_drag_event, drag_leave_event, child_window_event,
+     file_event, url_event].each(&.release)
+    url.release
+    before.release
+    action.release
+  end
+
+  it "wraps input method events and query values" do
+    attribute = Qt6::InputMethodAttribute.new(Qt6::InputMethodAttributeType::Cursor, 2, 1, "caret")
+    event = Qt6::InputMethodEvent.new("preedit", [attribute])
+    event.type.should eq(Qt6::EventType::InputMethod)
+    event.preedit_string.should eq("preedit")
+    event.attributes.should eq([attribute])
+
+    event.set_commit_string("commit", 1, 2)
+    event.commit_string.should eq("commit")
+    event.replacement_start.should eq(1)
+    event.replacement_length.should eq(2)
+
+    query_event = Qt6::InputMethodQueryEvent.new(Qt6::InputMethodQuery::ImEnabled | Qt6::InputMethodQuery::ImSurroundingText)
+    query_event.queries.includes?(Qt6::InputMethodQuery::ImEnabled).should be_true
+    query_event.set_value(Qt6::InputMethodQuery::ImEnabled, true)
+    query_event.set_value(Qt6::InputMethodQuery::ImSurroundingText, "hello")
+    query_event.set_value(Qt6::InputMethodQuery::ImCursorPosition, 3)
+    query_event.set_value(Qt6::InputMethodQuery::ImMaximumTextLength, 10.5)
+    query_event.value(Qt6::InputMethodQuery::ImEnabled).should eq(true)
+    query_event.value(Qt6::InputMethodQuery::ImSurroundingText).should eq("hello")
+    query_event.value(Qt6::InputMethodQuery::ImCursorPosition).should eq(3)
+    query_event.value(Qt6::InputMethodQuery::ImMaximumTextLength).should eq(10.5)
+
+    event.release
+    query_event.release
+  end
+
   it "supports widget event filters and no-scroll guards" do
     application = app
     host = Qt6::Widget.new

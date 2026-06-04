@@ -2,10 +2,17 @@ module Qt6
   # Wraps a live drag/drop event during `EventWidget` callbacks.
   #
   # The underlying event handle is only valid while the callback is running.
-  class DropEvent
-    getter to_unsafe : LibQt6::Handle
+  class DropEvent < QEvent
+    def self.wrap(handle : LibQt6::Handle, owned : Bool = false) : self
+      new(handle, owned)
+    end
 
-    def initialize(@to_unsafe : LibQt6::Handle)
+    def initialize(handle : LibQt6::Handle)
+      super(handle, false)
+    end
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool)
+      super(handle, owned)
     end
 
     # Returns the event position in widget-local coordinates.
@@ -29,6 +36,14 @@ module Qt6
       handle.null? ? nil : MimeData.wrap(handle)
     end
 
+    def possible_actions : DropAction
+      DropAction.from_value(LibQt6.qt6cr_drop_event_possible_actions(to_unsafe))
+    end
+
+    def proposed_action : DropAction
+      DropAction.from_value(LibQt6.qt6cr_drop_event_proposed_action(to_unsafe))
+    end
+
     # Returns the action that will be performed if this event is accepted.
     def drop_action : DropAction
       DropAction.from_value(LibQt6.qt6cr_drop_event_drop_action(to_unsafe))
@@ -44,6 +59,11 @@ module Qt6
     def set_drop_action(value : DropAction) : self
       self.drop_action = value
       self
+    end
+
+    def source : QObject?
+      handle = LibQt6.qt6cr_drop_event_source(to_unsafe)
+      handle.null? ? nil : QObject.wrap(handle)
     end
 
     # Marks the event as accepted.
@@ -67,6 +87,10 @@ module Qt6
     # Returns whether the event is currently accepted.
     def accepted? : Bool
       LibQt6.qt6cr_drop_event_is_accepted(to_unsafe)
+    end
+
+    protected def destroy_native : Nil
+      LibQt6.qt6cr_event_destroy(to_unsafe)
     end
   end
 end

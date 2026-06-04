@@ -230,6 +230,18 @@ module Qt6
       size : LibC::Int
     end
 
+    struct InputMethodAttributeValue
+      type : LibC::Int
+      start : LibC::Int
+      length : LibC::Int
+      value : VariantValue
+    end
+
+    struct InputMethodAttributeArrayValue
+      data : InputMethodAttributeValue*
+      size : LibC::Int
+    end
+
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_create = qt6cr_object_create(parent : Handle) : Handle
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -558,12 +570,131 @@ module Qt6
     fun qt6cr_gesture_event_set_widget = qt6cr_gesture_event_set_widget(handle : Handle, widget : Handle)
     fun qt6cr_event_filter_create = qt6cr_event_filter_create(parent : Handle) : Handle
     fun qt6cr_event_filter_on_event = qt6cr_event_filter_on_event(handle : Handle, callback : (Handle, Handle, Handle -> Bool), userdata : Handle)
+    fun qt6cr_event_create = qt6cr_event_create(type : LibC::Int) : Handle
+    fun qt6cr_event_clone = qt6cr_event_clone(handle : Handle) : Handle
+    fun qt6cr_event_destroy = qt6cr_event_destroy(handle : Handle)
     fun qt6cr_event_type = qt6cr_event_type(handle : Handle) : LibC::Int
+    fun qt6cr_event_spontaneous = qt6cr_event_spontaneous(handle : Handle) : Bool
+    fun qt6cr_event_is_input_event = qt6cr_event_is_input_event(handle : Handle) : Bool
+    fun qt6cr_event_is_pointer_event = qt6cr_event_is_pointer_event(handle : Handle) : Bool
+    fun qt6cr_event_is_single_point_event = qt6cr_event_is_single_point_event(handle : Handle) : Bool
+    fun qt6cr_event_register_event_type = qt6cr_event_register_event_type(hint : LibC::Int) : LibC::Int
     fun qt6cr_event_accept = qt6cr_event_accept(handle : Handle)
     fun qt6cr_event_ignore = qt6cr_event_ignore(handle : Handle)
     fun qt6cr_event_is_accepted = qt6cr_event_is_accepted(handle : Handle) : Bool
     fun qt6cr_event_mouse_event = qt6cr_event_mouse_event(handle : Handle) : MouseEventValue
     fun qt6cr_event_wheel_event = qt6cr_event_wheel_event(handle : Handle) : WheelEventValue
+    fun qt6cr_action_event_create = qt6cr_action_event_create(type : LibC::Int, action : Handle, before : Handle) : Handle
+    fun qt6cr_action_event_destroy = qt6cr_action_event_destroy(handle : Handle)
+    fun qt6cr_action_event_action = qt6cr_action_event_action(handle : Handle) : Handle
+    fun qt6cr_action_event_before = qt6cr_action_event_before(handle : Handle) : Handle
+    fun qt6cr_child_event_create = qt6cr_child_event_create(type : LibC::Int, child : Handle) : Handle
+    fun qt6cr_child_event_destroy = qt6cr_child_event_destroy(handle : Handle)
+    fun qt6cr_child_event_child = qt6cr_child_event_child(handle : Handle) : Handle
+    fun qt6cr_child_event_added = qt6cr_child_event_added(handle : Handle) : Bool
+    fun qt6cr_child_event_polished = qt6cr_child_event_polished(handle : Handle) : Bool
+    fun qt6cr_child_event_removed = qt6cr_child_event_removed(handle : Handle) : Bool
+    fun qt6cr_child_window_event_create = qt6cr_child_window_event_create(type : LibC::Int, child : Handle) : Handle
+    fun qt6cr_child_window_event_destroy = qt6cr_child_window_event_destroy(handle : Handle)
+    fun qt6cr_child_window_event_child = qt6cr_child_window_event_child(handle : Handle) : Handle
+    fun qt6cr_close_event_create = qt6cr_close_event_create : Handle
+    fun qt6cr_close_event_destroy = qt6cr_close_event_destroy(handle : Handle)
+    fun qt6cr_drag_leave_event_create = qt6cr_drag_leave_event_create : Handle
+    fun qt6cr_drag_leave_event_destroy = qt6cr_drag_leave_event_destroy(handle : Handle)
+    fun qt6cr_dynamic_property_change_event_create = qt6cr_dynamic_property_change_event_create(name : UInt8*) : Handle
+    fun qt6cr_dynamic_property_change_event_destroy = qt6cr_dynamic_property_change_event_destroy(handle : Handle)
+    fun qt6cr_dynamic_property_change_event_property_name = qt6cr_dynamic_property_change_event_property_name(handle : Handle) : UInt8*
+    fun qt6cr_expose_event_create = qt6cr_expose_event_create(region : Handle) : Handle
+    fun qt6cr_expose_event_destroy = qt6cr_expose_event_destroy(handle : Handle)
+    fun qt6cr_expose_event_region = qt6cr_expose_event_region(handle : Handle) : Handle
+    fun qt6cr_file_open_event_create_file = qt6cr_file_open_event_create_file(file : UInt8*) : Handle
+    fun qt6cr_file_open_event_create_url = qt6cr_file_open_event_create_url(url : Handle) : Handle
+    fun qt6cr_file_open_event_destroy = qt6cr_file_open_event_destroy(handle : Handle)
+    fun qt6cr_file_open_event_file = qt6cr_file_open_event_file(handle : Handle) : UInt8*
+    fun qt6cr_file_open_event_url = qt6cr_file_open_event_url(handle : Handle) : Handle
+    fun qt6cr_focus_event_create = qt6cr_focus_event_create(type : LibC::Int, reason : LibC::Int) : Handle
+    fun qt6cr_focus_event_destroy = qt6cr_focus_event_destroy(handle : Handle)
+    fun qt6cr_focus_event_got_focus = qt6cr_focus_event_got_focus(handle : Handle) : Bool
+    fun qt6cr_focus_event_lost_focus = qt6cr_focus_event_lost_focus(handle : Handle) : Bool
+    fun qt6cr_focus_event_reason = qt6cr_focus_event_reason(handle : Handle) : LibC::Int
+    fun qt6cr_help_event_create = qt6cr_help_event_create(type : LibC::Int, pos : PointValue, global_pos : PointValue) : Handle
+    fun qt6cr_help_event_destroy = qt6cr_help_event_destroy(handle : Handle)
+    fun qt6cr_help_event_pos = qt6cr_help_event_pos(handle : Handle) : PointValue
+    fun qt6cr_help_event_global_pos = qt6cr_help_event_global_pos(handle : Handle) : PointValue
+    fun qt6cr_hide_event_create = qt6cr_hide_event_create : Handle
+    fun qt6cr_hide_event_destroy = qt6cr_hide_event_destroy(handle : Handle)
+    fun qt6cr_icon_drag_event_create = qt6cr_icon_drag_event_create : Handle
+    fun qt6cr_icon_drag_event_destroy = qt6cr_icon_drag_event_destroy(handle : Handle)
+    fun qt6cr_input_event_modifiers = qt6cr_input_event_modifiers(handle : Handle) : LibC::Int
+    fun qt6cr_input_event_set_modifiers = qt6cr_input_event_set_modifiers(handle : Handle, modifiers : LibC::Int)
+    fun qt6cr_input_event_timestamp = qt6cr_input_event_timestamp(handle : Handle) : UInt64
+    fun qt6cr_input_event_set_timestamp = qt6cr_input_event_set_timestamp(handle : Handle, timestamp : UInt64)
+    fun qt6cr_input_event_device_type = qt6cr_input_event_device_type(handle : Handle) : LibC::Int
+    fun qt6cr_input_method_event_create = qt6cr_input_method_event_create : Handle
+    fun qt6cr_input_method_event_create_preedit = qt6cr_input_method_event_create_preedit(preedit : UInt8*, attributes : InputMethodAttributeValue*, count : LibC::Int) : Handle
+    fun qt6cr_input_method_event_destroy = qt6cr_input_method_event_destroy(handle : Handle)
+    fun qt6cr_input_method_event_set_commit_string = qt6cr_input_method_event_set_commit_string(handle : Handle, commit : UInt8*, replace_from : LibC::Int, replace_length : LibC::Int)
+    fun qt6cr_input_method_event_preedit_string = qt6cr_input_method_event_preedit_string(handle : Handle) : UInt8*
+    fun qt6cr_input_method_event_commit_string = qt6cr_input_method_event_commit_string(handle : Handle) : UInt8*
+    fun qt6cr_input_method_event_replacement_start = qt6cr_input_method_event_replacement_start(handle : Handle) : LibC::Int
+    fun qt6cr_input_method_event_replacement_length = qt6cr_input_method_event_replacement_length(handle : Handle) : LibC::Int
+    fun qt6cr_input_method_event_attributes = qt6cr_input_method_event_attributes(handle : Handle) : InputMethodAttributeArrayValue
+    fun qt6cr_input_method_attribute_array_free = qt6cr_input_method_attribute_array_free(value : InputMethodAttributeArrayValue)
+    fun qt6cr_input_method_query_event_create = qt6cr_input_method_query_event_create(queries : LibC::Int) : Handle
+    fun qt6cr_input_method_query_event_destroy = qt6cr_input_method_query_event_destroy(handle : Handle)
+    fun qt6cr_input_method_query_event_queries = qt6cr_input_method_query_event_queries(handle : Handle) : LibC::Int
+    fun qt6cr_input_method_query_event_set_value = qt6cr_input_method_query_event_set_value(handle : Handle, query : LibC::Int, value : VariantValue)
+    fun qt6cr_input_method_query_event_value = qt6cr_input_method_query_event_value(handle : Handle, query : LibC::Int) : VariantValue
+    fun qt6cr_move_event_create = qt6cr_move_event_create(pos : PointValue, old_pos : PointValue) : Handle
+    fun qt6cr_move_event_destroy = qt6cr_move_event_destroy(handle : Handle)
+    fun qt6cr_move_event_pos = qt6cr_move_event_pos(handle : Handle) : PointValue
+    fun qt6cr_move_event_old_pos = qt6cr_move_event_old_pos(handle : Handle) : PointValue
+    fun qt6cr_paint_event_create_rect = qt6cr_paint_event_create_rect(rect : RectValue) : Handle
+    fun qt6cr_paint_event_create_region = qt6cr_paint_event_create_region(region : Handle) : Handle
+    fun qt6cr_paint_event_destroy = qt6cr_paint_event_destroy(handle : Handle)
+    fun qt6cr_paint_event_rect = qt6cr_paint_event_rect(handle : Handle) : RectValue
+    fun qt6cr_paint_event_region = qt6cr_paint_event_region(handle : Handle) : Handle
+    fun qt6cr_platform_surface_event_create = qt6cr_platform_surface_event_create(surface_event_type : LibC::Int) : Handle
+    fun qt6cr_platform_surface_event_destroy = qt6cr_platform_surface_event_destroy(handle : Handle)
+    fun qt6cr_platform_surface_event_surface_event_type = qt6cr_platform_surface_event_surface_event_type(handle : Handle) : LibC::Int
+    fun qt6cr_resize_event_create = qt6cr_resize_event_create(size : SizeValue, old_size : SizeValue) : Handle
+    fun qt6cr_resize_event_destroy = qt6cr_resize_event_destroy(handle : Handle)
+    fun qt6cr_resize_event_size = qt6cr_resize_event_size(handle : Handle) : SizeValue
+    fun qt6cr_resize_event_old_size = qt6cr_resize_event_old_size(handle : Handle) : SizeValue
+    fun qt6cr_scroll_event_create = qt6cr_scroll_event_create(content_pos : PointFValue, overshoot : PointFValue, state : LibC::Int) : Handle
+    fun qt6cr_scroll_event_destroy = qt6cr_scroll_event_destroy(handle : Handle)
+    fun qt6cr_scroll_event_content_pos = qt6cr_scroll_event_content_pos(handle : Handle) : PointFValue
+    fun qt6cr_scroll_event_overshoot_distance = qt6cr_scroll_event_overshoot_distance(handle : Handle) : PointFValue
+    fun qt6cr_scroll_event_scroll_state = qt6cr_scroll_event_scroll_state(handle : Handle) : LibC::Int
+    fun qt6cr_scroll_prepare_event_create = qt6cr_scroll_prepare_event_create(start_pos : PointFValue) : Handle
+    fun qt6cr_scroll_prepare_event_destroy = qt6cr_scroll_prepare_event_destroy(handle : Handle)
+    fun qt6cr_scroll_prepare_event_start_pos = qt6cr_scroll_prepare_event_start_pos(handle : Handle) : PointFValue
+    fun qt6cr_scroll_prepare_event_viewport_size = qt6cr_scroll_prepare_event_viewport_size(handle : Handle) : SizeFValue
+    fun qt6cr_scroll_prepare_event_set_viewport_size = qt6cr_scroll_prepare_event_set_viewport_size(handle : Handle, size : SizeFValue)
+    fun qt6cr_scroll_prepare_event_content_pos_range = qt6cr_scroll_prepare_event_content_pos_range(handle : Handle) : RectFValue
+    fun qt6cr_scroll_prepare_event_set_content_pos_range = qt6cr_scroll_prepare_event_set_content_pos_range(handle : Handle, rect : RectFValue)
+    fun qt6cr_scroll_prepare_event_content_pos = qt6cr_scroll_prepare_event_content_pos(handle : Handle) : PointFValue
+    fun qt6cr_scroll_prepare_event_set_content_pos = qt6cr_scroll_prepare_event_set_content_pos(handle : Handle, pos : PointFValue)
+    fun qt6cr_shortcut_event_create = qt6cr_shortcut_event_create(key : UInt8*, id : LibC::Int, ambiguous : Bool) : Handle
+    fun qt6cr_shortcut_event_destroy = qt6cr_shortcut_event_destroy(handle : Handle)
+    fun qt6cr_shortcut_event_key = qt6cr_shortcut_event_key(handle : Handle) : UInt8*
+    fun qt6cr_shortcut_event_shortcut_id = qt6cr_shortcut_event_shortcut_id(handle : Handle) : LibC::Int
+    fun qt6cr_shortcut_event_is_ambiguous = qt6cr_shortcut_event_is_ambiguous(handle : Handle) : Bool
+    fun qt6cr_show_event_create = qt6cr_show_event_create : Handle
+    fun qt6cr_show_event_destroy = qt6cr_show_event_destroy(handle : Handle)
+    fun qt6cr_status_tip_event_create = qt6cr_status_tip_event_create(tip : UInt8*) : Handle
+    fun qt6cr_status_tip_event_destroy = qt6cr_status_tip_event_destroy(handle : Handle)
+    fun qt6cr_status_tip_event_tip = qt6cr_status_tip_event_tip(handle : Handle) : UInt8*
+    fun qt6cr_timer_event_create = qt6cr_timer_event_create(timer_id : LibC::Int) : Handle
+    fun qt6cr_timer_event_destroy = qt6cr_timer_event_destroy(handle : Handle)
+    fun qt6cr_timer_event_timer_id = qt6cr_timer_event_timer_id(handle : Handle) : LibC::Int
+    fun qt6cr_whats_this_clicked_event_create = qt6cr_whats_this_clicked_event_create(href : UInt8*) : Handle
+    fun qt6cr_whats_this_clicked_event_destroy = qt6cr_whats_this_clicked_event_destroy(handle : Handle)
+    fun qt6cr_whats_this_clicked_event_href = qt6cr_whats_this_clicked_event_href(handle : Handle) : UInt8*
+    fun qt6cr_window_state_change_event_create = qt6cr_window_state_change_event_create(old_state : LibC::Int, is_override : Bool) : Handle
+    fun qt6cr_window_state_change_event_destroy = qt6cr_window_state_change_event_destroy(handle : Handle)
+    fun qt6cr_window_state_change_event_old_state = qt6cr_window_state_change_event_old_state(handle : Handle) : LibC::Int
+    fun qt6cr_window_state_change_event_is_override = qt6cr_window_state_change_event_is_override(handle : Handle) : Bool
     fun qt6cr_graphics_scene_event_create = qt6cr_graphics_scene_event_create(type : LibC::Int) : Handle
     fun qt6cr_graphics_scene_event_destroy = qt6cr_graphics_scene_event_destroy(handle : Handle)
     fun qt6cr_graphics_scene_event_widget = qt6cr_graphics_scene_event_widget(handle : Handle) : Handle
@@ -3720,8 +3851,11 @@ module Qt6
     fun qt6cr_drop_event_buttons = qt6cr_drop_event_buttons(handle : Handle) : LibC::Int
     fun qt6cr_drop_event_modifiers = qt6cr_drop_event_modifiers(handle : Handle) : LibC::Int
     fun qt6cr_drop_event_mime_data = qt6cr_drop_event_mime_data(handle : Handle) : Handle
+    fun qt6cr_drop_event_possible_actions = qt6cr_drop_event_possible_actions(handle : Handle) : LibC::Int
+    fun qt6cr_drop_event_proposed_action = qt6cr_drop_event_proposed_action(handle : Handle) : LibC::Int
     fun qt6cr_drop_event_drop_action = qt6cr_drop_event_drop_action(handle : Handle) : LibC::Int
     fun qt6cr_drop_event_set_drop_action = qt6cr_drop_event_set_drop_action(handle : Handle, action : LibC::Int)
+    fun qt6cr_drop_event_source = qt6cr_drop_event_source(handle : Handle) : Handle
     fun qt6cr_drop_event_accept = qt6cr_drop_event_accept(handle : Handle)
     fun qt6cr_drop_event_accept_proposed_action = qt6cr_drop_event_accept_proposed_action(handle : Handle)
     fun qt6cr_drop_event_ignore = qt6cr_drop_event_ignore(handle : Handle)

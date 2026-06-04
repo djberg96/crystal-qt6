@@ -222,6 +222,7 @@
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QWheelEvent>
+#include <QWindow>
 #include <QWidget>
 #include <QWidgetAction>
 #include <QWizard>
@@ -286,6 +287,7 @@ qt6cr_point_t to_point(const QPoint &point);
 qt6cr_vector3d_t to_vector3d(const QVector3D &vector);
 qt6cr_linef_t to_linef(const QLineF &line);
 qt6cr_size_t to_size(const QSize &size);
+qt6cr_sizef_t to_sizef(const QSizeF &size);
 qt6cr_rect_t to_rect(const QRect &rect);
 qt6cr_rectf_t to_rectf(const QRectF &rect);
 qt6cr_mouse_event_t to_mouse_event(QMouseEvent *event);
@@ -3555,6 +3557,10 @@ QRectF from_rectf(qt6cr_rectf_t rect) {
   return QRectF(rect.x, rect.y, rect.width, rect.height);
 }
 
+QSizeF from_sizef(qt6cr_sizef_t size) {
+  return QSizeF(size.width, size.height);
+}
+
 QRect from_rect(qt6cr_rectf_t rect) {
   return QRect(static_cast<int>(rect.x), static_cast<int>(rect.y), static_cast<int>(rect.width), static_cast<int>(rect.height));
 }
@@ -6006,9 +6012,46 @@ void qt6cr_event_filter_on_event(qt6cr_handle_t handle, qt6cr_event_filter_callb
   event_filter->event_userdata = userdata;
 }
 
+qt6cr_handle_t qt6cr_event_create(int type) {
+  return new QEvent(static_cast<QEvent::Type>(type));
+}
+
+qt6cr_handle_t qt6cr_event_clone(qt6cr_handle_t handle) {
+  auto *event = static_cast<QEvent *>(handle);
+  return event == nullptr ? nullptr : event->clone();
+}
+
+void qt6cr_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QEvent *>(handle);
+}
+
 int qt6cr_event_type(qt6cr_handle_t handle) {
   auto *event = static_cast<QEvent *>(handle);
   return event == nullptr ? 0 : static_cast<int>(event->type());
+}
+
+bool qt6cr_event_spontaneous(qt6cr_handle_t handle) {
+  auto *event = static_cast<QEvent *>(handle);
+  return event != nullptr && event->spontaneous();
+}
+
+bool qt6cr_event_is_input_event(qt6cr_handle_t handle) {
+  auto *event = static_cast<QEvent *>(handle);
+  return event != nullptr && event->isInputEvent();
+}
+
+bool qt6cr_event_is_pointer_event(qt6cr_handle_t handle) {
+  auto *event = static_cast<QEvent *>(handle);
+  return event != nullptr && event->isPointerEvent();
+}
+
+bool qt6cr_event_is_single_point_event(qt6cr_handle_t handle) {
+  auto *event = static_cast<QEvent *>(handle);
+  return event != nullptr && event->isSinglePointEvent();
+}
+
+int qt6cr_event_register_event_type(int hint) {
+  return QEvent::registerEventType(hint);
 }
 
 void qt6cr_event_accept(qt6cr_handle_t handle) {
@@ -6057,6 +6100,568 @@ qt6cr_wheel_event_t qt6cr_event_wheel_event(qt6cr_handle_t handle) {
   }
 
   return to_wheel_event(event);
+}
+
+qt6cr_handle_t qt6cr_action_event_create(int type, qt6cr_handle_t action, qt6cr_handle_t before) {
+  return new QActionEvent(type, as_action(action), as_action(before));
+}
+
+void qt6cr_action_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QActionEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_action_event_action(qt6cr_handle_t handle) {
+  auto *event = static_cast<QActionEvent *>(handle);
+  return event == nullptr ? nullptr : event->action();
+}
+
+qt6cr_handle_t qt6cr_action_event_before(qt6cr_handle_t handle) {
+  auto *event = static_cast<QActionEvent *>(handle);
+  return event == nullptr ? nullptr : event->before();
+}
+
+qt6cr_handle_t qt6cr_child_event_create(int type, qt6cr_handle_t child) {
+  return new QChildEvent(static_cast<QEvent::Type>(type), as_qobject(child));
+}
+
+void qt6cr_child_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QChildEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_child_event_child(qt6cr_handle_t handle) {
+  auto *event = static_cast<QChildEvent *>(handle);
+  return event == nullptr ? nullptr : event->child();
+}
+
+bool qt6cr_child_event_added(qt6cr_handle_t handle) {
+  auto *event = static_cast<QChildEvent *>(handle);
+  return event != nullptr && event->added();
+}
+
+bool qt6cr_child_event_polished(qt6cr_handle_t handle) {
+  auto *event = static_cast<QChildEvent *>(handle);
+  return event != nullptr && event->polished();
+}
+
+bool qt6cr_child_event_removed(qt6cr_handle_t handle) {
+  auto *event = static_cast<QChildEvent *>(handle);
+  return event != nullptr && event->removed();
+}
+
+qt6cr_handle_t qt6cr_child_window_event_create(int type, qt6cr_handle_t child) {
+  return new QChildWindowEvent(static_cast<QEvent::Type>(type), static_cast<QWindow *>(child));
+}
+
+void qt6cr_child_window_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QChildWindowEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_child_window_event_child(qt6cr_handle_t handle) {
+  auto *event = static_cast<QChildWindowEvent *>(handle);
+  return event == nullptr ? nullptr : event->child();
+}
+
+qt6cr_handle_t qt6cr_close_event_create() {
+  return new QCloseEvent();
+}
+
+void qt6cr_close_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QCloseEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_drag_leave_event_create() {
+  return new QDragLeaveEvent();
+}
+
+void qt6cr_drag_leave_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QDragLeaveEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_dynamic_property_change_event_create(const char *name) {
+  return new QDynamicPropertyChangeEvent(QByteArray(name == nullptr ? "" : name));
+}
+
+void qt6cr_dynamic_property_change_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QDynamicPropertyChangeEvent *>(handle);
+}
+
+char *qt6cr_dynamic_property_change_event_property_name(qt6cr_handle_t handle) {
+  auto *event = static_cast<QDynamicPropertyChangeEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(QString::fromUtf8(event->propertyName()));
+}
+
+qt6cr_handle_t qt6cr_expose_event_create(qt6cr_handle_t region) {
+  auto *value = as_qregion(region);
+  return new QExposeEvent(value == nullptr ? QRegion() : *value);
+}
+
+void qt6cr_expose_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QExposeEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_expose_event_region(qt6cr_handle_t handle) {
+  auto *event = static_cast<QExposeEvent *>(handle);
+  QT_IGNORE_DEPRECATIONS(return event == nullptr ? nullptr : new QRegion(event->region());)
+}
+
+qt6cr_handle_t qt6cr_file_open_event_create_file(const char *file) {
+  return new QFileOpenEvent(QString::fromUtf8(file == nullptr ? "" : file));
+}
+
+qt6cr_handle_t qt6cr_file_open_event_create_url(qt6cr_handle_t url) {
+  auto *value = as_qurl(url);
+  return new QFileOpenEvent(value == nullptr ? QUrl() : *value);
+}
+
+void qt6cr_file_open_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QFileOpenEvent *>(handle);
+}
+
+char *qt6cr_file_open_event_file(qt6cr_handle_t handle) {
+  auto *event = static_cast<QFileOpenEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(event->file());
+}
+
+qt6cr_handle_t qt6cr_file_open_event_url(qt6cr_handle_t handle) {
+  auto *event = static_cast<QFileOpenEvent *>(handle);
+  return event == nullptr ? nullptr : new QUrl(event->url());
+}
+
+qt6cr_handle_t qt6cr_focus_event_create(int type, int reason) {
+  return new QFocusEvent(static_cast<QEvent::Type>(type), static_cast<Qt::FocusReason>(reason));
+}
+
+void qt6cr_focus_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QFocusEvent *>(handle);
+}
+
+bool qt6cr_focus_event_got_focus(qt6cr_handle_t handle) {
+  auto *event = static_cast<QFocusEvent *>(handle);
+  return event != nullptr && event->gotFocus();
+}
+
+bool qt6cr_focus_event_lost_focus(qt6cr_handle_t handle) {
+  auto *event = static_cast<QFocusEvent *>(handle);
+  return event != nullptr && event->lostFocus();
+}
+
+int qt6cr_focus_event_reason(qt6cr_handle_t handle) {
+  auto *event = static_cast<QFocusEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->reason());
+}
+
+qt6cr_handle_t qt6cr_help_event_create(int type, qt6cr_point_t pos, qt6cr_point_t global_pos) {
+  return new QHelpEvent(static_cast<QEvent::Type>(type), from_point(pos), from_point(global_pos));
+}
+
+void qt6cr_help_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QHelpEvent *>(handle);
+}
+
+qt6cr_point_t qt6cr_help_event_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QHelpEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->pos());
+}
+
+qt6cr_point_t qt6cr_help_event_global_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QHelpEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->globalPos());
+}
+
+qt6cr_handle_t qt6cr_hide_event_create() {
+  return new QHideEvent();
+}
+
+void qt6cr_hide_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QHideEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_icon_drag_event_create() {
+  return new QIconDragEvent();
+}
+
+void qt6cr_icon_drag_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QIconDragEvent *>(handle);
+}
+
+int qt6cr_input_event_modifiers(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->modifiers());
+}
+
+void qt6cr_input_event_set_modifiers(qt6cr_handle_t handle, int modifiers) {
+  auto *event = static_cast<QInputEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setModifiers(static_cast<Qt::KeyboardModifiers>(modifiers));
+  }
+}
+
+uint64_t qt6cr_input_event_timestamp(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputEvent *>(handle);
+  return event == nullptr ? 0 : event->timestamp();
+}
+
+void qt6cr_input_event_set_timestamp(qt6cr_handle_t handle, uint64_t timestamp) {
+  auto *event = static_cast<QInputEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setTimestamp(timestamp);
+  }
+}
+
+int qt6cr_input_event_device_type(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->deviceType());
+}
+
+static QList<QInputMethodEvent::Attribute> from_input_method_attributes(const qt6cr_input_method_attribute_t *attributes, int count) {
+  QList<QInputMethodEvent::Attribute> values;
+
+  if (attributes == nullptr || count <= 0) {
+    return values;
+  }
+
+  values.reserve(count);
+  for (int index = 0; index < count; ++index) {
+    values.append(QInputMethodEvent::Attribute(
+        static_cast<QInputMethodEvent::AttributeType>(attributes[index].type),
+        attributes[index].start,
+        attributes[index].length,
+        from_variant_value(attributes[index].value)));
+  }
+
+  return values;
+}
+
+qt6cr_handle_t qt6cr_input_method_event_create() {
+  return new QInputMethodEvent();
+}
+
+qt6cr_handle_t qt6cr_input_method_event_create_preedit(const char *preedit, const qt6cr_input_method_attribute_t *attributes, int count) {
+  return new QInputMethodEvent(QString::fromUtf8(preedit == nullptr ? "" : preedit), from_input_method_attributes(attributes, count));
+}
+
+void qt6cr_input_method_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QInputMethodEvent *>(handle);
+}
+
+void qt6cr_input_method_event_set_commit_string(qt6cr_handle_t handle, const char *commit, int replace_from, int replace_length) {
+  auto *event = static_cast<QInputMethodEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setCommitString(QString::fromUtf8(commit == nullptr ? "" : commit), replace_from, replace_length);
+  }
+}
+
+char *qt6cr_input_method_event_preedit_string(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputMethodEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(event->preeditString());
+}
+
+char *qt6cr_input_method_event_commit_string(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputMethodEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(event->commitString());
+}
+
+int qt6cr_input_method_event_replacement_start(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputMethodEvent *>(handle);
+  return event == nullptr ? 0 : event->replacementStart();
+}
+
+int qt6cr_input_method_event_replacement_length(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputMethodEvent *>(handle);
+  return event == nullptr ? 0 : event->replacementLength();
+}
+
+qt6cr_input_method_attribute_array_t qt6cr_input_method_event_attributes(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputMethodEvent *>(handle);
+
+  if (event == nullptr) {
+    return qt6cr_input_method_attribute_array_t{nullptr, 0};
+  }
+
+  const auto attributes = event->attributes();
+  auto *copy = static_cast<qt6cr_input_method_attribute_t *>(std::malloc(sizeof(qt6cr_input_method_attribute_t) * attributes.size()));
+  for (int index = 0; index < attributes.size(); ++index) {
+    const auto &attribute = attributes.at(index);
+    copy[index] = qt6cr_input_method_attribute_t{
+        static_cast<int>(attribute.type),
+        attribute.start,
+        attribute.length,
+        to_variant_value(attribute.value)};
+  }
+
+  return qt6cr_input_method_attribute_array_t{copy, static_cast<int>(attributes.size())};
+}
+
+void qt6cr_input_method_attribute_array_free(qt6cr_input_method_attribute_array_t value) {
+  if (value.data == nullptr) {
+    return;
+  }
+
+  std::free(value.data);
+}
+
+qt6cr_handle_t qt6cr_input_method_query_event_create(int queries) {
+  return new QInputMethodQueryEvent(static_cast<Qt::InputMethodQueries>(queries));
+}
+
+void qt6cr_input_method_query_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QInputMethodQueryEvent *>(handle);
+}
+
+int qt6cr_input_method_query_event_queries(qt6cr_handle_t handle) {
+  auto *event = static_cast<QInputMethodQueryEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->queries());
+}
+
+void qt6cr_input_method_query_event_set_value(qt6cr_handle_t handle, int query, qt6cr_variant_value_t value) {
+  auto *event = static_cast<QInputMethodQueryEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setValue(static_cast<Qt::InputMethodQuery>(query), from_variant_value(value));
+  }
+}
+
+qt6cr_variant_value_t qt6cr_input_method_query_event_value(qt6cr_handle_t handle, int query) {
+  auto *event = static_cast<QInputMethodQueryEvent *>(handle);
+  return event == nullptr ? to_variant_value(QVariant()) : to_variant_value(event->value(static_cast<Qt::InputMethodQuery>(query)));
+}
+
+qt6cr_handle_t qt6cr_move_event_create(qt6cr_point_t pos, qt6cr_point_t old_pos) {
+  return new QMoveEvent(from_point(pos), from_point(old_pos));
+}
+
+void qt6cr_move_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QMoveEvent *>(handle);
+}
+
+qt6cr_point_t qt6cr_move_event_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QMoveEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->pos());
+}
+
+qt6cr_point_t qt6cr_move_event_old_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QMoveEvent *>(handle);
+  return event == nullptr ? qt6cr_point_t{0, 0} : to_point(event->oldPos());
+}
+
+qt6cr_handle_t qt6cr_paint_event_create_rect(qt6cr_rect_t rect) {
+  return new QPaintEvent(from_rect(rect));
+}
+
+qt6cr_handle_t qt6cr_paint_event_create_region(qt6cr_handle_t region) {
+  auto *value = as_qregion(region);
+  return new QPaintEvent(value == nullptr ? QRegion() : *value);
+}
+
+void qt6cr_paint_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QPaintEvent *>(handle);
+}
+
+qt6cr_rect_t qt6cr_paint_event_rect(qt6cr_handle_t handle) {
+  auto *event = static_cast<QPaintEvent *>(handle);
+  return event == nullptr ? qt6cr_rect_t{0, 0, 0, 0} : to_rect(event->rect());
+}
+
+qt6cr_handle_t qt6cr_paint_event_region(qt6cr_handle_t handle) {
+  auto *event = static_cast<QPaintEvent *>(handle);
+  return event == nullptr ? nullptr : new QRegion(event->region());
+}
+
+qt6cr_handle_t qt6cr_platform_surface_event_create(int surface_event_type) {
+  return new QPlatformSurfaceEvent(static_cast<QPlatformSurfaceEvent::SurfaceEventType>(surface_event_type));
+}
+
+void qt6cr_platform_surface_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QPlatformSurfaceEvent *>(handle);
+}
+
+int qt6cr_platform_surface_event_surface_event_type(qt6cr_handle_t handle) {
+  auto *event = static_cast<QPlatformSurfaceEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->surfaceEventType());
+}
+
+qt6cr_handle_t qt6cr_resize_event_create(qt6cr_size_t size, qt6cr_size_t old_size) {
+  return new QResizeEvent(QSize(size.width, size.height), QSize(old_size.width, old_size.height));
+}
+
+void qt6cr_resize_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QResizeEvent *>(handle);
+}
+
+qt6cr_size_t qt6cr_resize_event_size(qt6cr_handle_t handle) {
+  auto *event = static_cast<QResizeEvent *>(handle);
+  return event == nullptr ? qt6cr_size_t{0, 0} : to_size(event->size());
+}
+
+qt6cr_size_t qt6cr_resize_event_old_size(qt6cr_handle_t handle) {
+  auto *event = static_cast<QResizeEvent *>(handle);
+  return event == nullptr ? qt6cr_size_t{0, 0} : to_size(event->oldSize());
+}
+
+qt6cr_handle_t qt6cr_scroll_event_create(qt6cr_pointf_t content_pos, qt6cr_pointf_t overshoot, int state) {
+  return new QScrollEvent(from_pointf(content_pos), from_pointf(overshoot), static_cast<QScrollEvent::ScrollState>(state));
+}
+
+void qt6cr_scroll_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QScrollEvent *>(handle);
+}
+
+qt6cr_pointf_t qt6cr_scroll_event_content_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->contentPos());
+}
+
+qt6cr_pointf_t qt6cr_scroll_event_overshoot_distance(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->overshootDistance());
+}
+
+int qt6cr_scroll_event_scroll_state(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->scrollState());
+}
+
+qt6cr_handle_t qt6cr_scroll_prepare_event_create(qt6cr_pointf_t start_pos) {
+  return new QScrollPrepareEvent(from_pointf(start_pos));
+}
+
+void qt6cr_scroll_prepare_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QScrollPrepareEvent *>(handle);
+}
+
+qt6cr_pointf_t qt6cr_scroll_prepare_event_start_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->startPos());
+}
+
+qt6cr_sizef_t qt6cr_scroll_prepare_event_viewport_size(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+  return event == nullptr ? qt6cr_sizef_t{0.0, 0.0} : to_sizef(event->viewportSize());
+}
+
+void qt6cr_scroll_prepare_event_set_viewport_size(qt6cr_handle_t handle, qt6cr_sizef_t size) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setViewportSize(from_sizef(size));
+  }
+}
+
+qt6cr_rectf_t qt6cr_scroll_prepare_event_content_pos_range(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+  return event == nullptr ? qt6cr_rectf_t{0.0, 0.0, 0.0, 0.0} : to_rectf(event->contentPosRange());
+}
+
+void qt6cr_scroll_prepare_event_set_content_pos_range(qt6cr_handle_t handle, qt6cr_rectf_t rect) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setContentPosRange(from_rectf(rect));
+  }
+}
+
+qt6cr_pointf_t qt6cr_scroll_prepare_event_content_pos(qt6cr_handle_t handle) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+  return event == nullptr ? qt6cr_pointf_t{0.0, 0.0} : to_pointf(event->contentPos());
+}
+
+void qt6cr_scroll_prepare_event_set_content_pos(qt6cr_handle_t handle, qt6cr_pointf_t pos) {
+  auto *event = static_cast<QScrollPrepareEvent *>(handle);
+
+  if (event != nullptr) {
+    event->setContentPos(from_pointf(pos));
+  }
+}
+
+qt6cr_handle_t qt6cr_shortcut_event_create(const char *key, int id, bool ambiguous) {
+  return new QShortcutEvent(QKeySequence(QString::fromUtf8(key == nullptr ? "" : key)), id, ambiguous);
+}
+
+void qt6cr_shortcut_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QShortcutEvent *>(handle);
+}
+
+char *qt6cr_shortcut_event_key(qt6cr_handle_t handle) {
+  auto *event = static_cast<QShortcutEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(event->key().toString());
+}
+
+int qt6cr_shortcut_event_shortcut_id(qt6cr_handle_t handle) {
+  auto *event = static_cast<QShortcutEvent *>(handle);
+  return event == nullptr ? 0 : event->shortcutId();
+}
+
+bool qt6cr_shortcut_event_is_ambiguous(qt6cr_handle_t handle) {
+  auto *event = static_cast<QShortcutEvent *>(handle);
+  return event != nullptr && event->isAmbiguous();
+}
+
+qt6cr_handle_t qt6cr_show_event_create() {
+  return new QShowEvent();
+}
+
+void qt6cr_show_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QShowEvent *>(handle);
+}
+
+qt6cr_handle_t qt6cr_status_tip_event_create(const char *tip) {
+  return new QStatusTipEvent(QString::fromUtf8(tip == nullptr ? "" : tip));
+}
+
+void qt6cr_status_tip_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QStatusTipEvent *>(handle);
+}
+
+char *qt6cr_status_tip_event_tip(qt6cr_handle_t handle) {
+  auto *event = static_cast<QStatusTipEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(event->tip());
+}
+
+qt6cr_handle_t qt6cr_timer_event_create(int timer_id) {
+  return new QTimerEvent(timer_id);
+}
+
+void qt6cr_timer_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QTimerEvent *>(handle);
+}
+
+int qt6cr_timer_event_timer_id(qt6cr_handle_t handle) {
+  auto *event = static_cast<QTimerEvent *>(handle);
+  return event == nullptr ? 0 : event->timerId();
+}
+
+qt6cr_handle_t qt6cr_whats_this_clicked_event_create(const char *href) {
+  return new QWhatsThisClickedEvent(QString::fromUtf8(href == nullptr ? "" : href));
+}
+
+void qt6cr_whats_this_clicked_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QWhatsThisClickedEvent *>(handle);
+}
+
+char *qt6cr_whats_this_clicked_event_href(qt6cr_handle_t handle) {
+  auto *event = static_cast<QWhatsThisClickedEvent *>(handle);
+  return event == nullptr ? duplicate_string("") : duplicate_string(event->href());
+}
+
+qt6cr_handle_t qt6cr_window_state_change_event_create(int old_state, bool is_override) {
+  return new QWindowStateChangeEvent(static_cast<Qt::WindowStates>(old_state), is_override);
+}
+
+void qt6cr_window_state_change_event_destroy(qt6cr_handle_t handle) {
+  delete static_cast<QWindowStateChangeEvent *>(handle);
+}
+
+int qt6cr_window_state_change_event_old_state(qt6cr_handle_t handle) {
+  auto *event = static_cast<QWindowStateChangeEvent *>(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->oldState());
+}
+
+bool qt6cr_window_state_change_event_is_override(qt6cr_handle_t handle) {
+  auto *event = static_cast<QWindowStateChangeEvent *>(handle);
+  return event != nullptr && event->isOverride();
 }
 
 qt6cr_handle_t qt6cr_graphics_scene_event_create(int type) {
@@ -27464,6 +28069,16 @@ qt6cr_handle_t qt6cr_drop_event_mime_data(qt6cr_handle_t handle) {
   return event == nullptr ? nullptr : const_cast<QMimeData *>(event->mimeData());
 }
 
+int qt6cr_drop_event_possible_actions(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->possibleActions());
+}
+
+int qt6cr_drop_event_proposed_action(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? 0 : static_cast<int>(event->proposedAction());
+}
+
 int qt6cr_drop_event_drop_action(qt6cr_handle_t handle) {
   auto *event = as_drop_event(handle);
   return event == nullptr ? 0 : static_cast<int>(event->dropAction());
@@ -27475,6 +28090,11 @@ void qt6cr_drop_event_set_drop_action(qt6cr_handle_t handle, int action) {
   if (event != nullptr) {
     event->setDropAction(static_cast<Qt::DropAction>(action));
   }
+}
+
+qt6cr_handle_t qt6cr_drop_event_source(qt6cr_handle_t handle) {
+  auto *event = as_drop_event(handle);
+  return event == nullptr ? nullptr : event->source();
 }
 
 void qt6cr_drop_event_accept(qt6cr_handle_t handle) {
