@@ -197,6 +197,11 @@ typedef struct {
 } qt6cr_input_method_attribute_array_t;
 
 typedef struct {
+	bool started;
+	int64_t process_id;
+} qt6cr_process_start_result_t;
+
+typedef struct {
 	int horizontal_policy;
 	int vertical_policy;
 	int control_type;
@@ -2713,6 +2718,73 @@ qt6cr_byte_array_t qt6cr_io_device_read(qt6cr_handle_t handle, int size);
 qt6cr_byte_array_t qt6cr_io_device_peek(qt6cr_handle_t handle, int size);
 qt6cr_byte_array_t qt6cr_io_device_read_all(qt6cr_handle_t handle);
 int64_t qt6cr_io_device_write(qt6cr_handle_t handle, const unsigned char *data, int size);
+
+qt6cr_handle_t qt6cr_process_environment_create(bool inherit_from_parent);
+void qt6cr_process_environment_destroy(qt6cr_handle_t handle);
+qt6cr_handle_t qt6cr_process_environment_system_environment(void);
+bool qt6cr_process_environment_is_empty(qt6cr_handle_t handle);
+bool qt6cr_process_environment_inherits_from_parent(qt6cr_handle_t handle);
+bool qt6cr_process_environment_contains(qt6cr_handle_t handle, const char *name);
+char *qt6cr_process_environment_value(qt6cr_handle_t handle, const char *name, const char *default_value);
+void qt6cr_process_environment_insert(qt6cr_handle_t handle, const char *name, const char *value);
+void qt6cr_process_environment_insert_environment(qt6cr_handle_t handle, qt6cr_handle_t other);
+void qt6cr_process_environment_remove(qt6cr_handle_t handle, const char *name);
+void qt6cr_process_environment_clear(qt6cr_handle_t handle);
+qt6cr_string_array_t qt6cr_process_environment_keys(qt6cr_handle_t handle);
+qt6cr_string_array_t qt6cr_process_environment_to_string_list(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_process_create(qt6cr_handle_t parent);
+void qt6cr_process_destroy(qt6cr_handle_t handle);
+void qt6cr_process_start(qt6cr_handle_t handle, const char *program, const char *const *arguments, int argument_count, int open_mode);
+void qt6cr_process_start_configured(qt6cr_handle_t handle, int open_mode);
+void qt6cr_process_start_command(qt6cr_handle_t handle, const char *command, int open_mode);
+qt6cr_process_start_result_t qt6cr_process_start_detached_instance(qt6cr_handle_t handle);
+int qt6cr_process_execute(const char *program, const char *const *arguments, int argument_count);
+qt6cr_process_start_result_t qt6cr_process_start_detached(const char *program, const char *const *arguments, int argument_count, const char *working_directory);
+qt6cr_string_array_t qt6cr_process_split_command(const char *command);
+qt6cr_string_array_t qt6cr_process_system_environment(void);
+char *qt6cr_process_null_device(void);
+void qt6cr_process_terminate(qt6cr_handle_t handle);
+void qt6cr_process_kill(qt6cr_handle_t handle);
+bool qt6cr_process_wait_for_started(qt6cr_handle_t handle, int msecs);
+bool qt6cr_process_wait_for_finished(qt6cr_handle_t handle, int msecs);
+bool qt6cr_process_wait_for_ready_read(qt6cr_handle_t handle, int msecs);
+bool qt6cr_process_wait_for_bytes_written(qt6cr_handle_t handle, int msecs);
+char *qt6cr_process_program(qt6cr_handle_t handle);
+void qt6cr_process_set_program(qt6cr_handle_t handle, const char *program);
+qt6cr_string_array_t qt6cr_process_arguments(qt6cr_handle_t handle);
+void qt6cr_process_set_arguments(qt6cr_handle_t handle, const char *const *arguments, int argument_count);
+char *qt6cr_process_working_directory(qt6cr_handle_t handle);
+void qt6cr_process_set_working_directory(qt6cr_handle_t handle, const char *directory);
+int64_t qt6cr_process_process_id(qt6cr_handle_t handle);
+int qt6cr_process_state(qt6cr_handle_t handle);
+int qt6cr_process_error(qt6cr_handle_t handle);
+int qt6cr_process_exit_code(qt6cr_handle_t handle);
+int qt6cr_process_exit_status(qt6cr_handle_t handle);
+qt6cr_byte_array_t qt6cr_process_read_all_standard_output(qt6cr_handle_t handle);
+qt6cr_byte_array_t qt6cr_process_read_all_standard_error(qt6cr_handle_t handle);
+int qt6cr_process_read_channel(qt6cr_handle_t handle);
+void qt6cr_process_set_read_channel(qt6cr_handle_t handle, int channel);
+int qt6cr_process_process_channel_mode(qt6cr_handle_t handle);
+void qt6cr_process_set_process_channel_mode(qt6cr_handle_t handle, int mode);
+int qt6cr_process_input_channel_mode(qt6cr_handle_t handle);
+void qt6cr_process_set_input_channel_mode(qt6cr_handle_t handle, int mode);
+void qt6cr_process_close_read_channel(qt6cr_handle_t handle, int channel);
+void qt6cr_process_close_write_channel(qt6cr_handle_t handle);
+void qt6cr_process_set_standard_input_file(qt6cr_handle_t handle, const char *file_name);
+void qt6cr_process_set_standard_output_file(qt6cr_handle_t handle, const char *file_name, int open_mode);
+void qt6cr_process_set_standard_error_file(qt6cr_handle_t handle, const char *file_name, int open_mode);
+void qt6cr_process_set_standard_output_process(qt6cr_handle_t handle, qt6cr_handle_t destination);
+qt6cr_handle_t qt6cr_process_environment(qt6cr_handle_t handle);
+void qt6cr_process_set_process_environment(qt6cr_handle_t handle, qt6cr_handle_t environment);
+qt6cr_string_array_t qt6cr_process_environment_strings(qt6cr_handle_t handle);
+void qt6cr_process_set_environment_strings(qt6cr_handle_t handle, const char *const *values, int value_count);
+void qt6cr_process_on_started(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_process_on_finished(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata);
+void qt6cr_process_on_error_occurred(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_process_on_state_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata);
+void qt6cr_process_on_ready_read_standard_output(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
+void qt6cr_process_on_ready_read_standard_error(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata);
 
 qt6cr_handle_t qt6cr_qbuffer_create(qt6cr_handle_t byte_array);
 void qt6cr_qbuffer_destroy(qt6cr_handle_t handle);

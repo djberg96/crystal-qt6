@@ -142,6 +142,7 @@
 #include <QPdfWriter>
 #include <QPixmap>
 #include <QPointer>
+#include <QProcess>
 #include <QProgressBar>
 #include <QPolygon>
 #include <QPolygonF>
@@ -344,6 +345,7 @@ QGesture *as_gesture(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_string_array_t to_string_array_value(const QList<QByteArray> &values);
+QStringList string_list_from_values(const char *const *values, int size);
 qt6cr_int_array_t to_int_array_value(const QList<int> &values);
 qt6cr_model_data_pair_array_t to_model_data_pair_array_value(const QMap<int, QVariant> &values);
 qt6cr_model_role_name_array_t to_model_role_name_array_value(const QHash<int, QByteArray> &values);
@@ -2201,6 +2203,21 @@ qt6cr_string_array_t to_string_array_value(const QList<QByteArray> &values) {
   return qt6cr_string_array_t{copy, size};
 }
 
+QStringList string_list_from_values(const char *const *values, int size) {
+  QStringList result;
+
+  if (values == nullptr || size <= 0) {
+    return result;
+  }
+
+  result.reserve(size);
+  for (int index = 0; index < size; ++index) {
+    result << QString::fromUtf8(values[index] == nullptr ? "" : values[index]);
+  }
+
+  return result;
+}
+
 qt6cr_int_array_t to_int_array_value(const QList<int> &values) {
   const auto size = static_cast<int>(values.size());
 
@@ -2793,6 +2810,16 @@ QBuffer *as_qbuffer(qt6cr_handle_t handle) {
 QIODevice *as_qio_device(qt6cr_handle_t handle) {
   return static_cast<QIODevice *>(handle);
 }
+
+QProcessEnvironment *as_qprocess_environment(qt6cr_handle_t handle) {
+  return static_cast<QProcessEnvironment *>(handle);
+}
+
+#if QT_CONFIG(process)
+QProcess *as_qprocess(qt6cr_handle_t handle) {
+  return static_cast<QProcess *>(handle);
+}
+#endif
 
 QPen *as_qpen(qt6cr_handle_t handle) {
   return static_cast<QPen *>(handle);
@@ -20367,6 +20394,689 @@ int64_t qt6cr_io_device_write(qt6cr_handle_t handle, const unsigned char *data, 
 
   return static_cast<int64_t>(device->write(reinterpret_cast<const char *>(data), size));
 }
+
+qt6cr_handle_t qt6cr_process_environment_create(bool inherit_from_parent) {
+  return inherit_from_parent
+             ? new QProcessEnvironment(QProcessEnvironment::InheritFromParent)
+             : new QProcessEnvironment();
+}
+
+void qt6cr_process_environment_destroy(qt6cr_handle_t handle) {
+  delete as_qprocess_environment(handle);
+}
+
+qt6cr_handle_t qt6cr_process_environment_system_environment(void) {
+  return new QProcessEnvironment(QProcessEnvironment::systemEnvironment());
+}
+
+bool qt6cr_process_environment_is_empty(qt6cr_handle_t handle) {
+  auto *environment = as_qprocess_environment(handle);
+  return environment == nullptr || environment->isEmpty();
+}
+
+bool qt6cr_process_environment_inherits_from_parent(qt6cr_handle_t handle) {
+  auto *environment = as_qprocess_environment(handle);
+  return environment != nullptr && environment->inheritsFromParent();
+}
+
+bool qt6cr_process_environment_contains(qt6cr_handle_t handle, const char *name) {
+  auto *environment = as_qprocess_environment(handle);
+  return environment != nullptr && environment->contains(QString::fromUtf8(name == nullptr ? "" : name));
+}
+
+char *qt6cr_process_environment_value(qt6cr_handle_t handle, const char *name, const char *default_value) {
+  auto *environment = as_qprocess_environment(handle);
+  if (environment == nullptr) {
+    return duplicate_string(default_value == nullptr ? "" : default_value);
+  }
+
+  return duplicate_string(environment->value(
+      QString::fromUtf8(name == nullptr ? "" : name),
+      QString::fromUtf8(default_value == nullptr ? "" : default_value)));
+}
+
+void qt6cr_process_environment_insert(qt6cr_handle_t handle, const char *name, const char *value) {
+  auto *environment = as_qprocess_environment(handle);
+  if (environment != nullptr) {
+    environment->insert(QString::fromUtf8(name == nullptr ? "" : name),
+                        QString::fromUtf8(value == nullptr ? "" : value));
+  }
+}
+
+void qt6cr_process_environment_insert_environment(qt6cr_handle_t handle, qt6cr_handle_t other) {
+  auto *environment = as_qprocess_environment(handle);
+  auto *source = as_qprocess_environment(other);
+  if (environment != nullptr && source != nullptr) {
+    environment->insert(*source);
+  }
+}
+
+void qt6cr_process_environment_remove(qt6cr_handle_t handle, const char *name) {
+  auto *environment = as_qprocess_environment(handle);
+  if (environment != nullptr) {
+    environment->remove(QString::fromUtf8(name == nullptr ? "" : name));
+  }
+}
+
+void qt6cr_process_environment_clear(qt6cr_handle_t handle) {
+  auto *environment = as_qprocess_environment(handle);
+  if (environment != nullptr) {
+    environment->clear();
+  }
+}
+
+qt6cr_string_array_t qt6cr_process_environment_keys(qt6cr_handle_t handle) {
+  auto *environment = as_qprocess_environment(handle);
+  return environment == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(environment->keys());
+}
+
+qt6cr_string_array_t qt6cr_process_environment_to_string_list(qt6cr_handle_t handle) {
+  auto *environment = as_qprocess_environment(handle);
+  return environment == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(environment->toStringList());
+}
+
+#if QT_CONFIG(process)
+qt6cr_handle_t qt6cr_process_create(qt6cr_handle_t parent) {
+  return new QProcess(as_qobject(parent));
+}
+
+void qt6cr_process_destroy(qt6cr_handle_t handle) {
+  delete as_qprocess(handle);
+}
+
+void qt6cr_process_start(qt6cr_handle_t handle, const char *program, const char *const *arguments, int argument_count, int open_mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->start(QString::fromUtf8(program == nullptr ? "" : program),
+                   string_list_from_values(arguments, argument_count),
+                   QIODevice::OpenMode(open_mode));
+  }
+}
+
+void qt6cr_process_start_configured(qt6cr_handle_t handle, int open_mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->start(QIODevice::OpenMode(open_mode));
+  }
+}
+
+void qt6cr_process_start_command(qt6cr_handle_t handle, const char *command, int open_mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->startCommand(QString::fromUtf8(command == nullptr ? "" : command), QIODevice::OpenMode(open_mode));
+  }
+}
+
+qt6cr_process_start_result_t qt6cr_process_start_detached_instance(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  qint64 process_id = 0;
+  const bool started = process != nullptr && process->startDetached(&process_id);
+  return qt6cr_process_start_result_t{started, static_cast<int64_t>(process_id)};
+}
+
+int qt6cr_process_execute(const char *program, const char *const *arguments, int argument_count) {
+  return QProcess::execute(QString::fromUtf8(program == nullptr ? "" : program), string_list_from_values(arguments, argument_count));
+}
+
+qt6cr_process_start_result_t qt6cr_process_start_detached(const char *program, const char *const *arguments, int argument_count, const char *working_directory) {
+  qint64 process_id = 0;
+  const bool started = QProcess::startDetached(QString::fromUtf8(program == nullptr ? "" : program),
+                                               string_list_from_values(arguments, argument_count),
+                                               QString::fromUtf8(working_directory == nullptr ? "" : working_directory),
+                                               &process_id);
+  return qt6cr_process_start_result_t{started, static_cast<int64_t>(process_id)};
+}
+#else
+qt6cr_handle_t qt6cr_process_create(qt6cr_handle_t parent) {
+  (void)parent;
+  return nullptr;
+}
+
+void qt6cr_process_destroy(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+void qt6cr_process_start(qt6cr_handle_t handle, const char *program, const char *const *arguments, int argument_count, int open_mode) {
+  (void)handle;
+  (void)program;
+  (void)arguments;
+  (void)argument_count;
+  (void)open_mode;
+}
+
+void qt6cr_process_start_configured(qt6cr_handle_t handle, int open_mode) {
+  (void)handle;
+  (void)open_mode;
+}
+
+void qt6cr_process_start_command(qt6cr_handle_t handle, const char *command, int open_mode) {
+  (void)handle;
+  (void)command;
+  (void)open_mode;
+}
+
+qt6cr_process_start_result_t qt6cr_process_start_detached_instance(qt6cr_handle_t handle) {
+  (void)handle;
+  return qt6cr_process_start_result_t{false, 0};
+}
+
+int qt6cr_process_execute(const char *program, const char *const *arguments, int argument_count) {
+  (void)program;
+  (void)arguments;
+  (void)argument_count;
+  return -2;
+}
+
+qt6cr_process_start_result_t qt6cr_process_start_detached(const char *program, const char *const *arguments, int argument_count, const char *working_directory) {
+  (void)program;
+  (void)arguments;
+  (void)argument_count;
+  (void)working_directory;
+  return qt6cr_process_start_result_t{false, 0};
+}
+#endif
+
+qt6cr_string_array_t qt6cr_process_split_command(const char *command) {
+  return to_string_array_value(QProcess::splitCommand(QString::fromUtf8(command == nullptr ? "" : command)));
+}
+
+#if QT_CONFIG(process)
+qt6cr_string_array_t qt6cr_process_system_environment(void) {
+  return to_string_array_value(QProcess::systemEnvironment());
+}
+
+char *qt6cr_process_null_device(void) {
+  return duplicate_string(QProcess::nullDevice());
+}
+
+void qt6cr_process_terminate(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->terminate();
+  }
+}
+
+void qt6cr_process_kill(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->kill();
+  }
+}
+
+bool qt6cr_process_wait_for_started(qt6cr_handle_t handle, int msecs) {
+  auto *process = as_qprocess(handle);
+  return process != nullptr && process->waitForStarted(msecs);
+}
+
+bool qt6cr_process_wait_for_finished(qt6cr_handle_t handle, int msecs) {
+  auto *process = as_qprocess(handle);
+  return process != nullptr && process->waitForFinished(msecs);
+}
+
+bool qt6cr_process_wait_for_ready_read(qt6cr_handle_t handle, int msecs) {
+  auto *process = as_qprocess(handle);
+  return process != nullptr && process->waitForReadyRead(msecs);
+}
+
+bool qt6cr_process_wait_for_bytes_written(qt6cr_handle_t handle, int msecs) {
+  auto *process = as_qprocess(handle);
+  return process != nullptr && process->waitForBytesWritten(msecs);
+}
+
+char *qt6cr_process_program(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return duplicate_string(process == nullptr ? QString() : process->program());
+}
+
+void qt6cr_process_set_program(qt6cr_handle_t handle, const char *program) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setProgram(QString::fromUtf8(program == nullptr ? "" : program));
+  }
+}
+
+qt6cr_string_array_t qt6cr_process_arguments(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(process->arguments());
+}
+
+void qt6cr_process_set_arguments(qt6cr_handle_t handle, const char *const *arguments, int argument_count) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setArguments(string_list_from_values(arguments, argument_count));
+  }
+}
+
+char *qt6cr_process_working_directory(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return duplicate_string(process == nullptr ? QString() : process->workingDirectory());
+}
+
+void qt6cr_process_set_working_directory(qt6cr_handle_t handle, const char *directory) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setWorkingDirectory(QString::fromUtf8(directory == nullptr ? "" : directory));
+  }
+}
+
+int64_t qt6cr_process_process_id(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 0 : static_cast<int64_t>(process->processId());
+}
+
+int qt6cr_process_state(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 0 : static_cast<int>(process->state());
+}
+
+int qt6cr_process_error(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 5 : static_cast<int>(process->error());
+}
+
+int qt6cr_process_exit_code(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? -1 : process->exitCode();
+}
+
+int qt6cr_process_exit_status(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 1 : static_cast<int>(process->exitStatus());
+}
+
+qt6cr_byte_array_t qt6cr_process_read_all_standard_output(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(process->readAllStandardOutput());
+}
+
+qt6cr_byte_array_t qt6cr_process_read_all_standard_error(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? qt6cr_byte_array_t{nullptr, 0} : to_byte_array_value(process->readAllStandardError());
+}
+
+int qt6cr_process_read_channel(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 0 : static_cast<int>(process->readChannel());
+}
+
+void qt6cr_process_set_read_channel(qt6cr_handle_t handle, int channel) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setReadChannel(static_cast<QProcess::ProcessChannel>(channel));
+  }
+}
+
+int qt6cr_process_process_channel_mode(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 0 : static_cast<int>(process->processChannelMode());
+}
+
+void qt6cr_process_set_process_channel_mode(qt6cr_handle_t handle, int mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setProcessChannelMode(static_cast<QProcess::ProcessChannelMode>(mode));
+  }
+}
+
+int qt6cr_process_input_channel_mode(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? 0 : static_cast<int>(process->inputChannelMode());
+}
+
+void qt6cr_process_set_input_channel_mode(qt6cr_handle_t handle, int mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setInputChannelMode(static_cast<QProcess::InputChannelMode>(mode));
+  }
+}
+
+void qt6cr_process_close_read_channel(qt6cr_handle_t handle, int channel) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->closeReadChannel(static_cast<QProcess::ProcessChannel>(channel));
+  }
+}
+
+void qt6cr_process_close_write_channel(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->closeWriteChannel();
+  }
+}
+
+void qt6cr_process_set_standard_input_file(qt6cr_handle_t handle, const char *file_name) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setStandardInputFile(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+void qt6cr_process_set_standard_output_file(qt6cr_handle_t handle, const char *file_name, int open_mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setStandardOutputFile(QString::fromUtf8(file_name == nullptr ? "" : file_name), QIODevice::OpenMode(open_mode));
+  }
+}
+
+void qt6cr_process_set_standard_error_file(qt6cr_handle_t handle, const char *file_name, int open_mode) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setStandardErrorFile(QString::fromUtf8(file_name == nullptr ? "" : file_name), QIODevice::OpenMode(open_mode));
+  }
+}
+
+void qt6cr_process_set_standard_output_process(qt6cr_handle_t handle, qt6cr_handle_t destination) {
+  auto *process = as_qprocess(handle);
+  auto *target = as_qprocess(destination);
+  if (process != nullptr && target != nullptr) {
+    process->setStandardOutputProcess(target);
+  }
+}
+
+qt6cr_handle_t qt6cr_process_environment(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? nullptr : new QProcessEnvironment(process->processEnvironment());
+}
+
+void qt6cr_process_set_process_environment(qt6cr_handle_t handle, qt6cr_handle_t environment) {
+  auto *process = as_qprocess(handle);
+  auto *value = as_qprocess_environment(environment);
+  if (process != nullptr && value != nullptr) {
+    process->setProcessEnvironment(*value);
+  }
+}
+
+qt6cr_string_array_t qt6cr_process_environment_strings(qt6cr_handle_t handle) {
+  auto *process = as_qprocess(handle);
+  return process == nullptr ? qt6cr_string_array_t{nullptr, 0} : to_string_array_value(process->environment());
+}
+
+void qt6cr_process_set_environment_strings(qt6cr_handle_t handle, const char *const *values, int value_count) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr) {
+    process->setEnvironment(string_list_from_values(values, value_count));
+  }
+}
+
+void qt6cr_process_on_started(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr && callback != nullptr) {
+    QObject::connect(process, &QProcess::started, process, [callback, userdata]() {
+      callback(userdata);
+    });
+  }
+}
+
+void qt6cr_process_on_finished(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr && callback != nullptr) {
+    QObject::connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), process,
+                     [callback, userdata](int exit_code, QProcess::ExitStatus exit_status) {
+                       callback(userdata, exit_code, static_cast<int>(exit_status));
+                     });
+  }
+}
+
+void qt6cr_process_on_error_occurred(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr && callback != nullptr) {
+    QObject::connect(process, &QProcess::errorOccurred, process, [callback, userdata](QProcess::ProcessError error) {
+      callback(userdata, static_cast<int>(error));
+    });
+  }
+}
+
+void qt6cr_process_on_state_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr && callback != nullptr) {
+    QObject::connect(process, &QProcess::stateChanged, process, [callback, userdata](QProcess::ProcessState state) {
+      callback(userdata, static_cast<int>(state));
+    });
+  }
+}
+
+void qt6cr_process_on_ready_read_standard_output(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr && callback != nullptr) {
+    QObject::connect(process, &QProcess::readyReadStandardOutput, process, [callback, userdata]() {
+      callback(userdata);
+    });
+  }
+}
+
+void qt6cr_process_on_ready_read_standard_error(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  auto *process = as_qprocess(handle);
+  if (process != nullptr && callback != nullptr) {
+    QObject::connect(process, &QProcess::readyReadStandardError, process, [callback, userdata]() {
+      callback(userdata);
+    });
+  }
+}
+#else
+qt6cr_string_array_t qt6cr_process_system_environment(void) {
+  return qt6cr_string_array_t{nullptr, 0};
+}
+
+char *qt6cr_process_null_device(void) {
+  return duplicate_string("");
+}
+
+void qt6cr_process_terminate(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+void qt6cr_process_kill(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+bool qt6cr_process_wait_for_started(qt6cr_handle_t handle, int msecs) {
+  (void)handle;
+  (void)msecs;
+  return false;
+}
+
+bool qt6cr_process_wait_for_finished(qt6cr_handle_t handle, int msecs) {
+  (void)handle;
+  (void)msecs;
+  return false;
+}
+
+bool qt6cr_process_wait_for_ready_read(qt6cr_handle_t handle, int msecs) {
+  (void)handle;
+  (void)msecs;
+  return false;
+}
+
+bool qt6cr_process_wait_for_bytes_written(qt6cr_handle_t handle, int msecs) {
+  (void)handle;
+  (void)msecs;
+  return false;
+}
+
+char *qt6cr_process_program(qt6cr_handle_t handle) {
+  (void)handle;
+  return duplicate_string("");
+}
+
+void qt6cr_process_set_program(qt6cr_handle_t handle, const char *program) {
+  (void)handle;
+  (void)program;
+}
+
+qt6cr_string_array_t qt6cr_process_arguments(qt6cr_handle_t handle) {
+  (void)handle;
+  return qt6cr_string_array_t{nullptr, 0};
+}
+
+void qt6cr_process_set_arguments(qt6cr_handle_t handle, const char *const *arguments, int argument_count) {
+  (void)handle;
+  (void)arguments;
+  (void)argument_count;
+}
+
+char *qt6cr_process_working_directory(qt6cr_handle_t handle) {
+  (void)handle;
+  return duplicate_string("");
+}
+
+void qt6cr_process_set_working_directory(qt6cr_handle_t handle, const char *directory) {
+  (void)handle;
+  (void)directory;
+}
+
+int64_t qt6cr_process_process_id(qt6cr_handle_t handle) {
+  (void)handle;
+  return 0;
+}
+
+int qt6cr_process_state(qt6cr_handle_t handle) {
+  (void)handle;
+  return 0;
+}
+
+int qt6cr_process_error(qt6cr_handle_t handle) {
+  (void)handle;
+  return 5;
+}
+
+int qt6cr_process_exit_code(qt6cr_handle_t handle) {
+  (void)handle;
+  return -1;
+}
+
+int qt6cr_process_exit_status(qt6cr_handle_t handle) {
+  (void)handle;
+  return 1;
+}
+
+qt6cr_byte_array_t qt6cr_process_read_all_standard_output(qt6cr_handle_t handle) {
+  (void)handle;
+  return qt6cr_byte_array_t{nullptr, 0};
+}
+
+qt6cr_byte_array_t qt6cr_process_read_all_standard_error(qt6cr_handle_t handle) {
+  (void)handle;
+  return qt6cr_byte_array_t{nullptr, 0};
+}
+
+int qt6cr_process_read_channel(qt6cr_handle_t handle) {
+  (void)handle;
+  return 0;
+}
+
+void qt6cr_process_set_read_channel(qt6cr_handle_t handle, int channel) {
+  (void)handle;
+  (void)channel;
+}
+
+int qt6cr_process_process_channel_mode(qt6cr_handle_t handle) {
+  (void)handle;
+  return 0;
+}
+
+void qt6cr_process_set_process_channel_mode(qt6cr_handle_t handle, int mode) {
+  (void)handle;
+  (void)mode;
+}
+
+int qt6cr_process_input_channel_mode(qt6cr_handle_t handle) {
+  (void)handle;
+  return 0;
+}
+
+void qt6cr_process_set_input_channel_mode(qt6cr_handle_t handle, int mode) {
+  (void)handle;
+  (void)mode;
+}
+
+void qt6cr_process_close_read_channel(qt6cr_handle_t handle, int channel) {
+  (void)handle;
+  (void)channel;
+}
+
+void qt6cr_process_close_write_channel(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+void qt6cr_process_set_standard_input_file(qt6cr_handle_t handle, const char *file_name) {
+  (void)handle;
+  (void)file_name;
+}
+
+void qt6cr_process_set_standard_output_file(qt6cr_handle_t handle, const char *file_name, int open_mode) {
+  (void)handle;
+  (void)file_name;
+  (void)open_mode;
+}
+
+void qt6cr_process_set_standard_error_file(qt6cr_handle_t handle, const char *file_name, int open_mode) {
+  (void)handle;
+  (void)file_name;
+  (void)open_mode;
+}
+
+void qt6cr_process_set_standard_output_process(qt6cr_handle_t handle, qt6cr_handle_t destination) {
+  (void)handle;
+  (void)destination;
+}
+
+qt6cr_handle_t qt6cr_process_environment(qt6cr_handle_t handle) {
+  (void)handle;
+  return new QProcessEnvironment();
+}
+
+void qt6cr_process_set_process_environment(qt6cr_handle_t handle, qt6cr_handle_t environment) {
+  (void)handle;
+  (void)environment;
+}
+
+qt6cr_string_array_t qt6cr_process_environment_strings(qt6cr_handle_t handle) {
+  (void)handle;
+  return qt6cr_string_array_t{nullptr, 0};
+}
+
+void qt6cr_process_set_environment_strings(qt6cr_handle_t handle, const char *const *values, int value_count) {
+  (void)handle;
+  (void)values;
+  (void)value_count;
+}
+
+void qt6cr_process_on_started(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+}
+
+void qt6cr_process_on_finished(qt6cr_handle_t handle, qt6cr_two_int_callback_t callback, void *userdata) {
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+}
+
+void qt6cr_process_on_error_occurred(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+}
+
+void qt6cr_process_on_state_changed(qt6cr_handle_t handle, qt6cr_int_callback_t callback, void *userdata) {
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+}
+
+void qt6cr_process_on_ready_read_standard_output(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+}
+
+void qt6cr_process_on_ready_read_standard_error(qt6cr_handle_t handle, qt6cr_void_callback_t callback, void *userdata) {
+  (void)handle;
+  (void)callback;
+  (void)userdata;
+}
+#endif
 
 qt6cr_handle_t qt6cr_qbuffer_create(qt6cr_handle_t byte_array) {
   auto *data = as_qbyte_array(byte_array);

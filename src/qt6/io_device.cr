@@ -1,10 +1,6 @@
 module Qt6
-  # Shared wrapper for `QIODevice`-style byte streams.
-  abstract class IODevice < NativeResource
-    protected def initialize(handle : LibQt6::Handle, owned : Bool = true)
-      super(handle, owned)
-    end
-
+  # Shared byte-stream helpers for wrappers backed by `QIODevice`.
+  module IODeviceMethods
     # Opens the device with the given Qt device mode flags.
     def open(mode : IODeviceOpenMode) : Bool
       LibQt6.qt6cr_io_device_open(to_unsafe, mode.value)
@@ -69,6 +65,15 @@ module Qt6
     # Writes UTF-8 text to the device and returns the number of bytes accepted.
     def write(data : String) : Int64
       write(data.to_slice)
+    end
+  end
+
+  # Shared wrapper for `QIODevice`-style byte streams.
+  abstract class IODevice < NativeResource
+    include IODeviceMethods
+
+    protected def initialize(handle : LibQt6::Handle, owned : Bool = true)
+      super(handle, owned)
     end
   end
 end

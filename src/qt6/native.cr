@@ -242,6 +242,11 @@ module Qt6
       size : LibC::Int
     end
 
+    struct ProcessStartResultValue
+      started : Bool
+      process_id : Int64
+    end
+
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_create = qt6cr_object_create(parent : Handle) : Handle
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -2681,6 +2686,73 @@ module Qt6
     fun qt6cr_io_device_peek = qt6cr_io_device_peek(handle : Handle, size : LibC::Int) : ByteArrayValue
     fun qt6cr_io_device_read_all = qt6cr_io_device_read_all(handle : Handle) : ByteArrayValue
     fun qt6cr_io_device_write = qt6cr_io_device_write(handle : Handle, data : UInt8*, size : LibC::Int) : Int64
+
+    fun qt6cr_process_environment_create = qt6cr_process_environment_create(inherit_from_parent : Bool) : Handle
+    fun qt6cr_process_environment_destroy = qt6cr_process_environment_destroy(handle : Handle)
+    fun qt6cr_process_environment_system_environment = qt6cr_process_environment_system_environment : Handle
+    fun qt6cr_process_environment_is_empty = qt6cr_process_environment_is_empty(handle : Handle) : Bool
+    fun qt6cr_process_environment_inherits_from_parent = qt6cr_process_environment_inherits_from_parent(handle : Handle) : Bool
+    fun qt6cr_process_environment_contains = qt6cr_process_environment_contains(handle : Handle, name : UInt8*) : Bool
+    fun qt6cr_process_environment_value = qt6cr_process_environment_value(handle : Handle, name : UInt8*, default_value : UInt8*) : UInt8*
+    fun qt6cr_process_environment_insert = qt6cr_process_environment_insert(handle : Handle, name : UInt8*, value : UInt8*)
+    fun qt6cr_process_environment_insert_environment = qt6cr_process_environment_insert_environment(handle : Handle, other : Handle)
+    fun qt6cr_process_environment_remove = qt6cr_process_environment_remove(handle : Handle, name : UInt8*)
+    fun qt6cr_process_environment_clear = qt6cr_process_environment_clear(handle : Handle)
+    fun qt6cr_process_environment_keys = qt6cr_process_environment_keys(handle : Handle) : StringArrayValue
+    fun qt6cr_process_environment_to_string_list = qt6cr_process_environment_to_string_list(handle : Handle) : StringArrayValue
+
+    fun qt6cr_process_create = qt6cr_process_create(parent : Handle) : Handle
+    fun qt6cr_process_destroy = qt6cr_process_destroy(handle : Handle)
+    fun qt6cr_process_start = qt6cr_process_start(handle : Handle, program : UInt8*, arguments : UInt8**, argument_count : LibC::Int, open_mode : LibC::Int)
+    fun qt6cr_process_start_configured = qt6cr_process_start_configured(handle : Handle, open_mode : LibC::Int)
+    fun qt6cr_process_start_command = qt6cr_process_start_command(handle : Handle, command : UInt8*, open_mode : LibC::Int)
+    fun qt6cr_process_start_detached_instance = qt6cr_process_start_detached_instance(handle : Handle) : ProcessStartResultValue
+    fun qt6cr_process_execute = qt6cr_process_execute(program : UInt8*, arguments : UInt8**, argument_count : LibC::Int) : LibC::Int
+    fun qt6cr_process_start_detached = qt6cr_process_start_detached(program : UInt8*, arguments : UInt8**, argument_count : LibC::Int, working_directory : UInt8*) : ProcessStartResultValue
+    fun qt6cr_process_split_command = qt6cr_process_split_command(command : UInt8*) : StringArrayValue
+    fun qt6cr_process_system_environment = qt6cr_process_system_environment : StringArrayValue
+    fun qt6cr_process_null_device = qt6cr_process_null_device : UInt8*
+    fun qt6cr_process_terminate = qt6cr_process_terminate(handle : Handle)
+    fun qt6cr_process_kill = qt6cr_process_kill(handle : Handle)
+    fun qt6cr_process_wait_for_started = qt6cr_process_wait_for_started(handle : Handle, msecs : LibC::Int) : Bool
+    fun qt6cr_process_wait_for_finished = qt6cr_process_wait_for_finished(handle : Handle, msecs : LibC::Int) : Bool
+    fun qt6cr_process_wait_for_ready_read = qt6cr_process_wait_for_ready_read(handle : Handle, msecs : LibC::Int) : Bool
+    fun qt6cr_process_wait_for_bytes_written = qt6cr_process_wait_for_bytes_written(handle : Handle, msecs : LibC::Int) : Bool
+    fun qt6cr_process_program = qt6cr_process_program(handle : Handle) : UInt8*
+    fun qt6cr_process_set_program = qt6cr_process_set_program(handle : Handle, program : UInt8*)
+    fun qt6cr_process_arguments = qt6cr_process_arguments(handle : Handle) : StringArrayValue
+    fun qt6cr_process_set_arguments = qt6cr_process_set_arguments(handle : Handle, arguments : UInt8**, argument_count : LibC::Int)
+    fun qt6cr_process_working_directory = qt6cr_process_working_directory(handle : Handle) : UInt8*
+    fun qt6cr_process_set_working_directory = qt6cr_process_set_working_directory(handle : Handle, directory : UInt8*)
+    fun qt6cr_process_process_id = qt6cr_process_process_id(handle : Handle) : Int64
+    fun qt6cr_process_state = qt6cr_process_state(handle : Handle) : LibC::Int
+    fun qt6cr_process_error = qt6cr_process_error(handle : Handle) : LibC::Int
+    fun qt6cr_process_exit_code = qt6cr_process_exit_code(handle : Handle) : LibC::Int
+    fun qt6cr_process_exit_status = qt6cr_process_exit_status(handle : Handle) : LibC::Int
+    fun qt6cr_process_read_all_standard_output = qt6cr_process_read_all_standard_output(handle : Handle) : ByteArrayValue
+    fun qt6cr_process_read_all_standard_error = qt6cr_process_read_all_standard_error(handle : Handle) : ByteArrayValue
+    fun qt6cr_process_read_channel = qt6cr_process_read_channel(handle : Handle) : LibC::Int
+    fun qt6cr_process_set_read_channel = qt6cr_process_set_read_channel(handle : Handle, channel : LibC::Int)
+    fun qt6cr_process_process_channel_mode = qt6cr_process_process_channel_mode(handle : Handle) : LibC::Int
+    fun qt6cr_process_set_process_channel_mode = qt6cr_process_set_process_channel_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_process_input_channel_mode = qt6cr_process_input_channel_mode(handle : Handle) : LibC::Int
+    fun qt6cr_process_set_input_channel_mode = qt6cr_process_set_input_channel_mode(handle : Handle, mode : LibC::Int)
+    fun qt6cr_process_close_read_channel = qt6cr_process_close_read_channel(handle : Handle, channel : LibC::Int)
+    fun qt6cr_process_close_write_channel = qt6cr_process_close_write_channel(handle : Handle)
+    fun qt6cr_process_set_standard_input_file = qt6cr_process_set_standard_input_file(handle : Handle, file_name : UInt8*)
+    fun qt6cr_process_set_standard_output_file = qt6cr_process_set_standard_output_file(handle : Handle, file_name : UInt8*, open_mode : LibC::Int)
+    fun qt6cr_process_set_standard_error_file = qt6cr_process_set_standard_error_file(handle : Handle, file_name : UInt8*, open_mode : LibC::Int)
+    fun qt6cr_process_set_standard_output_process = qt6cr_process_set_standard_output_process(handle : Handle, destination : Handle)
+    fun qt6cr_process_environment = qt6cr_process_environment(handle : Handle) : Handle
+    fun qt6cr_process_set_process_environment = qt6cr_process_set_process_environment(handle : Handle, environment : Handle)
+    fun qt6cr_process_environment_strings = qt6cr_process_environment_strings(handle : Handle) : StringArrayValue
+    fun qt6cr_process_set_environment_strings = qt6cr_process_set_environment_strings(handle : Handle, values : UInt8**, value_count : LibC::Int)
+    fun qt6cr_process_on_started = qt6cr_process_on_started(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_process_on_finished = qt6cr_process_on_finished(handle : Handle, callback : (Handle, LibC::Int, LibC::Int ->), userdata : Handle)
+    fun qt6cr_process_on_error_occurred = qt6cr_process_on_error_occurred(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_process_on_state_changed = qt6cr_process_on_state_changed(handle : Handle, callback : (Handle, LibC::Int ->), userdata : Handle)
+    fun qt6cr_process_on_ready_read_standard_output = qt6cr_process_on_ready_read_standard_output(handle : Handle, callback : (Handle ->), userdata : Handle)
+    fun qt6cr_process_on_ready_read_standard_error = qt6cr_process_on_ready_read_standard_error(handle : Handle, callback : (Handle ->), userdata : Handle)
 
     fun qt6cr_qbuffer_create = qt6cr_qbuffer_create(byte_array : Handle) : Handle
     fun qt6cr_qbuffer_destroy = qt6cr_qbuffer_destroy(handle : Handle)

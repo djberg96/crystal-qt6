@@ -3254,4 +3254,146 @@ describe Qt6 do
     native_rules.vertical.should eq(Qt6::TileRule::RepeatTile.value)
     Qt6::TileRules.from_native(native_rules).should eq(mixed_rules)
   end
+
+  it "supports process environment value helpers" do
+    environment = Qt6::QProcessEnvironment.new
+    environment.empty?.should be_true
+    environment.inherits_from_parent?.should be_false
+    environment.value("CRYSTAL_QT6_MISSING", "fallback").should eq("fallback")
+
+    environment.insert("CRYSTAL_QT6_PROCESS_ALPHA", "one")
+    environment.contains?("CRYSTAL_QT6_PROCESS_ALPHA").should be_true
+    environment.value("CRYSTAL_QT6_PROCESS_ALPHA").should eq("one")
+    environment.keys.should contain("CRYSTAL_QT6_PROCESS_ALPHA")
+    environment.to_string_list.should contain("CRYSTAL_QT6_PROCESS_ALPHA=one")
+
+    other = Qt6::QProcessEnvironment.new
+    other.insert("CRYSTAL_QT6_PROCESS_BETA", "two")
+    merged = environment.merge(other)
+    merged.value("CRYSTAL_QT6_PROCESS_ALPHA").should eq("one")
+    merged.value("CRYSTAL_QT6_PROCESS_BETA").should eq("two")
+
+    inherited = Qt6::QProcessEnvironment.new(true)
+    inherited.inherits_from_parent?.should be_true
+
+    system_environment = Qt6::QProcessEnvironment.system_environment
+    system_environment.to_string_list.should be_a(Array(String))
+
+    environment.remove("CRYSTAL_QT6_PROCESS_ALPHA")
+    environment.contains?("CRYSTAL_QT6_PROCESS_ALPHA").should be_false
+    environment.clear.empty?.should be_true
+
+    system_environment.release
+    inherited.release
+    merged.release
+    other.release
+    environment.release
+  end
+
+  it "supports process static helpers" do
+    Qt6::QProcess.split_command(%(echo "hello world")).should eq(["echo", "hello world"])
+    Qt6::QProcess.null_device.should_not be_empty
+    Qt6::QProcess.system_environment.should be_a(Array(String))
+
+    if File.exists?("/bin/sh")
+      Qt6::QProcess.execute("/bin/sh", ["-c", "exit 7"]).should eq(7)
+      result = Qt6::QProcess.start_detached("/bin/sh", ["-c", "exit 0"])
+      result.started.should be_true
+      result.process_id.should be >= 0
+    end
+  end
+
+  it "runs processes asynchronously and captures stdout and stderr" do
+    app
+
+    if File.exists?("/bin/sh")
+      process = Qt6::QProcess.new
+      started = false
+      finished = nil.as(Tuple(Int32, Qt6::ProcessExitStatus)?)
+      states = [] of Qt6::ProcessState
+      stdout_ready = 0
+      stderr_ready = 0
+
+      process.on_started { started = true }
+      process.on_finished { |code, status| finished = {code, status} }
+      process.on_state_changed { |state| states << state }
+      process.on_ready_read_standard_output { stdout_ready += 1 }
+      process.on_ready_read_standard_error { stderr_ready += 1 }
+
+      process.start("/bin/sh", ["-c", "printf out; printf err >&2"])
+      process.wait_for_started(3_000).should be_true
+      process.wait_for_finished(3_000).should be_true
+      3.times { app.process_events }
+
+      started.should be_true
+      finished.should eq({0, Qt6::ProcessExitStatus::NormalExit})
+      states.should contain(Qt6::ProcessState::Running)
+      stdout_ready.should be >= 1
+      stderr_ready.should be >= 1
+      String.new(process.read_all_standard_output.bytes).should eq("out")
+      String.new(process.read_all_standard_error.bytes).should eq("err")
+      process.exit_code.should eq(0)
+      process.exit_status.should eq(Qt6::ProcessExitStatus::NormalExit)
+      process.state.should eq(Qt6::ProcessState::NotRunning)
+      process.release
+    end
+  end
+
+  it "configures process environment, stdin, channels, and redirection" do
+    if File.exists?("/bin/sh")
+      environment = Qt6::QProcessEnvironment.new
+      environment.insert("CRYSTAL_QT6_PROCESS_VALUE", "from-env")
+
+      process = Qt6::QProcess.new
+      process.program = "/bin/sh"
+      process.arguments = ["-c", "printf \"$CRYSTAL_QT6_PROCESS_VALUE\""]
+      process.process_environment = environment
+      process.read_channel = Qt6::ProcessChannel::StandardOutput
+      process.process_channel_mode = Qt6::ProcessChannelMode::SeparateChannels
+      process.input_channel_mode = Qt6::ProcessInputChannelMode::ManagedInputChannel
+      process.start
+      process.wait_for_finished(3_000).should be_true
+      String.new(process.read_all_standard_output.bytes).should eq("from-env")
+      process.program.should eq("/bin/sh")
+      process.arguments.should eq(["-c", "printf \"$CRYSTAL_QT6_PROCESS_VALUE\""])
+      process.read_channel.should eq(Qt6::ProcessChannel::StandardOutput)
+      process.process_channel_mode.should eq(Qt6::ProcessChannelMode::SeparateChannels)
+      process.input_channel_mode.should eq(Qt6::ProcessInputChannelMode::ManagedInputChannel)
+
+      stdin_process = Qt6::QProcess.new
+      stdin_process.start("/bin/sh", ["-c", "cat"])
+      stdin_process.wait_for_started(3_000).should be_true
+      stdin_process.write("ping")
+      stdin_process.close_write_channel
+      stdin_process.wait_for_finished(3_000).should be_true
+      String.new(stdin_process.read_all_standard_output.bytes).should eq("ping")
+
+      output_path = File.join(Dir.tempdir, "crystal-qt6-process-#{::Process.pid}.txt")
+      redirected = Qt6::QProcess.new
+      redirected.set_standard_output_file(output_path)
+      redirected.start("/bin/sh", ["-c", "printf redirected"])
+      redirected.wait_for_finished(3_000).should be_true
+      File.read(output_path).should eq("redirected")
+
+      redirected.release
+      stdin_process.release
+      process.release
+      environment.release
+    end
+  ensure
+    File.delete?(output_path) if output_path
+  end
+
+  it "can kill a running process without hanging" do
+    if File.exists?("/bin/sh")
+      process = Qt6::QProcess.new
+      process.start("/bin/sh", ["-c", "sleep 10"])
+      process.wait_for_started(3_000).should be_true
+      process.process_id.should be > 0
+      process.kill
+      process.wait_for_finished(3_000).should be_true
+      process.state.should eq(Qt6::ProcessState::NotRunning)
+      process.release
+    end
+  end
 end
