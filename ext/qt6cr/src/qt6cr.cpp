@@ -6149,16 +6149,26 @@ bool qt6cr_child_event_removed(qt6cr_handle_t handle) {
 }
 
 qt6cr_handle_t qt6cr_child_window_event_create(int type, qt6cr_handle_t child) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
   return new QChildWindowEvent(static_cast<QEvent::Type>(type), static_cast<QWindow *>(child));
+#else
+  (void)child;
+  return new QEvent(static_cast<QEvent::Type>(type));
+#endif
 }
 
 void qt6cr_child_window_event_destroy(qt6cr_handle_t handle) {
-  delete static_cast<QChildWindowEvent *>(handle);
+  delete static_cast<QEvent *>(handle);
 }
 
 qt6cr_handle_t qt6cr_child_window_event_child(qt6cr_handle_t handle) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
   auto *event = static_cast<QChildWindowEvent *>(handle);
   return event == nullptr ? nullptr : event->child();
+#else
+  (void)handle;
+  return nullptr;
+#endif
 }
 
 qt6cr_handle_t qt6cr_close_event_create() {
