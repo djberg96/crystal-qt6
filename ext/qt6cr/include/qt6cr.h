@@ -202,6 +202,13 @@ typedef struct {
 } qt6cr_process_start_result_t;
 
 typedef struct {
+	bool valid;
+	int64_t pid;
+	char *hostname;
+	char *app_name;
+} qt6cr_lock_file_info_t;
+
+typedef struct {
 	int horizontal_policy;
 	int vertical_policy;
 	int control_type;
@@ -3018,6 +3025,50 @@ qt6cr_byte_array_t qt6cr_qfile_read_all(qt6cr_handle_t handle);
 int64_t qt6cr_qfile_write(qt6cr_handle_t handle, const unsigned char *data, int size);
 bool qt6cr_qfile_flush(qt6cr_handle_t handle);
 bool qt6cr_qfile_remove(qt6cr_handle_t handle);
+
+qt6cr_handle_t qt6cr_qsave_file_create(const char *file_name);
+void qt6cr_qsave_file_destroy(qt6cr_handle_t handle);
+char *qt6cr_qsave_file_file_name(qt6cr_handle_t handle);
+void qt6cr_qsave_file_set_file_name(qt6cr_handle_t handle, const char *file_name);
+bool qt6cr_qsave_file_open(qt6cr_handle_t handle, int open_mode);
+bool qt6cr_qsave_file_commit(qt6cr_handle_t handle);
+void qt6cr_qsave_file_cancel_writing(qt6cr_handle_t handle);
+bool qt6cr_qsave_file_direct_write_fallback(qt6cr_handle_t handle);
+void qt6cr_qsave_file_set_direct_write_fallback(qt6cr_handle_t handle, bool enabled);
+
+qt6cr_handle_t qt6cr_qtemporary_file_create(const char *template_name);
+void qt6cr_qtemporary_file_destroy(qt6cr_handle_t handle);
+bool qt6cr_qtemporary_file_auto_remove(qt6cr_handle_t handle);
+void qt6cr_qtemporary_file_set_auto_remove(qt6cr_handle_t handle, bool value);
+bool qt6cr_qtemporary_file_open(qt6cr_handle_t handle);
+char *qt6cr_qtemporary_file_file_template(qt6cr_handle_t handle);
+void qt6cr_qtemporary_file_set_file_template(qt6cr_handle_t handle, const char *template_name);
+bool qt6cr_qtemporary_file_rename(qt6cr_handle_t handle, const char *new_name);
+bool qt6cr_qtemporary_file_rename_overwrite(qt6cr_handle_t handle, const char *new_name);
+qt6cr_handle_t qt6cr_qtemporary_file_create_native_file(const char *file_name);
+
+qt6cr_handle_t qt6cr_qtemporary_dir_create(const char *template_name);
+void qt6cr_qtemporary_dir_destroy(qt6cr_handle_t handle);
+bool qt6cr_qtemporary_dir_is_valid(qt6cr_handle_t handle);
+char *qt6cr_qtemporary_dir_error_string(qt6cr_handle_t handle);
+bool qt6cr_qtemporary_dir_auto_remove(qt6cr_handle_t handle);
+void qt6cr_qtemporary_dir_set_auto_remove(qt6cr_handle_t handle, bool value);
+bool qt6cr_qtemporary_dir_remove(qt6cr_handle_t handle);
+char *qt6cr_qtemporary_dir_path(qt6cr_handle_t handle);
+char *qt6cr_qtemporary_dir_file_path(qt6cr_handle_t handle, const char *file_name);
+
+qt6cr_handle_t qt6cr_qlock_file_create(const char *file_name);
+void qt6cr_qlock_file_destroy(qt6cr_handle_t handle);
+char *qt6cr_qlock_file_file_name(qt6cr_handle_t handle);
+bool qt6cr_qlock_file_lock(qt6cr_handle_t handle);
+bool qt6cr_qlock_file_try_lock(qt6cr_handle_t handle, int timeout_ms);
+void qt6cr_qlock_file_unlock(qt6cr_handle_t handle);
+void qt6cr_qlock_file_set_stale_lock_time(qt6cr_handle_t handle, int stale_lock_time_ms);
+int qt6cr_qlock_file_stale_lock_time(qt6cr_handle_t handle);
+bool qt6cr_qlock_file_is_locked(qt6cr_handle_t handle);
+qt6cr_lock_file_info_t qt6cr_qlock_file_lock_info(qt6cr_handle_t handle);
+bool qt6cr_qlock_file_remove_stale_lock_file(qt6cr_handle_t handle);
+int qt6cr_qlock_file_error(qt6cr_handle_t handle);
 
 qt6cr_handle_t qt6cr_qsettings_create_from_file(const char *file_name, int format);
 qt6cr_handle_t qt6cr_qsettings_create_for_application(const char *organization, const char *application, int format);

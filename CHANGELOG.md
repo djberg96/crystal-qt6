@@ -13,6 +13,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Expanded the model/view core with richer `QAbstractItemModel` helpers and signals, callback-backed `QAbstractTableModel`, shared `QAbstractProxyModel`, `QConcatenateTablesProxyModel`, and broader `QStandardItem` / `QStandardItemModel` coverage while keeping optional Qt modules out of the dependency set.
 - Expanded `QEvent` with owned/borrowed wrapper support and added practical wrappers for common Core/Gui event subclasses, including child, action, dynamic-property, focus, paint/resize, input-method, scroll, shortcut, timer, status-tip, file-open, and window-state events.
 - Added `QProcess` and `QProcessEnvironment` bindings for launching external tools, streaming stdout/stderr, configuring process environments, handling process signals, and using Qt's static process helpers without adding new dependencies.
+- Added filesystem safety bindings for `QSaveFile`, `QTemporaryFile`, `QTemporaryDir`, and `QLockFile` to support safe writes, scratch files/directories, and advisory single-writer locks.
 
 ### Changed
 

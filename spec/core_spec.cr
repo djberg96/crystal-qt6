@@ -1,4 +1,5 @@
 require "./spec_helper"
+require "file_utils"
 
 describe Qt6 do
   it "wraps base QEvent ownership and simple core events" do
@@ -3395,5 +3396,140 @@ describe Qt6 do
       process.state.should eq(Qt6::ProcessState::NotRunning)
       process.release
     end
+  end
+
+  it "supports safe replacement writes with QSaveFile" do
+    target_path = File.join(Dir.tempdir, "crystal-qt6-save-file-#{::Process.pid}.txt")
+    renamed_path = File.join(Dir.tempdir, "crystal-qt6-save-file-renamed-#{::Process.pid}.txt")
+    File.write(target_path, "original")
+
+    canceled = Qt6::QSaveFile.new(target_path)
+    canceled.open.should be_true
+    canceled.write("canceled").should eq(8)
+    canceled.cancel_writing
+    canceled.release
+    File.read(target_path).should eq("original")
+
+    saved = Qt6::QSaveFile.new
+    saved.file_name = renamed_path
+    saved.file_name.should eq(renamed_path)
+    saved.direct_write_fallback = true
+    saved.direct_write_fallback?.should be_true
+    saved.open.should be_true
+    saved.write("committed").should eq(9)
+    saved.commit.should be_true
+    saved.release
+    File.read(renamed_path).should eq("committed")
+  ensure
+    File.delete?(target_path) if target_path
+    File.delete?(renamed_path) if renamed_path
+  end
+
+  it "supports temporary files for scratch data and renames" do
+    template_path = File.join(Dir.tempdir, "crystal-qt6-temp-file-XXXXXX")
+    kept_path = File.join(Dir.tempdir, "crystal-qt6-temp-file-kept-#{::Process.pid}.txt")
+    overwritten_path = File.join(Dir.tempdir, "crystal-qt6-temp-file-overwrite-#{::Process.pid}.txt")
+    source_path = File.join(Dir.tempdir, "crystal-qt6-temp-file-source-#{::Process.pid}.txt")
+
+    temp_file = Qt6::QTemporaryFile.new(template_path)
+    temp_file.file_template.should eq(template_path)
+    temp_file.auto_remove?.should be_true
+    temp_file.open.should be_true
+    temp_path = temp_file.file_name
+    Qt6::QFile.exists?(temp_path).should be_true
+    temp_file.write("scratch").should eq(7)
+    temp_file.seek(0).should be_true
+    String.new(temp_file.read_all.bytes).should eq("scratch")
+    temp_file.release
+    Qt6::QFile.exists?(temp_path).should be_false
+
+    kept = Qt6::QTemporaryFile.new
+    kept.file_template = template_path
+    kept.auto_remove = false
+    kept.open.should be_true
+    kept.write("kept").should eq(4)
+    kept.rename(kept_path).should be_true
+    kept.release
+    Qt6::QFile.exists?(kept_path).should be_true
+
+    File.write(overwritten_path, "old")
+    overwriting = Qt6::QTemporaryFile.new(template_path)
+    overwriting.auto_remove = false
+    overwriting.open.should be_true
+    overwriting.write("new").should eq(3)
+    overwriting.rename_overwrite(overwritten_path).should be_true
+    overwriting.release
+    File.read(overwritten_path).should eq("new")
+
+    File.write(source_path, "source")
+    native_file = Qt6::QTemporaryFile.create_native_file(source_path)
+    if native_file
+      Qt6::QFile.exists?(native_file.file_name).should be_true
+      native_file.release
+    end
+  ensure
+    File.delete?(temp_path) if temp_path
+    File.delete?(kept_path) if kept_path
+    File.delete?(overwritten_path) if overwritten_path
+    File.delete?(source_path) if source_path
+  end
+
+  it "supports temporary directories" do
+    template_path = File.join(Dir.tempdir, "crystal-qt6-temp-dir-XXXXXX")
+    temporary_dir = Qt6::QTemporaryDir.new(template_path)
+    temporary_dir.valid?.should be_true
+    temporary_dir.error_string.should be_a(String)
+    temporary_dir.auto_remove?.should be_true
+    temporary_dir.path.should_not be_empty
+    temporary_path = temporary_dir.path
+
+    child_path = temporary_dir.file_path("child.txt")
+    child_path.starts_with?(temporary_path).should be_true
+    File.write(child_path, "child")
+    File.exists?(child_path).should be_true
+    temporary_dir.auto_remove = false
+    temporary_dir.auto_remove?.should be_false
+    temporary_dir.remove.should be_true
+    Dir.exists?(temporary_path).should be_false
+    temporary_dir.release
+  ensure
+    FileUtils.rm_rf(temporary_path) if temporary_path && Dir.exists?(temporary_path)
+  end
+
+  it "supports advisory lock files" do
+    lock_path = File.join(Dir.tempdir, "crystal-qt6-lock-file-#{::Process.pid}.lock")
+    lock_file = Qt6::QLockFile.new(lock_path)
+    lock_file.file_name.should eq(lock_path)
+    lock_file.stale_lock_time = 250
+    lock_file.stale_lock_time.should eq(250)
+
+    lock_file.try_lock.should be_true
+    lock_file.locked?.should be_true
+    lock_file.error.should eq(Qt6::LockFileError::NoError)
+
+    lock_info = lock_file.lock_info
+    if lock_info
+      lock_info.pid.should be > 0
+      lock_info.hostname.should be_a(String)
+      lock_info.app_name.should be_a(String)
+    end
+
+    competing_lock = Qt6::QLockFile.new(lock_path)
+    competing_lock.try_lock.should be_false
+    competing_lock.error.should eq(Qt6::LockFileError::LockFailedError)
+
+    lock_file.unlock
+    lock_file.locked?.should be_false
+    competing_lock.try_lock.should be_true
+    competing_lock.unlock
+
+    stale_probe = Qt6::QLockFile.new(File.join(Dir.tempdir, "crystal-qt6-stale-lock-#{::Process.pid}.lock"))
+    stale_probe.remove_stale_lock_file.should be_false
+
+    stale_probe.release
+    competing_lock.release
+    lock_file.release
+  ensure
+    File.delete?(lock_path) if lock_path
   end
 end

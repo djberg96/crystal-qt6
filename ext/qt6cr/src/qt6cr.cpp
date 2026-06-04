@@ -111,6 +111,7 @@
 #include <QLayoutItem>
 #include <QLineEdit>
 #include <QLCDNumber>
+#include <QLockFile>
 #include <QMainWindow>
 #include <QMenu>
 #include <QBrush>
@@ -158,6 +159,7 @@
 #include <QShortcut>
 #include <QSettings>
 #include <QSequentialAnimationGroup>
+#include <QSaveFile>
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
 #include <QKeySequence>
@@ -204,6 +206,8 @@
 #include <QTableView>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTemporaryDir>
+#include <QTemporaryFile>
 #include <QSizeGrip>
 #include <QTimer>
 #include <QTransform>
@@ -240,6 +244,7 @@
 
 #include <QPoint>
 
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -2809,6 +2814,24 @@ QBuffer *as_qbuffer(qt6cr_handle_t handle) {
 
 QIODevice *as_qio_device(qt6cr_handle_t handle) {
   return static_cast<QIODevice *>(handle);
+}
+
+#if QT_CONFIG(temporaryfile)
+QSaveFile *as_qsave_file(qt6cr_handle_t handle) {
+  return static_cast<QSaveFile *>(handle);
+}
+
+QTemporaryFile *as_qtemporary_file(qt6cr_handle_t handle) {
+  return static_cast<QTemporaryFile *>(handle);
+}
+
+QTemporaryDir *as_qtemporary_dir(qt6cr_handle_t handle) {
+  return static_cast<QTemporaryDir *>(handle);
+}
+#endif
+
+QLockFile *as_qlock_file(qt6cr_handle_t handle) {
+  return static_cast<QLockFile *>(handle);
 }
 
 QProcessEnvironment *as_qprocess_environment(qt6cr_handle_t handle) {
@@ -22392,6 +22415,367 @@ bool qt6cr_qfile_flush(qt6cr_handle_t handle) {
 bool qt6cr_qfile_remove(qt6cr_handle_t handle) {
   auto *file = as_qfile(handle);
   return file != nullptr && file->remove();
+}
+
+#if QT_CONFIG(temporaryfile)
+qt6cr_handle_t qt6cr_qsave_file_create(const char *file_name) {
+  return new QSaveFile(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+void qt6cr_qsave_file_destroy(qt6cr_handle_t handle) {
+  delete as_qsave_file(handle);
+}
+
+char *qt6cr_qsave_file_file_name(qt6cr_handle_t handle) {
+  auto *file = as_qsave_file(handle);
+  return file == nullptr ? duplicate_string("") : duplicate_string(file->fileName());
+}
+
+void qt6cr_qsave_file_set_file_name(qt6cr_handle_t handle, const char *file_name) {
+  auto *file = as_qsave_file(handle);
+  if (file != nullptr) {
+    file->setFileName(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+  }
+}
+
+bool qt6cr_qsave_file_open(qt6cr_handle_t handle, int open_mode) {
+  auto *file = as_qsave_file(handle);
+  return file != nullptr && file->open(QIODevice::OpenMode(open_mode));
+}
+
+bool qt6cr_qsave_file_commit(qt6cr_handle_t handle) {
+  auto *file = as_qsave_file(handle);
+  return file != nullptr && file->commit();
+}
+
+void qt6cr_qsave_file_cancel_writing(qt6cr_handle_t handle) {
+  auto *file = as_qsave_file(handle);
+  if (file != nullptr) {
+    file->cancelWriting();
+  }
+}
+
+bool qt6cr_qsave_file_direct_write_fallback(qt6cr_handle_t handle) {
+  auto *file = as_qsave_file(handle);
+  return file != nullptr && file->directWriteFallback();
+}
+
+void qt6cr_qsave_file_set_direct_write_fallback(qt6cr_handle_t handle, bool enabled) {
+  auto *file = as_qsave_file(handle);
+  if (file != nullptr) {
+    file->setDirectWriteFallback(enabled);
+  }
+}
+
+qt6cr_handle_t qt6cr_qtemporary_file_create(const char *template_name) {
+  return template_name == nullptr
+             ? new QTemporaryFile()
+             : new QTemporaryFile(QString::fromUtf8(template_name));
+}
+
+void qt6cr_qtemporary_file_destroy(qt6cr_handle_t handle) {
+  delete as_qtemporary_file(handle);
+}
+
+bool qt6cr_qtemporary_file_auto_remove(qt6cr_handle_t handle) {
+  auto *file = as_qtemporary_file(handle);
+  return file != nullptr && file->autoRemove();
+}
+
+void qt6cr_qtemporary_file_set_auto_remove(qt6cr_handle_t handle, bool value) {
+  auto *file = as_qtemporary_file(handle);
+  if (file != nullptr) {
+    file->setAutoRemove(value);
+  }
+}
+
+bool qt6cr_qtemporary_file_open(qt6cr_handle_t handle) {
+  auto *file = as_qtemporary_file(handle);
+  return file != nullptr && file->open();
+}
+
+char *qt6cr_qtemporary_file_file_template(qt6cr_handle_t handle) {
+  auto *file = as_qtemporary_file(handle);
+  return file == nullptr ? duplicate_string("") : duplicate_string(file->fileTemplate());
+}
+
+void qt6cr_qtemporary_file_set_file_template(qt6cr_handle_t handle, const char *template_name) {
+  auto *file = as_qtemporary_file(handle);
+  if (file != nullptr) {
+    file->setFileTemplate(QString::fromUtf8(template_name == nullptr ? "" : template_name));
+  }
+}
+
+bool qt6cr_qtemporary_file_rename(qt6cr_handle_t handle, const char *new_name) {
+  auto *file = as_qtemporary_file(handle);
+  return file != nullptr && file->rename(QString::fromUtf8(new_name == nullptr ? "" : new_name));
+}
+
+bool qt6cr_qtemporary_file_rename_overwrite(qt6cr_handle_t handle, const char *new_name) {
+  auto *file = as_qtemporary_file(handle);
+  return file != nullptr && file->renameOverwrite(QString::fromUtf8(new_name == nullptr ? "" : new_name));
+}
+
+qt6cr_handle_t qt6cr_qtemporary_file_create_native_file(const char *file_name) {
+  return QTemporaryFile::createNativeFile(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+qt6cr_handle_t qt6cr_qtemporary_dir_create(const char *template_name) {
+  return template_name == nullptr
+             ? new QTemporaryDir()
+             : new QTemporaryDir(QString::fromUtf8(template_name));
+}
+
+void qt6cr_qtemporary_dir_destroy(qt6cr_handle_t handle) {
+  delete as_qtemporary_dir(handle);
+}
+
+bool qt6cr_qtemporary_dir_is_valid(qt6cr_handle_t handle) {
+  auto *dir = as_qtemporary_dir(handle);
+  return dir != nullptr && dir->isValid();
+}
+
+char *qt6cr_qtemporary_dir_error_string(qt6cr_handle_t handle) {
+  auto *dir = as_qtemporary_dir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->errorString());
+}
+
+bool qt6cr_qtemporary_dir_auto_remove(qt6cr_handle_t handle) {
+  auto *dir = as_qtemporary_dir(handle);
+  return dir != nullptr && dir->autoRemove();
+}
+
+void qt6cr_qtemporary_dir_set_auto_remove(qt6cr_handle_t handle, bool value) {
+  auto *dir = as_qtemporary_dir(handle);
+  if (dir != nullptr) {
+    dir->setAutoRemove(value);
+  }
+}
+
+bool qt6cr_qtemporary_dir_remove(qt6cr_handle_t handle) {
+  auto *dir = as_qtemporary_dir(handle);
+  return dir != nullptr && dir->remove();
+}
+
+char *qt6cr_qtemporary_dir_path(qt6cr_handle_t handle) {
+  auto *dir = as_qtemporary_dir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->path());
+}
+
+char *qt6cr_qtemporary_dir_file_path(qt6cr_handle_t handle, const char *file_name) {
+  auto *dir = as_qtemporary_dir(handle);
+  return dir == nullptr ? duplicate_string("") : duplicate_string(dir->filePath(QString::fromUtf8(file_name == nullptr ? "" : file_name)));
+}
+#else
+qt6cr_handle_t qt6cr_qsave_file_create(const char *file_name) {
+  (void)file_name;
+  return nullptr;
+}
+
+void qt6cr_qsave_file_destroy(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+char *qt6cr_qsave_file_file_name(qt6cr_handle_t handle) {
+  (void)handle;
+  return duplicate_string("");
+}
+
+void qt6cr_qsave_file_set_file_name(qt6cr_handle_t handle, const char *file_name) {
+  (void)handle;
+  (void)file_name;
+}
+
+bool qt6cr_qsave_file_open(qt6cr_handle_t handle, int open_mode) {
+  (void)handle;
+  (void)open_mode;
+  return false;
+}
+
+bool qt6cr_qsave_file_commit(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+void qt6cr_qsave_file_cancel_writing(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+bool qt6cr_qsave_file_direct_write_fallback(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+void qt6cr_qsave_file_set_direct_write_fallback(qt6cr_handle_t handle, bool enabled) {
+  (void)handle;
+  (void)enabled;
+}
+
+qt6cr_handle_t qt6cr_qtemporary_file_create(const char *template_name) {
+  (void)template_name;
+  return nullptr;
+}
+
+void qt6cr_qtemporary_file_destroy(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+bool qt6cr_qtemporary_file_auto_remove(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+void qt6cr_qtemporary_file_set_auto_remove(qt6cr_handle_t handle, bool value) {
+  (void)handle;
+  (void)value;
+}
+
+bool qt6cr_qtemporary_file_open(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+char *qt6cr_qtemporary_file_file_template(qt6cr_handle_t handle) {
+  (void)handle;
+  return duplicate_string("");
+}
+
+void qt6cr_qtemporary_file_set_file_template(qt6cr_handle_t handle, const char *template_name) {
+  (void)handle;
+  (void)template_name;
+}
+
+bool qt6cr_qtemporary_file_rename(qt6cr_handle_t handle, const char *new_name) {
+  (void)handle;
+  (void)new_name;
+  return false;
+}
+
+bool qt6cr_qtemporary_file_rename_overwrite(qt6cr_handle_t handle, const char *new_name) {
+  (void)handle;
+  (void)new_name;
+  return false;
+}
+
+qt6cr_handle_t qt6cr_qtemporary_file_create_native_file(const char *file_name) {
+  (void)file_name;
+  return nullptr;
+}
+
+qt6cr_handle_t qt6cr_qtemporary_dir_create(const char *template_name) {
+  (void)template_name;
+  return nullptr;
+}
+
+void qt6cr_qtemporary_dir_destroy(qt6cr_handle_t handle) {
+  (void)handle;
+}
+
+bool qt6cr_qtemporary_dir_is_valid(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+char *qt6cr_qtemporary_dir_error_string(qt6cr_handle_t handle) {
+  (void)handle;
+  return duplicate_string("");
+}
+
+bool qt6cr_qtemporary_dir_auto_remove(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+void qt6cr_qtemporary_dir_set_auto_remove(qt6cr_handle_t handle, bool value) {
+  (void)handle;
+  (void)value;
+}
+
+bool qt6cr_qtemporary_dir_remove(qt6cr_handle_t handle) {
+  (void)handle;
+  return false;
+}
+
+char *qt6cr_qtemporary_dir_path(qt6cr_handle_t handle) {
+  (void)handle;
+  return duplicate_string("");
+}
+
+char *qt6cr_qtemporary_dir_file_path(qt6cr_handle_t handle, const char *file_name) {
+  (void)handle;
+  (void)file_name;
+  return duplicate_string("");
+}
+#endif
+
+qt6cr_handle_t qt6cr_qlock_file_create(const char *file_name) {
+  return new QLockFile(QString::fromUtf8(file_name == nullptr ? "" : file_name));
+}
+
+void qt6cr_qlock_file_destroy(qt6cr_handle_t handle) {
+  delete as_qlock_file(handle);
+}
+
+char *qt6cr_qlock_file_file_name(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file == nullptr ? duplicate_string("") : duplicate_string(lock_file->fileName());
+}
+
+bool qt6cr_qlock_file_lock(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file != nullptr && lock_file->lock();
+}
+
+bool qt6cr_qlock_file_try_lock(qt6cr_handle_t handle, int timeout_ms) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file != nullptr && lock_file->tryLock(std::chrono::milliseconds(timeout_ms));
+}
+
+void qt6cr_qlock_file_unlock(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  if (lock_file != nullptr) {
+    lock_file->unlock();
+  }
+}
+
+void qt6cr_qlock_file_set_stale_lock_time(qt6cr_handle_t handle, int stale_lock_time_ms) {
+  auto *lock_file = as_qlock_file(handle);
+  if (lock_file != nullptr) {
+    lock_file->setStaleLockTime(std::chrono::milliseconds(stale_lock_time_ms));
+  }
+}
+
+int qt6cr_qlock_file_stale_lock_time(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file == nullptr ? 0 : static_cast<int>(lock_file->staleLockTimeAsDuration().count());
+}
+
+bool qt6cr_qlock_file_is_locked(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file != nullptr && lock_file->isLocked();
+}
+
+qt6cr_lock_file_info_t qt6cr_qlock_file_lock_info(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  if (lock_file == nullptr) {
+    return qt6cr_lock_file_info_t{false, 0, duplicate_string(""), duplicate_string("")};
+  }
+
+  qint64 pid = 0;
+  QString hostname;
+  QString app_name;
+  const bool valid = lock_file->getLockInfo(&pid, &hostname, &app_name);
+  return qt6cr_lock_file_info_t{valid, static_cast<int64_t>(pid), duplicate_string(hostname), duplicate_string(app_name)};
+}
+
+bool qt6cr_qlock_file_remove_stale_lock_file(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file != nullptr && lock_file->removeStaleLockFile();
+}
+
+int qt6cr_qlock_file_error(qt6cr_handle_t handle) {
+  auto *lock_file = as_qlock_file(handle);
+  return lock_file == nullptr ? static_cast<int>(QLockFile::UnknownError) : static_cast<int>(lock_file->error());
 }
 
 qt6cr_handle_t qt6cr_qsettings_create_from_file(const char *file_name, int format) {

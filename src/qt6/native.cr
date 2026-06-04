@@ -247,6 +247,13 @@ module Qt6
       process_id : Int64
     end
 
+    struct LockFileInfoValue
+      valid : Bool
+      pid : Int64
+      hostname : UInt8*
+      app_name : UInt8*
+    end
+
     fun qt6cr_object_destroy = qt6cr_object_destroy(handle : Handle)
     fun qt6cr_object_create = qt6cr_object_create(parent : Handle) : Handle
     fun qt6cr_object_on_destroyed = qt6cr_object_on_destroyed(handle : Handle, callback : (Handle ->), userdata : Handle)
@@ -2986,6 +2993,50 @@ module Qt6
     fun qt6cr_qfile_write = qt6cr_qfile_write(handle : Handle, data : UInt8*, size : LibC::Int) : Int64
     fun qt6cr_qfile_flush = qt6cr_qfile_flush(handle : Handle) : Bool
     fun qt6cr_qfile_remove = qt6cr_qfile_remove(handle : Handle) : Bool
+
+    fun qt6cr_qsave_file_create = qt6cr_qsave_file_create(file_name : UInt8*) : Handle
+    fun qt6cr_qsave_file_destroy = qt6cr_qsave_file_destroy(handle : Handle)
+    fun qt6cr_qsave_file_file_name = qt6cr_qsave_file_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qsave_file_set_file_name = qt6cr_qsave_file_set_file_name(handle : Handle, file_name : UInt8*)
+    fun qt6cr_qsave_file_open = qt6cr_qsave_file_open(handle : Handle, open_mode : LibC::Int) : Bool
+    fun qt6cr_qsave_file_commit = qt6cr_qsave_file_commit(handle : Handle) : Bool
+    fun qt6cr_qsave_file_cancel_writing = qt6cr_qsave_file_cancel_writing(handle : Handle)
+    fun qt6cr_qsave_file_direct_write_fallback = qt6cr_qsave_file_direct_write_fallback(handle : Handle) : Bool
+    fun qt6cr_qsave_file_set_direct_write_fallback = qt6cr_qsave_file_set_direct_write_fallback(handle : Handle, enabled : Bool)
+
+    fun qt6cr_qtemporary_file_create = qt6cr_qtemporary_file_create(template_name : UInt8*) : Handle
+    fun qt6cr_qtemporary_file_destroy = qt6cr_qtemporary_file_destroy(handle : Handle)
+    fun qt6cr_qtemporary_file_auto_remove = qt6cr_qtemporary_file_auto_remove(handle : Handle) : Bool
+    fun qt6cr_qtemporary_file_set_auto_remove = qt6cr_qtemporary_file_set_auto_remove(handle : Handle, value : Bool)
+    fun qt6cr_qtemporary_file_open = qt6cr_qtemporary_file_open(handle : Handle) : Bool
+    fun qt6cr_qtemporary_file_file_template = qt6cr_qtemporary_file_file_template(handle : Handle) : UInt8*
+    fun qt6cr_qtemporary_file_set_file_template = qt6cr_qtemporary_file_set_file_template(handle : Handle, template_name : UInt8*)
+    fun qt6cr_qtemporary_file_rename = qt6cr_qtemporary_file_rename(handle : Handle, new_name : UInt8*) : Bool
+    fun qt6cr_qtemporary_file_rename_overwrite = qt6cr_qtemporary_file_rename_overwrite(handle : Handle, new_name : UInt8*) : Bool
+    fun qt6cr_qtemporary_file_create_native_file = qt6cr_qtemporary_file_create_native_file(file_name : UInt8*) : Handle
+
+    fun qt6cr_qtemporary_dir_create = qt6cr_qtemporary_dir_create(template_name : UInt8*) : Handle
+    fun qt6cr_qtemporary_dir_destroy = qt6cr_qtemporary_dir_destroy(handle : Handle)
+    fun qt6cr_qtemporary_dir_is_valid = qt6cr_qtemporary_dir_is_valid(handle : Handle) : Bool
+    fun qt6cr_qtemporary_dir_error_string = qt6cr_qtemporary_dir_error_string(handle : Handle) : UInt8*
+    fun qt6cr_qtemporary_dir_auto_remove = qt6cr_qtemporary_dir_auto_remove(handle : Handle) : Bool
+    fun qt6cr_qtemporary_dir_set_auto_remove = qt6cr_qtemporary_dir_set_auto_remove(handle : Handle, value : Bool)
+    fun qt6cr_qtemporary_dir_remove = qt6cr_qtemporary_dir_remove(handle : Handle) : Bool
+    fun qt6cr_qtemporary_dir_path = qt6cr_qtemporary_dir_path(handle : Handle) : UInt8*
+    fun qt6cr_qtemporary_dir_file_path = qt6cr_qtemporary_dir_file_path(handle : Handle, file_name : UInt8*) : UInt8*
+
+    fun qt6cr_qlock_file_create = qt6cr_qlock_file_create(file_name : UInt8*) : Handle
+    fun qt6cr_qlock_file_destroy = qt6cr_qlock_file_destroy(handle : Handle)
+    fun qt6cr_qlock_file_file_name = qt6cr_qlock_file_file_name(handle : Handle) : UInt8*
+    fun qt6cr_qlock_file_lock = qt6cr_qlock_file_lock(handle : Handle) : Bool
+    fun qt6cr_qlock_file_try_lock = qt6cr_qlock_file_try_lock(handle : Handle, timeout_ms : LibC::Int) : Bool
+    fun qt6cr_qlock_file_unlock = qt6cr_qlock_file_unlock(handle : Handle)
+    fun qt6cr_qlock_file_set_stale_lock_time = qt6cr_qlock_file_set_stale_lock_time(handle : Handle, stale_lock_time_ms : LibC::Int)
+    fun qt6cr_qlock_file_stale_lock_time = qt6cr_qlock_file_stale_lock_time(handle : Handle) : LibC::Int
+    fun qt6cr_qlock_file_is_locked = qt6cr_qlock_file_is_locked(handle : Handle) : Bool
+    fun qt6cr_qlock_file_lock_info = qt6cr_qlock_file_lock_info(handle : Handle) : LockFileInfoValue
+    fun qt6cr_qlock_file_remove_stale_lock_file = qt6cr_qlock_file_remove_stale_lock_file(handle : Handle) : Bool
+    fun qt6cr_qlock_file_error = qt6cr_qlock_file_error(handle : Handle) : LibC::Int
 
     fun qt6cr_qsettings_create_from_file = qt6cr_qsettings_create_from_file(file_name : UInt8*, format : LibC::Int) : Handle
     fun qt6cr_qsettings_create_for_application = qt6cr_qsettings_create_for_application(organization : UInt8*, application : UInt8*, format : LibC::Int) : Handle
