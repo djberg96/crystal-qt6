@@ -286,11 +286,13 @@ struct HasTemporaryFileRenameOverwrite : std::false_type {};
 template <typename T>
 struct HasTemporaryFileRenameOverwrite<T, std::void_t<decltype(std::declval<T *>()->renameOverwrite(std::declval<const QString &>()))>> : std::true_type {};
 
-bool temporary_file_rename_overwrite(QTemporaryFile *file, const QString &new_name, std::true_type) {
+template <typename T, std::enable_if_t<HasTemporaryFileRenameOverwrite<T>::value, int> = 0>
+bool temporary_file_rename_overwrite(T *file, const QString &new_name) {
   return file->renameOverwrite(new_name);
 }
 
-bool temporary_file_rename_overwrite(QTemporaryFile *file, const QString &new_name, std::false_type) {
+template <typename T, std::enable_if_t<!HasTemporaryFileRenameOverwrite<T>::value, int> = 0>
+bool temporary_file_rename_overwrite(T *file, const QString &new_name) {
   if (QFile::exists(new_name) && !QFile::remove(new_name)) {
     return false;
   }
@@ -22535,8 +22537,7 @@ bool qt6cr_qtemporary_file_rename_overwrite(qt6cr_handle_t handle, const char *n
   auto *file = as_qtemporary_file(handle);
   return file != nullptr && temporary_file_rename_overwrite(
                              file,
-                             QString::fromUtf8(new_name == nullptr ? "" : new_name),
-                             HasTemporaryFileRenameOverwrite<QTemporaryFile>{});
+                             QString::fromUtf8(new_name == nullptr ? "" : new_name));
 }
 
 qt6cr_handle_t qt6cr_qtemporary_file_create_native_file(const char *file_name) {
