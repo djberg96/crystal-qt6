@@ -2,6 +2,10 @@ require "./spec_helper"
 require "file_utils"
 
 describe Qt6 do
+  it "exposes the Qt runtime version" do
+    Qt6.runtime_version.should match(/\A\d+\.\d+\.\d+/)
+  end
+
   it "wraps base QEvent ownership and simple core events" do
     event = Qt6::QEvent.new(Qt6::EventType::User)
     event.type.should eq(Qt6::EventType::User)

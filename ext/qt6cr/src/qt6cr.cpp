@@ -3434,6 +3434,10 @@ qt6cr_point_t to_point(const QPoint &point) {
   return qt6cr_point_t{point.x(), point.y()};
 }
 
+extern "C" const char *qt6cr_qt_version(void) {
+  return qVersion();
+}
+
 qt6cr_vector3d_t to_vector3d(const QVector3D &vector) {
   return qt6cr_vector3d_t{vector.x(), vector.y(), vector.z()};
 }
