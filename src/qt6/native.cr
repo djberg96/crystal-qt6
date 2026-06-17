@@ -11,6 +11,8 @@ module Qt6
   lib LibQt6
     alias Handle = Void*
 
+    fun qt6cr_qt_version = qt6cr_qt_version : UInt8*
+
     struct PointValue
       x : LibC::Int
       y : LibC::Int

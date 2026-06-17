@@ -13,6 +13,8 @@ typedef struct {
 	int y;
 } qt6cr_point_t;
 
+const char *qt6cr_qt_version(void);
+
 typedef struct {
 	double x;
 	double y;

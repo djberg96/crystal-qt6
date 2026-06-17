@@ -562,6 +562,11 @@ module Qt6
   @@tracked_objects = [] of ManagedResource
   @@shutdown_registered = false
 
+  # Returns the Qt runtime version.
+  def self.runtime_version : String
+    String.new(LibQt6.qt6cr_qt_version)
+  end
+
   # Creates or returns the shared `QApplication` wrapper for the process.
   #
   # The first call initializes Qt and registers the automatic shutdown hook.
