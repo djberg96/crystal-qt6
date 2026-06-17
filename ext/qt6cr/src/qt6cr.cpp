@@ -198,7 +198,6 @@
 #include <QTimeEdit>
 #include <QGroupBox>
 #include <QtGlobal>
-#include <QtVersion>
 #include <QSplashScreen>
 #include <QSvgGenerator>
 #include <QSvgRenderer>
