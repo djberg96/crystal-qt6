@@ -2948,8 +2948,16 @@ describe Qt6 do
     mime_data.text = "mime sample"
     mime_data.html = "<b>mime sample</b>"
     mime_data.image = loaded_image
+    local_path = File.join(Dir.tempdir, "crystal-qt6-clipboard-url.txt")
+    mime_data.urls = [
+      Qt6::QUrl.from_local_file(local_path),
+      Qt6::QUrl.new("https://example.com/crystal-qt6"),
+    ]
     mime_data.set_data("application/x-crystal-qt6-layer", Bytes[1_u8, 7_u8, 9_u8])
     mime_data.has_html?.should be_true
+    mime_data.has_urls?.should be_true
+    mime_data.urls.map(&.to_string).should contain("https://example.com/crystal-qt6")
+    mime_data.local_file_paths.should eq([local_path])
     mime_data.has_image?.should be_true
     mime_data.image.pixel_color(4, 3).should eq(Qt6::Color.new(12, 34, 56, 255))
     mime_data.formats.should contain("application/x-crystal-qt6-layer")
@@ -2963,9 +2971,19 @@ describe Qt6 do
     clipboard_mime.text.should eq("mime sample")
     clipboard_mime.has_html?.should be_true
     clipboard_mime.html.should contain("mime sample")
+    clipboard_mime.has_urls?.should be_true
+    clipboard_mime.local_file_paths.should eq([local_path])
+    clipboard.has_urls?.should be_true
+    clipboard.local_file_paths.should eq([local_path])
     clipboard_mime.formats.should contain("application/x-crystal-qt6-layer")
     clipboard_mime.has_format?("application/x-crystal-qt6-layer").should be_true
     clipboard_mime.data("application/x-crystal-qt6-layer").should eq(Bytes[1_u8, 7_u8, 9_u8])
+
+    direct_path = File.join(Dir.tempdir, "crystal-qt6-direct-clipboard-url.txt")
+    clipboard.urls = [Qt6::QUrl.from_local_file(direct_path)]
+    application.process_events
+    clipboard.has_urls?.should be_true
+    clipboard.local_file_paths.should eq([direct_path])
     clipboard.clear
   end
 

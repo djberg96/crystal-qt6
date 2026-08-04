@@ -31,6 +31,30 @@ module Qt6
       value
     end
 
+    def has_urls? : Bool
+      LibQt6.qt6cr_mime_data_has_urls(to_unsafe)
+    end
+
+    # Returns URL payloads, typically file URLs from clipboard or drag/drop data.
+    def urls : Array(QUrl)
+      Qt6.copy_and_release_handles(LibQt6.qt6cr_mime_data_urls(to_unsafe)).map do |handle|
+        QUrl.wrap(handle, true)
+      end
+    end
+
+    # Sets URL payloads.
+    def urls=(values : Enumerable(QUrl)) : Array(QUrl)
+      urls = values.to_a
+      handles = urls.map(&.to_unsafe)
+      LibQt6.qt6cr_mime_data_set_urls(to_unsafe, handles.to_unsafe, handles.size)
+      urls
+    end
+
+    # Returns local filesystem paths from URL payloads.
+    def local_file_paths : Array(String)
+      urls.select(&.local_file?).map(&.to_local_file)
+    end
+
     # Returns `true` when an HTML payload is present.
     def has_html? : Bool
       LibQt6.qt6cr_mime_data_has_html(to_unsafe)

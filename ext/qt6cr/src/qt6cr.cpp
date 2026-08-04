@@ -369,6 +369,7 @@ QGraphicsColorizeEffect *as_graphics_colorize_effect(qt6cr_handle_t handle);
 QGraphicsDropShadowEffect *as_graphics_drop_shadow_effect(qt6cr_handle_t handle);
 QGraphicsOpacityEffect *as_graphics_opacity_effect(qt6cr_handle_t handle);
 QGesture *as_gesture(qt6cr_handle_t handle);
+QUrl *as_qurl(qt6cr_handle_t handle);
 qt6cr_byte_array_t to_byte_array_value(const QByteArray &value);
 qt6cr_string_array_t to_string_array_value(const QStringList &values);
 qt6cr_string_array_t to_string_array_value(const QList<QByteArray> &values);
@@ -386,6 +387,8 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsTransform *> &va
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsItem *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QGraphicsView *> &values);
 qt6cr_handle_array_t to_handle_array_value(const QList<QMdiSubWindow *> &values);
+qt6cr_handle_array_t to_qurl_handle_array_value(const QList<QUrl> &values);
+QList<QUrl> qurl_list_from_handles(const qt6cr_handle_t *values, int size);
 qt6cr_handle_array_t to_abstract_item_model_handle_array_value(const QList<QAbstractItemModel *> &values);
 qt6cr_handle_array_t to_standard_item_handle_array_value(const QList<QStandardItem *> &values);
 qt6cr_handle_array_t to_model_index_handle_array_value(const QModelIndexList &values);
@@ -2451,6 +2454,39 @@ qt6cr_handle_array_t to_handle_array_value(const QList<QMdiSubWindow *> &values)
   return qt6cr_handle_array_t{copy, size};
 }
 
+qt6cr_handle_array_t to_qurl_handle_array_value(const QList<QUrl> &values) {
+  const auto size = static_cast<int>(values.size());
+
+  if (size <= 0) {
+    return qt6cr_handle_array_t{nullptr, 0};
+  }
+
+  auto *copy = new qt6cr_handle_t[static_cast<size_t>(size)];
+
+  for (int index = 0; index < size; ++index) {
+    copy[index] = new QUrl(values.at(index));
+  }
+
+  return qt6cr_handle_array_t{copy, size};
+}
+
+QList<QUrl> qurl_list_from_handles(const qt6cr_handle_t *values, int size) {
+  QList<QUrl> urls;
+
+  if (values == nullptr || size <= 0) {
+    return urls;
+  }
+
+  for (int index = 0; index < size; ++index) {
+    auto *url = as_qurl(values[index]);
+    if (url != nullptr) {
+      urls.append(*url);
+    }
+  }
+
+  return urls;
+}
+
 qt6cr_handle_array_t to_abstract_item_model_handle_array_value(const QList<QAbstractItemModel *> &values) {
   const auto size = static_cast<int>(values.size());
 
@@ -2508,6 +2544,10 @@ QMimeData *clone_mime_data(const QMimeData *source) {
 
   if (source->hasText()) {
     copy->setText(source->text());
+  }
+
+  if (source->hasUrls()) {
+    copy->setUrls(source->urls());
   }
 
   for (const auto &format : source->formats()) {
@@ -7988,6 +8028,27 @@ bool qt6cr_clipboard_has_text(qt6cr_handle_t handle) {
   return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasText();
 }
 
+bool qt6cr_clipboard_has_urls(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  return clipboard != nullptr && clipboard->mimeData() != nullptr && clipboard->mimeData()->hasUrls();
+}
+
+qt6cr_handle_array_t qt6cr_clipboard_urls(qt6cr_handle_t handle) {
+  auto *clipboard = as_clipboard(handle);
+  auto *mime_data = clipboard == nullptr ? nullptr : clipboard->mimeData();
+  return mime_data == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_qurl_handle_array_value(mime_data->urls());
+}
+
+void qt6cr_clipboard_set_urls(qt6cr_handle_t handle, const qt6cr_handle_t *urls, int size) {
+  auto *clipboard = as_clipboard(handle);
+
+  if (clipboard != nullptr) {
+    auto *mime_data = new QMimeData();
+    mime_data->setUrls(qurl_list_from_handles(urls, size));
+    clipboard->setMimeData(mime_data);
+  }
+}
+
 qt6cr_handle_t qt6cr_clipboard_image(qt6cr_handle_t handle) {
   auto *clipboard = as_clipboard(handle);
 
@@ -8087,6 +8148,10 @@ void qt6cr_clipboard_set_mime_data(qt6cr_handle_t handle, qt6cr_handle_t mime_da
 
   if (source->hasImage()) {
     copy->setImageData(source->imageData());
+  }
+
+  if (source->hasUrls()) {
+    copy->setUrls(source->urls());
   }
 
   const auto formats = source->formats();
@@ -10294,6 +10359,24 @@ qt6cr_handle_t qt6cr_mime_data_create(void) {
 bool qt6cr_mime_data_has_text(qt6cr_handle_t handle) {
   auto *mime_data = as_mime_data(handle);
   return mime_data != nullptr && mime_data->hasText();
+}
+
+bool qt6cr_mime_data_has_urls(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data != nullptr && mime_data->hasUrls();
+}
+
+qt6cr_handle_array_t qt6cr_mime_data_urls(qt6cr_handle_t handle) {
+  auto *mime_data = as_mime_data(handle);
+  return mime_data == nullptr ? qt6cr_handle_array_t{nullptr, 0} : to_qurl_handle_array_value(mime_data->urls());
+}
+
+void qt6cr_mime_data_set_urls(qt6cr_handle_t handle, const qt6cr_handle_t *urls, int size) {
+  auto *mime_data = as_mime_data(handle);
+
+  if (mime_data != nullptr) {
+    mime_data->setUrls(qurl_list_from_handles(urls, size));
+  }
 }
 
 char *qt6cr_mime_data_text(qt6cr_handle_t handle) {
