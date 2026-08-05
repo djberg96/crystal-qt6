@@ -894,6 +894,9 @@ module Qt6
     fun qt6cr_clipboard_text = qt6cr_clipboard_text(handle : Handle) : UInt8*
     fun qt6cr_clipboard_set_text = qt6cr_clipboard_set_text(handle : Handle, text : UInt8*)
     fun qt6cr_clipboard_has_text = qt6cr_clipboard_has_text(handle : Handle) : Bool
+    fun qt6cr_clipboard_has_urls = qt6cr_clipboard_has_urls(handle : Handle) : Bool
+    fun qt6cr_clipboard_urls = qt6cr_clipboard_urls(handle : Handle) : HandleArrayValue
+    fun qt6cr_clipboard_set_urls = qt6cr_clipboard_set_urls(handle : Handle, urls : Handle*, size : LibC::Int)
     fun qt6cr_clipboard_image = qt6cr_clipboard_image(handle : Handle) : Handle
     fun qt6cr_clipboard_set_image = qt6cr_clipboard_set_image(handle : Handle, image : Handle)
     fun qt6cr_clipboard_has_image = qt6cr_clipboard_has_image(handle : Handle) : Bool
@@ -1262,6 +1265,9 @@ module Qt6
     fun qt6cr_mime_data_has_text = qt6cr_mime_data_has_text(handle : Handle) : Bool
     fun qt6cr_mime_data_text = qt6cr_mime_data_text(handle : Handle) : UInt8*
     fun qt6cr_mime_data_set_text = qt6cr_mime_data_set_text(handle : Handle, text : UInt8*)
+    fun qt6cr_mime_data_has_urls = qt6cr_mime_data_has_urls(handle : Handle) : Bool
+    fun qt6cr_mime_data_urls = qt6cr_mime_data_urls(handle : Handle) : HandleArrayValue
+    fun qt6cr_mime_data_set_urls = qt6cr_mime_data_set_urls(handle : Handle, urls : Handle*, size : LibC::Int)
     fun qt6cr_mime_data_has_html = qt6cr_mime_data_has_html(handle : Handle) : Bool
     fun qt6cr_mime_data_html = qt6cr_mime_data_html(handle : Handle) : UInt8*
     fun qt6cr_mime_data_set_html = qt6cr_mime_data_set_html(handle : Handle, html : UInt8*)
