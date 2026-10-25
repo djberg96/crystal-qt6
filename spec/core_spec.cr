@@ -2678,7 +2678,7 @@ describe Qt6 do
     scheduled = Channel(Nil).new(1)
     completion = Channel(String).new(1)
 
-    spawn same_thread: false do
+    spawn do
       application.invoke_later do
         label.text = "Worker"
         completion.send(label.text)
@@ -3502,6 +3502,7 @@ describe Qt6 do
 
   it "supports advisory lock files" do
     lock_path = File.join(Dir.tempdir, "crystal-qt6-lock-file-#{::Process.pid}.lock")
+    stale_lock_path = File.join(Dir.tempdir, "crystal-qt6-stale-lock-#{::Process.pid}.lock")
     lock_file = Qt6::QLockFile.new(lock_path)
     lock_file.file_name.should eq(lock_path)
     lock_file.stale_lock_time = 250
@@ -3527,13 +3528,18 @@ describe Qt6 do
     competing_lock.try_lock.should be_true
     competing_lock.unlock
 
-    stale_probe = Qt6::QLockFile.new(File.join(Dir.tempdir, "crystal-qt6-stale-lock-#{::Process.pid}.lock"))
-    stale_probe.remove_stale_lock_file.should be_false
-
-    stale_probe.release
-    competing_lock.release
-    lock_file.release
+    # Simulate an abandoned lock file with no process holding a native lock.
+    File.write(stale_lock_path, "0\ncrystal-qt6-spec\n#{System.hostname}\n")
+    stale_probe = Qt6::QLockFile.new(stale_lock_path)
+    stale_probe.remove_stale_lock_file.should be_true
+    File.exists?(stale_lock_path).should be_false
+    stale_probe.try_lock.should be_true
+    stale_probe.unlock
   ensure
+    stale_probe.try(&.release)
+    competing_lock.try(&.release)
+    lock_file.try(&.release)
+    File.delete?(stale_lock_path) if stale_lock_path
     File.delete?(lock_path) if lock_path
   end
 end
