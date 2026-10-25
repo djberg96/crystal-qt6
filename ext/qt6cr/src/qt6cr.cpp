@@ -29234,7 +29234,11 @@ void qt6cr_event_widget_send_drag_enter_text(qt6cr_handle_t handle, qt6cr_pointf
 
   QMimeData mime_data;
   mime_data.setText(QString::fromUtf8(text == nullptr ? "" : text));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 12, 0)
+  QDragEnterEvent event(QPointF(position.x, position.y), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+#else
   QDragEnterEvent event(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+#endif
   QApplication::sendEvent(widget, &event);
 }
 
@@ -29247,7 +29251,11 @@ void qt6cr_event_widget_send_drag_move_text(qt6cr_handle_t handle, qt6cr_pointf_
 
   QMimeData mime_data;
   mime_data.setText(QString::fromUtf8(text == nullptr ? "" : text));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 12, 0)
+  QDragMoveEvent event(QPointF(position.x, position.y), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+#else
   QDragMoveEvent event(QPoint(static_cast<int>(position.x), static_cast<int>(position.y)), Qt::CopyAction, &mime_data, Qt::MouseButtons(buttons), Qt::KeyboardModifiers(modifiers));
+#endif
   QApplication::sendEvent(widget, &event);
 }
 
